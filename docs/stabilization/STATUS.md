@@ -191,3 +191,22 @@ continuidade. Não alterado o detector nesta etapa.
 Próximo trabalho deve recuperar detecção sem depender da fileira de controles,
 validando limites completos e sem inventar mesa a partir de histórico invisível.
 OCR continua bloqueado. Nenhum teste Windows ou instalador novo.
+
+## 2026-11-04 — Candidato sem controles e limite do viewport
+
+Investigação mostrou que o contorno azul do quadro derivado sem controles toca
+as bordas esquerda/inferior, sendo descartado pelo filtro anterior. Agora regiões
+com proporção válida e pelo menos 65% de máscara azul podem aparecer como candidatos
+de diagnóstico mesmo tocando a borda. `touches_viewport=true` força AMBIGUOUS,
+impede retenção da identidade e não aprova recorte completo. Esse filtro de ocupação
+rejeita um contorno adicional que misturava lobby e mesa no inventário.
+
+Ensaio atualizado: há candidato em todos os quatro quadros; os dois quadros sem
+controles ficam ambíguos. O relatório de continuidade permanece FAIL, pois a
+identidade estável NÃO foi demonstrada. O retorno exato recupera o ID original.
+22 testes passaram (3 transição/diagnóstico, 9 limites, 10 observador). Inventário
+permanece quatro capturas com candidatos, sem novos candidatos nas outras 14.
+
+A detecção deixou de desaparecer, mas a tarefa de continuidade não está concluída.
+São necessários limites confiáveis independentes dos controles e evidência visual
+para associação através da mudança de recorte. OCR e ações permanecem bloqueados.

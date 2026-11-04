@@ -28,11 +28,11 @@ def run_sequence():
     for name, frame in frames:
         tables=tracker.scan_unity_surface(frame)
         steps.append({'step':name,'tables':[{'id':t.table_id,'box':t.box_physical,
-            'status':t.status,'geometry_version':t.geometry_version} for t in tables],
+            'status':t.status,'geometry_version':t.geometry_version,'touches_viewport':t.touches_viewport} for t in tables],
             'active_count':len(tracker.active_tables)})
     initial_id=steps[0]['tables'][0]['id'] if len(steps[0]['tables'])==1 else None
     passed=initial_id is not None and all(len(s['tables'])==1 and s['tables'][0]['id']==initial_id for s in steps)
-    return {'passed':passed,'scope':'Derived screenshot replay; not native Windows or live transition',
+    return {'passed':passed,'detection_present_all_frames':all(s['tables'] for s in steps),'scope':'Derived screenshot replay; not native Windows or live transition',
         'fixture':FIXTURE,'sha256':hashlib.sha256(path.read_bytes()).hexdigest(),
         'transformation':{'box':[25,1194,675,66],'fill_rgb':[15,25,40]},'steps':steps}
 

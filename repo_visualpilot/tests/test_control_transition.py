@@ -25,3 +25,13 @@ class ControlTransition(unittest.TestCase):
         self.assertEqual(len(first['tables']),1)
         self.assertEqual(len(last['tables']),1)
         self.assertEqual(first['tables'][0]['id'],last['tables'][0]['id'])
+
+    def test_hidden_controls_are_detected_but_clipping_blocks_identity(self):
+        report=module.run_sequence()
+        for step in report['steps'][1:3]:
+            self.assertEqual(len(step['tables']),1)
+            table=step['tables'][0]
+            self.assertTrue(table['touches_viewport'])
+            self.assertEqual(table['status'],'AMBIGUOUS')
+        self.assertTrue(report['detection_present_all_frames'])
+        self.assertFalse(report['passed'])

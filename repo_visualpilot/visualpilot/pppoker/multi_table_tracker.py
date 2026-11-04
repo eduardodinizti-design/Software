@@ -38,6 +38,7 @@ class TableWindowInfo:
     status: str              # "HERO_TURN", "ACTIVE_OBSERVING", "WAITING_ACTION", "MINIMIZED"
     is_visible: bool
     geometry_version: int = 1
+    touches_viewport: bool = False
     hero_seat: Optional[int] = None
     hero_position: Optional[str] = None  # "BTN", "SB", "BB", "UTG", "MP", "CO"
     active_players: str = "6/6"
@@ -359,9 +360,12 @@ class MultiTableTracker:
         for contour in contours:
             x, y, w, h = cv2.boundingRect(contour)
             if w >= 200 and h >= 300 and .35 <= w / h <= .85:
-                # Touching the viewport may mean a clipped table; do not approve it.
-                if x > 0 and y > 0 and x+w < width and y+h < height:
-                    boxes.append((x, y, w, h))
+                # Edge-touching regions remain diagnostic candidates. The scanner
+                # explicitly blocks their identity and marks possible clipping.
+                edge = x == 0 or y == 0 or x+w == width or y+h == height
+                if edge and (blue_mask[y:y+h,x:x+w] > 0).mean() < .65:
+                    continue
+                boxes.append((x, y, w, h))
         # Keep unrelated felt candidates in mixed scenes, but do not emit a
         # second record for felt already inside an anchored table candidate.
         remaining = []
@@ -422,7 +426,9 @@ class MultiTableTracker:
             # Movement + changing content remains ambiguous.
             if old is None and anchor_counts[anchor] == 1 and anchor_old is not None and anchor_old[1] == box:
                 old = anchor_old
-            ambiguous = counts[signature] > 1 or (bool(previous) and old is None)
+            bx, by, bw, bh = box
+            touches_viewport = bx == 0 or by == 0 or bx+bw == unity_frame.shape[1] or by+bh == unity_frame.shape[0]
+            ambiguous = touches_viewport or counts[signature] > 1 or (bool(previous) and old is None)
             if old is not None and not ambiguous:
                 table_id, old_box, version = old
                 version += box != old_box
@@ -435,7 +441,7 @@ class MultiTableTracker:
                 box_physical=box,box_logical=box.copy(),dpi_scale=1.0,dpi_value=0,
                 aspect_ratio=box[2]/box[3],monitor_index=-1,
                 status="AMBIGUOUS" if ambiguous else "CANDIDATE",is_visible=True,
-                geometry_version=version,active_players="UNKNOWN",current_round="UNKNOWN")
+                geometry_version=version,touches_viewport=touches_viewport,active_players="UNKNOWN",current_round="UNKNOWN")
             result.append(info)
             if not ambiguous:
                 retained[signature]=(table_id,box,version)
