@@ -247,3 +247,18 @@ Resultado: translação+conteúdo e troca+conteúdo preservam IDs com geometry_v
 Nenhum deles comprova rastreamento semântico em uma sessão real. Conteúdo superior
 animado, redimensionamento simultâneo e alteração de layout permanecem pendentes.
 OCR continua bloqueado e não houve teste nativo Windows ou novo instalador.
+
+## 2026-11-04 — Validação de redimensionamento e mudanças superiores
+
+Executados 45 testes direcionados, sem falhas, erros, skips ou expectedFailure.
+Resultado estruturado em resize-validation.json. Foram adicionados quatro cenários:
+redimensionamento 2× nearest-neighbor sem alteração de conteúdo preserva IDs e
+incrementa geometry_version; redimensionamento com mudança inferior resulta em
+AMBIGUOUS sem transferência de IDs; mudança superior em uma mesa não invalida a
+outra; 40 alternâncias mantêm as coleções internas dentro dos limites configurados.
+
+Aprovação dos testes NÃO significa continuidade resolvida no segundo cenário:
+o teste confirma o bloqueio conservador, não recuperação de identidade. O teste de
+40 alternâncias não é ensaio prolongado de memória. Imagens sintéticas e API Windows
+mockada não substituem uma sessão real ou outros fatores de escala/interpolação.
+Nenhuma mudança de algoritmo nesta etapa. OCR continua bloqueado.

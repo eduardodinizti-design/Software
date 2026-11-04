@@ -1,0 +1,24 @@
+{
+  "scope": "Linux laboratory; synthetic frames and screenshot derivatives; mocked Windows APIs",
+  "tests_run": 45,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "expected_failures": 0,
+  "success": true,
+  "patterns": [
+    "test_moving_content.py",
+    "test_real_table_boundaries.py",
+    "test_observer*.py",
+    "test_control_transition.py",
+    "test_visual_continuity.py",
+    "test_windows_capture_contract.py",
+    "test_crop_acceptance.py"
+  ],
+  "findings": {
+    "resize_without_content_change": "ID preserved for 2x nearest-neighbor synthetic resize",
+    "resize_with_content_change": "AMBIGUOUS; continuity not implemented",
+    "one_table_upper_region_change": "other table retained its ID",
+    "repeated_transitions": "40 steps; internal collection sizes within configured limits; not a long-duration memory test"
+  }
+}

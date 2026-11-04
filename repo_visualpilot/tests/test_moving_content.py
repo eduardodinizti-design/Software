@@ -51,3 +51,44 @@ class MovingContent(unittest.TestCase):
         tracker=MultiTableTracker();tracker.scan_unity_surface(frame())
         tracker.scan_unity_surface(None)
         self.assertTrue(all(t.status=='AMBIGUOUS' for t in tracker.scan_unity_surface(frame((100,800),True))))
+
+    def resized_frame(self, changed):
+        import cv2
+        source=frame(changed=changed)
+        output=np.full((1650,1700,3),20,dtype=np.uint8)
+        for old_x,new_x in [(50,50),(750,900)]:
+            crop=source[50:750,old_x:old_x+350]
+            output[100:1500,new_x:new_x+700]=cv2.resize(crop,(700,1400),interpolation=cv2.INTER_NEAREST)
+        return output
+
+    def test_resize_unchanged_content_preserves_exact_signature(self):
+        tracker=MultiTableTracker();first=tracker.scan_unity_surface(frame())
+        second=tracker.scan_unity_surface(self.resized_frame(False))
+        self.assertEqual(len(second),2)
+        self.assertEqual([t.table_id for t in first],[t.table_id for t in second])
+        self.assertEqual([t.geometry_version for t in second],[2,2])
+
+    def test_resize_with_changed_content_blocks_uncertain_history(self):
+        tracker=MultiTableTracker();first=tracker.scan_unity_surface(frame())
+        second=tracker.scan_unity_surface(self.resized_frame(True))
+        self.assertEqual(len(second),2)
+        self.assertTrue(all(t.status=='AMBIGUOUS' for t in second))
+        self.assertFalse({t.table_id for t in first}&{t.table_id for t in second})
+        self.assertEqual(len(tracker.active_tables),2)
+
+    def test_changed_top_does_not_poison_other_table(self):
+        tracker=MultiTableTracker();first=tracker.scan_unity_surface(frame())
+        changed=frame((100,800),True)
+        changed[70:110,120:180]=[255,255,0]
+        second=tracker.scan_unity_surface(changed)
+        self.assertEqual(second[0].status,'AMBIGUOUS')
+        self.assertEqual(second[1].table_id,first[1].table_id)
+        self.assertEqual(second[1].status,'CANDIDATE')
+
+    def test_repeat_resize_keeps_state_bounded(self):
+        tracker=MultiTableTracker()
+        for i in range(40):
+            tracker.scan_unity_surface(frame() if i%2==0 else self.resized_frame(True))
+            self.assertLessEqual(len(tracker.active_tables),2)
+            self.assertLessEqual(len(tracker._visual_tracks),tracker.max_tables*4)
+            self.assertLessEqual(len(tracker._continuity),tracker.max_tables)
