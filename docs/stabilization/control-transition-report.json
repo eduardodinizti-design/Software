@@ -1,0 +1,65 @@
+{
+  "passed": false,
+  "scope": "Derived screenshot replay; not native Windows or live transition",
+  "fixture": "public/assets/aistudio/_21D744E1-8BE6-4C79-82AF-5582DD6A9547__6988a9e2.png",
+  "sha256": "6988a9e2826610295041b34feeca5a97e5e0ad490c1ee42183b33a2eed111abd",
+  "transformation": {
+    "box": [
+      25,
+      1194,
+      675,
+      66
+    ],
+    "fill_rgb": [
+      15,
+      25,
+      40
+    ]
+  },
+  "steps": [
+    {
+      "step": "visible",
+      "tables": [
+        {
+          "id": "visual-1",
+          "box": [
+            11,
+            36,
+            703,
+            1237
+          ],
+          "status": "CANDIDATE",
+          "geometry_version": 1
+        }
+      ],
+      "active_count": 1
+    },
+    {
+      "step": "hidden_1",
+      "tables": [],
+      "active_count": 0
+    },
+    {
+      "step": "hidden_2",
+      "tables": [],
+      "active_count": 0
+    },
+    {
+      "step": "visible_again",
+      "tables": [
+        {
+          "id": "visual-1",
+          "box": [
+            11,
+            36,
+            703,
+            1237
+          ],
+          "status": "CANDIDATE",
+          "geometry_version": 1
+        }
+      ],
+      "active_count": 1
+    }
+  ]
+}

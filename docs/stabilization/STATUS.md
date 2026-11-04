@@ -173,3 +173,21 @@ a mesma região superior podem permanecer ambíguas. Troca por outra mesa de apa
 superior idêntica é indistinguível por essa heurística; por isso CANDIDATE permanece
 provisório, sem autorização de OCR/ações. Movimento com mudança simultânea de conteúdo
 e alteração de recorte ao aparecerem controles ainda precisam de validação.
+
+## 2026-11-04 — Ensaio de controles visíveis/ausentes
+
+`tools/check_control_transition.py` reproduz quatro quadros: captura original,
+controles inferiores preenchidos por uma cor escura, repetição desse quadro e
+retorno ao original. Transformação explicitamente sintética, sem afirmar que
+representa pixels produzidos pelo PPPoker após a ação.
+
+Resultado: visual-1 / nenhuma mesa / nenhuma mesa / visual-1. O ensaio de
+continuidade FALHOU e retorna código 1; evidência em control-transition-report.json.
+A lista ativa não mantém candidatos antigos durante a ausência. Retorno idêntico
+recupera o ID sem duplicação, mas isso não valida recuperação após mudança real de
+cartas. Dois testes do relatório/recuperação passaram; não são aprovação da
+continuidade. Não alterado o detector nesta etapa.
+
+Próximo trabalho deve recuperar detecção sem depender da fileira de controles,
+validando limites completos e sem inventar mesa a partir de histórico invisível.
+OCR continua bloqueado. Nenhum teste Windows ou instalador novo.
