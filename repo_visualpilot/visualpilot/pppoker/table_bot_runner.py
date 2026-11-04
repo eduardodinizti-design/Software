@@ -399,7 +399,11 @@ class TableBotRunner:
             # Varre e rastreia mesas ativas via MultiTableTracker
             # Geometry is resolved once by the guardian; pixels are processed after capture.
             vis = self.guardian.inspect_and_prepare_window(auto_restore=False, auto_focus=False)
-            if not vis.is_found or not vis.frame_valid_for_ocr or vis.occlusion_status in ("WINDOW_NOT_FOUND", "WINDOW_AMBIGUOUS", "WINDOW_MINIMIZED", "INVALID_GEOMETRY"):
+            self.observer_occluders = []
+            observer_overlap = (self.mode in ("dry-run", "spectator")
+                                and vis.occlusion_status == "WINDOW_OCCLUDED"
+                                and bool(vis.occluding_windows))
+            if not vis.is_found or (not vis.frame_valid_for_ocr and not observer_overlap) or vis.occlusion_status in ("WINDOW_NOT_FOUND", "WINDOW_AMBIGUOUS", "WINDOW_MINIMIZED", "INVALID_GEOMETRY"):
                 logger.warning("Janela indisponível para captura. Status: %s - %s", vis.occlusion_status, vis.message)
                 return None
 
@@ -408,6 +412,7 @@ class TableBotRunner:
                 logger.debug("Área cliente inválida (%dx%d)", cw, ch)
                 return None
 
+            self.observer_occluders = vis.occluding_windows
             return (cx, cy, cw, ch)
         except Exception as exc:
             if self.allow_simulated_fallback:
@@ -759,15 +764,23 @@ class TableBotRunner:
                 # Stabilization branch: observer routes actual Unity pixels and does not
                 # feed the full desktop surface into single-table OCR/action logic.
                 if self.mode in ("dry-run", "spectator"):
-                    candidates = self.multi_table_tracker.scan_unity_surface(frame)
+                    from visualpilot.pppoker.observer_visibility import prepare_observer_frame, candidate_visibility
+                    blockers = getattr(self, "observer_occluders", [])
+                    detection_frame = prepare_observer_frame(frame, win_rect, blockers)
+                    candidates = self.multi_table_tracker.scan_unity_surface(detection_frame)
                     self.observer_candidates = []
                     for table in candidates:
                         x, y, w, h = table.box_physical
                         crop = frame[y:y+h, x:x+w]
                         entry = table.to_dict()
                         entry["desktop_box"] = [win_rect[0]+x, win_rect[1]+y, w, h]
-                        entry["preview_b64"] = encode_frame_thumbnail_b64(crop)
+                        visibility = candidate_visibility(entry["desktop_box"], blockers)
+                        entry["visibility"] = visibility
+                        entry["preview_b64"] = encode_frame_thumbnail_b64(crop) if visibility == "CLEAR" else ""
+                        entry["complete_table_validated"] = False
                         entry["ocr_status"] = "BLOCKED_PENDING_REAL_SCREEN_CALIBRATION"
+                        if visibility != "CLEAR":
+                            entry["ocr_status"] = "BLOCKED_OCCLUDED"
                         self.observer_candidates.append(entry)
                     if now - last_heartbeat_time >= 1.5:
                         last_heartbeat_time = now

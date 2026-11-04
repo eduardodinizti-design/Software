@@ -83,3 +83,22 @@ class WindowsCaptureContract(unittest.TestCase):
         self.assertEqual(result.process_info['pid'],22)
         self.assertEqual(result.occlusion_status,'WINDOW_OCCLUDED')
         self.assertFalse(result.frame_valid_for_ocr)
+
+    def test_overlap_geometry_allowed_only_for_observer(self):
+        source = Path(guardian.__file__).with_name('table_bot_runner.py').read_text()
+        tree = ast.parse(source)
+        cls = next(n for n in tree.body if isinstance(n, ast.ClassDef) and n.name == 'TableBotRunner')
+        fn = next(n for n in cls.body if isinstance(n, ast.FunctionDef) and n.name == 'resolve_window_geometry')
+        fn.returns = None
+        ns = {'sys': types.SimpleNamespace(platform='linux'), 'logger': logging.getLogger('geometry-test')}
+        exec(compile(ast.fix_missing_locations(ast.Module(body=[fn], type_ignores=[])), 'geometry-test', 'exec'), ns)
+        report = types.SimpleNamespace(is_found=True, frame_valid_for_ocr=False,
+            occlusion_status='WINDOW_OCCLUDED', occluding_windows=[{'box': (0,0,100,100)}],
+            client_rect=(-1920,0,5760,2160), message='overlap')
+        runner = types.SimpleNamespace(mode='spectator', guardian=types.SimpleNamespace(
+            inspect_and_prepare_window=lambda **kwargs: report), allow_simulated_fallback=False)
+        self.assertEqual(ns['resolve_window_geometry'](runner), report.client_rect)
+        self.assertEqual(runner.observer_occluders, report.occluding_windows)
+        runner.mode = 'live'
+        self.assertIsNone(ns['resolve_window_geometry'](runner))
+        self.assertEqual(runner.observer_occluders, [])

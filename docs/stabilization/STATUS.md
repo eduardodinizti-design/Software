@@ -35,3 +35,23 @@ simuladas, incluindo rejeição de Chrome com título PPPoker e bloqueio por ter
 sobreposto. Isto não constitui homologação Windows. A oclusão ainda é calculada
 sobre a superfície inteira; validação por mesa e enquadramento completo permanecem
 pendentes. Nenhum instalador foi recompilado nesta etapa.
+
+## 2026-11-04 — Sobreposição por região no observador
+
+O guardião informa todas as janelas superiores sobrepostas, inclusive obstáculos
+pequenos e janelas topmost acima do cliente em primeiro plano. O observador pode
+capturar essa superfície, mascara as áreas externas antes da detecção e bloqueia
+prévias de candidatos que intersectam ou encostam nos obstáculos. Outras regiões
+continuam sendo analisadas. O caminho live continua bloqueando superfície ocluída.
+
+Os candidatos expõem visibility e complete_table_validated=false. A segmentação
+por feltro ainda não comprova que cartas e botões estejam no recorte; OCR permanece
+bloqueado. Mesas completamente encobertas podem desaparecer da lista de candidatos;
+esta etapa não implementa recuperação de identidade após oclusão. Máscara pode
+fragmentar candidatos; a margem de contato rejeita bordas diretamente adjacentes,
+sem prometer classificação perfeita de todos os fragmentos.
+
+Validação: 13 testes de laboratório passaram (7 de observador, 6 de contrato de
+captura/seleção), incluindo origem negativa, isolamento entre regiões, recorte de
+obstáculos nos limites, imutabilidade do frame original e bloqueio live. APIs Windows
+simuladas; sem homologação nativa ou novo instalador.

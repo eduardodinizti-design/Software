@@ -393,20 +393,15 @@ class WindowVisibilityGuardian:
         foreground_hwnd = int(u.GetForegroundWindow())
         is_foreground = (foreground_hwnd == hwnd)
 
-        occluded = False
-        blocking_title = None
-        if not is_foreground:
-            # Verifica se alguma janela visível acima está sobrepondo a área cliente
-            for win in z_order_windows[:target_z_index]:
-                if win["hwnd"] == hwnd or win["is_iconic"]:
-                    continue
-                overlap = rect_intersection_area(client_box, win["box"])
-                if overlap > 0:
-                    overlap_pct = (overlap / float(client_w * client_h)) * 100.0
-                    if overlap_pct >= max_overlap_tolerance_pct:
-                        occluded = True
-                        blocking_title = win["title"] or f"PID {win['process_info']['pid']}"
-                        break
+        # Preserve every overlapping upper window, including small overlays and
+        # topmost windows above a foreground client. Coordinates are desktop pixels.
+        blockers = [
+            {"hwnd": win["hwnd"], "box": win["box"]}
+            for win in z_order_windows[:target_z_index]
+            if not win["is_iconic"] and rect_intersection_area(client_box, win["box"]) > 0
+        ]
+        occluded = bool(blockers)
+        blocking_title = "Overlapping window" if blockers else None
 
         status = "CLEAR"
         if occluded:
@@ -423,6 +418,7 @@ class WindowVisibilityGuardian:
             is_occluded=occluded,
             occlusion_status=status,
             blocking_window_title=blocking_title,
+            occluding_windows=blockers,
             window_rect=target["box"],
             client_rect=client_box,
             process_info=target["process_info"],
