@@ -1,5 +1,5 @@
 {
-  "passed": false,
+  "passed": true,
   "detection_present_all_frames": true,
   "scope": "Derived screenshot replay; not native Windows or live transition",
   "fixture": "public/assets/aistudio/_21D744E1-8BE6-4C79-82AF-5582DD6A9547__6988a9e2.png",
@@ -40,15 +40,15 @@
       "step": "hidden_1",
       "tables": [
         {
-          "id": "visual-2",
+          "id": "visual-1",
           "box": [
             0,
             36,
             711,
             1242
           ],
-          "status": "AMBIGUOUS",
-          "geometry_version": 1,
+          "status": "PARTIAL_CANDIDATE",
+          "geometry_version": 2,
           "touches_viewport": true
         }
       ],
@@ -58,15 +58,15 @@
       "step": "hidden_2",
       "tables": [
         {
-          "id": "visual-3",
+          "id": "visual-1",
           "box": [
             0,
             36,
             711,
             1242
           ],
-          "status": "AMBIGUOUS",
-          "geometry_version": 1,
+          "status": "PARTIAL_CANDIDATE",
+          "geometry_version": 2,
           "touches_viewport": true
         }
       ],
@@ -84,7 +84,7 @@
             1237
           ],
           "status": "CANDIDATE",
-          "geometry_version": 1,
+          "geometry_version": 3,
           "touches_viewport": false
         }
       ],

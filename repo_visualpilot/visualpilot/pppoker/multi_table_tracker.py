@@ -63,6 +63,7 @@ class MultiTableTracker:
     def __init__(self, max_tables: int = 6):
         self._visual_tracks = {}
         self._visual_anchors = {}
+        self._continuity = []
         self._next_visual_id = 1
         self.max_tables = max_tables
         self.active_tables: Dict[str, TableWindowInfo] = {}
@@ -396,6 +397,7 @@ class MultiTableTracker:
         if not isinstance(unity_frame, np.ndarray) or unity_frame.ndim != 3 or unity_frame.shape[2] != 3 or unity_frame.size == 0:
             self.active_tables = {}
             self._visual_anchors = {}
+            self._continuity = []
             return []
         boxes = custom_table_rects if custom_table_rects is not None else self.detect_tables_from_unity_pixels(unity_frame)
         candidates = []
@@ -411,6 +413,13 @@ class MultiTableTracker:
             anchor = hashlib.sha256(cv2.resize(crop[:max(1,h//5)],(128,48),interpolation=cv2.INTER_NEAREST).tobytes()).hexdigest()
             anchors[signature] = anchor
             candidates.append((signature,[x,y,w,h]))
+        from .visual_continuity import sample_upper, matches
+        samples = [sample_upper(unity_frame, box) for _,box in candidates]
+        links = [[j for j,(record,sample) in enumerate(self._continuity)
+                  if matches(sample,samples[i],record[1],box)]
+                 for i,(_,box) in enumerate(candidates)]
+        usage = Counter(j for links_i in links for j in links_i)
+        next_continuity = []
         counts = Counter(signature for signature,_ in candidates)
         anchor_counts = Counter(anchors[sig] for sig, _ in candidates)
         previous_anchors = self._visual_anchors
@@ -418,7 +427,7 @@ class MultiTableTracker:
         previous = self._visual_tracks
         result = []
         retained = {}
-        for signature, box in candidates:
+        for candidate_index, (signature, box) in enumerate(candidates):
             old = previous.get(signature)
             anchor = anchors[signature]
             anchor_old = previous_anchors.get(anchor)
@@ -428,7 +437,14 @@ class MultiTableTracker:
                 old = anchor_old
             bx, by, bw, bh = box
             touches_viewport = bx == 0 or by == 0 or bx+bw == unity_frame.shape[1] or by+bh == unity_frame.shape[0]
-            ambiguous = touches_viewport or counts[signature] > 1 or (bool(previous) and old is None)
+            common_match = None
+            if anchor_counts[anchor] == 1 and len(links[candidate_index]) == 1:
+                j = links[candidate_index][0]
+                if usage[j] == 1:
+                    common_match = self._continuity[j][0]
+            if old is None:
+                old = common_match
+            ambiguous = (touches_viewport and common_match is None) or counts[signature] > 1 or (bool(previous) and old is None)
             if old is not None and not ambiguous:
                 table_id, old_box, version = old
                 version += box != old_box
@@ -440,10 +456,11 @@ class MultiTableTracker:
                 title="Unvalidated visual candidate",game_type="UNKNOWN",blinds="?",
                 box_physical=box,box_logical=box.copy(),dpi_scale=1.0,dpi_value=0,
                 aspect_ratio=box[2]/box[3],monitor_index=-1,
-                status="AMBIGUOUS" if ambiguous else "CANDIDATE",is_visible=True,
+                status="AMBIGUOUS" if ambiguous else ("PARTIAL_CANDIDATE" if touches_viewport else "CANDIDATE"),is_visible=True,
                 geometry_version=version,touches_viewport=touches_viewport,active_players="UNKNOWN",current_round="UNKNOWN")
             result.append(info)
             if not ambiguous:
+                next_continuity.append(((table_id,box,version),samples[candidate_index]))
                 retained[signature]=(table_id,box,version)
                 if anchor_counts[anchor] == 1:
                     next_anchors[anchor]=(table_id,box,version)
@@ -452,6 +469,7 @@ class MultiTableTracker:
         previous = {key:value for key,value in previous.items() if value[0] not in updated_ids}
         self._visual_tracks = dict(list({**previous,**retained}.items())[-self.max_tables*4:])
         self._visual_anchors = next_anchors
+        self._continuity = next_continuity
         self.active_tables = {t.table_id:t for t in result}
         return result
 

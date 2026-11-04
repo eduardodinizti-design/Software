@@ -210,3 +210,24 @@ permanece quatro capturas com candidatos, sem novos candidatos nas outras 14.
 A detecção deixou de desaparecer, mas a tarefa de continuidade não está concluída.
 São necessários limites confiáveis independentes dos controles e evidência visual
 para associação através da mudança de recorte. OCR e ações permanecem bloqueados.
+
+## 2026-11-04 — Continuidade através de pequena mudança de recorte
+
+Implementada comparação de pixels comuns do terço superior em uma grade absoluta
+com passo de 8 pixels. Exige correspondência exata, variação visual suficiente,
+cobertura comum mínima de 80%, alteração geométrica de até 5% da largura e associação
+única entre candidatos consecutivos. Âncoras superiores compartilhadas continuam
+bloqueadas. Apenas amostras superiores dos candidatos aceitos são retidas; captura
+inválida limpa essa continuidade. Não usa o frame anterior para inventar detecção.
+
+O ensaio derivado agora PASS: mesmo ID nos quatro quadros, versões [1,2,2,3].
+Quadros tocando o viewport permanecem PARTIAL_CANDIDATE com touches_viewport=true;
+continuidade de ID não comprova integridade do recorte nem autoriza OCR.
+26 testes passaram: 4 comparação de pixels, 3 transição, 10 observador, 9 limites.
+Teste de âncora compartilhada detectou uma regressão durante desenvolvimento;
+a restrição de unicidade foi aplicada e o teste voltou a passar.
+
+Limites: o ensaio ainda usa controles removidos artificialmente, sem movimento
+simultâneo ou sequência real de jogo. Mudanças reais nos pixels superiores podem
+bloquear a associação. Não é identidade semântica de torneio, homologação Windows
+ou liberação operacional. OCR continua bloqueado.
