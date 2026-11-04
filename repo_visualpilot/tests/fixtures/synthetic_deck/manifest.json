@@ -1,0 +1,241 @@
+{
+  "schema_version": 1,
+  "scope": "synthetic_regression_only",
+  "base": "tests/fixtures/actions/right_99.png",
+  "real_observed": [
+    "2s",
+    "3s",
+    "4d",
+    "5c",
+    "5d",
+    "7d",
+    "7h",
+    "8h",
+    "As",
+    "Jd",
+    "Js",
+    "Kc",
+    "Kd",
+    "Qh",
+    "Th",
+    "Ts"
+  ],
+  "generated": {
+    "2h": {
+      "file": "2h.png",
+      "rank_origin": "real_extracted",
+      "suit_origin": "pppoker_asset",
+      "synthetic": true
+    },
+    "2d": {
+      "file": "2d.png",
+      "rank_origin": "real_extracted",
+      "suit_origin": "pppoker_asset",
+      "synthetic": true
+    },
+    "2c": {
+      "file": "2c.png",
+      "rank_origin": "real_extracted",
+      "suit_origin": "pppoker_asset",
+      "synthetic": true
+    },
+    "3h": {
+      "file": "3h.png",
+      "rank_origin": "real_extracted",
+      "suit_origin": "pppoker_asset",
+      "synthetic": true
+    },
+    "3d": {
+      "file": "3d.png",
+      "rank_origin": "real_extracted",
+      "suit_origin": "pppoker_asset",
+      "synthetic": true
+    },
+    "3c": {
+      "file": "3c.png",
+      "rank_origin": "real_extracted",
+      "suit_origin": "pppoker_asset",
+      "synthetic": true
+    },
+    "4s": {
+      "file": "4s.png",
+      "rank_origin": "real_extracted",
+      "suit_origin": "pppoker_asset",
+      "synthetic": true
+    },
+    "4h": {
+      "file": "4h.png",
+      "rank_origin": "real_extracted",
+      "suit_origin": "pppoker_asset",
+      "synthetic": true
+    },
+    "4c": {
+      "file": "4c.png",
+      "rank_origin": "real_extracted",
+      "suit_origin": "pppoker_asset",
+      "synthetic": true
+    },
+    "5s": {
+      "file": "5s.png",
+      "rank_origin": "real_extracted",
+      "suit_origin": "pppoker_asset",
+      "synthetic": true
+    },
+    "5h": {
+      "file": "5h.png",
+      "rank_origin": "real_extracted",
+      "suit_origin": "pppoker_asset",
+      "synthetic": true
+    },
+    "6s": {
+      "file": "6s.png",
+      "rank_origin": "synthetic_font",
+      "suit_origin": "pppoker_asset",
+      "synthetic": true
+    },
+    "6h": {
+      "file": "6h.png",
+      "rank_origin": "synthetic_font",
+      "suit_origin": "pppoker_asset",
+      "synthetic": true
+    },
+    "6d": {
+      "file": "6d.png",
+      "rank_origin": "synthetic_font",
+      "suit_origin": "pppoker_asset",
+      "synthetic": true
+    },
+    "6c": {
+      "file": "6c.png",
+      "rank_origin": "synthetic_font",
+      "suit_origin": "pppoker_asset",
+      "synthetic": true
+    },
+    "7s": {
+      "file": "7s.png",
+      "rank_origin": "real_extracted",
+      "suit_origin": "pppoker_asset",
+      "synthetic": true
+    },
+    "7c": {
+      "file": "7c.png",
+      "rank_origin": "real_extracted",
+      "suit_origin": "pppoker_asset",
+      "synthetic": true
+    },
+    "8s": {
+      "file": "8s.png",
+      "rank_origin": "real_extracted",
+      "suit_origin": "pppoker_asset",
+      "synthetic": true
+    },
+    "8d": {
+      "file": "8d.png",
+      "rank_origin": "real_extracted",
+      "suit_origin": "pppoker_asset",
+      "synthetic": true
+    },
+    "8c": {
+      "file": "8c.png",
+      "rank_origin": "real_extracted",
+      "suit_origin": "pppoker_asset",
+      "synthetic": true
+    },
+    "9s": {
+      "file": "9s.png",
+      "rank_origin": "synthetic_font",
+      "suit_origin": "pppoker_asset",
+      "synthetic": true
+    },
+    "9h": {
+      "file": "9h.png",
+      "rank_origin": "synthetic_font",
+      "suit_origin": "pppoker_asset",
+      "synthetic": true
+    },
+    "9d": {
+      "file": "9d.png",
+      "rank_origin": "synthetic_font",
+      "suit_origin": "pppoker_asset",
+      "synthetic": true
+    },
+    "9c": {
+      "file": "9c.png",
+      "rank_origin": "synthetic_font",
+      "suit_origin": "pppoker_asset",
+      "synthetic": true
+    },
+    "Td": {
+      "file": "Td.png",
+      "rank_origin": "real_extracted",
+      "suit_origin": "pppoker_asset",
+      "synthetic": true
+    },
+    "Tc": {
+      "file": "Tc.png",
+      "rank_origin": "real_extracted",
+      "suit_origin": "pppoker_asset",
+      "synthetic": true
+    },
+    "Jh": {
+      "file": "Jh.png",
+      "rank_origin": "real_extracted",
+      "suit_origin": "pppoker_asset",
+      "synthetic": true
+    },
+    "Jc": {
+      "file": "Jc.png",
+      "rank_origin": "real_extracted",
+      "suit_origin": "pppoker_asset",
+      "synthetic": true
+    },
+    "Qs": {
+      "file": "Qs.png",
+      "rank_origin": "real_extracted",
+      "suit_origin": "pppoker_asset",
+      "synthetic": true
+    },
+    "Qd": {
+      "file": "Qd.png",
+      "rank_origin": "real_extracted",
+      "suit_origin": "pppoker_asset",
+      "synthetic": true
+    },
+    "Qc": {
+      "file": "Qc.png",
+      "rank_origin": "real_extracted",
+      "suit_origin": "pppoker_asset",
+      "synthetic": true
+    },
+    "Ks": {
+      "file": "Ks.png",
+      "rank_origin": "real_extracted",
+      "suit_origin": "pppoker_asset",
+      "synthetic": true
+    },
+    "Kh": {
+      "file": "Kh.png",
+      "rank_origin": "real_extracted",
+      "suit_origin": "pppoker_asset",
+      "synthetic": true
+    },
+    "Ah": {
+      "file": "Ah.png",
+      "rank_origin": "real_extracted",
+      "suit_origin": "pppoker_asset",
+      "synthetic": true
+    },
+    "Ad": {
+      "file": "Ad.png",
+      "rank_origin": "real_extracted",
+      "suit_origin": "pppoker_asset",
+      "synthetic": true
+    },
+    "Ac": {
+      "file": "Ac.png",
+      "rank_origin": "real_extracted",
+      "suit_origin": "pppoker_asset",
+      "synthetic": true
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "scenarios": 5,
+  "coverage_toggle": true,
+  "pending_cases": 2,
+  "mobile_width": 390,
+  "js_errors": []
+}

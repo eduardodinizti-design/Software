@@ -1,0 +1,174 @@
+[
+  {
+    "field": "corujao-name",
+    "variants": {
+      "native": {
+        "text": "CORUJA0 HYPER PK010K",
+        "confidence": 0.9398274584250017
+      },
+      "inverted": {
+        "text": "CORUJA0 HYPER PK010K",
+        "confidence": 0.9374283687634901
+      },
+      "gray": {
+        "text": "CORUJA0 HYPER PK010K",
+        "confidence": 0.9412896904078397
+      },
+      "gray-inverted": {
+        "text": "CORUJA0 HYPER PK010K",
+        "confidence": 0.9400662942366167
+      },
+      "gray-inverted-2x": {
+        "text": "CORUJA0 HYPER PK010K",
+        "confidence": 0.9440100463953885
+      },
+      "otsu-inverted": {
+        "text": "CORUJA0 HYPER PK010K",
+        "confidence": 0.9641161078498477
+      },
+      "padded": {
+        "text": "CORUJAO HYPER PK010K",
+        "confidence": 0.9738520654765043
+      }
+    },
+    "detect": [
+      [
+        "CORUJAOHYPERPKO10K",
+        0.9649603466192881
+      ]
+    ]
+  },
+  {
+    "field": "freezeout-name",
+    "variants": {
+      "native": {
+        "text": "FREEZE0UT 30K GTD",
+        "confidence": 0.9440513584348891
+      },
+      "inverted": {
+        "text": "FREEZEOUT 30K GTD",
+        "confidence": 0.9427320857842764
+      },
+      "gray": {
+        "text": "FREEZE0UT 30K GTD",
+        "confidence": 0.9454638825522529
+      },
+      "gray-inverted": {
+        "text": "FREEZEOUT 30K GTD",
+        "confidence": 0.9443929394086202
+      },
+      "gray-inverted-2x": {
+        "text": "FREEZE0UT 30K GTD",
+        "confidence": 0.9421730207072364
+      },
+      "otsu-inverted": {
+        "text": "FREEZEOUT 30K GTD",
+        "confidence": 0.9789657066850102
+      },
+      "padded": {
+        "text": "FREEZEOUT 30K GTD",
+        "confidence": 0.9534865178559956
+      }
+    },
+    "detect": [
+      [
+        "FREEZEC",
+        0.9313224809510368
+      ],
+      [
+        "EOUT:",
+        0.8771669745445252
+      ],
+      [
+        "3",
+        0.9988094568252563
+      ],
+      [
+        "B0K",
+        0.783486525217692
+      ],
+      [
+        "GTD",
+        0.9992861747741699
+      ]
+    ]
+  },
+  {
+    "field": "details-name",
+    "variants": {
+      "native": {
+        "text": "CORUJA0 HYPER PKO10K",
+        "confidence": 0.9385324581102892
+      },
+      "inverted": {
+        "text": "CORUJA0 HYPER PKO10K",
+        "confidence": 0.9375316879966042
+      },
+      "gray": {
+        "text": "CORUJA0 HYPER PKO10K",
+        "confidence": 0.9509502242911946
+      },
+      "gray-inverted": {
+        "text": "CORUJA0 HYPER PKO10K",
+        "confidence": 0.9508896551348947
+      },
+      "gray-inverted-2x": {
+        "text": "CORUJA0 HYPER PKO10K",
+        "confidence": 0.9535564861514352
+      },
+      "otsu-inverted": {
+        "text": "CORUJA0 HYPER PKO10K",
+        "confidence": 0.9401832900264047
+      },
+      "padded": {
+        "text": "CORUJAO HYPER PK010K",
+        "confidence": 0.9640493988990784
+      }
+    },
+    "detect": [
+      [
+        "CORUJAO HYPER PKO10K",
+        0.9680893808603287
+      ]
+    ]
+  },
+  {
+    "field": "modal-confirm",
+    "variants": {
+      "native": {
+        "text": "Confirmar",
+        "confidence": 0.9493968069553376
+      },
+      "inverted": {
+        "text": "Confirmar",
+        "confidence": 0.9210483865304426
+      },
+      "gray": {
+        "text": "Confirmar",
+        "confidence": 0.9923860960536532
+      },
+      "gray-inverted": {
+        "text": "Confirmar",
+        "confidence": 0.9934527277946472
+      },
+      "gray-inverted-2x": {
+        "text": "Confirmar",
+        "confidence": 0.979334745142195
+      },
+      "otsu-inverted": {
+        "text": "Confirmar",
+        "confidence": 0.97213796377182
+      },
+      "padded": {
+        "text": "Confirmar",
+        "confidence": 0.9776323172781203
+      }
+    },
+    "detect": [
+      [
+        "Confirmar",
+        0.9997231231795417
+      ]
+    ]
+  }
+]

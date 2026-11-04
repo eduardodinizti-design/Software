@@ -1,0 +1,54 @@
+{
+  "status": "inspection_only",
+  "view": "details",
+  "coordinate_space": "pixels relative to each original image; desktop origin and DPI unknown",
+  "clicks_executed": 0,
+  "registration_authorized": false,
+  "items": [
+    {
+      "id": "details",
+      "complete": true,
+      "fields": {
+        "name": [
+          [
+            [],
+            "CORUJA0 HYPER PKO10K",
+            0.9385324581102892
+          ]
+        ],
+        "start": [
+          [
+            [],
+            "Horario de inicio: 10/31 22:00",
+            0.9715029776096344
+          ]
+        ],
+        "buyin": [
+          [
+            [],
+            "Buy-in: 50 (28.34+14.16+7.5)",
+            0.999656223825046
+          ]
+        ],
+        "stack": [
+          [
+            [],
+            "Fichas iniciais: 20,000",
+            0.9972409839215486
+          ]
+        ],
+        "register": [
+          [
+            [],
+            "Registrar",
+            0.9998035894499885
+          ]
+        ]
+      },
+      "image_point": [
+        395.5,
+        878.0
+      ]
+    }
+  ]
+}

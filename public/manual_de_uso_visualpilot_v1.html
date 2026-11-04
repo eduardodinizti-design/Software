@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manual de Uso e Arquitetura Completa - VisualPilot Poker Engine v1.0</title>
+  <style>
+    :root {
+      --primary: #10b981;
+      --primary-dark: #047857;
+      --text-main: #1f2937;
+      --text-muted: #4b5563;
+      --bg-light: #f9fafb;
+      --border: #e5e7eb;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text-main);
+      background-color: #f3f4f6;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .toolbar {
+      position: sticky;
+      top: 0;
+      background: #111827;
+      color: white;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .toolbar h1 {
+      font-size: 16px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toolbar .btn-print {
+      background: #10b981;
+      color: #064e3b;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .toolbar .btn-print:hover {
+      background: #34d399;
+    }
+
+    .page-container {
+      max-width: 900px;
+      margin: 30px auto;
+      background: white;
+      padding: 50px 60px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Print Styles */
+    @media print {
+      body {
+        background: white;
+        color: black;
+      }
+
+      .toolbar {
+        display: none !important;
+      }
+
+      .page-container {
+        margin: 0;
+        padding: 0;
+        max-width: 100%;
+        box-shadow: none;
+        border-radius: 0;
+      }
+
+      .page-break {
+        page-break-before: always;
+      }
+
+      a {
+        text-decoration: none;
+        color: black;
+      }
+    }
+
+    @page {
+      size: A4;
+      margin: 15mm;
+    }
+
+    header {
+      border-bottom: 2px solid #10b981;
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .logo-badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 44px;
+      height: 44px;
+      background: #ecfdf5;
+      color: #059669;
+      border: 1px solid #a7f3d0;
+      border-radius: 10px;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+    }
+
+    .doc-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: right;
+      font-family: monospace;
+    }
+
+    h1.doc-title {
+      font-size: 26px;
+      color: #111827;
+      margin-bottom: 4px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .doc-subtitle {
+      font-size: 13px;
+      color: #059669;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .spec-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 20px;
+      padding: 12px;
+      background: #f9fafb;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 11px;
+    }
+
+    .spec-item span.label {
+      display: block;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      font-size: 10px;
+    }
+
+    .spec-item span.value {
+      font-weight: 700;
+      color: #111827;
+      font-family: monospace;
+    }
+
+    section {
+      margin-bottom: 36px;
+    }
+
+    h2 {
+      font-size: 18px;
+      color: #111827;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+    }
+
+    h2 .num {
+      background: #10b981;
+      color: white;
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    h3 {
+      font-size: 15px;
+      color: #1f2937;
+      margin-top: 16px;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    p {
+      margin-bottom: 12px;
+      color: #374151;
+      line-height: 1.6;
+    }
+
+    .highlight-box {
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .highlight-box.warning {
+      background: #fffbeb;
+      border-color: #fde68a;
+      border-left-color: #f59e0b;
+    }
+
+    .highlight-box.danger {
+      background: #fef2f2;
+      border-color: #fecaca;
+      border-left-color: #ef4444;
+    }
+
+    .highlight-box strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      background: #e5e7eb;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+      color: #111827;
+    }
+
+    pre {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      background: #111827;
+      color: #34d399;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 12px;
+      overflow-x: auto;
+      margin-bottom: 12px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+      background: #fafafa;
+    }
+
+    .card h4 {
+      font-size: 13px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 6px;
+    }
+
+    ul, ol {
+      padding-left: 20px;
+      margin-bottom: 12px;
+    }
+
+    li {
+      margin-bottom: 6px;
+      color: #374151;
+    }
+
+    footer {
+      margin-top: 40px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="toolbar">
+    <h1>♠ VisualPilot Poker Engine · Manual Oficial v1.0</h1>
+    <button class="btn-print" onclick="window.print()">
+      🖨️ Imprimir / Salvar como PDF
+    </button>
+  </div>
+
+  <div class="page-container">
+    <header>
+      <div class="header-top">
+        <div class="logo-badge">
+          <div class="logo-icon">♠</div>
+          <div>
+            <h1 class="doc-title">VisualPilot Poker Engine</h1>
+            <div class="doc-subtitle">Manual de Operação, Arquitetura e Guia do Usuário</div>
+          </div>
+        </div>
+        <div class="doc-meta">
+          Versão: 1.0 (Produção)<br>
+          Ambiente: Windows x64<br>
+          Target: PPPoker (787×1470 px)
+        </div>
+      </div>
+
+      <div class="spec-grid">
+        <div class="spec-item">
+          <span class="label">Visão Computacional:</span>
+          <span class="value">OpenCV HSV + OCR</span>
+        </div>
+        <div class="spec-item">
+          <span class="label">Cliques Biométricos:</span>
+          <span class="value">Bézier Cúbica + Jitter</span>
+        </div>
+        <div class="spec-item">
+          <span class="label">Motor de Decisão:</span>
+          <span class="value">169 Mãos GTO + Monte Carlo</span>
+        </div>
+        <div class="spec-item">
+          <span class="label">Anti-Ban:</span>
+          <span class="value">Reação Randômica (320-580ms)</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- SEÇÃO 1 -->
+    <section id="download-vs-publicar">
+      <h2><span class="num">1</span> Preciso Publicar o Projeto Aqui ou Fazendo o Download Dará Certo?</h2>
+      
+      <div class="highlight-box">
+        <strong>RESPOSTA DIRETA: Fazendo o Download dará 100% certo e é o modo correto e recomendado de operação!</strong>
+        Você <u>NÃO precisa publicar</u> este projeto na nuvem para o robô de poker jogar de verdade. O bot foi projetado desde o primeiro dia para rodar no seu computador local com Windows.
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h4>Por que o robô roda localmente no Windows?</h4>
+          <ul>
+            <li><strong>Acesso à Tela do Monitor:</strong> O bot captura os frames físicos da janela do PPPoker através das bibliotecas <code>win32gui</code> e <code>pyautogui</code>. Um servidor em nuvem não consegue ver o monitor do seu quarto ou escritório.</li>
+            <li><strong>Movimentação Real do Mouse:</strong> Para clicar nos botões Fold, Call ou Raise, o cursor físico do mouse precisa se mover na sua área de trabalho.</li>
+            <li><strong>Zero Lag e Segurança:</strong> A computação de visão computacional e OCR roda em menos de 40 milissegundos localmente.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h4>Qual a função da versão web aqui na nuvem?</h4>
+          <ul>
+            <li><strong>Monitor Remoto / Dashboard:</strong> Você pode consultar os relatórios de ROI, gráficos de auditoria e calibrar ranges de qualquer lugar (inclusive pelo celular).</li>
+            <li><strong>Simulador de Cenários:</strong> Permite testar mãos e estudar linhas GTO sem ter que abrir o cliente do jogo.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEÇÃO 2 -->
+    <section id="arquitetura" class="page-break">
+      <h2><span class="num">2</span> Arquitetura do Sistema e Como Foi Construído</h2>
+      <p>O VisualPilot utiliza uma arquitetura modular orientada a eventos dividida em 6 camadas independentes:</p>
+
+      <ol>
+        <li><strong>Camada 1: Scanner de Janela e DPI (calibrate_window.py):</strong> Detecta o handle Win32 do PPPoker, analisa o fator de zoom da tela (100%, 125%, 150%) e ancora as coordenadas na proporção canônica de 787 × 1470 pixels.</li>
+        <li><strong>Camada 2: Visão Computacional de Cartas e Mesa (card_recognition.py & table_numerical_ocr.py):</strong>
+          <ul>
+            <li>Isolamento de naipes por máscaras de cor no espaço HSV (Copas: Vermelho, Espadas: Preto, Ouros: Azul, Paus: Verde).</li>
+            <li>Template Matching com normalização min-max para identificar o valor facial das cartas (A, K, Q, J, T, 9...2).</li>
+            <li>OCR numérico de alta precisão para ler o pote total, stacks dos vilões e a aposta necessária para pagar.</li>
+            <li>Localizador do botão do dealer ('D') para deduzir a posição do Hero (BTN, SB, BB, UTG, HJ, CO).</li>
+          </ul>
+        </li>
+        <li><strong>Camada 3: Motor GTO Híbrido (preflop_engine.py & postflop_gto_engine.py):</strong>
+          <ul>
+            <li>Pré-Flop: Matriz completa de 169 mãos com frequências GTO balanceadas.</li>
+            <li>Pós-Flop: Avaliação de textura do bordo (Dry, Wet, Paired, Monotone), cálculo de SPR (Stack-to-Pot Ratio) e simulação de Monte Carlo com mais de 1.000 iterações em tempo real.</li>
+          </ul>
+        </li>
+        <li><strong>Camada 4: Cérebro Adaptativo (brain_engine.py):</strong> Permite ajustar a taxa de aprendizado (Learning Rate de 0.01 a 0.50) e aplicar reforço com base em acertos e erros corrigidos pelo operador humano.</li>
+        <li><strong>Camada 5: Execução Física com Camuflagem Biométrica (table_bot_runner.py):</strong>
+          <ul>
+            <li>Geração de trajetórias curvas cúbicas de Bézier com aceleração natural.</li>
+            <li>Dispersão Gaussiana (σ = 3.5 px) dentro dos limites dos botões para evitar repetição do mesmo pixel.</li>
+            <li>Atraso de reação randômico humano entre 320ms e 580ms.</li>
+          </ul>
+        </li>
+        <li><strong>Camada 6: Orquestrador de Torneios e Auditoria CSV (lobby_orchestrator.py):</strong> Escaneia o lobby, gerencia inscrições com filtro de teto de buy-in, previne duplicações de vaga e grava cada evento em arquivo CSV inviolável.</li>
+      </ol>
+    </section>
+
+    <!-- SEÇÃO 3 -->
+    <section id="instalacao">
+      <h2><span class="num">3</span> Passo a Passo de Inicialização no Windows</h2>
+
+      <div class="card" style="margin-bottom: 12px;">
+        <h4>Passo 1: Instale os Pré-Requisitos</h4>
+        <p>Tenha instalado no Windows:</p>
+        <ul>
+          <li><strong>Python 3.10 ou 3.11:</strong> Baixe no site oficial <a href="https://www.python.org">python.org</a>. <em>Obrigatório marcar a opção "Add Python to PATH" durante o instalador.</em></li>
+          <li><strong>Node.js 18+ (Opcional):</strong> Caso deseje rodar o dashboard web localmente (<a href="https://nodejs.org">nodejs.org</a>).</li>
+          <li><strong>PPPoker Desktop:</strong> Aberto no Windows (resolução recomendada: 787 × 1470 px).</li>
+        </ul>
+      </div>
+
+      <div class="card" style="margin-bottom: 12px;">
+        <h4>Passo 2: Download do Repositório</h4>
+        <p>Baixe o arquivo ZIP deste projeto e extraia em qualquer pasta (ex: <code>C:\VisualPilot</code>).</p>
+      </div>
+
+      <div class="card" style="margin-bottom: 12px;">
+        <h4>Passo 3: Instalação Automática (setup_environment.bat)</h4>
+        <p>Dê dois cliques no arquivo <code>setup_environment.bat</code>. Ele criará o ambiente virtual isolado <code>venv</code> e instalará automaticamente todas as dependências (OpenCV, PyAutoGUI, Pillow, PyGetWindow).</p>
+      </div>
+
+      <div class="card">
+        <h4>Passo 4: Iniciar o Launcher (run_independent_bot.cmd)</h4>
+        <p>Dê dois cliques no arquivo <code>run_independent_bot.cmd</code> para abrir o menu interativo com as 8 opções operacionais.</p>
+      </div>
+    </section>
+
+    <!-- SEÇÃO 4 -->
+    <section id="comandos" class="page-break">
+      <h2><span class="num">4</span> Dicionário de Comandos e Scripts de Terminal</h2>
+
+      <p>Abaixo estão descritas todas as 8 opções do launcher <code>run_independent_bot.cmd</code>:</p>
+
+      <div class="card" style="margin-bottom: 10px;">
+        <h4>[Opção 5] Calibrar Janela e Escala DPI</h4>
+        <pre>python -m visualpilot.pppoker.calibrate_window --window-title PPPoker</pre>
+        <p>Verifica se a janela do jogo está na tela, detecta a escala de DPI do Windows e gera o relatório <code>table_calibration_report.json</code> e a imagem <code>calibration_overlay.png</code> com as caixas delimitadoras de todas as cartas e botões.</p>
+      </div>
+
+      <div class="card" style="margin-bottom: 10px;">
+        <h4>[Opção 6] Iniciar Modo Fantasma de Segurança (--spectator --sound)</h4>
+        <pre>python -m visualpilot.pppoker.table_bot_runner --spectator --sound</pre>
+        <p>Modo de observação passiva. O bot lê a mesa, identifica quando é o seu turno, calcula a decisão GTO e toca alertas sonoros no Windows, mas <strong>NÃO realiza nenhum clique</strong> com o mouse. Permite validar a leitura de cartas com 100% de segurança.</p>
+      </div>
+
+      <div class="card" style="margin-bottom: 10px;">
+        <h4>[Opção 7] Iniciar Jogo Autônomo com Cliques Camuflados (--live)</h4>
+        <pre>python -m visualpilot.pppoker.table_bot_runner --live</pre>
+        <p>Modo armado com cliques reais. Quando o turno do Hero é detectado, move o mouse em trajetória cúbica de Bézier com atraso humano (320-580ms) e clica no botão correspondente à decisão GTO calculada. Grava tudo em <code>table_runner_audit.csv</code>.</p>
+      </div>
+
+      <div class="card" style="margin-bottom: 10px;">
+        <h4>[Opção 2] Iniciar Orquestrador de Ciclo Contínuo (Lobby)</h4>
+        <pre>python -m visualpilot.pppoker.lobby_orchestrator --loop-interval 15 --max-buyin 50</pre>
+        <p>Varre a lista de torneios a cada 15 segundos, valida os filtros de buy-in máximo e realiza a inscrição automática com memória de anti-duplicação de vaga.</p>
+      </div>
+
+      <div class="card" style="margin-bottom: 10px;">
+        <h4>[Opção 1] Iniciar Servidor Central de Telemetria</h4>
+        <pre>python telemetry_server.py --port 8000</pre>
+        <p>Inicia a API local na porta 8000 para transmitir as métricas do bot para a interface web no navegador.</p>
+      </div>
+
+      <div class="card">
+        <h4>[Opção 8] Modo Completo (Telemetria + Orquestrador em Paralelo)</h4>
+        <p>Abre em janelas separadas do Windows o servidor de telemetria e o robô de inscrição contínua simultaneamente.</p>
+      </div>
+    </section>
+
+    <!-- SEÇÃO 5 -->
+    <section id="interface">
+      <h2><span class="num">5</span> Guia de Cada Botão e Elemento da Interface Gráfica</h2>
+
+      <div class="grid-2">
+        <div class="card">
+          <h4>Barra Superior & Gestão de Sessão</h4>
+          <ul>
+            <li><strong>Iniciar Sessão:</strong> Abre o modal para nomear a sessão (ex: "MTT Tarde 50") e liga o cronômetro oficial.</li>
+            <li><strong>Pausar / Retomar:</strong> Congela o cronômetro nos intervalos de torneio.</li>
+            <li><strong>Encerrar:</strong> Salva uma linha consolidada de auditoria no CSV.</li>
+            <li><strong>Exportar CSV:</strong> Baixa a planilha completa com latências e histórico de ações.</li>
+            <li><strong>Status PPPoker:</strong> Indica em tempo real se a janela 787x1470 está conectada.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h4>Aba Modo Fantasma (Espectador & Live)</h4>
+          <ul>
+            <li><strong>Seletor Modo Fantasma:</strong> Trava de software que impede disparos do mouse.</li>
+            <li><strong>Armar Cliques Biométricos:</strong> Switch de segurança física de dois passos para autorizar o envio de cliques reais para o jogo.</li>
+            <li><strong>Kill-Switch (Botão Vermelho):</strong> Botão de emergência que encerra qualquer clique imediatamente.</li>
+            <li><strong>Cenários Rápidos:</strong> Carrega mãos de teste pré-definidas (AKs BTN, QQ vs 3-Bet, Top Pair Flop) para checagem imediata.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h4>Aba Cérebro & Treinamento</h4>
+          <ul>
+            <li><strong>Learning Rate Slider:</strong> Define o peso do feedback humano sobre a baseline GTO (0.01 a 0.50).</li>
+            <li><strong>Exportar Win/Loss em JSON:</strong> Gera o arquivo <code>win_loss_lines_export.json</code> com os detalhes de cada mão para softwares externos.</li>
+            <li><strong>Gráfico EV Esperado vs Real:</strong> Mostra a lucratividade real versus teórica de cada linha de aposta.</li>
+            <li><strong>Histórico de Falhas:</strong> Registra e classifica erros de leitura ou de range para correção.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h4>Aba Auditoria & KPIs Financeiros</h4>
+          <ul>
+            <li><strong>ROI Total Estimado:</strong> Mostra o retorno financeiro percentual estimado com base nas inscrições confirmadas (SUCCESS) e no buy-in.</li>
+            <li><strong>Taxa de Sucesso (%):</strong> Proporção de inscrições bem-sucedidas em relação às tentativas totais.</li>
+            <li><strong>Tempo Médio entre Inscrições:</strong> Intervalo médio em segundos/minutos entre registros de torneio.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEÇÃO 6 -->
+    <section id="seguranca" class="page-break">
+      <h2><span class="num">6</span> Cuidados Operacionais, Protocolos de Segurança e Anti-Ban</h2>
+
+      <div class="highlight-box danger">
+        <strong>PROTOCOLOS MANDATÓRIOS DE SEGURANÇA:</strong>
+        O VisualPilot foi desenvolvido com padrões biométricos avançados, mas o comportamento do operador na máquina é vital para garantir longevidade e proteção da conta.
+      </div>
+
+      <ul>
+        <li><strong>Validação Prévia em Modo Fantasma:</strong> Nunca inicie o Modo Live sem antes rodar o Modo Fantasma (Opção 6) por pelo menos 15 a 20 minutos. Confirme no terminal se todas as cartas do Hero e comunitárias estão sendo lidas com 100% de exatidão.</li>
+        <li><strong>Não Toque no Mouse Durante a Vez do Hero:</strong> Se você puxar o mouse com a mão física no exato instante em que o bot está gerando a curva de Bézier, o cursor dará um salto não-humano. Deixe o bot executar o clique e só interaja no intervalo de mãos.</li>
+        <li><strong>Higiene de Horários (Sem Grind 24h):</strong> Nenhum jogador humano saudável joga 20 horas sem parar. Use o botão de pausar e execute sessões realistas de 2 a 4 horas com pausas de 10 a 15 minutos.</li>
+        <li><strong>Dispersão Gaussiana Ativada:</strong> Nunca desative a opção de jitter Gaussiano (σ = 3.5 px). Clicar no centro exato de um botão 50 vezes seguidas é um padrão facilmente detectável por robôs de segurança de salas de poker.</li>
+        <li><strong>Manter Janela em 787 × 1470:</strong> Evite distorcer a janela do PPPoker para proporções horizontais, pois isso diminui a nitidez do OCR nos números de potes pequenos.</li>
+      </ul>
+    </section>
+
+    <!-- SEÇÃO 7 -->
+    <section id="roadmap">
+      <h2><span class="num">7</span> Roadmap & O Que Pode Ser Melhorado para a Versão 2.0</h2>
+
+      <p>Após a conclusão e validação dos testes reais em ambiente real, as seguintes melhorias estão mapeadas para a versão 2.0:</p>
+
+      <div class="grid-2">
+        <div class="card">
+          <h4>1. Redes Neurais YOLOv8 para Cartas</h4>
+          <p>Treinar uma mini-rede neural YOLOv8 para detectar cartas mesmo se a mesa estiver em resolução arbitrária ou com efeitos especiais de temas personalizados.</p>
+        </div>
+
+        <div class="card">
+          <h4>2. HUD Profiler & Estratégia Exploratória</h4>
+          <p>Classificar os adversários da mesa em perfis (Fish, Nit, Maniac, Reg) com base no VPIP e PFR e desviar automaticamente do GTO para explorar fraquezas específicas de cada vilão.</p>
+        </div>
+
+        <div class="card">
+          <h4>3. Suporte a Omaha (PLO4 & PLO5)</h4>
+          <p>Expandir o motor de equidade para Omaha 4 e 5 cartas com cálculo de outs de draw e bloqueadores (blockers).</p>
+        </div>
+
+        <div class="card">
+          <h4>4. Multi-Mesas Concorrente Real (Multi-Thread)</h4>
+          <p>Suporte completo a 4 ou 6 mesas do PPPoker jogando em paralelo com fila de prioridade para a mesa cujo relógio do Hero estiver mais próximo de expirar.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div>VisualPilot AI Poker Suite · Documentação Oficial</div>
+      <div>Validação de Sistema: Produção v1.0 · Windows x64</div>
+      <div>Pressione <strong>Ctrl + P</strong> no navegador para salvar este manual em formato PDF.</div>
+    </footer>
+  </div>
+
+</body>
+</html>

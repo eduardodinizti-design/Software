@@ -1,0 +1,158 @@
+{
+  "version": "2.4.0",
+  "app_name": "VisualPilot",
+  "release_name": "VisualPilot Enterprise Core v2.4.0",
+  "release_date": "2026-11-02",
+  "min_python_version": "3.10",
+  "update_endpoint": "https://api.visualpilot.internal/update/version.json",
+  "channel": "stable",
+  "preserved_paths": [
+    "logs",
+    "logs/audit",
+    "logs/registered_tournaments.json",
+    "config",
+    ".env",
+    ".venv",
+    "venv",
+    "backup_patches"
+  ],
+  "manifest": {
+    "files": [
+      {
+        "path": "repo_visualpilot/visualpilot/pppoker/table_bot_runner.py",
+        "version": "2.4.0",
+        "sha256": "a7699bc6e850255460eb8c6ef3bc71657183ef38c1deaff6d9992f348056e814",
+        "size_bytes": 39136,
+        "critical": true,
+        "description": "Componente table_bot_runner.py"
+      },
+      {
+        "path": "repo_visualpilot/visualpilot/pppoker/lobby_orchestrator.py",
+        "version": "2.4.0",
+        "sha256": "3c277b635b40ab4d591e0c1f9f04e993272b03d7223e01dfcd1614fea2fc6dfc",
+        "size_bytes": 29692,
+        "critical": true,
+        "description": "Componente lobby_orchestrator.py"
+      },
+      {
+        "path": "repo_visualpilot/visualpilot/pppoker/card_recognition.py",
+        "version": "2.4.0",
+        "sha256": "f28aeb31450cfba391fd4322d813899a455a835c9748bbb7df193f72a2ba665b",
+        "size_bytes": 27982,
+        "critical": true,
+        "description": "Componente card_recognition.py"
+      },
+      {
+        "path": "repo_visualpilot/visualpilot/pppoker/preflop_decision_engine.py",
+        "version": "2.4.0",
+        "sha256": "2ebc103220bae2ec1822782a3c475f8458c930f6501ec8c1699ab4aa6b92b6a5",
+        "size_bytes": 30057,
+        "critical": true,
+        "description": "Componente preflop_decision_engine.py"
+      },
+      {
+        "path": "repo_visualpilot/visualpilot/pppoker/postflop_gto_engine.py",
+        "version": "2.4.0",
+        "sha256": "75f9e6163771fa26de13d340da71c6d3b64cb148a55a2ecafddc887705351a8d",
+        "size_bytes": 18134,
+        "critical": true,
+        "description": "Componente postflop_gto_engine.py"
+      },
+      {
+        "path": "repo_visualpilot/visualpilot/pppoker/hero_action_detector.py",
+        "version": "2.4.0",
+        "sha256": "4798808111096c3b69c687d51f28d577561bdd2f32b313aa44a651035e2a3b90",
+        "size_bytes": 18927,
+        "critical": true,
+        "description": "Componente hero_action_detector.py"
+      },
+      {
+        "path": "repo_visualpilot/visualpilot/pppoker/table_numerical_ocr.py",
+        "version": "2.4.0",
+        "sha256": "9dbedaa567e8e9c79aa296f5bb07560f2cd9fa14860ffa87a59b9e3762453bab",
+        "size_bytes": 13375,
+        "critical": true,
+        "description": "Componente table_numerical_ocr.py"
+      },
+      {
+        "path": "repo_visualpilot/visualpilot/pppoker/multi_table_tracker.py",
+        "version": "2.4.0",
+        "sha256": "a31f5360be4de8963ef4794f481ec6b59aa778d3b30906efaa59c476c5718ff0",
+        "size_bytes": 14947,
+        "critical": true,
+        "description": "Componente multi_table_tracker.py"
+      },
+      {
+        "path": "launcher.py",
+        "version": "2.4.0",
+        "sha256": "7f98ebf8ff49aa66538d0af925dbf12ae6f178e4c04034489750755449b43e68",
+        "size_bytes": 8760,
+        "critical": true,
+        "description": "Componente launcher.py"
+      },
+      {
+        "path": "patch_manager.py",
+        "version": "2.4.0",
+        "sha256": "92e20f810da50a97c7cd16696841689d69c913b8236f0d844b300114f27c5cde",
+        "size_bytes": 14725,
+        "critical": true,
+        "description": "Componente patch_manager.py"
+      },
+      {
+        "path": "patch_updater.py",
+        "version": "2.4.0",
+        "sha256": "a8cd0d003fb19efd318d861ac85dd21822084c119f3614babd50a631bdb3795a",
+        "size_bytes": 10051,
+        "critical": true,
+        "description": "Componente patch_updater.py"
+      },
+      {
+        "path": "diagnostico.py",
+        "version": "2.4.0",
+        "sha256": "bf2d39f8d9a127ad2bcc088691d08c68b41beaabe8aac1f9f0bae70d990915e5",
+        "size_bytes": 16229,
+        "critical": true,
+        "description": "Componente diagnostico.py"
+      },
+      {
+        "path": "MENU_INICIAR.bat",
+        "version": "2.4.0",
+        "sha256": "6c2fb9a7d80f823cac86f29637a5ef934b7f392b9060c5b3163825e0988fc5b4",
+        "size_bytes": 12225,
+        "critical": true,
+        "description": "Componente MENU_INICIAR.bat"
+      },
+      {
+        "path": "setup_environment.bat",
+        "version": "2.4.0",
+        "sha256": "d500b37a49a8f02dd6791515197208c71d78bfb2dd4f3e289c8bec5e0c63dc0c",
+        "size_bytes": 2976,
+        "critical": true,
+        "description": "Componente setup_environment.bat"
+      },
+      {
+        "path": "build_executable.bat",
+        "version": "2.4.0",
+        "sha256": "1cc711874d14aa2f64555c2d2c7887d43661ec1c03e6ee3428a423b82986e9a1",
+        "size_bytes": 4404,
+        "critical": true,
+        "description": "Componente build_executable.bat"
+      },
+      {
+        "path": "requirements.txt",
+        "version": "2.4.0",
+        "sha256": "ffe537780d93dccafdbbd41211a099d8d59c6e62cd95dac88d00c1dcf0ae8203",
+        "size_bytes": 225,
+        "critical": true,
+        "description": "Componente requirements.txt"
+      }
+    ]
+  },
+  "changelog": [
+    "Sistema de Patch Automático Delta: baixa apenas arquivos alterados sem substituir pastas",
+    "Empacotador PyInstaller com instalador embutido no primeiro uso (VisualPilot.exe)",
+    "Validação rigorosa de todos os requisitos de requirements.txt no setup_environment.bat",
+    "Controle de Pausa e Retomada no Orquestrador e Indicador Visual de Bot Pausado",
+    "Atalho de Intervenção Manual Humana (F12 / Alt+P) com overlay de segurança nas mesas"
+  ]
+}

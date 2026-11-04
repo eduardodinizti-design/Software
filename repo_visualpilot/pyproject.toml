@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "visualpilot"
+version = "0.1.0"
+description = "Coleta observacional de mesas simuladas, sem executar ações"
+requires-python = ">=3.10"
+dependencies = ["mss>=10,<11", "numpy>=2,<3", "opencv-python==4.11.0.86", "rapidocr-onnxruntime==1.4.4", "onnxruntime==1.23.2", "Pillow>=11,<13", "pytesseract>=0.3.13,<0.4"]
+
+[project.scripts]
+visualpilot = "visualpilot.app:main"
+
+[tool.setuptools.packages.find]
+include = ["visualpilot*"]
+
+[tool.setuptools.package-data]
+"visualpilot.pppoker" = ["assets/*.png"]

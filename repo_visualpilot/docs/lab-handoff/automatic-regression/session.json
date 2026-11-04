@@ -1,0 +1,2664 @@
+{
+  "mode": "recorded_execution_replay",
+  "policy": "demo-1-not-trainer",
+  "events": [
+    {
+      "at": "2026-10-30T00:11:50.114Z",
+      "index": 0,
+      "phase": 0,
+      "controlMode": "automatic",
+      "type": "control",
+      "message": "Controle: automático · decisões pendentes invalidadas.",
+      "data": {
+        "mode": "automatic",
+        "revision": 1
+      }
+    },
+    {
+      "at": "2026-10-30T00:11:50.120Z",
+      "index": 0,
+      "phase": 0,
+      "controlMode": "automatic",
+      "type": "capture",
+      "message": "Captura · geração 1",
+      "data": {
+        "sha256": "e689cd0f8c21cef5a7edbf4ec3c36aad7a46733fd9c32d7a1edae99cd22c4dd2",
+        "revision": 1
+      }
+    },
+    {
+      "at": "2026-10-30T00:11:50.729Z",
+      "index": 0,
+      "phase": 1,
+      "controlMode": "automatic",
+      "type": "reading",
+      "message": "OCR: Hero 5c 2s",
+      "data": {
+        "scene": "table",
+        "hero": [
+          "5c",
+          "2s"
+        ],
+        "board": [],
+        "street": null,
+        "hand_id": "261024093320-13552339-0000050-2",
+        "actions": [
+          "Fold",
+          "Call 2.5 BB",
+          "Raise 8 BB"
+        ],
+        "observed_actions": [
+          {
+            "action": "call",
+            "player_label": "Jhavidpino",
+            "player_box": [
+              328,
+              247,
+              112,
+              26
+            ],
+            "badge_box": [
+              407,
+              150,
+              36,
+              22
+            ],
+            "confidence": 0.9919787794351578,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "fold",
+            "player_label": "Chow Mein...",
+            "player_box": [
+              29,
+              466,
+              128,
+              28
+            ],
+            "badge_box": [
+              116,
+              373,
+              38,
+              17
+            ],
+            "confidence": 0.9922107756137848,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "raise",
+            "player_label": "smilekilla",
+            "player_box": [
+              623,
+              469,
+              100,
+              24
+            ],
+            "badge_box": [
+              607,
+              370,
+              53,
+              24
+            ],
+            "confidence": 0.9923843145370483,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "fold",
+            "player_label": "Mihcardoso7",
+            "player_box": [
+              612,
+              776,
+              130,
+              28
+            ],
+            "badge_box": [
+              620,
+              682,
+              39,
+              17
+            ],
+            "confidence": 0.987795278429985,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "call",
+            "player_label": "KenLy",
+            "player_box": [
+              627,
+              1011,
+              68,
+              27
+            ],
+            "badge_box": [
+              615,
+              914,
+              39,
+              22
+            ],
+            "confidence": 0.9932634085416794,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          }
+        ],
+        "hero_buttons": [
+          {
+            "action": "fold",
+            "amount": null,
+            "unit": null,
+            "raw_text": "Fold",
+            "confidence": 0.9944968372583389,
+            "box": [
+              107,
+              1278,
+              57,
+              29
+            ],
+            "amount_status": "not_shown"
+          },
+          {
+            "action": "call",
+            "amount": 2.5,
+            "unit": "BB",
+            "raw_text": "Call 2.5 BB",
+            "confidence": 0.9634817947040905,
+            "box": [
+              313,
+              1278,
+              143,
+              30
+            ],
+            "amount_status": "read"
+          },
+          {
+            "action": "raise",
+            "amount": 8,
+            "unit": "BB",
+            "raw_text": "Raise 8 BB",
+            "confidence": 0.9169043183326722,
+            "box": [
+              563,
+              1279,
+              140,
+              27
+            ],
+            "amount_status": "read"
+          }
+        ],
+        "action_pending": true,
+        "status": "partial",
+        "pot": "Pot: 9.6 BB",
+        "hero_stack": "102,6BB",
+        "decision": "Decisão ainda não implementada",
+        "diagnostics": {
+          "hero": {
+            "stage": "recognition",
+            "candidate_count": 1,
+            "card_pair_box": [
+              431,
+              1073,
+              113,
+              110
+            ],
+            "cards": [
+              {
+                "index": 0,
+                "rank_candidate": "5",
+                "rank_confidence": 0.9989701509475708,
+                "suit_candidate": "c",
+                "suit_similarity": 0.8802816901408451,
+                "suit_diagnostics": {
+                  "candidates": [
+                    {
+                      "suit": "c",
+                      "similarity": 0.8802816901408451
+                    }
+                  ],
+                  "method": "four_colour_shape"
+                },
+                "accepted": true,
+                "card": "5c",
+                "rank_box": [
+                  431,
+                  1073,
+                  31,
+                  40
+                ],
+                "suit_box": [
+                  435,
+                  1113,
+                  28,
+                  24
+                ],
+                "rejection": null
+              },
+              {
+                "index": 1,
+                "rank_candidate": "2",
+                "rank_confidence": 0.9993446469306946,
+                "suit_candidate": "s",
+                "suit_similarity": 0.9211136890951276,
+                "suit_diagnostics": {
+                  "candidates": [
+                    {
+                      "suit": "s",
+                      "similarity": 0.9211136890951276
+                    }
+                  ],
+                  "method": "four_colour_shape"
+                },
+                "accepted": true,
+                "card": "2s",
+                "rank_box": [
+                  469,
+                  1073,
+                  31,
+                  40
+                ],
+                "suit_box": [
+                  473,
+                  1113,
+                  28,
+                  24
+                ],
+                "rejection": null
+              }
+            ]
+          },
+          "coordinate_space": "normalized_table",
+          "image_size": [
+            755,
+            1343
+          ],
+          "board": []
+        },
+        "hero_confidence": [
+          {
+            "rank": 0.9989701509475708,
+            "suit_shape": 0.8802816901408451
+          },
+          {
+            "rank": 0.9993446469306946,
+            "suit_shape": 0.9211136890951276
+          }
+        ],
+        "evidence_size": [
+          755,
+          1343
+        ],
+        "evidence": {
+          "hero": [
+            [
+              431,
+              1073,
+              32,
+              64
+            ],
+            [
+              469,
+              1073,
+              32,
+              64
+            ]
+          ],
+          "board": [
+            [
+              135,
+              510,
+              543,
+              161
+            ]
+          ],
+          "observed_actions": [
+            [
+              407,
+              150,
+              36,
+              22
+            ],
+            [
+              328,
+              247,
+              112,
+              26
+            ],
+            [
+              116,
+              373,
+              38,
+              17
+            ],
+            [
+              29,
+              466,
+              128,
+              28
+            ],
+            [
+              607,
+              370,
+              53,
+              24
+            ],
+            [
+              623,
+              469,
+              100,
+              24
+            ],
+            [
+              620,
+              682,
+              39,
+              17
+            ],
+            [
+              612,
+              776,
+              130,
+              28
+            ],
+            [
+              615,
+              914,
+              39,
+              22
+            ],
+            [
+              627,
+              1011,
+              68,
+              27
+            ]
+          ],
+          "actions": [
+            [
+              0,
+              1248,
+              755,
+              94
+            ]
+          ],
+          "hand_id": [
+            [
+              222,
+              889,
+              319,
+              17
+            ]
+          ],
+          "pot": [
+            [
+              318,
+              492,
+              115,
+              23
+            ]
+          ],
+          "hero_stack": [
+            [
+              335,
+              1203,
+              100,
+              27
+            ]
+          ]
+        },
+        "hero_status": "read",
+        "hero_reason": "",
+        "board_status": "unknown",
+        "board_uncertain": true,
+        "board_reason": "Cartas comunitárias não localizadas; pré-flop não comprovado.",
+        "reason": "Cartas comunitárias não localizadas; pré-flop não comprovado."
+      }
+    },
+    {
+      "at": "2026-10-30T00:11:51.331Z",
+      "index": 0,
+      "phase": 2,
+      "controlMode": "automatic",
+      "type": "decision",
+      "message": "Decisão: CALL",
+      "data": {
+        "status": "found",
+        "mode": "laboratory_advisory",
+        "options": [
+          {
+            "action": "call",
+            "frequency": 1,
+            "sizing_bb": 2.5
+          }
+        ],
+        "observation": {
+          "table": "laboratory-table",
+          "generation": 1,
+          "frame_sha256": "e689cd0f8c21cef5a7edbf4ec3c36aad7a46733fd9c32d7a1edae99cd22c4dd2"
+        },
+        "provenance": {
+          "source": "visual-lab-script-NOT-trainer-ranges",
+          "version": "demo-1",
+          "sha256": "318bb6c5719be68275fac6c1e4bb87da73fb2d45df4343e7813302d4d394899b",
+          "state_sha256": "79fb8dbd2a1a4972c2d5abf2d5baf7196b3effbd2f9c1751701db3edf06c0f15"
+        }
+      }
+    },
+    {
+      "at": "2026-10-30T00:11:51.933Z",
+      "index": 0,
+      "phase": 3,
+      "controlMode": "automatic",
+      "type": "action",
+      "message": "MOTOR acionou CALL",
+      "data": {
+        "status": "applied",
+        "target": "simulator_only",
+        "generation": 1,
+        "action": "call",
+        "sizing_bb": 2.5,
+        "actor": "engine",
+        "revision": 1,
+        "observation": {
+          "table": "laboratory-table",
+          "generation": 1,
+          "frame_sha256": "e689cd0f8c21cef5a7edbf4ec3c36aad7a46733fd9c32d7a1edae99cd22c4dd2"
+        }
+      }
+    },
+    {
+      "at": "2026-10-30T00:11:53.136Z",
+      "index": 1,
+      "phase": 0,
+      "controlMode": "automatic",
+      "type": "capture",
+      "message": "Captura · geração 2",
+      "data": {
+        "sha256": "876cef6d2f8ed1af01d859b4bd684d2ae21f2a0b9d441ecc06786b93906f28ed",
+        "revision": 1
+      }
+    },
+    {
+      "at": "2026-10-30T00:11:53.738Z",
+      "index": 1,
+      "phase": 1,
+      "controlMode": "automatic",
+      "type": "reading",
+      "message": "OCR: Hero 5c 2s",
+      "data": {
+        "scene": "table",
+        "hero": [
+          "5c",
+          "2s"
+        ],
+        "board": [
+          "7h",
+          "As",
+          "Ts"
+        ],
+        "street": "flop",
+        "hand_id": "261024093320-13552339-0000050-2",
+        "actions": [
+          "Fold",
+          "Check",
+          "Bet 4 BB"
+        ],
+        "observed_actions": [
+          {
+            "action": "call",
+            "player_label": "Jhavidpino",
+            "player_box": [
+              328,
+              247,
+              112,
+              26
+            ],
+            "badge_box": [
+              407,
+              150,
+              36,
+              22
+            ],
+            "confidence": 0.9919787794351578,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "fold",
+            "player_label": "Chow Mein...",
+            "player_box": [
+              29,
+              466,
+              128,
+              28
+            ],
+            "badge_box": [
+              116,
+              373,
+              38,
+              17
+            ],
+            "confidence": 0.9922107756137848,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "raise",
+            "player_label": "smilekilla",
+            "player_box": [
+              623,
+              469,
+              100,
+              24
+            ],
+            "badge_box": [
+              607,
+              370,
+              53,
+              24
+            ],
+            "confidence": 0.9923843145370483,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "fold",
+            "player_label": "Mihcardoso7",
+            "player_box": [
+              612,
+              776,
+              130,
+              28
+            ],
+            "badge_box": [
+              620,
+              682,
+              39,
+              17
+            ],
+            "confidence": 0.987795278429985,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "call",
+            "player_label": "KenLy",
+            "player_box": [
+              627,
+              1011,
+              68,
+              27
+            ],
+            "badge_box": [
+              615,
+              914,
+              39,
+              22
+            ],
+            "confidence": 0.9932634085416794,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          }
+        ],
+        "hero_buttons": [
+          {
+            "action": "fold",
+            "amount": null,
+            "unit": null,
+            "raw_text": "Fold",
+            "confidence": 0.9944968372583389,
+            "box": [
+              107,
+              1278,
+              57,
+              29
+            ],
+            "amount_status": "not_shown"
+          },
+          {
+            "action": "check",
+            "amount": null,
+            "unit": null,
+            "raw_text": "Check",
+            "confidence": 0.9937312126159668,
+            "box": [
+              346,
+              1279,
+              78,
+              28
+            ],
+            "amount_status": "not_shown"
+          },
+          {
+            "action": "bet",
+            "amount": 4,
+            "unit": "BB",
+            "raw_text": "Bet 4 BB",
+            "confidence": 0.947630301117897,
+            "box": [
+              575,
+              1279,
+              116,
+              27
+            ],
+            "amount_status": "read"
+          }
+        ],
+        "action_pending": true,
+        "status": "read",
+        "pot": "Pot: 12.1 BB",
+        "hero_stack": "102,6BB",
+        "decision": "Decisão ainda não implementada",
+        "diagnostics": {
+          "hero": {
+            "stage": "recognition",
+            "candidate_count": 1,
+            "card_pair_box": [
+              431,
+              1073,
+              113,
+              110
+            ],
+            "cards": [
+              {
+                "index": 0,
+                "rank_candidate": "5",
+                "rank_confidence": 0.9989701509475708,
+                "suit_candidate": "c",
+                "suit_similarity": 0.8802816901408451,
+                "suit_diagnostics": {
+                  "candidates": [
+                    {
+                      "suit": "c",
+                      "similarity": 0.8802816901408451
+                    }
+                  ],
+                  "method": "four_colour_shape"
+                },
+                "accepted": true,
+                "card": "5c",
+                "rank_box": [
+                  431,
+                  1073,
+                  31,
+                  40
+                ],
+                "suit_box": [
+                  435,
+                  1113,
+                  28,
+                  24
+                ],
+                "rejection": null
+              },
+              {
+                "index": 1,
+                "rank_candidate": "2",
+                "rank_confidence": 0.9993446469306946,
+                "suit_candidate": "s",
+                "suit_similarity": 0.9211136890951276,
+                "suit_diagnostics": {
+                  "candidates": [
+                    {
+                      "suit": "s",
+                      "similarity": 0.9211136890951276
+                    }
+                  ],
+                  "method": "four_colour_shape"
+                },
+                "accepted": true,
+                "card": "2s",
+                "rank_box": [
+                  469,
+                  1073,
+                  31,
+                  40
+                ],
+                "suit_box": [
+                  473,
+                  1113,
+                  28,
+                  24
+                ],
+                "rejection": null
+              }
+            ]
+          },
+          "coordinate_space": "normalized_table",
+          "image_size": [
+            755,
+            1343
+          ],
+          "board": [
+            {
+              "box": [
+                163,
+                526,
+                83,
+                123
+              ],
+              "card": "7h",
+              "rank_candidate": "7",
+              "rank_confidence": 0.9896736145019531,
+              "suit_candidate": "h"
+            },
+            {
+              "box": [
+                252,
+                526,
+                83,
+                123
+              ],
+              "card": "As",
+              "rank_candidate": "A",
+              "rank_confidence": 0.9938596487045288,
+              "suit_candidate": "s"
+            },
+            {
+              "box": [
+                341,
+                526,
+                84,
+                123
+              ],
+              "card": "Ts",
+              "rank_candidate": "T",
+              "rank_confidence": 0.9987675249576569,
+              "suit_candidate": "s"
+            }
+          ]
+        },
+        "hero_confidence": [
+          {
+            "rank": 0.9989701509475708,
+            "suit_shape": 0.8802816901408451
+          },
+          {
+            "rank": 0.9993446469306946,
+            "suit_shape": 0.9211136890951276
+          }
+        ],
+        "evidence_size": [
+          755,
+          1343
+        ],
+        "evidence": {
+          "hero": [
+            [
+              431,
+              1073,
+              32,
+              64
+            ],
+            [
+              469,
+              1073,
+              32,
+              64
+            ]
+          ],
+          "board": [
+            [
+              163,
+              526,
+              45,
+              79
+            ],
+            [
+              252,
+              526,
+              45,
+              79
+            ],
+            [
+              341,
+              526,
+              46,
+              79
+            ]
+          ],
+          "observed_actions": [
+            [
+              407,
+              150,
+              36,
+              22
+            ],
+            [
+              328,
+              247,
+              112,
+              26
+            ],
+            [
+              116,
+              373,
+              38,
+              17
+            ],
+            [
+              29,
+              466,
+              128,
+              28
+            ],
+            [
+              607,
+              370,
+              53,
+              24
+            ],
+            [
+              623,
+              469,
+              100,
+              24
+            ],
+            [
+              620,
+              682,
+              39,
+              17
+            ],
+            [
+              612,
+              776,
+              130,
+              28
+            ],
+            [
+              615,
+              914,
+              39,
+              22
+            ],
+            [
+              627,
+              1011,
+              68,
+              27
+            ]
+          ],
+          "actions": [
+            [
+              0,
+              1248,
+              755,
+              94
+            ]
+          ],
+          "hand_id": [
+            [
+              222,
+              889,
+              318,
+              17
+            ]
+          ],
+          "pot": [
+            [
+              318,
+              492,
+              126,
+              23
+            ]
+          ],
+          "hero_stack": [
+            [
+              335,
+              1203,
+              100,
+              27
+            ]
+          ]
+        },
+        "hero_status": "read",
+        "hero_reason": "",
+        "board_status": "read",
+        "reason": ""
+      }
+    },
+    {
+      "at": "2026-10-30T00:11:54.339Z",
+      "index": 1,
+      "phase": 2,
+      "controlMode": "automatic",
+      "type": "decision",
+      "message": "Decisão: CHECK",
+      "data": {
+        "status": "found",
+        "mode": "laboratory_advisory",
+        "options": [
+          {
+            "action": "check",
+            "frequency": 1
+          }
+        ],
+        "observation": {
+          "table": "laboratory-table",
+          "generation": 2,
+          "frame_sha256": "876cef6d2f8ed1af01d859b4bd684d2ae21f2a0b9d441ecc06786b93906f28ed"
+        },
+        "provenance": {
+          "source": "visual-lab-script-NOT-trainer-ranges",
+          "version": "demo-1",
+          "sha256": "318bb6c5719be68275fac6c1e4bb87da73fb2d45df4343e7813302d4d394899b",
+          "state_sha256": "1af100d36e7999a30ba2c27dd380f4b9b509cdf2779c85c793d05c38dc850914"
+        }
+      }
+    },
+    {
+      "at": "2026-10-30T00:11:54.941Z",
+      "index": 1,
+      "phase": 3,
+      "controlMode": "automatic",
+      "type": "action",
+      "message": "MOTOR acionou CHECK",
+      "data": {
+        "status": "applied",
+        "target": "simulator_only",
+        "generation": 2,
+        "action": "check",
+        "sizing_bb": null,
+        "actor": "engine",
+        "revision": 1,
+        "observation": {
+          "table": "laboratory-table",
+          "generation": 2,
+          "frame_sha256": "876cef6d2f8ed1af01d859b4bd684d2ae21f2a0b9d441ecc06786b93906f28ed"
+        }
+      }
+    },
+    {
+      "at": "2026-10-30T00:11:56.146Z",
+      "index": 2,
+      "phase": 0,
+      "controlMode": "automatic",
+      "type": "capture",
+      "message": "Captura · geração 3",
+      "data": {
+        "sha256": "65b516bbae22a15f7a3f7e909c74418a69d0164d4d4d74087a32dedde4431cb0",
+        "revision": 1
+      }
+    },
+    {
+      "at": "2026-10-30T00:11:56.747Z",
+      "index": 2,
+      "phase": 1,
+      "controlMode": "automatic",
+      "type": "reading",
+      "message": "OCR: Hero 5c 2s",
+      "data": {
+        "scene": "table",
+        "hero": [
+          "5c",
+          "2s"
+        ],
+        "board": [
+          "7h",
+          "As",
+          "Ts",
+          "2h"
+        ],
+        "street": "turn",
+        "hand_id": "261024093320-13552339-0000050-2",
+        "actions": [
+          "Fold",
+          "Check",
+          "Bet 4 BB"
+        ],
+        "observed_actions": [
+          {
+            "action": "call",
+            "player_label": "Jhavidpino",
+            "player_box": [
+              328,
+              247,
+              112,
+              26
+            ],
+            "badge_box": [
+              407,
+              150,
+              36,
+              22
+            ],
+            "confidence": 0.9919787794351578,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "fold",
+            "player_label": "Chow Mein...",
+            "player_box": [
+              29,
+              466,
+              128,
+              28
+            ],
+            "badge_box": [
+              116,
+              373,
+              38,
+              17
+            ],
+            "confidence": 0.9922107756137848,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "raise",
+            "player_label": "smilekilla",
+            "player_box": [
+              623,
+              469,
+              100,
+              24
+            ],
+            "badge_box": [
+              607,
+              370,
+              53,
+              24
+            ],
+            "confidence": 0.9923843145370483,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "fold",
+            "player_label": "Mihcardoso7",
+            "player_box": [
+              612,
+              776,
+              130,
+              28
+            ],
+            "badge_box": [
+              620,
+              682,
+              39,
+              17
+            ],
+            "confidence": 0.987795278429985,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "call",
+            "player_label": "KenLy",
+            "player_box": [
+              627,
+              1011,
+              68,
+              27
+            ],
+            "badge_box": [
+              615,
+              914,
+              39,
+              22
+            ],
+            "confidence": 0.9932634085416794,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          }
+        ],
+        "hero_buttons": [
+          {
+            "action": "fold",
+            "amount": null,
+            "unit": null,
+            "raw_text": "Fold",
+            "confidence": 0.9944968372583389,
+            "box": [
+              107,
+              1278,
+              57,
+              29
+            ],
+            "amount_status": "not_shown"
+          },
+          {
+            "action": "check",
+            "amount": null,
+            "unit": null,
+            "raw_text": "Check",
+            "confidence": 0.9937312126159668,
+            "box": [
+              346,
+              1279,
+              78,
+              28
+            ],
+            "amount_status": "not_shown"
+          },
+          {
+            "action": "bet",
+            "amount": 4,
+            "unit": "BB",
+            "raw_text": "Bet 4 BB",
+            "confidence": 0.947630301117897,
+            "box": [
+              575,
+              1279,
+              116,
+              27
+            ],
+            "amount_status": "read"
+          }
+        ],
+        "action_pending": true,
+        "status": "read",
+        "pot": "Pot: 12.1 BB",
+        "hero_stack": "102,6BB",
+        "decision": "Decisão ainda não implementada",
+        "diagnostics": {
+          "hero": {
+            "stage": "recognition",
+            "candidate_count": 1,
+            "card_pair_box": [
+              431,
+              1073,
+              113,
+              110
+            ],
+            "cards": [
+              {
+                "index": 0,
+                "rank_candidate": "5",
+                "rank_confidence": 0.9989701509475708,
+                "suit_candidate": "c",
+                "suit_similarity": 0.8802816901408451,
+                "suit_diagnostics": {
+                  "candidates": [
+                    {
+                      "suit": "c",
+                      "similarity": 0.8802816901408451
+                    }
+                  ],
+                  "method": "four_colour_shape"
+                },
+                "accepted": true,
+                "card": "5c",
+                "rank_box": [
+                  431,
+                  1073,
+                  31,
+                  40
+                ],
+                "suit_box": [
+                  435,
+                  1113,
+                  28,
+                  24
+                ],
+                "rejection": null
+              },
+              {
+                "index": 1,
+                "rank_candidate": "2",
+                "rank_confidence": 0.9993446469306946,
+                "suit_candidate": "s",
+                "suit_similarity": 0.9211136890951276,
+                "suit_diagnostics": {
+                  "candidates": [
+                    {
+                      "suit": "s",
+                      "similarity": 0.9211136890951276
+                    }
+                  ],
+                  "method": "four_colour_shape"
+                },
+                "accepted": true,
+                "card": "2s",
+                "rank_box": [
+                  469,
+                  1073,
+                  31,
+                  40
+                ],
+                "suit_box": [
+                  473,
+                  1113,
+                  28,
+                  24
+                ],
+                "rejection": null
+              }
+            ]
+          },
+          "coordinate_space": "normalized_table",
+          "image_size": [
+            755,
+            1343
+          ],
+          "board": [
+            {
+              "box": [
+                163,
+                526,
+                83,
+                123
+              ],
+              "card": "7h",
+              "rank_candidate": "7",
+              "rank_confidence": 0.9896736145019531,
+              "suit_candidate": "h"
+            },
+            {
+              "box": [
+                252,
+                526,
+                83,
+                123
+              ],
+              "card": "As",
+              "rank_candidate": "A",
+              "rank_confidence": 0.9938596487045288,
+              "suit_candidate": "s"
+            },
+            {
+              "box": [
+                341,
+                526,
+                79,
+                123
+              ],
+              "card": "Ts",
+              "rank_candidate": "T",
+              "rank_confidence": 0.9987629950046539,
+              "suit_candidate": "s"
+            },
+            {
+              "box": [
+                431,
+                531,
+                77,
+                113
+              ],
+              "card": "2h",
+              "rank_candidate": "2",
+              "rank_confidence": 0.999049961566925,
+              "suit_candidate": "h"
+            }
+          ]
+        },
+        "hero_confidence": [
+          {
+            "rank": 0.9989701509475708,
+            "suit_shape": 0.8802816901408451
+          },
+          {
+            "rank": 0.9993446469306946,
+            "suit_shape": 0.9211136890951276
+          }
+        ],
+        "evidence_size": [
+          755,
+          1343
+        ],
+        "evidence": {
+          "hero": [
+            [
+              431,
+              1073,
+              32,
+              64
+            ],
+            [
+              469,
+              1073,
+              32,
+              64
+            ]
+          ],
+          "board": [
+            [
+              163,
+              526,
+              45,
+              79
+            ],
+            [
+              252,
+              526,
+              45,
+              79
+            ],
+            [
+              341,
+              526,
+              43,
+              79
+            ],
+            [
+              431,
+              531,
+              42,
+              73
+            ]
+          ],
+          "observed_actions": [
+            [
+              407,
+              150,
+              36,
+              22
+            ],
+            [
+              328,
+              247,
+              112,
+              26
+            ],
+            [
+              116,
+              373,
+              38,
+              17
+            ],
+            [
+              29,
+              466,
+              128,
+              28
+            ],
+            [
+              607,
+              370,
+              53,
+              24
+            ],
+            [
+              623,
+              469,
+              100,
+              24
+            ],
+            [
+              620,
+              682,
+              39,
+              17
+            ],
+            [
+              612,
+              776,
+              130,
+              28
+            ],
+            [
+              615,
+              914,
+              39,
+              22
+            ],
+            [
+              627,
+              1011,
+              68,
+              27
+            ]
+          ],
+          "actions": [
+            [
+              0,
+              1248,
+              755,
+              94
+            ]
+          ],
+          "hand_id": [
+            [
+              222,
+              889,
+              318,
+              17
+            ]
+          ],
+          "pot": [
+            [
+              318,
+              492,
+              126,
+              23
+            ]
+          ],
+          "hero_stack": [
+            [
+              335,
+              1203,
+              100,
+              27
+            ]
+          ]
+        },
+        "hero_status": "read",
+        "hero_reason": "",
+        "board_status": "read",
+        "reason": ""
+      }
+    },
+    {
+      "at": "2026-10-30T00:11:57.350Z",
+      "index": 2,
+      "phase": 2,
+      "controlMode": "automatic",
+      "type": "decision",
+      "message": "Decisão: BET",
+      "data": {
+        "status": "found",
+        "mode": "laboratory_advisory",
+        "options": [
+          {
+            "action": "bet",
+            "frequency": 1,
+            "sizing_bb": 4
+          }
+        ],
+        "observation": {
+          "table": "laboratory-table",
+          "generation": 3,
+          "frame_sha256": "65b516bbae22a15f7a3f7e909c74418a69d0164d4d4d74087a32dedde4431cb0"
+        },
+        "provenance": {
+          "source": "visual-lab-script-NOT-trainer-ranges",
+          "version": "demo-1",
+          "sha256": "318bb6c5719be68275fac6c1e4bb87da73fb2d45df4343e7813302d4d394899b",
+          "state_sha256": "bffe2405148ad719acf52f46de8bfc7696e461cbd7554a245e4f8546f40d4c10"
+        }
+      }
+    },
+    {
+      "at": "2026-10-30T00:11:57.952Z",
+      "index": 2,
+      "phase": 3,
+      "controlMode": "automatic",
+      "type": "action",
+      "message": "MOTOR acionou BET",
+      "data": {
+        "status": "applied",
+        "target": "simulator_only",
+        "generation": 3,
+        "action": "bet",
+        "sizing_bb": 4,
+        "actor": "engine",
+        "revision": 1,
+        "observation": {
+          "table": "laboratory-table",
+          "generation": 3,
+          "frame_sha256": "65b516bbae22a15f7a3f7e909c74418a69d0164d4d4d74087a32dedde4431cb0"
+        }
+      }
+    },
+    {
+      "at": "2026-10-30T00:11:59.155Z",
+      "index": 3,
+      "phase": 0,
+      "controlMode": "automatic",
+      "type": "capture",
+      "message": "Captura · geração 4",
+      "data": {
+        "sha256": "ea994c825e7563dcdb20d96fa75ed1803dfaa8747c31047cd978572691a38069",
+        "revision": 1
+      }
+    },
+    {
+      "at": "2026-10-30T00:11:59.758Z",
+      "index": 3,
+      "phase": 1,
+      "controlMode": "automatic",
+      "type": "reading",
+      "message": "OCR: Hero 5c 2s",
+      "data": {
+        "scene": "table",
+        "hero": [
+          "5c",
+          "2s"
+        ],
+        "board": [
+          "7h",
+          "As",
+          "Ts",
+          "2h",
+          "3c"
+        ],
+        "street": "river",
+        "hand_id": "261024093320-13552339-0000050-2",
+        "actions": [
+          "Fold",
+          "Call 2.5 BB",
+          "Raise 8 BB"
+        ],
+        "observed_actions": [
+          {
+            "action": "call",
+            "player_label": "Jhavidpino",
+            "player_box": [
+              328,
+              247,
+              112,
+              26
+            ],
+            "badge_box": [
+              407,
+              150,
+              36,
+              22
+            ],
+            "confidence": 0.9919787794351578,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "fold",
+            "player_label": "Chow Mein...",
+            "player_box": [
+              29,
+              466,
+              128,
+              28
+            ],
+            "badge_box": [
+              116,
+              373,
+              38,
+              17
+            ],
+            "confidence": 0.9922107756137848,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "raise",
+            "player_label": "smilekilla",
+            "player_box": [
+              623,
+              469,
+              100,
+              24
+            ],
+            "badge_box": [
+              607,
+              370,
+              53,
+              24
+            ],
+            "confidence": 0.9923843145370483,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "fold",
+            "player_label": "Mihcardoso7",
+            "player_box": [
+              612,
+              776,
+              130,
+              28
+            ],
+            "badge_box": [
+              620,
+              681,
+              39,
+              18
+            ],
+            "confidence": 0.9917090833187103,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "call",
+            "player_label": "KenLy",
+            "player_box": [
+              627,
+              1011,
+              68,
+              27
+            ],
+            "badge_box": [
+              615,
+              914,
+              39,
+              22
+            ],
+            "confidence": 0.9932634085416794,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          }
+        ],
+        "hero_buttons": [
+          {
+            "action": "fold",
+            "amount": null,
+            "unit": null,
+            "raw_text": "Fold",
+            "confidence": 0.9944968372583389,
+            "box": [
+              107,
+              1278,
+              57,
+              29
+            ],
+            "amount_status": "not_shown"
+          },
+          {
+            "action": "call",
+            "amount": 2.5,
+            "unit": "BB",
+            "raw_text": "Call 2.5 BB",
+            "confidence": 0.9634817947040905,
+            "box": [
+              313,
+              1278,
+              143,
+              30
+            ],
+            "amount_status": "read"
+          },
+          {
+            "action": "raise",
+            "amount": 8,
+            "unit": "BB",
+            "raw_text": "Raise 8 BB",
+            "confidence": 0.9169043183326722,
+            "box": [
+              563,
+              1279,
+              140,
+              27
+            ],
+            "amount_status": "read"
+          }
+        ],
+        "action_pending": true,
+        "status": "read",
+        "pot": "Pot: 24.1 BB",
+        "hero_stack": "102,6BB",
+        "decision": "Decisão ainda não implementada",
+        "diagnostics": {
+          "hero": {
+            "stage": "recognition",
+            "candidate_count": 1,
+            "card_pair_box": [
+              431,
+              1073,
+              113,
+              110
+            ],
+            "cards": [
+              {
+                "index": 0,
+                "rank_candidate": "5",
+                "rank_confidence": 0.9989701509475708,
+                "suit_candidate": "c",
+                "suit_similarity": 0.8802816901408451,
+                "suit_diagnostics": {
+                  "candidates": [
+                    {
+                      "suit": "c",
+                      "similarity": 0.8802816901408451
+                    }
+                  ],
+                  "method": "four_colour_shape"
+                },
+                "accepted": true,
+                "card": "5c",
+                "rank_box": [
+                  431,
+                  1073,
+                  31,
+                  40
+                ],
+                "suit_box": [
+                  435,
+                  1113,
+                  28,
+                  24
+                ],
+                "rejection": null
+              },
+              {
+                "index": 1,
+                "rank_candidate": "2",
+                "rank_confidence": 0.9993446469306946,
+                "suit_candidate": "s",
+                "suit_similarity": 0.9211136890951276,
+                "suit_diagnostics": {
+                  "candidates": [
+                    {
+                      "suit": "s",
+                      "similarity": 0.9211136890951276
+                    }
+                  ],
+                  "method": "four_colour_shape"
+                },
+                "accepted": true,
+                "card": "2s",
+                "rank_box": [
+                  469,
+                  1073,
+                  31,
+                  40
+                ],
+                "suit_box": [
+                  473,
+                  1113,
+                  28,
+                  24
+                ],
+                "rejection": null
+              }
+            ]
+          },
+          "coordinate_space": "normalized_table",
+          "image_size": [
+            755,
+            1343
+          ],
+          "board": [
+            {
+              "box": [
+                163,
+                526,
+                83,
+                123
+              ],
+              "card": "7h",
+              "rank_candidate": "7",
+              "rank_confidence": 0.9896736145019531,
+              "suit_candidate": "h"
+            },
+            {
+              "box": [
+                252,
+                526,
+                83,
+                123
+              ],
+              "card": "As",
+              "rank_candidate": "A",
+              "rank_confidence": 0.9938596487045288,
+              "suit_candidate": "s"
+            },
+            {
+              "box": [
+                341,
+                526,
+                79,
+                123
+              ],
+              "card": "Ts",
+              "rank_candidate": "T",
+              "rank_confidence": 0.9987629950046539,
+              "suit_candidate": "s"
+            },
+            {
+              "box": [
+                431,
+                531,
+                77,
+                113
+              ],
+              "card": "2h",
+              "rank_candidate": "2",
+              "rank_confidence": 0.999049961566925,
+              "suit_candidate": "h"
+            },
+            {
+              "box": [
+                522,
+                531,
+                77,
+                113
+              ],
+              "card": "3c",
+              "rank_candidate": "3",
+              "rank_confidence": 0.9900959730148315,
+              "suit_candidate": "c"
+            }
+          ]
+        },
+        "hero_confidence": [
+          {
+            "rank": 0.9989701509475708,
+            "suit_shape": 0.8802816901408451
+          },
+          {
+            "rank": 0.9993446469306946,
+            "suit_shape": 0.9211136890951276
+          }
+        ],
+        "evidence_size": [
+          755,
+          1343
+        ],
+        "evidence": {
+          "hero": [
+            [
+              431,
+              1073,
+              32,
+              64
+            ],
+            [
+              469,
+              1073,
+              32,
+              64
+            ]
+          ],
+          "board": [
+            [
+              163,
+              526,
+              45,
+              79
+            ],
+            [
+              252,
+              526,
+              45,
+              79
+            ],
+            [
+              341,
+              526,
+              43,
+              79
+            ],
+            [
+              431,
+              531,
+              42,
+              73
+            ],
+            [
+              522,
+              531,
+              42,
+              73
+            ]
+          ],
+          "observed_actions": [
+            [
+              407,
+              150,
+              36,
+              22
+            ],
+            [
+              328,
+              247,
+              112,
+              26
+            ],
+            [
+              116,
+              373,
+              38,
+              17
+            ],
+            [
+              29,
+              466,
+              128,
+              28
+            ],
+            [
+              607,
+              370,
+              53,
+              24
+            ],
+            [
+              623,
+              469,
+              100,
+              24
+            ],
+            [
+              620,
+              681,
+              39,
+              18
+            ],
+            [
+              612,
+              776,
+              130,
+              28
+            ],
+            [
+              615,
+              914,
+              39,
+              22
+            ],
+            [
+              627,
+              1011,
+              68,
+              27
+            ]
+          ],
+          "actions": [
+            [
+              0,
+              1248,
+              755,
+              94
+            ]
+          ],
+          "hand_id": [
+            [
+              222,
+              889,
+              318,
+              17
+            ]
+          ],
+          "pot": [
+            [
+              318,
+              492,
+              126,
+              23
+            ]
+          ],
+          "hero_stack": [
+            [
+              335,
+              1203,
+              100,
+              27
+            ]
+          ]
+        },
+        "hero_status": "read",
+        "hero_reason": "",
+        "board_status": "read",
+        "reason": ""
+      }
+    },
+    {
+      "at": "2026-10-30T00:12:00.359Z",
+      "index": 3,
+      "phase": 2,
+      "controlMode": "automatic",
+      "type": "decision",
+      "message": "Decisão: RAISE",
+      "data": {
+        "status": "found",
+        "mode": "laboratory_advisory",
+        "options": [
+          {
+            "action": "raise",
+            "frequency": 1,
+            "sizing_bb": 8
+          }
+        ],
+        "observation": {
+          "table": "laboratory-table",
+          "generation": 4,
+          "frame_sha256": "ea994c825e7563dcdb20d96fa75ed1803dfaa8747c31047cd978572691a38069"
+        },
+        "provenance": {
+          "source": "visual-lab-script-NOT-trainer-ranges",
+          "version": "demo-1",
+          "sha256": "318bb6c5719be68275fac6c1e4bb87da73fb2d45df4343e7813302d4d394899b",
+          "state_sha256": "5b9c8a5b5ae3e3a2e9c03ca2c29ffce3779709e8538d23d8f34b62a3c9dd48db"
+        }
+      }
+    },
+    {
+      "at": "2026-10-30T00:12:00.961Z",
+      "index": 3,
+      "phase": 3,
+      "controlMode": "automatic",
+      "type": "action",
+      "message": "MOTOR acionou RAISE",
+      "data": {
+        "status": "applied",
+        "target": "simulator_only",
+        "generation": 4,
+        "action": "raise",
+        "sizing_bb": 8,
+        "actor": "engine",
+        "revision": 1,
+        "observation": {
+          "table": "laboratory-table",
+          "generation": 4,
+          "frame_sha256": "ea994c825e7563dcdb20d96fa75ed1803dfaa8747c31047cd978572691a38069"
+        }
+      }
+    },
+    {
+      "at": "2026-10-30T00:12:02.167Z",
+      "index": 4,
+      "phase": 0,
+      "controlMode": "automatic",
+      "type": "capture",
+      "message": "Captura · geração 5",
+      "data": {
+        "sha256": "62906300d38f60f2c49fa34b3aef0e04a9795f98365cbe745c7928e1647e809f",
+        "revision": 1
+      }
+    },
+    {
+      "at": "2026-10-30T00:12:02.769Z",
+      "index": 4,
+      "phase": 1,
+      "controlMode": "automatic",
+      "type": "reading",
+      "message": "OCR: Hero 5c 2s",
+      "data": {
+        "scene": "table",
+        "hero": [
+          "5c",
+          "2s"
+        ],
+        "board": [
+          "7h",
+          "As",
+          "Ts",
+          "2h",
+          "3c"
+        ],
+        "street": "river",
+        "hand_id": "261024093320-13552339-0000050-2",
+        "actions": [
+          "Fold",
+          "Call 2.5 BB",
+          "Raise 8 BB"
+        ],
+        "observed_actions": [
+          {
+            "action": "call",
+            "player_label": "Jhavidpino",
+            "player_box": [
+              328,
+              247,
+              112,
+              26
+            ],
+            "badge_box": [
+              407,
+              150,
+              36,
+              22
+            ],
+            "confidence": 0.9919787794351578,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "fold",
+            "player_label": "Chow Mein...",
+            "player_box": [
+              29,
+              466,
+              128,
+              28
+            ],
+            "badge_box": [
+              116,
+              373,
+              38,
+              17
+            ],
+            "confidence": 0.9922107756137848,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "raise",
+            "player_label": "smilekilla",
+            "player_box": [
+              623,
+              469,
+              100,
+              24
+            ],
+            "badge_box": [
+              607,
+              370,
+              53,
+              24
+            ],
+            "confidence": 0.9923843145370483,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "fold",
+            "player_label": "Mihcardoso7",
+            "player_box": [
+              612,
+              776,
+              130,
+              28
+            ],
+            "badge_box": [
+              620,
+              681,
+              39,
+              18
+            ],
+            "confidence": 0.9917090833187103,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "call",
+            "player_label": "KenLy",
+            "player_box": [
+              627,
+              1011,
+              68,
+              27
+            ],
+            "badge_box": [
+              615,
+              914,
+              39,
+              22
+            ],
+            "confidence": 0.9932634085416794,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          }
+        ],
+        "hero_buttons": [
+          {
+            "action": "fold",
+            "amount": null,
+            "unit": null,
+            "raw_text": "Fold",
+            "confidence": 0.9944968372583389,
+            "box": [
+              107,
+              1278,
+              57,
+              29
+            ],
+            "amount_status": "not_shown"
+          },
+          {
+            "action": "call",
+            "amount": 2.5,
+            "unit": "BB",
+            "raw_text": "Call 2.5 BB",
+            "confidence": 0.9634817947040905,
+            "box": [
+              313,
+              1278,
+              143,
+              30
+            ],
+            "amount_status": "read"
+          },
+          {
+            "action": "raise",
+            "amount": 8,
+            "unit": "BB",
+            "raw_text": "Raise 8 BB",
+            "confidence": 0.9169043183326722,
+            "box": [
+              563,
+              1279,
+              140,
+              27
+            ],
+            "amount_status": "read"
+          }
+        ],
+        "action_pending": true,
+        "status": "read",
+        "pot": "Pot: 48.1 BB",
+        "hero_stack": "102,6BB",
+        "decision": "Decisão ainda não implementada",
+        "diagnostics": {
+          "hero": {
+            "stage": "recognition",
+            "candidate_count": 1,
+            "card_pair_box": [
+              431,
+              1073,
+              113,
+              110
+            ],
+            "cards": [
+              {
+                "index": 0,
+                "rank_candidate": "5",
+                "rank_confidence": 0.9989701509475708,
+                "suit_candidate": "c",
+                "suit_similarity": 0.8802816901408451,
+                "suit_diagnostics": {
+                  "candidates": [
+                    {
+                      "suit": "c",
+                      "similarity": 0.8802816901408451
+                    }
+                  ],
+                  "method": "four_colour_shape"
+                },
+                "accepted": true,
+                "card": "5c",
+                "rank_box": [
+                  431,
+                  1073,
+                  31,
+                  40
+                ],
+                "suit_box": [
+                  435,
+                  1113,
+                  28,
+                  24
+                ],
+                "rejection": null
+              },
+              {
+                "index": 1,
+                "rank_candidate": "2",
+                "rank_confidence": 0.9993446469306946,
+                "suit_candidate": "s",
+                "suit_similarity": 0.9211136890951276,
+                "suit_diagnostics": {
+                  "candidates": [
+                    {
+                      "suit": "s",
+                      "similarity": 0.9211136890951276
+                    }
+                  ],
+                  "method": "four_colour_shape"
+                },
+                "accepted": true,
+                "card": "2s",
+                "rank_box": [
+                  469,
+                  1073,
+                  31,
+                  40
+                ],
+                "suit_box": [
+                  473,
+                  1113,
+                  28,
+                  24
+                ],
+                "rejection": null
+              }
+            ]
+          },
+          "coordinate_space": "normalized_table",
+          "image_size": [
+            755,
+            1343
+          ],
+          "board": [
+            {
+              "box": [
+                163,
+                526,
+                83,
+                123
+              ],
+              "card": "7h",
+              "rank_candidate": "7",
+              "rank_confidence": 0.9896736145019531,
+              "suit_candidate": "h"
+            },
+            {
+              "box": [
+                252,
+                526,
+                83,
+                123
+              ],
+              "card": "As",
+              "rank_candidate": "A",
+              "rank_confidence": 0.9938596487045288,
+              "suit_candidate": "s"
+            },
+            {
+              "box": [
+                341,
+                526,
+                79,
+                123
+              ],
+              "card": "Ts",
+              "rank_candidate": "T",
+              "rank_confidence": 0.9987629950046539,
+              "suit_candidate": "s"
+            },
+            {
+              "box": [
+                431,
+                531,
+                77,
+                113
+              ],
+              "card": "2h",
+              "rank_candidate": "2",
+              "rank_confidence": 0.999049961566925,
+              "suit_candidate": "h"
+            },
+            {
+              "box": [
+                522,
+                531,
+                77,
+                113
+              ],
+              "card": "3c",
+              "rank_candidate": "3",
+              "rank_confidence": 0.9900959730148315,
+              "suit_candidate": "c"
+            }
+          ]
+        },
+        "hero_confidence": [
+          {
+            "rank": 0.9989701509475708,
+            "suit_shape": 0.8802816901408451
+          },
+          {
+            "rank": 0.9993446469306946,
+            "suit_shape": 0.9211136890951276
+          }
+        ],
+        "evidence_size": [
+          755,
+          1343
+        ],
+        "evidence": {
+          "hero": [
+            [
+              431,
+              1073,
+              32,
+              64
+            ],
+            [
+              469,
+              1073,
+              32,
+              64
+            ]
+          ],
+          "board": [
+            [
+              163,
+              526,
+              45,
+              79
+            ],
+            [
+              252,
+              526,
+              45,
+              79
+            ],
+            [
+              341,
+              526,
+              43,
+              79
+            ],
+            [
+              431,
+              531,
+              42,
+              73
+            ],
+            [
+              522,
+              531,
+              42,
+              73
+            ]
+          ],
+          "observed_actions": [
+            [
+              407,
+              150,
+              36,
+              22
+            ],
+            [
+              328,
+              247,
+              112,
+              26
+            ],
+            [
+              116,
+              373,
+              38,
+              17
+            ],
+            [
+              29,
+              466,
+              128,
+              28
+            ],
+            [
+              607,
+              370,
+              53,
+              24
+            ],
+            [
+              623,
+              469,
+              100,
+              24
+            ],
+            [
+              620,
+              681,
+              39,
+              18
+            ],
+            [
+              612,
+              776,
+              130,
+              28
+            ],
+            [
+              615,
+              914,
+              39,
+              22
+            ],
+            [
+              627,
+              1011,
+              68,
+              27
+            ]
+          ],
+          "actions": [
+            [
+              0,
+              1248,
+              755,
+              94
+            ]
+          ],
+          "hand_id": [
+            [
+              222,
+              889,
+              318,
+              17
+            ]
+          ],
+          "pot": [
+            [
+              318,
+              492,
+              126,
+              23
+            ]
+          ],
+          "hero_stack": [
+            [
+              335,
+              1203,
+              100,
+              27
+            ]
+          ]
+        },
+        "hero_status": "read",
+        "hero_reason": "",
+        "board_status": "read",
+        "reason": ""
+      }
+    },
+    {
+      "at": "2026-10-30T00:12:03.370Z",
+      "index": 4,
+      "phase": 2,
+      "controlMode": "automatic",
+      "type": "decision",
+      "message": "Decisão: FOLD",
+      "data": {
+        "status": "found",
+        "mode": "laboratory_advisory",
+        "options": [
+          {
+            "action": "fold",
+            "frequency": 1
+          }
+        ],
+        "observation": {
+          "table": "laboratory-table",
+          "generation": 5,
+          "frame_sha256": "62906300d38f60f2c49fa34b3aef0e04a9795f98365cbe745c7928e1647e809f"
+        },
+        "provenance": {
+          "source": "visual-lab-script-NOT-trainer-ranges",
+          "version": "demo-1",
+          "sha256": "318bb6c5719be68275fac6c1e4bb87da73fb2d45df4343e7813302d4d394899b",
+          "state_sha256": "2e325dba631c813746e6ccef63376b900c802e8bccf364d7c41603f86462e634"
+        }
+      }
+    },
+    {
+      "at": "2026-10-30T00:12:03.972Z",
+      "index": 4,
+      "phase": 3,
+      "controlMode": "automatic",
+      "type": "action",
+      "message": "MOTOR acionou FOLD",
+      "data": {
+        "status": "applied",
+        "target": "simulator_only",
+        "generation": 5,
+        "action": "fold",
+        "sizing_bb": null,
+        "actor": "engine",
+        "revision": 1,
+        "observation": {
+          "table": "laboratory-table",
+          "generation": 5,
+          "frame_sha256": "62906300d38f60f2c49fa34b3aef0e04a9795f98365cbe745c7928e1647e809f"
+        }
+      }
+    },
+    {
+      "at": "2026-10-30T00:12:04.573Z",
+      "index": 5,
+      "phase": 4,
+      "controlMode": "automatic",
+      "type": "finished",
+      "message": "Roteiro concluído.",
+      "data": null
+    }
+  ]
+}

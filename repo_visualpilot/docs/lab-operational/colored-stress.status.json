@@ -1,0 +1,11 @@
+{
+  "run_id": "60506f1d3cde4650af5e46bb265b86f9",
+  "pid": 278451,
+  "state": "completed",
+  "started_at": "2026-10-30T21:40:36.180148+00:00",
+  "updated_at": "2026-10-30T21:40:39.649034+00:00",
+  "scope": "colored-deck benchmark only",
+  "completed_cases": 60,
+  "passed": 60,
+  "outcome": "passed"
+}

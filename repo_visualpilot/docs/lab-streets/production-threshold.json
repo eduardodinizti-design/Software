@@ -1,0 +1,556 @@
+[
+  {
+    "card": "2c",
+    "status": "SUCCESS",
+    "cards": [
+      {
+        "card": "2c",
+        "confidence": 0.9964439272880554,
+        "box": [
+          12,
+          22,
+          85,
+          125
+        ]
+      }
+    ]
+  },
+  {
+    "card": "2d",
+    "status": "SUCCESS",
+    "cards": [
+      {
+        "card": "2d",
+        "confidence": 0.9964439272880554,
+        "box": [
+          12,
+          22,
+          85,
+          125
+        ]
+      }
+    ]
+  },
+  {
+    "card": "2h",
+    "status": "SUCCESS",
+    "cards": [
+      {
+        "card": "2h",
+        "confidence": 0.9964439272880554,
+        "box": [
+          12,
+          22,
+          85,
+          125
+        ]
+      }
+    ]
+  },
+  {
+    "card": "3c",
+    "status": "SUCCESS",
+    "cards": [
+      {
+        "card": "3c",
+        "confidence": 0.9883314967155457,
+        "box": [
+          12,
+          22,
+          85,
+          125
+        ]
+      }
+    ]
+  },
+  {
+    "card": "3d",
+    "status": "SUCCESS",
+    "cards": [
+      {
+        "card": "3d",
+        "confidence": 0.9883314967155457,
+        "box": [
+          12,
+          22,
+          85,
+          125
+        ]
+      }
+    ]
+  },
+  {
+    "card": "3h",
+    "status": "SUCCESS",
+    "cards": [
+      {
+        "card": "3h",
+        "confidence": 0.9883314967155457,
+        "box": [
+          12,
+          22,
+          85,
+          125
+        ]
+      }
+    ]
+  },
+  {
+    "card": "4c",
+    "status": "SUCCESS",
+    "cards": [
+      {
+        "card": "4c",
+        "confidence": 0.9892354607582092,
+        "box": [
+          12,
+          22,
+          85,
+          125
+        ]
+      }
+    ]
+  },
+  {
+    "card": "4h",
+    "status": "SUCCESS",
+    "cards": [
+      {
+        "card": "4h",
+        "confidence": 0.9892354607582092,
+        "box": [
+          12,
+          22,
+          85,
+          125
+        ]
+      }
+    ]
+  },
+  {
+    "card": "4s",
+    "status": "SUCCESS",
+    "cards": [
+      {
+        "card": "4s",
+        "confidence": 0.9892354607582092,
+        "box": [
+          12,
+          22,
+          85,
+          125
+        ]
+      }
+    ]
+  },
+  {
+    "card": "5h",
+    "status": "SUCCESS",
+    "cards": [
+      {
+        "card": "5h",
+        "confidence": 0.9900885224342346,
+        "box": [
+          12,
+          22,
+          85,
+          125
+        ]
+      }
+    ]
+  },
+  {
+    "card": "5s",
+    "status": "SUCCESS",
+    "cards": [
+      {
+        "card": "5s",
+        "confidence": 0.9900885224342346,
+        "box": [
+          12,
+          22,
+          85,
+          125
+        ]
+      }
+    ]
+  },
+  {
+    "card": "6c",
+    "status": "SUCCESS",
+    "cards": [
+      {
+        "card": "6c",
+        "confidence": 0.9970874190330505,
+        "box": [
+          12,
+          22,
+          85,
+          125
+        ]
+      }
+    ]
+  },
+  {
+    "card": "6d",
+    "status": "SUCCESS",
+    "cards": [
+      {
+        "card": "6d",
+        "confidence": 0.9970874190330505,
+        "box": [
+          12,
+          22,
+          85,
+          125
+        ]
+      }
+    ]
+  },
+  {
+    "card": "6h",
+    "status": "SUCCESS",
+    "cards": [
+      {
+        "card": "6h",
+        "confidence": 0.9970874190330505,
+        "box": [
+          12,
+          22,
+          85,
+          125
+        ]
+      }
+    ]
+  },
+  {
+    "card": "6s",
+    "status": "SUCCESS",
+    "cards": [
+      {
+        "card": "6s",
+        "confidence": 0.9970874190330505,
+        "box": [
+          12,
+          22,
+          85,
+          125
+        ]
+      }
+    ]
+  },
+  {
+    "card": "7c",
+    "status": "SUCCESS",
+    "cards": [
+      {
+        "card": "7c",
+        "confidence": 0.9856162071228027,
+        "box": [
+          12,
+          22,
+          85,
+          125
+        ]
+      }
+    ]
+  },
+  {
+    "card": "7s",
+    "status": "SUCCESS",
+    "cards": [
+      {
+        "card": "7s",
+        "confidence": 0.9856162071228027,
+        "box": [
+          12,
+          22,
+          85,
+          125
+        ]
+      }
+    ]
+  },
+  {
+    "card": "8c",
+    "status": "SUCCESS",
+    "cards": [
+      {
+        "card": "8c",
+        "confidence": 0.976850152015686,
+        "box": [
+          12,
+          22,
+          85,
+          125
+        ]
+      }
+    ]
+  },
+  {
+    "card": "8d",
+    "status": "SUCCESS",
+    "cards": [
+      {
+        "card": "8d",
+        "confidence": 0.976850152015686,
+        "box": [
+          12,
+          22,
+          85,
+          125
+        ]
+      }
+    ]
+  },
+  {
+    "card": "8s",
+    "status": "SUCCESS",
+    "cards": [
+      {
+        "card": "8s",
+        "confidence": 0.976850152015686,
+        "box": [
+          12,
+          22,
+          85,
+          125
+        ]
+      }
+    ]
+  },
+  {
+    "card": "9c",
+    "status": "SUCCESS",
+    "cards": [
+      {
+        "card": "9c",
+        "confidence": 0.9965229034423828,
+        "box": [
+          12,
+          22,
+          85,
+          125
+        ]
+      }
+    ]
+  },
+  {
+    "card": "9d",
+    "status": "SUCCESS",
+    "cards": [
+      {
+        "card": "9d",
+        "confidence": 0.9965229034423828,
+        "box": [
+          12,
+          22,
+          85,
+          125
+        ]
+      }
+    ]
+  },
+  {
+    "card": "9h",
+    "status": "SUCCESS",
+    "cards": [
+      {
+        "card": "9h",
+        "confidence": 0.9965229034423828,
+        "box": [
+          12,
+          22,
+          85,
+          125
+        ]
+      }
+    ]
+  },
+  {
+    "card": "9s",
+    "status": "SUCCESS",
+    "cards": [
+      {
+        "card": "9s",
+        "confidence": 0.9965229034423828,
+        "box": [
+          12,
+          22,
+          85,
+          125
+        ]
+      }
+    ]
+  },
+  {
+    "card": "Ac",
+    "status": "SUCCESS",
+    "cards": [
+      {
+        "card": "Ac",
+        "confidence": 0.9475564956665039,
+        "box": [
+          12,
+          22,
+          85,
+          125
+        ]
+      }
+    ]
+  },
+  {
+    "card": "Ad",
+    "status": "SUCCESS",
+    "cards": [
+      {
+        "card": "Ad",
+        "confidence": 0.9475564956665039,
+        "box": [
+          12,
+          22,
+          85,
+          125
+        ]
+      }
+    ]
+  },
+  {
+    "card": "Ah",
+    "status": "SUCCESS",
+    "cards": [
+      {
+        "card": "Ah",
+        "confidence": 0.9475564956665039,
+        "box": [
+          12,
+          22,
+          85,
+          125
+        ]
+      }
+    ]
+  },
+  {
+    "card": "Jc",
+    "status": "SUCCESS",
+    "cards": [
+      {
+        "card": "Jc",
+        "confidence": 0.9791989922523499,
+        "box": [
+          12,
+          22,
+          85,
+          125
+        ]
+      }
+    ]
+  },
+  {
+    "card": "Jh",
+    "status": "SUCCESS",
+    "cards": [
+      {
+        "card": "Jh",
+        "confidence": 0.9791989922523499,
+        "box": [
+          12,
+          22,
+          85,
+          125
+        ]
+      }
+    ]
+  },
+  {
+    "card": "Kh",
+    "status": "PENDING",
+    "cards": []
+  },
+  {
+    "card": "Ks",
+    "status": "PENDING",
+    "cards": []
+  },
+  {
+    "card": "Qc",
+    "status": "SUCCESS",
+    "cards": [
+      {
+        "card": "Qc",
+        "confidence": 0.9892733693122864,
+        "box": [
+          12,
+          22,
+          85,
+          125
+        ]
+      }
+    ]
+  },
+  {
+    "card": "Qd",
+    "status": "SUCCESS",
+    "cards": [
+      {
+        "card": "Qd",
+        "confidence": 0.9892733693122864,
+        "box": [
+          12,
+          22,
+          85,
+          125
+        ]
+      }
+    ]
+  },
+  {
+    "card": "Qs",
+    "status": "SUCCESS",
+    "cards": [
+      {
+        "card": "Qs",
+        "confidence": 0.9892733693122864,
+        "box": [
+          12,
+          22,
+          85,
+          125
+        ]
+      }
+    ]
+  },
+  {
+    "card": "Tc",
+    "status": "SUCCESS",
+    "cards": [
+      {
+        "card": "Tc",
+        "confidence": 0.9993463754653931,
+        "box": [
+          12,
+          22,
+          85,
+          125
+        ]
+      }
+    ]
+  },
+  {
+    "card": "Td",
+    "status": "SUCCESS",
+    "cards": [
+      {
+        "card": "Td",
+        "confidence": 0.9993463754653931,
+        "box": [
+          12,
+          22,
+          85,
+          125
+        ]
+      }
+    ]
+  }
+]

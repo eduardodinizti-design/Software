@@ -1,0 +1,19 @@
+{
+  "source": "2026-10-23 21-04-17.mp4",
+  "crop": [
+    195,
+    0,
+    950,
+    1400
+  ],
+  "frames": {
+    "hero_3s_Qh.png": 20,
+    "postflop.png": 0,
+    "preflop_waiting.png": 10,
+    "folded.png": 40
+  },
+  "expected_hero": [
+    "3s",
+    "Qh"
+  ]
+}

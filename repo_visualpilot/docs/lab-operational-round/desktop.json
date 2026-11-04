@@ -1,0 +1,123 @@
+{
+  "status": "passed",
+  "mode": "source",
+  "platform": "linux",
+  "build": "central-live-20261030-r4-desktop-validation",
+  "scope": "normal_entries_os_capture_tcp_ocr_browser_local_desktop",
+  "checks": [
+    "example_configuration_requires_visible_setup",
+    "connection_error_without_visible_table",
+    "connected_empty_desktop_has_no_frames",
+    "normal_capture_ocr_browser_left_99.png",
+    "normal_capture_ocr_browser_observer-without-hero.png",
+    "normal_capture_ocr_browser_right_99.png",
+    "occupied_panel_port_does_not_start_second_central",
+    "collector_stop_expires_preview_and_cards",
+    "collector_restart_three_tables_with_distinct_identities",
+    "three_moved_tables_have_no_frozen_duplicates",
+    "central_stop_is_visible_in_collector"
+  ],
+  "browser_errors": [],
+  "screen": [
+    1920,
+    1080
+  ],
+  "readings": [
+    {
+      "scenario": "left_99.png",
+      "hero": [
+        "Th",
+        "4d"
+      ],
+      "board": [
+        "7h",
+        "As",
+        "Ts"
+      ],
+      "capture_age_seconds": 0.1723
+    },
+    {
+      "scenario": "observer-without-hero.png",
+      "hero": [],
+      "board": [
+        "7h",
+        "As",
+        "Ts"
+      ],
+      "capture_age_seconds": 0.2585
+    },
+    {
+      "scenario": "right_99.png",
+      "hero": [
+        "5c",
+        "2s"
+      ],
+      "board": [],
+      "capture_age_seconds": 0.2025
+    },
+    {
+      "scenario": "three-tables-left_99.png",
+      "hero": [
+        "Th",
+        "4d"
+      ],
+      "board": [
+        "7h",
+        "As",
+        "Ts"
+      ],
+      "capture_age_seconds": 0.1338
+    },
+    {
+      "scenario": "three-tables-observer-without-hero.png",
+      "hero": [],
+      "board": [
+        "7h",
+        "As",
+        "Ts"
+      ],
+      "capture_age_seconds": 0.0393
+    },
+    {
+      "scenario": "three-tables-right_99.png",
+      "hero": [
+        "5c",
+        "2s"
+      ],
+      "board": [],
+      "capture_age_seconds": 0.075
+    },
+    {
+      "scenario": "moved-three-tables-left_99.png",
+      "hero": [
+        "Th",
+        "4d"
+      ],
+      "board": [
+        "7h",
+        "As",
+        "Ts"
+      ],
+      "capture_age_seconds": 0.093
+    },
+    {
+      "scenario": "moved-three-tables-observer-without-hero.png",
+      "hero": [],
+      "board": [
+        "7h",
+        "As",
+        "Ts"
+      ],
+      "capture_age_seconds": 0.0876
+    },
+    {
+      "scenario": "moved-three-tables-right_99.png",
+      "hero": [
+        "5c",
+        "2s"
+      ],
+      "board": [],
+      "capture_age_seconds": 0.0505
+    }
+  ]
+}

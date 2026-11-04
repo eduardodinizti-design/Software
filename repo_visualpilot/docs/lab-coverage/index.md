@@ -1,0 +1,56 @@
+# Auditoria por imagem
+
+{'passed': 46, 'failed': 0, 'missing': 4}
+
+Fonte | Tipo | Resultado
+--- | --- | ---
+[15_0.png](../../tests/fixtures/heldout_cards/15_0.png) | recorded | passed
+[15_1.png](../../tests/fixtures/heldout_cards/15_1.png) | recorded | passed
+[48_0.png](../../tests/fixtures/heldout_cards/48_0.png) | recorded | passed
+[48_1.png](../../tests/fixtures/heldout_cards/48_1.png) | recorded | passed
+[82_0.png](../../tests/fixtures/heldout_cards/82_0.png) | recorded | passed
+[82_1.png](../../tests/fixtures/heldout_cards/82_1.png) | recorded | passed
+[116_0.png](../../tests/fixtures/heldout_cards/116_0.png) | recorded | passed
+[116_1.png](../../tests/fixtures/heldout_cards/116_1.png) | recorded | passed
+[145_0.png](../../tests/fixtures/heldout_cards/145_0.png) | ausente | missing
+[145_1.png](../../tests/fixtures/heldout_cards/145_1.png) | ausente | missing
+[158_0.png](../../tests/fixtures/heldout_cards/158_0.png) | ausente | missing
+[158_1.png](../../tests/fixtures/heldout_cards/158_1.png) | ausente | missing
+[right_99.png](../../tests/fixtures/actions/right_99.png) | recorded | passed
+[left_99.png](../../tests/fixtures/actions/left_99.png) | recorded | passed
+[2h.png](../../tests/fixtures/synthetic_deck/2h.png) | synthetic | passed
+[2d.png](../../tests/fixtures/synthetic_deck/2d.png) | synthetic | passed
+[2c.png](../../tests/fixtures/synthetic_deck/2c.png) | synthetic | passed
+[3h.png](../../tests/fixtures/synthetic_deck/3h.png) | synthetic | passed
+[3d.png](../../tests/fixtures/synthetic_deck/3d.png) | synthetic | passed
+[3c.png](../../tests/fixtures/synthetic_deck/3c.png) | synthetic | passed
+[4s.png](../../tests/fixtures/synthetic_deck/4s.png) | synthetic | passed
+[4h.png](../../tests/fixtures/synthetic_deck/4h.png) | synthetic | passed
+[4c.png](../../tests/fixtures/synthetic_deck/4c.png) | synthetic | passed
+[5s.png](../../tests/fixtures/synthetic_deck/5s.png) | synthetic | passed
+[5h.png](../../tests/fixtures/synthetic_deck/5h.png) | synthetic | passed
+[6s.png](../../tests/fixtures/synthetic_deck/6s.png) | synthetic | passed
+[6h.png](../../tests/fixtures/synthetic_deck/6h.png) | synthetic | passed
+[6d.png](../../tests/fixtures/synthetic_deck/6d.png) | synthetic | passed
+[6c.png](../../tests/fixtures/synthetic_deck/6c.png) | synthetic | passed
+[7s.png](../../tests/fixtures/synthetic_deck/7s.png) | synthetic | passed
+[7c.png](../../tests/fixtures/synthetic_deck/7c.png) | synthetic | passed
+[8s.png](../../tests/fixtures/synthetic_deck/8s.png) | synthetic | passed
+[8d.png](../../tests/fixtures/synthetic_deck/8d.png) | synthetic | passed
+[8c.png](../../tests/fixtures/synthetic_deck/8c.png) | synthetic | passed
+[9s.png](../../tests/fixtures/synthetic_deck/9s.png) | synthetic | passed
+[9h.png](../../tests/fixtures/synthetic_deck/9h.png) | synthetic | passed
+[9d.png](../../tests/fixtures/synthetic_deck/9d.png) | synthetic | passed
+[9c.png](../../tests/fixtures/synthetic_deck/9c.png) | synthetic | passed
+[Td.png](../../tests/fixtures/synthetic_deck/Td.png) | synthetic | passed
+[Tc.png](../../tests/fixtures/synthetic_deck/Tc.png) | synthetic | passed
+[Jh.png](../../tests/fixtures/synthetic_deck/Jh.png) | synthetic | passed
+[Jc.png](../../tests/fixtures/synthetic_deck/Jc.png) | synthetic | passed
+[Qs.png](../../tests/fixtures/synthetic_deck/Qs.png) | synthetic | passed
+[Qd.png](../../tests/fixtures/synthetic_deck/Qd.png) | synthetic | passed
+[Qc.png](../../tests/fixtures/synthetic_deck/Qc.png) | synthetic | passed
+[Ks.png](../../tests/fixtures/synthetic_deck/Ks.png) | synthetic | passed
+[Kh.png](../../tests/fixtures/synthetic_deck/Kh.png) | synthetic | passed
+[Ah.png](../../tests/fixtures/synthetic_deck/Ah.png) | synthetic | passed
+[Ad.png](../../tests/fixtures/synthetic_deck/Ad.png) | synthetic | passed
+[Ac.png](../../tests/fixtures/synthetic_deck/Ac.png) | synthetic | passed

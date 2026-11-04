@@ -1,0 +1,41 @@
+{
+  "status": "failed",
+  "scope": "isolated_browser_not_pppoker",
+  "checks": [
+    {
+      "name": "confirmed-and-restart",
+      "result": {
+        "status": "unknown",
+        "reason": "Recibo não corresponde à inscrição reservada.",
+        "error_type": "ValueError",
+        "token": "d6c8b4f1da6d41e2855770a897468b4b"
+      },
+      "actions": [
+        {
+          "action": "open_details",
+          "id": "T1"
+        },
+        {
+          "action": "open_modal",
+          "id": "T1"
+        },
+        {
+          "action": "confirm",
+          "id": "T1"
+        }
+      ],
+      "registrations": [
+        {
+          "token": "d6c8b4f1da6d41e2855770a897468b4b",
+          "tournament": "T1",
+          "offer": "01",
+          "amount": 50,
+          "bounty": 1,
+          "status": "reserved"
+        }
+      ]
+    }
+  ],
+  "browser_errors": [],
+  "elapsed_seconds": 6.233
+}

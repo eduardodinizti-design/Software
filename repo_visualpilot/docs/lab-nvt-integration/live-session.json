@@ -1,0 +1,3145 @@
+{
+  "mode": "local_live_ocr",
+  "policy": "NVT-preflop-ea758d9",
+  "events": [
+    {
+      "at": "2026-10-30T00:27:07.146Z",
+      "index": 0,
+      "phase": 0,
+      "controlMode": "automatic",
+      "type": "control",
+      "message": "Controle: automático · decisões pendentes invalidadas.",
+      "data": {
+        "mode": "automatic",
+        "revision": 1
+      }
+    },
+    {
+      "at": "2026-10-30T00:27:07.293Z",
+      "index": 0,
+      "phase": 0,
+      "controlMode": "automatic",
+      "type": "control",
+      "message": "Controle: automático · decisões pendentes invalidadas.",
+      "data": {
+        "mode": "automatic",
+        "revision": 2
+      }
+    },
+    {
+      "at": "2026-10-30T00:27:09.024Z",
+      "index": 0,
+      "phase": 0,
+      "controlMode": "automatic",
+      "type": "capture",
+      "message": "Captura · geração 1",
+      "data": {
+        "sha256": "aa9a77fd648718adb3abaaf51094412f1ee0ce14e3b8f2feb801bb540848d1bb",
+        "revision": 2
+      }
+    },
+    {
+      "at": "2026-10-30T00:27:09.628Z",
+      "index": 0,
+      "phase": 1,
+      "controlMode": "automatic",
+      "type": "reading",
+      "message": "OCR: Hero 7d 3s",
+      "data": {
+        "scene": "table",
+        "hero": [
+          "7d",
+          "3s"
+        ],
+        "board": [],
+        "street": null,
+        "hand_id": "261024093320-13552339-0000050-2",
+        "actions": [
+          "Fold",
+          "Call 1 BB"
+        ],
+        "observed_actions": [
+          {
+            "action": "call",
+            "player_label": "Jhavidpino",
+            "player_box": [
+              328,
+              247,
+              112,
+              26
+            ],
+            "badge_box": [
+              407,
+              150,
+              36,
+              22
+            ],
+            "confidence": 0.9919787794351578,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "fold",
+            "player_label": "Chow Mein...",
+            "player_box": [
+              29,
+              466,
+              128,
+              28
+            ],
+            "badge_box": [
+              116,
+              373,
+              38,
+              17
+            ],
+            "confidence": 0.9922107756137848,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "raise",
+            "player_label": "smilekilla",
+            "player_box": [
+              623,
+              469,
+              100,
+              24
+            ],
+            "badge_box": [
+              607,
+              370,
+              53,
+              24
+            ],
+            "confidence": 0.9923843145370483,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "fold",
+            "player_label": "Mihcardoso7",
+            "player_box": [
+              612,
+              776,
+              130,
+              28
+            ],
+            "badge_box": [
+              620,
+              682,
+              39,
+              17
+            ],
+            "confidence": 0.987795278429985,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "call",
+            "player_label": "KenLy",
+            "player_box": [
+              627,
+              1011,
+              68,
+              27
+            ],
+            "badge_box": [
+              615,
+              914,
+              39,
+              22
+            ],
+            "confidence": 0.9932634085416794,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          }
+        ],
+        "hero_buttons": [
+          {
+            "action": "fold",
+            "amount": null,
+            "unit": null,
+            "raw_text": "Fold",
+            "confidence": 0.9944968372583389,
+            "box": [
+              107,
+              1278,
+              57,
+              29
+            ],
+            "amount_status": "not_shown"
+          },
+          {
+            "action": "call",
+            "amount": 1,
+            "unit": "BB",
+            "raw_text": "Call 1 BB",
+            "confidence": 0.9125652511914571,
+            "box": [
+              325,
+              1279,
+              119,
+              27
+            ],
+            "amount_status": "read"
+          }
+        ],
+        "action_pending": true,
+        "status": "partial",
+        "pot": "Pot: 4.5 BB",
+        "hero_stack": "102,6BB",
+        "decision": "Decisão ainda não implementada",
+        "diagnostics": {
+          "hero": {
+            "stage": "recognition",
+            "candidate_count": 1,
+            "card_pair_box": [
+              431,
+              1074,
+              113,
+              110
+            ],
+            "cards": [
+              {
+                "index": 0,
+                "rank_candidate": "7",
+                "rank_confidence": 0.9995778203010559,
+                "suit_candidate": "d",
+                "suit_similarity": 0.7876543209876543,
+                "suit_diagnostics": {
+                  "candidates": [
+                    {
+                      "suit": "d",
+                      "similarity": 0.7876543209876543
+                    }
+                  ],
+                  "method": "four_colour_shape"
+                },
+                "accepted": true,
+                "card": "7d",
+                "rank_box": [
+                  431,
+                  1074,
+                  31,
+                  40
+                ],
+                "suit_box": [
+                  435,
+                  1114,
+                  28,
+                  24
+                ],
+                "rejection": null
+              },
+              {
+                "index": 1,
+                "rank_candidate": "3",
+                "rank_confidence": 0.9958198070526123,
+                "suit_candidate": "s",
+                "suit_similarity": 0.9205607476635514,
+                "suit_diagnostics": {
+                  "candidates": [
+                    {
+                      "suit": "s",
+                      "similarity": 0.9205607476635514
+                    }
+                  ],
+                  "method": "four_colour_shape"
+                },
+                "accepted": true,
+                "card": "3s",
+                "rank_box": [
+                  469,
+                  1074,
+                  31,
+                  40
+                ],
+                "suit_box": [
+                  473,
+                  1114,
+                  28,
+                  24
+                ],
+                "rejection": null
+              }
+            ]
+          },
+          "coordinate_space": "normalized_table",
+          "image_size": [
+            755,
+            1343
+          ],
+          "board": []
+        },
+        "hero_confidence": [
+          {
+            "rank": 0.9995778203010559,
+            "suit_shape": 0.7876543209876543
+          },
+          {
+            "rank": 0.9958198070526123,
+            "suit_shape": 0.9205607476635514
+          }
+        ],
+        "evidence_size": [
+          755,
+          1343
+        ],
+        "evidence": {
+          "hero": [
+            [
+              431,
+              1074,
+              32,
+              64
+            ],
+            [
+              469,
+              1074,
+              32,
+              64
+            ]
+          ],
+          "board": [
+            [
+              135,
+              510,
+              543,
+              161
+            ]
+          ],
+          "observed_actions": [
+            [
+              407,
+              150,
+              36,
+              22
+            ],
+            [
+              328,
+              247,
+              112,
+              26
+            ],
+            [
+              116,
+              373,
+              38,
+              17
+            ],
+            [
+              29,
+              466,
+              128,
+              28
+            ],
+            [
+              607,
+              370,
+              53,
+              24
+            ],
+            [
+              623,
+              469,
+              100,
+              24
+            ],
+            [
+              620,
+              682,
+              39,
+              17
+            ],
+            [
+              612,
+              776,
+              130,
+              28
+            ],
+            [
+              615,
+              914,
+              39,
+              22
+            ],
+            [
+              627,
+              1011,
+              68,
+              27
+            ]
+          ],
+          "actions": [
+            [
+              0,
+              1248,
+              755,
+              94
+            ]
+          ],
+          "hand_id": [
+            [
+              222,
+              889,
+              319,
+              17
+            ]
+          ],
+          "pot": [
+            [
+              318,
+              492,
+              115,
+              23
+            ]
+          ],
+          "hero_stack": [
+            [
+              335,
+              1203,
+              100,
+              27
+            ]
+          ]
+        },
+        "hero_status": "read",
+        "hero_reason": "",
+        "board_status": "unknown",
+        "board_uncertain": true,
+        "board_reason": "Cartas comunitárias não localizadas; pré-flop não comprovado.",
+        "reason": "Cartas comunitárias não localizadas; pré-flop não comprovado."
+      }
+    },
+    {
+      "at": "2026-10-30T00:27:10.230Z",
+      "index": 0,
+      "phase": 2,
+      "controlMode": "automatic",
+      "type": "decision",
+      "message": "Decisão: FOLD",
+      "data": {
+        "status": "found",
+        "options": [
+          {
+            "action": "fold",
+            "frequency": 1
+          }
+        ],
+        "observation": {
+          "table": "laboratory-table",
+          "generation": 1,
+          "frame_sha256": "aa9a77fd648718adb3abaaf51094412f1ee0ce14e3b8f2feb801bb540848d1bb"
+        },
+        "provenance": {
+          "engine_commit": "ea758d9",
+          "generated_at": "2026-10-29T23:56:40.052Z",
+          "validation": {
+            "version": "2026-10-29-223refs",
+            "gate": true
+          },
+          "package_sha256": "9b0be1a64301a60f263d03a3f3641ce5c1c5d854083b90bf702dd85a9182bf03",
+          "node_id": "chip_ev|mid|25|vs_open|BB|BTN|-",
+          "source": {
+            "id": "solver",
+            "label": "HRC (chip EV, todos com 25bb)",
+            "version": "hrc_chip_25-2026-10-26"
+          },
+          "family": "hrc:chip_25"
+        },
+        "range_decision": {
+          "status": "found",
+          "hand": "73o",
+          "mix": [
+            {
+              "action": "fold",
+              "frequency": 1
+            }
+          ],
+          "ev": {
+            "all_in": -0.9946,
+            "three_bet": -0.0822,
+            "call": -0.0658,
+            "fold": 0
+          },
+          "raw_ev": {
+            "all_in": -0.9946,
+            "three_bet": -0.0822,
+            "call": -0.0658,
+            "fold": 0
+          },
+          "ev_unit": "bb",
+          "legal_actions": [
+            "fold",
+            "call",
+            "three_bet",
+            "all_in"
+          ],
+          "sizing_status": "not_exported",
+          "provenance": {
+            "engine_commit": "ea758d9",
+            "generated_at": "2026-10-29T23:56:40.052Z",
+            "validation": {
+              "version": "2026-10-29-223refs",
+              "gate": true
+            },
+            "package_sha256": "9b0be1a64301a60f263d03a3f3641ce5c1c5d854083b90bf702dd85a9182bf03",
+            "node_id": "chip_ev|mid|25|vs_open|BB|BTN|-",
+            "source": {
+              "id": "solver",
+              "label": "HRC (chip EV, todos com 25bb)",
+              "version": "hrc_chip_25-2026-10-26"
+            },
+            "family": "hrc:chip_25"
+          },
+          "scope": "preflop_reference_table",
+          "advisory_only": true
+        },
+        "range_selection": {
+          "action": "fold",
+          "draw": 0.00019125341149232536,
+          "seed": "9b0be1a64301a60f263d03a3f3641ce5c1c5d854083b90bf702dd85a9182bf03:lab-seed-42:case-0",
+          "frequency_sum": 1
+        }
+      }
+    },
+    {
+      "at": "2026-10-30T00:27:10.838Z",
+      "index": 0,
+      "phase": 3,
+      "controlMode": "automatic",
+      "type": "action",
+      "message": "MOTOR acionou FOLD",
+      "data": {
+        "status": "applied",
+        "target": "simulator_only",
+        "generation": 1,
+        "action": "fold",
+        "sizing_bb": null,
+        "actor": "engine",
+        "mode": "automatic",
+        "revision": 2,
+        "grade": {
+          "status": "graded",
+          "correct": true,
+          "in_mix": true,
+          "ev_loss": 0,
+          "ev_unit": "bb",
+          "provenance": {
+            "engine_commit": "ea758d9",
+            "generated_at": "2026-10-29T23:56:40.052Z",
+            "validation": {
+              "version": "2026-10-29-223refs",
+              "gate": true
+            },
+            "package_sha256": "9b0be1a64301a60f263d03a3f3641ce5c1c5d854083b90bf702dd85a9182bf03",
+            "node_id": "chip_ev|mid|25|vs_open|BB|BTN|-",
+            "source": {
+              "id": "solver",
+              "label": "HRC (chip EV, todos com 25bb)",
+              "version": "hrc_chip_25-2026-10-26"
+            },
+            "family": "hrc:chip_25"
+          }
+        },
+        "observation": {
+          "table": "laboratory-table",
+          "generation": 1,
+          "frame_sha256": "aa9a77fd648718adb3abaaf51094412f1ee0ce14e3b8f2feb801bb540848d1bb"
+        }
+      }
+    },
+    {
+      "at": "2026-10-30T00:27:13.953Z",
+      "index": 1,
+      "phase": 0,
+      "controlMode": "automatic",
+      "type": "capture",
+      "message": "Captura · geração 2",
+      "data": {
+        "sha256": "977fb95b075f7c220878c93184b5c6f8c3c46289127e18a7ecc11441d2527e0a",
+        "revision": 2
+      }
+    },
+    {
+      "at": "2026-10-30T00:27:14.555Z",
+      "index": 1,
+      "phase": 1,
+      "controlMode": "automatic",
+      "type": "reading",
+      "message": "OCR: Hero 8h Jd",
+      "data": {
+        "scene": "table",
+        "hero": [
+          "8h",
+          "Jd"
+        ],
+        "board": [],
+        "street": null,
+        "hand_id": "261024093320-13552339-0000050-2",
+        "actions": [
+          "Fold",
+          "Call 1 BB"
+        ],
+        "observed_actions": [
+          {
+            "action": "call",
+            "player_label": "Jhavidpino",
+            "player_box": [
+              328,
+              247,
+              112,
+              26
+            ],
+            "badge_box": [
+              407,
+              150,
+              36,
+              22
+            ],
+            "confidence": 0.9919787794351578,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "fold",
+            "player_label": "Chow Mein...",
+            "player_box": [
+              29,
+              466,
+              128,
+              28
+            ],
+            "badge_box": [
+              116,
+              373,
+              38,
+              17
+            ],
+            "confidence": 0.9922107756137848,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "raise",
+            "player_label": "smilekilla",
+            "player_box": [
+              623,
+              469,
+              100,
+              24
+            ],
+            "badge_box": [
+              607,
+              370,
+              53,
+              24
+            ],
+            "confidence": 0.9923843145370483,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "fold",
+            "player_label": "Mihcardoso7",
+            "player_box": [
+              612,
+              776,
+              130,
+              28
+            ],
+            "badge_box": [
+              620,
+              682,
+              39,
+              17
+            ],
+            "confidence": 0.987795278429985,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "call",
+            "player_label": "KenLy",
+            "player_box": [
+              627,
+              1011,
+              68,
+              27
+            ],
+            "badge_box": [
+              615,
+              914,
+              39,
+              22
+            ],
+            "confidence": 0.9932634085416794,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          }
+        ],
+        "hero_buttons": [
+          {
+            "action": "fold",
+            "amount": null,
+            "unit": null,
+            "raw_text": "Fold",
+            "confidence": 0.9944968372583389,
+            "box": [
+              107,
+              1278,
+              57,
+              29
+            ],
+            "amount_status": "not_shown"
+          },
+          {
+            "action": "call",
+            "amount": 1,
+            "unit": "BB",
+            "raw_text": "Call 1 BB",
+            "confidence": 0.9125652511914571,
+            "box": [
+              325,
+              1279,
+              119,
+              27
+            ],
+            "amount_status": "read"
+          }
+        ],
+        "action_pending": true,
+        "status": "partial",
+        "pot": "Pot: 4.5 BB",
+        "hero_stack": "102,6BB",
+        "decision": "Decisão ainda não implementada",
+        "diagnostics": {
+          "hero": {
+            "stage": "recognition",
+            "candidate_count": 1,
+            "card_pair_box": [
+              431,
+              1074,
+              113,
+              110
+            ],
+            "cards": [
+              {
+                "index": 0,
+                "rank_candidate": "8",
+                "rank_confidence": 0.9939131140708923,
+                "suit_candidate": "h",
+                "suit_similarity": 0.899581589958159,
+                "suit_diagnostics": {
+                  "candidates": [
+                    {
+                      "suit": "h",
+                      "similarity": 0.899581589958159
+                    }
+                  ],
+                  "method": "four_colour_shape"
+                },
+                "accepted": true,
+                "card": "8h",
+                "rank_box": [
+                  431,
+                  1074,
+                  31,
+                  40
+                ],
+                "suit_box": [
+                  435,
+                  1114,
+                  28,
+                  24
+                ],
+                "rejection": null
+              },
+              {
+                "index": 1,
+                "rank_candidate": "J",
+                "rank_confidence": 0.9569417834281921,
+                "suit_candidate": "d",
+                "suit_similarity": 0.7995049504950495,
+                "suit_diagnostics": {
+                  "candidates": [
+                    {
+                      "suit": "d",
+                      "similarity": 0.7995049504950495
+                    }
+                  ],
+                  "method": "four_colour_shape"
+                },
+                "accepted": true,
+                "card": "Jd",
+                "rank_box": [
+                  469,
+                  1074,
+                  31,
+                  40
+                ],
+                "suit_box": [
+                  473,
+                  1114,
+                  28,
+                  24
+                ],
+                "rejection": null
+              }
+            ]
+          },
+          "coordinate_space": "normalized_table",
+          "image_size": [
+            755,
+            1343
+          ],
+          "board": []
+        },
+        "hero_confidence": [
+          {
+            "rank": 0.9939131140708923,
+            "suit_shape": 0.899581589958159
+          },
+          {
+            "rank": 0.9569417834281921,
+            "suit_shape": 0.7995049504950495
+          }
+        ],
+        "evidence_size": [
+          755,
+          1343
+        ],
+        "evidence": {
+          "hero": [
+            [
+              431,
+              1074,
+              32,
+              64
+            ],
+            [
+              469,
+              1074,
+              32,
+              64
+            ]
+          ],
+          "board": [
+            [
+              135,
+              510,
+              543,
+              161
+            ]
+          ],
+          "observed_actions": [
+            [
+              407,
+              150,
+              36,
+              22
+            ],
+            [
+              328,
+              247,
+              112,
+              26
+            ],
+            [
+              116,
+              373,
+              38,
+              17
+            ],
+            [
+              29,
+              466,
+              128,
+              28
+            ],
+            [
+              607,
+              370,
+              53,
+              24
+            ],
+            [
+              623,
+              469,
+              100,
+              24
+            ],
+            [
+              620,
+              682,
+              39,
+              17
+            ],
+            [
+              612,
+              776,
+              130,
+              28
+            ],
+            [
+              615,
+              914,
+              39,
+              22
+            ],
+            [
+              627,
+              1011,
+              68,
+              27
+            ]
+          ],
+          "actions": [
+            [
+              0,
+              1248,
+              755,
+              94
+            ]
+          ],
+          "hand_id": [
+            [
+              222,
+              889,
+              319,
+              17
+            ]
+          ],
+          "pot": [
+            [
+              318,
+              492,
+              115,
+              23
+            ]
+          ],
+          "hero_stack": [
+            [
+              335,
+              1203,
+              100,
+              27
+            ]
+          ]
+        },
+        "hero_status": "read",
+        "hero_reason": "",
+        "board_status": "unknown",
+        "board_uncertain": true,
+        "board_reason": "Cartas comunitárias não localizadas; pré-flop não comprovado.",
+        "reason": "Cartas comunitárias não localizadas; pré-flop não comprovado."
+      }
+    },
+    {
+      "at": "2026-10-30T00:27:15.156Z",
+      "index": 1,
+      "phase": 2,
+      "controlMode": "automatic",
+      "type": "decision",
+      "message": "Decisão: CALL",
+      "data": {
+        "status": "found",
+        "options": [
+          {
+            "action": "call",
+            "frequency": 1,
+            "sizing_bb": 1
+          }
+        ],
+        "observation": {
+          "table": "laboratory-table",
+          "generation": 2,
+          "frame_sha256": "977fb95b075f7c220878c93184b5c6f8c3c46289127e18a7ecc11441d2527e0a"
+        },
+        "provenance": {
+          "engine_commit": "ea758d9",
+          "generated_at": "2026-10-29T23:56:40.052Z",
+          "validation": {
+            "version": "2026-10-29-223refs",
+            "gate": true
+          },
+          "package_sha256": "9b0be1a64301a60f263d03a3f3641ce5c1c5d854083b90bf702dd85a9182bf03",
+          "node_id": "chip_ev|mid|25|vs_open|BB|BTN|-",
+          "source": {
+            "id": "solver",
+            "label": "HRC (chip EV, todos com 25bb)",
+            "version": "hrc_chip_25-2026-10-26"
+          },
+          "family": "hrc:chip_25"
+        },
+        "range_decision": {
+          "status": "found",
+          "hand": "J8o",
+          "mix": [
+            {
+              "action": "call",
+              "frequency": 1
+            }
+          ],
+          "ev": {
+            "all_in": 0.213,
+            "three_bet": 0.3398,
+            "call": 0.4009,
+            "fold": 0
+          },
+          "raw_ev": {
+            "all_in": 0.213,
+            "three_bet": 0.3398,
+            "call": 0.4009,
+            "fold": 0
+          },
+          "ev_unit": "bb",
+          "legal_actions": [
+            "fold",
+            "call",
+            "three_bet",
+            "all_in"
+          ],
+          "sizing_status": "not_exported",
+          "provenance": {
+            "engine_commit": "ea758d9",
+            "generated_at": "2026-10-29T23:56:40.052Z",
+            "validation": {
+              "version": "2026-10-29-223refs",
+              "gate": true
+            },
+            "package_sha256": "9b0be1a64301a60f263d03a3f3641ce5c1c5d854083b90bf702dd85a9182bf03",
+            "node_id": "chip_ev|mid|25|vs_open|BB|BTN|-",
+            "source": {
+              "id": "solver",
+              "label": "HRC (chip EV, todos com 25bb)",
+              "version": "hrc_chip_25-2026-10-26"
+            },
+            "family": "hrc:chip_25"
+          },
+          "scope": "preflop_reference_table",
+          "advisory_only": true
+        },
+        "range_selection": {
+          "action": "call",
+          "draw": 0.362294907064535,
+          "seed": "9b0be1a64301a60f263d03a3f3641ce5c1c5d854083b90bf702dd85a9182bf03:lab-seed-42:case-1",
+          "frequency_sum": 1
+        }
+      }
+    },
+    {
+      "at": "2026-10-30T00:27:15.763Z",
+      "index": 1,
+      "phase": 3,
+      "controlMode": "automatic",
+      "type": "action",
+      "message": "MOTOR acionou CALL",
+      "data": {
+        "status": "applied",
+        "target": "simulator_only",
+        "generation": 2,
+        "action": "call",
+        "sizing_bb": 1,
+        "actor": "engine",
+        "mode": "automatic",
+        "revision": 2,
+        "grade": {
+          "status": "graded",
+          "correct": true,
+          "in_mix": true,
+          "ev_loss": 0,
+          "ev_unit": "bb",
+          "provenance": {
+            "engine_commit": "ea758d9",
+            "generated_at": "2026-10-29T23:56:40.052Z",
+            "validation": {
+              "version": "2026-10-29-223refs",
+              "gate": true
+            },
+            "package_sha256": "9b0be1a64301a60f263d03a3f3641ce5c1c5d854083b90bf702dd85a9182bf03",
+            "node_id": "chip_ev|mid|25|vs_open|BB|BTN|-",
+            "source": {
+              "id": "solver",
+              "label": "HRC (chip EV, todos com 25bb)",
+              "version": "hrc_chip_25-2026-10-26"
+            },
+            "family": "hrc:chip_25"
+          }
+        },
+        "observation": {
+          "table": "laboratory-table",
+          "generation": 2,
+          "frame_sha256": "977fb95b075f7c220878c93184b5c6f8c3c46289127e18a7ecc11441d2527e0a"
+        }
+      }
+    },
+    {
+      "at": "2026-10-30T00:27:18.516Z",
+      "index": 2,
+      "phase": 0,
+      "controlMode": "automatic",
+      "type": "capture",
+      "message": "Captura · geração 3",
+      "data": {
+        "sha256": "f2d1001f239b01405db05d5c010a3375e975e4c4a8d31b19e96190f701453497",
+        "revision": 2
+      }
+    },
+    {
+      "at": "2026-10-30T00:27:19.119Z",
+      "index": 2,
+      "phase": 1,
+      "controlMode": "automatic",
+      "type": "reading",
+      "message": "OCR: Hero 5c 2s",
+      "data": {
+        "scene": "table",
+        "hero": [
+          "5c",
+          "2s"
+        ],
+        "board": [],
+        "street": null,
+        "hand_id": "261024093320-13552339-0000050-2",
+        "actions": [
+          "Fold",
+          "Call 1 BB"
+        ],
+        "observed_actions": [
+          {
+            "action": "call",
+            "player_label": "Jhavidpino",
+            "player_box": [
+              328,
+              247,
+              112,
+              26
+            ],
+            "badge_box": [
+              407,
+              150,
+              36,
+              22
+            ],
+            "confidence": 0.9919787794351578,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "fold",
+            "player_label": "Chow Mein...",
+            "player_box": [
+              29,
+              466,
+              128,
+              28
+            ],
+            "badge_box": [
+              116,
+              373,
+              38,
+              17
+            ],
+            "confidence": 0.9922107756137848,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "raise",
+            "player_label": "smilekilla",
+            "player_box": [
+              623,
+              469,
+              100,
+              24
+            ],
+            "badge_box": [
+              607,
+              370,
+              53,
+              24
+            ],
+            "confidence": 0.9923843145370483,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "fold",
+            "player_label": "Mihcardoso7",
+            "player_box": [
+              612,
+              776,
+              130,
+              28
+            ],
+            "badge_box": [
+              620,
+              682,
+              39,
+              17
+            ],
+            "confidence": 0.987795278429985,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "call",
+            "player_label": "KenLy",
+            "player_box": [
+              627,
+              1011,
+              68,
+              27
+            ],
+            "badge_box": [
+              615,
+              914,
+              39,
+              22
+            ],
+            "confidence": 0.9932634085416794,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          }
+        ],
+        "hero_buttons": [
+          {
+            "action": "fold",
+            "amount": null,
+            "unit": null,
+            "raw_text": "Fold",
+            "confidence": 0.9944968372583389,
+            "box": [
+              107,
+              1278,
+              57,
+              29
+            ],
+            "amount_status": "not_shown"
+          },
+          {
+            "action": "call",
+            "amount": 1,
+            "unit": "BB",
+            "raw_text": "Call 1 BB",
+            "confidence": 0.9125652511914571,
+            "box": [
+              325,
+              1279,
+              119,
+              27
+            ],
+            "amount_status": "read"
+          }
+        ],
+        "action_pending": true,
+        "status": "partial",
+        "pot": "Pot: 4.5 BB",
+        "hero_stack": "102,6BB",
+        "decision": "Decisão ainda não implementada",
+        "diagnostics": {
+          "hero": {
+            "stage": "recognition",
+            "candidate_count": 1,
+            "card_pair_box": [
+              431,
+              1073,
+              113,
+              110
+            ],
+            "cards": [
+              {
+                "index": 0,
+                "rank_candidate": "5",
+                "rank_confidence": 0.9989701509475708,
+                "suit_candidate": "c",
+                "suit_similarity": 0.8802816901408451,
+                "suit_diagnostics": {
+                  "candidates": [
+                    {
+                      "suit": "c",
+                      "similarity": 0.8802816901408451
+                    }
+                  ],
+                  "method": "four_colour_shape"
+                },
+                "accepted": true,
+                "card": "5c",
+                "rank_box": [
+                  431,
+                  1073,
+                  31,
+                  40
+                ],
+                "suit_box": [
+                  435,
+                  1113,
+                  28,
+                  24
+                ],
+                "rejection": null
+              },
+              {
+                "index": 1,
+                "rank_candidate": "2",
+                "rank_confidence": 0.9993446469306946,
+                "suit_candidate": "s",
+                "suit_similarity": 0.9211136890951276,
+                "suit_diagnostics": {
+                  "candidates": [
+                    {
+                      "suit": "s",
+                      "similarity": 0.9211136890951276
+                    }
+                  ],
+                  "method": "four_colour_shape"
+                },
+                "accepted": true,
+                "card": "2s",
+                "rank_box": [
+                  469,
+                  1073,
+                  31,
+                  40
+                ],
+                "suit_box": [
+                  473,
+                  1113,
+                  28,
+                  24
+                ],
+                "rejection": null
+              }
+            ]
+          },
+          "coordinate_space": "normalized_table",
+          "image_size": [
+            755,
+            1343
+          ],
+          "board": []
+        },
+        "hero_confidence": [
+          {
+            "rank": 0.9989701509475708,
+            "suit_shape": 0.8802816901408451
+          },
+          {
+            "rank": 0.9993446469306946,
+            "suit_shape": 0.9211136890951276
+          }
+        ],
+        "evidence_size": [
+          755,
+          1343
+        ],
+        "evidence": {
+          "hero": [
+            [
+              431,
+              1073,
+              32,
+              64
+            ],
+            [
+              469,
+              1073,
+              32,
+              64
+            ]
+          ],
+          "board": [
+            [
+              135,
+              510,
+              543,
+              161
+            ]
+          ],
+          "observed_actions": [
+            [
+              407,
+              150,
+              36,
+              22
+            ],
+            [
+              328,
+              247,
+              112,
+              26
+            ],
+            [
+              116,
+              373,
+              38,
+              17
+            ],
+            [
+              29,
+              466,
+              128,
+              28
+            ],
+            [
+              607,
+              370,
+              53,
+              24
+            ],
+            [
+              623,
+              469,
+              100,
+              24
+            ],
+            [
+              620,
+              682,
+              39,
+              17
+            ],
+            [
+              612,
+              776,
+              130,
+              28
+            ],
+            [
+              615,
+              914,
+              39,
+              22
+            ],
+            [
+              627,
+              1011,
+              68,
+              27
+            ]
+          ],
+          "actions": [
+            [
+              0,
+              1248,
+              755,
+              94
+            ]
+          ],
+          "hand_id": [
+            [
+              222,
+              889,
+              319,
+              17
+            ]
+          ],
+          "pot": [
+            [
+              318,
+              492,
+              115,
+              23
+            ]
+          ],
+          "hero_stack": [
+            [
+              335,
+              1203,
+              100,
+              27
+            ]
+          ]
+        },
+        "hero_status": "read",
+        "hero_reason": "",
+        "board_status": "unknown",
+        "board_uncertain": true,
+        "board_reason": "Cartas comunitárias não localizadas; pré-flop não comprovado.",
+        "reason": "Cartas comunitárias não localizadas; pré-flop não comprovado."
+      }
+    },
+    {
+      "at": "2026-10-30T00:27:19.188Z",
+      "index": 2,
+      "phase": 0,
+      "controlMode": "manual",
+      "type": "control",
+      "message": "Controle: manual · decisões pendentes invalidadas.",
+      "data": {
+        "mode": "manual",
+        "revision": 3
+      }
+    },
+    {
+      "at": "2026-10-30T00:27:20.763Z",
+      "index": 2,
+      "phase": 0,
+      "controlMode": "manual",
+      "type": "capture",
+      "message": "Captura · geração 3",
+      "data": {
+        "sha256": "f2d1001f239b01405db05d5c010a3375e975e4c4a8d31b19e96190f701453497",
+        "revision": 3
+      }
+    },
+    {
+      "at": "2026-10-30T00:27:20.855Z",
+      "index": 2,
+      "phase": 3,
+      "controlMode": "manual",
+      "type": "manual_answer",
+      "message": "Resposta manual avaliada: call · nenhum clique aplicado.",
+      "data": {
+        "status": "evaluated",
+        "action": "call",
+        "actor": "human",
+        "executed": false,
+        "grade": {
+          "status": "graded",
+          "correct": true,
+          "in_mix": true,
+          "ev_loss": 0,
+          "ev_unit": "bb",
+          "provenance": {
+            "engine_commit": "ea758d9",
+            "generated_at": "2026-10-29T23:56:40.052Z",
+            "validation": {
+              "version": "2026-10-29-223refs",
+              "gate": true
+            },
+            "package_sha256": "9b0be1a64301a60f263d03a3f3641ce5c1c5d854083b90bf702dd85a9182bf03",
+            "node_id": "chip_ev|mid|25|vs_open|BB|BTN|-",
+            "source": {
+              "id": "solver",
+              "label": "HRC (chip EV, todos com 25bb)",
+              "version": "hrc_chip_25-2026-10-26"
+            },
+            "family": "hrc:chip_25"
+          }
+        },
+        "observation": {
+          "table": "laboratory-table",
+          "generation": 3,
+          "frame_sha256": "f2d1001f239b01405db05d5c010a3375e975e4c4a8d31b19e96190f701453497"
+        },
+        "revision": 3
+      }
+    },
+    {
+      "at": "2026-10-30T00:27:21.239Z",
+      "index": 2,
+      "phase": 3,
+      "controlMode": "manual",
+      "type": "action",
+      "message": "VOCÊ acionou CALL",
+      "data": {
+        "status": "applied",
+        "target": "simulator_only",
+        "generation": 3,
+        "action": "call",
+        "sizing_bb": 1,
+        "actor": "human",
+        "mode": "manual",
+        "revision": 3,
+        "grade": {
+          "status": "graded",
+          "correct": true,
+          "in_mix": true,
+          "ev_loss": 0,
+          "ev_unit": "bb",
+          "provenance": {
+            "engine_commit": "ea758d9",
+            "generated_at": "2026-10-29T23:56:40.052Z",
+            "validation": {
+              "version": "2026-10-29-223refs",
+              "gate": true
+            },
+            "package_sha256": "9b0be1a64301a60f263d03a3f3641ce5c1c5d854083b90bf702dd85a9182bf03",
+            "node_id": "chip_ev|mid|25|vs_open|BB|BTN|-",
+            "source": {
+              "id": "solver",
+              "label": "HRC (chip EV, todos com 25bb)",
+              "version": "hrc_chip_25-2026-10-26"
+            },
+            "family": "hrc:chip_25"
+          }
+        },
+        "observation": {
+          "table": "laboratory-table",
+          "generation": 3,
+          "frame_sha256": "f2d1001f239b01405db05d5c010a3375e975e4c4a8d31b19e96190f701453497"
+        }
+      }
+    },
+    {
+      "at": "2026-10-30T00:27:21.305Z",
+      "index": 2,
+      "phase": 0,
+      "controlMode": "automatic",
+      "type": "control",
+      "message": "Controle: automático · decisões pendentes invalidadas.",
+      "data": {
+        "mode": "automatic",
+        "revision": 4
+      }
+    },
+    {
+      "at": "2026-10-30T00:27:22.922Z",
+      "index": 3,
+      "phase": 0,
+      "controlMode": "automatic",
+      "type": "capture",
+      "message": "Captura · geração 4",
+      "data": {
+        "sha256": "25fa0b526901e5ecd2ba7a285a8b3486f301fc589bdcc0502fd3f6762ae8db62",
+        "revision": 4
+      }
+    },
+    {
+      "at": "2026-10-30T00:27:23.524Z",
+      "index": 3,
+      "phase": 1,
+      "controlMode": "automatic",
+      "type": "reading",
+      "message": "OCR: Hero Kd Js",
+      "data": {
+        "scene": "table",
+        "hero": [
+          "Kd",
+          "Js"
+        ],
+        "board": [],
+        "street": null,
+        "hand_id": "261024093320-13552339-0000050-2",
+        "actions": [
+          "Fold"
+        ],
+        "observed_actions": [
+          {
+            "action": "call",
+            "player_label": "Jhavidpino",
+            "player_box": [
+              328,
+              247,
+              112,
+              26
+            ],
+            "badge_box": [
+              407,
+              150,
+              36,
+              22
+            ],
+            "confidence": 0.9919787794351578,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "fold",
+            "player_label": "Chow Mein...",
+            "player_box": [
+              29,
+              466,
+              128,
+              28
+            ],
+            "badge_box": [
+              116,
+              373,
+              38,
+              17
+            ],
+            "confidence": 0.9922107756137848,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "raise",
+            "player_label": "smilekilla",
+            "player_box": [
+              623,
+              469,
+              100,
+              24
+            ],
+            "badge_box": [
+              607,
+              370,
+              53,
+              24
+            ],
+            "confidence": 0.9923843145370483,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "fold",
+            "player_label": "Mihcardoso7",
+            "player_box": [
+              612,
+              776,
+              130,
+              28
+            ],
+            "badge_box": [
+              620,
+              682,
+              39,
+              17
+            ],
+            "confidence": 0.987795278429985,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "call",
+            "player_label": "KenLy",
+            "player_box": [
+              627,
+              1011,
+              68,
+              27
+            ],
+            "badge_box": [
+              615,
+              914,
+              39,
+              22
+            ],
+            "confidence": 0.9932634085416794,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          }
+        ],
+        "hero_buttons": [
+          {
+            "action": "fold",
+            "amount": null,
+            "unit": null,
+            "raw_text": "Fold",
+            "confidence": 0.9944968372583389,
+            "box": [
+              107,
+              1278,
+              57,
+              29
+            ],
+            "amount_status": "not_shown"
+          }
+        ],
+        "action_pending": true,
+        "status": "partial",
+        "pot": "Pot: 2.5 BB",
+        "hero_stack": "102,6BB",
+        "decision": "Decisão ainda não implementada",
+        "diagnostics": {
+          "hero": {
+            "stage": "recognition",
+            "candidate_count": 1,
+            "card_pair_box": [
+              431,
+              1073,
+              113,
+              110
+            ],
+            "cards": [
+              {
+                "index": 0,
+                "rank_candidate": "K",
+                "rank_confidence": 0.9638814330101013,
+                "suit_candidate": "d",
+                "suit_similarity": 0.7736318407960199,
+                "suit_diagnostics": {
+                  "candidates": [
+                    {
+                      "suit": "d",
+                      "similarity": 0.7736318407960199
+                    }
+                  ],
+                  "method": "four_colour_shape"
+                },
+                "accepted": true,
+                "card": "Kd",
+                "rank_box": [
+                  431,
+                  1073,
+                  31,
+                  40
+                ],
+                "suit_box": [
+                  435,
+                  1113,
+                  28,
+                  24
+                ],
+                "rejection": null
+              },
+              {
+                "index": 1,
+                "rank_candidate": "J",
+                "rank_confidence": 0.9678471684455872,
+                "suit_candidate": "s",
+                "suit_similarity": 0.9211136890951276,
+                "suit_diagnostics": {
+                  "candidates": [
+                    {
+                      "suit": "s",
+                      "similarity": 0.9211136890951276
+                    }
+                  ],
+                  "method": "four_colour_shape"
+                },
+                "accepted": true,
+                "card": "Js",
+                "rank_box": [
+                  469,
+                  1073,
+                  31,
+                  40
+                ],
+                "suit_box": [
+                  473,
+                  1113,
+                  28,
+                  24
+                ],
+                "rejection": null
+              }
+            ]
+          },
+          "coordinate_space": "normalized_table",
+          "image_size": [
+            755,
+            1343
+          ],
+          "board": []
+        },
+        "hero_confidence": [
+          {
+            "rank": 0.9638814330101013,
+            "suit_shape": 0.7736318407960199
+          },
+          {
+            "rank": 0.9678471684455872,
+            "suit_shape": 0.9211136890951276
+          }
+        ],
+        "evidence_size": [
+          755,
+          1343
+        ],
+        "evidence": {
+          "hero": [
+            [
+              431,
+              1073,
+              32,
+              64
+            ],
+            [
+              469,
+              1073,
+              32,
+              64
+            ]
+          ],
+          "board": [
+            [
+              135,
+              510,
+              543,
+              161
+            ]
+          ],
+          "observed_actions": [
+            [
+              407,
+              150,
+              36,
+              22
+            ],
+            [
+              328,
+              247,
+              112,
+              26
+            ],
+            [
+              116,
+              373,
+              38,
+              17
+            ],
+            [
+              29,
+              466,
+              128,
+              28
+            ],
+            [
+              607,
+              370,
+              53,
+              24
+            ],
+            [
+              623,
+              469,
+              100,
+              24
+            ],
+            [
+              620,
+              682,
+              39,
+              17
+            ],
+            [
+              612,
+              776,
+              130,
+              28
+            ],
+            [
+              615,
+              914,
+              39,
+              22
+            ],
+            [
+              627,
+              1011,
+              68,
+              27
+            ]
+          ],
+          "actions": [
+            [
+              0,
+              1248,
+              755,
+              94
+            ]
+          ],
+          "hand_id": [
+            [
+              222,
+              889,
+              318,
+              17
+            ]
+          ],
+          "pot": [
+            [
+              318,
+              492,
+              115,
+              23
+            ]
+          ],
+          "hero_stack": [
+            [
+              334,
+              1202,
+              99,
+              27
+            ]
+          ]
+        },
+        "hero_status": "read",
+        "hero_reason": "",
+        "board_status": "unknown",
+        "board_uncertain": true,
+        "board_reason": "Cartas comunitárias não localizadas; pré-flop não comprovado.",
+        "reason": "Cartas comunitárias não localizadas; pré-flop não comprovado."
+      }
+    },
+    {
+      "at": "2026-10-30T00:27:24.125Z",
+      "index": 3,
+      "phase": 2,
+      "controlMode": "automatic",
+      "type": "decision",
+      "message": "Ação automática bloqueada.",
+      "data": {
+        "status": "pending",
+        "reason": "Range recomenda raise, mas o sizing não foi exportado ou o botão não foi reconhecido.",
+        "range_decision": {
+          "status": "found",
+          "hand": "KJo",
+          "mix": [
+            {
+              "action": "raise",
+              "frequency": 1
+            }
+          ],
+          "ev": {
+            "raise": 0.5623,
+            "fold": 0
+          },
+          "raw_ev": {
+            "raise": 0.5623,
+            "fold": 0
+          },
+          "ev_unit": "bb",
+          "legal_actions": [
+            "fold",
+            "raise"
+          ],
+          "sizing_status": "not_exported",
+          "provenance": {
+            "engine_commit": "ea758d9",
+            "generated_at": "2026-10-29T23:56:40.052Z",
+            "validation": {
+              "version": "2026-10-29-223refs",
+              "gate": true
+            },
+            "package_sha256": "9b0be1a64301a60f263d03a3f3641ce5c1c5d854083b90bf702dd85a9182bf03",
+            "node_id": "chip_ev|mid|25|open_raise|BTN||-",
+            "source": {
+              "id": "solver",
+              "label": "HRC (chip EV, todos com 25bb)",
+              "version": "hrc_chip_25-2026-10-26"
+            },
+            "family": "hrc:chip_25"
+          },
+          "scope": "preflop_reference_table",
+          "advisory_only": true
+        },
+        "range_selection": {
+          "action": "raise",
+          "draw": 0.12802352372913905,
+          "seed": "9b0be1a64301a60f263d03a3f3641ce5c1c5d854083b90bf702dd85a9182bf03:lab-seed-42:case-3",
+          "frequency_sum": 1
+        }
+      }
+    },
+    {
+      "at": "2026-10-30T00:27:24.187Z",
+      "index": 3,
+      "phase": 0,
+      "controlMode": "manual",
+      "type": "control",
+      "message": "Controle: manual · decisões pendentes invalidadas.",
+      "data": {
+        "mode": "manual",
+        "revision": 5
+      }
+    },
+    {
+      "at": "2026-10-30T00:27:25.696Z",
+      "index": 3,
+      "phase": 0,
+      "controlMode": "manual",
+      "type": "capture",
+      "message": "Captura · geração 4",
+      "data": {
+        "sha256": "25fa0b526901e5ecd2ba7a285a8b3486f301fc589bdcc0502fd3f6762ae8db62",
+        "revision": 5
+      }
+    },
+    {
+      "at": "2026-10-30T00:27:25.771Z",
+      "index": 3,
+      "phase": 3,
+      "controlMode": "manual",
+      "type": "manual_answer",
+      "message": "Resposta manual avaliada: raise · nenhum clique aplicado.",
+      "data": {
+        "status": "evaluated",
+        "action": "raise",
+        "actor": "human",
+        "executed": false,
+        "grade": {
+          "status": "graded",
+          "correct": true,
+          "in_mix": true,
+          "ev_loss": 0,
+          "ev_unit": "bb",
+          "provenance": {
+            "engine_commit": "ea758d9",
+            "generated_at": "2026-10-29T23:56:40.052Z",
+            "validation": {
+              "version": "2026-10-29-223refs",
+              "gate": true
+            },
+            "package_sha256": "9b0be1a64301a60f263d03a3f3641ce5c1c5d854083b90bf702dd85a9182bf03",
+            "node_id": "chip_ev|mid|25|open_raise|BTN||-",
+            "source": {
+              "id": "solver",
+              "label": "HRC (chip EV, todos com 25bb)",
+              "version": "hrc_chip_25-2026-10-26"
+            },
+            "family": "hrc:chip_25"
+          }
+        },
+        "observation": {
+          "table": "laboratory-table",
+          "generation": 4,
+          "frame_sha256": "25fa0b526901e5ecd2ba7a285a8b3486f301fc589bdcc0502fd3f6762ae8db62"
+        },
+        "revision": 5
+      }
+    },
+    {
+      "at": "2026-10-30T00:27:25.837Z",
+      "index": 3,
+      "phase": 0,
+      "controlMode": "automatic",
+      "type": "control",
+      "message": "Controle: automático · decisões pendentes invalidadas.",
+      "data": {
+        "mode": "automatic",
+        "revision": 6
+      }
+    },
+    {
+      "at": "2026-10-30T00:27:27.239Z",
+      "index": 3,
+      "phase": 0,
+      "controlMode": "automatic",
+      "type": "capture",
+      "message": "Captura · geração 4",
+      "data": {
+        "sha256": "25fa0b526901e5ecd2ba7a285a8b3486f301fc589bdcc0502fd3f6762ae8db62",
+        "revision": 6
+      }
+    },
+    {
+      "at": "2026-10-30T00:27:27.841Z",
+      "index": 3,
+      "phase": 1,
+      "controlMode": "automatic",
+      "type": "reading",
+      "message": "OCR: Hero Kd Js",
+      "data": {
+        "scene": "table",
+        "hero": [
+          "Kd",
+          "Js"
+        ],
+        "board": [],
+        "street": null,
+        "hand_id": "261024093320-13552339-0000050-2",
+        "actions": [
+          "Fold"
+        ],
+        "observed_actions": [
+          {
+            "action": "call",
+            "player_label": "Jhavidpino",
+            "player_box": [
+              328,
+              247,
+              112,
+              26
+            ],
+            "badge_box": [
+              407,
+              150,
+              36,
+              22
+            ],
+            "confidence": 0.9919787794351578,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "fold",
+            "player_label": "Chow Mein...",
+            "player_box": [
+              29,
+              466,
+              128,
+              28
+            ],
+            "badge_box": [
+              116,
+              373,
+              38,
+              17
+            ],
+            "confidence": 0.9922107756137848,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "raise",
+            "player_label": "smilekilla",
+            "player_box": [
+              623,
+              469,
+              100,
+              24
+            ],
+            "badge_box": [
+              607,
+              370,
+              53,
+              24
+            ],
+            "confidence": 0.9923843145370483,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "fold",
+            "player_label": "Mihcardoso7",
+            "player_box": [
+              612,
+              776,
+              130,
+              28
+            ],
+            "badge_box": [
+              620,
+              682,
+              39,
+              17
+            ],
+            "confidence": 0.987795278429985,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "call",
+            "player_label": "KenLy",
+            "player_box": [
+              627,
+              1011,
+              68,
+              27
+            ],
+            "badge_box": [
+              615,
+              914,
+              39,
+              22
+            ],
+            "confidence": 0.9932634085416794,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          }
+        ],
+        "hero_buttons": [
+          {
+            "action": "fold",
+            "amount": null,
+            "unit": null,
+            "raw_text": "Fold",
+            "confidence": 0.9944968372583389,
+            "box": [
+              107,
+              1278,
+              57,
+              29
+            ],
+            "amount_status": "not_shown"
+          }
+        ],
+        "action_pending": true,
+        "status": "partial",
+        "pot": "Pot: 2.5 BB",
+        "hero_stack": "102,6BB",
+        "decision": "Decisão ainda não implementada",
+        "diagnostics": {
+          "hero": {
+            "stage": "recognition",
+            "candidate_count": 1,
+            "card_pair_box": [
+              431,
+              1073,
+              113,
+              110
+            ],
+            "cards": [
+              {
+                "index": 0,
+                "rank_candidate": "K",
+                "rank_confidence": 0.9638814330101013,
+                "suit_candidate": "d",
+                "suit_similarity": 0.7736318407960199,
+                "suit_diagnostics": {
+                  "candidates": [
+                    {
+                      "suit": "d",
+                      "similarity": 0.7736318407960199
+                    }
+                  ],
+                  "method": "four_colour_shape"
+                },
+                "accepted": true,
+                "card": "Kd",
+                "rank_box": [
+                  431,
+                  1073,
+                  31,
+                  40
+                ],
+                "suit_box": [
+                  435,
+                  1113,
+                  28,
+                  24
+                ],
+                "rejection": null
+              },
+              {
+                "index": 1,
+                "rank_candidate": "J",
+                "rank_confidence": 0.9678471684455872,
+                "suit_candidate": "s",
+                "suit_similarity": 0.9211136890951276,
+                "suit_diagnostics": {
+                  "candidates": [
+                    {
+                      "suit": "s",
+                      "similarity": 0.9211136890951276
+                    }
+                  ],
+                  "method": "four_colour_shape"
+                },
+                "accepted": true,
+                "card": "Js",
+                "rank_box": [
+                  469,
+                  1073,
+                  31,
+                  40
+                ],
+                "suit_box": [
+                  473,
+                  1113,
+                  28,
+                  24
+                ],
+                "rejection": null
+              }
+            ]
+          },
+          "coordinate_space": "normalized_table",
+          "image_size": [
+            755,
+            1343
+          ],
+          "board": []
+        },
+        "hero_confidence": [
+          {
+            "rank": 0.9638814330101013,
+            "suit_shape": 0.7736318407960199
+          },
+          {
+            "rank": 0.9678471684455872,
+            "suit_shape": 0.9211136890951276
+          }
+        ],
+        "evidence_size": [
+          755,
+          1343
+        ],
+        "evidence": {
+          "hero": [
+            [
+              431,
+              1073,
+              32,
+              64
+            ],
+            [
+              469,
+              1073,
+              32,
+              64
+            ]
+          ],
+          "board": [
+            [
+              135,
+              510,
+              543,
+              161
+            ]
+          ],
+          "observed_actions": [
+            [
+              407,
+              150,
+              36,
+              22
+            ],
+            [
+              328,
+              247,
+              112,
+              26
+            ],
+            [
+              116,
+              373,
+              38,
+              17
+            ],
+            [
+              29,
+              466,
+              128,
+              28
+            ],
+            [
+              607,
+              370,
+              53,
+              24
+            ],
+            [
+              623,
+              469,
+              100,
+              24
+            ],
+            [
+              620,
+              682,
+              39,
+              17
+            ],
+            [
+              612,
+              776,
+              130,
+              28
+            ],
+            [
+              615,
+              914,
+              39,
+              22
+            ],
+            [
+              627,
+              1011,
+              68,
+              27
+            ]
+          ],
+          "actions": [
+            [
+              0,
+              1248,
+              755,
+              94
+            ]
+          ],
+          "hand_id": [
+            [
+              222,
+              889,
+              318,
+              17
+            ]
+          ],
+          "pot": [
+            [
+              318,
+              492,
+              115,
+              23
+            ]
+          ],
+          "hero_stack": [
+            [
+              334,
+              1202,
+              99,
+              27
+            ]
+          ]
+        },
+        "hero_status": "read",
+        "hero_reason": "",
+        "board_status": "unknown",
+        "board_uncertain": true,
+        "board_reason": "Cartas comunitárias não localizadas; pré-flop não comprovado.",
+        "reason": "Cartas comunitárias não localizadas; pré-flop não comprovado."
+      }
+    },
+    {
+      "at": "2026-10-30T00:27:28.442Z",
+      "index": 3,
+      "phase": 2,
+      "controlMode": "automatic",
+      "type": "decision",
+      "message": "Ação automática bloqueada.",
+      "data": {
+        "status": "pending",
+        "reason": "Range recomenda raise, mas o sizing não foi exportado ou o botão não foi reconhecido.",
+        "range_decision": {
+          "status": "found",
+          "hand": "KJo",
+          "mix": [
+            {
+              "action": "raise",
+              "frequency": 1
+            }
+          ],
+          "ev": {
+            "raise": 0.5623,
+            "fold": 0
+          },
+          "raw_ev": {
+            "raise": 0.5623,
+            "fold": 0
+          },
+          "ev_unit": "bb",
+          "legal_actions": [
+            "fold",
+            "raise"
+          ],
+          "sizing_status": "not_exported",
+          "provenance": {
+            "engine_commit": "ea758d9",
+            "generated_at": "2026-10-29T23:56:40.052Z",
+            "validation": {
+              "version": "2026-10-29-223refs",
+              "gate": true
+            },
+            "package_sha256": "9b0be1a64301a60f263d03a3f3641ce5c1c5d854083b90bf702dd85a9182bf03",
+            "node_id": "chip_ev|mid|25|open_raise|BTN||-",
+            "source": {
+              "id": "solver",
+              "label": "HRC (chip EV, todos com 25bb)",
+              "version": "hrc_chip_25-2026-10-26"
+            },
+            "family": "hrc:chip_25"
+          },
+          "scope": "preflop_reference_table",
+          "advisory_only": true
+        },
+        "range_selection": {
+          "action": "raise",
+          "draw": 0.12802352372913905,
+          "seed": "9b0be1a64301a60f263d03a3f3641ce5c1c5d854083b90bf702dd85a9182bf03:lab-seed-42:case-3",
+          "frequency_sum": 1
+        }
+      }
+    },
+    {
+      "at": "2026-10-30T00:27:29.043Z",
+      "index": 3,
+      "phase": 3,
+      "controlMode": "automatic",
+      "type": "blocked",
+      "message": "Execução bloqueada: Range recomenda raise, mas o sizing não foi exportado ou o botão não foi reconhecido.",
+      "data": null
+    },
+    {
+      "at": "2026-10-30T00:27:31.467Z",
+      "index": 4,
+      "phase": 0,
+      "controlMode": "automatic",
+      "type": "capture",
+      "message": "Captura · geração 5",
+      "data": {
+        "sha256": "a8fa0165b998ce66b77ee0f83f1e24201aa064222643be95798b5afa2b260927",
+        "revision": 6
+      }
+    },
+    {
+      "at": "2026-10-30T00:27:32.070Z",
+      "index": 4,
+      "phase": 1,
+      "controlMode": "automatic",
+      "type": "reading",
+      "message": "OCR: Hero 8h Jd",
+      "data": {
+        "scene": "table",
+        "hero": [
+          "8h",
+          "Jd"
+        ],
+        "board": [],
+        "street": null,
+        "hand_id": "261024093320-13552339-0000050-2",
+        "actions": [
+          "Check"
+        ],
+        "observed_actions": [
+          {
+            "action": "call",
+            "player_label": "Jhavidpino",
+            "player_box": [
+              328,
+              247,
+              112,
+              26
+            ],
+            "badge_box": [
+              407,
+              150,
+              36,
+              22
+            ],
+            "confidence": 0.9919787794351578,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "fold",
+            "player_label": "Chow Mein...",
+            "player_box": [
+              29,
+              466,
+              128,
+              28
+            ],
+            "badge_box": [
+              117,
+              374,
+              35,
+              15
+            ],
+            "confidence": 0.9909552782773972,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "raise",
+            "player_label": "smilekilla",
+            "player_box": [
+              623,
+              469,
+              100,
+              24
+            ],
+            "badge_box": [
+              607,
+              370,
+              53,
+              24
+            ],
+            "confidence": 0.9923843145370483,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "fold",
+            "player_label": "Mihcardoso7",
+            "player_box": [
+              612,
+              776,
+              130,
+              28
+            ],
+            "badge_box": [
+              620,
+              682,
+              39,
+              17
+            ],
+            "confidence": 0.987795278429985,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          },
+          {
+            "action": "call",
+            "player_label": "KenLy",
+            "player_box": [
+              627,
+              1011,
+              68,
+              27
+            ],
+            "badge_box": [
+              615,
+              914,
+              39,
+              22
+            ],
+            "confidence": 0.9932634085416794,
+            "evidence": "visible_badge",
+            "amount": null,
+            "player_id": null,
+            "performed_at": null,
+            "action_street": null
+          }
+        ],
+        "hero_buttons": [
+          {
+            "action": "check",
+            "amount": null,
+            "unit": null,
+            "raw_text": "Check",
+            "confidence": 0.9939853310585022,
+            "box": [
+              97,
+              1279,
+              78,
+              28
+            ],
+            "amount_status": "not_shown"
+          }
+        ],
+        "action_pending": true,
+        "status": "partial",
+        "pot": "Pot: 3.0 BB",
+        "hero_stack": "102,6BB",
+        "decision": "Decisão ainda não implementada",
+        "diagnostics": {
+          "hero": {
+            "stage": "recognition",
+            "candidate_count": 1,
+            "card_pair_box": [
+              431,
+              1074,
+              113,
+              110
+            ],
+            "cards": [
+              {
+                "index": 0,
+                "rank_candidate": "8",
+                "rank_confidence": 0.9939131140708923,
+                "suit_candidate": "h",
+                "suit_similarity": 0.899581589958159,
+                "suit_diagnostics": {
+                  "candidates": [
+                    {
+                      "suit": "h",
+                      "similarity": 0.899581589958159
+                    }
+                  ],
+                  "method": "four_colour_shape"
+                },
+                "accepted": true,
+                "card": "8h",
+                "rank_box": [
+                  431,
+                  1074,
+                  31,
+                  40
+                ],
+                "suit_box": [
+                  435,
+                  1114,
+                  28,
+                  24
+                ],
+                "rejection": null
+              },
+              {
+                "index": 1,
+                "rank_candidate": "J",
+                "rank_confidence": 0.9569417834281921,
+                "suit_candidate": "d",
+                "suit_similarity": 0.7995049504950495,
+                "suit_diagnostics": {
+                  "candidates": [
+                    {
+                      "suit": "d",
+                      "similarity": 0.7995049504950495
+                    }
+                  ],
+                  "method": "four_colour_shape"
+                },
+                "accepted": true,
+                "card": "Jd",
+                "rank_box": [
+                  469,
+                  1074,
+                  31,
+                  40
+                ],
+                "suit_box": [
+                  473,
+                  1114,
+                  28,
+                  24
+                ],
+                "rejection": null
+              }
+            ]
+          },
+          "coordinate_space": "normalized_table",
+          "image_size": [
+            755,
+            1343
+          ],
+          "board": []
+        },
+        "hero_confidence": [
+          {
+            "rank": 0.9939131140708923,
+            "suit_shape": 0.899581589958159
+          },
+          {
+            "rank": 0.9569417834281921,
+            "suit_shape": 0.7995049504950495
+          }
+        ],
+        "evidence_size": [
+          755,
+          1343
+        ],
+        "evidence": {
+          "hero": [
+            [
+              431,
+              1074,
+              32,
+              64
+            ],
+            [
+              469,
+              1074,
+              32,
+              64
+            ]
+          ],
+          "board": [
+            [
+              135,
+              510,
+              543,
+              161
+            ]
+          ],
+          "observed_actions": [
+            [
+              407,
+              150,
+              36,
+              22
+            ],
+            [
+              328,
+              247,
+              112,
+              26
+            ],
+            [
+              117,
+              374,
+              35,
+              15
+            ],
+            [
+              29,
+              466,
+              128,
+              28
+            ],
+            [
+              607,
+              370,
+              53,
+              24
+            ],
+            [
+              623,
+              469,
+              100,
+              24
+            ],
+            [
+              620,
+              682,
+              39,
+              17
+            ],
+            [
+              612,
+              776,
+              130,
+              28
+            ],
+            [
+              615,
+              914,
+              39,
+              22
+            ],
+            [
+              627,
+              1011,
+              68,
+              27
+            ]
+          ],
+          "actions": [
+            [
+              0,
+              1248,
+              755,
+              94
+            ]
+          ],
+          "hand_id": [
+            [
+              222,
+              889,
+              318,
+              17
+            ]
+          ],
+          "pot": [
+            [
+              318,
+              492,
+              115,
+              23
+            ]
+          ],
+          "hero_stack": [
+            [
+              335,
+              1203,
+              100,
+              27
+            ]
+          ]
+        },
+        "hero_status": "read",
+        "hero_reason": "",
+        "board_status": "unknown",
+        "board_uncertain": true,
+        "board_reason": "Cartas comunitárias não localizadas; pré-flop não comprovado.",
+        "reason": "Cartas comunitárias não localizadas; pré-flop não comprovado."
+      }
+    },
+    {
+      "at": "2026-10-30T00:27:32.671Z",
+      "index": 4,
+      "phase": 2,
+      "controlMode": "automatic",
+      "type": "decision",
+      "message": "Decisão: CHECK",
+      "data": {
+        "status": "found",
+        "options": [
+          {
+            "action": "check",
+            "frequency": 1
+          }
+        ],
+        "observation": {
+          "table": "laboratory-table",
+          "generation": 5,
+          "frame_sha256": "a8fa0165b998ce66b77ee0f83f1e24201aa064222643be95798b5afa2b260927"
+        },
+        "provenance": {
+          "engine_commit": "ea758d9",
+          "generated_at": "2026-10-29T23:56:40.052Z",
+          "validation": {
+            "version": "2026-10-29-223refs",
+            "gate": true
+          },
+          "package_sha256": "9b0be1a64301a60f263d03a3f3641ce5c1c5d854083b90bf702dd85a9182bf03",
+          "node_id": "chip_ev|mid|25|vs_limp|BB||-",
+          "source": {
+            "id": "solver",
+            "label": "HRC (chip EV, todos com 25bb)",
+            "version": "hrc_chip_25-2026-10-26"
+          },
+          "family": "hrc:chip_25"
+        },
+        "range_decision": {
+          "status": "found",
+          "hand": "J8o",
+          "mix": [
+            {
+              "action": "check",
+              "frequency": 1
+            }
+          ],
+          "ev": {
+            "all_in": -0.14,
+            "raise": -0.01,
+            "check": 0
+          },
+          "raw_ev": {
+            "all_in": -0.14,
+            "raise": -0.01,
+            "check": 0
+          },
+          "ev_unit": "bb",
+          "legal_actions": [
+            "check",
+            "raise",
+            "all_in"
+          ],
+          "sizing_status": "not_exported",
+          "provenance": {
+            "engine_commit": "ea758d9",
+            "generated_at": "2026-10-29T23:56:40.052Z",
+            "validation": {
+              "version": "2026-10-29-223refs",
+              "gate": true
+            },
+            "package_sha256": "9b0be1a64301a60f263d03a3f3641ce5c1c5d854083b90bf702dd85a9182bf03",
+            "node_id": "chip_ev|mid|25|vs_limp|BB||-",
+            "source": {
+              "id": "solver",
+              "label": "HRC (chip EV, todos com 25bb)",
+              "version": "hrc_chip_25-2026-10-26"
+            },
+            "family": "hrc:chip_25"
+          },
+          "scope": "preflop_reference_table",
+          "advisory_only": true
+        },
+        "range_selection": {
+          "action": "check",
+          "draw": 0.19139083799064263,
+          "seed": "9b0be1a64301a60f263d03a3f3641ce5c1c5d854083b90bf702dd85a9182bf03:lab-seed-42:case-4",
+          "frequency_sum": 1
+        }
+      }
+    },
+    {
+      "at": "2026-10-30T00:27:33.276Z",
+      "index": 4,
+      "phase": 3,
+      "controlMode": "automatic",
+      "type": "action",
+      "message": "MOTOR acionou CHECK",
+      "data": {
+        "status": "applied",
+        "target": "simulator_only",
+        "generation": 5,
+        "action": "check",
+        "sizing_bb": null,
+        "actor": "engine",
+        "mode": "automatic",
+        "revision": 6,
+        "grade": {
+          "status": "graded",
+          "correct": true,
+          "in_mix": true,
+          "ev_loss": 0,
+          "ev_unit": "bb",
+          "provenance": {
+            "engine_commit": "ea758d9",
+            "generated_at": "2026-10-29T23:56:40.052Z",
+            "validation": {
+              "version": "2026-10-29-223refs",
+              "gate": true
+            },
+            "package_sha256": "9b0be1a64301a60f263d03a3f3641ce5c1c5d854083b90bf702dd85a9182bf03",
+            "node_id": "chip_ev|mid|25|vs_limp|BB||-",
+            "source": {
+              "id": "solver",
+              "label": "HRC (chip EV, todos com 25bb)",
+              "version": "hrc_chip_25-2026-10-26"
+            },
+            "family": "hrc:chip_25"
+          }
+        },
+        "observation": {
+          "table": "laboratory-table",
+          "generation": 5,
+          "frame_sha256": "a8fa0165b998ce66b77ee0f83f1e24201aa064222643be95798b5afa2b260927"
+        }
+      }
+    },
+    {
+      "at": "2026-10-30T00:27:33.878Z",
+      "index": 5,
+      "phase": 4,
+      "controlMode": "automatic",
+      "type": "finished",
+      "message": "Roteiro concluído.",
+      "data": null
+    }
+  ]
+}

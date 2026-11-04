@@ -1,0 +1,2 @@
+{"action": "increase", "point": [284.5, 766.0], "image_point": [284.5, 766.0], "applied": true, "reason": null, "image": "capture-001.png", "pixels_sha256": "9d483b1f84cbc28e6fd168b402dc1062dc2e7f1be7a1a8e06338355bdb542dd7"}
+{"action": "register", "point": [404.0, 766.0], "image_point": [404.0, 766.0], "applied": true, "reason": null, "image": "capture-002.png", "pixels_sha256": "94af0bc428dafc8b155035c3e53023d9c8bc273fdf6e98ed6ce284a2c63cd73b"}

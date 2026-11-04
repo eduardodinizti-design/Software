@@ -1,0 +1,111 @@
+[
+  {
+    "file": "cycle-1-repeat.log",
+    "tests": 3,
+    "duration_seconds": 9.097,
+    "passed": true,
+    "timings": []
+  },
+  {
+    "file": "cycle-1.log",
+    "tests": 3,
+    "duration_seconds": 10.512,
+    "passed": true,
+    "timings": []
+  },
+  {
+    "file": "cycle-2-after.log",
+    "tests": 2,
+    "duration_seconds": 8.285,
+    "passed": true,
+    "timings": []
+  },
+  {
+    "file": "cycle-2-before.log",
+    "tests": 1,
+    "duration_seconds": 0.001,
+    "passed": false,
+    "timings": []
+  },
+  {
+    "file": "cycle-3-after.log",
+    "tests": 2,
+    "duration_seconds": 4.485,
+    "passed": false,
+    "timings": []
+  },
+  {
+    "file": "cycle-3-before.log",
+    "tests": 1,
+    "duration_seconds": 0.002,
+    "passed": false,
+    "timings": []
+  },
+  {
+    "file": "cycle-3-repeat.log",
+    "tests": 2,
+    "duration_seconds": 9.193,
+    "passed": true,
+    "timings": []
+  },
+  {
+    "file": "cycle-4-repeat.log",
+    "tests": 2,
+    "duration_seconds": 8.921,
+    "passed": true,
+    "timings": []
+  },
+  {
+    "file": "cycle-4.log",
+    "tests": 2,
+    "duration_seconds": 9.048,
+    "passed": true,
+    "timings": []
+  },
+  {
+    "file": "cycle-5-full.log",
+    "tests": 154,
+    "duration_seconds": 55.193,
+    "passed": true,
+    "timings": [
+      {
+        "scenario": "right_99.png",
+        "partial_seconds": 2.611,
+        "complete_seconds": 4.979
+      },
+      {
+        "scenario": "left_99.png",
+        "partial_seconds": 0.292,
+        "complete_seconds": 2.504
+      },
+      {
+        "scenario": "board-only-change",
+        "partial_seconds": 0.293,
+        "complete_seconds": 2.142
+      }
+    ]
+  },
+  {
+    "file": "cycle-5-repeat.log",
+    "tests": 154,
+    "duration_seconds": 49.313,
+    "passed": true,
+    "timings": [
+      {
+        "scenario": "right_99.png",
+        "partial_seconds": 1.318,
+        "complete_seconds": 3.469
+      },
+      {
+        "scenario": "left_99.png",
+        "partial_seconds": 0.282,
+        "complete_seconds": 2.338
+      },
+      {
+        "scenario": "board-only-change",
+        "partial_seconds": 0.29,
+        "complete_seconds": 1.878
+      }
+    ]
+  }
+]

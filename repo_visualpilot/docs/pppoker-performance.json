@@ -1,0 +1,39 @@
+{
+  "scope": "Linux; recortes reais repetidos como seis mesas virtuais; sem descoberta, captura ou GUI Windows.",
+  "results": [
+    {
+      "tables": 6,
+      "workers": 2,
+      "recognized": 6,
+      "confirmed": 6,
+      "all_first_seconds": 14.22301980300108,
+      "all_confirmed_seconds": 14.22942074299499,
+      "fresh_at_finish": 6,
+      "ocr_latency_median_seconds": 3.872632603000966,
+      "ocr_latency_max_seconds": 4.736001163997571,
+      "metrics": {
+        "ocr": 7,
+        "cached": 22,
+        "stale": 1,
+        "errors": 0,
+        "workers": 2,
+        "warmup_start_seconds": 0.036,
+        "coverage": {
+          "published": 29,
+          "hero_read": 28,
+          "board_read": 0,
+          "street_unknown": 29,
+          "hero_confirmed": 22,
+          "board_confirmed": 0
+        },
+        "evidence_images": 5,
+        "evidence_bytes": 5340883,
+        "evidence_limit_bytes": 268435456,
+        "replaced": 133,
+        "overflow": 0,
+        "expired": 0,
+        "highwater": 6
+      }
+    }
+  ]
+}

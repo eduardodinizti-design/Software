@@ -1,0 +1,272 @@
+[
+  {
+    "bounty": 0,
+    "hero_covers": false,
+    "chosen": "fold",
+    "ev": {
+      "fold": 0,
+      "call": -3.75
+    },
+    "pko": {
+      "hero_stack": 10,
+      "villain_stack": 20,
+      "hero_bounty": 8,
+      "villain_bounty": 0,
+      "cash_fraction": 0.5,
+      "bb_per_currency": 2,
+      "conversion_source": "synthetic-fixed-rate",
+      "currency": "LAB",
+      "hero_covers": false,
+      "villain_covers": true,
+      "utility": "chip_ev_plus_immediate_cash_bounty_conversion",
+      "excludes": [
+        "ICM",
+        "future_progressive_bounty_value",
+        "multiway_side_pots"
+      ]
+    }
+  },
+  {
+    "bounty": 0,
+    "hero_covers": true,
+    "chosen": "fold",
+    "ev": {
+      "fold": 0,
+      "call": -3.75
+    },
+    "pko": {
+      "hero_stack": 20,
+      "villain_stack": 10,
+      "hero_bounty": 8,
+      "villain_bounty": 0,
+      "cash_fraction": 0.5,
+      "bb_per_currency": 2,
+      "conversion_source": "synthetic-fixed-rate",
+      "currency": "LAB",
+      "hero_covers": true,
+      "villain_covers": false,
+      "utility": "chip_ev_plus_immediate_cash_bounty_conversion",
+      "excludes": [
+        "ICM",
+        "future_progressive_bounty_value",
+        "multiway_side_pots"
+      ]
+    }
+  },
+  {
+    "bounty": 5,
+    "hero_covers": false,
+    "chosen": "fold",
+    "ev": {
+      "fold": 0,
+      "call": -3.75
+    },
+    "pko": {
+      "hero_stack": 10,
+      "villain_stack": 20,
+      "hero_bounty": 8,
+      "villain_bounty": 5,
+      "cash_fraction": 0.5,
+      "bb_per_currency": 2,
+      "conversion_source": "synthetic-fixed-rate",
+      "currency": "LAB",
+      "hero_covers": false,
+      "villain_covers": true,
+      "utility": "chip_ev_plus_immediate_cash_bounty_conversion",
+      "excludes": [
+        "ICM",
+        "future_progressive_bounty_value",
+        "multiway_side_pots"
+      ]
+    }
+  },
+  {
+    "bounty": 5,
+    "hero_covers": true,
+    "chosen": "fold",
+    "ev": {
+      "fold": 0,
+      "call": -2.5
+    },
+    "pko": {
+      "hero_stack": 20,
+      "villain_stack": 10,
+      "hero_bounty": 8,
+      "villain_bounty": 5,
+      "cash_fraction": 0.5,
+      "bb_per_currency": 2,
+      "conversion_source": "synthetic-fixed-rate",
+      "currency": "LAB",
+      "hero_covers": true,
+      "villain_covers": false,
+      "utility": "chip_ev_plus_immediate_cash_bounty_conversion",
+      "excludes": [
+        "ICM",
+        "future_progressive_bounty_value",
+        "multiway_side_pots"
+      ]
+    }
+  },
+  {
+    "bounty": 10,
+    "hero_covers": false,
+    "chosen": "fold",
+    "ev": {
+      "fold": 0,
+      "call": -3.75
+    },
+    "pko": {
+      "hero_stack": 10,
+      "villain_stack": 20,
+      "hero_bounty": 8,
+      "villain_bounty": 10,
+      "cash_fraction": 0.5,
+      "bb_per_currency": 2,
+      "conversion_source": "synthetic-fixed-rate",
+      "currency": "LAB",
+      "hero_covers": false,
+      "villain_covers": true,
+      "utility": "chip_ev_plus_immediate_cash_bounty_conversion",
+      "excludes": [
+        "ICM",
+        "future_progressive_bounty_value",
+        "multiway_side_pots"
+      ]
+    }
+  },
+  {
+    "bounty": 10,
+    "hero_covers": true,
+    "chosen": "fold",
+    "ev": {
+      "fold": 0,
+      "call": -1.25
+    },
+    "pko": {
+      "hero_stack": 20,
+      "villain_stack": 10,
+      "hero_bounty": 8,
+      "villain_bounty": 10,
+      "cash_fraction": 0.5,
+      "bb_per_currency": 2,
+      "conversion_source": "synthetic-fixed-rate",
+      "currency": "LAB",
+      "hero_covers": true,
+      "villain_covers": false,
+      "utility": "chip_ev_plus_immediate_cash_bounty_conversion",
+      "excludes": [
+        "ICM",
+        "future_progressive_bounty_value",
+        "multiway_side_pots"
+      ]
+    }
+  },
+  {
+    "bounty": 20,
+    "hero_covers": false,
+    "chosen": "fold",
+    "ev": {
+      "fold": 0,
+      "call": -3.75
+    },
+    "pko": {
+      "hero_stack": 10,
+      "villain_stack": 20,
+      "hero_bounty": 8,
+      "villain_bounty": 20,
+      "cash_fraction": 0.5,
+      "bb_per_currency": 2,
+      "conversion_source": "synthetic-fixed-rate",
+      "currency": "LAB",
+      "hero_covers": false,
+      "villain_covers": true,
+      "utility": "chip_ev_plus_immediate_cash_bounty_conversion",
+      "excludes": [
+        "ICM",
+        "future_progressive_bounty_value",
+        "multiway_side_pots"
+      ]
+    }
+  },
+  {
+    "bounty": 20,
+    "hero_covers": true,
+    "chosen": "call",
+    "ev": {
+      "fold": 0,
+      "call": 1.25
+    },
+    "pko": {
+      "hero_stack": 20,
+      "villain_stack": 10,
+      "hero_bounty": 8,
+      "villain_bounty": 20,
+      "cash_fraction": 0.5,
+      "bb_per_currency": 2,
+      "conversion_source": "synthetic-fixed-rate",
+      "currency": "LAB",
+      "hero_covers": true,
+      "villain_covers": false,
+      "utility": "chip_ev_plus_immediate_cash_bounty_conversion",
+      "excludes": [
+        "ICM",
+        "future_progressive_bounty_value",
+        "multiway_side_pots"
+      ]
+    }
+  },
+  {
+    "bounty": 40,
+    "hero_covers": false,
+    "chosen": "fold",
+    "ev": {
+      "fold": 0,
+      "call": -3.75
+    },
+    "pko": {
+      "hero_stack": 10,
+      "villain_stack": 20,
+      "hero_bounty": 8,
+      "villain_bounty": 40,
+      "cash_fraction": 0.5,
+      "bb_per_currency": 2,
+      "conversion_source": "synthetic-fixed-rate",
+      "currency": "LAB",
+      "hero_covers": false,
+      "villain_covers": true,
+      "utility": "chip_ev_plus_immediate_cash_bounty_conversion",
+      "excludes": [
+        "ICM",
+        "future_progressive_bounty_value",
+        "multiway_side_pots"
+      ]
+    }
+  },
+  {
+    "bounty": 40,
+    "hero_covers": true,
+    "chosen": "call",
+    "ev": {
+      "fold": 0,
+      "call": 6.25
+    },
+    "pko": {
+      "hero_stack": 20,
+      "villain_stack": 10,
+      "hero_bounty": 8,
+      "villain_bounty": 40,
+      "cash_fraction": 0.5,
+      "bb_per_currency": 2,
+      "conversion_source": "synthetic-fixed-rate",
+      "currency": "LAB",
+      "hero_covers": true,
+      "villain_covers": false,
+      "utility": "chip_ev_plus_immediate_cash_bounty_conversion",
+      "excludes": [
+        "ICM",
+        "future_progressive_bounty_value",
+        "multiway_side_pots"
+      ]
+    }
+  }
+]

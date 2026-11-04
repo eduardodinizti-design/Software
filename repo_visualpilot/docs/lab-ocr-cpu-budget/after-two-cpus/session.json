@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "mode": "pppoker_observation_only",
+  "started_at": "2026-10-30T23:32:56.449824+00:00",
+  "workers": 2,
+  "layout": "portrait_blue_four_colour",
+  "source": "recovered-perception-consolidated-dev4"
+}

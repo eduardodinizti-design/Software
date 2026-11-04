@@ -1,0 +1,130 @@
+{
+  "video": "2026-10-24 09-26-02.mp4",
+  "label_method": "Manual visual inspection before running new reader",
+  "held_out_from_tuning": true,
+  "independent_video": false,
+  "left_crop": [
+    743,
+    54,
+    835,
+    1485
+  ],
+  "right_crop": [
+    1559,
+    52,
+    835,
+    1485
+  ],
+  "cases": {
+    "15_0": {
+      "hero": [
+        "7d",
+        "3s"
+      ],
+      "board": []
+    },
+    "15_1": {
+      "hero": [
+        "Kd",
+        "Js"
+      ],
+      "board": [
+        "Ts",
+        "Th",
+        "Qh"
+      ]
+    },
+    "48_0": {
+      "hero": [
+        "8h",
+        "Jd"
+      ],
+      "board": []
+    },
+    "48_1": {
+      "hero": [
+        "Kd",
+        "Js"
+      ],
+      "board": [
+        "Ts",
+        "Th",
+        "Qh",
+        "5d"
+      ]
+    },
+    "82_0": {
+      "hero": [
+        "Th",
+        "4d"
+      ],
+      "board": []
+    },
+    "82_1": {
+      "hero": [
+        "5c",
+        "2s"
+      ],
+      "board": []
+    },
+    "116_0": {
+      "hero": [
+        "Th",
+        "4d"
+      ],
+      "board": [
+        "7h",
+        "As",
+        "Ts",
+        "Kd",
+        "Kc"
+      ]
+    },
+    "116_1": {
+      "hero": [
+        "5c",
+        "2s"
+      ],
+      "board": []
+    },
+    "145_0": {
+      "hero": [
+        "Qs",
+        "Ac"
+      ],
+      "board": []
+    },
+    "145_1": {
+      "hero": [
+        "5c",
+        "2s"
+      ],
+      "board": [
+        "Ad",
+        "Qc",
+        "2h",
+        "Kh"
+      ]
+    },
+    "158_0": {
+      "hero": [
+        "Qs",
+        "Ac"
+      ],
+      "board": []
+    },
+    "158_1": {
+      "hero": [
+        "5c",
+        "2s"
+      ],
+      "board": [
+        "Ad",
+        "Qc",
+        "2h",
+        "Kh",
+        "9d"
+      ]
+    }
+  }
+}

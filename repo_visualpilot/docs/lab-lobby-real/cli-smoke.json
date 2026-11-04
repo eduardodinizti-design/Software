@@ -1,0 +1,79 @@
+{
+  "source": "generated_text_fixture_not_user_screenshots",
+  "checks": [
+    {
+      "font_size": 16,
+      "fields": {
+        "name": [
+          [
+            [],
+            "CORUJAO HYPER PKO10OK",
+            0.8519030728123405
+          ]
+        ],
+        "buyin": [
+          [
+            [],
+            "Buy-in: 50",
+            0.9605997264385223
+          ]
+        ],
+        "start": [
+          [
+            [],
+            "Horario de inicio: 10/31 22:00",
+            0.9049043158690134
+          ]
+        ]
+      },
+      "reading": {
+        "name": null,
+        "buyin": null,
+        "start": null,
+        "registration": "unknown",
+        "currency": "unknown",
+        "can_inspect_details": false,
+        "can_register": false,
+        "reason": "name: confiança insuficiente"
+      }
+    },
+    {
+      "font_size": 20,
+      "fields": {
+        "name": [
+          [
+            [],
+            "CORUJAO HYPER PKO10K",
+            0.933960653486706
+          ]
+        ],
+        "buyin": [
+          [
+            [],
+            "Buy-in: 50",
+            0.9989533424377441
+          ]
+        ],
+        "start": [
+          [
+            [],
+            "Horario de inicio: 10/31 22:00",
+            0.9994400223096211
+          ]
+        ]
+      },
+      "reading": {
+        "name": null,
+        "buyin": null,
+        "start": null,
+        "registration": "unknown",
+        "currency": "unknown",
+        "can_inspect_details": false,
+        "can_register": false,
+        "reason": "name: confiança insuficiente"
+      }
+    }
+  ],
+  "wrong_dimensions_rejected": true,
+  "clicks": 0
+}

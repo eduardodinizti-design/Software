@@ -1,0 +1,72 @@
+[
+  {
+    "scenario": "flop_top_pair",
+    "status": "experimental",
+    "action": "check",
+    "attempts": 1,
+    "means": {
+      "check": 10.320817280615067,
+      "bet:2": 9.837505130703017,
+      "bet:4": 9.671502690576324,
+      "bet:6": 9.326145043467484,
+      "bet:18": 7.206865669570213
+    },
+    "seconds": 41.87543467004434
+  },
+  {
+    "scenario": "flop_flush_draw",
+    "status": "pending",
+    "action": null,
+    "attempts": 2,
+    "means": {
+      "check": 8.227453055365524,
+      "bet:2": 8.076152479505236,
+      "bet:4": 7.98531495130081,
+      "bet:6": 7.739684665954836,
+      "bet:18": 5.703823937881826
+    },
+    "seconds": 140.8966431360168
+  },
+  {
+    "scenario": "turn_flush",
+    "status": "experimental",
+    "action": "check",
+    "attempts": 1,
+    "means": {
+      "check": 17.3402695715049,
+      "bet:3.33": 16.728843714480895,
+      "bet:6.67": 16.470714853583562,
+      "bet:10": 15.900677615482948,
+      "bet:16": 14.865693093237406
+    },
+    "seconds": 2.3375867779832333
+  },
+  {
+    "scenario": "turn_missed_draw",
+    "status": "pending",
+    "action": null,
+    "attempts": 2,
+    "means": {
+      "check": 7.920754600848974,
+      "bet:3.33": 8.727030621335393,
+      "bet:6.67": 8.757782411132586,
+      "bet:10": 8.684593561504952,
+      "bet:16": 8.005666892109488
+    },
+    "seconds": 6.075051435967907
+  },
+  {
+    "scenario": "river_missed_draw",
+    "status": "experimental",
+    "action": "bet:3.33",
+    "attempts": 1,
+    "means": {
+      "check": 4.039669698430475,
+      "bet:3.33": 4.564860797602071,
+      "bet:6.67": 4.364408425470616,
+      "bet:10": 4.410361215401207,
+      "bet:16": 4.265915963604635
+    },
+    "seconds": 0.18516527899191715
+  }
+]

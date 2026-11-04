@@ -1,0 +1,186 @@
+{
+  "updated_at": "2026-10-30T23:47:41.802702+00:00",
+  "stage": 2,
+  "stage_approved": false,
+  "base_commit": "17d289d2cb282d5d5085708bccc6532bd13f5f07",
+  "source_revision": "working_tree_on_base_commit",
+  "source_sha256": {
+    "visualpilot/pppoker/replay/reader.py": "417c00d4b4e395131a529c4ceeb75d3e2cbc727284f78c262ee3cca2b5c89e0a",
+    "visualpilot/pppoker/replay/service.py": "ca3939ba398ccd1ebdf5759b647b8ef3a03c95026ba144bb908e59ad788fefb2",
+    "visualpilot/pppoker/observer/runtime.py": "0ef353aebd726d9e0eaf61508dff988440f6fb3bb4431de6832d8552ec655320",
+    "visualpilot/pppoker/observer/freshness.py": "212f1e25e76326a627e5b089de89d9f3140a2a257255247a69c4ffbf203ff1ff",
+    "visualpilot/pppoker/transport_freshness.py": "bb76aa5665f1a85ebd90424d3853a805d60acf167e0590f525bc63232e46b3fe",
+    "tests/test_single_table_pipeline.py": "20490e925f377f9ff9f423605cdfc4f3eb7e77582a490b11de8dc902ba8abb9b",
+    "tests/test_remote_recovery.py": "aab5cab4dd3eff41c457c6804408b3d06a4e3ccc14480ac84a2510344ef49e1b",
+    "tests/observation_assertions.py": "feaa649c19fc0a6a138625d5ca33c0881e60614ea3bacfb1d7e1d9a52b99535b",
+    "tests/lab_evidence.py": "20f61caa347d3e9b4aa4cbf3e28f0804443e0a93c532b44ea18f2862959916d6",
+    "tests/test_lab_evidence.py": "9414337c669f360927c58959e8b6f1aebdf1fd26143becc65af4217610033bcc",
+    "tools/check_ocr_retry_lab.py": "1a7b119e1423c72fdebe9e743c223c4387db4236fc56dde6bab1b4a86f0b4ff0",
+    ".github/workflows/windows-lab.yml": "56040f37587522af8ec19c2e04bf62a0fded1109b37c7f2d91e7f3dd62eb37b4",
+    "build_windows.ps1": "257e0a0cca4fd875aba26cb81a6be8164cb7209d4f1a365166da3929603d24bb"
+  },
+  "baseline_ocr_sha256": {
+    "visualpilot/pppoker/replay/reader.py": "24418870b6024dee4326b9a0bf226aac60e67fd396b4a766ede58ec7cb13ced3",
+    "visualpilot/pppoker/replay/service.py": "6ffc51f4691af0e32631ce8511a7e00d9a17f376071cc402c05c718d00b46bd5"
+  },
+  "environment": {
+    "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "cpu_count": 5,
+    "available_affinity": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "packages": {
+      "numpy": "2.3.5",
+      "opencv-python": "4.11.0.86",
+      "onnxruntime": "1.23.2",
+      "rapidocr-onnxruntime": "1.4.4",
+      "Pillow": "11.3.0"
+    }
+  },
+  "reported_windows": {
+    "commit": "17d289d2cb282d5d5085708bccc6532bd13f5f07",
+    "tests_run": 316,
+    "failures": 1,
+    "skipped_entries": 3,
+    "seconds": 350.014,
+    "failure": "No complete reading for window-1.5 within scenario deadline",
+    "packaged_collector_check": "not_reached",
+    "evidence": "reported-windows-failure.txt"
+  },
+  "local_trials": {
+    "before-one-cpu": {
+      "platform": "linux",
+      "cpu_affinity": [
+        0
+      ],
+      "ocr_workers": 2,
+      "onnx_intra_op_threads": 2,
+      "opencv_worker_threads": 4,
+      "suite_result": "passed",
+      "seconds": 77.278,
+      "scenarios": 7,
+      "discarded_results": {
+        "expired_source": 8
+      },
+      "max_published_age_seconds": 4.9965,
+      "window_150_complete_seconds": 9.356,
+      "log": "before-one-cpu.log",
+      "session_evidence": "before-one-cpu"
+    },
+    "after-one-cpu": {
+      "platform": "linux",
+      "cpu_affinity": [
+        0
+      ],
+      "ocr_workers": 2,
+      "onnx_intra_op_threads": 1,
+      "opencv_worker_threads": 1,
+      "suite_result": "passed",
+      "seconds": 24.226,
+      "scenarios": 7,
+      "discarded_results": {},
+      "max_published_age_seconds": 4.4173,
+      "window_150_complete_seconds": 3.463,
+      "log": "after-one-cpu.log",
+      "session_evidence": "after-one-cpu"
+    },
+    "before-two-cpus": {
+      "platform": "linux",
+      "cpu_affinity": [
+        0,
+        1
+      ],
+      "ocr_workers": 2,
+      "onnx_intra_op_threads": 2,
+      "opencv_worker_threads": 4,
+      "suite_result": "passed",
+      "seconds": 16.986,
+      "scenarios": 7,
+      "discarded_results": {},
+      "max_published_age_seconds": 2.9236,
+      "window_150_complete_seconds": 3.019,
+      "log": "before-two-cpus.log",
+      "session_evidence": "before-two-cpus"
+    },
+    "after-two-cpus": {
+      "platform": "linux",
+      "cpu_affinity": [
+        0,
+        1
+      ],
+      "ocr_workers": 2,
+      "onnx_intra_op_threads": 1,
+      "opencv_worker_threads": 1,
+      "suite_result": "passed",
+      "seconds": 17.708,
+      "scenarios": 7,
+      "discarded_results": {},
+      "max_published_age_seconds": 3.3144,
+      "window_150_complete_seconds": 2.209,
+      "log": "after-two-cpus.log",
+      "session_evidence": "after-two-cpus"
+    }
+  },
+  "local_regression": {
+    "tests_run": 318,
+    "failures": 0,
+    "skipped_entries": 3,
+    "seconds": 136.597,
+    "result": "passed",
+    "log": "full-regression.log",
+    "execution": "full-regression.json"
+  },
+  "unchanged_limits": {
+    "capture_age_seconds": 5,
+    "scenario_wait_seconds": 35
+  },
+  "new_revision_windows_result": "passed_user_confirmed_acd1351",
+  "scope": "source OCR worker CPU use and integration failure diagnostics",
+  "remaining": [
+    "paired physical installation validation"
+  ],
+  "report": "README.md",
+  "delayed_ocr_check": {
+    "result": "passed",
+    "tests_run": 3,
+    "seconds": 89.952,
+    "injected_delay_seconds": 6,
+    "platform": "linux",
+    "cases": [
+      {
+        "case": "reconnect",
+        "expired_source": 1,
+        "max_published_age_seconds": 2.8028,
+        "evidence": "delayed/reconnect"
+      },
+      {
+        "case": "restart",
+        "expired_source": 1,
+        "max_published_age_seconds": 2.579,
+        "evidence": "delayed/restart"
+      },
+      {
+        "case": "single-table",
+        "expired_source": 1,
+        "max_published_age_seconds": 2.7865,
+        "evidence": "delayed/single-table"
+      }
+    ],
+    "log": "real-ocr-delayed.log",
+    "execution": "real-ocr-delayed.json"
+  },
+  "local_execution": "completed",
+  "background_process": false,
+  "confirmed_windows_revision": {
+    "commit": "acd13517527f6071539f31aeed4f80d4b376760a",
+    "status": "passed_user_confirmed",
+    "evidence": "confirmed-windows.json",
+    "packaged_collector_check": "passed_by_required_workflow_step",
+    "physical_pair_validation": "pending"
+  }
+}

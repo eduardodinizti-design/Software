@@ -1,0 +1,54 @@
+{
+  "status": "passed",
+  "scope": "extracted_python_package_on_linux_existing_venv",
+  "windows_validated": false,
+  "archive_sha256": "1e61db8e2777ed02aa46e7ec2f823f227b3c08addf8c5e6c2725545600402937",
+  "manifest_files_checked": 9,
+  "imports_from_extracted_package": true,
+  "monitor_list": [
+    {
+      "index": 1,
+      "left": 0,
+      "top": 0,
+      "width": 1920,
+      "height": 1080
+    }
+  ],
+  "capture": {
+    "module": "phase1_module1",
+    "source": "desktop_mss",
+    "platform": "linux",
+    "captured_at_utc": "2026-10-31T14:27:05.657427+00:00",
+    "capture_seconds": 0.05339,
+    "region": {
+      "left": 20,
+      "top": 30,
+      "width": 640,
+      "height": 480
+    },
+    "monitors": [
+      {
+        "left": 0,
+        "top": 0,
+        "width": 1920,
+        "height": 1080
+      }
+    ],
+    "containing_monitors": [
+      1
+    ],
+    "image_size": [
+      640,
+      480
+    ],
+    "coordinate_space": "absolute_physical_desktop_pixels",
+    "pixel_format": "RGB",
+    "resized": false,
+    "uniform_image": true,
+    "validation_state": "awaiting_visual_check",
+    "note": "Imagem uniforme: confira se a tela está bloqueada, vazia ou se a região está correta.",
+    "image": "lobby.png",
+    "png_sha256": "441da7236f6ffdd8fb4cdfa2d9ce7b8d8df8cf2f7a8e82c530714d92266ce613"
+  },
+  "invalid_region_exit": 1
+}

@@ -1,0 +1,25 @@
+Source: Windows laboratory log supplied by the user for commit 17d289d.
+The log does not identify a run number or run URL. This file is an excerpt.
+
+All three test_collector_distribution tests: ok (source entry/transport only).
+Both test_remote_recovery integration tests: ok.
+
+LAB_TIMING {"scenario": "right_99.png", "partial_seconds": 1.75, "complete_seconds": 18.453}
+LAB_TIMING {"scenario": "left_99.png", "partial_seconds": 0.766, "complete_seconds": 4.641}
+LAB_TIMING {"scenario": "board-only-change", "partial_seconds": 0.312, "complete_seconds": 4.328}
+LAB_TIMING {"scenario": "turn", "partial_seconds": 1.172, "complete_seconds": 8.422}
+LAB_TIMING {"scenario": "river", "partial_seconds": 0.344, "complete_seconds": 9.781}
+LAB_TIMING {"scenario": "window-1.25", "partial_seconds": 1.359, "complete_seconds": 15.14}
+
+FAIL: test_tcp_real_ocr_hand_change_and_journal (test_single_table_pipeline.SingleTablePipelineTests.test_tcp_real_ocr_hand_change_and_journal)
+Traceback (most recent call last):
+  File "D:\a\VisualPilot\VisualPilot\tests\test_single_table_pipeline.py", line 117, in test_tcp_real_ocr_hand_change_and_journal
+    self.assertTrue(consolidated, f'Nenhuma leitura completa para {name}')
+AssertionError: False is not true : Nenhuma leitura completa para window-1.5
+
+Ran 316 tests in 350.014s
+FAILED (failures=1, skipped=3)
+Etapa falhou. Build interrompido.
+Error: Process completed with exit code 1.
+
+Packaging and the frozen collector verification were not reached.

@@ -1,0 +1,75 @@
+{
+  "updated_at": "2026-10-30T23:11:07.755548+00:00",
+  "stage": 2,
+  "stage_approved": false,
+  "local_execution": "completed",
+  "background_process": false,
+  "base_commit": "d4d67c2587079d4cd5c254ad27e334ecf540ae6a",
+  "source_sha256": {
+    ".github/workflows/windows-lab.yml": "ffddbfc257bde77670c16bf5e5f067e8c56dab078967541eed594da17fe65152",
+    "build_windows.ps1": "e96afe07649b5e4c1c0a5849b7a9e669db5d450d4f35516932a16f8534b3f436",
+    "tests/observation_assertions.py": "feaa649c19fc0a6a138625d5ca33c0881e60614ea3bacfb1d7e1d9a52b99535b",
+    "tests/test_remote_recovery.py": "58a5e81d8d582ede4693fd475321fb017b80372adfba72030237848754688880",
+    "tests/test_single_table_pipeline.py": "93a6e4b04b4449d8db9fa9cec49766286248532683b28b2664b4609b7a695c98",
+    "tests/test_runtime_freshness.py": "481e22f1394c5f919940183357d9968ebafc3e2bfa58edeb72d30dfe7f1ee70f",
+    "tests/test_windows_stage_log.py": "1f2b95d1625eb6e6c4103574603d7fa9ba03cf5ebfc33f073cdbe1770d0d19d4",
+    "tools/run_windows_stage.py": "d75490390f670c73e348251a776b02f64c1955f4693af83c442306a5eb2c41b5",
+    "tools/check_ocr_retry_lab.py": "1a7b119e1423c72fdebe9e743c223c4387db4236fc56dde6bab1b4a86f0b4ff0",
+    "tools/check_freshness_lab.py": "0cf15de6896ebeca68ecdbbfdad95e3caed8aef34cfeb26758c7b12a69ebbcb7",
+    "visualpilot/pppoker/observer/runtime.py": "0ef353aebd726d9e0eaf61508dff988440f6fb3bb4431de6832d8552ec655320",
+    "visualpilot/pppoker/transport_freshness.py": "bb76aa5665f1a85ebd90424d3853a805d60acf167e0590f525bc63232e46b3fe"
+  },
+  "reported_windows": {
+    "run_id": 41138441716,
+    "commit": "d4d67c2",
+    "result": "failed",
+    "tests_run": 310,
+    "failures": 3,
+    "skipped": 3,
+    "evidence": "user-supplied CI log"
+  },
+  "correction_windows_result": "passed_run_29",
+  "local_checks": {
+    "fault_injection": {
+      "tests": 18,
+      "result": "passed"
+    },
+    "regression": {
+      "tests_run": 313,
+      "failures": 0,
+      "skipped_entries": 3,
+      "result": "passed",
+      "seconds": 120.526
+    },
+    "real_tcp_ocr_delayed": {
+      "tests_run": 3,
+      "result": "passed",
+      "injected_seconds": 6,
+      "seconds": 81.29
+    },
+    "logger": {
+      "tests_run": 2,
+      "result": "passed"
+    }
+  },
+  "unchanged_source_age_limit_seconds": 5,
+  "report": "README.md",
+  "confirmed_windows_correction": {
+    "run_number": 29,
+    "commit": "1660f739f29c1a7fa6cf4a750ad10cadbbfa82a1",
+    "status": "passed",
+    "job_seconds": 432,
+    "evidence": "user-supplied GitHub Actions screenshot",
+    "scope": [
+      "source_tests",
+      "frozen_central_startup",
+      "build",
+      "artifact_publication"
+    ],
+    "collector_execution_included": false
+  },
+  "remaining": [
+    "frozen collector transport verification added after audit",
+    "physical paired installation validation"
+  ]
+}

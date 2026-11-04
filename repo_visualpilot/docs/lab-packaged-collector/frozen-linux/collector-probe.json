@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "nonce": "32da0d234d6144c8939f926438fc5a34",
+  "pid": 293052,
+  "protocol": 2,
+  "executable": "/tmp/visualpilot-collector-dist/VisualPilot_Coletor/VisualPilot_Coletor",
+  "frozen": true,
+  "collector_session": "371a13c2f0ba49d7916778d1394cad52",
+  "acknowledged_frames": 2
+}

@@ -1,0 +1,43 @@
+{
+  "version": "1.0",
+  "updated_at_utc": "2026-11-01T03:23:20.592390+00:00",
+  "total_registered": 3,
+  "tournaments": [
+    {
+      "key": "PPPOKERSUPERCLASSIC20K_20_1400",
+      "tournament_name": "PPPOKER SUPER CLASSIC 20K",
+      "buyin": "20",
+      "start_time": "14:00",
+      "first_seen_iso": "2026-11-01T03:23:19.585490+00:00",
+      "last_registered_iso": "2026-11-01T03:23:19.585490+00:00",
+      "status": "REGISTERED",
+      "registration_count": 1,
+      "session_name": "Teste CLI Orquestrador",
+      "details": "Inscrição concluída no ciclo #1 em 0.5ms."
+    },
+    {
+      "key": "TARDEZINHAPKO5KGTD_10_1630",
+      "tournament_name": "TARDEZINHA PKO 5K GTD",
+      "buyin": "10",
+      "start_time": "16:30",
+      "first_seen_iso": "2026-11-01T03:23:19.586365+00:00",
+      "last_registered_iso": "2026-11-01T03:23:19.586365+00:00",
+      "status": "REGISTERED",
+      "registration_count": 1,
+      "session_name": "Teste CLI Orquestrador",
+      "details": "Inscrição concluída no ciclo #1 em 0.5ms."
+    },
+    {
+      "key": "CORUJAOHYPERPKO10K_50_2300",
+      "tournament_name": "CORUJAO HYPER PKO10K",
+      "buyin": "50",
+      "start_time": "23:00",
+      "first_seen_iso": "2026-11-01T03:23:19.587240+00:00",
+      "last_registered_iso": "2026-11-01T03:23:19.587240+00:00",
+      "status": "REGISTERED",
+      "registration_count": 1,
+      "session_name": "Teste CLI Orquestrador",
+      "details": "Inscrição concluída no ciclo #1 em 0.4ms."
+    }
+  ]
+}

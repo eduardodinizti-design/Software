@@ -1,0 +1,44 @@
+<!doctype html><html lang="pt-BR"><meta charset="utf-8"><title>Laboratório de lobby</title>
+<style>
+body{font:18px Arial,sans-serif;background:#eef2f6;color:#172434;margin:24px}
+main{width:850px;margin:auto}h1{font-size:28px;margin:10px 0}button{font:18px Arial;padding:8px 16px;margin:6px;cursor:pointer}
+.tournament,#details{border:2px solid #427baa;background:white;padding:16px;margin:14px 0}
+.tournament{cursor:pointer}.tournament p,#details p{font-size:26px;line-height:32px;margin:6px 0}
+.note{font-size:16px;margin:8px 0}
+</style>
+<main><h1>Lobby de torneios fictícios</h1><p class="note">LABORATORIO FICTICIO — leitura e navegação simuladas.</p>
+<button onclick="lab.mode='paused';lab.revision++">Pausar</button><button onclick="lab.mode='manual';lab.revision++">Assumir manual</button>
+<button onclick="lab.mode='automatic';lab.revision++">Retomar</button>
+<section id="content"></section></main>
+<script>
+window.lab={mode:'automatic',revision:0,token:null,stage:'lobby',cards:[],actions:[],detailOverride:null};
+function lines(card){
+ const values=['Torneio: '+card.id,'Nome: '+card.name,'Tipo: '+card.kind,
+  'Buy-in: '+card.price+' '+(card.currency||'fichas ficticias'),'Stack: '+card.stack,'Inicio: '+card.start];
+ if(card.status!==null)values.push('Registro: '+card.status);
+ return values;
+}
+function fill(node,card){for(const text of lines(card)){let p=document.createElement('p');p.textContent=text;node.append(p)}}
+function showLobby(){
+ lab.stage='lobby';lab.revision++;let content=document.querySelector('#content');content.replaceChildren();
+ for(const card of lab.cards){let node=document.createElement('article');node.className='tournament';node.dataset.id=card.id;
+  fill(node,card);node.onclick=()=>showDetails(card);content.append(node)}
+}
+function showDetails(card){
+ if(lab.mode==='paused')return;
+ lab.actions.push({action:'open_details',id:card.id});lab.stage='details';lab.revision++;
+ let content=document.querySelector('#content');content.replaceChildren();let node=document.createElement('article');node.id='details';
+ fill(node,{...card,...(lab.detailOverride||{})});
+ let register=document.createElement('button');register.textContent='Registrar';register.disabled=true;node.append(register);
+ let back=document.createElement('button');back.textContent='Voltar ao lobby';back.onclick=showLobby;node.append(back);content.append(node);
+}
+window.resetLobby=(cards)=>{lab.cards=cards;lab.actions=[];lab.mode='automatic';lab.detailOverride=null;showLobby()};
+window.openLabCardAt=({point,revision,id})=>{
+ if(lab.mode!=='automatic'||lab.stage!=='lobby'||lab.revision!==revision)return false;
+ if(!Array.isArray(point)||point.length!==2||!point.every(Number.isFinite))return false;
+ let node=document.elementFromPoint(point[0],point[1])?.closest('.tournament');
+ if(!node||node.dataset.id!==id)return false;
+ node.click();return true;
+};
+resetLobby([{id:'T1',name:'DIAMANTE',kind:'MTT',price:'10',stack:10000,start:'20:30',status:'ABERTO'}]);
+</script></html>

@@ -1,0 +1,143 @@
+{
+  "status": "passed",
+  "platform": "linux",
+  "scope": "isolated_browser_png_real_ocr_simulated_registration",
+  "checks": [
+    {
+      "name": "increase-10-to-50",
+      "result": {
+        "status": "confirmed",
+        "token": "0c9cb3f8ddb14165a21141dec74f2c6e",
+        "steps": 8
+      },
+      "actions": [
+        {
+          "action": "increase",
+          "amount": 15
+        },
+        {
+          "action": "increase",
+          "amount": 20
+        },
+        {
+          "action": "increase",
+          "amount": 25
+        },
+        {
+          "action": "increase",
+          "amount": 30
+        },
+        {
+          "action": "increase",
+          "amount": 35
+        },
+        {
+          "action": "increase",
+          "amount": 40
+        },
+        {
+          "action": "increase",
+          "amount": 45
+        },
+        {
+          "action": "increase",
+          "amount": 50
+        },
+        {
+          "action": "register",
+          "amount": 50
+        }
+      ]
+    },
+    {
+      "name": "decrease-60-to-50",
+      "result": {
+        "status": "confirmed",
+        "token": "a3a7f2dabfc14ce48e7ca81a24c3c395",
+        "steps": 2
+      },
+      "actions": [
+        {
+          "action": "decrease",
+          "amount": 55
+        },
+        {
+          "action": "decrease",
+          "amount": 50
+        },
+        {
+          "action": "register",
+          "amount": 50
+        }
+      ]
+    },
+    {
+      "name": "stuck-selector",
+      "result": {
+        "status": "blocked",
+        "reason": "Ajuste não confirmado; sem progresso ou valor inesperado.",
+        "error_type": "ValueError",
+        "steps": 1
+      },
+      "actions": [
+        {
+          "action": "increase",
+          "amount": 40
+        }
+      ]
+    },
+    {
+      "name": "malformed-cost",
+      "result": {
+        "status": "blocked",
+        "reason": "Campo ausente ou ambíguo.",
+        "error_type": "ValueError",
+        "steps": 0
+      },
+      "actions": []
+    },
+    {
+      "name": "manual-during-ocr",
+      "result": {
+        "status": "blocked",
+        "reason": "Controle alterado; obtenha uma nova observação.",
+        "error_type": "ValueError",
+        "steps": 0
+      },
+      "actions": []
+    },
+    {
+      "name": "popup-replaced-before-click",
+      "result": {
+        "status": "blocked",
+        "reason": "Popup substituído antes do ajuste.",
+        "error_type": "ValueError",
+        "steps": 0
+      },
+      "actions": []
+    },
+    {
+      "name": "explicit-rejection",
+      "result": {
+        "status": "rejected",
+        "token": "5f1618ad836e4d2a8cbe748d65a00025",
+        "steps": 0
+      },
+      "actions": [
+        {
+          "action": "register",
+          "amount": 50
+        }
+      ]
+    },
+    {
+      "name": "four-slots-fifth-blocked",
+      "result": {
+        "status": "blocked",
+        "reason": "simultaneous_limit"
+      }
+    }
+  ],
+  "browser_errors": [],
+  "elapsed_seconds": 19.44
+}

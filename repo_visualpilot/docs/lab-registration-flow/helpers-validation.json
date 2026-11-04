@@ -1,0 +1,301 @@
+{
+  "status": "passed",
+  "scope": "isolated_browser_not_pppoker",
+  "checks": [
+    {
+      "name": "confirmed-and-restart",
+      "result": {
+        "status": "confirmed",
+        "token": "479c682fd2f942c59773f90088e8a252"
+      },
+      "actions": [
+        {
+          "action": "open_details",
+          "id": "T1"
+        },
+        {
+          "action": "open_modal",
+          "id": "T1"
+        },
+        {
+          "action": "confirm",
+          "id": "T1"
+        }
+      ],
+      "registrations": [
+        {
+          "token": "479c682fd2f942c59773f90088e8a252",
+          "tournament": "T1",
+          "offer": "P1",
+          "amount": 50,
+          "bounty": 1,
+          "status": "confirmed"
+        }
+      ],
+      "after_restart": {
+        "status": "empty",
+        "reason": "no_eligible_unvisited_tournament",
+        "scan": {
+          "cards": [],
+          "eligible": []
+        }
+      }
+    },
+    {
+      "name": "modal-price-changed",
+      "result": {
+        "status": "blocked",
+        "reason": "Modal difere do torneio/oferta selecionado.",
+        "error_type": "ValueError"
+      },
+      "actions": [
+        {
+          "action": "open_details",
+          "id": "T1"
+        },
+        {
+          "action": "open_modal",
+          "id": "T1"
+        }
+      ],
+      "registrations": []
+    },
+    {
+      "name": "modal-offer-changed",
+      "result": {
+        "status": "blocked",
+        "reason": "Modal difere do torneio/oferta selecionado.",
+        "error_type": "ValueError"
+      },
+      "actions": [
+        {
+          "action": "open_details",
+          "id": "T1"
+        },
+        {
+          "action": "open_modal",
+          "id": "T1"
+        }
+      ],
+      "registrations": []
+    },
+    {
+      "name": "closed-without-receipt",
+      "result": {
+        "status": "unknown",
+        "reason": "Campo ausente ou ambíguo.",
+        "error_type": "ValueError",
+        "token": "8ffa5a783ae64112976a3bceb3d82ef9"
+      },
+      "actions": [
+        {
+          "action": "open_details",
+          "id": "T1"
+        },
+        {
+          "action": "open_modal",
+          "id": "T1"
+        },
+        {
+          "action": "confirm",
+          "id": "T1"
+        }
+      ],
+      "registrations": [
+        {
+          "token": "8ffa5a783ae64112976a3bceb3d82ef9",
+          "tournament": "T1",
+          "offer": "P1",
+          "amount": 50,
+          "bounty": 1,
+          "status": "reserved"
+        }
+      ],
+      "after_restart": {
+        "status": "empty",
+        "reason": "no_eligible_unvisited_tournament",
+        "scan": {
+          "cards": [],
+          "eligible": []
+        }
+      }
+    },
+    {
+      "name": "wrong-receipt-cost",
+      "result": {
+        "status": "unknown",
+        "reason": "Recibo não corresponde à inscrição reservada.",
+        "error_type": "ValueError",
+        "token": "cec45ab4fac2462ba2e5c2ce0c760705"
+      },
+      "actions": [
+        {
+          "action": "open_details",
+          "id": "T1"
+        },
+        {
+          "action": "open_modal",
+          "id": "T1"
+        },
+        {
+          "action": "confirm",
+          "id": "T1"
+        }
+      ],
+      "registrations": [
+        {
+          "token": "cec45ab4fac2462ba2e5c2ce0c760705",
+          "tournament": "T1",
+          "offer": "P1",
+          "amount": 50,
+          "bounty": 1,
+          "status": "reserved"
+        }
+      ],
+      "after_restart": {
+        "status": "empty",
+        "reason": "no_eligible_unvisited_tournament",
+        "scan": {
+          "cards": [],
+          "eligible": []
+        }
+      }
+    },
+    {
+      "name": "explicit-rejection",
+      "result": {
+        "status": "rejected",
+        "token": "d612057ec9ea46b194426990c85f0de7"
+      },
+      "actions": [
+        {
+          "action": "open_details",
+          "id": "T1"
+        },
+        {
+          "action": "open_modal",
+          "id": "T1"
+        },
+        {
+          "action": "confirm",
+          "id": "T1"
+        }
+      ],
+      "registrations": [
+        {
+          "token": "d612057ec9ea46b194426990c85f0de7",
+          "tournament": "T1",
+          "offer": "P1",
+          "amount": 50,
+          "bounty": 1,
+          "status": "rejected"
+        }
+      ]
+    },
+    {
+      "name": "manual-during-modal-ocr",
+      "result": {
+        "status": "blocked",
+        "reason": "Controle alterado; obtenha uma nova observação.",
+        "error_type": "ValueError"
+      },
+      "actions": [
+        {
+          "action": "open_details",
+          "id": "T1"
+        },
+        {
+          "action": "open_modal",
+          "id": "T1"
+        }
+      ],
+      "registrations": []
+    },
+    {
+      "name": "modal-moved-before-click",
+      "result": {
+        "status": "blocked",
+        "reason": "image_changed_before_click",
+        "token": "1e1efbf4b90d48ab89c1139d39ec4ead"
+      },
+      "actions": [
+        {
+          "action": "open_details",
+          "id": "T1"
+        },
+        {
+          "action": "open_modal",
+          "id": "T1"
+        }
+      ],
+      "registrations": [
+        {
+          "token": "1e1efbf4b90d48ab89c1139d39ec4ead",
+          "tournament": "T1",
+          "offer": "P1",
+          "amount": 50,
+          "bounty": 1,
+          "status": "rejected"
+        }
+      ]
+    },
+    {
+      "name": "details-price-changed",
+      "result": {
+        "status": "unknown",
+        "reason": "Detalhes diferem do cartão selecionado; inscrição não autorizada.",
+        "registered": false
+      },
+      "actions": [
+        {
+          "action": "open_details",
+          "id": "T1"
+        }
+      ],
+      "registrations": []
+    },
+    {
+      "name": "receipt-token-mismatch",
+      "result": {
+        "status": "unknown",
+        "reason": "Recibo sem correlação com a reserva.",
+        "error_type": "ValueError",
+        "token": "a58a8002f6c241869f8de42a0ec5fad4"
+      },
+      "actions": [
+        {
+          "action": "open_details",
+          "id": "T1"
+        },
+        {
+          "action": "open_modal",
+          "id": "T1"
+        },
+        {
+          "action": "confirm",
+          "id": "T1"
+        }
+      ],
+      "registrations": [
+        {
+          "token": "a58a8002f6c241869f8de42a0ec5fad4",
+          "tournament": "T1",
+          "offer": "P1",
+          "amount": 50,
+          "bounty": 1,
+          "status": "reserved"
+        }
+      ],
+      "after_restart": {
+        "status": "empty",
+        "reason": "no_eligible_unvisited_tournament",
+        "scan": {
+          "cards": [],
+          "eligible": []
+        }
+      }
+    }
+  ],
+  "browser_errors": [],
+  "elapsed_seconds": 46.767
+}

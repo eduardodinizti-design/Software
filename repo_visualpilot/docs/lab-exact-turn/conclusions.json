@@ -1,0 +1,72 @@
+{
+  "groups": [
+    {
+      "scenario": "turn_draw",
+      "status": "experimental",
+      "chosen": "bet:3.33",
+      "exact_under_model": true,
+      "mean_ev": {
+        "check": 8.463668290942916,
+        "bet:3.33": 9.20568213287932,
+        "bet:6.67": 9.179312425113263,
+        "bet:10": 9.06759276108495,
+        "bet:16": 8.14738380590736
+      },
+      "top_gap": 0.026369707766056294,
+      "seconds": 19.301626018976094,
+      "reason": "same_action_all_seeds"
+    },
+    {
+      "scenario": "flop_draw",
+      "status": "pending",
+      "chosen": null,
+      "exact_under_model": false,
+      "mean_ev": {
+        "check": 8.422838710751266,
+        "bet:2": 8.0427817809824,
+        "bet:4": 7.901482119133072,
+        "bet:6": 7.631788291800728,
+        "bet:18": 5.703823937881826
+      },
+      "top_gap": 0.38005692976886607,
+      "seconds": 350.50349987400114,
+      "reason": "unstable_or_incomplete"
+    }
+  ],
+  "optimization_parity": [
+    {
+      "scenario": "turn_draw",
+      "seed": 11,
+      "max_ev_difference": 0.0,
+      "before_seconds": 8.64378432999365,
+      "after_seconds": 6.295485402981285
+    },
+    {
+      "scenario": "turn_draw",
+      "seed": 23,
+      "max_ev_difference": 0.0,
+      "before_seconds": 7.739513706997968,
+      "after_seconds": 6.93405033799354
+    },
+    {
+      "scenario": "turn_draw",
+      "seed": 47,
+      "max_ev_difference": 0.0,
+      "before_seconds": 7.55728122201981,
+      "after_seconds": 6.072090278001269
+    },
+    {
+      "scenario": "flop_draw",
+      "seed": 11,
+      "max_ev_difference": 0.0,
+      "before_seconds": 194.36764075001702,
+      "after_seconds": 120.86996836197795
+    }
+  ],
+  "limitations": [
+    "synthetic_opponent_model",
+    "not_GTO",
+    "no_live_actions",
+    "flop_chance_still_sampled"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "browser_errors": [],
+  "sender_errors": [],
+  "mobile_overflow": false,
+  "manual_markers": 1,
+  "reading_samples": 3,
+  "frozen_warning": true,
+  "source": "recorded real fixture over local TCP; Linux"
+}

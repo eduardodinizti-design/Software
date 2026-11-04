@@ -1,0 +1,17 @@
+{
+  "stage": "before-entry",
+  "state": "failed",
+  "started_at": "2026-10-30T23:08:16.096124+00:00",
+  "platform": "linux",
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "commit": null,
+  "command": [
+    "/workspace/VisualPilot/.venv/bin/python",
+    "-c",
+    "import runpy; runpy.run_path(\"visualpilot/pppoker/stream_node.py\",run_name=\"collector_entry_probe\")"
+  ],
+  "log": "before-entry.log",
+  "exit_code": 1,
+  "finished_at": "2026-10-30T23:08:16.238836+00:00",
+  "elapsed_seconds": 0.142
+}

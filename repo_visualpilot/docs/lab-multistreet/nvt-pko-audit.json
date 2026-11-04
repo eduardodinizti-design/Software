@@ -1,0 +1,14 @@
+{
+  "nodes": 6349,
+  "table_keys": {
+    "stacks": 6349,
+    "actions": 6349,
+    "potBb": 6349
+  },
+  "validated_by_mode": {
+    "chip_ev": 490,
+    "icm": 2024,
+    "pko_icm": 2033
+  },
+  "conclusion": "Static export lacks individual bounty table inputs and dynamic bounty-power engine."
+}

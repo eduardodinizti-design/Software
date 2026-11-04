@@ -1,0 +1,27 @@
+[
+  {
+    "mode": "offline_replay",
+    "actions": [
+      "call",
+      "check",
+      "bet",
+      "raise",
+      "fold"
+    ],
+    "download": "ok",
+    "evidence_dialog": "ok"
+  },
+  {
+    "mode": "offline_occlusion",
+    "blocked": true
+  },
+  {
+    "mode": "live_ocr_http",
+    "action": "call",
+    "recorded": true
+  },
+  {
+    "browser_errors": [],
+    "mobile_horizontal_overflow": false
+  }
+]

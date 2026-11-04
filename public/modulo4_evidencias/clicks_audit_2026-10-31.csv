@@ -1,0 +1,5 @@
+timestamp_iso,event_type,status,tournament_name,card_index,buyin_chips,target_abs_x,target_abs_y,win_left,win_top,win_width,win_height,duration_ms,details
+2026-10-31T22:41:29.946492+00:00,CLICK_SUCCESS,SUCCESS,CORUJAO HYPER PKO10K,2,50,904,1142,500,150,787,1470,284.2,Clique despachado com sucesso via PyAutoGUI (easeInOutQuad)
+2026-10-31T22:41:29.946920+00:00,CLICK_ABORTED,ABORTED,FREEZEOUT 30K GTD,1,200,904,961,500,150,787,1470,,Torneio inelegível: buy-in 200 excede teto autorizado de 50 fichas
+2026-10-31T22:41:29.947160+00:00,RESOLUTION_CHANGED,ABORTED,CORUJAO HYPER PKO10K,2,50,,,500,150,1400,450,,Janela deformada: W/H = 3.11 (1400x450). Proporção retrato rompida.
+2026-10-31T22:41:29.947271+00:00,WINDOW_CLOSED,ABORTED,CORUJAO HYPER PKO10K,2,50,,,0,0,0,0,,Janela do PPPoker não foi encontrada no desktop. Clique cancelado.

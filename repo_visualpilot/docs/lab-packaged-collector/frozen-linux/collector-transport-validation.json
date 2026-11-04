@@ -1,0 +1,57 @@
+{
+  "status": "passed",
+  "platform": "linux",
+  "mode": "frozen",
+  "scope": "collector_entry_and_loopback_transport",
+  "nonce": "32da0d234d6144c8939f926438fc5a34",
+  "protocol": 2,
+  "source_age_limit_seconds": 5.0,
+  "frames": [
+    {
+      "sequence": 1,
+      "table": "[\"lab-32da0d234d6144c8939f926438fc5a34\",\"371a13c2f0ba49d7916778d1394cad52\",\"transport-probe\"]",
+      "collector_session": "371a13c2f0ba49d7916778d1394cad52",
+      "transport": {
+        "protocol": 2,
+        "verified": true,
+        "not_before_monotonic": 309509.893919864,
+        "age_upper_bound_at_receive": 0.0012543400516733527,
+        "age_budget_seconds": 5.0
+      },
+      "source_observed": 309509.893919864,
+      "source_age_seconds": 0.001517605036497116,
+      "frame_sha256": "b9fae658d5cd2ffcbf974b3a0b938a3a7cbba939d9b701564152d93eeabae61d"
+    },
+    {
+      "sequence": 2,
+      "table": "[\"lab-32da0d234d6144c8939f926438fc5a34\",\"371a13c2f0ba49d7916778d1394cad52\",\"transport-probe\"]",
+      "collector_session": "371a13c2f0ba49d7916778d1394cad52",
+      "transport": {
+        "protocol": 2,
+        "verified": true,
+        "not_before_monotonic": 309509.895463037,
+        "age_upper_bound_at_receive": 0.0003455679980106652,
+        "age_budget_seconds": 5.0
+      },
+      "source_observed": 309509.895463037,
+      "source_age_seconds": 0.00041603395948186517,
+      "frame_sha256": "0f8c0895ef73d7466195f804c8290f427d44595a4d2251dd5dee67f553ae1c66"
+    }
+  ],
+  "executable_sha256": "cfaba1fda5f573fa08be7c39e9252b05df2c8f4ed7d255838233b5a3dae6fdc4",
+  "collector": {
+    "status": "passed",
+    "nonce": "32da0d234d6144c8939f926438fc5a34",
+    "pid": 293052,
+    "protocol": 2,
+    "executable": "/tmp/visualpilot-collector-dist/VisualPilot_Coletor/VisualPilot_Coletor",
+    "frozen": true,
+    "collector_session": "371a13c2f0ba49d7916778d1394cad52",
+    "acknowledged_frames": 2
+  },
+  "transport_metrics": {
+    "accepted_verified": 2,
+    "accepted_legacy": 0,
+    "rejected": {}
+  }
+}

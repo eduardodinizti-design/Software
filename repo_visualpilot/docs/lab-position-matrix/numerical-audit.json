@@ -1,0 +1,536 @@
+{
+  "cases": [
+    {
+      "id": "BB_vs_BTN:top_pair_overcard:turn",
+      "status": "accepted_under_model",
+      "numerically_accepted": true,
+      "seed_stable": true,
+      "regrets": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "worst_regret": 0.0,
+      "tolerance": 0.03,
+      "strategically_validated": false,
+      "reason": "within_reference_tolerance"
+    },
+    {
+      "id": "BB_vs_BTN:paired:turn",
+      "status": "accepted_under_model",
+      "numerically_accepted": true,
+      "seed_stable": true,
+      "regrets": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "worst_regret": 0.0,
+      "tolerance": 0.03,
+      "strategically_validated": false,
+      "reason": "within_reference_tolerance"
+    },
+    {
+      "id": "BB_vs_BTN:flush_draw:turn",
+      "status": "needs_refinement",
+      "numerically_accepted": false,
+      "seed_stable": false,
+      "regrets": [
+        0.1681788642707751,
+        0.0,
+        0.1681788642707751
+      ],
+      "worst_regret": 0.1681788642707751,
+      "tolerance": 0.03,
+      "strategically_validated": false,
+      "reason": "reference_disagreement"
+    },
+    {
+      "id": "BB_vs_BTN:monotone:turn",
+      "status": "needs_refinement",
+      "numerically_accepted": false,
+      "seed_stable": false,
+      "regrets": [
+        0.17739376296308507,
+        0.32432771024699214,
+        0.0
+      ],
+      "worst_regret": 0.32432771024699214,
+      "tolerance": 0.03,
+      "strategically_validated": false,
+      "reason": "reference_disagreement"
+    },
+    {
+      "id": "BB_vs_BTN:connected:turn",
+      "status": "accepted_under_model",
+      "numerically_accepted": true,
+      "seed_stable": true,
+      "regrets": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "worst_regret": 0.0,
+      "tolerance": 0.03,
+      "strategically_validated": false,
+      "reason": "within_reference_tolerance"
+    },
+    {
+      "id": "BB_vs_BTN:four_flush:turn",
+      "status": "needs_refinement",
+      "numerically_accepted": false,
+      "seed_stable": false,
+      "regrets": [
+        0.7892164517709013,
+        0.0,
+        0.0
+      ],
+      "worst_regret": 0.7892164517709013,
+      "tolerance": 0.03,
+      "strategically_validated": false,
+      "reason": "reference_disagreement"
+    },
+    {
+      "id": "BTN_vs_BB:top_pair_overcard:turn",
+      "status": "accepted_under_model",
+      "numerically_accepted": true,
+      "seed_stable": true,
+      "regrets": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "worst_regret": 0.0,
+      "tolerance": 0.03,
+      "strategically_validated": false,
+      "reason": "within_reference_tolerance"
+    },
+    {
+      "id": "BTN_vs_BB:paired:turn",
+      "status": "needs_refinement",
+      "numerically_accepted": false,
+      "seed_stable": false,
+      "regrets": [
+        0.6788523199993506,
+        0.05141593873778216,
+        0.05141593873778216
+      ],
+      "worst_regret": 0.6788523199993506,
+      "tolerance": 0.03,
+      "strategically_validated": false,
+      "reason": "reference_disagreement"
+    },
+    {
+      "id": "BTN_vs_BB:flush_draw:turn",
+      "status": "needs_refinement",
+      "numerically_accepted": false,
+      "seed_stable": false,
+      "regrets": [
+        0.0,
+        0.08806545489900586,
+        0.0
+      ],
+      "worst_regret": 0.08806545489900586,
+      "tolerance": 0.03,
+      "strategically_validated": false,
+      "reason": "reference_disagreement"
+    },
+    {
+      "id": "BTN_vs_BB:monotone:turn",
+      "status": "needs_refinement",
+      "numerically_accepted": false,
+      "seed_stable": true,
+      "regrets": [
+        0.07728196358111461,
+        0.07728196358111461,
+        0.07728196358111461
+      ],
+      "worst_regret": 0.07728196358111461,
+      "tolerance": 0.03,
+      "strategically_validated": false,
+      "reason": "reference_disagreement"
+    },
+    {
+      "id": "BTN_vs_BB:connected:turn",
+      "status": "accepted_under_model",
+      "numerically_accepted": true,
+      "seed_stable": true,
+      "regrets": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "worst_regret": 0.0,
+      "tolerance": 0.03,
+      "strategically_validated": false,
+      "reason": "within_reference_tolerance"
+    },
+    {
+      "id": "BTN_vs_BB:four_flush:turn",
+      "status": "needs_refinement",
+      "numerically_accepted": false,
+      "seed_stable": false,
+      "regrets": [
+        0.0,
+        0.0,
+        0.7246096257106345
+      ],
+      "worst_regret": 0.7246096257106345,
+      "tolerance": 0.03,
+      "strategically_validated": false,
+      "reason": "reference_disagreement"
+    },
+    {
+      "id": "BB_vs_CO:top_pair_overcard:turn",
+      "status": "accepted_under_model",
+      "numerically_accepted": true,
+      "seed_stable": true,
+      "regrets": [
+        0.003920438200069043,
+        0.003920438200069043,
+        0.003920438200069043
+      ],
+      "worst_regret": 0.003920438200069043,
+      "tolerance": 0.03,
+      "strategically_validated": false,
+      "reason": "within_reference_tolerance"
+    },
+    {
+      "id": "BB_vs_CO:paired:turn",
+      "status": "accepted_under_model",
+      "numerically_accepted": true,
+      "seed_stable": true,
+      "regrets": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "worst_regret": 0.0,
+      "tolerance": 0.03,
+      "strategically_validated": false,
+      "reason": "within_reference_tolerance"
+    },
+    {
+      "id": "BB_vs_CO:flush_draw:turn",
+      "status": "needs_refinement",
+      "numerically_accepted": false,
+      "seed_stable": false,
+      "regrets": [
+        0.17293204908910997,
+        0.47323845726976455,
+        0.17293204908910997
+      ],
+      "worst_regret": 0.47323845726976455,
+      "tolerance": 0.03,
+      "strategically_validated": false,
+      "reason": "reference_disagreement"
+    },
+    {
+      "id": "BB_vs_CO:monotone:turn",
+      "status": "needs_refinement",
+      "numerically_accepted": false,
+      "seed_stable": false,
+      "regrets": [
+        0.16304928026486465,
+        0.16304928026486465,
+        0.0
+      ],
+      "worst_regret": 0.16304928026486465,
+      "tolerance": 0.03,
+      "strategically_validated": false,
+      "reason": "reference_disagreement"
+    },
+    {
+      "id": "BB_vs_CO:connected:turn",
+      "status": "accepted_under_model",
+      "numerically_accepted": true,
+      "seed_stable": true,
+      "regrets": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "worst_regret": 0.0,
+      "tolerance": 0.03,
+      "strategically_validated": false,
+      "reason": "within_reference_tolerance"
+    },
+    {
+      "id": "BB_vs_CO:four_flush:turn",
+      "status": "needs_refinement",
+      "numerically_accepted": false,
+      "seed_stable": false,
+      "regrets": [
+        0.7965517675518576,
+        0.0,
+        0.0
+      ],
+      "worst_regret": 0.7965517675518576,
+      "tolerance": 0.03,
+      "strategically_validated": false,
+      "reason": "reference_disagreement"
+    },
+    {
+      "id": "BB_vs_SB:top_pair_overcard:turn",
+      "status": "accepted_under_model",
+      "numerically_accepted": true,
+      "seed_stable": true,
+      "regrets": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "worst_regret": 0.0,
+      "tolerance": 0.03,
+      "strategically_validated": false,
+      "reason": "within_reference_tolerance"
+    },
+    {
+      "id": "BB_vs_SB:paired:turn",
+      "status": "needs_refinement",
+      "numerically_accepted": false,
+      "seed_stable": false,
+      "regrets": [
+        0.14503914045088706,
+        0.7586444802547909,
+        0.14503914045088706
+      ],
+      "worst_regret": 0.7586444802547909,
+      "tolerance": 0.03,
+      "strategically_validated": false,
+      "reason": "reference_disagreement"
+    },
+    {
+      "id": "BB_vs_SB:flush_draw:turn",
+      "status": "needs_refinement",
+      "numerically_accepted": false,
+      "seed_stable": false,
+      "regrets": [
+        0.0,
+        0.08681850779207423,
+        0.0
+      ],
+      "worst_regret": 0.08681850779207423,
+      "tolerance": 0.03,
+      "strategically_validated": false,
+      "reason": "reference_disagreement"
+    },
+    {
+      "id": "BB_vs_SB:monotone:turn",
+      "status": "accepted_under_model",
+      "numerically_accepted": true,
+      "seed_stable": true,
+      "regrets": [
+        0.003852790110187243,
+        0.003852790110187243,
+        0.003852790110187243
+      ],
+      "worst_regret": 0.003852790110187243,
+      "tolerance": 0.03,
+      "strategically_validated": false,
+      "reason": "within_reference_tolerance"
+    },
+    {
+      "id": "BB_vs_SB:connected:turn",
+      "status": "needs_refinement",
+      "numerically_accepted": false,
+      "seed_stable": false,
+      "regrets": [
+        0.0,
+        0.0,
+        0.14547911266902602
+      ],
+      "worst_regret": 0.14547911266902602,
+      "tolerance": 0.03,
+      "strategically_validated": false,
+      "reason": "reference_disagreement"
+    },
+    {
+      "id": "BB_vs_SB:four_flush:turn",
+      "status": "needs_refinement",
+      "numerically_accepted": false,
+      "seed_stable": false,
+      "regrets": [
+        0.0,
+        0.0,
+        0.7033773682115445
+      ],
+      "worst_regret": 0.7033773682115445,
+      "tolerance": 0.03,
+      "strategically_validated": false,
+      "reason": "reference_disagreement"
+    },
+    {
+      "id": "SB_vs_BB:top_pair_overcard:turn",
+      "status": "accepted_under_model",
+      "numerically_accepted": true,
+      "seed_stable": true,
+      "regrets": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "worst_regret": 0.0,
+      "tolerance": 0.03,
+      "strategically_validated": false,
+      "reason": "within_reference_tolerance"
+    },
+    {
+      "id": "SB_vs_BB:paired:turn",
+      "status": "needs_refinement",
+      "numerically_accepted": false,
+      "seed_stable": false,
+      "regrets": [
+        0.0,
+        0.0,
+        0.786069339954337
+      ],
+      "worst_regret": 0.786069339954337,
+      "tolerance": 0.03,
+      "strategically_validated": false,
+      "reason": "reference_disagreement"
+    },
+    {
+      "id": "SB_vs_BB:flush_draw:turn",
+      "status": "needs_refinement",
+      "numerically_accepted": false,
+      "seed_stable": false,
+      "regrets": [
+        0.06837698095706823,
+        0.0,
+        0.06837698095706823
+      ],
+      "worst_regret": 0.06837698095706823,
+      "tolerance": 0.03,
+      "strategically_validated": false,
+      "reason": "reference_disagreement"
+    },
+    {
+      "id": "SB_vs_BB:monotone:turn",
+      "status": "accepted_under_model",
+      "numerically_accepted": true,
+      "seed_stable": true,
+      "regrets": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "worst_regret": 0.0,
+      "tolerance": 0.03,
+      "strategically_validated": false,
+      "reason": "within_reference_tolerance"
+    },
+    {
+      "id": "SB_vs_BB:connected:turn",
+      "status": "accepted_under_model",
+      "numerically_accepted": true,
+      "seed_stable": true,
+      "regrets": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "worst_regret": 0.0,
+      "tolerance": 0.03,
+      "strategically_validated": false,
+      "reason": "within_reference_tolerance"
+    },
+    {
+      "id": "SB_vs_BB:four_flush:turn",
+      "status": "accepted_under_model",
+      "numerically_accepted": true,
+      "seed_stable": true,
+      "regrets": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "worst_regret": 0.0,
+      "tolerance": 0.03,
+      "strategically_validated": false,
+      "reason": "within_reference_tolerance"
+    }
+  ],
+  "accepted": 14,
+  "needs_refinement": 16,
+  "stable_but_inaccurate": [
+    "BTN_vs_BB:monotone:turn"
+  ],
+  "worst_cases": [
+    {
+      "id": "BB_vs_CO:four_flush:turn",
+      "status": "needs_refinement",
+      "numerically_accepted": false,
+      "seed_stable": false,
+      "regrets": [
+        0.7965517675518576,
+        0.0,
+        0.0
+      ],
+      "worst_regret": 0.7965517675518576,
+      "tolerance": 0.03,
+      "strategically_validated": false,
+      "reason": "reference_disagreement"
+    },
+    {
+      "id": "BB_vs_BTN:four_flush:turn",
+      "status": "needs_refinement",
+      "numerically_accepted": false,
+      "seed_stable": false,
+      "regrets": [
+        0.7892164517709013,
+        0.0,
+        0.0
+      ],
+      "worst_regret": 0.7892164517709013,
+      "tolerance": 0.03,
+      "strategically_validated": false,
+      "reason": "reference_disagreement"
+    },
+    {
+      "id": "SB_vs_BB:paired:turn",
+      "status": "needs_refinement",
+      "numerically_accepted": false,
+      "seed_stable": false,
+      "regrets": [
+        0.0,
+        0.0,
+        0.786069339954337
+      ],
+      "worst_regret": 0.786069339954337,
+      "tolerance": 0.03,
+      "strategically_validated": false,
+      "reason": "reference_disagreement"
+    },
+    {
+      "id": "BB_vs_SB:paired:turn",
+      "status": "needs_refinement",
+      "numerically_accepted": false,
+      "seed_stable": false,
+      "regrets": [
+        0.14503914045088706,
+        0.7586444802547909,
+        0.14503914045088706
+      ],
+      "worst_regret": 0.7586444802547909,
+      "tolerance": 0.03,
+      "strategically_validated": false,
+      "reason": "reference_disagreement"
+    },
+    {
+      "id": "BTN_vs_BB:four_flush:turn",
+      "status": "needs_refinement",
+      "numerically_accepted": false,
+      "seed_stable": false,
+      "regrets": [
+        0.0,
+        0.0,
+        0.7246096257106345
+      ],
+      "worst_regret": 0.7246096257106345,
+      "tolerance": 0.03,
+      "strategically_validated": false,
+      "reason": "reference_disagreement"
+    }
+  ]
+}

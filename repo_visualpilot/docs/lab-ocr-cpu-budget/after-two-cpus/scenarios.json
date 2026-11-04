@@ -1,0 +1,65 @@
+[
+  {
+    "scenario": "right_99.png",
+    "first_sequence": 1,
+    "last_sequence": 12,
+    "frame_sha256": "5db1da5b35ffa45d8e234290f7fa1f68db3d24d75e97a00ad9aba83d5525602b",
+    "elapsed_seconds": 3.405,
+    "partial_seconds": 0.702,
+    "complete_seconds": 3.405
+  },
+  {
+    "scenario": "left_99.png",
+    "first_sequence": 13,
+    "last_sequence": 20,
+    "frame_sha256": "db0647c94110b574f11881b6f22c30b6ad24644ad9f02b516a1262574943e4e9",
+    "elapsed_seconds": 2.169,
+    "partial_seconds": 0.259,
+    "complete_seconds": 2.169
+  },
+  {
+    "scenario": "board-only-change",
+    "first_sequence": 21,
+    "last_sequence": 29,
+    "frame_sha256": "99635bb6dece9a0801d6fc6c00c145af1dcb14c479fd600de5930f16a9fa32f1",
+    "elapsed_seconds": 2.502,
+    "partial_seconds": 0.299,
+    "complete_seconds": 2.502
+  },
+  {
+    "scenario": "turn",
+    "first_sequence": 30,
+    "last_sequence": 37,
+    "frame_sha256": "364746b55528de903bc4c787caae43c7a30833c23f1452b16dbddec775876eaa",
+    "elapsed_seconds": 2.173,
+    "partial_seconds": 0.544,
+    "complete_seconds": 2.173
+  },
+  {
+    "scenario": "river",
+    "first_sequence": 38,
+    "last_sequence": 46,
+    "frame_sha256": "f29d37641c6faa05f6e5ed53fbb85ccf8328abaaa26d8257e80c9255ec2f7b3c",
+    "elapsed_seconds": 2.405,
+    "partial_seconds": 0.256,
+    "complete_seconds": 2.405
+  },
+  {
+    "scenario": "window-1.25",
+    "first_sequence": 47,
+    "last_sequence": 55,
+    "frame_sha256": "f78b693d8c7ce518b2717fda4586cca5869ea89e317dbd25fa544cc9845eb8e7",
+    "elapsed_seconds": 2.471,
+    "partial_seconds": 0.583,
+    "complete_seconds": 2.471
+  },
+  {
+    "scenario": "window-1.5",
+    "first_sequence": 56,
+    "last_sequence": 63,
+    "frame_sha256": "c905d9a09d30e8cf2765c432be654bf9d257ae3f457abf0d6440bd04097e2bb0",
+    "elapsed_seconds": 2.209,
+    "partial_seconds": 0.589,
+    "complete_seconds": 2.209
+  }
+]

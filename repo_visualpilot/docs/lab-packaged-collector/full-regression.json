@@ -1,0 +1,21 @@
+{
+  "stage": "full-regression",
+  "state": "passed",
+  "started_at": "2026-10-30T23:13:27.870984+00:00",
+  "platform": "linux",
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "commit": null,
+  "command": [
+    "/workspace/VisualPilot/.venv/bin/python",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-v"
+  ],
+  "log": "full-regression.log",
+  "exit_code": 0,
+  "finished_at": "2026-10-30T23:15:35.546525+00:00",
+  "elapsed_seconds": 127.675
+}

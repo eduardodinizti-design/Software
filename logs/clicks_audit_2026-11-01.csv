@@ -1,0 +1,24 @@
+timestamp_iso,event_type,status,tournament_name,card_index,buyin_chips,target_abs_x,target_abs_y,win_left,win_top,win_width,win_height,duration_ms,details
+2026-11-01T03:23:19.584324+00:00,Teste CLI Orquestrador,ORCHESTRATOR_STARTED,SUCCESS,,,,,,0,0,0,0,,Orquestrador de ciclo contínuo iniciado. Sessão: 'Teste CLI Orquestrador'.
+2026-11-01T03:23:19.584819+00:00,Teste CLI Orquestrador,SCREEN_TRANSITION_OK,SUCCESS,,,,,,0,0,0,0,0.0,Tela de detalhes do torneio identificada com sucesso.
+2026-11-01T03:23:19.584977+00:00,Teste CLI Orquestrador,REGISTER_BUTTON_CLICKED,SUCCESS,,,,894,1546,0,0,0,0,0.0,"Botão de registro acionado em (894, 1546)"
+2026-11-01T03:23:19.585072+00:00,Teste CLI Orquestrador,BUYIN_CONFIRMED,SUCCESS,,,,990,1000,0,0,0,0,0.0,"Diálogo de buy-in confirmado em (990, 1000)"
+2026-11-01T03:23:19.585150+00:00,Teste CLI Orquestrador,STATUS_VERIFIED_REGISTERED,SUCCESS,,,,,,0,0,0,0,0.0,Status validado com sucesso: 'Inscrito' (Vaga confirmada)
+2026-11-01T03:23:19.585250+00:00,Teste CLI Orquestrador,RETURNED_TO_LOBBY,SUCCESS,,,,556,230,0,0,0,0,0.0,"Retorno ao Lobby acionado via Back Button em (556, 230)"
+2026-11-01T03:23:19.585344+00:00,Teste CLI Orquestrador,REGISTRATION_SUCCESS,SUCCESS,PPPOKER SUPER CLASSIC 20K,0,20,,,500,150,787,1470,0.5,Inscrição concluída com sucesso! Status verificado como 'Inscrito' e retornado ao Lobby.
+2026-11-01T03:23:19.585821+00:00,Teste CLI Orquestrador,SCREEN_TRANSITION_OK,SUCCESS,,,,,,0,0,0,0,0.0,Tela de detalhes do torneio identificada com sucesso.
+2026-11-01T03:23:19.585924+00:00,Teste CLI Orquestrador,REGISTER_BUTTON_CLICKED,SUCCESS,,,,894,1546,0,0,0,0,0.0,"Botão de registro acionado em (894, 1546)"
+2026-11-01T03:23:19.586003+00:00,Teste CLI Orquestrador,BUYIN_CONFIRMED,SUCCESS,,,,990,1000,0,0,0,0,0.0,"Diálogo de buy-in confirmado em (990, 1000)"
+2026-11-01T03:23:19.586099+00:00,Teste CLI Orquestrador,STATUS_VERIFIED_REGISTERED,SUCCESS,,,,,,0,0,0,0,0.0,Status validado com sucesso: 'Inscrito' (Vaga confirmada)
+2026-11-01T03:23:19.586194+00:00,Teste CLI Orquestrador,RETURNED_TO_LOBBY,SUCCESS,,,,556,230,0,0,0,0,0.0,"Retorno ao Lobby acionado via Back Button em (556, 230)"
+2026-11-01T03:23:19.586271+00:00,Teste CLI Orquestrador,REGISTRATION_SUCCESS,SUCCESS,TARDEZINHA PKO 5K GTD,1,10,,,500,150,787,1470,0.5,Inscrição concluída com sucesso! Status verificado como 'Inscrito' e retornado ao Lobby.
+2026-11-01T03:23:19.586712+00:00,Teste CLI Orquestrador,SCREEN_TRANSITION_OK,SUCCESS,,,,,,0,0,0,0,0.0,Tela de detalhes do torneio identificada com sucesso.
+2026-11-01T03:23:19.586830+00:00,Teste CLI Orquestrador,REGISTER_BUTTON_CLICKED,SUCCESS,,,,894,1546,0,0,0,0,0.0,"Botão de registro acionado em (894, 1546)"
+2026-11-01T03:23:19.586911+00:00,Teste CLI Orquestrador,BUYIN_CONFIRMED,SUCCESS,,,,990,1000,0,0,0,0,0.0,"Diálogo de buy-in confirmado em (990, 1000)"
+2026-11-01T03:23:19.586988+00:00,Teste CLI Orquestrador,STATUS_VERIFIED_REGISTERED,SUCCESS,,,,,,0,0,0,0,0.0,Status validado com sucesso: 'Inscrito' (Vaga confirmada)
+2026-11-01T03:23:19.587063+00:00,Teste CLI Orquestrador,RETURNED_TO_LOBBY,SUCCESS,,,,556,230,0,0,0,0,0.0,"Retorno ao Lobby acionado via Back Button em (556, 230)"
+2026-11-01T03:23:19.587127+00:00,Teste CLI Orquestrador,REGISTRATION_SUCCESS,SUCCESS,CORUJAO HYPER PKO10K,2,50,,,500,150,787,1470,0.4,Inscrição concluída com sucesso! Status verificado como 'Inscrito' e retornado ao Lobby.
+2026-11-01T03:23:20.591553+00:00,Teste CLI Orquestrador,TOURNAMENT_SKIPPED_ALREADY_REGISTERED,SKIPPED,PPPOKER SUPER CLASSIC 20K,0,20.0,,,0,0,0,0,,Inscrição evitada por Anti-Duplicação: 'PPPOKER SUPER CLASSIC 20K' já consta no registro persistente.
+2026-11-01T03:23:20.591942+00:00,Teste CLI Orquestrador,TOURNAMENT_SKIPPED_ALREADY_REGISTERED,SKIPPED,TARDEZINHA PKO 5K GTD,1,10.0,,,0,0,0,0,,Inscrição evitada por Anti-Duplicação: 'TARDEZINHA PKO 5K GTD' já consta no registro persistente.
+2026-11-01T03:23:20.592104+00:00,Teste CLI Orquestrador,TOURNAMENT_SKIPPED_ALREADY_REGISTERED,SKIPPED,CORUJAO HYPER PKO10K,2,50.0,,,0,0,0,0,,Inscrição evitada por Anti-Duplicação: 'CORUJAO HYPER PKO10K' já consta no registro persistente.
+2026-11-01T03:23:20.592833+00:00,Teste CLI Orquestrador,ORCHESTRATOR_STOPPED,SUCCESS,,,,,,0,0,0,0,,"Orquestrador finalizado. Total de ciclos: 2, Inscrições realizadas: 3."

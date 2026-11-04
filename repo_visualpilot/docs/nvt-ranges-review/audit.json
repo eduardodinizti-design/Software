@@ -1,0 +1,225 @@
+{
+  "packages": [
+    {
+      "file": "nvt-ranges.json",
+      "sha256": "9630dae8e9175bf3799728738cfdb681914829aa6450eaeecf6f49dd023655c9",
+      "format": "nvt-range-export",
+      "version": 1,
+      "engineCommit": "ea758d9",
+      "generatedAt": "2026-10-29T23:56:40.052Z",
+      "validation": {
+        "version": "2026-10-29-223refs",
+        "gate": true
+      },
+      "hands": 169,
+      "unique_hands": 169,
+      "combos": 1326,
+      "nodes": 6349,
+      "modes": {
+        "chip_ev": 651,
+        "icm": 2667,
+        "pko": 364,
+        "pko_icm": 2667
+      },
+      "stacks": {
+        "100": 560,
+        "40": 560,
+        "25": 2297,
+        "15": 948,
+        "12": 640,
+        "10": 352,
+        "8": 352,
+        "5": 352,
+        "20": 288
+      },
+      "tournament_stages": {
+        "mid": 1015,
+        "pre_itm": 1778,
+        "bubble": 1778,
+        "ft": 1778
+      },
+      "spots": {
+        "open_raise": 320,
+        "open_shove": 320,
+        "vs_open_shove": 1440,
+        "3bet_shove": 1584,
+        "vs_open": 1440,
+        "vs_3bet": 1188,
+        "limp": 19,
+        "limp_call": 19,
+        "vs_limp": 19
+      },
+      "players": {
+        "9": 6349
+      },
+      "validated": {
+        "False": 1802,
+        "True": 4547
+      },
+      "ev_units": {
+        "None": 1379,
+        "bb": 884,
+        "pct": 4086
+      },
+      "node_fields": {
+        "id": 6349,
+        "context": 6349,
+        "spot": 6349,
+        "hero": 6349,
+        "vs": 6349,
+        "table": 6349,
+        "source": 6349,
+        "family": 6349,
+        "validated": 6349,
+        "evUnit": 6349,
+        "legalActions": 6349,
+        "actions": 6349,
+        "freq": 6349,
+        "ev": 6349,
+        "totals": 6349,
+        "outOfRange": 739,
+        "spread": 5334
+      },
+      "issues": {},
+      "examples": {},
+      "zero_ev_zero_frequency_nonfold": 3036,
+      "ev_cells": 2079545,
+      "client_documentation_discrepancy_examples": [
+        {
+          "node": "chip_ev|mid|25|vs_limp|BB||-",
+          "hand": "Q9o",
+          "chosen": "check",
+          "ev_loss": 0.01,
+          "client_result": "ACCEPTABLE_MIXED_ACTION from zero placeholder",
+          "documentation": "treat EV as not calculated"
+        },
+        {
+          "node": "icm|pre_itm|8|open_shove|UTG+2||-",
+          "hand": "A5o",
+          "chosen": "all_in",
+          "ev_loss": 0,
+          "client_result": "ACCEPTABLE_MIXED_ACTION from zero placeholder",
+          "documentation": "treat EV as not calculated"
+        },
+        {
+          "node": "icm|pre_itm|15|vs_open_shove|BB|BTN|-",
+          "hand": "KQo",
+          "chosen": "call",
+          "ev_loss": 0,
+          "client_result": "ACCEPTABLE_MIXED_ACTION from zero placeholder",
+          "documentation": "treat EV as not calculated"
+        }
+      ]
+    },
+    {
+      "file": "nvt-ranges-validados.json",
+      "sha256": "9b0be1a64301a60f263d03a3f3641ce5c1c5d854083b90bf702dd85a9182bf03",
+      "format": "nvt-range-export",
+      "version": 1,
+      "engineCommit": "ea758d9",
+      "generatedAt": "2026-10-29T23:56:40.052Z",
+      "validation": {
+        "version": "2026-10-29-223refs",
+        "gate": true
+      },
+      "hands": 169,
+      "unique_hands": 169,
+      "combos": 1326,
+      "nodes": 4547,
+      "modes": {
+        "chip_ev": 490,
+        "icm": 2024,
+        "pko_icm": 2033
+      },
+      "stacks": {
+        "25": 2207,
+        "15": 604,
+        "12": 560,
+        "10": 308,
+        "8": 308,
+        "5": 308,
+        "20": 252
+      },
+      "tournament_stages": {
+        "mid": 490,
+        "pre_itm": 1350,
+        "bubble": 1351,
+        "ft": 1356
+      },
+      "spots": {
+        "open_raise": 160,
+        "open_shove": 280,
+        "vs_open_shove": 1260,
+        "3bet_shove": 1440,
+        "vs_open": 720,
+        "vs_3bet": 630,
+        "limp": 19,
+        "limp_call": 19,
+        "vs_limp": 19
+      },
+      "players": {
+        "9": 4547
+      },
+      "validated": {
+        "True": 4547
+      },
+      "ev_units": {
+        "bb": 490,
+        "pct": 4057
+      },
+      "node_fields": {
+        "id": 4547,
+        "context": 4547,
+        "spot": 4547,
+        "hero": 4547,
+        "vs": 4547,
+        "table": 4547,
+        "source": 4547,
+        "family": 4547,
+        "validated": 4547,
+        "evUnit": 4547,
+        "legalActions": 4547,
+        "actions": 4547,
+        "freq": 4547,
+        "ev": 4547,
+        "totals": 4547,
+        "outOfRange": 649,
+        "spread": 4057
+      },
+      "issues": {},
+      "examples": {},
+      "zero_ev_zero_frequency_nonfold": 3035,
+      "ev_cells": 1919333,
+      "client_documentation_discrepancy_examples": [
+        {
+          "node": "chip_ev|mid|25|vs_limp|BB||-",
+          "hand": "Q9o",
+          "chosen": "check",
+          "ev_loss": 0.01,
+          "client_result": "ACCEPTABLE_MIXED_ACTION from zero placeholder",
+          "documentation": "treat EV as not calculated"
+        },
+        {
+          "node": "icm|pre_itm|8|open_shove|UTG+2||-",
+          "hand": "A5o",
+          "chosen": "all_in",
+          "ev_loss": 0,
+          "client_result": "ACCEPTABLE_MIXED_ACTION from zero placeholder",
+          "documentation": "treat EV as not calculated"
+        },
+        {
+          "node": "icm|pre_itm|15|vs_open_shove|BB|BTN|-",
+          "hand": "KQo",
+          "chosen": "call",
+          "ev_loss": 0,
+          "client_result": "ACCEPTABLE_MIXED_ACTION from zero placeholder",
+          "documentation": "treat EV as not calculated"
+        }
+      ]
+    }
+  ],
+  "validated_subset": {
+    "same_ids": true,
+    "same_contents": true
+  }
+}

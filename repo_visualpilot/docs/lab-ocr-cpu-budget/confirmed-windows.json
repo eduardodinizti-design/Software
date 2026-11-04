@@ -1,0 +1,26 @@
+{
+  "recorded_at": "2026-10-30T23:47:41.802702+00:00",
+  "commit": "acd13517527f6071539f31aeed4f80d4b376760a",
+  "workflow": "Windows laboratory",
+  "status": "passed_user_confirmed",
+  "evidence_source": "user reply to the pending question for this commit",
+  "user_reply": "ficou verde",
+  "run_id": null,
+  "run_number": null,
+  "duration_seconds": null,
+  "raw_job_reports_inspected": false,
+  "scope_basis": "required sequential build steps in the workflow at the confirmed commit",
+  "required_steps": [
+    "source_tests",
+    "build_collector",
+    "build_central",
+    "frozen_central_startup",
+    "frozen_collector_verified_loopback_transport",
+    "seal_distribution",
+    "candidate_artifact_publication"
+  ],
+  "workflow_sha256": "56040f37587522af8ec19c2e04bf62a0fded1109b37c7f2d91e7f3dd62eb37b4",
+  "build_script_sha256": "257e0a0cca4fd875aba26cb81a6be8164cb7209d4f1a365166da3929603d24bb",
+  "candidate_artifact": "windows-laboratory-candidate",
+  "physical_pair_validation": "pending"
+}

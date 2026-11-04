@@ -1,0 +1,401 @@
+{
+  "scope": "Three real frames; two card regions; three variants. Not 52-card validation.",
+  "labeling": "Manual visual labels from uploaded session; empty frames are add-on breaks.",
+  "passed": 12,
+  "total": 18,
+  "cases": [
+    {
+      "source": "000001.png",
+      "sha256": "eafba8a4eeff58f23f0541bd2be3d073f9d04df827e0b130af1c8190114ffaa0",
+      "variant": "original",
+      "region": "hero_cards",
+      "expected": [
+        "Th",
+        "6c"
+      ],
+      "actual": [],
+      "passed": false,
+      "reading": {
+        "region": "hero_cards",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "candidate_count": 0
+        },
+        "latency_sec": 0.004520144022535533
+      }
+    },
+    {
+      "source": "000001.png",
+      "sha256": "eafba8a4eeff58f23f0541bd2be3d073f9d04df827e0b130af1c8190114ffaa0",
+      "variant": "original",
+      "region": "board_flop",
+      "expected": [
+        "2c",
+        "4h",
+        "9c"
+      ],
+      "actual": [],
+      "passed": false,
+      "reading": {
+        "region": "board_flop",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "candidate_count": 1,
+          "boxes": [
+            [
+              114,
+              24,
+              41,
+              75
+            ]
+          ]
+        },
+        "latency_sec": 0.007887145970016718
+      }
+    },
+    {
+      "source": "000001.png",
+      "sha256": "eafba8a4eeff58f23f0541bd2be3d073f9d04df827e0b130af1c8190114ffaa0",
+      "variant": "brightness_70_percent",
+      "region": "hero_cards",
+      "expected": [
+        "Th",
+        "6c"
+      ],
+      "actual": [],
+      "passed": false,
+      "reading": {
+        "region": "hero_cards",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "candidate_count": 0
+        },
+        "latency_sec": 0.004358812002465129
+      }
+    },
+    {
+      "source": "000001.png",
+      "sha256": "eafba8a4eeff58f23f0541bd2be3d073f9d04df827e0b130af1c8190114ffaa0",
+      "variant": "brightness_70_percent",
+      "region": "board_flop",
+      "expected": [
+        "2c",
+        "4h",
+        "9c"
+      ],
+      "actual": [],
+      "passed": false,
+      "reading": {
+        "region": "board_flop",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "candidate_count": 1,
+          "boxes": [
+            [
+              114,
+              24,
+              41,
+              75
+            ]
+          ]
+        },
+        "latency_sec": 0.0034463820047676563
+      }
+    },
+    {
+      "source": "000001.png",
+      "sha256": "eafba8a4eeff58f23f0541bd2be3d073f9d04df827e0b130af1c8190114ffaa0",
+      "variant": "resize_75_percent",
+      "region": "hero_cards",
+      "expected": [
+        "Th",
+        "6c"
+      ],
+      "actual": [],
+      "passed": false,
+      "reading": {
+        "region": "hero_cards",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "candidate_count": 0
+        },
+        "latency_sec": 0.002354983997065574
+      }
+    },
+    {
+      "source": "000001.png",
+      "sha256": "eafba8a4eeff58f23f0541bd2be3d073f9d04df827e0b130af1c8190114ffaa0",
+      "variant": "resize_75_percent",
+      "region": "board_flop",
+      "expected": [
+        "2c",
+        "4h",
+        "9c"
+      ],
+      "actual": [],
+      "passed": false,
+      "reading": {
+        "region": "board_flop",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "candidate_count": 1,
+          "boxes": [
+            [
+              86,
+              18,
+              31,
+              56
+            ]
+          ]
+        },
+        "latency_sec": 0.00192772300215438
+      }
+    },
+    {
+      "source": "000002.png",
+      "sha256": "60676b8202ed335417cecc8b24cbd34e1059c04b7e35cb21d3eda812cbc15de3",
+      "variant": "original",
+      "region": "hero_cards",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "hero_cards",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "candidate_count": 0
+        },
+        "latency_sec": 0.0043238389771431684
+      }
+    },
+    {
+      "source": "000002.png",
+      "sha256": "60676b8202ed335417cecc8b24cbd34e1059c04b7e35cb21d3eda812cbc15de3",
+      "variant": "original",
+      "region": "board_flop",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "board_flop",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "candidate_count": 0,
+          "boxes": []
+        },
+        "latency_sec": 0.003336526977363974
+      }
+    },
+    {
+      "source": "000002.png",
+      "sha256": "60676b8202ed335417cecc8b24cbd34e1059c04b7e35cb21d3eda812cbc15de3",
+      "variant": "brightness_70_percent",
+      "region": "hero_cards",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "hero_cards",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "candidate_count": 0
+        },
+        "latency_sec": 0.004218951042275876
+      }
+    },
+    {
+      "source": "000002.png",
+      "sha256": "60676b8202ed335417cecc8b24cbd34e1059c04b7e35cb21d3eda812cbc15de3",
+      "variant": "brightness_70_percent",
+      "region": "board_flop",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "board_flop",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "candidate_count": 0,
+          "boxes": []
+        },
+        "latency_sec": 0.0032709690276533365
+      }
+    },
+    {
+      "source": "000002.png",
+      "sha256": "60676b8202ed335417cecc8b24cbd34e1059c04b7e35cb21d3eda812cbc15de3",
+      "variant": "resize_75_percent",
+      "region": "hero_cards",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "hero_cards",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "candidate_count": 0
+        },
+        "latency_sec": 0.0024981590104289353
+      }
+    },
+    {
+      "source": "000002.png",
+      "sha256": "60676b8202ed335417cecc8b24cbd34e1059c04b7e35cb21d3eda812cbc15de3",
+      "variant": "resize_75_percent",
+      "region": "board_flop",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "board_flop",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "candidate_count": 0,
+          "boxes": []
+        },
+        "latency_sec": 0.0018598010065034032
+      }
+    },
+    {
+      "source": "000003.png",
+      "sha256": "a8bdbeb560d948228e8ea0bb5e79ee444542d52c27cfcb6a657fe6bda4a8d4a0",
+      "variant": "original",
+      "region": "hero_cards",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "hero_cards",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "candidate_count": 0
+        },
+        "latency_sec": 0.004049716982990503
+      }
+    },
+    {
+      "source": "000003.png",
+      "sha256": "a8bdbeb560d948228e8ea0bb5e79ee444542d52c27cfcb6a657fe6bda4a8d4a0",
+      "variant": "original",
+      "region": "board_flop",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "board_flop",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "candidate_count": 0,
+          "boxes": []
+        },
+        "latency_sec": 0.0034874940174631774
+      }
+    },
+    {
+      "source": "000003.png",
+      "sha256": "a8bdbeb560d948228e8ea0bb5e79ee444542d52c27cfcb6a657fe6bda4a8d4a0",
+      "variant": "brightness_70_percent",
+      "region": "hero_cards",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "hero_cards",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "candidate_count": 0
+        },
+        "latency_sec": 0.0044177399831824005
+      }
+    },
+    {
+      "source": "000003.png",
+      "sha256": "a8bdbeb560d948228e8ea0bb5e79ee444542d52c27cfcb6a657fe6bda4a8d4a0",
+      "variant": "brightness_70_percent",
+      "region": "board_flop",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "board_flop",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "candidate_count": 0,
+          "boxes": []
+        },
+        "latency_sec": 0.0034714489593170583
+      }
+    },
+    {
+      "source": "000003.png",
+      "sha256": "a8bdbeb560d948228e8ea0bb5e79ee444542d52c27cfcb6a657fe6bda4a8d4a0",
+      "variant": "resize_75_percent",
+      "region": "hero_cards",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "hero_cards",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "candidate_count": 0
+        },
+        "latency_sec": 0.002294453966896981
+      }
+    },
+    {
+      "source": "000003.png",
+      "sha256": "a8bdbeb560d948228e8ea0bb5e79ee444542d52c27cfcb6a657fe6bda4a8d4a0",
+      "variant": "resize_75_percent",
+      "region": "board_flop",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "board_flop",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "candidate_count": 0,
+          "boxes": []
+        },
+        "latency_sec": 0.0018407320021651685
+      }
+    }
+  ]
+}

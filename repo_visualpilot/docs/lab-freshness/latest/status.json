@@ -1,0 +1,90 @@
+{
+  "run_id": "323fc885e21b4f5da9bac934164461d5",
+  "pid": 281139,
+  "state": "completed",
+  "started_at": "2026-10-30T21:57:46.291785+00:00",
+  "tests": [
+    {
+      "test": "test_runtime_freshness.PublicationBoundaryTests.test_monitor_cancels_old_button_interval_on_new_frame",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_runtime_freshness.PublicationBoundaryTests.test_new_image_invalidates_display_and_late_partial_cannot_restore_it",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_runtime_freshness.PublicationBoundaryTests.test_panel_does_not_replace_new_reading_with_delayed_old_event",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_runtime_freshness.PublicationBoundaryTests.test_partial_cannot_downgrade_consolidated_same_source",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_runtime_freshness.PublicationBoundaryTests.test_scheduler_checks_expiry_when_result_arrives_without_cleanup",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_runtime_freshness.RuntimeFreshnessTests.test_actual_processing_time_is_separate_from_image_age",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_runtime_freshness.RuntimeFreshnessTests.test_cache_limit_really_schedules_new_ocr",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_runtime_freshness.RuntimeFreshnessTests.test_expired_partial_never_reaches_consumers",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_runtime_freshness.RuntimeFreshnessTests.test_identical_new_frame_cannot_renew_inflight_ocr_age",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_runtime_freshness.RuntimeFreshnessTests.test_ingress_during_publication_preparation_blocks_old_full_result",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_runtime_freshness.RuntimeFreshnessTests.test_pending_new_frame_blocks_partial_before_generation_advances",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_runtime_freshness.RuntimeFreshnessTests.test_rejections_have_reason_and_frame_identity",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_runtime_freshness.RuntimeFreshnessTests.test_source_and_processing_timing_are_traceable",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_runtime_freshness.RuntimeFreshnessTests.test_wrong_worker_identity_is_rejected",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_runtime_freshness.StrategyFreshnessTests.test_delayed_strategy_cannot_restore_old_generation_or_expired_frame",
+      "outcome": "passed"
+    },
+    {
+      "test": "test_runtime_freshness.StrategyFreshnessTests.test_fresh_advisory_retains_source_but_never_authorizes_action",
+      "outcome": "passed"
+    }
+  ],
+  "scope": "deterministic fault injection; not end-to-end Windows validation",
+  "source_sha256": {
+    "tests/test_runtime_freshness.py": "1d26426b1abaacfa53ef593d58ae56dc6f341ed1d0de950a12c210b94eaa984a",
+    "visualpilot/pppoker/observer/runtime.py": "e106e10183b009917a115a47dd2a18fd2ac7f630ef98eff9d05eacf82e7c12b3",
+    "visualpilot/pppoker/observer/freshness.py": "54c373e794e1e6f009a05f6d6a938d4c62e38e71a5719692ab233fd2544b9e70",
+    "visualpilot/pppoker/scheduler.py": "f4e19be476945ba34f72e67531a922e62a0f9b906659a056d723ec2df932af52",
+    "visualpilot/viz/session.py": "7f8858bb1bb9ca8f3d9e9e665fc5bdbb51f6a3843d78c41af15984d383a9b24e",
+    "visualpilot/viz/monitor.py": "ca36b3d8a07ed178f5feba1b0357faa38c500397d2f24c3629b912b57c9bddbf",
+    "visualpilot/agent/bridge.py": "33a1b6ae498de9417a597a6df62295c4ebd8c4d66e9f79034b2b9d9ef324b48a",
+    "visualpilot/pppoker/stream_receiver.py": "ad8e4bd552dec046e3f825e7323e99ab9d26752619b95145136a3b3b7f19f930"
+  },
+  "updated_at": "2026-10-30T21:57:46.586835+00:00",
+  "current_test": null,
+  "tests_run": 16,
+  "outcome": "passed",
+  "failures": 0,
+  "errors": 0,
+  "stage_approved": false
+}

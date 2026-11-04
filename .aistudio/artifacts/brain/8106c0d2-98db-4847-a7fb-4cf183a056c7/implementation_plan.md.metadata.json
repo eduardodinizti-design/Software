@@ -1,0 +1,6 @@
+{
+  "summary":  "Plano de implementação para o Sistema de Registro Persistente em CSV e Monitoramento Contínuo da Janela do PPPoker no Módulo 4: auditoria histórica diária com rotatividade automática, detecção em tempo real de fechamento ou mudança brusca de resolução, cancelamento imediato de cliques inseguros e visualização do histórico de auditoria no dashboard web.",
+  "updatedAt":  "2026-10-31T22:39:49.444015542Z",
+  "requestFeedback":  true,
+  "userFacing":  true
+}

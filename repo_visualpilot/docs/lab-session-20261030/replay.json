@@ -1,0 +1,349 @@
+[
+  {
+    "file": "000001.png",
+    "seconds": 1.854,
+    "regions": {
+      "hero_cards": {
+        "box": [
+          407,
+          1049,
+          570,
+          1203
+        ],
+        "reading": {
+          "region": "hero_cards",
+          "status": "PENDING",
+          "cards": [],
+          "reason": "Cartas incompletas ou ambíguas.",
+          "diagnostics": {
+            "candidate_count": 0
+          },
+          "latency_sec": 0.0052776719676330686
+        }
+      },
+      "board_flop": {
+        "box": [
+          154,
+          511,
+          429,
+          665
+        ],
+        "reading": {
+          "region": "board_flop",
+          "status": "PENDING",
+          "cards": [],
+          "reason": "Cartas incompletas ou ambíguas.",
+          "diagnostics": {
+            "candidate_count": 1,
+            "boxes": [
+              [
+                114,
+                24,
+                41,
+                75
+              ]
+            ]
+          },
+          "latency_sec": 0.00927022099494934
+        }
+      },
+      "board_turn": {
+        "box": [
+          420,
+          511,
+          520,
+          665
+        ],
+        "reading": {
+          "region": "board_turn",
+          "status": "PENDING",
+          "cards": [],
+          "reason": "Cartas incompletas ou ambíguas.",
+          "diagnostics": {
+            "candidate_count": 0,
+            "boxes": []
+          },
+          "latency_sec": 0.00151162501424551
+        }
+      },
+      "board_river": {
+        "box": [
+          511,
+          511,
+          615,
+          665
+        ],
+        "reading": {
+          "region": "board_river",
+          "status": "PENDING",
+          "cards": [],
+          "reason": "Cartas incompletas ou ambíguas.",
+          "diagnostics": {
+            "candidate_count": 0,
+            "boxes": []
+          },
+          "latency_sec": 0.0015419300179928541
+        }
+      }
+    },
+    "result": {
+      "status": "partial",
+      "hero": [],
+      "board": [],
+      "street": null,
+      "pot": "Pot:3,4 BB",
+      "hero_stack": "35,5 BB",
+      "reason": "Board incompleto ou ilegível.",
+      "diagnostics": {
+        "hero": {
+          "stage": "localization",
+          "candidate_count": 0,
+          "search_box": [
+            302,
+            1020,
+            294,
+            188
+          ],
+          "cards": []
+        },
+        "coordinate_space": "normalized_table",
+        "image_size": [
+          755,
+          1343
+        ],
+        "board": [
+          {
+            "box": [
+              268,
+              535,
+              41,
+              75
+            ],
+            "card": null,
+            "rank_candidate": "?",
+            "rank_confidence": 0.0,
+            "suit_candidate": null
+          }
+        ]
+      }
+    }
+  },
+  {
+    "file": "000002.png",
+    "seconds": 1.09,
+    "regions": {
+      "hero_cards": {
+        "box": [
+          407,
+          1048,
+          570,
+          1202
+        ],
+        "reading": {
+          "region": "hero_cards",
+          "status": "PENDING",
+          "cards": [],
+          "reason": "Cartas incompletas ou ambíguas.",
+          "diagnostics": {
+            "candidate_count": 0
+          },
+          "latency_sec": 0.0046996669843792915
+        }
+      },
+      "board_flop": {
+        "box": [
+          154,
+          511,
+          429,
+          664
+        ],
+        "reading": {
+          "region": "board_flop",
+          "status": "PENDING",
+          "cards": [],
+          "reason": "Cartas incompletas ou ambíguas.",
+          "diagnostics": {
+            "candidate_count": 0,
+            "boxes": []
+          },
+          "latency_sec": 0.0035346030490472913
+        }
+      },
+      "board_turn": {
+        "box": [
+          420,
+          511,
+          520,
+          664
+        ],
+        "reading": {
+          "region": "board_turn",
+          "status": "PENDING",
+          "cards": [],
+          "reason": "Cartas incompletas ou ambíguas.",
+          "diagnostics": {
+            "candidate_count": 0,
+            "boxes": []
+          },
+          "latency_sec": 0.0011563299922272563
+        }
+      },
+      "board_river": {
+        "box": [
+          511,
+          511,
+          615,
+          664
+        ],
+        "reading": {
+          "region": "board_river",
+          "status": "PENDING",
+          "cards": [],
+          "reason": "Cartas incompletas ou ambíguas.",
+          "diagnostics": {
+            "candidate_count": 0,
+            "boxes": []
+          },
+          "latency_sec": 0.00124714698176831
+        }
+      }
+    },
+    "result": {
+      "status": "partial",
+      "hero": [],
+      "board": [],
+      "street": null,
+      "pot": null,
+      "hero_stack": "33,3BB",
+      "reason": "Cartas comunitárias não localizadas; pré-flop não comprovado.",
+      "diagnostics": {
+        "hero": {
+          "stage": "localization",
+          "candidate_count": 0,
+          "search_box": [
+            302,
+            1019,
+            294,
+            188
+          ],
+          "cards": []
+        },
+        "coordinate_space": "normalized_table",
+        "image_size": [
+          755,
+          1342
+        ],
+        "board": []
+      }
+    }
+  },
+  {
+    "file": "000003.png",
+    "seconds": 1.393,
+    "regions": {
+      "hero_cards": {
+        "box": [
+          407,
+          1048,
+          570,
+          1202
+        ],
+        "reading": {
+          "region": "hero_cards",
+          "status": "PENDING",
+          "cards": [],
+          "reason": "Cartas incompletas ou ambíguas.",
+          "diagnostics": {
+            "candidate_count": 0
+          },
+          "latency_sec": 0.00435113999992609
+        }
+      },
+      "board_flop": {
+        "box": [
+          154,
+          511,
+          429,
+          664
+        ],
+        "reading": {
+          "region": "board_flop",
+          "status": "PENDING",
+          "cards": [],
+          "reason": "Cartas incompletas ou ambíguas.",
+          "diagnostics": {
+            "candidate_count": 0,
+            "boxes": []
+          },
+          "latency_sec": 0.0033874180517159402
+        }
+      },
+      "board_turn": {
+        "box": [
+          420,
+          511,
+          520,
+          664
+        ],
+        "reading": {
+          "region": "board_turn",
+          "status": "PENDING",
+          "cards": [],
+          "reason": "Cartas incompletas ou ambíguas.",
+          "diagnostics": {
+            "candidate_count": 0,
+            "boxes": []
+          },
+          "latency_sec": 0.0011703800410032272
+        }
+      },
+      "board_river": {
+        "box": [
+          511,
+          511,
+          615,
+          664
+        ],
+        "reading": {
+          "region": "board_river",
+          "status": "PENDING",
+          "cards": [],
+          "reason": "Cartas incompletas ou ambíguas.",
+          "diagnostics": {
+            "candidate_count": 0,
+            "boxes": []
+          },
+          "latency_sec": 0.0012580420006997883
+        }
+      }
+    },
+    "result": {
+      "status": "partial",
+      "hero": [],
+      "board": [],
+      "street": null,
+      "pot": null,
+      "hero_stack": "33,3BB",
+      "reason": "Cartas comunitárias não localizadas; pré-flop não comprovado.",
+      "diagnostics": {
+        "hero": {
+          "stage": "localization",
+          "candidate_count": 0,
+          "search_box": [
+            302,
+            1019,
+            294,
+            188
+          ],
+          "cards": []
+        },
+        "coordinate_space": "normalized_table",
+        "image_size": [
+          755,
+          1342
+        ],
+        "board": []
+      }
+    }
+  }
+]

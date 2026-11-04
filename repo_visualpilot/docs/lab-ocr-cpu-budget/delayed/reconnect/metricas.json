@@ -1,0 +1,56 @@
+{
+  "ocr": 3,
+  "cached": 1,
+  "stale": 0,
+  "errors": 0,
+  "latencies": [
+    2.8028,
+    2.1,
+    2.5752,
+    0.228
+  ],
+  "ocr_latencies": [
+    2.8028,
+    2.1,
+    2.5752
+  ],
+  "cached_latencies": [
+    0.228
+  ],
+  "tables": {
+    "[\"lab\",\"recovery\",\"one\"]": {
+      "published": 4,
+      "cached": 1,
+      "expired": 0,
+      "last_age_seconds": 0.228
+    }
+  },
+  "workers": 2,
+  "transport": {
+    "accepted_verified": 77,
+    "accepted_legacy": 0,
+    "rejected": {}
+  },
+  "latency_semantics": "v2: conservative ticket-to-publication capture-age bound; legacy: ingress-only",
+  "warmup_start_seconds": 0.0323,
+  "card_region_ocr": 16,
+  "partial_cards": 4,
+  "discarded_results": {
+    "expired_source": 1
+  },
+  "coverage": {
+    "published": 4,
+    "hero_read": 4,
+    "board_read": 1,
+    "street_unknown": 3,
+    "hero_confirmed": 1,
+    "board_confirmed": 0
+  },
+  "evidence_images": 1,
+  "evidence_bytes": 1068042,
+  "evidence_limit_bytes": 268435456,
+  "replaced": 0,
+  "overflow": 0,
+  "expired": 0,
+  "highwater": 1
+}

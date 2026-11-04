@@ -1,0 +1,170 @@
+{
+  "status": "passed",
+  "mode": "frozen",
+  "platform": "linux",
+  "build": "central-live-20261030-r4-desktop-validation",
+  "scope": "normal_entries_os_capture_tcp_ocr_browser_local_desktop",
+  "checks": [
+    "example_configuration_requires_visible_setup",
+    "connection_error_without_visible_table",
+    "connected_empty_desktop_has_no_frames",
+    "normal_capture_ocr_browser_left_99.png",
+    "normal_capture_ocr_browser_observer-without-hero.png",
+    "normal_capture_ocr_browser_right_99.png",
+    "occupied_panel_port_does_not_start_second_central",
+    "collector_stop_expires_preview_and_cards",
+    "collector_restart_three_tables_with_distinct_identities",
+    "three_moved_tables_have_no_frozen_duplicates",
+    "central_stop_is_visible_in_collector"
+  ],
+  "bundles": {
+    "VisualPilot_Central": {
+      "sha256": "5a0f703b8bbbfbda5af669132ede5ff86c74539a5513756bc7b71a3ab5e0271c",
+      "files": 2827
+    },
+    "VisualPilot_Coletor": {
+      "sha256": "b18b4e47772a10b40c378e3aeb3b7daf74d7f1a9ab7e7d1e745ab7f7da0b07ed",
+      "files": 368
+    }
+  },
+  "browser_errors": [],
+  "full_report_sha256": "233ff5d564bc1f6444363a18bcb8aa1551a86c8344c55d18ff20a19a640a309b",
+  "screen": [
+    1920,
+    1080
+  ],
+  "readings": [
+    {
+      "scenario": "left_99.png",
+      "table": "[\"desktop-lab-66f6ab3fb5b44d859a09d7a71c031840\",\"3ac27b8a279c42dd98986d570412fd4e\",\"d2a40f4e67ce40a4ac26560f663b9b24\"]",
+      "hero": [
+        "Th",
+        "4d"
+      ],
+      "board": [
+        "7h",
+        "As",
+        "Ts"
+      ],
+      "capture_age_seconds": 2.3419,
+      "transport_verified": true,
+      "frame_sha256": "9afc355852f232e6fbd7879625d63ccfe88d7abc51c9539a35966992ccbebf89",
+      "transport_sequence": 1
+    },
+    {
+      "scenario": "observer-without-hero.png",
+      "table": "[\"desktop-lab-66f6ab3fb5b44d859a09d7a71c031840\",\"3ac27b8a279c42dd98986d570412fd4e\",\"d2a40f4e67ce40a4ac26560f663b9b24\"]",
+      "hero": [],
+      "board": [
+        "7h",
+        "As",
+        "Ts"
+      ],
+      "capture_age_seconds": 2.3456,
+      "transport_verified": true,
+      "frame_sha256": "e0c35c9bb6033a7b88051275761b2b7d290ce52db7f8ff8ac90e1e9e5cbf43ec",
+      "transport_sequence": 17
+    },
+    {
+      "scenario": "right_99.png",
+      "table": "[\"desktop-lab-66f6ab3fb5b44d859a09d7a71c031840\",\"3ac27b8a279c42dd98986d570412fd4e\",\"d2a40f4e67ce40a4ac26560f663b9b24\"]",
+      "hero": [
+        "5c",
+        "2s"
+      ],
+      "board": [],
+      "capture_age_seconds": 2.5732,
+      "transport_verified": true,
+      "frame_sha256": "8e698ab8d59ff3a3f6adaf9adf057fae15b3a35bc446e09c84f2ae58064ed9c7",
+      "transport_sequence": 32
+    },
+    {
+      "scenario": "three-tables-left_99.png",
+      "table": "[\"desktop-lab-66f6ab3fb5b44d859a09d7a71c031840\",\"5fdd170a0ceb4dc09c1f04270f636069\",\"7c4725b04e1d445db8e87bcea3943287\"]",
+      "hero": [
+        "Th",
+        "4d"
+      ],
+      "board": [
+        "7h",
+        "As",
+        "Ts"
+      ],
+      "capture_age_seconds": 0.0994,
+      "transport_verified": true,
+      "frame_sha256": "cc0408891ec4ea3d9d05fd36dd70a95f80a4ad772f4816859405edf4cf3dffea",
+      "transport_sequence": 16
+    },
+    {
+      "scenario": "three-tables-observer-without-hero.png",
+      "table": "[\"desktop-lab-66f6ab3fb5b44d859a09d7a71c031840\",\"5fdd170a0ceb4dc09c1f04270f636069\",\"f249af250b9e4dd0a96f01505ccfc04c\"]",
+      "hero": [],
+      "board": [
+        "7h",
+        "As",
+        "Ts"
+      ],
+      "capture_age_seconds": 0.0885,
+      "transport_verified": true,
+      "frame_sha256": "9c01f9b1d44655c898dabaeac03ac5663e0550d032ee96c17e3cd71428931f8b",
+      "transport_sequence": 15
+    },
+    {
+      "scenario": "three-tables-right_99.png",
+      "table": "[\"desktop-lab-66f6ab3fb5b44d859a09d7a71c031840\",\"5fdd170a0ceb4dc09c1f04270f636069\",\"999335a2c63143ba82018453739395ab\"]",
+      "hero": [
+        "5c",
+        "2s"
+      ],
+      "board": [],
+      "capture_age_seconds": 0.0528,
+      "transport_verified": true,
+      "frame_sha256": "da4dc21cd36443e75843429de58adedc7d934b306859dd53ce0cc6c45f64cf34",
+      "transport_sequence": 39
+    },
+    {
+      "scenario": "moved-three-tables-left_99.png",
+      "table": "[\"desktop-lab-66f6ab3fb5b44d859a09d7a71c031840\",\"5fdd170a0ceb4dc09c1f04270f636069\",\"c11b10407ceb4bdfbfd1cde97a1252a2\"]",
+      "hero": [
+        "Th",
+        "4d"
+      ],
+      "board": [
+        "7h",
+        "As",
+        "Ts"
+      ],
+      "capture_age_seconds": 0.0893,
+      "transport_verified": true,
+      "frame_sha256": "cc0408891ec4ea3d9d05fd36dd70a95f80a4ad772f4816859405edf4cf3dffea",
+      "transport_sequence": 11
+    },
+    {
+      "scenario": "moved-three-tables-observer-without-hero.png",
+      "table": "[\"desktop-lab-66f6ab3fb5b44d859a09d7a71c031840\",\"5fdd170a0ceb4dc09c1f04270f636069\",\"49aa38031d374f53afd2815a4223f8ca\"]",
+      "hero": [],
+      "board": [
+        "7h",
+        "As",
+        "Ts"
+      ],
+      "capture_age_seconds": 0.038,
+      "transport_verified": true,
+      "frame_sha256": "9c01f9b1d44655c898dabaeac03ac5663e0550d032ee96c17e3cd71428931f8b",
+      "transport_sequence": 11
+    },
+    {
+      "scenario": "moved-three-tables-right_99.png",
+      "table": "[\"desktop-lab-66f6ab3fb5b44d859a09d7a71c031840\",\"5fdd170a0ceb4dc09c1f04270f636069\",\"68f4829e8f8947af956db3de19215471\"]",
+      "hero": [
+        "5c",
+        "2s"
+      ],
+      "board": [],
+      "capture_age_seconds": 0.1092,
+      "transport_verified": true,
+      "frame_sha256": "da4dc21cd36443e75843429de58adedc7d934b306859dd53ce0cc6c45f64cf34",
+      "transport_sequence": 20
+    }
+  ]
+}

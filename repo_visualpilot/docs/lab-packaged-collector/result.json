@@ -1,0 +1,81 @@
+{
+  "updated_at": "2026-10-30T23:47:41.802702+00:00",
+  "stage": 2,
+  "stage_approved": false,
+  "local_execution": "completed",
+  "background_process": false,
+  "base_commit": "1660f739f29c1a7fa6cf4a750ad10cadbbfa82a1",
+  "source_sha256": {
+    ".github/workflows/windows-lab.yml": "56040f37587522af8ec19c2e04bf62a0fded1109b37c7f2d91e7f3dd62eb37b4",
+    "build_windows.ps1": "257e0a0cca4fd875aba26cb81a6be8164cb7209d4f1a365166da3929603d24bb",
+    "build/VisualPilot_Coletor.spec": "e4e69d85c9d41fc572fc7b1649d01ca98738244008a1f517e055945c19944025",
+    "visualpilot/pppoker/stream_node.py": "02752c9d092cb988bda7fe412e9028755e1e0502b0f11971c260f5f6ed03839b",
+    "visualpilot/pppoker/collector_probe.py": "6c7e6a5d6e3eff33a6abded0da4a1419fe4f71c25eba33e6d5401def22a56147",
+    "visualpilot/pppoker/transport_freshness.py": "bb76aa5665f1a85ebd90424d3853a805d60acf167e0590f525bc63232e46b3fe",
+    "visualpilot/pppoker/stream_receiver.py": "60c2bd6fba93919d1405e88899628277eac7ef857e25703eef60e6971689bafe",
+    "visualpilot/pppoker/observer/runtime.py": "0ef353aebd726d9e0eaf61508dff988440f6fb3bb4431de6832d8552ec655320",
+    "tools/validate_collector_distribution.py": "e9c4a404f05e2a365a5faf033c35ae51c7cf2eee60c1b04c3d57bc29ac951d94",
+    "tools/seal_central_distribution.py": "a6f3ab1b4bca1a9bb04eb1a4ebd7768fb3053cc24923bd74cba92648b7a8c98d",
+    "tests/test_collector_distribution.py": "9f0466baf19e5bdf4d7259fabcd7f5e9150c752c5ae6ab0bc8f39632745a82a0"
+  },
+  "confirmed_previous_windows": {
+    "run_number": 29,
+    "commit": "1660f739f29c1a7fa6cf4a750ad10cadbbfa82a1",
+    "status": "passed",
+    "evidence": "user-supplied GitHub Actions screenshots",
+    "job_seconds": 432,
+    "collector_execution_included": false
+  },
+  "local_checks": {
+    "original_entry": {
+      "result": "failed_as_expected",
+      "error": "ImportError: attempted relative import with no known parent package",
+      "report": "before-entry.json"
+    },
+    "targeted": {
+      "tests_run": 3,
+      "result": "passed",
+      "report": "collector-tests.json"
+    },
+    "frozen_collector": {
+      "result": "passed",
+      "platform": "linux",
+      "accepted_verified": 2,
+      "executable_sha256": "cfaba1fda5f573fa08be7c39e9252b05df2c8f4ed7d255838233b5a3dae6fdc4",
+      "report": "frozen-linux/collector-transport-validation.json"
+    },
+    "regression": {
+      "tests_run": 316,
+      "failures": 0,
+      "skipped_entries": 3,
+      "result": "passed",
+      "seconds": 126.94,
+      "report": "full-regression.json"
+    }
+  },
+  "new_revision_windows_result": "passed_user_confirmed_acd1351",
+  "scope": "packaged collector entry and synthetic loopback transport against source receiver",
+  "remaining": [
+    "paired physical installation validation"
+  ],
+  "report": "README.md",
+  "reported_windows_revision": {
+    "commit": "17d289d2cb282d5d5085708bccc6532bd13f5f07",
+    "evidence": "user-supplied Windows laboratory log",
+    "tests_run": 316,
+    "failures": 1,
+    "skipped_entries": 3,
+    "seconds": 350.014,
+    "failure": "test_single_table_pipeline: no complete reading for window-1.5",
+    "source_collector_tests": "passed",
+    "packaged_collector_check": "not_reached",
+    "details": "../lab-ocr-cpu-budget/reported-windows-failure.txt"
+  },
+  "confirmed_windows_revision": {
+    "commit": "acd13517527f6071539f31aeed4f80d4b376760a",
+    "status": "passed_user_confirmed",
+    "evidence": "../lab-ocr-cpu-budget/confirmed-windows.json",
+    "packaged_collector_check": "passed_by_required_workflow_step",
+    "physical_pair_validation": "pending"
+  }
+}

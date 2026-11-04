@@ -1,0 +1,17 @@
+{
+  "stage": "reproduce-count-assumption",
+  "state": "failed",
+  "started_at": "2026-10-30T22:43:08.912362+00:00",
+  "platform": "linux",
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "commit": null,
+  "command": [
+    "/workspace/VisualPilot/.venv/bin/python",
+    "-c",
+    "import sys; sys.path.insert(0,\"tests\"); from test_runtime_freshness import RuntimeFreshnessTests; case=RuntimeFreshnessTests(); events,records,rejected=case.exercise(\"text_expired_after_partial\"); partials=[r for r in records if r.get(\"event\")==\"PARTIAL_CARDS_READY\"]; print(\"Partial sources:\", [(r[\"generation\"],r[\"observation\"][\"transport_sequence\"],r[\"observation\"][\"source_observed\"]) for r in partials]); print(\"Rejected text:\", [(r[\"reason\"],r[\"observation\"][\"generation\"]) for r in rejected]); case.assertEqual([r[\"reading\"][\"hero\"] for r in partials],[[\"As\",\"Ks\"]])"
+  ],
+  "log": "reproduce-count-assumption.log",
+  "exit_code": 1,
+  "finished_at": "2026-10-30T22:43:09.158384+00:00",
+  "elapsed_seconds": 0.246
+}

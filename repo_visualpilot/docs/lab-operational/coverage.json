@@ -1,0 +1,270 @@
+{
+  "stage": 1,
+  "approved": false,
+  "required_cards": 52,
+  "observed_cards": 5,
+  "missing_real_cards": 47,
+  "independent_validation_cards": 0,
+  "cards": [
+    {
+      "card": "2s",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "3s",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "4s",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "5s",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "6s",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "7s",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "8s",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "9s",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "Ts",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "Js",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "Qs",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "Ks",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "As",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "2h",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "3h",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "4h",
+      "development_frame_available": true,
+      "independent_validation_available": false
+    },
+    {
+      "card": "5h",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "6h",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "7h",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "8h",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "9h",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "Th",
+      "development_frame_available": true,
+      "independent_validation_available": false
+    },
+    {
+      "card": "Jh",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "Qh",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "Kh",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "Ah",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "2d",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "3d",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "4d",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "5d",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "6d",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "7d",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "8d",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "9d",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "Td",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "Jd",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "Qd",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "Kd",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "Ad",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "2c",
+      "development_frame_available": true,
+      "independent_validation_available": false
+    },
+    {
+      "card": "3c",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "4c",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "5c",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "6c",
+      "development_frame_available": true,
+      "independent_validation_available": false
+    },
+    {
+      "card": "7c",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "8c",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "9c",
+      "development_frame_available": true,
+      "independent_validation_available": false
+    },
+    {
+      "card": "Tc",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "Jc",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "Qc",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "Kc",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    },
+    {
+      "card": "Ac",
+      "development_frame_available": false,
+      "independent_validation_available": false
+    }
+  ]
+}

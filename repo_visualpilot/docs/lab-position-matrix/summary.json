@@ -1,0 +1,19 @@
+{
+  "turn_scenarios": 30,
+  "exact_turn_searches": 30,
+  "approximate_turn_searches": 90,
+  "flop_scenarios": 12,
+  "flop_searches": 36,
+  "turn_decisions_within_003bb": 62,
+  "turn_decisions": 90,
+  "mean_regret_bb": 0.0925088271389828,
+  "worst_regret_bb": 0.7965517675518576,
+  "stable_turn_cases": 15,
+  "stable_flop_cases": 7,
+  "limits": [
+    "one_Hero_hand_JTs",
+    "synthetic_opponent",
+    "no_GTO_validation",
+    "default_not_changed"
+  ]
+}

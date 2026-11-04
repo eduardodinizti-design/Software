@@ -1,0 +1,200 @@
+{
+  "status": "inspection_only",
+  "view": "lobby",
+  "coordinate_space": "pixels relative to each original image; desktop origin and DPI unknown",
+  "clicks_executed": 0,
+  "registration_authorized": false,
+  "items": [
+    {
+      "id": "diamante",
+      "complete": true,
+      "fields": {
+        "name": [
+          [
+            [],
+            "DTORANTO",
+            0.8102262690663338
+          ]
+        ],
+        "prize": [
+          [
+            [],
+            "Premiacao: ← 10,000",
+            0.9460806156459608
+          ]
+        ],
+        "start": [
+          [
+            [],
+            "Horario de inicio: 10/31 16:00",
+            0.9861273765563965
+          ]
+        ]
+      },
+      "image_point": [
+        405.0,
+        630.5
+      ],
+      "reading": {
+        "name": null,
+        "buyin": null,
+        "start": null,
+        "registration": "unknown",
+        "currency": "unknown",
+        "can_inspect_details": false,
+        "can_register": false,
+        "reason": "name: confiança insuficiente"
+      }
+    },
+    {
+      "id": "freezeout",
+      "complete": true,
+      "fields": {
+        "name": [
+          [
+            [],
+            "FREEZE0UT 30K GTD",
+            0.9440513584348891
+          ]
+        ],
+        "buyin": [
+          [
+            [],
+            "Buy-in: 200",
+            0.9503971040248871
+          ]
+        ],
+        "start": [
+          [
+            [],
+            "Horario de inicio: 10/31 18:00",
+            0.9802204728126526
+          ]
+        ]
+      },
+      "image_point": [
+        405.0,
+        811.0
+      ],
+      "reading": {
+        "name": null,
+        "buyin": null,
+        "start": null,
+        "registration": "unknown",
+        "currency": "unknown",
+        "can_inspect_details": false,
+        "can_register": false,
+        "reason": "name: confiança insuficiente"
+      }
+    },
+    {
+      "id": "corujao",
+      "complete": true,
+      "fields": {
+        "name": [
+          [
+            [],
+            "CORUJA0 HYPER PK010K",
+            0.9398274584250017
+          ]
+        ],
+        "buyin": [
+          [
+            [],
+            "Buy-in: 50",
+            0.9763239423433939
+          ]
+        ],
+        "start": [
+          [
+            [],
+            "Horario de inicio: 10/31 22:00",
+            0.9894144078095753
+          ]
+        ]
+      },
+      "image_point": [
+        405.0,
+        992.0
+      ],
+      "reading": {
+        "name": null,
+        "buyin": null,
+        "start": null,
+        "registration": "unknown",
+        "currency": "unknown",
+        "can_inspect_details": false,
+        "can_register": false,
+        "reason": "name: confiança insuficiente"
+      }
+    },
+    {
+      "id": "omaha-1",
+      "complete": true,
+      "fields": {
+        "name": [
+          [
+            [],
+            "OMAHA - 6",
+            0.8621605217456818
+          ]
+        ],
+        "blinds": [
+          [
+            [],
+            "Blinds: 1/2",
+            0.9848824522712014
+          ]
+        ]
+      },
+      "image_point": [
+        405.0,
+        1172.5
+      ],
+      "reading": {
+        "name": null,
+        "buyin": null,
+        "start": null,
+        "registration": "unknown",
+        "currency": "unknown",
+        "can_inspect_details": false,
+        "can_register": false,
+        "reason": "name: confiança insuficiente"
+      }
+    },
+    {
+      "id": "omaha-2",
+      "complete": true,
+      "fields": {
+        "name": [
+          [
+            [],
+            "OMAHA - 6",
+            0.8683633863925934
+          ]
+        ],
+        "blinds": [
+          [
+            [],
+            "Blinds: 1/2",
+            0.979023196480491
+          ]
+        ]
+      },
+      "image_point": [
+        405.0,
+        1354.0
+      ],
+      "reading": {
+        "name": null,
+        "buyin": null,
+        "start": null,
+        "registration": "unknown",
+        "currency": "unknown",
+        "can_inspect_details": false,
+        "can_register": false,
+        "reason": "name: confiança insuficiente"
+      }
+    }
+  ]
+}

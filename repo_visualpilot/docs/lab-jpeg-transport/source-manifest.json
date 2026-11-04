@@ -1,0 +1,13 @@
+{
+  "base_commit": "7995f356229bf4c3f16f69475949a66c62e041a2",
+  "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+  "note": "Final source hashes; comparison and soak explicitly select each JPEG quality. PNG remains default; omitted JPEG quality now defaults to 100.",
+  "source_sha256": {
+    "visualpilot/pppoker/stream_node.py": "5dc9cbfa39e0a56654d24937d70bbda9d73dc727fee73bf5208219020dd6fa8b",
+    "visualpilot/pppoker/stream_receiver.py": "519dcd6afb5e6f2dad219fbd5d7eb027405d1f83d1d24c3a755db9f128affd07",
+    "visualpilot/pppoker/collector_app.py": "4e844941b293b72be5673e95a81ee8d0b3f71db117b6cee8398c9a28b3a6f53a",
+    "tools/compare_image_codecs.py": "d57dc956969a6343091f35b5af34c10a86186fe037a268b50286fbab95dda892",
+    "tools/check_multitable_soak.py": "fe4ee8c776f101690e9909595db4eff758cb84343ace3eb1fc9521c8585011ab",
+    "tests/test_jpeg_transport.py": "d8de9513e8a34499af4ed2187de9df15e1f0d89e27577ac5146dc971df4fd999"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "source": "imagens.rar uploaded by user",
+  "files": {
+    "lobby": {
+      "original_file": "{BB2DA591-027C-4CA0-8923-F86A7B8EC1E1}.png",
+      "sha256": "c0906a33f8b35f0f1e0af7616c162a8f4ac64fe13d875da1280efc7021075b3d"
+    },
+    "details": {
+      "original_file": "{C039768D-546A-42C5-A3C6-55A6EAAB6485}.png",
+      "sha256": "83f29f5cc734b5c0d19546e3e31717201ab679885a1bca2bba74bd6e6c26d1fc"
+    },
+    "modal": {
+      "original_file": "{86F16971-1934-4236-96C5-B74087A8E534}.png",
+      "sha256": "bd1659c8362394e2590dd7a241da6ad04e463235080ac55e28c54943bcadd3f9"
+    }
+  }
+}

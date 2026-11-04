@@ -1,0 +1,116 @@
+{
+  "status": "passed",
+  "mode": "source",
+  "platform": "linux",
+  "build": "central-live-20261030-r4-desktop-validation",
+  "scope": "normal_entries_os_capture_tcp_ocr_browser_local_desktop",
+  "checks": [
+    "example_configuration_requires_visible_setup",
+    "connection_error_without_visible_table",
+    "connected_empty_desktop_has_no_frames",
+    "normal_capture_ocr_browser_left_99.png",
+    "normal_capture_ocr_browser_observer-without-hero.png",
+    "normal_capture_ocr_browser_right_99.png",
+    "occupied_panel_port_does_not_start_second_central",
+    "collector_stop_expires_preview_and_cards",
+    "collector_restart_three_tables_with_distinct_identities",
+    "three_moved_tables_have_no_frozen_duplicates",
+    "central_stop_is_visible_in_collector"
+  ],
+  "browser_errors": [],
+  "full_report_sha256": "47744336adb1c7e9e061433bf854eebfb1d53593f5aa78b283759fb7b915c348",
+  "screen": [
+    2200,
+    1700
+  ],
+  "readings": [
+    {
+      "scenario": "left_99.png",
+      "table": "[\"desktop-lab-b2604102c36c49cabf77a73f7a51a7f2\",\"bd67e6a423b64e598d22414a97fb8f68\",\"ffbe52709073441fa7da50e04ea2c42b\"]",
+      "hero": [
+        "Th",
+        "4d"
+      ],
+      "board": [
+        "7h",
+        "As",
+        "Ts"
+      ],
+      "capture_age_seconds": 0.2224,
+      "transport_verified": true,
+      "frame_sha256": "11af23ac78639be5359e7e0b4958067403de39acefffd18fa6f961d37935ea40",
+      "transport_sequence": 12
+    },
+    {
+      "scenario": "observer-without-hero.png",
+      "table": "[\"desktop-lab-b2604102c36c49cabf77a73f7a51a7f2\",\"bd67e6a423b64e598d22414a97fb8f68\",\"ffbe52709073441fa7da50e04ea2c42b\"]",
+      "hero": [],
+      "board": [
+        "7h",
+        "As",
+        "Ts"
+      ],
+      "capture_age_seconds": 2.4531,
+      "transport_verified": true,
+      "frame_sha256": "1fc54abf32d7e254092131ffb7d08b2c2d1885dab01546df4bdf54f6c6e8d31e",
+      "transport_sequence": 16
+    },
+    {
+      "scenario": "right_99.png",
+      "table": "[\"desktop-lab-b2604102c36c49cabf77a73f7a51a7f2\",\"bd67e6a423b64e598d22414a97fb8f68\",\"ffbe52709073441fa7da50e04ea2c42b\"]",
+      "hero": [
+        "5c",
+        "2s"
+      ],
+      "board": [],
+      "capture_age_seconds": 2.2176,
+      "transport_verified": true,
+      "frame_sha256": "b77ff78b43a6915a36e329933d5016aa2ff83cc97f704402dbc617f60e91adc3",
+      "transport_sequence": 31
+    },
+    {
+      "scenario": "three-tables-left_99.png",
+      "table": "[\"desktop-lab-b2604102c36c49cabf77a73f7a51a7f2\",\"9e73135fc11e4cafaba7a99b710560dd\",\"dc76c848134348c5adee04b78f4b0c5c\"]",
+      "hero": [
+        "Th",
+        "4d"
+      ],
+      "board": [
+        "7h",
+        "As",
+        "Ts"
+      ],
+      "capture_age_seconds": 0.2436,
+      "transport_verified": true,
+      "frame_sha256": "f934f1fa18a783fa0b1924b6b00224f4e0895f07ca3e39e028545a26354ea69d",
+      "transport_sequence": 12
+    },
+    {
+      "scenario": "three-tables-observer-without-hero.png",
+      "table": "[\"desktop-lab-b2604102c36c49cabf77a73f7a51a7f2\",\"9e73135fc11e4cafaba7a99b710560dd\",\"3e4e7ac64e3648c487c39a4bc9423efc\"]",
+      "hero": [],
+      "board": [
+        "7h",
+        "As",
+        "Ts"
+      ],
+      "capture_age_seconds": 0.142,
+      "transport_verified": true,
+      "frame_sha256": "c605f0ba334f92e5bf8f56cb5e82ab8dd76552e4f164543d2f6997eed070688a",
+      "transport_sequence": 12
+    },
+    {
+      "scenario": "three-tables-right_99.png",
+      "table": "[\"desktop-lab-b2604102c36c49cabf77a73f7a51a7f2\",\"9e73135fc11e4cafaba7a99b710560dd\",\"217641dc51184e28adda3427cba87597\"]",
+      "hero": [
+        "5c",
+        "2s"
+      ],
+      "board": [],
+      "capture_age_seconds": 0.0645,
+      "transport_verified": true,
+      "frame_sha256": "27ccf205405c6ddeef8590becea5d542db260c319f43345096e1d1f72e98624e",
+      "transport_sequence": 23
+    }
+  ]
+}

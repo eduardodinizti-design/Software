@@ -1,0 +1,254 @@
+{
+  "status": "manual_reference_not_homologated",
+  "source": "Three inline user screenshots, PPPoker v228; manually mapped, original PNG bytes unavailable in workspace.",
+  "coordinate_space": "pixels relative to each supplied image; no desktop origin or DPI mapping",
+  "automatic_segmentation": false,
+  "views": {
+    "lobby": {
+      "size": [
+        623,
+        1115
+      ],
+      "items": [
+        {
+          "id": "diamante",
+          "box": [
+            25,
+            427,
+            580,
+            131
+          ],
+          "complete": true,
+          "fields": {
+            "name": [
+              88,
+              465,
+              140,
+              59
+            ],
+            "prize": [
+              260,
+              449,
+              230,
+              33
+            ],
+            "start": [
+              260,
+              513,
+              324,
+              29
+            ]
+          }
+        },
+        {
+          "id": "freezeout",
+          "box": [
+            25,
+            568,
+            580,
+            130
+          ],
+          "complete": true,
+          "fields": {
+            "name": [
+              260,
+              588,
+              315,
+              32
+            ],
+            "buyin": [
+              85,
+              608,
+              125,
+              29
+            ],
+            "start": [
+              260,
+              652,
+              324,
+              29
+            ]
+          }
+        },
+        {
+          "id": "corujao",
+          "box": [
+            25,
+            708,
+            580,
+            130
+          ],
+          "complete": true,
+          "fields": {
+            "name": [
+              260,
+              728,
+              330,
+              32
+            ],
+            "buyin": [
+              85,
+              749,
+              125,
+              29
+            ],
+            "start": [
+              260,
+              792,
+              324,
+              29
+            ]
+          }
+        },
+        {
+          "id": "sexta",
+          "box": [
+            25,
+            848,
+            580,
+            130
+          ],
+          "complete": true,
+          "fields": {
+            "name": [
+              260,
+              868,
+              320,
+              32
+            ],
+            "buyin": [
+              85,
+              889,
+              125,
+              29
+            ],
+            "status": [
+              260,
+              934,
+              310,
+              29
+            ]
+          }
+        },
+        {
+          "id": "omaha",
+          "box": [
+            25,
+            988,
+            580,
+            127
+          ],
+          "complete": false,
+          "fields": {
+            "name": [
+              260,
+              1002,
+              280,
+              31
+            ],
+            "blinds": [
+              85,
+              1030,
+              125,
+              29
+            ]
+          }
+        }
+      ]
+    },
+    "details": {
+      "size": [
+        617,
+        1141
+      ],
+      "items": [
+        {
+          "id": "details",
+          "box": [
+            6,
+            198,
+            611,
+            943
+          ],
+          "complete": true,
+          "fields": {
+            "name": [
+              125,
+              208,
+              380,
+              39
+            ],
+            "start": [
+              178,
+              294,
+              286,
+              31
+            ],
+            "buyin": [
+              56,
+              718,
+              300,
+              37
+            ],
+            "stack": [
+              56,
+              770,
+              225,
+              34
+            ],
+            "register": [
+              246,
+              1065,
+              155,
+              35
+            ]
+          }
+        }
+      ]
+    },
+    "modal": {
+      "size": [
+        600,
+        1141
+      ],
+      "items": [
+        {
+          "id": "modal",
+          "box": [
+            18,
+            329,
+            575,
+            520
+          ],
+          "complete": true,
+          "fields": {
+            "buyin": [
+              46,
+              431,
+              270,
+              35
+            ],
+            "start": [
+              46,
+              490,
+              306,
+              35
+            ],
+            "confirm": [
+              91,
+              772,
+              160,
+              36
+            ],
+            "cancel": [
+              383,
+              772,
+              150,
+              36
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

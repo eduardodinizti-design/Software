@@ -1,0 +1,62 @@
+{
+  "identity": {
+    "source_sha256": "dcceeff3d0b1f120a19b1c578eef25c41a46ca1d2cee80a0a439f29febaef96f",
+    "smoke": true,
+    "cases": [
+      {
+        "context": "BB_vs_BTN",
+        "texture": "paired",
+        "hero": [
+          "Jh",
+          "Th"
+        ]
+      }
+    ]
+  },
+  "results": {
+    "case-000": {
+      "case": {
+        "context": "BB_vs_BTN",
+        "texture": "paired",
+        "hero": [
+          "Jh",
+          "Th"
+        ]
+      },
+      "attempts": [
+        {
+          "samples": 6,
+          "audit": {
+            "status": "accepted_under_model",
+            "numerically_accepted": true,
+            "seed_stable": true,
+            "regrets": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "worst_regret": 0.0,
+            "tolerance": 0.03,
+            "strategically_validated": false,
+            "reason": "within_reference_tolerance"
+          }
+        }
+      ],
+      "status": "accepted_under_model",
+      "numerically_accepted": true,
+      "seed_stable": true,
+      "regrets": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "worst_regret": 0.0,
+      "tolerance": 0.03,
+      "strategically_validated": false,
+      "reason": "within_reference_tolerance"
+    }
+  },
+  "started_at": "2026-10-30T03:03:43.100333+00:00",
+  "status": "completed",
+  "updated_at": "2026-10-30T03:07:01.576519+00:00"
+}

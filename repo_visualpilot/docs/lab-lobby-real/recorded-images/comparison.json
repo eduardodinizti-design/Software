@@ -1,0 +1,82 @@
+{
+  "status": "passed_on_recorded_images",
+  "scope": "three_recorded_images_manual_regions",
+  "clicks": 0,
+  "live_continuity_verified": false,
+  "desktop_origin_known": false,
+  "automatic_segmentation": false,
+  "selection": {
+    "name": "CORUJAOHYPERPKO10K",
+    "buyin": "50.00",
+    "start": "10/31 22:00",
+    "registration": "unknown",
+    "currency": "unknown",
+    "can_inspect_details": true,
+    "can_register": false,
+    "reason": "details_required"
+  },
+  "details": {
+    "matches": true,
+    "can_register": false,
+    "currency": "unknown",
+    "name": "CORUJAO HYPER PKO10K",
+    "buyin": "50.00",
+    "start": "10/31 22:00",
+    "initial_stack": 20000,
+    "register_text_visible": true,
+    "reason": "details_match"
+  },
+  "modal": {
+    "matches": true,
+    "can_register": false,
+    "adjustable_amount": false,
+    "buyin": "50.00",
+    "start": "10/31 22:00",
+    "confirm_text_visible": true,
+    "reason": "matching_values_need_live_continuity"
+  },
+  "rejected_cards": [
+    {
+      "id": "diamante",
+      "reason": "buyin: leitura ausente ou ambígua"
+    },
+    {
+      "id": "freezeout",
+      "reason": "buyin_limit"
+    },
+    {
+      "id": "omaha-1",
+      "reason": "buyin: leitura ausente ou ambígua"
+    },
+    {
+      "id": "omaha-2",
+      "reason": "buyin: leitura ausente ou ambígua"
+    }
+  ],
+  "pending_fields": [
+    {
+      "view": "lobby",
+      "item": "diamante",
+      "field": "prize",
+      "reason": "missing_ambiguous_or_low_confidence"
+    },
+    {
+      "view": "lobby",
+      "item": "freezeout",
+      "field": "name",
+      "reason": "missing_ambiguous_or_low_confidence"
+    },
+    {
+      "view": "lobby",
+      "item": "omaha-1",
+      "field": "name",
+      "reason": "missing_ambiguous_or_low_confidence"
+    },
+    {
+      "view": "lobby",
+      "item": "omaha-2",
+      "field": "name",
+      "reason": "missing_ambiguous_or_low_confidence"
+    }
+  ]
+}

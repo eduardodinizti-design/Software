@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "status": "specification_not_runtime_config",
+  "as_of": "2026-10-31",
+  "scope": {
+    "clubs": 1,
+    "leagues": 1,
+    "currency": "fictitious_chips"
+  },
+  "registration": {
+    "user_selected_only": true,
+    "scheduled_entry_required": true,
+    "max_entry_cost": 50,
+    "max_concurrent_tournaments": 4,
+    "implementation": "laboratory_limits_exist_real_schedule_pending"
+  },
+  "rebuy": {
+    "enabled_per_tournament": true,
+    "minimum_received_big_blinds": 50,
+    "formula": "received_chips / current_big_blind >= minimum_received_big_blinds",
+    "threshold_configurable": true,
+    "max_count_requires_plan": true,
+    "runtime_gap": "lab currently also requires bounty and limits to one rebuy"
+  },
+  "addon": {
+    "default": "simple",
+    "requires_explicit_plan": true,
+    "double_triple": "not_implemented"
+  },
+  "storage": {
+    "target_bytes_per_day_both_computers": 1000000000,
+    "maximum_bytes_per_day_both_computers": 2000000000,
+    "continuous_capture_to_disk": false,
+    "session_hours_up_to": 14,
+    "implementation": "pending",
+    "retention_mode": "undecided",
+    "protect": [
+      "active_session",
+      "settings",
+      "schedule",
+      "transaction_deduplication_state"
+    ]
+  },
+  "images": {
+    "target_codec": "png",
+    "target_native_region_resolution": true,
+    "module1": "native",
+    "transport_gap": "currently resizes to maximum width 755",
+    "unchanged_pixels_are_not_failure": true
+  },
+  "lobby_temporal_reading": {
+    "initial_retry_seconds": 1,
+    "same_event_required": true,
+    "max_attempts": "to_calibrate",
+    "implementation": "pending"
+  },
+  "phase1": {
+    "module1": "basic_capture_validated_in_user_environment",
+    "module2": "next_not_delivered",
+    "module3": "pending",
+    "module4": "pending",
+    "module5": "pending"
+  },
+  "execution_authorized_by_this_file": false
+}

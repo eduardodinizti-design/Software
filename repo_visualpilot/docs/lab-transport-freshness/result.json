@@ -1,0 +1,56 @@
+{
+  "updated_at": "2026-10-30T23:47:41.802702+00:00",
+  "execution": "completed",
+  "background_process": false,
+  "stage": 2,
+  "linux_lab_result": "passed",
+  "stage_approved": false,
+  "build": "central-live-20261030-r3-temporal-v2",
+  "protocol": 2,
+  "focused_tests": {
+    "run": 32,
+    "passed": 32
+  },
+  "full_suite": {
+    "run": 310,
+    "failures": 0,
+    "skipped_entries": 3
+  },
+  "browser": "passed",
+  "windows_result": "passed_user_confirmed_acd1351",
+  "windows_api_query": "Forbidden",
+  "maximum_total_age_seconds": 5,
+  "age_semantics": "conservative upper bound from central ticket issue",
+  "remaining": [
+    "paired physical installation validation"
+  ],
+  "report": "README.md",
+  "windows_run": "https://github.com/eduardodinizti-design/VisualPilot/actions/runs/41138441716",
+  "windows_reported_tests": 310,
+  "windows_reported_failures": 3,
+  "windows_reported_skipped": 3,
+  "windows_evidence_source": "run log supplied by user",
+  "corrective_report": "../lab-windows-diagnostics/README.md",
+  "confirmed_windows_correction": {
+    "run_number": 29,
+    "commit": "1660f739f29c1a7fa6cf4a750ad10cadbbfa82a1",
+    "status": "passed",
+    "job_seconds": 432,
+    "evidence": "user-supplied GitHub Actions screenshot",
+    "scope": [
+      "source_tests",
+      "frozen_central_startup",
+      "build",
+      "artifact_publication"
+    ],
+    "collector_execution_included": false
+  },
+  "correction_windows_result": "passed_run_29",
+  "confirmed_windows_revision": {
+    "commit": "acd13517527f6071539f31aeed4f80d4b376760a",
+    "status": "passed_user_confirmed",
+    "evidence": "../lab-ocr-cpu-budget/confirmed-windows.json",
+    "packaged_collector_check": "passed_by_required_workflow_step",
+    "physical_pair_validation": "pending"
+  }
+}

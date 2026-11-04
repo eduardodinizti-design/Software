@@ -1,0 +1,17 @@
+{
+  "provenance": {
+    "engine_commit": "ea758d9",
+    "generated_at": "2026-10-29T23:56:40.052Z",
+    "validation": {
+      "version": "2026-10-29-223refs",
+      "gate": true
+    },
+    "package_sha256": "9b0be1a64301a60f263d03a3f3641ce5c1c5d854083b90bf702dd85a9182bf03"
+  },
+  "nodes": 4547,
+  "hand_queries": 768443,
+  "passed": 768443,
+  "failures": [],
+  "out_of_range_queries": 71478,
+  "scope": "Exact exported frequency mixes and outOfRange; not solver correctness or sizing"
+}

@@ -1,0 +1,248 @@
+{
+  "status": "manual_regions_pending_ocr_validation",
+  "source": "Original PNGs from uploaded imagens.rar; see tests/fixtures/lobby_real/source.json",
+  "coordinate_space": "pixels relative to each original image; desktop origin and DPI unknown",
+  "automatic_segmentation": false,
+  "views": {
+    "lobby": {
+      "size": [
+        787,
+        1470
+      ],
+      "items": [
+        {
+          "id": "diamante",
+          "box": [
+            31,
+            546,
+            748,
+            169
+          ],
+          "complete": true,
+          "fields": {
+            "name": [
+              158,
+              594,
+              134,
+              73
+            ],
+            "prize": [
+              333,
+              579,
+              280,
+              36
+            ],
+            "start": [
+              332,
+              660,
+              335,
+              31
+            ]
+          }
+        },
+        {
+          "id": "freezeout",
+          "box": [
+            31,
+            727,
+            748,
+            168
+          ],
+          "complete": true,
+          "fields": {
+            "name": [
+              333,
+              754,
+              290,
+              38
+            ],
+            "buyin": [
+              108,
+              784,
+              150,
+              34
+            ],
+            "start": [
+              331,
+              840,
+              338,
+              33
+            ]
+          }
+        },
+        {
+          "id": "corujao",
+          "box": [
+            31,
+            908,
+            748,
+            168
+          ],
+          "complete": true,
+          "fields": {
+            "name": [
+              332,
+              937,
+              350,
+              37
+            ],
+            "buyin": [
+              113,
+              966,
+              140,
+              34
+            ],
+            "start": [
+              331,
+              1022,
+              340,
+              32
+            ]
+          }
+        },
+        {
+          "id": "omaha-1",
+          "box": [
+            31,
+            1089,
+            748,
+            167
+          ],
+          "complete": true,
+          "fields": {
+            "name": [
+              331,
+              1110,
+              181,
+              38
+            ],
+            "blinds": [
+              110,
+              1145,
+              146,
+              36
+            ]
+          }
+        },
+        {
+          "id": "omaha-2",
+          "box": [
+            31,
+            1270,
+            748,
+            168
+          ],
+          "complete": true,
+          "fields": {
+            "name": [
+              331,
+              1290,
+              181,
+              38
+            ],
+            "blinds": [
+              110,
+              1327,
+              146,
+              36
+            ]
+          }
+        }
+      ]
+    },
+    "details": {
+      "size": [
+        791,
+        1497
+      ],
+      "items": [
+        {
+          "id": "details",
+          "box": [
+            0,
+            268,
+            791,
+            1220
+          ],
+          "complete": true,
+          "fields": {
+            "name": [
+              158,
+              277,
+              480,
+              48
+            ],
+            "start": [
+              219,
+              394,
+              354,
+              37
+            ],
+            "buyin": [
+              61,
+              940,
+              356,
+              41
+            ],
+            "stack": [
+              62,
+              1009,
+              273,
+              39
+            ],
+            "register": [
+              318,
+              1384,
+              164,
+              48
+            ]
+          }
+        }
+      ]
+    },
+    "modal": {
+      "size": [
+        786,
+        1479
+      ],
+      "items": [
+        {
+          "id": "modal",
+          "box": [
+            23,
+            438,
+            741,
+            668
+          ],
+          "complete": true,
+          "fields": {
+            "buyin": [
+              57,
+              571,
+              325,
+              40
+            ],
+            "start": [
+              57,
+              647,
+              388,
+              42
+            ],
+            "confirm": [
+              138,
+              1007,
+              174,
+              47
+            ],
+            "cancel": [
+              489,
+              1007,
+              178,
+              47
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,28 @@
+Source: GitHub Actions run 41138441716, commit d4d67c2.
+The following excerpts were supplied by the user in the chat; this is not
+an automatic download of the full CI log.
+
+FAIL: test_disconnect_expiry_reconnect_new_hand_three_cycles
+  tests/test_remote_recovery.py, line 92
+AssertionError: Lists differ:
+[['5c', '2s'], ['5c', '2s'], ['Th', '4d'], ['5c', '2s']]
+!= [['5c', '2s'], ['Th', '4d'], ['5c', '2s']]
+
+FAIL: test_new_collector_sessions_replace_old_tables_three_cycles
+  tests/test_remote_recovery.py, line 92
+AssertionError: Lists differ:
+[['5c', '2s'], ['5c', '2s'], ['Th', '4d'], ['5c', '2s']]
+!= [['5c', '2s'], ['Th', '4d'], ['5c', '2s']]
+
+FAIL: test_tcp_real_ocr_hand_change_and_journal
+  tests/test_single_table_pipeline.py, line 123
+First list contains 1 additional elements.
+The extra partial observation was ['5c', '2s'] in the first scenario.
+
+RECOVERY_TIMINGS {'restart': False, 'seconds': [9.188, 3.672, 3.437]}
+RECOVERY_TIMINGS {'restart': True, 'seconds': [9.0, 3.703, 3.547]}
+LAB_TIMING {"scenario": "right_99.png", "partial_seconds": 1.219, "complete_seconds": 9.219}
+
+Ran 310 tests in 208.498s
+FAILED (failures=3, skipped=3)
+Etapa falhou. Build interrompido.

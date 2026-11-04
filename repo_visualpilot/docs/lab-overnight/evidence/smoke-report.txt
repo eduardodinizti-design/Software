@@ -1,0 +1,6 @@
+VisualPilot - laboratorio noturno
+Estado: completed
+Casos registrados: 1 / 1
+Aceitos numericamente sob modelo sintetico: 1
+Nao equivale a GTO ou validacao estrategica. Nenhum codigo ou cliente foi alterado.
+Para retomar, execute o mesmo comando/pasta. Mudanca de codigo exige nova pasta.

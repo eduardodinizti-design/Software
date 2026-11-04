@@ -1,0 +1,9 @@
+{
+  "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+  "cpu_count": 5,
+  "affinity_count": 5,
+  "cpu_max": "400000 100000",
+  "python": "3.12.14",
+  "workload": "loopback replay; 30s with 1 table, 30s with 3, 180s with 6; two known recorded table images alternate every 12s",
+  "concurrent_activity": "Two short targeted regression runs (about 2.5 seconds each) overlapped this soak; performance is descriptive, not an isolated capacity benchmark."
+}

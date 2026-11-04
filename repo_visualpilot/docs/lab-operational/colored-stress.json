@@ -1,0 +1,3732 @@
+{
+  "run_id": "60506f1d3cde4650af5e46bb265b86f9",
+  "started_at": "2026-10-30T21:40:36.180148+00:00",
+  "completed_at": "2026-10-30T21:40:39.645166+00:00",
+  "candidate": true,
+  "scope": "Three real frames; derived variants are not independent hands. Not 52-card validation.",
+  "labeling": "Manual visual labels from uploaded session; empty frames are add-on breaks.",
+  "passed": 60,
+  "total": 60,
+  "cases": [
+    {
+      "source": "000001.png",
+      "sha256": "eafba8a4eeff58f23f0541bd2be3d073f9d04df827e0b130af1c8190114ffaa0",
+      "variant": "original",
+      "region": "hero_cards",
+      "expected": [
+        "Th",
+        "6c"
+      ],
+      "actual": [
+        "Th",
+        "6c"
+      ],
+      "passed": true,
+      "reading": {
+        "region": "hero_cards",
+        "status": "SUCCESS",
+        "cards": [
+          {
+            "card": "Th",
+            "confidence": 0.9984772801399231,
+            "box": [
+              9,
+              20,
+              43,
+              116
+            ]
+          },
+          {
+            "card": "6c",
+            "confidence": 0.99919193983078,
+            "box": [
+              51,
+              20,
+              78,
+              116
+            ]
+          }
+        ],
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 2,
+          "cards": [
+            {
+              "box": [
+                9,
+                20,
+                43,
+                116
+              ],
+              "suit": "h",
+              "shape_similarity": 0.6322701688555347,
+              "rank_votes": [
+                [
+                  "T",
+                  0.9984772801399231
+                ],
+                [
+                  "T",
+                  0.9990793764591217
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "T",
+                      0.9984772801399231
+                    ],
+                    [
+                      "T",
+                      0.9990793764591217
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            },
+            {
+              "box": [
+                51,
+                20,
+                78,
+                116
+              ],
+              "suit": "c",
+              "shape_similarity": 0.6615384615384615,
+              "rank_votes": [
+                [
+                  "6",
+                  0.9997120499610901
+                ],
+                [
+                  "6",
+                  0.99919193983078
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "6",
+                      0.9997120499610901
+                    ],
+                    [
+                      "6",
+                      0.99919193983078
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            }
+          ]
+        },
+        "latency_sec": 0.1028211530065164
+      }
+    },
+    {
+      "source": "000001.png",
+      "sha256": "eafba8a4eeff58f23f0541bd2be3d073f9d04df827e0b130af1c8190114ffaa0",
+      "variant": "original",
+      "region": "board_flop",
+      "expected": [
+        "2c",
+        "4h",
+        "9c"
+      ],
+      "actual": [
+        "2c",
+        "4h",
+        "9c"
+      ],
+      "passed": true,
+      "reading": {
+        "region": "board_flop",
+        "status": "SUCCESS",
+        "cards": [
+          {
+            "card": "2c",
+            "confidence": 0.9996793270111084,
+            "box": [
+              15,
+              19,
+              87,
+              129
+            ]
+          },
+          {
+            "card": "4h",
+            "confidence": 0.999862790107727,
+            "box": [
+              110,
+              19,
+              87,
+              129
+            ]
+          },
+          {
+            "card": "9c",
+            "confidence": 0.9998736381530762,
+            "box": [
+              205,
+              19,
+              87,
+              129
+            ]
+          }
+        ],
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 3,
+          "cards": [
+            {
+              "box": [
+                15,
+                19,
+                87,
+                129
+              ],
+              "suit": "c",
+              "shape_similarity": 0.6302681992337165,
+              "rank_votes": [
+                [
+                  "2",
+                  0.9998499155044556
+                ],
+                [
+                  "2",
+                  0.9996793270111084
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "2",
+                      0.9998499155044556
+                    ],
+                    [
+                      "2",
+                      0.9996793270111084
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            },
+            {
+              "box": [
+                110,
+                19,
+                87,
+                129
+              ],
+              "suit": "h",
+              "shape_similarity": 0.6361904761904762,
+              "rank_votes": [
+                [
+                  "4",
+                  0.9999579191207886
+                ],
+                [
+                  "4",
+                  0.999862790107727
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "4",
+                      0.9999579191207886
+                    ],
+                    [
+                      "4",
+                      0.999862790107727
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            },
+            {
+              "box": [
+                205,
+                19,
+                87,
+                129
+              ],
+              "suit": "c",
+              "shape_similarity": 0.6254901960784314,
+              "rank_votes": [
+                [
+                  "9",
+                  0.999954342842102
+                ],
+                [
+                  "9",
+                  0.9998736381530762
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "9",
+                      0.999954342842102
+                    ],
+                    [
+                      "9",
+                      0.9998736381530762
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            }
+          ]
+        },
+        "latency_sec": 0.12075483897933736
+      }
+    },
+    {
+      "source": "000001.png",
+      "sha256": "eafba8a4eeff58f23f0541bd2be3d073f9d04df827e0b130af1c8190114ffaa0",
+      "variant": "brightness_70_percent",
+      "region": "hero_cards",
+      "expected": [
+        "Th",
+        "6c"
+      ],
+      "actual": [
+        "Th",
+        "6c"
+      ],
+      "passed": true,
+      "reading": {
+        "region": "hero_cards",
+        "status": "SUCCESS",
+        "cards": [
+          {
+            "card": "Th",
+            "confidence": 0.9981162846088409,
+            "box": [
+              9,
+              20,
+              43,
+              116
+            ]
+          },
+          {
+            "card": "6c",
+            "confidence": 0.99919193983078,
+            "box": [
+              51,
+              20,
+              78,
+              116
+            ]
+          }
+        ],
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 2,
+          "cards": [
+            {
+              "box": [
+                9,
+                20,
+                43,
+                116
+              ],
+              "suit": "h",
+              "shape_similarity": 0.6322701688555347,
+              "rank_votes": [
+                [
+                  "T",
+                  0.9981162846088409
+                ],
+                [
+                  "T",
+                  0.9989360868930817
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "T",
+                      0.9981162846088409
+                    ],
+                    [
+                      "T",
+                      0.9989360868930817
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            },
+            {
+              "box": [
+                51,
+                20,
+                78,
+                116
+              ],
+              "suit": "c",
+              "shape_similarity": 0.6615384615384615,
+              "rank_votes": [
+                [
+                  "6",
+                  0.9997120499610901
+                ],
+                [
+                  "6",
+                  0.99919193983078
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "6",
+                      0.9997120499610901
+                    ],
+                    [
+                      "6",
+                      0.99919193983078
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            }
+          ]
+        },
+        "latency_sec": 0.03821257199160755
+      }
+    },
+    {
+      "source": "000001.png",
+      "sha256": "eafba8a4eeff58f23f0541bd2be3d073f9d04df827e0b130af1c8190114ffaa0",
+      "variant": "brightness_70_percent",
+      "region": "board_flop",
+      "expected": [
+        "2c",
+        "4h",
+        "9c"
+      ],
+      "actual": [
+        "2c",
+        "4h",
+        "9c"
+      ],
+      "passed": true,
+      "reading": {
+        "region": "board_flop",
+        "status": "SUCCESS",
+        "cards": [
+          {
+            "card": "2c",
+            "confidence": 0.9996411800384521,
+            "box": [
+              15,
+              19,
+              87,
+              129
+            ]
+          },
+          {
+            "card": "4h",
+            "confidence": 0.999885082244873,
+            "box": [
+              110,
+              19,
+              87,
+              129
+            ]
+          },
+          {
+            "card": "9c",
+            "confidence": 0.9998788833618164,
+            "box": [
+              205,
+              19,
+              87,
+              129
+            ]
+          }
+        ],
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 3,
+          "cards": [
+            {
+              "box": [
+                15,
+                19,
+                87,
+                129
+              ],
+              "suit": "c",
+              "shape_similarity": 0.6393129770992366,
+              "rank_votes": [
+                [
+                  "2",
+                  0.9998315572738647
+                ],
+                [
+                  "2",
+                  0.9996411800384521
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "2",
+                      0.9998315572738647
+                    ],
+                    [
+                      "2",
+                      0.9996411800384521
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            },
+            {
+              "box": [
+                110,
+                19,
+                87,
+                129
+              ],
+              "suit": "h",
+              "shape_similarity": 0.6565464895635673,
+              "rank_votes": [
+                [
+                  "4",
+                  0.9999173879623413
+                ],
+                [
+                  "4",
+                  0.999885082244873
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "4",
+                      0.9999173879623413
+                    ],
+                    [
+                      "4",
+                      0.999885082244873
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            },
+            {
+              "box": [
+                205,
+                19,
+                87,
+                129
+              ],
+              "suit": "c",
+              "shape_similarity": 0.6414728682170543,
+              "rank_votes": [
+                [
+                  "9",
+                  0.9999599456787109
+                ],
+                [
+                  "9",
+                  0.9998788833618164
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "9",
+                      0.9999599456787109
+                    ],
+                    [
+                      "9",
+                      0.9998788833618164
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            }
+          ]
+        },
+        "latency_sec": 0.09830443403916433
+      }
+    },
+    {
+      "source": "000001.png",
+      "sha256": "eafba8a4eeff58f23f0541bd2be3d073f9d04df827e0b130af1c8190114ffaa0",
+      "variant": "resize_75_percent",
+      "region": "hero_cards",
+      "expected": [
+        "Th",
+        "6c"
+      ],
+      "actual": [
+        "Th",
+        "6c"
+      ],
+      "passed": true,
+      "reading": {
+        "region": "hero_cards",
+        "status": "SUCCESS",
+        "cards": [
+          {
+            "card": "Th",
+            "confidence": 0.9979485273361206,
+            "box": [
+              7,
+              15,
+              31,
+              87
+            ]
+          },
+          {
+            "card": "6c",
+            "confidence": 0.99925297498703,
+            "box": [
+              39,
+              15,
+              58,
+              87
+            ]
+          }
+        ],
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 2,
+          "cards": [
+            {
+              "box": [
+                7,
+                15,
+                31,
+                87
+              ],
+              "suit": "h",
+              "shape_similarity": 0.6629001883239172,
+              "rank_votes": [
+                [
+                  "T",
+                  0.9991923570632935
+                ],
+                [
+                  "T",
+                  0.9979485273361206
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "T",
+                      0.9991923570632935
+                    ],
+                    [
+                      "T",
+                      0.9979485273361206
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            },
+            {
+              "box": [
+                39,
+                15,
+                58,
+                87
+              ],
+              "suit": "c",
+              "shape_similarity": 0.6444007858546169,
+              "rank_votes": [
+                [
+                  "6",
+                  0.9998518228530884
+                ],
+                [
+                  "6",
+                  0.99925297498703
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "6",
+                      0.9998518228530884
+                    ],
+                    [
+                      "6",
+                      0.99925297498703
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            }
+          ]
+        },
+        "latency_sec": 0.11128060502232984
+      }
+    },
+    {
+      "source": "000001.png",
+      "sha256": "eafba8a4eeff58f23f0541bd2be3d073f9d04df827e0b130af1c8190114ffaa0",
+      "variant": "resize_75_percent",
+      "region": "board_flop",
+      "expected": [
+        "2c",
+        "4h",
+        "9c"
+      ],
+      "actual": [
+        "2c",
+        "4h",
+        "9c"
+      ],
+      "passed": true,
+      "reading": {
+        "region": "board_flop",
+        "status": "SUCCESS",
+        "cards": [
+          {
+            "card": "2c",
+            "confidence": 0.9997952580451965,
+            "box": [
+              12,
+              14,
+              65,
+              96
+            ]
+          },
+          {
+            "card": "4h",
+            "confidence": 0.9997754693031311,
+            "box": [
+              83,
+              14,
+              65,
+              96
+            ]
+          },
+          {
+            "card": "9c",
+            "confidence": 0.9996243715286255,
+            "box": [
+              154,
+              14,
+              65,
+              96
+            ]
+          }
+        ],
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 3,
+          "cards": [
+            {
+              "box": [
+                12,
+                14,
+                65,
+                96
+              ],
+              "suit": "c",
+              "shape_similarity": 0.6152380952380953,
+              "rank_votes": [
+                [
+                  "2",
+                  0.9997952580451965
+                ],
+                [
+                  "2",
+                  0.9998277425765991
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "2",
+                      0.9997952580451965
+                    ],
+                    [
+                      "2",
+                      0.9998277425765991
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            },
+            {
+              "box": [
+                83,
+                14,
+                65,
+                96
+              ],
+              "suit": "h",
+              "shape_similarity": 0.6396226415094339,
+              "rank_votes": [
+                [
+                  "4",
+                  0.9999306201934814
+                ],
+                [
+                  "4",
+                  0.9997754693031311
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "4",
+                      0.9999306201934814
+                    ],
+                    [
+                      "4",
+                      0.9997754693031311
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            },
+            {
+              "box": [
+                154,
+                14,
+                65,
+                96
+              ],
+              "suit": "c",
+              "shape_similarity": 0.631578947368421,
+              "rank_votes": [
+                [
+                  "9",
+                  0.9999074935913086
+                ],
+                [
+                  "9",
+                  0.9996243715286255
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "9",
+                      0.9999074935913086
+                    ],
+                    [
+                      "9",
+                      0.9996243715286255
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            }
+          ]
+        },
+        "latency_sec": 0.1888032450224273
+      }
+    },
+    {
+      "source": "000001.png",
+      "sha256": "eafba8a4eeff58f23f0541bd2be3d073f9d04df827e0b130af1c8190114ffaa0",
+      "variant": "brightness_0.45",
+      "region": "hero_cards",
+      "expected": [
+        "Th",
+        "6c"
+      ],
+      "actual": [
+        "Th",
+        "6c"
+      ],
+      "passed": true,
+      "reading": {
+        "region": "hero_cards",
+        "status": "SUCCESS",
+        "cards": [
+          {
+            "card": "Th",
+            "confidence": 0.9981162846088409,
+            "box": [
+              9,
+              20,
+              42,
+              116
+            ]
+          },
+          {
+            "card": "6c",
+            "confidence": 0.99919193983078,
+            "box": [
+              51,
+              20,
+              78,
+              115
+            ]
+          }
+        ],
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 2,
+          "cards": [
+            {
+              "box": [
+                9,
+                20,
+                42,
+                116
+              ],
+              "suit": "h",
+              "shape_similarity": 0.6322701688555347,
+              "rank_votes": [
+                [
+                  "T",
+                  0.9981162846088409
+                ],
+                [
+                  "T",
+                  0.9989360868930817
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "T",
+                      0.9981162846088409
+                    ],
+                    [
+                      "T",
+                      0.9989360868930817
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            },
+            {
+              "box": [
+                51,
+                20,
+                78,
+                115
+              ],
+              "suit": "c",
+              "shape_similarity": 0.6615384615384615,
+              "rank_votes": [
+                [
+                  "6",
+                  0.9997120499610901
+                ],
+                [
+                  "6",
+                  0.99919193983078
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "6",
+                      0.9997120499610901
+                    ],
+                    [
+                      "6",
+                      0.99919193983078
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            }
+          ]
+        },
+        "latency_sec": 0.008863789029419422
+      }
+    },
+    {
+      "source": "000001.png",
+      "sha256": "eafba8a4eeff58f23f0541bd2be3d073f9d04df827e0b130af1c8190114ffaa0",
+      "variant": "brightness_0.45",
+      "region": "board_flop",
+      "expected": [
+        "2c",
+        "4h",
+        "9c"
+      ],
+      "actual": [
+        "2c",
+        "4h",
+        "9c"
+      ],
+      "passed": true,
+      "reading": {
+        "region": "board_flop",
+        "status": "SUCCESS",
+        "cards": [
+          {
+            "card": "2c",
+            "confidence": 0.9996196031570435,
+            "box": [
+              15,
+              19,
+              87,
+              129
+            ]
+          },
+          {
+            "card": "4h",
+            "confidence": 0.9998144507408142,
+            "box": [
+              110,
+              19,
+              87,
+              129
+            ]
+          },
+          {
+            "card": "9c",
+            "confidence": 0.9998461008071899,
+            "box": [
+              205,
+              19,
+              87,
+              129
+            ]
+          }
+        ],
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 3,
+          "cards": [
+            {
+              "box": [
+                15,
+                19,
+                87,
+                129
+              ],
+              "suit": "c",
+              "shape_similarity": 0.6469465648854962,
+              "rank_votes": [
+                [
+                  "2",
+                  0.9998313188552856
+                ],
+                [
+                  "2",
+                  0.9996196031570435
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "2",
+                      0.9998313188552856
+                    ],
+                    [
+                      "2",
+                      0.9996196031570435
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            },
+            {
+              "box": [
+                110,
+                19,
+                87,
+                129
+              ],
+              "suit": "h",
+              "shape_similarity": 0.6604127579737336,
+              "rank_votes": [
+                [
+                  "4",
+                  0.9999250173568726
+                ],
+                [
+                  "4",
+                  0.9998144507408142
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "4",
+                      0.9999250173568726
+                    ],
+                    [
+                      "4",
+                      0.9998144507408142
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            },
+            {
+              "box": [
+                205,
+                19,
+                87,
+                129
+              ],
+              "suit": "c",
+              "shape_similarity": 0.6435452793834296,
+              "rank_votes": [
+                [
+                  "9",
+                  0.9999499320983887
+                ],
+                [
+                  "9",
+                  0.9998461008071899
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "9",
+                      0.9999499320983887
+                    ],
+                    [
+                      "9",
+                      0.9998461008071899
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            }
+          ]
+        },
+        "latency_sec": 0.1882440480403602
+      }
+    },
+    {
+      "source": "000001.png",
+      "sha256": "eafba8a4eeff58f23f0541bd2be3d073f9d04df827e0b130af1c8190114ffaa0",
+      "variant": "brightness_0.9",
+      "region": "hero_cards",
+      "expected": [
+        "Th",
+        "6c"
+      ],
+      "actual": [
+        "Th",
+        "6c"
+      ],
+      "passed": true,
+      "reading": {
+        "region": "hero_cards",
+        "status": "SUCCESS",
+        "cards": [
+          {
+            "card": "Th",
+            "confidence": 0.9985356628894806,
+            "box": [
+              9,
+              20,
+              43,
+              116
+            ]
+          },
+          {
+            "card": "6c",
+            "confidence": 0.99919193983078,
+            "box": [
+              51,
+              20,
+              78,
+              116
+            ]
+          }
+        ],
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 2,
+          "cards": [
+            {
+              "box": [
+                9,
+                20,
+                43,
+                116
+              ],
+              "suit": "h",
+              "shape_similarity": 0.6341463414634146,
+              "rank_votes": [
+                [
+                  "T",
+                  0.9985356628894806
+                ],
+                [
+                  "T",
+                  0.9990931153297424
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "T",
+                      0.9985356628894806
+                    ],
+                    [
+                      "T",
+                      0.9990931153297424
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            },
+            {
+              "box": [
+                51,
+                20,
+                78,
+                116
+              ],
+              "suit": "c",
+              "shape_similarity": 0.6615384615384615,
+              "rank_votes": [
+                [
+                  "6",
+                  0.9997120499610901
+                ],
+                [
+                  "6",
+                  0.99919193983078
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "6",
+                      0.9997120499610901
+                    ],
+                    [
+                      "6",
+                      0.99919193983078
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            }
+          ]
+        },
+        "latency_sec": 0.06586342200171202
+      }
+    },
+    {
+      "source": "000001.png",
+      "sha256": "eafba8a4eeff58f23f0541bd2be3d073f9d04df827e0b130af1c8190114ffaa0",
+      "variant": "brightness_0.9",
+      "region": "board_flop",
+      "expected": [
+        "2c",
+        "4h",
+        "9c"
+      ],
+      "actual": [
+        "2c",
+        "4h",
+        "9c"
+      ],
+      "passed": true,
+      "reading": {
+        "region": "board_flop",
+        "status": "SUCCESS",
+        "cards": [
+          {
+            "card": "2c",
+            "confidence": 0.9996716976165771,
+            "box": [
+              15,
+              19,
+              87,
+              129
+            ]
+          },
+          {
+            "card": "4h",
+            "confidence": 0.9998759031295776,
+            "box": [
+              110,
+              19,
+              87,
+              129
+            ]
+          },
+          {
+            "card": "9c",
+            "confidence": 0.9998875856399536,
+            "box": [
+              205,
+              19,
+              87,
+              129
+            ]
+          }
+        ],
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 3,
+          "cards": [
+            {
+              "box": [
+                15,
+                19,
+                87,
+                129
+              ],
+              "suit": "c",
+              "shape_similarity": 0.6328871892925431,
+              "rank_votes": [
+                [
+                  "2",
+                  0.9998252987861633
+                ],
+                [
+                  "2",
+                  0.9996716976165771
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "2",
+                      0.9998252987861633
+                    ],
+                    [
+                      "2",
+                      0.9996716976165771
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            },
+            {
+              "box": [
+                110,
+                19,
+                87,
+                129
+              ],
+              "suit": "h",
+              "shape_similarity": 0.6514285714285715,
+              "rank_votes": [
+                [
+                  "4",
+                  0.9999569654464722
+                ],
+                [
+                  "4",
+                  0.9998759031295776
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "4",
+                      0.9999569654464722
+                    ],
+                    [
+                      "4",
+                      0.9998759031295776
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            },
+            {
+              "box": [
+                205,
+                19,
+                87,
+                129
+              ],
+              "suit": "c",
+              "shape_similarity": 0.631578947368421,
+              "rank_votes": [
+                [
+                  "9",
+                  0.9999510049819946
+                ],
+                [
+                  "9",
+                  0.9998875856399536
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "9",
+                      0.9999510049819946
+                    ],
+                    [
+                      "9",
+                      0.9998875856399536
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            }
+          ]
+        },
+        "latency_sec": 0.19115435698768124
+      }
+    },
+    {
+      "source": "000001.png",
+      "sha256": "eafba8a4eeff58f23f0541bd2be3d073f9d04df827e0b130af1c8190114ffaa0",
+      "variant": "brightness_1.15",
+      "region": "hero_cards",
+      "expected": [
+        "Th",
+        "6c"
+      ],
+      "actual": [
+        "Th",
+        "6c"
+      ],
+      "passed": true,
+      "reading": {
+        "region": "hero_cards",
+        "status": "SUCCESS",
+        "cards": [
+          {
+            "card": "Th",
+            "confidence": 0.998799204826355,
+            "box": [
+              9,
+              20,
+              43,
+              116
+            ]
+          },
+          {
+            "card": "6c",
+            "confidence": 0.99919193983078,
+            "box": [
+              51,
+              20,
+              78,
+              116
+            ]
+          }
+        ],
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 2,
+          "cards": [
+            {
+              "box": [
+                9,
+                20,
+                43,
+                116
+              ],
+              "suit": "h",
+              "shape_similarity": 0.6761363636363636,
+              "rank_votes": [
+                [
+                  "T",
+                  0.998799204826355
+                ],
+                [
+                  "T",
+                  0.9987992942333221
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "T",
+                      0.998799204826355
+                    ],
+                    [
+                      "T",
+                      0.9987992942333221
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            },
+            {
+              "box": [
+                51,
+                20,
+                78,
+                116
+              ],
+              "suit": "c",
+              "shape_similarity": 0.6615384615384615,
+              "rank_votes": [
+                [
+                  "6",
+                  0.9997120499610901
+                ],
+                [
+                  "6",
+                  0.99919193983078
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "6",
+                      0.9997120499610901
+                    ],
+                    [
+                      "6",
+                      0.99919193983078
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            }
+          ]
+        },
+        "latency_sec": 0.05554358405061066
+      }
+    },
+    {
+      "source": "000001.png",
+      "sha256": "eafba8a4eeff58f23f0541bd2be3d073f9d04df827e0b130af1c8190114ffaa0",
+      "variant": "brightness_1.15",
+      "region": "board_flop",
+      "expected": [
+        "2c",
+        "4h",
+        "9c"
+      ],
+      "actual": [
+        "2c",
+        "4h",
+        "9c"
+      ],
+      "passed": true,
+      "reading": {
+        "region": "board_flop",
+        "status": "SUCCESS",
+        "cards": [
+          {
+            "card": "2c",
+            "confidence": 0.9996743202209473,
+            "box": [
+              15,
+              19,
+              87,
+              129
+            ]
+          },
+          {
+            "card": "4h",
+            "confidence": 0.9998527765274048,
+            "box": [
+              110,
+              19,
+              87,
+              129
+            ]
+          },
+          {
+            "card": "9c",
+            "confidence": 0.9998764991760254,
+            "box": [
+              205,
+              19,
+              87,
+              129
+            ]
+          }
+        ],
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 3,
+          "cards": [
+            {
+              "box": [
+                15,
+                19,
+                87,
+                129
+              ],
+              "suit": "c",
+              "shape_similarity": 0.6302681992337165,
+              "rank_votes": [
+                [
+                  "2",
+                  0.9998481273651123
+                ],
+                [
+                  "2",
+                  0.9996743202209473
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "2",
+                      0.9998481273651123
+                    ],
+                    [
+                      "2",
+                      0.9996743202209473
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            },
+            {
+              "box": [
+                110,
+                19,
+                87,
+                129
+              ],
+              "suit": "h",
+              "shape_similarity": 0.6527514231499051,
+              "rank_votes": [
+                [
+                  "4",
+                  0.9999420642852783
+                ],
+                [
+                  "4",
+                  0.9998527765274048
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "4",
+                      0.9999420642852783
+                    ],
+                    [
+                      "4",
+                      0.9998527765274048
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            },
+            {
+              "box": [
+                205,
+                19,
+                87,
+                129
+              ],
+              "suit": "c",
+              "shape_similarity": 0.6274509803921569,
+              "rank_votes": [
+                [
+                  "9",
+                  0.9999573230743408
+                ],
+                [
+                  "9",
+                  0.9998764991760254
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "9",
+                      0.9999573230743408
+                    ],
+                    [
+                      "9",
+                      0.9998764991760254
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            }
+          ]
+        },
+        "latency_sec": 0.12519081396749243
+      }
+    },
+    {
+      "source": "000001.png",
+      "sha256": "eafba8a4eeff58f23f0541bd2be3d073f9d04df827e0b130af1c8190114ffaa0",
+      "variant": "resize_0.6",
+      "region": "hero_cards",
+      "expected": [
+        "Th",
+        "6c"
+      ],
+      "actual": [
+        "Th",
+        "6c"
+      ],
+      "passed": true,
+      "reading": {
+        "region": "hero_cards",
+        "status": "SUCCESS",
+        "cards": [
+          {
+            "card": "Th",
+            "confidence": 0.9967853426933289,
+            "box": [
+              6,
+              12,
+              25,
+              69
+            ]
+          },
+          {
+            "card": "6c",
+            "confidence": 0.9988158941268921,
+            "box": [
+              31,
+              11,
+              47,
+              70
+            ]
+          }
+        ],
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 2,
+          "cards": [
+            {
+              "box": [
+                6,
+                12,
+                25,
+                69
+              ],
+              "suit": "h",
+              "shape_similarity": 0.6471698113207547,
+              "rank_votes": [
+                [
+                  "T",
+                  0.998379647731781
+                ],
+                [
+                  "T",
+                  0.9967853426933289
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "T",
+                      0.998379647731781
+                    ],
+                    [
+                      "T",
+                      0.9967853426933289
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            },
+            {
+              "box": [
+                31,
+                11,
+                47,
+                70
+              ],
+              "suit": "c",
+              "shape_similarity": 0.6227897838899804,
+              "rank_votes": [
+                [
+                  "6",
+                  0.9996755123138428
+                ],
+                [
+                  "6",
+                  0.9988158941268921
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "6",
+                      0.9996755123138428
+                    ],
+                    [
+                      "6",
+                      0.9988158941268921
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            }
+          ]
+        },
+        "latency_sec": 0.1359513060306199
+      }
+    },
+    {
+      "source": "000001.png",
+      "sha256": "eafba8a4eeff58f23f0541bd2be3d073f9d04df827e0b130af1c8190114ffaa0",
+      "variant": "resize_0.6",
+      "region": "board_flop",
+      "expected": [
+        "2c",
+        "4h",
+        "9c"
+      ],
+      "actual": [
+        "2c",
+        "4h",
+        "9c"
+      ],
+      "passed": true,
+      "reading": {
+        "region": "board_flop",
+        "status": "SUCCESS",
+        "cards": [
+          {
+            "card": "2c",
+            "confidence": 0.9995829463005066,
+            "box": [
+              9,
+              12,
+              52,
+              77
+            ]
+          },
+          {
+            "card": "4h",
+            "confidence": 0.9997032284736633,
+            "box": [
+              66,
+              12,
+              52,
+              77
+            ]
+          },
+          {
+            "card": "9c",
+            "confidence": 0.9994145631790161,
+            "box": [
+              123,
+              12,
+              52,
+              77
+            ]
+          }
+        ],
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 3,
+          "cards": [
+            {
+              "box": [
+                9,
+                12,
+                52,
+                77
+              ],
+              "suit": "c",
+              "shape_similarity": 0.6377358490566037,
+              "rank_votes": [
+                [
+                  "2",
+                  0.9998213648796082
+                ],
+                [
+                  "2",
+                  0.9995829463005066
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "2",
+                      0.9998213648796082
+                    ],
+                    [
+                      "2",
+                      0.9995829463005066
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            },
+            {
+              "box": [
+                66,
+                12,
+                52,
+                77
+              ],
+              "suit": "h",
+              "shape_similarity": 0.6547169811320754,
+              "rank_votes": [
+                [
+                  "4",
+                  0.9999418258666992
+                ],
+                [
+                  "4",
+                  0.9997032284736633
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "4",
+                      0.9999418258666992
+                    ],
+                    [
+                      "4",
+                      0.9997032284736633
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            },
+            {
+              "box": [
+                123,
+                12,
+                52,
+                77
+              ],
+              "suit": "c",
+              "shape_similarity": 0.6054158607350096,
+              "rank_votes": [
+                [
+                  "9",
+                  0.999836802482605
+                ],
+                [
+                  "9",
+                  0.9994145631790161
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "9",
+                      0.999836802482605
+                    ],
+                    [
+                      "9",
+                      0.9994145631790161
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            }
+          ]
+        },
+        "latency_sec": 0.21616142697166651
+      }
+    },
+    {
+      "source": "000001.png",
+      "sha256": "eafba8a4eeff58f23f0541bd2be3d073f9d04df827e0b130af1c8190114ffaa0",
+      "variant": "resize_1.25",
+      "region": "hero_cards",
+      "expected": [
+        "Th",
+        "6c"
+      ],
+      "actual": [
+        "Th",
+        "6c"
+      ],
+      "passed": true,
+      "reading": {
+        "region": "hero_cards",
+        "status": "SUCCESS",
+        "cards": [
+          {
+            "card": "Th",
+            "confidence": 0.9988265335559845,
+            "box": [
+              11,
+              25,
+              53,
+              144
+            ]
+          },
+          {
+            "card": "6c",
+            "confidence": 0.9997273087501526,
+            "box": [
+              64,
+              24,
+              97,
+              145
+            ]
+          }
+        ],
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 2,
+          "cards": [
+            {
+              "box": [
+                11,
+                25,
+                53,
+                144
+              ],
+              "suit": "h",
+              "shape_similarity": 0.6444444444444445,
+              "rank_votes": [
+                [
+                  "T",
+                  0.9990207254886627
+                ],
+                [
+                  "T",
+                  0.9988265335559845
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "T",
+                      0.9990207254886627
+                    ],
+                    [
+                      "T",
+                      0.9988265335559845
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            },
+            {
+              "box": [
+                64,
+                24,
+                97,
+                145
+              ],
+              "suit": "c",
+              "shape_similarity": 0.6588693957115009,
+              "rank_votes": [
+                [
+                  "6",
+                  0.9998779296875
+                ],
+                [
+                  "6",
+                  0.9997273087501526
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "6",
+                      0.9998779296875
+                    ],
+                    [
+                      "6",
+                      0.9997273087501526
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            }
+          ]
+        },
+        "latency_sec": 0.14379860099870712
+      }
+    },
+    {
+      "source": "000001.png",
+      "sha256": "eafba8a4eeff58f23f0541bd2be3d073f9d04df827e0b130af1c8190114ffaa0",
+      "variant": "resize_1.25",
+      "region": "board_flop",
+      "expected": [
+        "2c",
+        "4h",
+        "9c"
+      ],
+      "actual": [
+        "2c",
+        "4h",
+        "9c"
+      ],
+      "passed": true,
+      "reading": {
+        "region": "board_flop",
+        "status": "SUCCESS",
+        "cards": [
+          {
+            "card": "2c",
+            "confidence": 0.9997485280036926,
+            "box": [
+              20,
+              24,
+              108,
+              160
+            ]
+          },
+          {
+            "card": "4h",
+            "confidence": 0.9999352693557739,
+            "box": [
+              138,
+              24,
+              109,
+              160
+            ]
+          },
+          {
+            "card": "9c",
+            "confidence": 0.999913215637207,
+            "box": [
+              257,
+              24,
+              108,
+              160
+            ]
+          }
+        ],
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 3,
+          "cards": [
+            {
+              "box": [
+                20,
+                24,
+                108,
+                160
+              ],
+              "suit": "c",
+              "shape_similarity": 0.6159844054580896,
+              "rank_votes": [
+                [
+                  "2",
+                  0.9998663663864136
+                ],
+                [
+                  "2",
+                  0.9997485280036926
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "2",
+                      0.9998663663864136
+                    ],
+                    [
+                      "2",
+                      0.9997485280036926
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            },
+            {
+              "box": [
+                138,
+                24,
+                109,
+                160
+              ],
+              "suit": "h",
+              "shape_similarity": 0.6481835564053537,
+              "rank_votes": [
+                [
+                  "4",
+                  0.9999494552612305
+                ],
+                [
+                  "4",
+                  0.9999352693557739
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "4",
+                      0.9999494552612305
+                    ],
+                    [
+                      "4",
+                      0.9999352693557739
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            },
+            {
+              "box": [
+                257,
+                24,
+                108,
+                160
+              ],
+              "suit": "c",
+              "shape_similarity": 0.6225296442687747,
+              "rank_votes": [
+                [
+                  "9",
+                  0.9999592304229736
+                ],
+                [
+                  "9",
+                  0.999913215637207
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "9",
+                      0.9999592304229736
+                    ],
+                    [
+                      "9",
+                      0.999913215637207
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            }
+          ]
+        },
+        "latency_sec": 0.22632199001964182
+      }
+    },
+    {
+      "source": "000001.png",
+      "sha256": "eafba8a4eeff58f23f0541bd2be3d073f9d04df827e0b130af1c8190114ffaa0",
+      "variant": "jpeg_50",
+      "region": "hero_cards",
+      "expected": [
+        "Th",
+        "6c"
+      ],
+      "actual": [
+        "Th",
+        "6c"
+      ],
+      "passed": true,
+      "reading": {
+        "region": "hero_cards",
+        "status": "SUCCESS",
+        "cards": [
+          {
+            "card": "Th",
+            "confidence": 0.9897379279136658,
+            "box": [
+              8,
+              21,
+              43,
+              115
+            ]
+          },
+          {
+            "card": "6c",
+            "confidence": 0.9960773587226868,
+            "box": [
+              51,
+              21,
+              78,
+              115
+            ]
+          }
+        ],
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 2,
+          "cards": [
+            {
+              "box": [
+                8,
+                21,
+                43,
+                115
+              ],
+              "suit": "h",
+              "shape_similarity": 0.6037735849056604,
+              "rank_votes": [
+                [
+                  "T",
+                  0.9923701882362366
+                ],
+                [
+                  "T",
+                  0.9897379279136658
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "T",
+                      0.9923701882362366
+                    ],
+                    [
+                      "T",
+                      0.9897379279136658
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            },
+            {
+              "box": [
+                51,
+                21,
+                78,
+                115
+              ],
+              "suit": "c",
+              "shape_similarity": 0.6640471512770137,
+              "rank_votes": [
+                [
+                  "6",
+                  0.999595582485199
+                ],
+                [
+                  "6",
+                  0.9960773587226868
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "6",
+                      0.999595582485199
+                    ],
+                    [
+                      "6",
+                      0.9960773587226868
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            }
+          ]
+        },
+        "latency_sec": 0.13045477599371225
+      }
+    },
+    {
+      "source": "000001.png",
+      "sha256": "eafba8a4eeff58f23f0541bd2be3d073f9d04df827e0b130af1c8190114ffaa0",
+      "variant": "jpeg_50",
+      "region": "board_flop",
+      "expected": [
+        "2c",
+        "4h",
+        "9c"
+      ],
+      "actual": [
+        "2c",
+        "4h",
+        "9c"
+      ],
+      "passed": true,
+      "reading": {
+        "region": "board_flop",
+        "status": "SUCCESS",
+        "cards": [
+          {
+            "card": "2c",
+            "confidence": 0.9997617602348328,
+            "box": [
+              15,
+              19,
+              87,
+              129
+            ]
+          },
+          {
+            "card": "4h",
+            "confidence": 0.9993970394134521,
+            "box": [
+              110,
+              20,
+              87,
+              128
+            ]
+          },
+          {
+            "card": "9c",
+            "confidence": 0.9560232758522034,
+            "box": [
+              205,
+              19,
+              87,
+              129
+            ]
+          }
+        ],
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 3,
+          "cards": [
+            {
+              "box": [
+                15,
+                19,
+                87,
+                129
+              ],
+              "suit": "c",
+              "shape_similarity": 0.6147704590818364,
+              "rank_votes": [
+                [
+                  "2",
+                  0.9998376369476318
+                ],
+                [
+                  "2",
+                  0.9997617602348328
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "2",
+                      0.9998376369476318
+                    ],
+                    [
+                      "2",
+                      0.9997617602348328
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            },
+            {
+              "box": [
+                110,
+                20,
+                87,
+                128
+              ],
+              "suit": "h",
+              "shape_similarity": 0.6165703275529865,
+              "rank_votes": [
+                [
+                  "4",
+                  0.9993970394134521
+                ],
+                [
+                  "4",
+                  0.9994086027145386
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "4",
+                      0.9993970394134521
+                    ],
+                    [
+                      "4",
+                      0.9994086027145386
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            },
+            {
+              "box": [
+                205,
+                19,
+                87,
+                129
+              ],
+              "suit": "c",
+              "shape_similarity": 0.6265060240963856,
+              "rank_votes": [
+                [
+                  "9",
+                  0.9842287302017212
+                ],
+                [
+                  "9",
+                  0.9560232758522034
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "9",
+                      0.9842287302017212
+                    ],
+                    [
+                      "9",
+                      0.9560232758522034
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            }
+          ]
+        },
+        "latency_sec": 0.20022351300576702
+      }
+    },
+    {
+      "source": "000001.png",
+      "sha256": "eafba8a4eeff58f23f0541bd2be3d073f9d04df827e0b130af1c8190114ffaa0",
+      "variant": "jpeg_80",
+      "region": "hero_cards",
+      "expected": [
+        "Th",
+        "6c"
+      ],
+      "actual": [
+        "Th",
+        "6c"
+      ],
+      "passed": true,
+      "reading": {
+        "region": "hero_cards",
+        "status": "SUCCESS",
+        "cards": [
+          {
+            "card": "Th",
+            "confidence": 0.9984298944473267,
+            "box": [
+              9,
+              21,
+              42,
+              115
+            ]
+          },
+          {
+            "card": "6c",
+            "confidence": 0.9997629523277283,
+            "box": [
+              51,
+              20,
+              78,
+              115
+            ]
+          }
+        ],
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 2,
+          "cards": [
+            {
+              "box": [
+                9,
+                21,
+                42,
+                115
+              ],
+              "suit": "h",
+              "shape_similarity": 0.6704331450094162,
+              "rank_votes": [
+                [
+                  "T",
+                  0.9989542365074158
+                ],
+                [
+                  "T",
+                  0.9984298944473267
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "T",
+                      0.9989542365074158
+                    ],
+                    [
+                      "T",
+                      0.9984298944473267
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            },
+            {
+              "box": [
+                51,
+                20,
+                78,
+                115
+              ],
+              "suit": "c",
+              "shape_similarity": 0.6385068762278978,
+              "rank_votes": [
+                [
+                  "6",
+                  0.9998493194580078
+                ],
+                [
+                  "6",
+                  0.9997629523277283
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "6",
+                      0.9998493194580078
+                    ],
+                    [
+                      "6",
+                      0.9997629523277283
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            }
+          ]
+        },
+        "latency_sec": 0.13109080999856815
+      }
+    },
+    {
+      "source": "000001.png",
+      "sha256": "eafba8a4eeff58f23f0541bd2be3d073f9d04df827e0b130af1c8190114ffaa0",
+      "variant": "jpeg_80",
+      "region": "board_flop",
+      "expected": [
+        "2c",
+        "4h",
+        "9c"
+      ],
+      "actual": [
+        "2c",
+        "4h",
+        "9c"
+      ],
+      "passed": true,
+      "reading": {
+        "region": "board_flop",
+        "status": "SUCCESS",
+        "cards": [
+          {
+            "card": "2c",
+            "confidence": 0.999648928642273,
+            "box": [
+              15,
+              20,
+              87,
+              128
+            ]
+          },
+          {
+            "card": "4h",
+            "confidence": 0.9997718930244446,
+            "box": [
+              110,
+              20,
+              87,
+              128
+            ]
+          },
+          {
+            "card": "9c",
+            "confidence": 0.9998323917388916,
+            "box": [
+              205,
+              20,
+              87,
+              128
+            ]
+          }
+        ],
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 3,
+          "cards": [
+            {
+              "box": [
+                15,
+                20,
+                87,
+                128
+              ],
+              "suit": "c",
+              "shape_similarity": 0.6178861788617886,
+              "rank_votes": [
+                [
+                  "2",
+                  0.9997609257698059
+                ],
+                [
+                  "2",
+                  0.999648928642273
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "2",
+                      0.9997609257698059
+                    ],
+                    [
+                      "2",
+                      0.999648928642273
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            },
+            {
+              "box": [
+                110,
+                20,
+                87,
+                128
+              ],
+              "suit": "h",
+              "shape_similarity": 0.6462715105162524,
+              "rank_votes": [
+                [
+                  "4",
+                  0.9999109506607056
+                ],
+                [
+                  "4",
+                  0.9997718930244446
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "4",
+                      0.9999109506607056
+                    ],
+                    [
+                      "4",
+                      0.9997718930244446
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            },
+            {
+              "box": [
+                205,
+                20,
+                87,
+                128
+              ],
+              "suit": "c",
+              "shape_similarity": 0.6613226452905812,
+              "rank_votes": [
+                [
+                  "9",
+                  0.9998323917388916
+                ],
+                [
+                  "9",
+                  0.9998944997787476
+                ]
+              ],
+              "rank_attempts": [
+                {
+                  "route": "binary",
+                  "votes": [
+                    [
+                      "9",
+                      0.9998323917388916
+                    ],
+                    [
+                      "9",
+                      0.9998944997787476
+                    ]
+                  ]
+                }
+              ],
+              "accepted": true
+            }
+          ]
+        },
+        "latency_sec": 0.20802818896481767
+      }
+    },
+    {
+      "source": "000002.png",
+      "sha256": "60676b8202ed335417cecc8b24cbd34e1059c04b7e35cb21d3eda812cbc15de3",
+      "variant": "original",
+      "region": "hero_cards",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "hero_cards",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.006548277044203132
+      }
+    },
+    {
+      "source": "000002.png",
+      "sha256": "60676b8202ed335417cecc8b24cbd34e1059c04b7e35cb21d3eda812cbc15de3",
+      "variant": "original",
+      "region": "board_flop",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "board_flop",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.009673291991930455
+      }
+    },
+    {
+      "source": "000002.png",
+      "sha256": "60676b8202ed335417cecc8b24cbd34e1059c04b7e35cb21d3eda812cbc15de3",
+      "variant": "brightness_70_percent",
+      "region": "hero_cards",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "hero_cards",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.0067167599918320775
+      }
+    },
+    {
+      "source": "000002.png",
+      "sha256": "60676b8202ed335417cecc8b24cbd34e1059c04b7e35cb21d3eda812cbc15de3",
+      "variant": "brightness_70_percent",
+      "region": "board_flop",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "board_flop",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.011478258995339274
+      }
+    },
+    {
+      "source": "000002.png",
+      "sha256": "60676b8202ed335417cecc8b24cbd34e1059c04b7e35cb21d3eda812cbc15de3",
+      "variant": "resize_75_percent",
+      "region": "hero_cards",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "hero_cards",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.003692505997605622
+      }
+    },
+    {
+      "source": "000002.png",
+      "sha256": "60676b8202ed335417cecc8b24cbd34e1059c04b7e35cb21d3eda812cbc15de3",
+      "variant": "resize_75_percent",
+      "region": "board_flop",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "board_flop",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.006153465015813708
+      }
+    },
+    {
+      "source": "000002.png",
+      "sha256": "60676b8202ed335417cecc8b24cbd34e1059c04b7e35cb21d3eda812cbc15de3",
+      "variant": "brightness_0.45",
+      "region": "hero_cards",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "hero_cards",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.006546303979121149
+      }
+    },
+    {
+      "source": "000002.png",
+      "sha256": "60676b8202ed335417cecc8b24cbd34e1059c04b7e35cb21d3eda812cbc15de3",
+      "variant": "brightness_0.45",
+      "region": "board_flop",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "board_flop",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.009793823002837598
+      }
+    },
+    {
+      "source": "000002.png",
+      "sha256": "60676b8202ed335417cecc8b24cbd34e1059c04b7e35cb21d3eda812cbc15de3",
+      "variant": "brightness_0.9",
+      "region": "hero_cards",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "hero_cards",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.006619212974328548
+      }
+    },
+    {
+      "source": "000002.png",
+      "sha256": "60676b8202ed335417cecc8b24cbd34e1059c04b7e35cb21d3eda812cbc15de3",
+      "variant": "brightness_0.9",
+      "region": "board_flop",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "board_flop",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.011735923995729536
+      }
+    },
+    {
+      "source": "000002.png",
+      "sha256": "60676b8202ed335417cecc8b24cbd34e1059c04b7e35cb21d3eda812cbc15de3",
+      "variant": "brightness_1.15",
+      "region": "hero_cards",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "hero_cards",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.006460565025918186
+      }
+    },
+    {
+      "source": "000002.png",
+      "sha256": "60676b8202ed335417cecc8b24cbd34e1059c04b7e35cb21d3eda812cbc15de3",
+      "variant": "brightness_1.15",
+      "region": "board_flop",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "board_flop",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.009530268027447164
+      }
+    },
+    {
+      "source": "000002.png",
+      "sha256": "60676b8202ed335417cecc8b24cbd34e1059c04b7e35cb21d3eda812cbc15de3",
+      "variant": "resize_0.6",
+      "region": "hero_cards",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "hero_cards",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.002489261969458312
+      }
+    },
+    {
+      "source": "000002.png",
+      "sha256": "60676b8202ed335417cecc8b24cbd34e1059c04b7e35cb21d3eda812cbc15de3",
+      "variant": "resize_0.6",
+      "region": "board_flop",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "board_flop",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.003784454020205885
+      }
+    },
+    {
+      "source": "000002.png",
+      "sha256": "60676b8202ed335417cecc8b24cbd34e1059c04b7e35cb21d3eda812cbc15de3",
+      "variant": "resize_1.25",
+      "region": "hero_cards",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "hero_cards",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.009879001008812338
+      }
+    },
+    {
+      "source": "000002.png",
+      "sha256": "60676b8202ed335417cecc8b24cbd34e1059c04b7e35cb21d3eda812cbc15de3",
+      "variant": "resize_1.25",
+      "region": "board_flop",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "board_flop",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.015314308984670788
+      }
+    },
+    {
+      "source": "000002.png",
+      "sha256": "60676b8202ed335417cecc8b24cbd34e1059c04b7e35cb21d3eda812cbc15de3",
+      "variant": "jpeg_50",
+      "region": "hero_cards",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "hero_cards",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.006258702953346074
+      }
+    },
+    {
+      "source": "000002.png",
+      "sha256": "60676b8202ed335417cecc8b24cbd34e1059c04b7e35cb21d3eda812cbc15de3",
+      "variant": "jpeg_50",
+      "region": "board_flop",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "board_flop",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.010674753983039409
+      }
+    },
+    {
+      "source": "000002.png",
+      "sha256": "60676b8202ed335417cecc8b24cbd34e1059c04b7e35cb21d3eda812cbc15de3",
+      "variant": "jpeg_80",
+      "region": "hero_cards",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "hero_cards",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.006609389034565538
+      }
+    },
+    {
+      "source": "000002.png",
+      "sha256": "60676b8202ed335417cecc8b24cbd34e1059c04b7e35cb21d3eda812cbc15de3",
+      "variant": "jpeg_80",
+      "region": "board_flop",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "board_flop",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.0106981240096502
+      }
+    },
+    {
+      "source": "000003.png",
+      "sha256": "a8bdbeb560d948228e8ea0bb5e79ee444542d52c27cfcb6a657fe6bda4a8d4a0",
+      "variant": "original",
+      "region": "hero_cards",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "hero_cards",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.0064724640105850995
+      }
+    },
+    {
+      "source": "000003.png",
+      "sha256": "a8bdbeb560d948228e8ea0bb5e79ee444542d52c27cfcb6a657fe6bda4a8d4a0",
+      "variant": "original",
+      "region": "board_flop",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "board_flop",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.010417597950436175
+      }
+    },
+    {
+      "source": "000003.png",
+      "sha256": "a8bdbeb560d948228e8ea0bb5e79ee444542d52c27cfcb6a657fe6bda4a8d4a0",
+      "variant": "brightness_70_percent",
+      "region": "hero_cards",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "hero_cards",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.006403750041499734
+      }
+    },
+    {
+      "source": "000003.png",
+      "sha256": "a8bdbeb560d948228e8ea0bb5e79ee444542d52c27cfcb6a657fe6bda4a8d4a0",
+      "variant": "brightness_70_percent",
+      "region": "board_flop",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "board_flop",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.00990162999369204
+      }
+    },
+    {
+      "source": "000003.png",
+      "sha256": "a8bdbeb560d948228e8ea0bb5e79ee444542d52c27cfcb6a657fe6bda4a8d4a0",
+      "variant": "resize_75_percent",
+      "region": "hero_cards",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "hero_cards",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.003994595026597381
+      }
+    },
+    {
+      "source": "000003.png",
+      "sha256": "a8bdbeb560d948228e8ea0bb5e79ee444542d52c27cfcb6a657fe6bda4a8d4a0",
+      "variant": "resize_75_percent",
+      "region": "board_flop",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "board_flop",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.0053778609726578
+      }
+    },
+    {
+      "source": "000003.png",
+      "sha256": "a8bdbeb560d948228e8ea0bb5e79ee444542d52c27cfcb6a657fe6bda4a8d4a0",
+      "variant": "brightness_0.45",
+      "region": "hero_cards",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "hero_cards",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.007141668000258505
+      }
+    },
+    {
+      "source": "000003.png",
+      "sha256": "a8bdbeb560d948228e8ea0bb5e79ee444542d52c27cfcb6a657fe6bda4a8d4a0",
+      "variant": "brightness_0.45",
+      "region": "board_flop",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "board_flop",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.010485436010640115
+      }
+    },
+    {
+      "source": "000003.png",
+      "sha256": "a8bdbeb560d948228e8ea0bb5e79ee444542d52c27cfcb6a657fe6bda4a8d4a0",
+      "variant": "brightness_0.9",
+      "region": "hero_cards",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "hero_cards",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.006950751994736493
+      }
+    },
+    {
+      "source": "000003.png",
+      "sha256": "a8bdbeb560d948228e8ea0bb5e79ee444542d52c27cfcb6a657fe6bda4a8d4a0",
+      "variant": "brightness_0.9",
+      "region": "board_flop",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "board_flop",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.009884683997370303
+      }
+    },
+    {
+      "source": "000003.png",
+      "sha256": "a8bdbeb560d948228e8ea0bb5e79ee444542d52c27cfcb6a657fe6bda4a8d4a0",
+      "variant": "brightness_1.15",
+      "region": "hero_cards",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "hero_cards",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.006256329012103379
+      }
+    },
+    {
+      "source": "000003.png",
+      "sha256": "a8bdbeb560d948228e8ea0bb5e79ee444542d52c27cfcb6a657fe6bda4a8d4a0",
+      "variant": "brightness_1.15",
+      "region": "board_flop",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "board_flop",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.01008307101437822
+      }
+    },
+    {
+      "source": "000003.png",
+      "sha256": "a8bdbeb560d948228e8ea0bb5e79ee444542d52c27cfcb6a657fe6bda4a8d4a0",
+      "variant": "resize_0.6",
+      "region": "hero_cards",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "hero_cards",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.0026558060199022293
+      }
+    },
+    {
+      "source": "000003.png",
+      "sha256": "a8bdbeb560d948228e8ea0bb5e79ee444542d52c27cfcb6a657fe6bda4a8d4a0",
+      "variant": "resize_0.6",
+      "region": "board_flop",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "board_flop",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.0038964980049058795
+      }
+    },
+    {
+      "source": "000003.png",
+      "sha256": "a8bdbeb560d948228e8ea0bb5e79ee444542d52c27cfcb6a657fe6bda4a8d4a0",
+      "variant": "resize_1.25",
+      "region": "hero_cards",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "hero_cards",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.010737764008808881
+      }
+    },
+    {
+      "source": "000003.png",
+      "sha256": "a8bdbeb560d948228e8ea0bb5e79ee444542d52c27cfcb6a657fe6bda4a8d4a0",
+      "variant": "resize_1.25",
+      "region": "board_flop",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "board_flop",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.014658508007414639
+      }
+    },
+    {
+      "source": "000003.png",
+      "sha256": "a8bdbeb560d948228e8ea0bb5e79ee444542d52c27cfcb6a657fe6bda4a8d4a0",
+      "variant": "jpeg_50",
+      "region": "hero_cards",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "hero_cards",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.006660995946731418
+      }
+    },
+    {
+      "source": "000003.png",
+      "sha256": "a8bdbeb560d948228e8ea0bb5e79ee444542d52c27cfcb6a657fe6bda4a8d4a0",
+      "variant": "jpeg_50",
+      "region": "board_flop",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "board_flop",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.009652695967815816
+      }
+    },
+    {
+      "source": "000003.png",
+      "sha256": "a8bdbeb560d948228e8ea0bb5e79ee444542d52c27cfcb6a657fe6bda4a8d4a0",
+      "variant": "jpeg_80",
+      "region": "hero_cards",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "hero_cards",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.00807526899734512
+      }
+    },
+    {
+      "source": "000003.png",
+      "sha256": "a8bdbeb560d948228e8ea0bb5e79ee444542d52c27cfcb6a657fe6bda4a8d4a0",
+      "variant": "jpeg_80",
+      "region": "board_flop",
+      "expected": [],
+      "actual": [],
+      "passed": true,
+      "reading": {
+        "region": "board_flop",
+        "status": "PENDING",
+        "cards": [],
+        "reason": "Cartas incompletas ou ambíguas.",
+        "diagnostics": {
+          "deck": "solid_colour_candidate",
+          "candidate_count": 0,
+          "cards": []
+        },
+        "latency_sec": 0.011884985025972128
+      }
+    }
+  ]
+}

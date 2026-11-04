@@ -1,0 +1,23 @@
+{
+  "stage": "logger-self-test",
+  "state": "passed",
+  "started_at": "2026-10-30T22:40:26.065960+00:00",
+  "platform": "linux",
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "commit": null,
+  "command": [
+    "/workspace/VisualPilot/.venv/bin/python",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-p",
+    "test_windows_stage_log.py",
+    "-v"
+  ],
+  "log": "logger-self-test.log",
+  "exit_code": 0,
+  "finished_at": "2026-10-30T22:40:26.349495+00:00",
+  "elapsed_seconds": 0.283
+}

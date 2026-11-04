@@ -1,0 +1,412 @@
+{
+  "case-471": {
+    "case": {
+      "context": "SB_vs_BB",
+      "texture": "monotone",
+      "hero": [
+        "5h",
+        "5d"
+      ]
+    },
+    "reference": {
+      "check": 8.475991847188281,
+      "bet:3.33": 9.254540351388426,
+      "bet:6.67": 9.335365281391173,
+      "bet:10": 9.234603038931878,
+      "bet:16": 8.445245370372543
+    },
+    "experiments": [
+      {
+        "chance_samples": 24,
+        "all_in_samples": 500,
+        "audit": {
+          "status": "needs_refinement",
+          "numerically_accepted": false,
+          "seed_stable": false,
+          "regrets": [
+            0.0,
+            0.0,
+            0.8901199110186298
+          ],
+          "worst_regret": 0.8901199110186298,
+          "tolerance": 0.03,
+          "strategically_validated": false,
+          "reason": "reference_disagreement"
+        },
+        "runs": [
+          {
+            "status": "experimental",
+            "chosen": "bet:6.67",
+            "comparisons": {
+              "check": 8.452136540956328,
+              "bet:3.33": 9.29179594368102,
+              "bet:6.67": 9.377406835695183,
+              "bet:10": 9.277293607875952,
+              "bet:16": 8.208649357668447
+            },
+            "seconds": 7.652582960028667,
+            "nodes": 4341,
+            "seed": 11
+          },
+          {
+            "status": "experimental",
+            "chosen": "bet:6.67",
+            "comparisons": {
+              "check": 8.348149782860967,
+              "bet:3.33": 9.18306367074773,
+              "bet:6.67": 9.361509327669769,
+              "bet:10": 9.269973348549708,
+              "bet:16": 8.59139433502708
+            },
+            "seconds": 8.181048663973343,
+            "nodes": 4536,
+            "seed": 23
+          },
+          {
+            "status": "experimental",
+            "chosen": "bet:16",
+            "comparisons": {
+              "check": 8.275851483509086,
+              "bet:3.33": 9.119733099602364,
+              "bet:6.67": 9.331622015631613,
+              "bet:10": 9.248964027352768,
+              "bet:16": 9.616604095809127
+            },
+            "seconds": 7.162528467015363,
+            "nodes": 4341,
+            "seed": 47
+          }
+        ]
+      },
+      {
+        "chance_samples": 96,
+        "all_in_samples": 500,
+        "audit": {
+          "status": "needs_refinement",
+          "numerically_accepted": false,
+          "seed_stable": false,
+          "regrets": [
+            0.0,
+            0.0,
+            0.8901199110186298
+          ],
+          "worst_regret": 0.8901199110186298,
+          "tolerance": 0.03,
+          "strategically_validated": false,
+          "reason": "reference_disagreement"
+        },
+        "runs": [
+          {
+            "status": "experimental",
+            "chosen": "bet:6.67",
+            "comparisons": {
+              "check": 8.392824174745023,
+              "bet:3.33": 9.221258666383497,
+              "bet:6.67": 9.329820006981018,
+              "bet:10": 9.217600632680272,
+              "bet:16": 8.208649357668447
+            },
+            "seconds": 15.680419604002964,
+            "nodes": 9021,
+            "seed": 11
+          },
+          {
+            "status": "experimental",
+            "chosen": "bet:6.67",
+            "comparisons": {
+              "check": 8.460385665857663,
+              "bet:3.33": 9.29500730804613,
+              "bet:6.67": 9.43767416843789,
+              "bet:10": 9.340457502538918,
+              "bet:16": 8.59139433502708
+            },
+            "seconds": 18.87181702197995,
+            "nodes": 9021,
+            "seed": 23
+          },
+          {
+            "status": "experimental",
+            "chosen": "bet:16",
+            "comparisons": {
+              "check": 8.570294244819777,
+              "bet:3.33": 9.346166974230986,
+              "bet:6.67": 9.457412437390184,
+              "bet:10": 9.342983392246103,
+              "bet:16": 9.616604095809127
+            },
+            "seconds": 16.783464168955106,
+            "nodes": 9021,
+            "seed": 47
+          }
+        ]
+      },
+      {
+        "chance_samples": 24,
+        "all_in_samples": 5000,
+        "audit": {
+          "status": "accepted_under_model",
+          "numerically_accepted": true,
+          "seed_stable": true,
+          "regrets": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "worst_regret": 0.0,
+          "tolerance": 0.03,
+          "strategically_validated": false,
+          "reason": "within_reference_tolerance"
+        },
+        "runs": [
+          {
+            "status": "experimental",
+            "chosen": "bet:6.67",
+            "comparisons": {
+              "check": 8.457521933163402,
+              "bet:3.33": 9.269563141160798,
+              "bet:6.67": 9.332941230654738,
+              "bet:10": 9.232828002835507,
+              "bet:16": 8.531248695727866
+            },
+            "seconds": 7.6805827710195445,
+            "nodes": 4341,
+            "seed": 11
+          },
+          {
+            "status": "experimental",
+            "chosen": "bet:6.67",
+            "comparisons": {
+              "check": 8.334933917227895,
+              "bet:3.33": 9.121701135791916,
+              "bet:6.67": 9.238784257758141,
+              "bet:10": 9.14724827863808,
+              "bet:16": 8.480671680862619
+            },
+            "seconds": 8.618525342957582,
+            "nodes": 4536,
+            "seed": 23
+          },
+          {
+            "status": "experimental",
+            "chosen": "bet:6.67",
+            "comparisons": {
+              "check": 8.228036530340669,
+              "bet:3.33": 9.077342556130473,
+              "bet:6.67": 9.246840928687831,
+              "bet:10": 9.164182940408987,
+              "bet:16": 8.29476697757414
+            },
+            "seconds": 8.397790519986302,
+            "nodes": 4341,
+            "seed": 47
+          }
+        ]
+      }
+    ]
+  },
+  "case-425": {
+    "case": {
+      "context": "BB_vs_SB",
+      "texture": "connected",
+      "hero": [
+        "Ts",
+        "Ac"
+      ]
+    },
+    "reference": {
+      "check": 6.397346697859636,
+      "bet:3.33": 6.98764782207543,
+      "bet:6.67": 6.913734401281097,
+      "bet:10": 6.797745692432546,
+      "bet:16": 6.22382207251658
+    },
+    "experiments": [
+      {
+        "chance_samples": 24,
+        "all_in_samples": 500,
+        "audit": {
+          "status": "needs_refinement",
+          "numerically_accepted": false,
+          "seed_stable": false,
+          "regrets": [
+            0.0,
+            0.0,
+            0.7638257495588503
+          ],
+          "worst_regret": 0.7638257495588503,
+          "tolerance": 0.03,
+          "strategically_validated": false,
+          "reason": "reference_disagreement"
+        },
+        "runs": [
+          {
+            "status": "experimental",
+            "chosen": "bet:3.33",
+            "comparisons": {
+              "check": 6.971760954461446,
+              "bet:3.33": 7.566198692647468,
+              "bet:6.67": 7.510031611661862,
+              "bet:10": 7.374728559714132,
+              "bet:16": 6.545018304486766
+            },
+            "seconds": 3.8702879800111987,
+            "nodes": 2609,
+            "seed": 11
+          },
+          {
+            "status": "experimental",
+            "chosen": "bet:3.33",
+            "comparisons": {
+              "check": 6.997051578873497,
+              "bet:3.33": 7.402377100591487,
+              "bet:6.67": 7.1671913590717065,
+              "bet:10": 7.015629324503779,
+              "bet:16": 5.8769017422862255
+            },
+            "seconds": 4.455948168004397,
+            "nodes": 2855,
+            "seed": 23
+          },
+          {
+            "status": "experimental",
+            "chosen": "bet:16",
+            "comparisons": {
+              "check": 6.105901719383412,
+              "bet:3.33": 6.8223904799547235,
+              "bet:6.67": 6.713625034947144,
+              "bet:10": 6.648956529365231,
+              "bet:16": 6.914614700597704
+            },
+            "seconds": 3.7891175230033696,
+            "nodes": 2855,
+            "seed": 47
+          }
+        ]
+      },
+      {
+        "chance_samples": 96,
+        "all_in_samples": 500,
+        "audit": {
+          "status": "needs_refinement",
+          "numerically_accepted": false,
+          "seed_stable": false,
+          "regrets": [
+            0.07391342079433283,
+            0.0,
+            0.07391342079433283
+          ],
+          "worst_regret": 0.07391342079433283,
+          "tolerance": 0.03,
+          "strategically_validated": false,
+          "reason": "reference_disagreement"
+        },
+        "runs": [
+          {
+            "status": "experimental",
+            "chosen": "bet:6.67",
+            "comparisons": {
+              "check": 6.496145344949425,
+              "bet:3.33": 7.201323213713205,
+              "bet:6.67": 7.236703236300848,
+              "bet:10": 7.116381865460465,
+              "bet:16": 6.545018304486766
+            },
+            "seconds": 7.172828950046096,
+            "nodes": 5684,
+            "seed": 11
+          },
+          {
+            "status": "experimental",
+            "chosen": "bet:3.33",
+            "comparisons": {
+              "check": 6.75771441073325,
+              "bet:3.33": 7.207694325681592,
+              "bet:6.67": 7.040513106128499,
+              "bet:10": 6.907898487209813,
+              "bet:16": 5.8769017422862255
+            },
+            "seconds": 8.613561219011899,
+            "nodes": 5684,
+            "seed": 23
+          },
+          {
+            "status": "experimental",
+            "chosen": "bet:6.67",
+            "comparisons": {
+              "check": 6.503695365339199,
+              "bet:3.33": 7.206030667101026,
+              "bet:6.67": 7.207390933712658,
+              "bet:10": 7.088786526836847,
+              "bet:16": 6.914614700597704
+            },
+            "seconds": 8.27496298099868,
+            "nodes": 5684,
+            "seed": 47
+          }
+        ]
+      },
+      {
+        "chance_samples": 24,
+        "all_in_samples": 5000,
+        "audit": {
+          "status": "accepted_under_model",
+          "numerically_accepted": true,
+          "seed_stable": true,
+          "regrets": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "worst_regret": 0.0,
+          "tolerance": 0.03,
+          "strategically_validated": false,
+          "reason": "within_reference_tolerance"
+        },
+        "runs": [
+          {
+            "status": "experimental",
+            "chosen": "bet:3.33",
+            "comparisons": {
+              "check": 6.971760954461446,
+              "bet:3.33": 7.429462466606409,
+              "bet:6.67": 7.236559159579744,
+              "bet:10": 7.101256107632014,
+              "bet:16": 6.21380307258735
+            },
+            "seconds": 4.676997710950673,
+            "nodes": 2609,
+            "seed": 11
+          },
+          {
+            "status": "experimental",
+            "chosen": "bet:3.33",
+            "comparisons": {
+              "check": 6.997051578873497,
+              "bet:3.33": 7.419201468448888,
+              "bet:6.67": 7.200840094786509,
+              "bet:10": 7.049278060218581,
+              "bet:16": 6.054592317339561
+            },
+            "seconds": 5.327210957999341,
+            "nodes": 2855,
+            "seed": 23
+          },
+          {
+            "status": "experimental",
+            "chosen": "bet:3.33",
+            "comparisons": {
+              "check": 6.105901719383412,
+              "bet:3.33": 6.656288084562564,
+              "bet:6.67": 6.381420244162825,
+              "bet:10": 6.316751738580912,
+              "bet:16": 6.155520563969855
+            },
+            "seconds": 5.309214434004389,
+            "nodes": 2855,
+            "seed": 47
+          }
+        ]
+      }
+    ]
+  }
+}

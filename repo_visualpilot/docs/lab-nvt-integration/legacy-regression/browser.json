@@ -1,0 +1,58 @@
+[
+  {
+    "mode": "replay",
+    "actions": [
+      [
+        "human",
+        "raise"
+      ],
+      [
+        "engine",
+        "check"
+      ],
+      [
+        "engine",
+        "bet"
+      ],
+      [
+        "engine",
+        "raise"
+      ],
+      [
+        "engine",
+        "fold"
+      ]
+    ],
+    "pause_blocks": true,
+    "manual_with_hidden_hero": true,
+    "errors": []
+  },
+  {
+    "mode": "live",
+    "actions": [
+      [
+        "human",
+        "raise"
+      ],
+      [
+        "engine",
+        "check"
+      ],
+      [
+        "engine",
+        "bet"
+      ],
+      [
+        "engine",
+        "raise"
+      ],
+      [
+        "engine",
+        "fold"
+      ]
+    ],
+    "pause_blocks": true,
+    "manual_with_hidden_hero": true,
+    "errors": []
+  }
+]

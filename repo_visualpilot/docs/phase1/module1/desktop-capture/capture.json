@@ -1,0 +1,36 @@
+{
+  "module": "phase1_module1",
+  "source": "desktop_mss",
+  "platform": "linux",
+  "captured_at_utc": "2026-10-31T14:24:21.271085+00:00",
+  "capture_seconds": 0.062948,
+  "region": {
+    "left": 20,
+    "top": 30,
+    "width": 640,
+    "height": 480
+  },
+  "monitors": [
+    {
+      "left": 0,
+      "top": 0,
+      "width": 1920,
+      "height": 1080
+    }
+  ],
+  "containing_monitors": [
+    1
+  ],
+  "image_size": [
+    640,
+    480
+  ],
+  "coordinate_space": "absolute_physical_desktop_pixels",
+  "pixel_format": "RGB",
+  "resized": false,
+  "uniform_image": true,
+  "validation_state": "awaiting_visual_check",
+  "note": "Imagem uniforme: confira se a tela está bloqueada, vazia ou se a região está correta.",
+  "image": "lobby.png",
+  "png_sha256": "441da7236f6ffdd8fb4cdfa2d9ce7b8d8df8cf2f7a8e82c530714d92266ce613"
+}

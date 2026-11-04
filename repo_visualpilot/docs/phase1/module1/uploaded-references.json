@@ -1,0 +1,22 @@
+{
+  "archive": "imagens.rar",
+  "purpose": "reference for future layout/grid work; not used as live capture proof",
+  "files": [
+    {
+      "name": "{16A9800F-6B27-4B36-8858-B58CECE1D386}.png",
+      "size": [
+        3756,
+        2128
+      ],
+      "sha256": "2a85bce5ad584bae070d13d65b7bebcf71530c8689b34f8f5012c6da0a112c81"
+    },
+    {
+      "name": "{CE8EABDB-2FE0-448D-AB73-CDCF17357274}.png",
+      "size": [
+        1050,
+        154
+      ],
+      "sha256": "480ccb18f9ce25a99f7bb31fcd6cb351e34ea1f0dcbc5b56a2d6d1509cd16274"
+    }
+  ]
+}

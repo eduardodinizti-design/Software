@@ -1,0 +1,98 @@
+[
+  {
+    "scenario": "turn_draw",
+    "seed": 11,
+    "status": "experimental",
+    "chosen": "bet:3.33",
+    "seconds": 6.295485402981285,
+    "nodes": 9021,
+    "exact_under_model": true,
+    "comparisons": {
+      "check": 8.463668290942916,
+      "bet:3.33": 9.20568213287932,
+      "bet:6.67": 9.179312425113263,
+      "bet:10": 9.06759276108495,
+      "bet:16": 8.14738380590736
+    }
+  },
+  {
+    "scenario": "turn_draw",
+    "seed": 23,
+    "status": "experimental",
+    "chosen": "bet:3.33",
+    "seconds": 6.93405033799354,
+    "nodes": 9021,
+    "exact_under_model": true,
+    "comparisons": {
+      "check": 8.463668290942916,
+      "bet:3.33": 9.20568213287932,
+      "bet:6.67": 9.179312425113263,
+      "bet:10": 9.06759276108495,
+      "bet:16": 8.14738380590736
+    }
+  },
+  {
+    "scenario": "turn_draw",
+    "seed": 47,
+    "status": "experimental",
+    "chosen": "bet:3.33",
+    "seconds": 6.072090278001269,
+    "nodes": 9021,
+    "exact_under_model": true,
+    "comparisons": {
+      "check": 8.463668290942916,
+      "bet:3.33": 9.20568213287932,
+      "bet:6.67": 9.179312425113263,
+      "bet:10": 9.06759276108495,
+      "bet:16": 8.14738380590736
+    }
+  },
+  {
+    "scenario": "flop_draw",
+    "seed": 11,
+    "status": "experimental",
+    "chosen": "bet:4",
+    "seconds": 120.86996836197795,
+    "nodes": 161412,
+    "exact_under_model": false,
+    "comparisons": {
+      "check": 6.177660202315927,
+      "bet:2": 6.325038028693553,
+      "bet:4": 6.461789899688997,
+      "bet:6": 6.359999930994089,
+      "bet:18": 5.665386256587231
+    }
+  },
+  {
+    "scenario": "flop_draw",
+    "seed": 23,
+    "status": "experimental",
+    "chosen": "check",
+    "seconds": 112.36528903100407,
+    "nodes": 161412,
+    "exact_under_model": false,
+    "comparisons": {
+      "check": 10.436043214464778,
+      "bet:2": 9.821091488642615,
+      "bet:4": 9.47210198219771,
+      "bet:6": 9.08531712140488,
+      "bet:18": 5.650972126101758
+    }
+  },
+  {
+    "scenario": "flop_draw",
+    "seed": 47,
+    "status": "experimental",
+    "chosen": "check",
+    "seconds": 117.26824248101912,
+    "nodes": 161412,
+    "exact_under_model": false,
+    "comparisons": {
+      "check": 8.654812715473094,
+      "bet:2": 7.982215825611033,
+      "bet:4": 7.770554475512509,
+      "bet:6": 7.4500478230032146,
+      "bet:18": 5.795113430956489
+    }
+  }
+]

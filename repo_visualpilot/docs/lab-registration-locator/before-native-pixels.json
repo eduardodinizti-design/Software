@@ -1,0 +1,408 @@
+{
+  "status": "failed",
+  "platform": "linux",
+  "scope": "isolated_browser_png_template_coordinates_real_ocr_simulated_registration",
+  "checks": [
+    {
+      "name": "increase-10-to-50",
+      "result": {
+        "status": "confirmed",
+        "token": "1ec03c9e7f1c402397e5d7ad808110b2",
+        "steps": 8
+      },
+      "actions": [
+        {
+          "action": "increase",
+          "amount": 15
+        },
+        {
+          "action": "increase",
+          "amount": 20
+        },
+        {
+          "action": "increase",
+          "amount": 25
+        },
+        {
+          "action": "increase",
+          "amount": 30
+        },
+        {
+          "action": "increase",
+          "amount": 35
+        },
+        {
+          "action": "increase",
+          "amount": 40
+        },
+        {
+          "action": "increase",
+          "amount": 45
+        },
+        {
+          "action": "increase",
+          "amount": 50
+        },
+        {
+          "action": "register",
+          "amount": 50
+        }
+      ],
+      "visual_clicks": [
+        {
+          "action": "increase",
+          "point": [
+            284.5,
+            766.0
+          ],
+          "applied": true,
+          "reason": null,
+          "image": "capture-001.png",
+          "pixels_sha256": "83db5cfa8f71a488724017332157570af592863edc5aefa4f566f68f6f1021d8"
+        },
+        {
+          "action": "increase",
+          "point": [
+            284.5,
+            766.0
+          ],
+          "applied": true,
+          "reason": null,
+          "image": "capture-002.png",
+          "pixels_sha256": "cf59d4e82121c88b0f823322a3cf892c1ab5cd8e12be6d06675e78b241e6768c"
+        },
+        {
+          "action": "increase",
+          "point": [
+            284.5,
+            766.0
+          ],
+          "applied": true,
+          "reason": null,
+          "image": "capture-003.png",
+          "pixels_sha256": "ba873ec56cae659a8a24c3d93064c24b2d85ac24fd5923e3e905151ea9f9b3bf"
+        },
+        {
+          "action": "increase",
+          "point": [
+            284.5,
+            766.0
+          ],
+          "applied": true,
+          "reason": null,
+          "image": "capture-004.png",
+          "pixels_sha256": "87a5cd43729bed1fa099e9d05bd38aa907a20eaf087ad1cbbf8616c9e64e2c94"
+        },
+        {
+          "action": "increase",
+          "point": [
+            284.5,
+            766.0
+          ],
+          "applied": true,
+          "reason": null,
+          "image": "capture-005.png",
+          "pixels_sha256": "316995f16ef09293f49dfcde147abd795abc497050ad13d507ef349d5a3a23ea"
+        },
+        {
+          "action": "increase",
+          "point": [
+            284.5,
+            766.0
+          ],
+          "applied": true,
+          "reason": null,
+          "image": "capture-006.png",
+          "pixels_sha256": "9ebb29593415a7dabc80718af4c843361f1c7f40a71e6d4fb75ad53437f18477"
+        },
+        {
+          "action": "increase",
+          "point": [
+            284.5,
+            766.0
+          ],
+          "applied": true,
+          "reason": null,
+          "image": "capture-007.png",
+          "pixels_sha256": "de04303b58038e79b3beab79ae95c725448d6cd1dfdcdd5d4b79c4a339c958f8"
+        },
+        {
+          "action": "increase",
+          "point": [
+            284.5,
+            766.0
+          ],
+          "applied": true,
+          "reason": null,
+          "image": "capture-008.png",
+          "pixels_sha256": "9d483b1f84cbc28e6fd168b402dc1062dc2e7f1be7a1a8e06338355bdb542dd7"
+        },
+        {
+          "action": "register",
+          "point": [
+            404.0,
+            766.0
+          ],
+          "applied": true,
+          "reason": null,
+          "image": "capture-009.png",
+          "pixels_sha256": "94af0bc428dafc8b155035c3e53023d9c8bc273fdf6e98ed6ce284a2c63cd73b"
+        }
+      ]
+    },
+    {
+      "name": "decrease-60-to-50",
+      "result": {
+        "status": "confirmed",
+        "token": "3ddc6c0e93b04aa0b67c51d5201dc4d5",
+        "steps": 2
+      },
+      "actions": [
+        {
+          "action": "decrease",
+          "amount": 55
+        },
+        {
+          "action": "decrease",
+          "amount": 50
+        },
+        {
+          "action": "register",
+          "amount": 50
+        }
+      ],
+      "visual_clicks": [
+        {
+          "action": "decrease",
+          "point": [
+            175.5,
+            766.0
+          ],
+          "applied": true,
+          "reason": null,
+          "image": "capture-001.png",
+          "pixels_sha256": "afeb740b09bb4bb6d4b6874b6592e7ec3245576a5697cf1becfa73e2d9813459"
+        },
+        {
+          "action": "decrease",
+          "point": [
+            175.5,
+            766.0
+          ],
+          "applied": true,
+          "reason": null,
+          "image": "capture-002.png",
+          "pixels_sha256": "d7b6b28fdd2f2328d1ea20ed37c8d69668cf5b53126a4cbab8ad02b08aec5d2a"
+        },
+        {
+          "action": "register",
+          "point": [
+            404.0,
+            766.0
+          ],
+          "applied": true,
+          "reason": null,
+          "image": "capture-003.png",
+          "pixels_sha256": "94af0bc428dafc8b155035c3e53023d9c8bc273fdf6e98ed6ce284a2c63cd73b"
+        }
+      ]
+    },
+    {
+      "name": "stuck-selector",
+      "result": {
+        "status": "blocked",
+        "reason": "Ajuste não confirmado; sem progresso ou valor inesperado.",
+        "error_type": "ValueError",
+        "steps": 1
+      },
+      "actions": [
+        {
+          "action": "increase",
+          "amount": 40
+        }
+      ],
+      "visual_clicks": [
+        {
+          "action": "increase",
+          "point": [
+            284.5,
+            766.0
+          ],
+          "applied": true,
+          "reason": null,
+          "image": "capture-001.png",
+          "pixels_sha256": "de04303b58038e79b3beab79ae95c725448d6cd1dfdcdd5d4b79c4a339c958f8"
+        }
+      ]
+    },
+    {
+      "name": "malformed-cost",
+      "result": {
+        "status": "blocked",
+        "reason": "Campo ausente ou ambíguo.",
+        "error_type": "ValueError",
+        "steps": 0
+      },
+      "actions": [],
+      "visual_clicks": []
+    },
+    {
+      "name": "manual-during-ocr",
+      "result": {
+        "status": "blocked",
+        "reason": "Controle alterado; obtenha uma nova observação.",
+        "error_type": "ValueError",
+        "steps": 0
+      },
+      "actions": [],
+      "visual_clicks": []
+    },
+    {
+      "name": "popup-replaced-before-click",
+      "result": {
+        "status": "blocked",
+        "reason": "Popup substituído antes do ajuste.",
+        "error_type": "ValueError",
+        "steps": 0
+      },
+      "actions": [],
+      "visual_clicks": [
+        {
+          "action": "increase",
+          "point": [
+            284.5,
+            766.0
+          ],
+          "applied": false,
+          "reason": "image_changed_before_click",
+          "image": "capture-001.png",
+          "pixels_sha256": "de04303b58038e79b3beab79ae95c725448d6cd1dfdcdd5d4b79c4a339c958f8"
+        }
+      ]
+    },
+    {
+      "name": "explicit-rejection",
+      "result": {
+        "status": "rejected",
+        "token": "4a990b56e7b546faab8ac6dae70d1e25",
+        "steps": 0
+      },
+      "actions": [
+        {
+          "action": "register",
+          "amount": 50
+        }
+      ],
+      "visual_clicks": [
+        {
+          "action": "register",
+          "point": [
+            404.0,
+            766.0
+          ],
+          "applied": true,
+          "reason": null,
+          "image": "capture-001.png",
+          "pixels_sha256": "94af0bc428dafc8b155035c3e53023d9c8bc273fdf6e98ed6ce284a2c63cd73b"
+        }
+      ]
+    },
+    {
+      "name": "moved-popup",
+      "result": {
+        "status": "confirmed",
+        "token": "9bc67a1f492c4eda9cd11982eac4f1b8",
+        "steps": 1
+      },
+      "actions": [
+        {
+          "action": "increase",
+          "amount": 50
+        },
+        {
+          "action": "register",
+          "amount": 50
+        }
+      ],
+      "visual_clicks": [
+        {
+          "action": "increase",
+          "point": [
+            554.5,
+            831.0
+          ],
+          "applied": true,
+          "reason": null,
+          "image": "capture-001.png",
+          "pixels_sha256": "1d7f2a56bdea0db2c90555ca71a67cb344117988ce323b62ed9d09c08269283e"
+        },
+        {
+          "action": "register",
+          "point": [
+            674.0,
+            831.0
+          ],
+          "applied": true,
+          "reason": null,
+          "image": "capture-002.png",
+          "pixels_sha256": "d9d466fecc0ddef9393fc3bd5b88c7831c935951b01f89ebeda46aa76c04f82a"
+        }
+      ]
+    },
+    {
+      "name": "cropped-image-origin",
+      "result": {
+        "status": "confirmed",
+        "token": "3f7580a991f448228c27a0625d71e57a",
+        "steps": 1
+      },
+      "actions": [
+        {
+          "action": "decrease",
+          "amount": 50
+        },
+        {
+          "action": "register",
+          "amount": 50
+        }
+      ],
+      "visual_clicks": [
+        {
+          "action": "decrease",
+          "point": [
+            175.5,
+            766.0
+          ],
+          "applied": true,
+          "reason": null,
+          "image": "capture-001.png",
+          "pixels_sha256": "20fde3af0bf5cd5802a3cb236c08425940e1c43b5f44cd380cb6e2a0bd967a37"
+        },
+        {
+          "action": "register",
+          "point": [
+            404.0,
+            766.0
+          ],
+          "applied": true,
+          "reason": null,
+          "image": "capture-002.png",
+          "pixels_sha256": "81ee44f5b537926c10325b47acec6b7afaee2b47ca29640bf580984f9e5d6c89"
+        }
+      ]
+    },
+    {
+      "name": "high-dpi-browser",
+      "result": {
+        "status": "blocked",
+        "reason": "Campo ausente ou ambíguo.",
+        "error_type": "ValueError",
+        "steps": 0
+      },
+      "actions": [],
+      "visual_clicks": []
+    }
+  ],
+  "browser_errors": [],
+  "elapsed_seconds": 31.689
+}

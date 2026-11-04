@@ -1,0 +1,18 @@
+{
+  "random": {
+    "choices": [
+      "bet:4",
+      "check",
+      "check"
+    ],
+    "seed_stable": false
+  },
+  "stratified": {
+    "choices": [
+      "bet:2",
+      "check",
+      "check"
+    ],
+    "seed_stable": false
+  }
+}

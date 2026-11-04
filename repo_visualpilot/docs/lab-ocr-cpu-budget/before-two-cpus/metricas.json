@@ -1,0 +1,65 @@
+{
+  "ocr": 7,
+  "cached": 3,
+  "stale": 0,
+  "errors": 0,
+  "latencies": [
+    2.5737,
+    1.8989,
+    1.9056,
+    2.1481,
+    0.3207,
+    2.4568,
+    0.329,
+    2.9174,
+    2.9236,
+    0.2654
+  ],
+  "ocr_latencies": [
+    2.5737,
+    1.8989,
+    1.9056,
+    2.1481,
+    2.4568,
+    2.9174,
+    2.9236
+  ],
+  "cached_latencies": [
+    0.3207,
+    0.329,
+    0.2654
+  ],
+  "tables": {
+    "[\"lab\",\"one-session\",\"one-table\"]": {
+      "published": 10,
+      "cached": 3,
+      "expired": 0,
+      "last_age_seconds": 0.265
+    }
+  },
+  "workers": 2,
+  "transport": {
+    "accepted_verified": 54,
+    "accepted_legacy": 0,
+    "rejected": {}
+  },
+  "latency_semantics": "v2: conservative ticket-to-publication capture-age bound; legacy: ingress-only",
+  "warmup_start_seconds": 0.028,
+  "card_region_ocr": 28,
+  "partial_cards": 7,
+  "coverage": {
+    "published": 10,
+    "hero_read": 10,
+    "board_read": 8,
+    "street_unknown": 2,
+    "hero_confirmed": 8,
+    "board_confirmed": 5
+  },
+  "evidence_images": 2,
+  "evidence_bytes": 2041585,
+  "evidence_limit_bytes": 268435456,
+  "replaced": 0,
+  "overflow": 0,
+  "expired": 0,
+  "highwater": 1
+}

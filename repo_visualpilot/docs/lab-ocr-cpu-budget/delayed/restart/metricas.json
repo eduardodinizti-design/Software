@@ -1,0 +1,68 @@
+{
+  "ocr": 3,
+  "cached": 1,
+  "stale": 0,
+  "errors": 0,
+  "latencies": [
+    2.579,
+    0.3295,
+    1.9034,
+    2.4177
+  ],
+  "ocr_latencies": [
+    2.579,
+    1.9034,
+    2.4177
+  ],
+  "cached_latencies": [
+    0.3295
+  ],
+  "tables": {
+    "[\"lab\",\"restart-0\",\"table-0\"]": {
+      "published": 2,
+      "cached": 1,
+      "expired": 0,
+      "last_age_seconds": 0.33
+    },
+    "[\"lab\",\"restart-1\",\"table-1\"]": {
+      "published": 1,
+      "cached": 0,
+      "expired": 0,
+      "last_age_seconds": 1.903
+    },
+    "[\"lab\",\"restart-2\",\"table-2\"]": {
+      "published": 1,
+      "cached": 0,
+      "expired": 0,
+      "last_age_seconds": 2.418
+    }
+  },
+  "workers": 2,
+  "transport": {
+    "accepted_verified": 75,
+    "accepted_legacy": 0,
+    "rejected": {}
+  },
+  "latency_semantics": "v2: conservative ticket-to-publication capture-age bound; legacy: ingress-only",
+  "warmup_start_seconds": 0.0017,
+  "card_region_ocr": 16,
+  "partial_cards": 4,
+  "discarded_results": {
+    "expired_source": 1
+  },
+  "coverage": {
+    "published": 4,
+    "hero_read": 4,
+    "board_read": 1,
+    "street_unknown": 3,
+    "hero_confirmed": 1,
+    "board_confirmed": 0
+  },
+  "evidence_images": 2,
+  "evidence_bytes": 2041920,
+  "evidence_limit_bytes": 268435456,
+  "replaced": 0,
+  "overflow": 0,
+  "expired": 0,
+  "highwater": 1
+}

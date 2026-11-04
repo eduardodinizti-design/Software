@@ -1,0 +1,47 @@
+{
+  "status": "inspection_only",
+  "view": "modal",
+  "coordinate_space": "pixels relative to each original image; desktop origin and DPI unknown",
+  "clicks_executed": 0,
+  "registration_authorized": false,
+  "items": [
+    {
+      "id": "modal",
+      "complete": true,
+      "fields": {
+        "buyin": [
+          [
+            [],
+            "Buy-in: 28.34+14.16+7.5",
+            0.9995488576267076
+          ]
+        ],
+        "start": [
+          [
+            [],
+            "Horario de inicio: 10/31 22:00",
+            0.9820543199777603
+          ]
+        ],
+        "confirm": [
+          [
+            [],
+            "Confirmar",
+            0.9493968069553376
+          ]
+        ],
+        "cancel": [
+          [
+            [],
+            "Cancelar",
+            0.9941665083169937
+          ]
+        ]
+      },
+      "image_point": [
+        393.5,
+        772.0
+      ]
+    }
+  ]
+}

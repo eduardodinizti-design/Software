@@ -1,0 +1,176 @@
+{
+  "mode": "live",
+  "timestamp": "2026-11-01T23:21:43.468931+00:00",
+  "hand_counter": 1,
+  "status": "RUNNING",
+  "snapshot": {
+    "is_hero_turn": true,
+    "time_bank_remaining_sec": 11.5,
+    "time_bank_total_sec": 15.0,
+    "time_bank_percent": 76.7,
+    "pot_total_bb": 18.0,
+    "current_bet_to_call_bb": 3.0,
+    "buttons": [
+      {
+        "button_id": "btn_left",
+        "action_type": "fold",
+        "label": "Fold",
+        "box": [
+          1370,
+          20,
+          1455,
+          255
+        ],
+        "is_active": true,
+        "amount": null,
+        "unit": null,
+        "confidence": 0.98,
+        "center_point": [
+          138,
+          1412
+        ],
+        "jittered_click_point": [
+          135,
+          1414
+        ]
+      },
+      {
+        "button_id": "btn_center",
+        "action_type": "call",
+        "label": "Call 3.0 BB",
+        "box": [
+          1370,
+          270,
+          1455,
+          515
+        ],
+        "is_active": true,
+        "amount": 3.0,
+        "unit": "BB",
+        "confidence": 0.98,
+        "center_point": [
+          392,
+          1412
+        ],
+        "jittered_click_point": [
+          396,
+          1416
+        ]
+      },
+      {
+        "button_id": "btn_right",
+        "action_type": "raise",
+        "label": "Raise 9.0 BB",
+        "box": [
+          1370,
+          530,
+          1455,
+          770
+        ],
+        "is_active": true,
+        "amount": 9.0,
+        "unit": "BB",
+        "confidence": 0.98,
+        "center_point": [
+          650,
+          1412
+        ],
+        "jittered_click_point": [
+          651,
+          1404
+        ]
+      }
+    ],
+    "sizing_options": [
+      {
+        "shortcut_id": "size_min",
+        "label": "Min (6.6 BB)",
+        "percentage_pot": null,
+        "amount_bb": 6.6,
+        "box": [
+          1315,
+          300,
+          1360,
+          390
+        ]
+      },
+      {
+        "shortcut_id": "size_33",
+        "label": "33% (5.9 BB)",
+        "percentage_pot": 0.33,
+        "amount_bb": 5.9,
+        "box": [
+          1315,
+          395,
+          1360,
+          485
+        ]
+      },
+      {
+        "shortcut_id": "size_50",
+        "label": "50% (9.0 BB)",
+        "percentage_pot": 0.5,
+        "amount_bb": 9.0,
+        "box": [
+          1315,
+          490,
+          1360,
+          580
+        ]
+      },
+      {
+        "shortcut_id": "size_75",
+        "label": "75% (13.5 BB)",
+        "percentage_pot": 0.75,
+        "amount_bb": 13.5,
+        "box": [
+          1315,
+          585,
+          1360,
+          675
+        ]
+      },
+      {
+        "shortcut_id": "size_pot",
+        "label": "Pot (18.0 BB)",
+        "percentage_pot": 1.0,
+        "amount_bb": 18.0,
+        "box": [
+          1315,
+          680,
+          1360,
+          770
+        ]
+      }
+    ],
+    "suggested_action": "Fold",
+    "status": "HERO_TURN"
+  },
+  "latest_decision": {
+    "timestamp": "2026-11-01T23:21:43.468525+00:00",
+    "hand_id": "H-0001",
+    "street": "PREFLOP",
+    "hero_position": "BTN",
+    "hero_cards": [
+      "As",
+      "Kh"
+    ],
+    "board_cards": [],
+    "pot_total_bb": 18.0,
+    "bet_to_call_bb": 3.0,
+    "stack_bb": 100.0,
+    "recommended_action": "RAISE",
+    "recommended_sizing_bb": 7.5,
+    "equity_pct": 50.0,
+    "expected_ev_bb": 4.39,
+    "target_button_id": "btn_right",
+    "target_button_label": "Raise 9.0 BB",
+    "click_coordinates": [
+      650,
+      1411
+    ],
+    "is_live_click_executed": false,
+    "status_message": "Decisão calculada com sucesso (RAISE)"
+  },
+  "recent_decisions_count": 1
+}

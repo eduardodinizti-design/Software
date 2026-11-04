@@ -1,0 +1,50 @@
+{
+  "source_archives": [
+    "VisualPilot.rar",
+    "tests.rar"
+  ],
+  "original_version": "perception-consolidated-dev4",
+  "files": {
+    "discovery.py": "cc94289f5d3eefadd04572aee131eb1f8417366b95449131a7069866fbad82bf",
+    "capture.py": "df792da5afdaf7ff74c8adfc68b81726eb6a50189c9564c7ed51bb4f7e896500",
+    "table_registry.py": "a08f9150d2d0fc1cb2d81ba4110fc13f2ee111e59f3e8252fd6cc04b7285e238",
+    "window_geometry.py": "d4faf95e8a454a3691b26954a6c283451f68cb2eba1c242dc49c6cc1b52bd307",
+    "card_rank.py": "9c6450d94b6a718eed69865f3e6ab4244c96819186c1a646d209692c136c1f25",
+    "multitable.py": "7cf0834a13c96bfa06502216e2530bc8e46eea8aa6b33d6252e93647e89dbb65",
+    "observer/perception.py": "8215a0ab547ee85993df3c83d881e54c97cbeb86a942e13095117dc25326286e",
+    "observer/actions.py": "d1ac93fae2193f03f2c2c19772c22a44b1adf4144426da35155df81fc4a5924b",
+    "observer/validation.py": "7845fa521e2636745310ce823f612499b1c0821d126931d5331ee0b0a23b3e4c",
+    "observer/archive.py": "749657915fde3823a4e95da9a5611a6f0d485214a285ca01ab2b0a01dc3c0dbd",
+    "observer/runtime.py": "f2fde44873c6eefb9a4f6987fd64389647696087a9177927fdd62300552e3108",
+    "replay/cards.py": "efbef9a869c4fa500a542127bb4a2f05d705eeece6ff6548857bcc86142e6cc2",
+    "training/perception.py": "43cdda26b54b29ec9f7e416412eb2afdb55b3359511e3a8d048b88eb92cdd4ae",
+    "core.py": "5f0059de35122c22aea251e1ed3dce8bf414aace0a8c3c95dac4f0e5dfbe20d3",
+    "history.py": "4297e392d59a5aee8929986012084528672f7d88dffbaa521a99aea425f7e406",
+    "replay/reader.py": "14d82dd56d358d4bceb337ad42c9d93c71ad8d69d457612105ab773c5d467001",
+    "replay/vision.py": "b6e617d67921a1eddde981ffcfdb5cd2cc097991bcbad206cb120dd15cbc48c4",
+    "replay/service.py": "f643f792f06546af233b61d9aa0d88c777da071a372b50900da077121fd97e16"
+  },
+  "assets": {
+    "ppp_chat.png": "1ddade23beb796a6c3ef7cdf819305cb07df137f8c45b608eeedba3aefeefbab",
+    "suit_c.png": "126838caba7589c94d2c5297a027173dd9c6dc5eb700070da44bfb729643a883",
+    "suit_d.png": "7fb5f89c08cd304b97f874379971139ba7b8d6fcebc0a6415e97ed30911da4ea",
+    "suit_h.png": "94ec0c4eb0846baeeba470fe13da8c17c0c13019e62f6621ebeeaf8f89a04950",
+    "suit_s.png": "7ba8e1d22339d05eb641936a1cfff6ff86f49f2388900f4f3f5a3eb04a45fef1",
+    "suit_c_small.png": "d4c685231c4f375ac85bb3dae187c682c152db8ffdf800b008e35c868857edb0",
+    "spade_shape.png": "f2f78111d2291c3ccd74f06160647ccacf19e7022c75970ad37179b8f400c28c"
+  },
+  "tests": {
+    "test_multitable.py": "c52a20a717668b393f6dc424ba07aa71d10ffe0f7004577fca3cb589ec98efeb",
+    "test_archive.py": "246aad6b4a4c9535e98fdc24f106a1c24b83a705a8211d581ea5a48dc931e408",
+    "test_diagnostics.py": "39088aad53c853f07690154bd12435904f6513e153591965d0196c3f37255dec",
+    "test_monitors.py": "88cca6919ac01992d58fc3497cdd7418827defc8407c815911b8c866d1f6584d",
+    "test_actions.py": "ea3329d8ce390feb89c4118a3d08953e69b8985b8d147d9bb7032a111266f6e7",
+    "test_observer.py": "e36406f141f4f10cf0ab11e10c4e3baaa202b73dac6a5fa127ac4a2886e4482e",
+    "test_field_validation.py": "0db2346362b2d49b3e6d8a285c6ab2f7d7ebdaffb0406543ae80354cc5e0eec5",
+    "test_discovery.py": "0c8d8b951c123a1ce570fe4f9bf9ff09088b0ac5cdb008bcf24081360e4a35da"
+  },
+  "archives": {
+    "VisualPilot.rar": "485728527379b468baac57a7d65b7d4e323fd51f757505f9758cd45c8e6c33dc",
+    "tests.rar": "7bfc8319b692db446a575d0b7f6abd7eb99bd5fe5264b263d108ec7a4820925b"
+  }
+}

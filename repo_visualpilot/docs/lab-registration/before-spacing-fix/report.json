@@ -1,0 +1,32 @@
+{
+  "status": "failed",
+  "platform": "linux",
+  "scope": "isolated_browser_png_real_ocr_simulated_registration",
+  "checks": [
+    {
+      "name": "increase-10-to-50",
+      "result": {
+        "status": "blocked",
+        "reason": "Campo ausente ou ambíguo.",
+        "error_type": "ValueError",
+        "steps": 3
+      },
+      "actions": [
+        {
+          "action": "increase",
+          "amount": 15
+        },
+        {
+          "action": "increase",
+          "amount": 20
+        },
+        {
+          "action": "increase",
+          "amount": 25
+        }
+      ]
+    }
+  ],
+  "browser_errors": [],
+  "elapsed_seconds": 2.942
+}

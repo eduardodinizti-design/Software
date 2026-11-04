@@ -1,0 +1,375 @@
+{
+  "timestamp": "2026-11-01T23:11:45.065252+00:00",
+  "window_title": "PPPoker (Modo Simulado)",
+  "is_window_found": true,
+  "window_rect": [
+    100,
+    50,
+    787,
+    1470
+  ],
+  "dpi_scale_factor": 1.0,
+  "is_calibrated": true,
+  "calibration_score": 100,
+  "scale_x": 1.0,
+  "scale_y": 1.0,
+  "aspect_ratio": 0.5354,
+  "ratio_error_pct": 0.0,
+  "status": "CALIBRATED_PERFECT",
+  "message": "Janela perfeitamente calibrada (787x1470 px, proporção exata 9:16.8).",
+  "rois_audit": [
+    {
+      "name": "btn_left",
+      "category": "action_button",
+      "original_box": [
+        1370,
+        20,
+        1455,
+        255
+      ],
+      "scaled_box": [
+        1370,
+        20,
+        1455,
+        255
+      ],
+      "center_point": [
+        138,
+        1412
+      ],
+      "width": 235,
+      "height": 85
+    },
+    {
+      "name": "btn_center",
+      "category": "action_button",
+      "original_box": [
+        1370,
+        270,
+        1455,
+        515
+      ],
+      "scaled_box": [
+        1370,
+        270,
+        1455,
+        515
+      ],
+      "center_point": [
+        392,
+        1412
+      ],
+      "width": 245,
+      "height": 85
+    },
+    {
+      "name": "btn_right",
+      "category": "action_button",
+      "original_box": [
+        1370,
+        530,
+        1455,
+        770
+      ],
+      "scaled_box": [
+        1370,
+        530,
+        1455,
+        770
+      ],
+      "center_point": [
+        650,
+        1412
+      ],
+      "width": 240,
+      "height": 85
+    },
+    {
+      "name": "size_min",
+      "category": "sizing_shortcut",
+      "original_box": [
+        1315,
+        300,
+        1360,
+        390
+      ],
+      "scaled_box": [
+        1315,
+        300,
+        1360,
+        390
+      ],
+      "center_point": [
+        345,
+        1338
+      ],
+      "width": 90,
+      "height": 45
+    },
+    {
+      "name": "size_33",
+      "category": "sizing_shortcut",
+      "original_box": [
+        1315,
+        395,
+        1360,
+        485
+      ],
+      "scaled_box": [
+        1315,
+        395,
+        1360,
+        485
+      ],
+      "center_point": [
+        440,
+        1338
+      ],
+      "width": 90,
+      "height": 45
+    },
+    {
+      "name": "size_50",
+      "category": "sizing_shortcut",
+      "original_box": [
+        1315,
+        490,
+        1360,
+        580
+      ],
+      "scaled_box": [
+        1315,
+        490,
+        1360,
+        580
+      ],
+      "center_point": [
+        535,
+        1338
+      ],
+      "width": 90,
+      "height": 45
+    },
+    {
+      "name": "size_75",
+      "category": "sizing_shortcut",
+      "original_box": [
+        1315,
+        585,
+        1360,
+        675
+      ],
+      "scaled_box": [
+        1315,
+        585,
+        1360,
+        675
+      ],
+      "center_point": [
+        630,
+        1338
+      ],
+      "width": 90,
+      "height": 45
+    },
+    {
+      "name": "size_pot",
+      "category": "sizing_shortcut",
+      "original_box": [
+        1315,
+        680,
+        1360,
+        770
+      ],
+      "scaled_box": [
+        1315,
+        680,
+        1360,
+        770
+      ],
+      "center_point": [
+        725,
+        1338
+      ],
+      "width": 90,
+      "height": 45
+    },
+    {
+      "name": "hero_card_hero_1",
+      "category": "hero_card",
+      "original_box": [
+        1160,
+        310,
+        1330,
+        410
+      ],
+      "scaled_box": [
+        1160,
+        310,
+        1330,
+        410
+      ],
+      "center_point": [
+        360,
+        1245
+      ],
+      "width": 100,
+      "height": 170
+    },
+    {
+      "name": "hero_card_hero_2",
+      "category": "hero_card",
+      "original_box": [
+        1160,
+        420,
+        1330,
+        520
+      ],
+      "scaled_box": [
+        1160,
+        420,
+        1330,
+        520
+      ],
+      "center_point": [
+        470,
+        1245
+      ],
+      "width": 100,
+      "height": 170
+    },
+    {
+      "name": "board_flop_1",
+      "category": "board_card",
+      "original_box": [
+        565,
+        175,
+        730,
+        265
+      ],
+      "scaled_box": [
+        565,
+        175,
+        730,
+        265
+      ],
+      "center_point": [
+        220,
+        648
+      ],
+      "width": 90,
+      "height": 165
+    },
+    {
+      "name": "board_flop_2",
+      "category": "board_card",
+      "original_box": [
+        565,
+        270,
+        730,
+        360
+      ],
+      "scaled_box": [
+        565,
+        270,
+        730,
+        360
+      ],
+      "center_point": [
+        315,
+        648
+      ],
+      "width": 90,
+      "height": 165
+    },
+    {
+      "name": "board_flop_3",
+      "category": "board_card",
+      "original_box": [
+        565,
+        365,
+        730,
+        455
+      ],
+      "scaled_box": [
+        565,
+        365,
+        730,
+        455
+      ],
+      "center_point": [
+        410,
+        648
+      ],
+      "width": 90,
+      "height": 165
+    },
+    {
+      "name": "board_turn",
+      "category": "board_card",
+      "original_box": [
+        565,
+        470,
+        730,
+        560
+      ],
+      "scaled_box": [
+        565,
+        470,
+        730,
+        560
+      ],
+      "center_point": [
+        515,
+        648
+      ],
+      "width": 90,
+      "height": 165
+    },
+    {
+      "name": "board_river",
+      "category": "board_card",
+      "original_box": [
+        565,
+        575,
+        730,
+        665
+      ],
+      "scaled_box": [
+        565,
+        575,
+        730,
+        665
+      ],
+      "center_point": [
+        620,
+        648
+      ],
+      "width": 90,
+      "height": 165
+    },
+    {
+      "name": "total_pot",
+      "category": "table_pot",
+      "original_box": [
+        520,
+        270,
+        580,
+        515
+      ],
+      "scaled_box": [
+        520,
+        270,
+        580,
+        515
+      ],
+      "center_point": [
+        392,
+        550
+      ],
+      "width": 245,
+      "height": 60
+    }
+  ],
+  "action_ready": true
+}

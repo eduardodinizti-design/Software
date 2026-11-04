@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "profiles": [
+    "Apostar 3 \u00b7 EV 5.977 BB",
+    "Apostar 3 \u00b7 EV 5.231 BB",
+    "Apostar 3 \u00b7 EV 4.056 BB",
+    "Check \u00b7 EV 4.280 BB",
+    "Check \u00b7 EV 4.684 BB"
+  ],
+  "rivers": 46,
+  "mobile_width": 390,
+  "autoplay_pause": true,
+  "js_errors": []
+}
