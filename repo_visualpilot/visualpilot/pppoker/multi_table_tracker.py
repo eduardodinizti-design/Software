@@ -61,6 +61,7 @@ class MultiTableTracker:
 
     def __init__(self, max_tables: int = 6):
         self._visual_tracks = {}
+        self._visual_anchors = {}
         self._next_visual_id = 1
         self.max_tables = max_tables
         self.active_tables: Dict[str, TableWindowInfo] = {}
@@ -390,22 +391,37 @@ class MultiTableTracker:
         self.last_scan_iso = datetime.now(timezone.utc).isoformat()
         if not isinstance(unity_frame, np.ndarray) or unity_frame.ndim != 3 or unity_frame.shape[2] != 3 or unity_frame.size == 0:
             self.active_tables = {}
+            self._visual_anchors = {}
             return []
         boxes = custom_table_rects if custom_table_rects is not None else self.detect_tables_from_unity_pixels(unity_frame)
         candidates = []
+        anchors = {}
         for box in boxes[:self.max_tables]:
             x, y, w, h = map(int, box)
             if min(x,y) < 0 or min(w,h) <= 0 or x+w > unity_frame.shape[1] or y+h > unity_frame.shape[0]:
                 continue
             crop = unity_frame[y:y+h, x:x+w]
             signature = hashlib.sha256(cv2.resize(crop,(128,256),interpolation=cv2.INTER_NEAREST).tobytes()).hexdigest()
+            # Provisional continuity anchor excludes lower cards and controls.
+            # Exact bytes only; no geometric nearest-neighbor identity guesses.
+            anchor = hashlib.sha256(cv2.resize(crop[:max(1,h//5)],(128,48),interpolation=cv2.INTER_NEAREST).tobytes()).hexdigest()
+            anchors[signature] = anchor
             candidates.append((signature,[x,y,w,h]))
         counts = Counter(signature for signature,_ in candidates)
+        anchor_counts = Counter(anchors[sig] for sig, _ in candidates)
+        previous_anchors = self._visual_anchors
+        next_anchors = {}
         previous = self._visual_tracks
         result = []
         retained = {}
         for signature, box in candidates:
             old = previous.get(signature)
+            anchor = anchors[signature]
+            anchor_old = previous_anchors.get(anchor)
+            # Require identical geometry and uniqueness in consecutive frames.
+            # Movement + changing content remains ambiguous.
+            if old is None and anchor_counts[anchor] == 1 and anchor_old is not None and anchor_old[1] == box:
+                old = anchor_old
             ambiguous = counts[signature] > 1 or (bool(previous) and old is None)
             if old is not None and not ambiguous:
                 table_id, old_box, version = old
@@ -423,8 +439,13 @@ class MultiTableTracker:
             result.append(info)
             if not ambiguous:
                 retained[signature]=(table_id,box,version)
+                if anchor_counts[anchor] == 1:
+                    next_anchors[anchor]=(table_id,box,version)
         # Preserve unmatched identities for recovery; bound memory for a diagnostic session.
+        updated_ids = {record[0] for record in retained.values()}
+        previous = {key:value for key,value in previous.items() if value[0] not in updated_ids}
         self._visual_tracks = dict(list({**previous,**retained}.items())[-self.max_tables*4:])
+        self._visual_anchors = next_anchors
         self.active_tables = {t.table_id:t for t in result}
         return result
 

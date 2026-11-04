@@ -157,3 +157,19 @@ mesmas capturas, não homologação Windows ou evidência de todos os layouts.
 Permanece pendente validar identidade com mudanças reais de conteúdo e transições
 entre controles visíveis/ausentes, além de OCR. As correções de segmentação não
 liberam ações nem removem o bloqueio de OCR. Nenhum instalador recompilado.
+
+## 2026-11-04 — Continuidade provisória durante mudança localizada
+
+A associação pode preservar o ID quando muda o hash do recorte completo, mas os
+20% superiores normalizados permanecem exatamente iguais, únicos nos dois quadros
+consecutivos e com geometria idêntica. Não usa vizinho por posição para decidir a
+identidade. Âncoras compartilhadas ou captura interrompida impedem essa recuperação.
+Hashes antigos do mesmo ID são removidos quando a aparência é atualizada.
+
+Validação: 10 testes de observador passaram (incluindo mudança localizada, âncoras
+compartilhadas e interrupção), além de 9 de limites/escala. A continuidade usa
+imagens sintéticas; não é reconhecimento semântico do ID da mesa. Duas mesas com
+a mesma região superior podem permanecer ambíguas. Troca por outra mesa de aparência
+superior idêntica é indistinguível por essa heurística; por isso CANDIDATE permanece
+provisório, sem autorização de OCR/ações. Movimento com mudança simultânea de conteúdo
+e alteração de recorte ao aparecerem controles ainda precisam de validação.
