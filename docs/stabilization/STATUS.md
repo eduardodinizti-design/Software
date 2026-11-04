@@ -280,3 +280,22 @@ A comparação ainda é exata após normalização: interpolação real, antiali
 animação superior e outros layouts podem impedir associação. Este resultado não
 valida uma sessão real nem identifica semanticamente o torneio. OCR continua
 bloqueado; não houve homologação Windows ou atualização de instalador.
+
+## 2026-11-04 — Validação de interpolação com pixels reais: REPROVADA
+
+Criado tools/check_interpolation_continuity.py, matriz reproduzível de 36 casos:
+nearest/linear/cubic/area, escalas 75%/125%/200%, sem alteração/alteração inferior/
+alteração superior. Usa um recorte da captura real e caixas explícitas para isolar
+associação de identidade; não valida detector nem captura Windows. Alterações são
+edições sintéticas e não representam uma gravação real de animação.
+
+Resultado: somente 4/24 casos de continuidade passaram. Todos os 12 casos com
+alteração superior bloquearam associação como AMBIGUOUS. O ensaio retorna código 1
+com passed=false; relatório completo em interpolation-validation.json. As 49
+regressões anteriores não demonstravam robustez de interpolação em pixels reais.
+Nenhuma modificação do algoritmo nesta etapa: limite agora reproduzido objetivamente.
+
+Próxima correção deve substituir igualdade exata por evidência tolerante à escala,
+com discriminação entre mesas parecidas, margem entre melhor/segunda correspondência
+e rejeição de ambiguidades. Não afrouxar limiares apenas para aprovar esta captura.
+OCR continua bloqueado. Sem homologação Windows ou novo instalador.
