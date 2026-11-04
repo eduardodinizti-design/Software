@@ -1,6 +1,6 @@
 {
   "scope": "Linux laboratory; synthetic frames and screenshot derivatives; mocked Windows APIs",
-  "tests_run": 45,
+  "tests_run": 49,
   "failures": 0,
   "errors": 0,
   "skipped": 0,
@@ -16,9 +16,10 @@
     "test_crop_acceptance.py"
   ],
   "findings": {
-    "resize_without_content_change": "ID preserved for 2x nearest-neighbor synthetic resize",
-    "resize_with_content_change": "AMBIGUOUS; continuity not implemented",
-    "one_table_upper_region_change": "other table retained its ID",
-    "repeated_transitions": "40 steps; internal collection sizes within configured limits; not a long-duration memory test"
+    "resize_with_lower_content_change": "IDs preserved in 2x nearest-neighbor synthetic sequence with exact unique normalized upper pixels",
+    "shared_or_changed_upper_region": "AMBIGUOUS",
+    "capture_gap": "AMBIGUOUS for changed-content recovery",
+    "nonuniform_resize": "AMBIGUOUS",
+    "limitation": "No native Windows resampling or live poker validation; OCR remains blocked"
   }
 }

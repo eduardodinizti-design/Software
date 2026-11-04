@@ -402,6 +402,7 @@ class MultiTableTracker:
         boxes = custom_table_rects if custom_table_rects is not None else self.detect_tables_from_unity_pixels(unity_frame)
         candidates = []
         anchors = {}
+        textured_anchors = {}
         for box in boxes[:self.max_tables]:
             x, y, w, h = map(int, box)
             if min(x,y) < 0 or min(w,h) <= 0 or x+w > unity_frame.shape[1] or y+h > unity_frame.shape[0]:
@@ -412,6 +413,7 @@ class MultiTableTracker:
             # Exact bytes only; no geometric nearest-neighbor identity guesses.
             anchor = hashlib.sha256(cv2.resize(crop[:max(1,h//5)],(128,48),interpolation=cv2.INTER_NEAREST).tobytes()).hexdigest()
             anchors[signature] = anchor
+            textured_anchors[anchor] = float(crop[:max(1,h//5)].std(axis=(0,1)).max()) >= 20
             candidates.append((signature,[x,y,w,h]))
         from .visual_continuity import sample_upper, matches
         samples = [sample_upper(unity_frame, box) for _,box in candidates]
@@ -431,10 +433,13 @@ class MultiTableTracker:
             old = previous.get(signature)
             anchor = anchors[signature]
             anchor_old = previous_anchors.get(anchor)
-            # Exact unique upper-region evidence can follow translation when
-            # dimensions remain identical. Do not infer identity from proximity.
-            if old is None and anchor_counts[anchor] == 1 and anchor_old is not None and anchor_old[1][2:] == box[2:]:
-                old = anchor_old
+            # Exact normalized upper pixels, with texture and unique association,
+            # may follow uniform scaling. This is not semantic table identity.
+            if old is None and anchor_counts[anchor] == 1 and anchor_old is not None and textured_anchors[anchor]:
+                old_w, old_h = anchor_old[1][2:]
+                sx, sy = box[2]/old_w, box[3]/old_h
+                if .5 <= sx <= 2 and .5 <= sy <= 2 and abs(sx/sy-1) <= .01:
+                    old = anchor_old
             bx, by, bw, bh = box
             touches_viewport = bx == 0 or by == 0 or bx+bw == unity_frame.shape[1] or by+bh == unity_frame.shape[0]
             common_match = None
@@ -462,7 +467,7 @@ class MultiTableTracker:
             if not ambiguous:
                 next_continuity.append(((table_id,box,version),samples[candidate_index]))
                 retained[signature]=(table_id,box,version)
-                if anchor_counts[anchor] == 1:
+                if anchor_counts[anchor] == 1 and textured_anchors[anchor]:
                     next_anchors[anchor]=(table_id,box,version)
         # Preserve unmatched identities for recovery; bound memory for a diagnostic session.
         updated_ids = {record[0] for record in retained.values()}

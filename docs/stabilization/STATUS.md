@@ -262,3 +262,21 @@ o teste confirma o bloqueio conservador, não recuperação de identidade. O tes
 40 alternâncias não é ensaio prolongado de memória. Imagens sintéticas e API Windows
 mockada não substituem uma sessão real ou outros fatores de escala/interpolação.
 Nenhuma mudança de algoritmo nesta etapa. OCR continua bloqueado.
+
+## 2026-11-04 — Associação com escala uniforme e mudança inferior
+
+A âncora superior exata e única agora permite escala uniforme entre 0,5× e 2×,
+com diferença relativa máxima de 1% entre os fatores horizontal/vertical. Exige
+variação de pixels na região superior (desvio padrão de algum canal >=20), evitando
+usar uma cor de feltro uniforme como âncora. Continua limitada a quadros consecutivos.
+
+O cenário sintético de 2× nearest-neighbor com alteração inferior preserva IDs e
+incrementa geometry_version. Quatro testes adicionais confirmam bloqueio de âncora
+compartilhada, superior alterado, intervalo sem captura e escala não proporcional.
+49 testes direcionados passaram; resize-validation.json atualizado substitui o
+resultado anterior para esse cenário. Nenhuma falha esperada ou skip.
+
+A comparação ainda é exata após normalização: interpolação real, antialiasing,
+animação superior e outros layouts podem impedir associação. Este resultado não
+valida uma sessão real nem identifica semanticamente o torneio. OCR continua
+bloqueado; não houve homologação Windows ou atualização de instalador.

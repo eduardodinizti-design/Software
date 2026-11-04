@@ -68,12 +68,13 @@ class MovingContent(unittest.TestCase):
         self.assertEqual([t.table_id for t in first],[t.table_id for t in second])
         self.assertEqual([t.geometry_version for t in second],[2,2])
 
-    def test_resize_with_changed_content_blocks_uncertain_history(self):
+    def test_resize_with_changed_content_preserves_unique_evidence(self):
         tracker=MultiTableTracker();first=tracker.scan_unity_surface(frame())
         second=tracker.scan_unity_surface(self.resized_frame(True))
         self.assertEqual(len(second),2)
-        self.assertTrue(all(t.status=='AMBIGUOUS' for t in second))
-        self.assertFalse({t.table_id for t in first}&{t.table_id for t in second})
+        self.assertTrue(all(t.status=='CANDIDATE' for t in second))
+        self.assertEqual([t.table_id for t in first],[t.table_id for t in second])
+        self.assertEqual([t.geometry_version for t in second],[2,2])
         self.assertEqual(len(tracker.active_tables),2)
 
     def test_changed_top_does_not_poison_other_table(self):
@@ -92,3 +93,36 @@ class MovingContent(unittest.TestCase):
             self.assertLessEqual(len(tracker.active_tables),2)
             self.assertLessEqual(len(tracker._visual_tracks),tracker.max_tables*4)
             self.assertLessEqual(len(tracker._continuity),tracker.max_tables)
+
+    def test_resize_shared_anchor_remains_ambiguous(self):
+        tracker=MultiTableTracker()
+        before=frame(shared=True)
+        tracker.scan_unity_surface(before)
+        after=self.resized_frame(True)
+        # Copy the upper region only, leaving lower content different.
+        after[100:380,900:1600]=after[100:380,50:750]
+        self.assertTrue(all(t.status=='AMBIGUOUS' for t in tracker.scan_unity_surface(after)))
+
+    def test_resize_changed_top_remains_ambiguous(self):
+        tracker=MultiTableTracker();tracker.scan_unity_surface(frame())
+        after=self.resized_frame(True)
+        after[140:220,90:210]=[255,255,0]
+        result=tracker.scan_unity_surface(after)
+        self.assertEqual(result[0].status,'AMBIGUOUS')
+        self.assertEqual(result[1].status,'CANDIDATE')
+
+    def test_resize_after_capture_gap_remains_ambiguous(self):
+        tracker=MultiTableTracker();tracker.scan_unity_surface(frame())
+        tracker.scan_unity_surface(None)
+        self.assertTrue(all(t.status=='AMBIGUOUS' for t in tracker.scan_unity_surface(self.resized_frame(True))))
+
+    def test_nonuniform_resize_rejected(self):
+        import cv2
+        tracker=MultiTableTracker();tracker.scan_unity_surface(frame())
+        source=frame(changed=True)
+        output=np.full((1650,1700,3),20,dtype=np.uint8)
+        for old_x,new_x in [(50,50),(750,900)]:
+            output[100:1500,new_x:new_x+525]=cv2.resize(source[50:750,old_x:old_x+350],(525,1400),interpolation=cv2.INTER_NEAREST)
+        result=tracker.scan_unity_surface(output)
+        self.assertEqual(len(result),2)
+        self.assertTrue(all(t.status=='AMBIGUOUS' for t in result))
