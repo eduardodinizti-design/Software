@@ -76,3 +76,21 @@ desktop inteiro e ausência de detecção). Esses testes validam o avaliador,
 não o detector. Próximo trabalho: substituir a segmentação somente por cor por
 localização dos limites completos, usando esta captura como regressão e outras
 escalas/temas como validação. OCR continua bloqueado, sem novo instalador.
+
+## 2026-11-04 — Candidato completo ancorado nos controles
+
+Implementado `table_boundaries.py`: procura três controles verdes alinhados,
+com dimensões semelhantes e espaços compatíveis, e acompanha a superfície azul
+para cima. Margens são proporcionais à largura observada; não usa coordenadas
+fixas da captura. Se não houver âncoras suficientes, não inventa uma mesa completa.
+O tracker prioriza esses candidatos e mantém o detector experimental de feltro
+quando não encontra controles. Ambos continuam sendo candidatos sem autorização
+para OCR. Em cenas mistas, a prioridade dos candidatos ancorados pode omitir mesas
+sem controles: cobertura multimesa completa permanece pendente.
+
+A referência real antes reprovada passou no avaliador de cobertura (JSON atualizado).
+Três testes novos passaram, incluindo quatro escalas (50%, 75%, 100%, 125%) com
+translação, remoção dos controles e controles sem superfície azul. Sete testes
+anteriores de observador também passaram. Essas variantes derivam da mesma captura,
+não são validação independente de novos layouts. Não há reconhecimento semântico
+de botões, validação de OCR, homologação Windows nem novo instalador nesta etapa.

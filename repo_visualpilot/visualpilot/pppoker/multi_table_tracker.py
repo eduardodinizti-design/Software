@@ -339,6 +339,10 @@ class MultiTableTracker:
             return []
         if unity_frame.dtype != np.uint8 or unity_frame.size == 0:
             return []
+        from .table_boundaries import detect_control_anchored_tables
+        complete_candidates = detect_control_anchored_tables(unity_frame)
+        if complete_candidates:
+            return complete_candidates[:self.max_tables]
         hsv = cv2.cvtColor(unity_frame, cv2.COLOR_RGB2HSV)
         mask = cv2.inRange(hsv, (35, 45, 30), (130, 255, 255))
         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
