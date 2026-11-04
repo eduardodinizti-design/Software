@@ -121,3 +121,19 @@ Não há taxa de acurácia calculada a partir deste inventário sem rótulos com
 Pendências: detecção nas duas capturas sem candidato, mesas sem controles visíveis,
 validação independente dos limites e recuperação de identidade. OCR continua
 bloqueado. Nenhum instalador ou homologação Windows produzido nesta etapa.
+
+## 2026-11-04 — Controles multicoloridos e máscara azul separada
+
+Detectores ajustados para controles vermelhos/amarelos além dos verdes e uma
+máscara azul separada (HSV H=105..130), pois a máscara ampla conectava a mesa ao
+fundo ciano. Candidatos sobrepostos entre máscaras são suprimidos.
+Inventário atualizado: quatro capturas com candidatos; os outros 14 PNGs continuam
+sem candidatos. Isto não comprova acurácia geral ou recorte completo em todas elas.
+
+Validação: sete testes de limites passaram e sete de observador passaram; referência
+anotada original continua PASS. Dois novos ensaios de escala FALHARAM e permanecem
+explicitamente registrados como expectedFailure: captura sem controles a 50% gera
+zero candidatos; captura com controles multicoloridos a 75% perde parte do topo.
+Os testes nas escalas nativas passaram, e multicolorido a 125% também passou.
+Essas falhas conhecidas não são aprovação: próxima etapa deve resolvê-las sem
+remover os testes. OCR continua bloqueado; não houve homologação Windows.

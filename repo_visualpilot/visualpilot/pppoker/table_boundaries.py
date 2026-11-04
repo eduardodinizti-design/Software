@@ -1,4 +1,4 @@
-"""Experimental blue-table boundary proposal anchored by three green controls.
+"""Experimental blue-table boundary proposal anchored by three colored controls.
 
 Produces candidates, not OCR authorization. Layouts without visible controls need
 another detector; never invent boundaries when the anchors are missing.
@@ -11,6 +11,9 @@ import numpy as np
 def detect_control_anchored_tables(rgb):
     hsv = cv2.cvtColor(rgb, cv2.COLOR_RGB2HSV)
     green = cv2.inRange(hsv, (38,70,60), (90,255,255))
+    # PPPoker also displays red Fold and yellow Raise controls.
+    green = cv2.bitwise_or(green, cv2.inRange(hsv, (0,90,70), (35,255,255)))
+    green = cv2.bitwise_or(green, cv2.inRange(hsv, (170,90,70), (179,255,255)))
     blue = cv2.inRange(hsv, (90,45,30), (130,255,255)) > 0
     controls = []
     for contour in cv2.findContours(green, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[0]:

@@ -344,6 +344,11 @@ class MultiTableTracker:
         hsv = cv2.cvtColor(unity_frame, cv2.COLOR_RGB2HSV)
         mask = cv2.inRange(hsv, (35, 45, 30), (130, 255, 255))
         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        # A cyan desktop can connect to the broad felt mask. A separate blue
+        # band recovers isolated candidates without changing broad-mask behavior.
+        blue_mask = cv2.inRange(hsv, (105,45,30), (130,255,255))
+        blue_contours, _ = cv2.findContours(blue_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        contours = list(contours) + list(blue_contours)
         height, width = unity_frame.shape[:2]
         boxes = []
         for contour in contours:
@@ -358,7 +363,7 @@ class MultiTableTracker:
         for box in boxes:
             x, y, w, h = box
             overlaps_anchor = False
-            for ax, ay, aw, ah in complete_candidates:
+            for ax, ay, aw, ah in complete_candidates + remaining:
                 intersection = max(0, min(x+w, ax+aw)-max(x, ax))*max(0, min(y+h, ay+ah)-max(y, ay))
                 if intersection / min(w*h, aw*ah) >= .5:
                     overlaps_anchor = True

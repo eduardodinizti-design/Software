@@ -34,7 +34,14 @@
         1290
       ],
       "anchored_candidates": [],
-      "all_candidates": [],
+      "all_candidates": [
+        [
+          14,
+          36,
+          704,
+          1244
+        ]
+      ],
       "ocr_approved": false
     },
     {
@@ -106,8 +113,22 @@
         1506,
         1001
       ],
-      "anchored_candidates": [],
-      "all_candidates": [],
+      "anchored_candidates": [
+        [
+          755,
+          30,
+          376,
+          664
+        ]
+      ],
+      "all_candidates": [
+        [
+          755,
+          30,
+          376,
+          664
+        ]
+      ],
       "ocr_approved": false
     },
     {
