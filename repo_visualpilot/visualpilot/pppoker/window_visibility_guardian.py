@@ -281,8 +281,6 @@ class WindowVisibilityGuardian:
             pinfo = get_process_info_for_hwnd(hwnd)
             t_lower = title.lower()
             has_table_kw = any(k in t_lower for k in ["mtt", "nlh", "plo", "pko", "sat", "sng", "spin", "freeze", "stack", "4-max", "6-max", "hold'em", "omaha", "mesa", "table"])
-            if not pinfo.get("is_valid", False) or pinfo.get("is_forbidden", False):
-                return True
             z_order_windows.append({
                 "hwnd": int(hwnd),
                 "title": title,
@@ -296,6 +294,8 @@ class WindowVisibilityGuardian:
 
         candidate_list = []
         for idx, win in enumerate(z_order_windows):
+            if not win["process_info"].get("is_valid", False) or win["process_info"].get("is_forbidden", False):
+                continue
             title = win["title"] or ""
             t_lower = title.lower()
 
@@ -319,41 +319,6 @@ class WindowVisibilityGuardian:
                 sc += 50.0
 
             candidate_list.append((sc, idx, win))
-
-        if not candidate_list:
-            # PASSAGEM DE FALLBACK GLOBAL: captura qualquer janela visível com título na tela
-            @callback_type
-            def enum_windows_global_fallback(hwnd, _):
-                if not u.IsWindowVisible(hwnd):
-                    return True
-                length = u.GetWindowTextLengthW(hwnd)
-                title_buf = ctypes.create_unicode_buffer(length + 1)
-                u.GetWindowTextW(hwnd, title_buf, length + 1)
-                title = title_buf.value
-                if not title or len(title.strip()) < 2:
-                    return True
-                rect = wintypes.RECT()
-                u.GetWindowRect(hwnd, ctypes.byref(rect))
-                w = rect.right - rect.left
-                h = rect.bottom - rect.top
-                if w < 50 or h < 50 or w > 10000 or h > 10000:
-                    return True
-                z_order_windows.append({
-                    "hwnd": int(hwnd),
-                    "title": title,
-                    "is_iconic": bool(u.IsIconic(hwnd)),
-                    "process_info": {"pid": 0, "executable": "pppoker.exe", "is_valid": True, "is_forbidden": False, "error": None},
-                    "box": (int(rect.left), int(rect.top), int(w), int(h))
-                })
-                return True
-            u.EnumWindows(enum_windows_global_fallback, 0)
-            
-            # Recalcula candidatos após fallback global
-            for idx, win in enumerate(z_order_windows):
-                title = win["title"] or ""
-                t_lower = title.lower()
-                sc = 100.0 if any(k in t_lower for k in ["mtt", "nlh", "plo", "pko", "v228", "poker", "pppoker"]) else 50.0
-                candidate_list.append((sc, idx, win))
 
         if not candidate_list:
             return WindowVisibilityReport(
@@ -433,7 +398,7 @@ class WindowVisibilityGuardian:
         if not is_foreground:
             # Verifica se alguma janela visível acima está sobrepondo a área cliente
             for win in z_order_windows[:target_z_index]:
-                if win["hwnd"] == hwnd:
+                if win["hwnd"] == hwnd or win["is_iconic"]:
                     continue
                 overlap = rect_intersection_area(client_box, win["box"])
                 if overlap > 0:

@@ -20,3 +20,18 @@ Pending: capture bounds for this user's Unity surface; validated full-table dete
 - Runner rejects frame_valid_for_ocr=False and exposes query errors.
 
 Three new Linux regression tests passed with mocked Win32/ImageGrab calls: access denied does not fabricate identity; (-1920,0,5760,2160) maps to correct bbox; wrong capture size is rejected. Four previous observer regressions passed again. This is contract validation, NOT Windows native validation. Full-surface occlusion and complete table-boundary calibration remain pending; no installer delivered.
+
+## 2026-11-04 — Remoção do fallback global de identidade
+
+A revisão encontrou um segundo fallback que, na ausência de candidatos autorizados,
+voltava a enumerar todas as janelas e atribuía artificialmente `pppoker.exe` a elas.
+Esse fallback foi removido. Ausência de processo autorizado retorna WINDOW_NOT_FOUND.
+A lista de Z-order agora mantém janelas externas para detectar sobreposição, mas
+somente processos autorizados participam da seleção do alvo. Janelas minimizadas
+não contam como obstáculos.
+
+Validação: 5 testes de contrato de captura passaram em Linux com APIs Windows
+simuladas, incluindo rejeição de Chrome com título PPPoker e bloqueio por terminal
+sobreposto. Isto não constitui homologação Windows. A oclusão ainda é calculada
+sobre a superfície inteira; validação por mesa e enquadramento completo permanecem
+pendentes. Nenhum instalador foi recompilado nesta etapa.

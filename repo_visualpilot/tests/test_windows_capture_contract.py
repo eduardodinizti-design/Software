@@ -37,3 +37,49 @@ class WindowsCaptureContract(unittest.TestCase):
         self.assertEqual(result['executable'],'')
         self.assertIn('PROCESS_ACCESS_DENIED',result['error'])
         kernel.CloseHandle.assert_not_called()
+
+    def inspect_windows(self, windows, identities):
+        import ctypes
+        user = MagicMock()
+        user.IsWindowVisible.return_value = True
+        user.IsIconic.return_value = False
+        user.GetForegroundWindow.return_value = 1
+        user.GetWindowTextLengthW.return_value = 40
+        def title(hwnd, buf, size):
+            buf.value = windows[hwnd][0]
+            return len(buf.value)
+        def rect(hwnd, ptr):
+            x,y,w,h = windows[hwnd][1]
+            ptr._obj.left,ptr._obj.top = x,y
+            ptr._obj.right,ptr._obj.bottom = x+w,y+h
+            return 1
+        def enumerate_windows(callback, param):
+            for hwnd in windows: callback(hwnd, param)
+            return 1
+        user.GetWindowTextW.side_effect = title
+        user.GetWindowRect.side_effect = rect
+        user.GetClientRect.side_effect = rect
+        user.ClientToScreen.return_value = 1
+        user.EnumWindows.side_effect = enumerate_windows
+        with patch.object(guardian.sys,'platform','win32'), patch.object(ctypes,'windll',types.SimpleNamespace(user32=user),create=True), patch.object(ctypes,'WINFUNCTYPE',lambda *args: lambda fn: fn,create=True), patch.object(guardian,'get_process_info_for_hwnd',side_effect=lambda hwnd: identities[hwnd]):
+            result = guardian.WindowVisibilityGuardian().inspect_and_prepare_window()
+        return result, user
+
+    def test_browser_with_pppoker_title_is_not_fallback_target(self):
+        result, user = self.inspect_windows(
+            {1: ('PPPoker - Chrome', (0,0,800,1400))},
+            {1: {'is_valid':False,'is_forbidden':True,'pid':11,'executable':'chrome.exe'}})
+        self.assertFalse(result.is_found)
+        self.assertEqual(result.occlusion_status,'WINDOW_NOT_FOUND')
+        user.EnumWindows.assert_called_once()
+        user.GetClientRect.assert_not_called()
+
+    def test_terminal_above_real_client_blocks_capture(self):
+        result, _ = self.inspect_windows(
+            {1: ('Terminal', (0,0,800,700)), 2: ('PPPoker', (0,0,800,1400))},
+            {1: {'is_valid':False,'is_forbidden':True,'pid':11,'executable':'cmd.exe'},
+             2: {'is_valid':True,'is_forbidden':False,'pid':22,'executable':'pppoker.exe'}})
+        self.assertTrue(result.is_found)
+        self.assertEqual(result.process_info['pid'],22)
+        self.assertEqual(result.occlusion_status,'WINDOW_OCCLUDED')
+        self.assertFalse(result.frame_valid_for_ocr)
