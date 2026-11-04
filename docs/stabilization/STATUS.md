@@ -94,3 +94,30 @@ translação, remoção dos controles e controles sem superfície azul. Sete tes
 anteriores de observador também passaram. Essas variantes derivam da mesma captura,
 não são validação independente de novos layouts. Não há reconhecimento semântico
 de botões, validação de OCR, homologação Windows nem novo instalador nesta etapa.
+
+## 2026-11-04 — Validação ampliada e cenas mistas
+
+Corrigido retorno antecipado: encontrar controles em uma mesa não deve excluir
+candidatos de feltro em outras regiões. Os dois métodos agora são combinados,
+suprimindo candidatos com pelo menos 50% de sobreposição sobre a menor caixa.
+Candidatos ancorados têm prioridade no limite de seis; isso não valida identidade
+nem autoriza OCR.
+
+Cinco testes de limites passaram: escalas/translação, ausência de âncoras,
+controles sem mesa, composição com duas cópias de uma mesa real mais um candidato
+sintético de feltro (exatamente três regiões), e limite de seis. A composição não
+representa duas mesas reais independentes. Somados aos sete testes de observador,
+seis de contrato Windows e quatro do avaliador, foram 22 testes aprovados nesta etapa.
+
+`tools/check_capture_inventory.py` executou ambos os detectores nos 18 PNGs de
+assets/aistudio. Resultado versionado em capture-inventory.json com hashes e caixas.
+Somente dois PNGs geraram candidatos; grande parte dos outros PNGs mostra logs/UI.
+Das quatro capturas visualmente identificadas como cenas com mesas, continuam sem
+candidato image_2da5ef3e.png e _4CCF9DD1-A945-450A-9C7C-2334847FE3E4__02419b13.png.
+A captura _72432B1C... gera apenas candidato de feltro, sem comprovação de cobertura.
+A referência _21D744E1... continua passando no avaliador de cobertura anotada.
+Não há taxa de acurácia calculada a partir deste inventário sem rótulos completos.
+
+Pendências: detecção nas duas capturas sem candidato, mesas sem controles visíveis,
+validação independente dos limites e recuperação de identidade. OCR continua
+bloqueado. Nenhum instalador ou homologação Windows produzido nesta etapa.

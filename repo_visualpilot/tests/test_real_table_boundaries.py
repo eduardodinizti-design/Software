@@ -33,3 +33,24 @@ class RealBoundaries(unittest.TestCase):
         frame=np.zeros_like(np.asarray(self.image))
         frame[1190:1278,:710]=np.asarray(self.image)[1190:1278,:710]
         self.assertEqual(detect_control_anchored_tables(frame),[])
+
+    def test_two_real_table_copies_and_mixed_felt(self):
+        from visualpilot.pppoker.multi_table_tracker import MultiTableTracker
+        # Composed fixture, not evidence of two independent live tables.
+        table=np.asarray(self.image)[:,:710]
+        frame=np.zeros((1400,2400,3),dtype=np.uint8)
+        frame[30:1308,30:740]=table
+        frame[30:1308,820:1530]=table
+        frame[100:1100,1700:2200]=[30,120,50]
+        boxes=MultiTableTracker().detect_tables_from_unity_pixels(frame)
+        self.assertEqual(len(boxes),3)
+        self.assertTrue(any(x<100 and h>1200 for x,y,w,h in boxes))
+        self.assertTrue(any(800<x<900 and h>1200 for x,y,w,h in boxes))
+        self.assertIn((1700,100,500,1000),boxes)
+
+    def test_upper_bound_six_candidates(self):
+        from visualpilot.pppoker.multi_table_tracker import MultiTableTracker
+        frame=np.zeros((700,3200,3),dtype=np.uint8)
+        for i in range(7):
+            frame[50:650,20+450*i:320+450*i]=[30,120,50]
+        self.assertEqual(len(MultiTableTracker().detect_tables_from_unity_pixels(frame)),6)

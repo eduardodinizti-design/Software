@@ -341,8 +341,6 @@ class MultiTableTracker:
             return []
         from .table_boundaries import detect_control_anchored_tables
         complete_candidates = detect_control_anchored_tables(unity_frame)
-        if complete_candidates:
-            return complete_candidates[:self.max_tables]
         hsv = cv2.cvtColor(unity_frame, cv2.COLOR_RGB2HSV)
         mask = cv2.inRange(hsv, (35, 45, 30), (130, 255, 255))
         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -354,7 +352,20 @@ class MultiTableTracker:
                 # Touching the viewport may mean a clipped table; do not approve it.
                 if x > 0 and y > 0 and x+w < width and y+h < height:
                     boxes.append((x, y, w, h))
-        return sorted(boxes)[:self.max_tables]
+        # Keep unrelated felt candidates in mixed scenes, but do not emit a
+        # second record for felt already inside an anchored table candidate.
+        remaining = []
+        for box in boxes:
+            x, y, w, h = box
+            overlaps_anchor = False
+            for ax, ay, aw, ah in complete_candidates:
+                intersection = max(0, min(x+w, ax+aw)-max(x, ax))*max(0, min(y+h, ay+ah)-max(y, ay))
+                if intersection / min(w*h, aw*ah) >= .5:
+                    overlaps_anchor = True
+                    break
+            if not overlaps_anchor:
+                remaining.append(box)
+        return (sorted(complete_candidates) + sorted(remaining))[:self.max_tables]
 
     def scan_unity_surface(self, unity_frame: Any, custom_table_rects=None) -> List[TableWindowInfo]:
         """Conservative diagnostic association, not gameplay authorization.
