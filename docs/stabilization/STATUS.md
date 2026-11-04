@@ -299,3 +299,26 @@ Próxima correção deve substituir igualdade exata por evidência tolerante à 
 com discriminação entre mesas parecidas, margem entre melhor/segunda correspondência
 e rejeição de ambiguidades. Não afrouxar limiares apenas para aprovar esta captura.
 OCR continua bloqueado. Sem homologação Windows ou novo instalador.
+
+## 2026-11-04 — Comparação tolerante à interpolação
+
+Adicionada associação de fallback por faixa superior normalizada com INTER_AREA,
+suavização leve e erro RGB por 32 regiões. Usa o maior erro regional (limite 0,045),
+sem diluir uma alteração localizada na média do recorte. Exige margem de 0,025
+contra outras mesas anteriores e candidatos atuais, textura suficiente, escala
+proporcional entre 0,5× e 2× e quadros consecutivos. A comparação não utiliza posição
+como evidência de identidade e não produz confiança probabilística.
+
+Matriz original agora PASS: 24/24 continuidades e 12/12 alterações superiores
+rejeitadas. interpolation-validation.json atualizado. Duas outras capturas passaram
+em 18 subcasos com mudança inferior (linear/cubic/area × 75/125/200%). O teste usa
+caixas explícitas para isolar associação. Sete cenários unitários adicionais cobrem
+mesas quase iguais, competição pelo mesmo ID, regiões uniformes, mudança local,
+deformação e geometria que não pode fabricar distinção visual.
+
+Resultado consolidado: 57 testes passaram, sem falhas esperadas ou skips, além da
+matriz de 36 cenários. tolerant-validation.json registra o resultado. Os limiares
+são conservadores de laboratório, não calibração em sessões reais. Pequenas mudanças
+semânticas podem escapar da comparação visual; uma faixa superior semelhante não
+é identificador de torneio. Não valida animações reais, oclusão prolongada, sessões
+longas ou Windows nativo. OCR e ações permanecem bloqueados, sem novo instalador.

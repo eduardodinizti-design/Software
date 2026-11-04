@@ -5,17 +5,17 @@
       "interpolation": "nearest",
       "scale": 0.75,
       "change": "none",
-      "same_id": false,
-      "status": "AMBIGUOUS",
-      "passed": false
+      "same_id": true,
+      "status": "CANDIDATE",
+      "passed": true
     },
     {
       "interpolation": "nearest",
       "scale": 0.75,
       "change": "lower",
-      "same_id": false,
-      "status": "AMBIGUOUS",
-      "passed": false
+      "same_id": true,
+      "status": "CANDIDATE",
+      "passed": true
     },
     {
       "interpolation": "nearest",
@@ -29,17 +29,17 @@
       "interpolation": "nearest",
       "scale": 1.25,
       "change": "none",
-      "same_id": false,
-      "status": "AMBIGUOUS",
-      "passed": false
+      "same_id": true,
+      "status": "CANDIDATE",
+      "passed": true
     },
     {
       "interpolation": "nearest",
       "scale": 1.25,
       "change": "lower",
-      "same_id": false,
-      "status": "AMBIGUOUS",
-      "passed": false
+      "same_id": true,
+      "status": "CANDIDATE",
+      "passed": true
     },
     {
       "interpolation": "nearest",
@@ -77,17 +77,17 @@
       "interpolation": "linear",
       "scale": 0.75,
       "change": "none",
-      "same_id": false,
-      "status": "AMBIGUOUS",
-      "passed": false
+      "same_id": true,
+      "status": "CANDIDATE",
+      "passed": true
     },
     {
       "interpolation": "linear",
       "scale": 0.75,
       "change": "lower",
-      "same_id": false,
-      "status": "AMBIGUOUS",
-      "passed": false
+      "same_id": true,
+      "status": "CANDIDATE",
+      "passed": true
     },
     {
       "interpolation": "linear",
@@ -101,17 +101,17 @@
       "interpolation": "linear",
       "scale": 1.25,
       "change": "none",
-      "same_id": false,
-      "status": "AMBIGUOUS",
-      "passed": false
+      "same_id": true,
+      "status": "CANDIDATE",
+      "passed": true
     },
     {
       "interpolation": "linear",
       "scale": 1.25,
       "change": "lower",
-      "same_id": false,
-      "status": "AMBIGUOUS",
-      "passed": false
+      "same_id": true,
+      "status": "CANDIDATE",
+      "passed": true
     },
     {
       "interpolation": "linear",
@@ -125,17 +125,17 @@
       "interpolation": "linear",
       "scale": 2,
       "change": "none",
-      "same_id": false,
-      "status": "AMBIGUOUS",
-      "passed": false
+      "same_id": true,
+      "status": "CANDIDATE",
+      "passed": true
     },
     {
       "interpolation": "linear",
       "scale": 2,
       "change": "lower",
-      "same_id": false,
-      "status": "AMBIGUOUS",
-      "passed": false
+      "same_id": true,
+      "status": "CANDIDATE",
+      "passed": true
     },
     {
       "interpolation": "linear",
@@ -149,17 +149,17 @@
       "interpolation": "cubic",
       "scale": 0.75,
       "change": "none",
-      "same_id": false,
-      "status": "AMBIGUOUS",
-      "passed": false
+      "same_id": true,
+      "status": "CANDIDATE",
+      "passed": true
     },
     {
       "interpolation": "cubic",
       "scale": 0.75,
       "change": "lower",
-      "same_id": false,
-      "status": "AMBIGUOUS",
-      "passed": false
+      "same_id": true,
+      "status": "CANDIDATE",
+      "passed": true
     },
     {
       "interpolation": "cubic",
@@ -173,17 +173,17 @@
       "interpolation": "cubic",
       "scale": 1.25,
       "change": "none",
-      "same_id": false,
-      "status": "AMBIGUOUS",
-      "passed": false
+      "same_id": true,
+      "status": "CANDIDATE",
+      "passed": true
     },
     {
       "interpolation": "cubic",
       "scale": 1.25,
       "change": "lower",
-      "same_id": false,
-      "status": "AMBIGUOUS",
-      "passed": false
+      "same_id": true,
+      "status": "CANDIDATE",
+      "passed": true
     },
     {
       "interpolation": "cubic",
@@ -197,17 +197,17 @@
       "interpolation": "cubic",
       "scale": 2,
       "change": "none",
-      "same_id": false,
-      "status": "AMBIGUOUS",
-      "passed": false
+      "same_id": true,
+      "status": "CANDIDATE",
+      "passed": true
     },
     {
       "interpolation": "cubic",
       "scale": 2,
       "change": "lower",
-      "same_id": false,
-      "status": "AMBIGUOUS",
-      "passed": false
+      "same_id": true,
+      "status": "CANDIDATE",
+      "passed": true
     },
     {
       "interpolation": "cubic",
@@ -221,17 +221,17 @@
       "interpolation": "area",
       "scale": 0.75,
       "change": "none",
-      "same_id": false,
-      "status": "AMBIGUOUS",
-      "passed": false
+      "same_id": true,
+      "status": "CANDIDATE",
+      "passed": true
     },
     {
       "interpolation": "area",
       "scale": 0.75,
       "change": "lower",
-      "same_id": false,
-      "status": "AMBIGUOUS",
-      "passed": false
+      "same_id": true,
+      "status": "CANDIDATE",
+      "passed": true
     },
     {
       "interpolation": "area",
@@ -245,17 +245,17 @@
       "interpolation": "area",
       "scale": 1.25,
       "change": "none",
-      "same_id": false,
-      "status": "AMBIGUOUS",
-      "passed": false
+      "same_id": true,
+      "status": "CANDIDATE",
+      "passed": true
     },
     {
       "interpolation": "area",
       "scale": 1.25,
       "change": "lower",
-      "same_id": false,
-      "status": "AMBIGUOUS",
-      "passed": false
+      "same_id": true,
+      "status": "CANDIDATE",
+      "passed": true
     },
     {
       "interpolation": "area",
@@ -290,9 +290,9 @@
       "passed": true
     }
   ],
-  "continuity_passed": 4,
+  "continuity_passed": 24,
   "continuity_total": 24,
   "upper_change_rejected": 12,
   "upper_change_total": 12,
-  "passed": false
+  "passed": true
 }

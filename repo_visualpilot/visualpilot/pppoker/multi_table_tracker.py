@@ -64,6 +64,7 @@ class MultiTableTracker:
         self._visual_tracks = {}
         self._visual_anchors = {}
         self._continuity = []
+        self._normalized_previous = []
         self._next_visual_id = 1
         self.max_tables = max_tables
         self.active_tables: Dict[str, TableWindowInfo] = {}
@@ -398,6 +399,7 @@ class MultiTableTracker:
             self.active_tables = {}
             self._visual_anchors = {}
             self._continuity = []
+            self._normalized_previous = []
             return []
         boxes = custom_table_rects if custom_table_rects is not None else self.detect_tables_from_unity_pixels(unity_frame)
         candidates = []
@@ -415,7 +417,10 @@ class MultiTableTracker:
             anchors[signature] = anchor
             textured_anchors[anchor] = float(crop[:max(1,h//5)].std(axis=(0,1)).max()) >= 20
             candidates.append((signature,[x,y,w,h]))
-        from .visual_continuity import sample_upper, matches
+        from .visual_continuity import sample_upper, matches, normalized_upper, tolerant_links
+        descriptors = [normalized_upper(unity_frame,box) for _,box in candidates]
+        tolerant = tolerant_links(descriptors,[box for _,box in candidates],self._normalized_previous)
+        next_normalized = []
         samples = [sample_upper(unity_frame, box) for _,box in candidates]
         links = [[j for j,(record,sample) in enumerate(self._continuity)
                   if matches(sample,samples[i],record[1],box)]
@@ -440,6 +445,8 @@ class MultiTableTracker:
                 sx, sy = box[2]/old_w, box[3]/old_h
                 if .5 <= sx <= 2 and .5 <= sy <= 2 and abs(sx/sy-1) <= .01:
                     old = anchor_old
+            if old is None and candidate_index in tolerant:
+                old = self._normalized_previous[tolerant[candidate_index]][0]
             bx, by, bw, bh = box
             touches_viewport = bx == 0 or by == 0 or bx+bw == unity_frame.shape[1] or by+bh == unity_frame.shape[0]
             common_match = None
@@ -466,6 +473,7 @@ class MultiTableTracker:
             result.append(info)
             if not ambiguous:
                 next_continuity.append(((table_id,box,version),samples[candidate_index]))
+                next_normalized.append(((table_id,box,version),descriptors[candidate_index]))
                 retained[signature]=(table_id,box,version)
                 if anchor_counts[anchor] == 1 and textured_anchors[anchor]:
                     next_anchors[anchor]=(table_id,box,version)
@@ -475,6 +483,7 @@ class MultiTableTracker:
         self._visual_tracks = dict(list({**previous,**retained}.items())[-self.max_tables*4:])
         self._visual_anchors = next_anchors
         self._continuity = next_continuity
+        self._normalized_previous = next_normalized
         self.active_tables = {t.table_id:t for t in result}
         return result
 
