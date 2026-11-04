@@ -9,3 +9,14 @@ All candidates remain unvalidated. Observer bypasses old full-surface single-tab
 Validation: Linux, real NumPy/OpenCV synthetic images. Original 12 tracker tests pass; 4 new regressions verify gray background, exact dimensions, identity swap, geometry increment, identical-appearance ambiguity, invalid inputs and out-of-bounds crops. Original OCR-routing test is only a local mock and not proof of real OCR integration.
 
 Pending: capture bounds for this user's Unity surface; validated full-table detector with real images; windows process/API checks; moved/resized real screens; visibility; OCR version fencing; lifecycle recovery; packaged Windows validation. No installer rebuilt or approved.
+
+## Second implementation: capture contract
+
+- Removed process-query failures that fabricated pppoker.exe from a title.
+- Removed title-based override of invalid process identity; native PPPoker/PPClient only. Emulator support needs explicit validated configuration, not generic python/electron/java allowlisting.
+- Check Win32 client-area API return values; request thread Per-Monitor V2 before geometry lookup.
+- Capture uses all_screens=True and validates exact returned dimensions, including negative desktop origins.
+- Capture failure clears previews instead of feeding None into downstream readers.
+- Runner rejects frame_valid_for_ocr=False and exposes query errors.
+
+Three new Linux regression tests passed with mocked Win32/ImageGrab calls: access denied does not fabricate identity; (-1920,0,5760,2160) maps to correct bbox; wrong capture size is rejected. Four previous observer regressions passed again. This is contract validation, NOT Windows native validation. Full-surface occlusion and complete table-boundary calibration remain pending; no installer delivered.

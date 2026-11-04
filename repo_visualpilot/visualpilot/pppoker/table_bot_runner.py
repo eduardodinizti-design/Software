@@ -154,10 +154,12 @@ def capture_window_frame(win_rect: Tuple[int, int, int, int]) -> Optional[Any]:
         import numpy as np
         # Coordenadas absolutas na tela (left, top, right, bottom)
         bbox = (x, y, x + w, y + h)
-        img = ImageGrab.grab(bbox=bbox)
+        img = ImageGrab.grab(bbox=bbox, all_screens=True)
+        if img.size != (w, h):
+            raise ValueError(f"CAPTURE_SIZE_MISMATCH: expected {(w,h)}, received {img.size}")
         return np.array(img)
     except Exception as exc:
-        logger.debug("Captura de tela via ImageGrab indisponível: %s", exc)
+        logger.warning("CAPTURE_FAILED: %s", exc)
         return None
 
 
@@ -386,11 +388,19 @@ class TableBotRunner:
         Bloqueia identificação desconhecida, ambiguidade, geometria inválida, minimização e oclusão.
         """
         try:
+            if sys.platform == "win32":
+                import ctypes
+                from ctypes import wintypes
+                dpi = ctypes.windll.user32.SetThreadDpiAwarenessContext
+                dpi.argtypes = [wintypes.HANDLE]
+                dpi.restype = wintypes.HANDLE
+                if not dpi(ctypes.c_void_p(-4)):
+                    raise OSError("DPI_CONTEXT_FAILED")
             # Varre e rastreia mesas ativas via MultiTableTracker
             # Geometry is resolved once by the guardian; pixels are processed after capture.
             vis = self.guardian.inspect_and_prepare_window(auto_restore=False, auto_focus=False)
-            if not vis.is_found or vis.occlusion_status in ("WINDOW_NOT_FOUND", "WINDOW_AMBIGUOUS", "WINDOW_MINIMIZED", "INVALID_GEOMETRY"):
-                logger.debug("Janela indisponível para captura. Status: %s - %s", vis.occlusion_status, vis.message)
+            if not vis.is_found or not vis.frame_valid_for_ocr or vis.occlusion_status in ("WINDOW_NOT_FOUND", "WINDOW_AMBIGUOUS", "WINDOW_MINIMIZED", "INVALID_GEOMETRY"):
+                logger.warning("Janela indisponível para captura. Status: %s - %s", vis.occlusion_status, vis.message)
                 return None
 
             cx, cy, cw, ch = vis.client_rect
@@ -402,7 +412,7 @@ class TableBotRunner:
         except Exception as exc:
             if self.allow_simulated_fallback:
                 return (100, 50, 787, 1470)
-            logger.debug("Erro ao resolver geometria cliente da janela: %s", exc)
+            logger.exception("WINDOW_QUERY_FAILED: %s", exc)
             return None
 
     def query_decision(
@@ -738,8 +748,13 @@ class TableBotRunner:
 
                 # 2. Captura o frame real da janela
                 frame = capture_window_frame(win_rect)
-                if frame is not None:
-                    self.last_frame_b64 = encode_frame_thumbnail_b64(frame)
+                if frame is None:
+                    self.last_frame_b64 = ""
+                    self.observer_candidates = []
+                    self.last_status_message = "CAPTURE_FAILED"
+                    time.sleep(self.interval_sec)
+                    continue
+                self.last_frame_b64 = encode_frame_thumbnail_b64(frame)
 
                 # Stabilization branch: observer routes actual Unity pixels and does not
                 # feed the full desktop surface into single-table OCR/action logic.

@@ -150,21 +150,6 @@ def get_process_info_for_hwnd(hwnd: int) -> Dict[str, Any]:
         h_proc = k32.OpenProcess(0x1000, False, pid.value) # PROCESS_QUERY_LIMITED_INFORMATION
         if not h_proc:
             err_code = k32.GetLastError()
-            # Obter título da janela para fallback resiliente caso o processo seja protegido/inacessível
-            length = u.GetWindowTextLengthW(hwnd)
-            t_buf = ctypes.create_unicode_buffer(length + 1)
-            u.GetWindowTextW(hwnd, t_buf, length + 1)
-            win_title = t_buf.value.lower()
-            has_table_kw = any(k in win_title for k in ["mtt", "nlh", "plo", "pko", "sat", "sng", "spin", "freeze", "stack", "4-max", "6-max", "v228", "poker", "pppoker"])
-            if has_table_kw:
-                return {
-                    "pid": int(pid.value),
-                    "executable": "pppoker.exe",
-                    "executable_path": "pppoker.exe",
-                    "is_valid": True,
-                    "is_forbidden": False,
-                    "error": None
-                }
             return {
                 "pid": int(pid.value),
                 "executable": "",
@@ -179,20 +164,6 @@ def get_process_info_for_hwnd(hwnd: int) -> Dict[str, Any]:
         success = k32.QueryFullProcessImageNameW(h_proc, 0, buf, ctypes.byref(size))
         if not success:
             err_code = k32.GetLastError()
-            length = u.GetWindowTextLengthW(hwnd)
-            t_buf = ctypes.create_unicode_buffer(length + 1)
-            u.GetWindowTextW(hwnd, t_buf, length + 1)
-            win_title = t_buf.value.lower()
-            has_table_kw = any(k in win_title for k in ["mtt", "nlh", "plo", "pko", "sat", "sng", "spin", "freeze", "stack", "4-max", "6-max", "v228", "poker", "pppoker"])
-            if has_table_kw:
-                return {
-                    "pid": int(pid.value),
-                    "executable": "pppoker.exe",
-                    "executable_path": "pppoker.exe",
-                    "is_valid": True,
-                    "is_forbidden": False,
-                    "error": None
-                }
             return {
                 "pid": int(pid.value),
                 "executable": "",
@@ -206,10 +177,10 @@ def get_process_info_for_hwnd(hwnd: int) -> Dict[str, Any]:
         exe_name = Path(exe_path).name.lower() if exe_path else ""
 
         forbidden = {"chrome.exe", "msedge.exe", "firefox.exe", "explorer.exe", "cmd.exe", "powershell.exe", "code.exe", "devenv.exe"}
-        authorized = {"pppoker.exe", "ppclient.exe", "client.exe", "app.exe", "poker.exe", "javaw.exe", "electron.exe", "chromium.exe", "ldplayer.exe", "dnplayer.exe", "bluestacks.exe", "nox.exe", "hd-player.exe", "memu.exe", "python.exe", "python3.11.exe", "python3.12.exe"}
+        authorized = {"pppoker.exe", "ppclient.exe"}
 
         is_forbidden = exe_name in forbidden
-        is_authorized = exe_name in authorized or "pppoker" in exe_name
+        is_authorized = exe_name in authorized
 
         is_valid = is_authorized and not is_forbidden
         error_msg = None if is_valid else (f"INVALID_IDENTITY: Processo não autorizado '{exe_name}'" if not is_forbidden else f"PROCESS_FORBIDDEN: Navegador/Sistema '{exe_name}'")
@@ -310,9 +281,7 @@ class WindowVisibilityGuardian:
             pinfo = get_process_info_for_hwnd(hwnd)
             t_lower = title.lower()
             has_table_kw = any(k in t_lower for k in ["mtt", "nlh", "plo", "pko", "sat", "sng", "spin", "freeze", "stack", "4-max", "6-max", "hold'em", "omaha", "mesa", "table"])
-            if not pinfo["is_valid"] and has_table_kw:
-                pinfo["is_valid"] = True
-            if (not pinfo.get("is_valid", False) and not has_table_kw) or pinfo.get("is_forbidden", False):
+            if not pinfo.get("is_valid", False) or pinfo.get("is_forbidden", False):
                 return True
             z_order_windows.append({
                 "hwnd": int(hwnd),
@@ -431,11 +400,14 @@ class WindowVisibilityGuardian:
 
         # Obter área cliente precisa
         client_rect = wintypes.RECT()
-        u.GetClientRect(hwnd, ctypes.byref(client_rect))
+        if not u.GetClientRect(hwnd, ctypes.byref(client_rect)):
+            raise OSError("GetClientRect failed")
         pt_tl = wintypes.POINT(client_rect.left, client_rect.top)
         pt_br = wintypes.POINT(client_rect.right, client_rect.bottom)
-        u.ClientToScreen(hwnd, ctypes.byref(pt_tl))
-        u.ClientToScreen(hwnd, ctypes.byref(pt_br))
+        if not u.ClientToScreen(hwnd, ctypes.byref(pt_tl)):
+            raise OSError("ClientToScreen(top-left) failed")
+        if not u.ClientToScreen(hwnd, ctypes.byref(pt_br)):
+            raise OSError("ClientToScreen(bottom-right) failed")
         client_w = pt_br.x - pt_tl.x
         client_h = pt_br.y - pt_tl.y
         client_box = (int(pt_tl.x), int(pt_tl.y), int(client_w), int(client_h))
