@@ -59,7 +59,7 @@ export const AppNavigationSidebar: React.FC<AppNavigationSidebarProps> = ({
   };
 
   return (
-    <aside className="w-full lg:w-64 bg-[#080c14] border border-slate-800/80 rounded-xl flex flex-col justify-between shrink-0 select-none lg:sticky lg:top-20 shadow-xl overflow-hidden">
+    <aside className="w-64 shrink-0 bg-[#080c14] border border-slate-800/80 rounded-xl flex flex-col justify-between shrink-0 select-none  shadow-xl overflow-hidden">
       {/* Lista de Navegação Principal */}
       <div className="p-3 space-y-1 overflow-y-auto">
         {/* 1. Visão Geral */}

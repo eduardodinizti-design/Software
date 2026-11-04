@@ -4,7 +4,7 @@ import socket
 import struct
 from time import monotonic
 
-from .transport_freshness import VERSION, parse_ticket
+from visualpilot.pppoker.transport_freshness import VERSION, parse_ticket
 
 CONTROL_VERSION = 1
 CONTROL_LIMIT = 4096
@@ -64,3 +64,23 @@ class ControlSender:
             raise ValueError('Confirmação de controle não corresponde ao pedido')
         return dict(control_roundtrip_ms=round((monotonic()-started)*1000,3),
                     control_sequence=self.sequence,control_bytes=len(packet))
+
+
+class AdaptiveFpsThrottler:
+    """Throttler de FPS adaptativo para otimização de CPU/GPU em multi-mesas (6+)."""
+    def __init__(self, idle_fps: int = 10, active_fps: int = 30):
+        self.idle_fps = idle_fps
+        self.active_fps = active_fps
+        self.last_capture_times: Dict[str, float] = {}
+
+    def should_capture(self, table_id: str, is_hero_turn: bool) -> bool:
+        """Determina se o frame da mesa deve ser capturado com base no FPS alvo."""
+        target_fps = self.active_fps if is_hero_turn else self.idle_fps
+        interval = 1.0 / target_fps
+        now = monotonic()
+        
+        last = self.last_capture_times.get(table_id, 0.0)
+        if (now - last) >= interval:
+            self.last_capture_times[table_id] = now
+            return True
+        return False

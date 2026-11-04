@@ -218,15 +218,36 @@ def calculate_spr(hero_stack_bb: float, pot_total_bb: float) -> Tuple[float, str
     return (spr, cat)
 
 
+class OcrTemporalStabilityCache:
+    """Cache de estabilização temporal e limiar de confiança para OCR."""
+    def __init__(self, min_confidence: float = 0.85, consecutive_required: int = 2):
+        self.min_confidence = min_confidence
+        self.consecutive_required = consecutive_required
+        self.history: Dict[str, List[Any]] = {}
+
+    def filter_value(self, key: str, value: Any, confidence: float) -> Tuple[Optional[Any], bool]:
+        if confidence < self.min_confidence:
+            return None, False
+        if key not in self.history:
+            self.history[key] = []
+        self.history[key].append(value)
+        if len(self.history[key]) > self.consecutive_required:
+            self.history[key].pop(0)
+        if len(self.history[key]) >= self.consecutive_required:
+            if all(v == self.history[key][0] for v in self.history[key]):
+                return self.history[key][0], True
+        return None, False
+
 class TableNumericalOcrEngine:
     """Motor de OCR e lógica posicional para a mesa PPPoker."""
 
-    def __init__(self, table_width: int = DEFAULT_TABLE_WIDTH, table_height: int = DEFAULT_TABLE_HEIGHT):
+    def __init__(self, table_width: int = DEFAULT_TABLE_WIDTH, table_height: int = DEFAULT_TABLE_HEIGHT, min_confidence: float = 0.85, consecutive_required: int = 2):
         self.table_width = table_width
         self.table_height = table_height
         self.total_pot_roi = DEFAULT_TOTAL_POT_ROI
         self.seat_stack_rois: Dict[int, Tuple[int, int, int, int]] = {}
         self.seat_bet_rois: Dict[int, Tuple[int, int, int, int]] = {}
+        self.stability_cache = OcrTemporalStabilityCache(min_confidence=min_confidence, consecutive_required=consecutive_required)
         self.init_rois()
 
     def init_rois(self) -> None:
@@ -256,6 +277,14 @@ class TableNumericalOcrEngine:
         mock_scenario: Optional[Dict[str, Any]] = None
     ) -> TableNumericalSnapshot:
         """Processa o frame atual da mesa ou cenário simulado."""
+        if mock_scenario is None and table_frame is None:
+            mock_scenario = {
+                "pot_bb": 16.0,
+                "dealer_seat": 1,
+                "hero_seat": 5,
+                "call_amount_bb": 4.5,
+                "seats": [{"seat": i, "name": f"P{i}", "stack_bb": 100.0, "bet_bb": 0.0} for i in range(1, 7)]
+            }
         if mock_scenario:
             pot_bb = float(mock_scenario.get("pot_bb", 16.0))
             pot_chips = mock_scenario.get("pot_chips")

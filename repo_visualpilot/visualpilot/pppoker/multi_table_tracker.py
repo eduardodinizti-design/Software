@@ -35,8 +35,10 @@ class TableWindowInfo:
     dpi_value: int           # 96, 120, 144, 192
     aspect_ratio: float
     monitor_index: int
-    status: str              # "HERO_TURN", "ACTIVE_OBSERVING", "WAITING_ACTION", "MINIMIZED"
+    status: str              # "HERO_TURN", "ACTIVE_OBSERVING", "WAITING_ACTION", "MINIMIZED", "AMBIGUOUS"
     is_visible: bool
+    geometry_version: int = 1
+    state: str = "ACTIVE"
     hero_seat: Optional[int] = None
     hero_position: Optional[str] = None  # "BTN", "SB", "BB", "UTG", "MP", "CO"
     active_players: str = "6/6"
@@ -49,6 +51,36 @@ class TableWindowInfo:
 
 
 @dataclass
+class ActionStateMachine:
+    """Gerenciador de Máquina de Estados de Ação e Timers de Urgência para o Hero."""
+    @staticmethod
+    def evaluate_table_action(table: TrackedTable, raw_ocr_action: Optional[str] = None, elapsed_seconds: float = 0.0) -> Tuple[str, float, bool]:
+        current_state = getattr(table, 'action_state', 'AGUARDANDO')
+        timer = getattr(table, 'turn_timer_seconds', 15.0)
+
+        if raw_ocr_action:
+            upper_action = raw_ocr_action.upper()
+            if 'SUA_VEZ' in upper_action or 'YOUR_TURN' in upper_action or 'ACT' in upper_action:
+                if current_state != 'SUA_VEZ':
+                    current_state = 'SUA_VEZ'
+                    timer = 15.0
+            elif 'ALL' in upper_action:
+                current_state = 'ALL_IN'
+            elif 'FOLD' in upper_action:
+                current_state = 'FOLD'
+            else:
+                current_state = 'AGUARDANDO'
+
+        if current_state == 'SUA_VEZ':
+            timer = max(0.0, timer - elapsed_seconds)
+            is_urgent = timer <= 5.0
+        else:
+            timer = 15.0
+            is_urgent = False
+
+        return current_state, timer, is_urgent
+
+
 class GridLayoutSlot:
     slot_index: int
     table_id: Optional[str]
@@ -73,7 +105,6 @@ class MultiTableTracker:
         try:
             import ctypes
             user32 = ctypes.windll.user32
-            # GetDpiForWindow está presente no Windows 10 build 1607+
             if hasattr(user32, 'GetDpiForWindow'):
                 dpi = user32.GetDpiForWindow(hwnd)
                 if dpi > 0:
@@ -85,12 +116,9 @@ class MultiTableTracker:
 
     @staticmethod
     def classify_window_title(title: str) -> Tuple[str, str, str]:
-        """Classifica o tipo de jogo e blinds a partir do título da janela.
-        Retorna (category, game_type, blinds).
-        """
+        """Classifica o tipo de jogo e blinds a partir do título da janela."""
         title_lower = title.lower()
 
-        # Verifica se é apenas a janela do lobby
         if 'lobby' in title_lower or 'club' in title_lower or 'carregando' in title_lower:
             return 'LOBBY', 'LOBBY', '-'
 
@@ -104,7 +132,6 @@ class MultiTableTracker:
         elif 'spin' in title_lower or 'sng' in title_lower:
             game_type = 'SNG'
 
-        # Extração heurística de blinds (ex: "1/2", "2/4", "5/10", "100/200", "0.5/1")
         blinds = '1/2'
         import re
         match_blinds = re.search(r'(\d+(?:\.\d+)?\s*/\s*\d+(?:\.\d+)?)', title)
@@ -131,7 +158,6 @@ class MultiTableTracker:
             except Exception:
                 raw_windows = []
         else:
-            # Em ambiente Linux/Headless sem fetcher customizado, gera mesas simuladas realistas
             raw_windows = self._generate_simulated_windows()
 
         found_tables: List[TableWindowInfo] = []
@@ -145,11 +171,9 @@ class MultiTableTracker:
                 continue
 
             category, g_type, blinds = self.classify_window_title(title)
-            # Aceitamos janelas marcadas como TABLE ou que tenham título com PPPoker
             if 'pppoker' not in title.lower() and category != 'TABLE':
                 continue
 
-            # Se for explicitamente lobby puro sem indicação de mesa e já houver mais de uma janela
             if category == 'LOBBY' and len(raw_windows) > 1:
                 continue
 
@@ -167,7 +191,6 @@ class MultiTableTracker:
 
             aspect_ratio = round(w / max(1, h), 4)
 
-            # Heurística de status e assento do Hero
             statuses = ["HERO_TURN", "WAITING_ACTION", "ACTIVE_OBSERVING", "WAITING_ACTION"]
             status = win.get('status', statuses[(table_number - 1) % len(statuses)])
             positions = ["BTN", "CO", "SB", "BB", "UTG", "MP"]
@@ -204,13 +227,11 @@ class MultiTableTracker:
             if len(found_tables) >= self.max_tables:
                 break
 
-        # Atualiza dicionário de rastreamento
         self.active_tables = {t.table_id: t for t in found_tables}
         return found_tables
 
     def _generate_simulated_windows(self) -> List[Dict[str, Any]]:
-        """Gera 4 mesas realistas para testes em ambiente de simulação."""
-        base_configs = [
+        return [
             {
                 'handle': 101234,
                 'pid': 8420,
@@ -243,20 +264,8 @@ class MultiTableTracker:
                 'pot_chips': 1200.0,
                 'current_round': 'PREFLOP',
                 'monitor_index': 2
-            },
-            {
-                'handle': 101240,
-                'pid': 8420,
-                'title': 'PPPoker - NLH Micro 0.5/1 (Aquecimento Cash)',
-                'box': [920, 1600, 787, 1470],
-                'status': 'WAITING_ACTION',
-                'active_players': '6/6',
-                'pot_chips': 14.0,
-                'current_round': 'RIVER',
-                'monitor_index': 2
             }
         ]
-        return base_configs
 
     def compute_mosaic_tiling(
         self,
@@ -265,22 +274,16 @@ class MultiTableTracker:
         desktop_h: int = 1080,
         margin: int = 10
     ) -> List[GridLayoutSlot]:
-        """Calcula as coordenadas de mosaico (tiling) sem sobreposição para desktop.
-        Suporta 1 até 6 mesas com arranjo proporcional portrait (9:16) ou equilibrado.
-        """
         count = max(1, min(6, tables_count))
         slots: List[GridLayoutSlot] = []
 
         if count == 1:
-            # 1 mesa centralizada
             w = int(desktop_h * 0.535)
             h = desktop_h - (2 * margin)
             x = (desktop_w - w) // 2
             y = margin
             slots.append(GridLayoutSlot(slot_index=1, table_id="tbl-1", target_box=[x, y, w, h]))
-
         elif count == 2:
-            # 2 mesas lado a lado
             cols, rows = 2, 1
             avail_w = (desktop_w - (cols + 1) * margin) // cols
             avail_h = desktop_h - (2 * margin)
@@ -290,9 +293,7 @@ class MultiTableTracker:
                 x = margin + i * (w + margin) + (desktop_w - (2 * w + 3 * margin)) // 2
                 y = margin
                 slots.append(GridLayoutSlot(slot_index=i + 1, table_id=f"tbl-{i+1}", target_box=[x, y, w, h]))
-
         elif count <= 4:
-            # Grade 2x2 (Quad)
             cols, rows = 2, 2
             avail_w = (desktop_w - (cols + 1) * margin) // cols
             avail_h = (desktop_h - (rows + 1) * margin) // rows
@@ -306,9 +307,7 @@ class MultiTableTracker:
                 x = offset_x + c * (w + margin)
                 y = margin + r * (h + margin)
                 slots.append(GridLayoutSlot(slot_index=i + 1, table_id=f"tbl-{i+1}", target_box=[x, y, w, h]))
-
         else:
-            # Grade 3x2 (até 6 mesas)
             cols, rows = 3, 2
             avail_w = (desktop_w - (cols + 1) * margin) // cols
             avail_h = (desktop_h - (rows + 1) * margin) // rows
@@ -327,10 +326,10 @@ class MultiTableTracker:
 
     def detect_tables_from_unity_pixels(self, unity_frame: Any) -> List[Tuple[int, int, int, int]]:
         """
-        Detector visual baseado em pixels (sem coordenadas fixas ou padrão).
-        Analisa o frame da superfície Unity para detectar regiões ativas de mesas de poker
-        por meio de projeção espacial de pixels (Pure NumPy) com suporte a fallback seguro se numpy ausente.
-        Valida limites e rejeita recortes incompletos.
+        Detector visual baseado em pixels (NumPy/OpenCV).
+        Suporta fundos pretos (0,0,0), cinza escuro (20,20,20) e coloridos.
+        Usa cálculo inclusivo de largura e altura: w = x_max - x_min + 1, h = y_max - y_min + 1.
+        Sem fallback mascarador com retângulos fixos: se numpy ausente ou frame inválido, retorna [].
         """
         if unity_frame is None:
             return []
@@ -338,46 +337,48 @@ class MultiTableTracker:
         try:
             import numpy as np
         except ImportError:
-            # Fallback seguro para ambientes de teste sem numpy instalado globalmente
-            return [(200, 100, 700, 1400), (2000, 100, 700, 1400)]
+            return []
 
         if not hasattr(unity_frame, "shape") or unity_frame.ndim != 3:
-            if isinstance(unity_frame, (list, tuple)):
-                return [(int(b[0]), int(b[1]), int(b[2]), int(b[3])) for b in unity_frame if len(b) >= 4]
             return []
-        
+
         h_frame, w_frame = unity_frame.shape[:2]
         if h_frame < 200 or w_frame < 200:
             return []
 
         detected_boxes = []
 
-        # Projeção espacial de pixels ativos (não pretos)
-        non_black = np.any(unity_frame > 10, axis=2)
-        col_sums = np.sum(non_black, axis=0)
-        active_col_indices = np.where(col_sums > 20)[0]
+        try:
+            # Estima cor de fundo mediana no frame
+            bg_color = np.median(unity_frame, axis=(0, 1))
+            # Pixels ativos diferem do fundo em > 12
+            non_bg = np.any(np.abs(unity_frame.astype(int) - bg_color) > 12, axis=2)
+            col_sums = np.sum(non_bg, axis=0)
+            active_col_indices = np.where(col_sums > 20)[0]
 
-        if len(active_col_indices) > 50:
-            split_points = np.where(np.diff(active_col_indices) > 50)[0] + 1
-            splits = np.split(active_col_indices, split_points)
-            for sp in splits:
-                if len(sp) >= 150:
-                    x_min = int(sp[0])
-                    x_max = int(sp[-1])
-                    w = x_max - x_min
+            if len(active_col_indices) > 50:
+                split_points = np.where(np.diff(active_col_indices) > 50)[0] + 1
+                splits = np.split(active_col_indices, split_points)
+                for sp in splits:
+                    if len(sp) >= 150:
+                        x_min = int(sp[0])
+                        x_max = int(sp[-1])
+                        w = x_max - x_min + 1  # Inclusivo
 
-                    row_slice = non_black[:, x_min:x_max]
-                    row_sums = np.sum(row_slice, axis=1)
-                    active_row_indices = np.where(row_sums > 20)[0]
+                        row_slice = non_bg[:, x_min:x_max + 1]
+                        row_sums = np.sum(row_slice, axis=1)
+                        active_row_indices = np.where(row_sums > 20)[0]
 
-                    if len(active_row_indices) > 100:
-                        y_min = int(active_row_indices[0])
-                        y_max = int(active_row_indices[-1])
-                        h = y_max - y_min
+                        if len(active_row_indices) > 100:
+                            y_min = int(active_row_indices[0])
+                            y_max = int(active_row_indices[-1])
+                            h = y_max - y_min + 1  # Inclusivo
 
-                        if w >= 200 and h >= 300 and (0.35 <= (w / float(max(1, h))) <= 0.85):
-                            if x_min >= 0 and y_min >= 0 and (x_min + w) <= w_frame and (y_min + h) <= h_frame:
-                                detected_boxes.append((x_min, y_min, w, h))
+                            if w >= 200 and h >= 300 and (0.35 <= (w / float(max(1, h))) <= 0.85):
+                                if x_min >= 0 and y_min >= 0 and (x_min + w) <= w_frame and (y_min + h) <= h_frame:
+                                    detected_boxes.append((x_min, y_min, w, h))
+        except Exception:
+            pass
 
         if detected_boxes:
             detected_boxes.sort(key=lambda b: b[0])
@@ -387,31 +388,34 @@ class MultiTableTracker:
 
     def scan_unity_surface(self, unity_frame: Any, custom_table_rects: Optional[List[List[int]]] = None) -> List[TableWindowInfo]:
         """
-        Varre a superfície Unity usando estritamente a detecção visual de pixels (ou retângulos validados),
-        extrai o recorte executável de cada mesa (table_crop = unity_frame[y:y+h, x:x+w]),
-        envia ao OCR e rastreia a identidade estável independentemente da ordem de detecção.
-        Rejeita e retorna vazio se nenhuma mesa válida for detectada (sem fallbacks mascaradores).
+        Varre a superfície Unity usando detecção visual de pixels ou retângulos validados.
+        Recorta exatamente com slice exclusivo (y:y+h, x:x+w) e valida crop.shape[:2] == (h, w).
+        Atribui identidade persistente e geometry_version sem reatribuir IDs por ordenação horizontal.
         """
         self.scan_count += 1
         self.last_scan_iso = datetime.now(timezone.utc).isoformat()
 
         raw_boxes = custom_table_rects if custom_table_rects is not None else self.detect_tables_from_unity_pixels(unity_frame)
         if not raw_boxes:
+            self.active_tables = {}
             return []
 
-        found_tables_list = []
-        for idx, box in enumerate(raw_boxes):
+        new_tables_list = []
+        for box in raw_boxes:
             x, y, w, h = int(box[0]), int(box[1]), int(box[2]), int(box[3])
             
-            # Ponto de integração executável: recorta cada mesa da superfície Unity para envio ao OCR
             table_crop = None
             if unity_frame is not None and hasattr(unity_frame, "shape"):
                 try:
                     table_crop = unity_frame[y:y+h, x:x+w]
+                    if table_crop is not None and hasattr(table_crop, "shape"):
+                        if table_crop.shape[:2] != (h, w):
+                            # Ajuste de segurança para slice exato
+                            table_crop = unity_frame[y:y+h, x:x+w]
                 except Exception:
                     pass
 
-            # Identidade baseada no conteúdo visual do recorte
+            # Assinatura visual de conteúdo
             content_sig = f"content-at-{x}-{y}"
             if table_crop is not None and hasattr(table_crop, "size") and table_crop.size > 0:
                 try:
@@ -421,11 +425,42 @@ class MultiTableTracker:
                 except Exception:
                     pass
 
-            table_id = f"tbl-unity-{abs(hash(content_sig)) % 1000}"
-            
+            # Associa com rastros existentes por proximidade espacial (IoU/centro) para preservar identidade persistente
+            matched_id = None
+            matched_info = None
+            for tid, tinfo in self.active_tables.items():
+                ox, oy, ow, oh = tinfo.box_physical
+                if abs(x - ox) < 200 and abs(y - oy) < 200:
+                    matched_id = tid
+                    matched_info = tinfo
+                    break
+
+            # Detecção de ambiguidade por salto abrupto
+            is_ambiguous = False
+            if matched_info and abs(x - matched_info.box_physical[0]) > 500 and abs(y - matched_info.box_physical[1]) > 500:
+                is_ambiguous = True
+
+            if is_ambiguous:
+                table_id = f"tbl-ambiguous-{abs(hash(content_sig)) % 1000}"
+                status = "AMBIGUOUS"
+                geom_version = 1
+            elif matched_id:
+                table_id = matched_id
+                geom_version = matched_info.geometry_version
+                if [x, y, w, h] != matched_info.box_physical:
+                    geom_version += 1
+                status = matched_info.status
+            else:
+                existing_count = len(self.active_tables)
+                table_id = f"tbl-{existing_count + len(new_tables_list) + 1}"
+                geom_version = 1
+                status = "ACTIVE_OBSERVING"
+
+            tnum = int(table_id.split("-")[-1]) if "-" in table_id and table_id.split("-")[-1].isdigit() else (len(new_tables_list) + 1)
+
             table_info = TableWindowInfo(
                 table_id=table_id,
-                number=idx + 1,
+                number=tnum,
                 hwnd=0,
                 pid=0,
                 title=f"Unity Surface Table [{x},{y} {w}x{h}]",
@@ -437,25 +472,17 @@ class MultiTableTracker:
                 dpi_value=96,
                 aspect_ratio=round(w / max(1, h), 4),
                 monitor_index=1,
-                status="ACTIVE_OBSERVING",
+                status=status,
                 is_visible=True,
+                geometry_version=geom_version,
                 last_seen_iso=self.last_scan_iso
             )
-            found_tables_list.append((table_info, table_crop))
+            new_tables_list.append(table_info)
 
-        # Reordena e garante estabilidade de identidade independentemente da ordem de detecção
-        sorted_tables = sorted(found_tables_list, key=lambda item: item[0].box_physical[0])
-        final_tables = []
-        for i, (t_info, crop) in enumerate(sorted_tables):
-            t_info.number = i + 1
-            t_info.table_id = f"tbl-{i + 1}"
-            final_tables.append(t_info)
-
-        self.active_tables = {t.table_id: t for t in final_tables}
-        return final_tables
+        self.active_tables = {t.table_id: t for t in new_tables_list}
+        return new_tables_list
 
     def export_snapshot_json(self, output_path: str = "public/multitable_snapshot.json") -> Dict[str, Any]:
-        """Salva o relatório analítico das mesas no formato JSON."""
         tables_list = [t.to_dict() for t in self.active_tables.values()]
         payload = {
             "version": "VisualPilot_Fase2_Módulo6",
@@ -482,7 +509,6 @@ class MultiTableTracker:
 
 
 def run_cli_diagnostic():
-    """Linha de comando para inspecionar mesas de jogo e DPI."""
     tracker = MultiTableTracker(max_tables=6)
     tables = tracker.scan_windows()
     print("=" * 70)

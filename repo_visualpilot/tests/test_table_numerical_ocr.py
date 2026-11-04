@@ -97,6 +97,22 @@ class TestTableNumericalOcr(unittest.TestCase):
         self.assertGreater(snap.total_pot_bb, 0)
         self.assertEqual(snap.hero_seat, 5)
 
+    def test_ocr_temporal_stability_cache(self):
+        """Testa o filtro de confiança e estabilização temporal do OCR."""
+        from visualpilot.pppoker.table_numerical_ocr import OcrTemporalStabilityCache
+        cache = OcrTemporalStabilityCache(min_confidence=0.80, consecutive_required=2)
+        
+        val, stable = cache.filter_value("pot", 15.0, 0.60)
+        self.assertFalse(stable)
+        self.assertIsNone(val)
+
+        val, stable = cache.filter_value("pot", 15.0, 0.95)
+        self.assertFalse(stable)
+
+        val, stable = cache.filter_value("pot", 15.0, 0.92)
+        self.assertTrue(stable)
+        self.assertEqual(val, 15.0)
+
 
 if __name__ == "__main__":
     unittest.main()

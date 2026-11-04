@@ -735,10 +735,23 @@ class TableBotRunner:
                         print("=" * 70 + "\n")
                         time.sleep(1.5)
 
-                # 2. Captura o frame real da janela
+                # 2. Captura o frame real da janela e varre a superfície Unity visualmente
                 frame = capture_window_frame(win_rect)
+                tracked_tables = []
                 if frame is not None:
                     self.last_frame_b64 = encode_frame_thumbnail_b64(frame)
+                    tracked_tables = self.multi_table_tracker.scan_unity_surface(frame)
+                    for t_info in tracked_tables:
+                        if t_info.status == "AMBIGUOUS":
+                            logger.warning("Estado AMBIGUOUS detectado para mesa %s (versão %d). Histórico e OCR suspensos.", t_info.table_id, t_info.geometry_version)
+                            continue
+                        x, y, w, h = t_info.box_physical
+                        try:
+                            table_crop = frame[y:y+h, x:x+w]
+                            if table_crop.shape[:2] == (h, w):
+                                pass
+                        except Exception:
+                            pass
 
                 # 3. Inspeciona ações e se é a vez do Hero no frame real
                 action_snap = self.action_detector.detect_actions(table_frame=frame)

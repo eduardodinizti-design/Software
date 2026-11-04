@@ -41,6 +41,13 @@ class TrackedTable:
         return asdict(self)
 
 
+@dataclass
+class GridLayoutSlot:
+    slot_index: int
+    table_id: Optional[str]
+    target_box: List[int]
+
+
 class MultiTableTracker:
     """Rastreador dinâmico multi-mesas para superfícies UnityWndClass de alta resolução."""
     def __init__(self, max_tables: int = 6):
@@ -188,3 +195,40 @@ class MultiTableTracker:
             "tracks": [t.to_dict() for t in self.tracks.values()],
             "recent_events": self.events_log[-20:]
         }
+
+    def compute_mosaic_tiling(self, tables_count: int, desktop_w: int = 1920, desktop_h: int = 1080) -> List[GridLayoutSlot]:
+        """Calcula o posicionamento automático em mosaico (Grid 2x2, 3x2, etc.) para N mesas sem sobreposição."""
+        if tables_count <= 0:
+            return []
+        if tables_count == 1:
+            cols, rows = 1, 1
+        elif tables_count == 2:
+            cols, rows = 2, 1
+        elif tables_count <= 4:
+            cols, rows = 2, 2
+        elif tables_count <= 6:
+            cols, rows = 3, 2
+        elif tables_count <= 9:
+            cols, rows = 3, 3
+        else:
+            cols, rows = 4, 3
+
+        slot_w = desktop_w // cols
+        slot_h = desktop_h // rows
+        table_w = int(slot_w * 0.90)
+        table_h = int(slot_h * 0.95)
+
+        slots = []
+        active_ids = list(self.tracks.keys())
+        for idx in range(tables_count):
+            c = idx % cols
+            r = idx // cols
+            x = c * slot_w + (slot_w - table_w) // 2
+            y = r * slot_h + (slot_h - table_h) // 2
+            t_id = active_ids[idx] if idx < len(active_ids) else f"tbl-{idx+1}"
+            slots.append(GridLayoutSlot(
+                slot_index=idx + 1,
+                table_id=t_id,
+                target_box=[x, y, table_w, table_h]
+            ))
+        return slots
