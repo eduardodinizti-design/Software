@@ -431,9 +431,9 @@ class MultiTableTracker:
             old = previous.get(signature)
             anchor = anchors[signature]
             anchor_old = previous_anchors.get(anchor)
-            # Require identical geometry and uniqueness in consecutive frames.
-            # Movement + changing content remains ambiguous.
-            if old is None and anchor_counts[anchor] == 1 and anchor_old is not None and anchor_old[1] == box:
+            # Exact unique upper-region evidence can follow translation when
+            # dimensions remain identical. Do not infer identity from proximity.
+            if old is None and anchor_counts[anchor] == 1 and anchor_old is not None and anchor_old[1][2:] == box[2:]:
                 old = anchor_old
             bx, by, bw, bh = box
             touches_viewport = bx == 0 or by == 0 or bx+bw == unity_frame.shape[1] or by+bh == unity_frame.shape[0]

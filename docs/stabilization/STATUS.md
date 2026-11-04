@@ -231,3 +231,19 @@ Limites: o ensaio ainda usa controles removidos artificialmente, sem movimento
 simultâneo ou sequência real de jogo. Mudanças reais nos pixels superiores podem
 bloquear a associação. Não é identidade semântica de torneio, homologação Windows
 ou liberação operacional. OCR continua bloqueado.
+
+## 2026-11-04 — Movimento simultâneo a mudança de conteúdo inferior
+
+Cinco testes novos em test_moving_content.py usam duas regiões sintéticas com
+marcadores superiores distintos e alterações inferiores. Antes da correção, os
+cenários de translação e troca de posição geravam novos IDs. A associação por
+âncora agora exige dimensões idênticas em vez de caixa inteira idêntica; preserva
+exigência de hash superior exato, unicidade e quadros consecutivos. Não usa
+proximidade como prova de identidade.
+
+Resultado: translação+conteúdo e troca+conteúdo preservam IDs com geometry_version=2.
+Âncoras iguais, mudança superior e intervalo sem captura permanecem AMBIGUOUS.
+18 testes passaram nesta etapa: 5 novos, 10 observador, 3 transição de controles.
+Nenhum deles comprova rastreamento semântico em uma sessão real. Conteúdo superior
+animado, redimensionamento simultâneo e alteração de layout permanecem pendentes.
+OCR continua bloqueado e não houve teste nativo Windows ou novo instalador.
