@@ -137,3 +137,23 @@ zero candidatos; captura com controles multicoloridos a 75% perde parte do topo.
 Os testes nas escalas nativas passaram, e multicolorido a 125% também passou.
 Essas falhas conhecidas não são aprovação: próxima etapa deve resolvê-las sem
 remover os testes. OCR continua bloqueado; não houve homologação Windows.
+
+## 2026-11-04 — Duas regressões de escala corrigidas
+
+A máscara azul recebe abertura morfológica 3×3 quando um componente toca a borda
+esquerda, eliminando a conexão fina introduzida pela redução da captura sem
+controles. O filtro de limites do viewport permanece obrigatório. Na localização
+ancorada, bandas horizontais menores que 1,5% da largura dos controles são removidas
+antes de seguir a superfície para cima: isso impede incorporar uma linha fina da
+barra de título ao recorte na escala de 75%.
+
+Os dois expectedFailure foram removidos. Reintroduzidas as escalas 50% e 75% nas
+verificações de geometria e cobertura. Resultado: 26 testes aprovados, sem falhas
+esperadas (9 limites reais/composições, 7 observador, 6 contrato Windows, 4 avaliador).
+Inventário permanece com quatro capturas gerando candidatos e 14 sem candidatos;
+referência completa anotada permanece PASS. Variações de escala são derivadas das
+mesmas capturas, não homologação Windows ou evidência de todos os layouts.
+
+Permanece pendente validar identidade com mudanças reais de conteúdo e transições
+entre controles visíveis/ausentes, além de OCR. As correções de segmentação não
+liberam ações nem removem o bloqueio de OCR. Nenhum instalador recompilado.

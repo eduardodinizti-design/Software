@@ -59,7 +59,7 @@ class RealBoundaries(unittest.TestCase):
         from visualpilot.pppoker.multi_table_tracker import MultiTableTracker
         root=Path(__file__).resolve().parents[2]
         im=Image.open(root/'public/assets/aistudio/image_2da5ef3e.png').convert('RGB')
-        for scale in (1,1.25):
+        for scale in (.75,1,1.25):
             with self.subTest(scale=scale):
                 resized=im.resize((round(im.width*scale),round(im.height*scale)))
                 boxes=MultiTableTracker().detect_tables_from_unity_pixels(np.array(resized))
@@ -74,7 +74,7 @@ class RealBoundaries(unittest.TestCase):
         from visualpilot.pppoker.multi_table_tracker import MultiTableTracker
         root=Path(__file__).resolve().parents[2]
         im=Image.open(root/'public/assets/aistudio/_4CCF9DD1-A945-450A-9C7C-2334847FE3E4__02419b13.png').convert('RGB')
-        for scale in (1,):
+        for scale in (.5,1):
             with self.subTest(scale=scale):
                 frame=np.array(im.resize((round(im.width*scale),round(im.height*scale))))
                 boxes=MultiTableTracker().detect_tables_from_unity_pixels(frame)
@@ -85,16 +85,14 @@ class RealBoundaries(unittest.TestCase):
                 self.assertGreaterEqual(x+w,713*scale)
                 self.assertGreaterEqual(y+h,1177*scale)
 
-    @unittest.expectedFailure
-    def test_known_half_scale_without_controls(self):
+    def test_half_scale_without_controls(self):
         from visualpilot.pppoker.multi_table_tracker import MultiTableTracker
         root=Path(__file__).resolve().parents[2]
         im=Image.open(root/'public/assets/aistudio/_4CCF9DD1-A945-450A-9C7C-2334847FE3E4__02419b13.png').convert('RGB')
         boxes=MultiTableTracker().detect_tables_from_unity_pixels(np.array(im.resize((1240,645))))
         self.assertEqual(len(boxes),1)
 
-    @unittest.expectedFailure
-    def test_known_three_quarter_scale_top_boundary(self):
+    def test_three_quarter_scale_top_boundary(self):
         from visualpilot.pppoker.multi_table_tracker import MultiTableTracker
         root=Path(__file__).resolve().parents[2]
         im=Image.open(root/'public/assets/aistudio/image_2da5ef3e.png').convert('RGB')

@@ -44,6 +44,13 @@ def detect_control_anchored_tables(rgb):
         button_top = min(b[1] for b in group)
         # Follow blue surface upward; short interruptions from cards/HUD are allowed.
         rows = blue[:button_top,x0:x1].mean(axis=1) >= .30
+        # Thin title-bar highlights must not bridge the client/header gap.
+        # Require a sustained horizontal band, scaled to the observed width.
+        minimum_band = max(2, round(span*.015))
+        edges = np.diff(np.r_[False, rows, False].astype(np.int8))
+        for first, last in zip(np.flatnonzero(edges == 1), np.flatnonzero(edges == -1)):
+            if last-first < minimum_band:
+                rows[first:last] = False
         hits = np.flatnonzero(rows)
         if not len(hits) or button_top-hits[-1] > span*.2:
             continue

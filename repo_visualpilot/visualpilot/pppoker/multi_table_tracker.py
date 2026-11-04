@@ -347,6 +347,10 @@ class MultiTableTracker:
         # A cyan desktop can connect to the broad felt mask. A separate blue
         # band recovers isolated candidates without changing broad-mask behavior.
         blue_mask = cv2.inRange(hsv, (105,45,30), (130,255,255))
+        # Remove one-pixel bridges introduced by resampling, without accepting
+        # contours that actually touch the viewport boundary.
+        if any(cv2.boundingRect(c)[0] == 0 for c in cv2.findContours(blue_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[0]):
+            blue_mask = cv2.morphologyEx(blue_mask, cv2.MORPH_OPEN, np.ones((3,3), np.uint8))
         blue_contours, _ = cv2.findContours(blue_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         contours = list(contours) + list(blue_contours)
         height, width = unity_frame.shape[:2]
