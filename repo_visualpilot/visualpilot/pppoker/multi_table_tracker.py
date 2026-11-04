@@ -37,6 +37,7 @@ class TableWindowInfo:
     monitor_index: int
     status: str              # "HERO_TURN", "ACTIVE_OBSERVING", "WAITING_ACTION", "MINIMIZED"
     is_visible: bool
+    geometry_version: int = 1
     hero_seat: Optional[int] = None
     hero_position: Optional[str] = None  # "BTN", "SB", "BB", "UTG", "MP", "CO"
     active_players: str = "6/6"
@@ -59,6 +60,8 @@ class MultiTableTracker:
     """Motor de detecção, rastreamento e cálculo de mosaico de até 6 mesas simultâneas."""
 
     def __init__(self, max_tables: int = 6):
+        self._visual_tracks = {}
+        self._next_visual_id = 1
         self.max_tables = max_tables
         self.active_tables: Dict[str, TableWindowInfo] = {}
         self.scan_count: int = 0
@@ -326,133 +329,80 @@ class MultiTableTracker:
         return slots
 
     def detect_tables_from_unity_pixels(self, unity_frame: Any) -> List[Tuple[int, int, int, int]]:
+        """Experimental felt candidates, NOT proof of a complete poker table.
+
+        Real-screen calibration remains required. No synthetic fallback.
         """
-        Detector visual baseado em pixels (sem coordenadas fixas ou padrão).
-        Analisa o frame da superfície Unity para detectar regiões ativas de mesas de poker
-        por meio de projeção espacial de pixels (Pure NumPy) com suporte a fallback seguro se numpy ausente.
-        Valida limites e rejeita recortes incompletos.
-        """
-        if unity_frame is None:
+        import numpy as np
+        import cv2
+        if not isinstance(unity_frame, np.ndarray) or unity_frame.ndim != 3 or unity_frame.shape[2] != 3:
             return []
-
-        try:
-            import numpy as np
-        except ImportError:
-            # Fallback seguro para ambientes de teste sem numpy instalado globalmente
-            return [(200, 100, 700, 1400), (2000, 100, 700, 1400)]
-
-        if not hasattr(unity_frame, "shape") or unity_frame.ndim != 3:
-            if isinstance(unity_frame, (list, tuple)):
-                return [(int(b[0]), int(b[1]), int(b[2]), int(b[3])) for b in unity_frame if len(b) >= 4]
+        if unity_frame.dtype != np.uint8 or unity_frame.size == 0:
             return []
-        
-        h_frame, w_frame = unity_frame.shape[:2]
-        if h_frame < 200 or w_frame < 200:
-            return []
+        hsv = cv2.cvtColor(unity_frame, cv2.COLOR_RGB2HSV)
+        mask = cv2.inRange(hsv, (35, 45, 30), (130, 255, 255))
+        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        height, width = unity_frame.shape[:2]
+        boxes = []
+        for contour in contours:
+            x, y, w, h = cv2.boundingRect(contour)
+            if w >= 200 and h >= 300 and .35 <= w / h <= .85:
+                # Touching the viewport may mean a clipped table; do not approve it.
+                if x > 0 and y > 0 and x+w < width and y+h < height:
+                    boxes.append((x, y, w, h))
+        return sorted(boxes)[:self.max_tables]
 
-        detected_boxes = []
+    def scan_unity_surface(self, unity_frame: Any, custom_table_rects=None) -> List[TableWindowInfo]:
+        """Conservative diagnostic association, not gameplay authorization.
 
-        # Projeção espacial de pixels ativos (não pretos)
-        non_black = np.any(unity_frame > 10, axis=2)
-        col_sums = np.sum(non_black, axis=0)
-        active_col_indices = np.where(col_sums > 20)[0]
-
-        if len(active_col_indices) > 50:
-            split_points = np.where(np.diff(active_col_indices) > 50)[0] + 1
-            splits = np.split(active_col_indices, split_points)
-            for sp in splits:
-                if len(sp) >= 150:
-                    x_min = int(sp[0])
-                    x_max = int(sp[-1])
-                    w = x_max - x_min
-
-                    row_slice = non_black[:, x_min:x_max]
-                    row_sums = np.sum(row_slice, axis=1)
-                    active_row_indices = np.where(row_sums > 20)[0]
-
-                    if len(active_row_indices) > 100:
-                        y_min = int(active_row_indices[0])
-                        y_max = int(active_row_indices[-1])
-                        h = y_max - y_min
-
-                        if w >= 200 and h >= 300 and (0.35 <= (w / float(max(1, h))) <= 0.85):
-                            if x_min >= 0 and y_min >= 0 and (x_min + w) <= w_frame and (y_min + h) <= h_frame:
-                                detected_boxes.append((x_min, y_min, w, h))
-
-        if detected_boxes:
-            detected_boxes.sort(key=lambda b: b[0])
-            return detected_boxes
-
-        return []
-
-    def scan_unity_surface(self, unity_frame: Any, custom_table_rects: Optional[List[List[int]]] = None) -> List[TableWindowInfo]:
+        Exact normalized appearance can preserve identity under translation.
+        Changed/indistinguishable appearance is suspended, never guessed.
         """
-        Varre a superfície Unity usando estritamente a detecção visual de pixels (ou retângulos validados),
-        extrai o recorte executável de cada mesa (table_crop = unity_frame[y:y+h, x:x+w]),
-        envia ao OCR e rastreia a identidade estável independentemente da ordem de detecção.
-        Rejeita e retorna vazio se nenhuma mesa válida for detectada (sem fallbacks mascaradores).
-        """
+        import numpy as np
+        import cv2
+        import hashlib
+        from collections import Counter
         self.scan_count += 1
         self.last_scan_iso = datetime.now(timezone.utc).isoformat()
-
-        raw_boxes = custom_table_rects if custom_table_rects is not None else self.detect_tables_from_unity_pixels(unity_frame)
-        if not raw_boxes:
+        if not isinstance(unity_frame, np.ndarray) or unity_frame.ndim != 3 or unity_frame.shape[2] != 3 or unity_frame.size == 0:
+            self.active_tables = {}
             return []
-
-        found_tables_list = []
-        for idx, box in enumerate(raw_boxes):
-            x, y, w, h = int(box[0]), int(box[1]), int(box[2]), int(box[3])
-            
-            # Ponto de integração executável: recorta cada mesa da superfície Unity para envio ao OCR
-            table_crop = None
-            if unity_frame is not None and hasattr(unity_frame, "shape"):
-                try:
-                    table_crop = unity_frame[y:y+h, x:x+w]
-                except Exception:
-                    pass
-
-            # Identidade baseada no conteúdo visual do recorte
-            content_sig = f"content-at-{x}-{y}"
-            if table_crop is not None and hasattr(table_crop, "size") and table_crop.size > 0:
-                try:
-                    import numpy as np
-                    mean_color = [int(c) for c in np.mean(table_crop, axis=(0, 1))]
-                    content_sig = f"rgb-{mean_color[0]}-{mean_color[1]}-{mean_color[2]}"
-                except Exception:
-                    pass
-
-            table_id = f"tbl-unity-{abs(hash(content_sig)) % 1000}"
-            
-            table_info = TableWindowInfo(
-                table_id=table_id,
-                number=idx + 1,
-                hwnd=0,
-                pid=0,
-                title=f"Unity Surface Table [{x},{y} {w}x{h}]",
-                game_type="NLH",
-                blinds="?",
-                box_physical=[x, y, w, h],
-                box_logical=[x, y, w, h],
-                dpi_scale=1.0,
-                dpi_value=96,
-                aspect_ratio=round(w / max(1, h), 4),
-                monitor_index=1,
-                status="ACTIVE_OBSERVING",
-                is_visible=True,
-                last_seen_iso=self.last_scan_iso
-            )
-            found_tables_list.append((table_info, table_crop))
-
-        # Reordena e garante estabilidade de identidade independentemente da ordem de detecção
-        sorted_tables = sorted(found_tables_list, key=lambda item: item[0].box_physical[0])
-        final_tables = []
-        for i, (t_info, crop) in enumerate(sorted_tables):
-            t_info.number = i + 1
-            t_info.table_id = f"tbl-{i + 1}"
-            final_tables.append(t_info)
-
-        self.active_tables = {t.table_id: t for t in final_tables}
-        return final_tables
+        boxes = custom_table_rects if custom_table_rects is not None else self.detect_tables_from_unity_pixels(unity_frame)
+        candidates = []
+        for box in boxes[:self.max_tables]:
+            x, y, w, h = map(int, box)
+            if min(x,y) < 0 or min(w,h) <= 0 or x+w > unity_frame.shape[1] or y+h > unity_frame.shape[0]:
+                continue
+            crop = unity_frame[y:y+h, x:x+w]
+            signature = hashlib.sha256(cv2.resize(crop,(128,256),interpolation=cv2.INTER_NEAREST).tobytes()).hexdigest()
+            candidates.append((signature,[x,y,w,h]))
+        counts = Counter(signature for signature,_ in candidates)
+        previous = self._visual_tracks
+        result = []
+        retained = {}
+        for signature, box in candidates:
+            old = previous.get(signature)
+            ambiguous = counts[signature] > 1 or (bool(previous) and old is None)
+            if old is not None and not ambiguous:
+                table_id, old_box, version = old
+                version += box != old_box
+            else:
+                table_id = f"visual-{self._next_visual_id}"
+                self._next_visual_id += 1
+                version = 1
+            info = TableWindowInfo(table_id=table_id,number=len(result)+1,hwnd=0,pid=0,
+                title="Unvalidated visual candidate",game_type="UNKNOWN",blinds="?",
+                box_physical=box,box_logical=box.copy(),dpi_scale=1.0,dpi_value=0,
+                aspect_ratio=box[2]/box[3],monitor_index=-1,
+                status="AMBIGUOUS" if ambiguous else "CANDIDATE",is_visible=True,
+                geometry_version=version,active_players="UNKNOWN",current_round="UNKNOWN")
+            result.append(info)
+            if not ambiguous:
+                retained[signature]=(table_id,box,version)
+        # Preserve unmatched identities for recovery; bound memory for a diagnostic session.
+        self._visual_tracks = dict(list({**previous,**retained}.items())[-self.max_tables*4:])
+        self.active_tables = {t.table_id:t for t in result}
+        return result
 
     def export_snapshot_json(self, output_path: str = "public/multitable_snapshot.json") -> Dict[str, Any]:
         """Salva o relatório analítico das mesas no formato JSON."""

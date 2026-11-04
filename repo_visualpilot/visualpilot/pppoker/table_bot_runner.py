@@ -254,6 +254,7 @@ class TableBotRunner:
 
         return {
             "mode": self.mode,
+            "observer_candidates": getattr(self, "observer_candidates", []),
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "hand_counter": self.hand_counter,
             "status": "RUNNING" if self.is_running else "STOPPED",
@@ -386,7 +387,7 @@ class TableBotRunner:
         """
         try:
             # Varre e rastreia mesas ativas via MultiTableTracker
-            tracked_tables = self.multi_table_tracker.scan_windows()
+            # Geometry is resolved once by the guardian; pixels are processed after capture.
             vis = self.guardian.inspect_and_prepare_window(auto_restore=False, auto_focus=False)
             if not vis.is_found or vis.occlusion_status in ("WINDOW_NOT_FOUND", "WINDOW_AMBIGUOUS", "WINDOW_MINIMIZED", "INVALID_GEOMETRY"):
                 logger.debug("Janela indisponível para captura. Status: %s - %s", vis.occlusion_status, vis.message)
@@ -739,6 +740,25 @@ class TableBotRunner:
                 frame = capture_window_frame(win_rect)
                 if frame is not None:
                     self.last_frame_b64 = encode_frame_thumbnail_b64(frame)
+
+                # Stabilization branch: observer routes actual Unity pixels and does not
+                # feed the full desktop surface into single-table OCR/action logic.
+                if self.mode in ("dry-run", "spectator"):
+                    candidates = self.multi_table_tracker.scan_unity_surface(frame)
+                    self.observer_candidates = []
+                    for table in candidates:
+                        x, y, w, h = table.box_physical
+                        crop = frame[y:y+h, x:x+w]
+                        entry = table.to_dict()
+                        entry["desktop_box"] = [win_rect[0]+x, win_rect[1]+y, w, h]
+                        entry["preview_b64"] = encode_frame_thumbnail_b64(crop)
+                        entry["ocr_status"] = "BLOCKED_PENDING_REAL_SCREEN_CALIBRATION"
+                        self.observer_candidates.append(entry)
+                    if now - last_heartbeat_time >= 1.5:
+                        last_heartbeat_time = now
+                        print(f"[OBSERVER] {len(candidates)} visual candidates; OCR/actions blocked pending calibration")
+                    time.sleep(self.interval_sec)
+                    continue
 
                 # 3. Inspeciona ações e se é a vez do Hero no frame real
                 action_snap = self.action_detector.detect_actions(table_frame=frame)
