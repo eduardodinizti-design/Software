@@ -55,3 +55,24 @@ Validação: 13 testes de laboratório passaram (7 de observador, 6 de contrato 
 captura/seleção), incluindo origem negativa, isolamento entre regiões, recorte de
 obstáculos nos limites, imutabilidade do frame original e bloqueio live. APIs Windows
 simuladas; sem homologação nativa ou novo instalador.
+
+## 2026-11-04 — Ensaio de recorte com captura real existente
+
+Foi inspecionada a captura `_21D744E1-8BE6-4C79-82AF-5582DD6A9547__6988a9e2.png`
+(2072×1278), que contém uma mesa PPPoker visível à esquerda, outros clientes e um
+terminal sobreposto. O detector atual retorna zero candidatos nessa captura.
+Não está aprovado para encaminhar mesas completas ao OCR.
+
+`tools/check_real_table_crops.py` reproduz essa falha e retorna código 1.
+Referências manuais, exclusivas desse fixture, medem cobertura da mesa, cartas,
+stacks e controles inferiores. Exige cobertura de 98% de cada região e ocupação
+de 90% do retângulo candidato pela referência, impedindo aprovação do desktop
+inteiro. Essas referências não são coordenadas operacionais do bot.
+
+Comando: `python tools/check_real_table_crops.py --output docs/stabilization/real-crop-report.json`
+Resultado atual: FAIL: complete table not detected. Evidência JSON versionada.
+Quatro testes do avaliador passaram (referência completa, feltro incompleto,
+desktop inteiro e ausência de detecção). Esses testes validam o avaliador,
+não o detector. Próximo trabalho: substituir a segmentação somente por cor por
+localização dos limites completos, usando esta captura como regressão e outras
+escalas/temas como validação. OCR continua bloqueado, sem novo instalador.
