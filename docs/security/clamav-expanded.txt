@@ -1,0 +1,41 @@
+/scan/expanded/VisualPilot_Observador_Windows/verify_package.py: OK
+/scan/expanded/VisualPilot_Observador_Windows/reader/suit_reader.py: OK
+/scan/expanded/VisualPilot_Observador_Windows/reader/suit_templates/h.png: OK
+/scan/expanded/VisualPilot_Observador_Windows/reader/suit_templates/c.png: OK
+/scan/expanded/VisualPilot_Observador_Windows/reader/suit_templates/d.png: OK
+/scan/expanded/VisualPilot_Observador_Windows/reader/suit_templates/LICENSE-DejaVu.txt: OK
+/scan/expanded/VisualPilot_Observador_Windows/reader/suit_templates/s.png: OK
+/scan/expanded/VisualPilot_Observador_Windows/reader/inspect_cards.py: OK
+/scan/expanded/VisualPilot_Observador_Windows/reader/segmented_rank.py: OK
+/scan/expanded/VisualPilot_Observador_Windows/reader/card_alignment.py: OK
+/scan/expanded/VisualPilot_Observador_Windows/launch.py: OK
+/scan/expanded/VisualPilot_Observador_Windows/INICIAR.cmd: OK
+/scan/expanded/VisualPilot_Observador_Windows/LEIA_ME.txt: OK
+/scan/expanded/VisualPilot_Observador_Windows/app.py: OK
+/scan/expanded/VisualPilot_Observador_Windows/check_init.py: OK
+/scan/expanded/VisualPilot_Observador_Windows/VERSION.json: OK
+/scan/expanded/VisualPilot_Observador_Windows/windows_capture.py: OK
+/scan/expanded/VisualPilot_Observador_Windows/visualpilot/pppoker/__init__.py: Empty file
+/scan/expanded/VisualPilot_Observador_Windows/visualpilot/pppoker/table_boundaries.py: OK
+/scan/expanded/VisualPilot_Observador_Windows/visualpilot/pppoker/automatic_table_crops.py: OK
+/scan/expanded/VisualPilot_Observador_Windows/visualpilot/pppoker/table_corner_anchors.py: OK
+/scan/expanded/VisualPilot_Observador_Windows/visualpilot/pppoker/table_anchor_templates/cards.png: OK
+/scan/expanded/VisualPilot_Observador_Windows/visualpilot/pppoker/table_anchor_templates/provenance.json: OK
+/scan/expanded/VisualPilot_Observador_Windows/visualpilot/pppoker/table_anchor_templates/menu.png: OK
+/scan/expanded/VisualPilot_Observador_Windows/visualpilot/pppoker/table_anchor_templates/chat.png: OK
+/scan/expanded/VisualPilot_Observador_Windows/visualpilot/pppoker/table_anchor_templates/signal.png: OK
+/scan/expanded/VisualPilot_Observador_Windows/visualpilot/__init__.py: Empty file
+/scan/expanded/VisualPilot_Observador_Windows/requirements.txt: OK
+/scan/expanded/VisualPilot_Observador_Windows/MANIFEST.json: OK
+
+----------- SCAN SUMMARY -----------
+Known viruses: 3628245
+Engine version: 1.5.4
+Scanned directories: 7
+Scanned files: 27
+Infected files: 0
+Data scanned: 126.27 KiB
+Data read: 68.58 KiB (ratio 1.84:1)
+Time: 12.325 sec (0 m 12 s)
+Start Date: 2026:11:05 22:46:32
+End Date:   2026:11:05 22:46:45
