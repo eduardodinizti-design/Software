@@ -1,0 +1,32 @@
+STATUS: Prepared only. NOT submitted to Microsoft. No submission ID exists.
+
+Subject: Review requested: Trojan:Script/Ulthar.A!ml on VisualPilot observer ZIP
+
+Detection: Trojan:Script/Ulthar.A!ml
+ThreatID: 2147751841
+File: VisualPilot_Observador_Windows.zip
+Size: 36146 bytes
+SHA256: 004c4d2afc28461d9f419003297538539344045b07f6b5dc45db6c361b18984c
+
+Please investigate whether this detection is correct. We are not asserting a confirmed false positive.
+The user reported Defender blocking/removing this ZIP at download on 2026-11-05.
+The package contains source Python, one CMD launcher, PNG templates, JSON metadata and text documentation; no bundled EXE/DLL. Intended function: capture a user-selected PPPoker window and inspect cards locally. The launcher installs Python dependencies with pip. Captures/diagnostics are saved locally when requested. The package has been withdrawn from its delivery branch pending investigation.
+
+Independent reproduction:
+- ClamAV 1.5.4, database 28171 dated 2026-11-01: ZIP and extracted files scanned, zero detections.
+- Windows GitHub Actions: Microsoft Defender engine 1.1.26100.4, product 4.18.26100.4, updated definitions 1.463.144.0 dated 2026-11-05. Exact ZIP SHA256 verified. Custom scan of ZIP and extracted files returned exit 0; Get-MpThreatDetection/Get-MpThreat returned no records.
+- Important limitation: runner RealTimeProtectionEnabled, BehaviorMonitorEnabled and IoavProtectionEnabled were false by default. The workflow did not disable these settings. The program was not executed or installed. This scan does not reproduce the user's download/cloud/real-time evaluation.
+
+Evidence and reproducible workflow:
+https://github.com/eduardodinizti-design/Software/actions/runs/42124479170
+https://github.com/eduardodinizti-design/Software/blob/delivery/observer-windows-20261105/docs/security/RELATORIO.md
+https://github.com/eduardodinizti-design/Software/blob/delivery/observer-windows-20261105/docs/security/observer-defender-evidence.json
+
+Original sample is retained for forensic review in Git history:
+Repository eduardodinizti-design/Software
+Commit 00233c609f583c2022ff076d975c862c4b691cbb
+Path delivery/VisualPilot_Observador_Windows.zip
+
+Requested outcome: identify the triggering component and determine whether this signature should be corrected or whether a specific security defect must be fixed. Please provide the analysis result and submission tracking ID.
+
+Local submission blocker: this environment's network proxy returned HTTP 403 for https://www.microsoft.com/en-us/wdsi/filesubmission. Access to www.microsoft.com has been prepared as an environment configuration draft, not yet applied. No upload to Microsoft has occurred.
