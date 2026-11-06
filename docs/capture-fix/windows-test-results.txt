@@ -1,5 +1,5 @@
-Run: 42142459869
-Source commit: 1c4d8f420bdd9402dc4c5fc7d560373caa35408f
+Run: 42142874242
+Source commit: 64fb6704c8f9539dbbe310f412ef625d40c8d7fd
 test_arbitrary_executable_is_rejected (test_capture_regressions.OriginalRegressionTests.test_arbitrary_executable_is_rejected) ... ok
 test_linux_cannot_report_success (test_capture_regressions.OriginalRegressionTests.test_linux_cannot_report_success) ... ok
 test_process_access_denied_is_rejected (test_capture_regressions.OriginalRegressionTests.test_process_access_denied_is_rejected) ... ok
@@ -18,14 +18,14 @@ test_cleanup_failure_blocks_return (test_window_capture_engine.GDIContracts.test
 test_native_process_query_exception_does_not_default_name (test_window_capture_engine.GDIContracts.test_native_process_query_exception_does_not_default_name) ... ok
 test_partial_acquisition_failure (test_window_capture_engine.GDIContracts.test_partial_acquisition_failure) ... ok
 test_success_uses_client_dc_and_releases_only_owned_dc (test_window_capture_engine.GDIContracts.test_success_uses_client_dc_and_releases_only_owned_dc) ... ok
-test_diagnostic_forwards_selected_hwnd (test_window_capture_audit.IntegrationContracts.test_diagnostic_forwards_selected_hwnd) ... ok
-test_diagnostic_saves_linux_failure_without_image (test_window_capture_audit.IntegrationContracts.test_diagnostic_saves_linux_failure_without_image) ... ok
+test_diagnostic_forwards_selected_hwnd (test_window_capture_audit.IntegrationContracts.test_diagnostic_forwards_selected_hwnd) ... ERROR
+test_diagnostic_saves_linux_failure_without_image (test_window_capture_audit.IntegrationContracts.test_diagnostic_saves_linux_failure_without_image) ... ERROR
 test_observer_routes_to_engine (test_window_capture_audit.IntegrationContracts.test_observer_routes_to_engine) ... ok
 test_standalone_routes_to_engine (test_window_capture_audit.IntegrationContracts.test_standalone_routes_to_engine) ... ok
 test_capture_client_pixels_and_resize (test_capture_windows_native.NativeGDISmoke.test_capture_client_pixels_and_resize) ... ok
 test_black_frame_has_no_tables (test_table_reading.PipelineContracts.test_black_frame_has_no_tables) ... ok
 test_duplicate_card_is_not_accepted (test_table_reading.PipelineContracts.test_duplicate_card_is_not_accepted) ... ok
-test_export_pixels_and_budget (test_table_reading.PipelineContracts.test_export_pixels_and_budget) ... ok
+test_export_pixels_and_budget (test_table_reading.PipelineContracts.test_export_pixels_and_budget) ... ERROR
 test_latest_skips_failed_reports (test_table_reading.PipelineContracts.test_latest_skips_failed_reports) ... ok
 test_metadata_mismatch_blocks_reading (test_table_reading.PipelineContracts.test_metadata_mismatch_blocks_reading) ... ok
 test_missing_ocr_preserves_detected_crop (test_table_reading.PipelineContracts.test_missing_ocr_preserves_detected_crop) ... ok
@@ -40,8 +40,51 @@ test_full_agreement_has_no_extra_ocr (test_rank_confirmation.RankConfirmationTes
 test_retry_blank_abstains (test_rank_confirmation.RankConfirmationTests.test_retry_blank_abstains) ... ok
 test_retry_conflict_abstains (test_rank_confirmation.RankConfirmationTests.test_retry_conflict_abstains) ... ok
 test_retry_error_abstains (test_rank_confirmation.RankConfirmationTests.test_retry_error_abstains) ... ok
+test_oversized_does_not_delete (test_diagnostic_storage.StorageTests.test_oversized_does_not_delete) ... ok
+test_path_escape_rejected (test_diagnostic_storage.StorageTests.test_path_escape_rejected) ... ok
+test_shared_rotation_and_protection (test_diagnostic_storage.StorageTests.test_shared_rotation_and_protection) ... ok
+test_unknown_files_not_deleted (test_diagnostic_storage.StorageTests.test_unknown_files_not_deleted) ... ok
+
+======================================================================
+ERROR: test_diagnostic_forwards_selected_hwnd (test_window_capture_audit.IntegrationContracts.test_diagnostic_forwards_selected_hwnd)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\a\Software\Software\test_window_capture_audit.py", line 26, in test_diagnostic_forwards_selected_hwnd
+    r=diagnostics.run_diagnostics(2,folder,_engine=WindowCaptureEngine(_backend=b))
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\a\Software\Software\windows_capture_diagnostics.py", line 31, in run_diagnostics
+    store_bundle(directory.parent, files)
+  File "D:\a\Software\Software\diagnostic_storage.py", line 73, in store_bundle
+    raise RuntimeError('Limite global: arquivos protegidos ou externos impedem salvar. Nada removido.')
+RuntimeError: Limite global: arquivos protegidos ou externos impedem salvar. Nada removido.
+
+======================================================================
+ERROR: test_diagnostic_saves_linux_failure_without_image (test_window_capture_audit.IntegrationContracts.test_diagnostic_saves_linux_failure_without_image)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\a\Software\Software\test_window_capture_audit.py", line 17, in test_diagnostic_saves_linux_failure_without_image
+    result=diagnostics.run_diagnostics(output_dir=folder)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\a\Software\Software\windows_capture_diagnostics.py", line 31, in run_diagnostics
+    store_bundle(directory.parent, files)
+  File "D:\a\Software\Software\diagnostic_storage.py", line 73, in store_bundle
+    raise RuntimeError('Limite global: arquivos protegidos ou externos impedem salvar. Nada removido.')
+RuntimeError: Limite global: arquivos protegidos ou externos impedem salvar. Nada removido.
+
+======================================================================
+ERROR: test_export_pixels_and_budget (test_table_reading.PipelineContracts.test_export_pixels_and_budget)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\a\Software\Software\test_table_reading.py", line 89, in test_export_pixels_and_budget
+    folder=save_result(self.frame,r,root)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\a\Software\Software\ler_mesas.py", line 45, in save_result
+    store_bundle(root,{str(Path(directory.name)/target.name/name):data for name,data in files.items()},budget)
+  File "D:\a\Software\Software\diagnostic_storage.py", line 73, in store_bundle
+    raise RuntimeError('Limite global: arquivos protegidos ou externos impedem salvar. Nada removido.')
+RuntimeError: Limite global: arquivos protegidos ou externos impedem salvar. Nada removido.
 
 ----------------------------------------------------------------------
-Ran 40 tests in 3.299s
+Ran 44 tests in 3.176s
 
-OK
+FAILED (errors=3)
