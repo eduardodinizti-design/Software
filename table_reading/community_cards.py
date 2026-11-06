@@ -49,6 +49,11 @@ def read_board(table, *, _rank=read_rank, _suit=read_suit, hero_cards=()):
         face=cv2.resize(table[y:y+bh,x:x+bw],(90,130))
         try:
             rank=_rank(face[3:53,4:44]);suit=_suit(face[45:86,3:43])
+            if suit.get('status')=='SUIT_UNREADABLE':
+                native=table[y+round(bh*45/130):y+round(bh*86/130),
+                             x+round(bw*3/90):x+round(bw*43/90)]
+                retry=_suit(native)
+                if retry.get('suit'):suit=dict(retry,source='NATIVE_PIXELS')
             card=(rank.get('rank') or '')+(suit.get('suit') or '') if rank.get('rank') and suit.get('suit') else None
             readings.append(dict(card=card,rank=rank,suit=suit))
         except Exception as exc:readings.append(dict(card=None,error=str(exc)))

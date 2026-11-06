@@ -57,6 +57,20 @@ class BoardTests(unittest.TestCase):
             result=read_board(image)
             self.assertEqual(result['status'],'INVALID_CROP')
             self.assertIsNone(result['street'])
+    def test_native_suit_retry_only_after_unreadable(self):
+        ranks=iter('A23');calls=[]
+        def suit(image):
+            calls.append(image.shape)
+            if image.shape[:2]==(41,40):return {'suit':None,'status':'SUIT_UNREADABLE'}
+            return {'suit':'c','status':'CANDIDATE_ONLY'}
+        result=read_board(self.scene(3),_rank=lambda _:dict(rank=next(ranks)),_suit=suit)
+        self.assertEqual(result['cards'],['Ac','2c','3c']);self.assertEqual(len(calls),6)
+        self.assertTrue(all(r['suit']['source']=='NATIVE_PIXELS' for r in result['readings']))
+    def test_existing_suit_is_not_overridden(self):
+        ranks=iter('A23');calls=[]
+        def suit(image):calls.append(image.shape);return {'suit':'h','status':'CANDIDATE_ONLY'}
+        result=read_board(self.scene(3),_rank=lambda _:dict(rank=next(ranks)),_suit=suit)
+        self.assertEqual(result['cards'],['Ah','2h','3h']);self.assertEqual(len(calls),3)
     def test_development_empty_screens(self):
         root=Path(os.environ.get('VISUALPILOT_ASSETS','public/assets/aistudio'))
         rows=json.loads(Path('docs/table-reading/development-labels.json').read_text())['tables']
