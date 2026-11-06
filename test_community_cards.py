@@ -39,6 +39,24 @@ class BoardTests(unittest.TestCase):
             ranks=iter('A23')
             result=read_board(resized,_rank=lambda _:dict(rank=next(ranks)),_suit=lambda _:dict(suit='c'))
             self.assertEqual(result['cards'],['Ac','2c','3c'])
+    def test_sequence_never_reuses_previous_board(self):
+        for n in (3,0,2,4,0,5,3):
+            result=self.read(n,list('A2345')[:n])
+            if n in (3,4,5):self.assertEqual(len(result['cards']),n)
+            else:
+                self.assertEqual(result['cards'],[])
+                self.assertIsNone(result['street'])
+    def test_ocr_exception_discards_whole_board_then_recovers(self):
+        def fail(_):raise RuntimeError('OCR timeout')
+        failed=read_board(self.scene(3),_rank=fail)
+        self.assertEqual(failed['cards'],[])
+        self.assertIsNone(failed['street'])
+        self.assertEqual(self.read(3,list('A23'))['cards'],['Ac','2c','3c'])
+    def test_bad_input_does_not_claim_street(self):
+        for image in (None,np.zeros((100,100),np.uint8),np.zeros((100,100,3),float)):
+            result=read_board(image)
+            self.assertEqual(result['status'],'INVALID_CROP')
+            self.assertIsNone(result['street'])
     def test_development_empty_screens(self):
         root=Path(os.environ.get('VISUALPILOT_ASSETS','public/assets/aistudio'))
         rows=json.loads(Path('docs/table-reading/development-labels.json').read_text())['tables']
