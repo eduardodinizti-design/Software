@@ -24,6 +24,13 @@ class PipelineContracts(unittest.TestCase):
     def setUpClass(cls):
         if not (ASSETS/SOURCE).is_file():raise RuntimeError('Required real fixture missing: '+str(ASSETS/SOURCE))
         cls.frame=cv2.imdecode(np.frombuffer((ASSETS/SOURCE).read_bytes(),np.uint8),cv2.IMREAD_COLOR)
+    def test_buttons_receive_only_accepted_crop_when_enabled(self):
+        with patch('table_reading.action_buttons.read_action_buttons',return_value={'status':'NO_BUTTON_ROW','buttons':[]}) as buttons:
+            r=analyze_tables(self.frame,metadata(self.frame),_reader=unknown,read_buttons=True)
+        self.assertEqual(buttons.call_count,r['complete_count'])
+        self.assertTrue(any('action_buttons' in row for row in r['tables']))
+        self.assertGreaterEqual(r['timings_ms']['button_reading'],0)
+
     def test_real_pixels_are_cropped_and_routed(self):
         seen=[]
         def reader(crop):seen.append(crop);return unknown(crop)
