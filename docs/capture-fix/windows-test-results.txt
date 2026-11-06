@@ -1,5 +1,5 @@
-Run: 42229586328
-Source commit: 56c7009f73686ccc25f272bfdcc29b25a7bbee89
+Run: 42233699977
+Source commit: 841aaf7bd05b16972ad85db28324161899543635
 test_arbitrary_executable_is_rejected (test_capture_regressions.OriginalRegressionTests.test_arbitrary_executable_is_rejected) ... ok
 test_linux_cannot_report_success (test_capture_regressions.OriginalRegressionTests.test_linux_cannot_report_success) ... ok
 test_process_access_denied_is_rejected (test_capture_regressions.OriginalRegressionTests.test_process_access_denied_is_rejected) ... ok
@@ -132,6 +132,8 @@ test_margin_compares_distinct_ranks_not_variant_count (test_rank_templates.RankT
 test_missing_or_corrupt_atlas_delegates (test_rank_templates.RankTemplateContracts.test_missing_or_corrupt_atlas_delegates) ... ok
 test_toggle_disabled_never_invokes_template_reader (test_rank_templates.RankTemplateContracts.test_toggle_disabled_never_invokes_template_reader) ... ok
 test_two_thresholds_must_agree (test_rank_templates.RankTemplateContracts.test_two_thresholds_must_agree) ... ok
+test_vectorized_scores_exactly_match_scalar_reference (test_rank_templates.RankTemplateContracts.test_vectorized_scores_exactly_match_scalar_reference) ... ok
+test_vectorized_tie_keeps_first_template_geometry (test_rank_templates.RankTemplateContracts.test_vectorized_tie_keeps_first_template_geometry) ... ok
 test_ambiguous_templates_abstain (test_button_templates.ButtonTemplateTests.test_ambiguous_templates_abstain) ... ok
 test_disabled_mode_bypasses_templates (test_button_templates.ButtonTemplateTests.test_disabled_mode_bypasses_templates) ... ok
 test_extreme_aspect_abstains_before_resize (test_button_templates.ButtonTemplateTests.test_extreme_aspect_abstains_before_resize) ... ok
@@ -151,6 +153,6 @@ test_resize_uses_new_bounds_and_cache_is_bounded (test_roi_geometry.RoiGeometryT
 test_translation_changes_only_diagnostics_not_cached_local_geometry (test_roi_geometry.RoiGeometryTests.test_translation_changes_only_diagnostics_not_cached_local_geometry) ... ok
 
 ----------------------------------------------------------------------
-Ran 149 tests in 14.326s
+Ran 151 tests in 12.641s
 
 OK
