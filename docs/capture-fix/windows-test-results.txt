@@ -1,5 +1,5 @@
-Run: 42233699977
-Source commit: 841aaf7bd05b16972ad85db28324161899543635
+Run: 42237498222
+Source commit: 53881008c8f260c18004534e2212bb8fd3855dea
 test_arbitrary_executable_is_rejected (test_capture_regressions.OriginalRegressionTests.test_arbitrary_executable_is_rejected) ... ok
 test_linux_cannot_report_success (test_capture_regressions.OriginalRegressionTests.test_linux_cannot_report_success) ... ok
 test_process_access_denied_is_rejected (test_capture_regressions.OriginalRegressionTests.test_process_access_denied_is_rejected) ... ok
@@ -151,8 +151,37 @@ test_invalid_dimensions_and_unknown_profiles_rejected (test_roi_geometry.RoiGeom
 test_matches_existing_board_band_across_resolutions (test_roi_geometry.RoiGeometryTests.test_matches_existing_board_band_across_resolutions) ... ok
 test_resize_uses_new_bounds_and_cache_is_bounded (test_roi_geometry.RoiGeometryTests.test_resize_uses_new_bounds_and_cache_is_bounded) ... ok
 test_translation_changes_only_diagnostics_not_cached_local_geometry (test_roi_geometry.RoiGeometryTests.test_translation_changes_only_diagnostics_not_cached_local_geometry) ... ok
+test_cli_requires_explicit_mode_and_paired_metadata (test_template_sample_collection.SampleCollectionTests.test_cli_requires_explicit_mode_and_paired_metadata) ... usage: python.exe -m unittest [-h] (--hwnd HWND | --image IMAGE)
+                              [--logs-root LOGS_ROOT] [--metadata METADATA]
+                              [--max-tables {1,2,3,4,5,6}]
+python.exe -m unittest: error: one of the arguments --hwnd --image is required
+usage: python.exe -m unittest [-h] (--hwnd HWND | --image IMAGE)
+                              [--logs-root LOGS_ROOT] [--metadata METADATA]
+                              [--max-tables {1,2,3,4,5,6}]
+python.exe -m unittest: error: --image exige --metadata; --hwnd nao aceita --metadata
+usage: python.exe -m unittest [-h] (--hwnd HWND | --image IMAGE)
+                              [--logs-root LOGS_ROOT] [--metadata METADATA]
+                              [--max-tables {1,2,3,4,5,6}]
+python.exe -m unittest: error: --image exige --metadata; --hwnd nao aceita --metadata
+ok
+test_incoming_budget_failure_never_creates_logs (test_template_sample_collection.SampleCollectionTests.test_incoming_budget_failure_never_creates_logs) ... ok
+test_live_failure_or_other_hwnd_never_saves (test_template_sample_collection.SampleCollectionTests.test_live_failure_or_other_hwnd_never_saves) ... ok
+test_max_table_limit_and_missing_table_never_write (test_template_sample_collection.SampleCollectionTests.test_max_table_limit_and_missing_table_never_write) ... ok
+test_mock_strict_live_capture_passes_requested_hwnd (test_template_sample_collection.SampleCollectionTests.test_mock_strict_live_capture_passes_requested_hwnd) ... ok
+test_real_fixture_only_native_regions_and_unlabeled_manifest (test_template_sample_collection.SampleCollectionTests.test_real_fixture_only_native_regions_and_unlabeled_manifest) ... ok
+test_wrong_metadata_never_creates_logs (test_template_sample_collection.SampleCollectionTests.test_wrong_metadata_never_creates_logs) ... ok
+test_blank_and_suffix_rejected (test_exact_call_template.ExactCallTests.test_blank_and_suffix_rejected) ... ok
+test_exact_full_amount (test_exact_call_template.ExactCallTests.test_exact_full_amount) ... ok
+test_injected_reader_bypasses_exact_shortcut (test_exact_call_template.ExactCallTests.test_injected_reader_bypasses_exact_shortcut) ... ok
+test_missing_or_corrupt_asset_falls_back (test_exact_call_template.ExactCallTests.test_missing_or_corrupt_asset_falls_back) ... ok
+test_mixed_preselection_keeps_amount_but_disables_action (test_exact_call_template.ExactCallTests.test_mixed_preselection_keeps_amount_but_disables_action) ... ok
+test_resize_rejected (test_exact_call_template.ExactCallTests.test_resize_rejected) ... ok
+test_single_pixel_change_rejected (test_exact_call_template.ExactCallTests.test_single_pixel_change_rejected) ... ok
 
 ----------------------------------------------------------------------
-Ran 151 tests in 12.641s
+FALHA: Captura estrita falhou: {'status': 'WINDOW_INVALID_HWND'}
+FALHA: Returned HWND differs from requested HWND
+Amostras UNLABELED: C:\Users\RUNNER~1\AppData\Local\Temp\tmppod25mdo\logs\leitura\leitura-3b19b5898c954b2fa49c6f65159f3503 | 1 mesa(s). Sem OCR ou importacao para treino.
+Ran 165 tests in 9.122s
 
 OK
