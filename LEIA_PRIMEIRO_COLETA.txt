@@ -1,42 +1,36 @@
-VISUALPILOT - COLETA PASSIVA DE 30 MINUTOS
+VISUALPILOT COLETA V2 — 30 MINUTOS, SEM IMAGENS POR PADRAO
 
-1. Extraia TODO o ZIP em uma pasta nova. Nao execute dentro do ZIP.
-2. Use Python 3.12 e Tesseract com idioma English, como nos testes anteriores.
-   Se necessario, execute INSTALAR_DEPENDENCIAS.bat. Esse arquivo instala somente
-   dependencias Python. Tesseract e uma instalacao separada.
-   Se Python nao for encontrado, instale Python 3.12 com Add Python to PATH.
-3. Abra de duas a quatro mesas no PPPoker, no layout azul com cartas coloridas.
-   Mantenha-as visiveis, sem sobreposicao, sem minimizar ou redimensionar durante
-   esta primeira coleta. Nao deixe o CMD cobrir as mesas.
-4. Execute INICIAR_COLETA_30_MIN.bat.
-5. O console lista HWNDs. Digite o numero da superficie PPPoker que contem as
-   mesas. Se forem fontes distintas, digite seus HWNDs separados por espacos.
-   Nao duplique uma mesma superficie. O leitor busca ate seis mesas por fonte.
-6. A coleta dura 30 minutos, solicitando um ciclo a cada dois segundos.
-   Se o processamento demorar mais, o intervalo real aumenta, sem acumular fila.
-   Voce joga normalmente; o coletor nunca clica.
-7. Ctrl+C encerra antecipadamente e gera o resumo.
+1. Interrompa a versao anterior com Ctrl+C.
+2. Extraia TODO este ZIP numa pasta nova. Nao misture com a versao antiga.
+3. Reutilize Python/Tesseract dos testes anteriores. Se necessario, execute
+   INSTALAR_DEPENDENCIAS.bat (somente dependencias Python).
+4. Abra suas mesas, visiveis e sem sobreposicao.
+5. Execute INICIAR_COLETA_30_MIN.bat e informe o HWND listado.
+6. Confira a mensagem: COLETA V2: texto; imagens DESLIGADAS.
 
-SAIDA
-logs/sessoes/sessao-DATA-HORA-ID/
-- resumo.json: duracao, motivo de parada, contagens e latencia.
-- leituras.jsonl: metadados e relatorio completo de cada amostra salva.
-- frame-*.png: capturas nativas, sem reduzir resolucao.
+A leitura continua em resolucao nativa, na memoria. Nao reduzimos a resolucao
+nem alteramos o reconhecedor. Nao ha cliques ou janela de debug.
 
-O limite padrao e 1024 MiB POR SESSAO. Ao atingir, encerra e preserva o que
-ja foi salvo, sem apagar evidencias. Sessoes anteriores nao sao removidas.
-Se precisar de outro limite, abra CMD nesta pasta e execute, por exemplo:
-python coletar_sessao.py --minutos 30 --intervalo 2 --limite-mb 2048
+RESULTADOS: logs/sessoes/sessao-DATA-HORA-ID/
+- resumo.json: contagens, tempos e motivo do encerramento.
+- leituras.jsonl: leituras completas e falhas.
+- NENHUM PNG por padrao.
 
-IMPORTANTE
-Capturas periodicas nao sao video nem registro completo de todas as jogadas.
-O leitor registra Hero, board, botoes, regioes rejeitadas e erros. Nao reconhece
-integralmente stacks/potes nem comprova todas as acoes realizadas pelo jogador.
-Botao disponivel nao significa acao executada. A aprovacao de precisao exige
-comparar leituras com os PNGs. O programa nao declara automaticamente que
-reconheceu tudo corretamente. Regioes sao identificadas por fonte e coordenadas,
-nao por um ID persistente de mesa quando ela e movida.
+Limite padrao: 16 MiB POR SESSAO (conteudo dos arquivos, nao alocacao do disco).
+Se a cota de texto acabar, a leitura continua ate o fim; o resumo informa
+quantos registros nao foram salvos. Nao remove arquivos de sessoes anteriores.
 
-ENVIO PARA ANALISE
-Envie primeiro resumo.json e leituras.jsonl. Guarde os PNGs; enviaremos apenas
-os correspondentes aos casos que precisarem de verificacao.
+Opcional, apenas para diagnostico visual:
+python coletar_sessao.py --amostras
+Salva recortes nativos das mesas, no maximo uma rodada por fonte a cada 60s,
+com cota de 4 MiB para imagens e restante reservado ao texto/resumo.
+Nunca salva a superficie inteira. Ao esgotar a cota, deixa de salvar recortes.
+
+Ctrl+C encerra antecipadamente e grava o resumo.
+Envie resumo.json e leituras.jsonl. Preserve os dados anteriores que considerar
+necessarios; este programa nao limpa nem reduz retroativamente suas pastas.
+
+Capturas periodicas nao representam todas as jogadas. Botoes disponiveis nao
+comprovam acoes executadas. O leitor ainda nao decodifica todos os potes/stacks.
+Sem amostras visuais nao e possivel conferir visualmente cada leitura; o resumo
+nao declara precisao validada automaticamente.
