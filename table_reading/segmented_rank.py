@@ -10,7 +10,7 @@ def read_segmented_rank(crop):
     neutral=hsv[:,:,1]<70
     values=hsv[:,:,2][neutral]
     if values.size<8:return {'rank':None,'status':'SEGMENTATION_UNAVAILABLE'}
-    readings=[];counts=[]
+    readings=[];counts=[];original_shapes=[]
     for fraction in (.6,.8):
         mask=np.uint8(neutral & (hsv[:,:,2]>max(45,fraction*float(np.percentile(values,90)))))*255
         _,labels,stats,_=cv2.connectedComponentsWithStats(mask)
@@ -24,6 +24,7 @@ def read_segmented_rank(crop):
         mask=np.uint8(np.isin(labels,[p[0] for p in parts]))*255
         ys,xs=np.where(mask);clean=255-mask[ys.min():ys.max()+1,xs.min():xs.max()+1]
         original_shape=clean.copy()
+        original_shapes.append(original_shape)
         clean=cv2.resize(clean,None,fx=12,fy=8,interpolation=cv2.INTER_NEAREST)
         clean=cv2.copyMakeBorder(clean,40,40,40,40,cv2.BORDER_CONSTANT,value=255)
         counts.append(len(parts))
@@ -48,5 +49,23 @@ def read_segmented_rank(crop):
         return {'rank':'T' if readings[0]=='10' else readings[0],'status':'CANDIDATE_ONLY',
                 'readings':readings,'evidence':'SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES'}
     if found:
-        return {'rank':None,'status':'OCR_AMBIGUOUS','readings':readings,'evidence':'SEGMENTED_INK_INCOMPLETE_AGREEMENT'}
+        # Retry incomplete agreement using undistorted glyphs. Blank OCR output
+        # is not a vote; require all four new observations, with no disagreement
+        # against any earlier valid rank. Conflicts above never reach this path.
+        confirmation=[]
+        try:
+            for glyph in original_shapes:
+                clean=cv2.resize(glyph,None,fx=8,fy=8,interpolation=cv2.INTER_NEAREST)
+                clean=cv2.copyMakeBorder(clean,40,40,40,40,cv2.BORDER_CONSTANT,value=255)
+                confirmation.extend(pytesseract.image_to_string(clean,
+                    config=f'--psm {mode} -c tessedit_char_whitelist=AKQJT1098765432',
+                    timeout=3).strip() for mode in (7,10))
+        except Exception as exc:
+            return {'rank':None,'status':'OCR_ERROR','error':str(exc)}
+        if len(confirmation)==4 and len(set(confirmation))==1 and set(confirmation)==found:
+            value=confirmation[0]
+            return {'rank':'T' if value=='10' else value,'status':'CANDIDATE_ONLY',
+                    'readings':readings,'aspect_confirmation':confirmation,
+                    'evidence':'ORIGINAL_ASPECT_TWO_THRESHOLDS_TWO_MODES'}
+        return {'rank':None,'status':'OCR_AMBIGUOUS','readings':readings,'aspect_confirmation':confirmation,'evidence':'SEGMENTED_INK_INCOMPLETE_AGREEMENT'}
     return {'rank':None,'status':'SEGMENTATION_UNREADABLE','readings':readings}

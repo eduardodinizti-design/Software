@@ -1,0 +1,34 @@
+"""Contract tests with mocked OCR, not recognition-accuracy measurements."""
+import unittest
+from unittest.mock import patch
+import cv2
+import numpy as np
+from table_reading.segmented_rank import read_segmented_rank
+
+class RankConfirmationTests(unittest.TestCase):
+    def read(self, outputs):
+        crop=np.zeros((60,42,3),dtype=np.uint8)
+        cv2.putText(crop,'9',(8,43),cv2.FONT_HERSHEY_SIMPLEX,1.2,(255,255,255),2)
+        with patch('table_reading.segmented_rank.pytesseract.image_to_string',side_effect=outputs) as ocr:
+            result=read_segmented_rank(crop)
+            return result,ocr.call_count
+    def test_blank_variants_require_four_fresh_confirmations(self):
+        r,n=self.read(['','','9','9']+['9']*4)
+        self.assertEqual(r['rank'],'9');self.assertEqual(n,8)
+    def test_conflicting_seven_nine_cannot_be_overridden(self):
+        r,n=self.read(['7','9','9','9'])
+        self.assertIsNone(r['rank']);self.assertEqual(n,4)
+    def test_retry_conflict_abstains(self):
+        r,_=self.read(['','','9','9']+['9','7','9','9'])
+        self.assertIsNone(r['rank'])
+    def test_retry_blank_abstains(self):
+        r,_=self.read(['','','9','9']+['9','','9','9'])
+        self.assertIsNone(r['rank'])
+    def test_retry_error_abstains(self):
+        r,_=self.read(['','','9','9',RuntimeError('timeout')])
+        self.assertEqual(r['status'],'OCR_ERROR')
+    def test_full_agreement_has_no_extra_ocr(self):
+        r,n=self.read(['9']*4)
+        self.assertEqual(r['rank'],'9');self.assertEqual(n,4)
+
+if __name__=='__main__':unittest.main()

@@ -18,7 +18,7 @@ jobs:
       - name: Run contracts and native GDI on controlled Tk window
         shell: pwsh
         run: |
-          python -m unittest test_capture_regressions test_window_capture_engine test_window_capture_audit test_capture_windows_native test_table_reading -v *> capture-test-results.txt
+          python -m unittest test_capture_regressions test_window_capture_engine test_window_capture_audit test_capture_windows_native test_table_reading test_rank_confirmation -v *> capture-test-results.txt
           $code = $LASTEXITCODE
           Get-Content capture-test-results.txt
           exit $code
