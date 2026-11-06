@@ -93,3 +93,7 @@ Próximo trabalho: inspecionar rótulos e executar estes recortes no leitor atua
 ## Reavaliação concluída do legado
 
 Os oito PNGs foram reavaliados; veja LEGACY_REPLAY.md. Hero: 11/16 corretas, cinco abstenções, zero erros aceitos. Board branco: 12/12 não identificadas. Os rótulos foram reconferidos visualmente. Mantidos separados do tema de faces coloridas.
+
+## Ampliação posterior: board colorido
+
+Cinco regiões agora reavaliadas: quatro flops e um river, 17 ocorrências e 16 cartas distintas. Quatro regiões adicionais; o flop anterior está incluído. Ver COLORED_BOARD_EXPANSION.md e colored-board-expansion.json. O inventário COVERAGE.json original é a base anterior, não o total atualizado desta expansão.
