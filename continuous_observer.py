@@ -7,7 +7,7 @@ from table_reading.presentation import describe_regions
 
 
 def observe(engine, hwnd, *, interval=2.0, max_age=10.0, max_tables=6,
-            max_cycles=0, read_buttons=False, analyze=analyze_tables, emit=print,
+            max_cycles=0, read_buttons=False, read_community=False, analyze=analyze_tables, emit=print,
             clock=time.monotonic, sleep=time.sleep):
     if not math.isfinite(interval) or interval < .25:
         raise ValueError('Intervalo minimo: 0.25 segundos')
@@ -37,7 +37,7 @@ def observe(engine, hwnd, *, interval=2.0, max_age=10.0, max_tables=6,
                         emit('SOURCE_CHANGED: processo mudou; observador encerrado. Selecione a janela novamente.')
                         return 2
                     identity=current
-                    report=analyze(frame,metadata,max_tables=max_tables,**({'read_buttons':True} if read_buttons else {}))
+                    report=analyze(frame,metadata,max_tables=max_tables,**({'read_buttons':True} if read_buttons else {}),**({'read_community':True} if read_community else {}))
                     age=clock()-started
                     metrics.add(metadata,report,age*1000)
                     if cycle % 10 == 0:

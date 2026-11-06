@@ -31,6 +31,14 @@ class PipelineContracts(unittest.TestCase):
         self.assertTrue(any('action_buttons' in row for row in r['tables']))
         self.assertGreaterEqual(r['timings_ms']['button_reading'],0)
 
+    def test_board_is_opt_in_and_uses_accepted_native_crop(self):
+        with patch('table_reading.community_cards.read_board',return_value={'cards':[],'street':None,'status':'BOARD_NOT_CONFIRMED'}) as reader:
+            disabled=analyze_tables(self.frame,metadata(self.frame),_reader=unknown)
+            reader.assert_not_called()
+            enabled=analyze_tables(self.frame,metadata(self.frame),_reader=unknown,read_community=True)
+            self.assertEqual(reader.call_count,enabled['complete_count'])
+            self.assertEqual(enabled['attempts']['board_reading'],reader.call_count)
+
     def test_real_pixels_are_cropped_and_routed(self):
         seen=[]
         def reader(crop):seen.append(crop);return unknown(crop)

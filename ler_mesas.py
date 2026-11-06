@@ -59,6 +59,7 @@ def main(argv=None):
     parser.add_argument('--continuo',action='store_true',help='Observador continuo em memoria')
     parser.add_argument('--intervalo',type=float,default=2.0,help='Intervalo minimo entre inicios de captura em segundos')
     parser.add_argument('--botoes',action='store_true',help='Ler rotulos dos botoes experimentalmente, sem cliques')
+    parser.add_argument('--board',action='store_true',help='Leitura experimental das cartas comunitarias')
     args=parser.parse_args(argv)
     if args.continuo and (args.hwnd is None or args.image or args.metadata or args.save):
         parser.error('--continuo exige --hwnd e nao aceita --image, --metadata ou --save')
@@ -68,7 +69,7 @@ def main(argv=None):
         if args.continuo:
             from continuous_observer import observe
             from window_capture_engine import WindowCaptureEngine
-            return observe(WindowCaptureEngine(),args.hwnd,interval=args.intervalo,max_tables=args.max_tables,read_buttons=args.botoes)
+            return observe(WindowCaptureEngine(),args.hwnd,interval=args.intervalo,max_tables=args.max_tables,read_buttons=args.botoes,read_community=args.board)
         if args.hwnd is not None:
             from window_capture_engine import WindowCaptureEngine
             frame,metadata=WindowCaptureEngine().capture_frame(hwnd=args.hwnd)
@@ -79,7 +80,7 @@ def main(argv=None):
             else:image,metadata=latest_capture(args.diagnostics_dir)
             print('Captura existente:',image)
             frame=cv2.imdecode(np.frombuffer(image.read_bytes(),np.uint8),cv2.IMREAD_COLOR)
-        report=analyze_tables(frame,metadata,max_tables=args.max_tables,read_buttons=args.botoes)
+        report=analyze_tables(frame,metadata,max_tables=args.max_tables,read_buttons=args.botoes,read_community=args.board)
         target=save_result(frame,report,args.output_dir) if args.hwnd is None or args.save else None
         print('Fonte:',report['source_key'])
         for line in describe_regions(report): print(line)

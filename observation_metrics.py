@@ -10,7 +10,7 @@ class ObservationMetrics:
     def add(self, capture, report, cycle_ms):
         values={'capture':capture.get('duration_ms'), **report.get('timings_ms',{}), 'cycle':cycle_ms}
         attempts=report.get('attempts',{})
-        for key in ('card_reading','button_reading'):
+        for key in ('card_reading','button_reading','board_reading'):
             if attempts.get(key,0)==0:values.pop(key,None)
         if not any(attempts.values()):values.pop('ocr_setup',None)
         values['cycle_with_ocr' if any(attempts.values()) else 'cycle_without_ocr']=cycle_ms
