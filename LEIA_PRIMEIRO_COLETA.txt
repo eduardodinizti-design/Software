@@ -1,0 +1,42 @@
+VISUALPILOT - COLETA PASSIVA DE 30 MINUTOS
+
+1. Extraia TODO o ZIP em uma pasta nova. Nao execute dentro do ZIP.
+2. Use Python 3.12 e Tesseract com idioma English, como nos testes anteriores.
+   Se necessario, execute INSTALAR_DEPENDENCIAS.bat. Esse arquivo instala somente
+   dependencias Python. Tesseract e uma instalacao separada.
+   Se Python nao for encontrado, instale Python 3.12 com Add Python to PATH.
+3. Abra de duas a quatro mesas no PPPoker, no layout azul com cartas coloridas.
+   Mantenha-as visiveis, sem sobreposicao, sem minimizar ou redimensionar durante
+   esta primeira coleta. Nao deixe o CMD cobrir as mesas.
+4. Execute INICIAR_COLETA_30_MIN.bat.
+5. O console lista HWNDs. Digite o numero da superficie PPPoker que contem as
+   mesas. Se forem fontes distintas, digite seus HWNDs separados por espacos.
+   Nao duplique uma mesma superficie. O leitor busca ate seis mesas por fonte.
+6. A coleta dura 30 minutos, solicitando um ciclo a cada dois segundos.
+   Se o processamento demorar mais, o intervalo real aumenta, sem acumular fila.
+   Voce joga normalmente; o coletor nunca clica.
+7. Ctrl+C encerra antecipadamente e gera o resumo.
+
+SAIDA
+logs/sessoes/sessao-DATA-HORA-ID/
+- resumo.json: duracao, motivo de parada, contagens e latencia.
+- leituras.jsonl: metadados e relatorio completo de cada amostra salva.
+- frame-*.png: capturas nativas, sem reduzir resolucao.
+
+O limite padrao e 1024 MiB POR SESSAO. Ao atingir, encerra e preserva o que
+ja foi salvo, sem apagar evidencias. Sessoes anteriores nao sao removidas.
+Se precisar de outro limite, abra CMD nesta pasta e execute, por exemplo:
+python coletar_sessao.py --minutos 30 --intervalo 2 --limite-mb 2048
+
+IMPORTANTE
+Capturas periodicas nao sao video nem registro completo de todas as jogadas.
+O leitor registra Hero, board, botoes, regioes rejeitadas e erros. Nao reconhece
+integralmente stacks/potes nem comprova todas as acoes realizadas pelo jogador.
+Botao disponivel nao significa acao executada. A aprovacao de precisao exige
+comparar leituras com os PNGs. O programa nao declara automaticamente que
+reconheceu tudo corretamente. Regioes sao identificadas por fonte e coordenadas,
+nao por um ID persistente de mesa quando ela e movida.
+
+ENVIO PARA ANALISE
+Envie primeiro resumo.json e leituras.jsonl. Guarde os PNGs; enviaremos apenas
+os correspondentes aos casos que precisarem de verificacao.
