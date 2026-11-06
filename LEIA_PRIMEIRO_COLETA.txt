@@ -22,7 +22,7 @@ quantos registros nao foram salvos. Nao remove arquivos de sessoes anteriores.
 
 Opcional, apenas para diagnostico visual:
 python coletar_sessao.py --amostras
-Salva recortes nativos das mesas, no maximo uma rodada por fonte a cada 60s,
+Salva recortes nativos das mesas, no maximo uma amostra por regiao/estado a cada 60s, incluindo rejeicoes,
 com cota de 4 MiB para imagens e restante reservado ao texto/resumo.
 Nunca salva a superficie inteira. Ao esgotar a cota, deixa de salvar recortes.
 
@@ -34,3 +34,9 @@ Capturas periodicas nao representam todas as jogadas. Botoes disponiveis nao
 comprovam acoes executadas. O leitor ainda nao decodifica todos os potes/stacks.
 Sem amostras visuais nao e possivel conferir visualmente cada leitura; o resumo
 nao declara precisao validada automaticamente.
+
+DIAGNOSTICO DE REGIOES REJEITADAS
+Execute DIAGNOSTICAR_REGIOES_1_MIN.bat. Salva recortes aceitos e rejeitados,
+inclusive ao mudar de aceito para rejeitado, sem aguardar 60s. O JSON associa
+cada PNG ao ciclo, coordenadas, status e motivo. Cota de imagens: 4 MiB.
+Nao altera o detector nem os criterios de aceitacao.

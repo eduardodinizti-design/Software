@@ -29,7 +29,7 @@ def run_session(engine, hwnds, *, minutes=30, interval=2, budget_mb=16, samples=
     log_limit=limit-image_limit-reserve
     image_used=0;log_used=0;last_sample={}
     print('Pasta:',folder.resolve(),flush=True)
-    print('COLETA V2: texto; imagens DESLIGADAS.' if not samples else 'COLETA V2: texto e amostras de mesas a cada 60s, com cota.',flush=True)
+    print('COLETA V2: texto; imagens DESLIGADAS.' if not samples else 'COLETA V2: texto e recortes aceitos/rejeitados; nova condicao ou 60s, com cota.',flush=True)
     print('Sem cliques. Limite por sessao:',budget_mb,'MiB. Ctrl+C encerra.',flush=True)
     try:
         with (folder/'leituras.jsonl').open('wb') as log:
@@ -68,10 +68,12 @@ def run_session(engine, hwnds, *, minutes=30, interval=2, budget_mb=16, samples=
                     ms=(clock()-t)*1000;durations.append(ms)
                     record['duration_ms']=round(ms,2)
                     # Optional bounded native table samples; never encode the full surface.
-                    if samples and frame is not None and report is not None and image_used<image_limit and clock()-last_sample.get(hwnd,-1e9)>=60:
-                        last_sample[hwnd]=clock();record['samples']=[]
+                    if samples and frame is not None and report is not None and image_used<image_limit:
+                        record['samples']=[]
                         for row in report.get('tables',[])[:6]:
-                            if row.get('status')!='COMPLETE_CANDIDATE':continue
+                            sample_key=(hwnd,row['table_index'],row.get('status'))
+                            if clock()-last_sample.get(sample_key,-1e9)<60:continue
+                            last_sample[sample_key]=clock()
                             x,y,w,h=map(int,row['local_box'])
                             if min(x,y)<0 or min(w,h)<=0 or x+w>frame.shape[1] or y+h>frame.shape[0]:continue
                             ok,encoded=cv2.imencode('.png',frame[y:y+h,x:x+w],[cv2.IMWRITE_PNG_COMPRESSION,3])
@@ -80,8 +82,9 @@ def run_session(engine, hwnds, *, minutes=30, interval=2, budget_mb=16, samples=
                             if image_used+len(data)>image_limit:counts['sample_budget_skips']+=1;continue
                             name=f"sample-{seq:06d}-mesa-{row['table_index']}.png"
                             (folder/name).write_bytes(data);image_used+=len(data);used+=len(data)
-                            record['samples'].append(dict(file=name,local_box=[x,y,w,h]))
+                            record['samples'].append(dict(file=name,local_box=[x,y,w,h],region_status=row.get('status'),reasons=row.get('reasons',[]),sequence=seq))
                             counts['saved_samples']+=1
+                            counts['saved_accepted_samples' if row.get('status')=='COMPLETE_CANDIDATE' else 'saved_rejected_samples']+=1
                     payload=(json.dumps(record,ensure_ascii=False,separators=(',',':'))+'\n').encode('utf8')
                     if log_used+len(payload)<=log_limit:
                         log.write(payload);log.flush();log_used+=len(payload);used+=len(payload);counts['saved_records']+=1
@@ -122,7 +125,7 @@ def main():
     p.add_argument('--minutos',type=float,default=30)
     p.add_argument('--intervalo',type=float,default=2)
     p.add_argument('--limite-mb',type=int,default=16)
-    p.add_argument('--amostras',action='store_true',help='Recortes nativos de mesas a cada 60s; cota de 25% do limite')
+    p.add_argument('--amostras',action='store_true',help='Recortes aceitos/rejeitados por estado a cada 60s; cota de 25% do limite')
     args=p.parse_args()
     from window_capture_engine import WindowCaptureEngine
     engine=WindowCaptureEngine()
