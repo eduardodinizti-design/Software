@@ -16,6 +16,7 @@ class TableCrop:
     reasons: list
     evidence: str
     corner_scores: dict = field(default_factory=dict)
+    corner_diagnostics: dict = field(default_factory=dict)
     def to_dict(self):return asdict(self)
 
 
@@ -53,7 +54,7 @@ def detect_table_crops(rgb, blockers=(), max_tables=6):
             proposals.append((box,'FELT_ONLY'))
     results=[]
     for box,evidence in proposals:
-        x,y,w,h=box;reasons=[];corner_scores={}
+        x,y,w,h=box;reasons=[];corner_scores={};corners={}
         if evidence=='FELT_ONLY' and .50<=w/h<=.63:
             corners=corner_evidence(rgb[y:y+h,x:x+w]);corner_scores=corners.get('scores',{})
             if corners['accepted']:evidence='FOUR_CORNER_BLUE_SURFACE'
@@ -79,7 +80,7 @@ def detect_table_crops(rgb, blockers=(), max_tables=6):
             elif float(crop.std())<15 or blue.mean()<.55:
                 status='UNCERTAIN';reasons.append('INSUFFICIENT_LAYOUT_EVIDENCE')
             else:status='COMPLETE_CANDIDATE'
-        results.append(TableCrop(box,status,reasons,evidence,corner_scores))
+        results.append(TableCrop(box,status,reasons,evidence,corner_scores,corners))
     if sum(r.status=='COMPLETE_CANDIDATE' for r in results)>max_tables:
         for r in results:
             if r.status=='COMPLETE_CANDIDATE':r.status='UNCERTAIN';r.reasons.append('TABLE_LIMIT_EXCEEDED')

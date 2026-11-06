@@ -15,10 +15,13 @@ def shape(mask):
     out[yy:yy+small.shape[0],xx:xx+small.shape[1]]=small
     return out
 
-def corner_evidence(rgb):
-    a=cv2.resize(rgb,(400,704));hsv=cv2.cvtColor(a,cv2.COLOR_RGB2HSV)
+def _measure(rgb, native=False):
+    a=rgb if native else cv2.resize(rgb,(400,704))
+    hsv=cv2.cvtColor(a,cv2.COLOR_RGB2HSV)
     scores={}
     for name,(x,y,w,h) in REGIONS.items():
+        if native:
+            x,y,w,h=round(x*rgb.shape[1]/400),round(y*rgb.shape[0]/704),round(w*rgb.shape[1]/400),round(h*rgb.shape[0]/704)
         mask=cv2.inRange(hsv[y:y+h,x:x+w],(38,90,65),(90,255,255))
         if name=='chat' and np.any(mask):
             _,labels,stats,_=cv2.connectedComponentsWithStats(mask)
@@ -34,3 +37,18 @@ def corner_evidence(rgb):
             score=float(np.logical_and(candidate,reference).sum()/max(1,np.logical_or(candidate,reference).sum()))
         scores[name]=round(score,4)
     return {'accepted':all(score>=.65 for score in scores.values()),'scores':scores,'reason':'FOUR_CORNER_ANCHORS'}
+
+
+def corner_evidence(rgb):
+    """Keep existing evidence first; retry masks before resizing, not looser scores.
+
+    Every corner must pass in one complete measurement. Do not combine best
+    corners across methods, infer missing icons, or lower the .65 threshold.
+    """
+    canonical=_measure(rgb)
+    if canonical['accepted']:
+        return dict(canonical,method='CANONICAL_RGB')
+    native=_measure(rgb,native=True)
+    if native['accepted']:
+        return dict(native,method='NATIVE_MASK',canonical_scores=canonical['scores'])
+    return dict(canonical,method='CANONICAL_RGB',native_scores=native['scores'])
