@@ -33,5 +33,7 @@ def main():
  args.output.parent.mkdir(parents=True,exist_ok=True)
  args.output.write_text(json.dumps(dict(summary=summary,scope='Previously used development screenshots; not independent generalization or latest user GDI frame.',results=results),indent=2))
  print(summary)
+ if summary["wrong"] or summary["unknown"] or summary["detected"] != summary["tables"]:
+  raise SystemExit(1)
 
 if __name__=='__main__':main()

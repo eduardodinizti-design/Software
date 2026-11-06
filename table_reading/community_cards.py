@@ -31,6 +31,10 @@ def read_board(table, *, _rank=read_rank, _suit=read_suit, hero_cards=()):
     boxes.sort()
     result['candidates']=[list(b) for b in boxes]
     if len(boxes) not in (3,4,5):return result
+    # This calibrated layout starts the community row near 20% of table width.
+    # A contiguous suffix of an occluded river must not be called a turn/flop.
+    if not .17*w <= boxes[0][0] <= .25*w:
+        return dict(result,status='BOARD_PARTIAL_OR_OBSTRUCTED',reason='FIRST_CARD_ANCHOR_MISSING')
     heights=[b[3] for b in boxes];widths=[b[2] for b in boxes]
     if max(b[1] for b in boxes)-min(b[1] for b in boxes)>.012*h:return result
     if max(heights)/min(heights)>1.15 or max(widths)/min(widths)>1.15:return result

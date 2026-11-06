@@ -31,4 +31,18 @@ class RankConfirmationTests(unittest.TestCase):
         r,n=self.read(['9']*4)
         self.assertEqual(r['rank'],'9');self.assertEqual(n,4)
 
+
+class AceAspectTests(unittest.TestCase):
+    read = RankConfirmationTests.read
+    def test_distorted_ace_requires_undistorted_agreement(self):
+        result,count=self.read(['A']*4+['7','7'])
+        self.assertIsNone(result['rank'])
+        self.assertEqual(result['evidence'],'ACE_REQUIRES_ORIGINAL_ASPECT')
+        self.assertEqual(count,6)
+
+    def test_confirmed_ace_remains_accepted(self):
+        result,count=self.read(['A']*6)
+        self.assertEqual(result['rank'],'A')
+        self.assertEqual(count,6)
+
 if __name__=='__main__':unittest.main()

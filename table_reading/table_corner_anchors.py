@@ -1,5 +1,6 @@
 """Calibrated blue-layout corner cues independent of action controls."""
 from pathlib import Path
+from itertools import combinations
 import cv2
 import numpy as np
 
@@ -15,6 +16,37 @@ def shape(mask):
     out[yy:yy+small.shape[0],xx:xx+small.shape[1]]=small
     return out
 
+def _menu_stripes(mask):
+    """Extract one unambiguous group of three aligned menu bars.
+
+    A window-title line can enter the ROI without occluding the actual icon.
+    Keep geometry constraints and the downstream template threshold; an overlay
+    hiding the bars cannot supply this evidence.
+    """
+    _, labels, stats, _ = cv2.connectedComponentsWithStats(mask)
+    bars = [(i, x, y, w, h) for i, (x, y, w, h, area)
+            in enumerate(stats[1:], 1)
+            if w >= 5 and 3 <= w / max(h, 1) <= 16 and area >= w * h * .45]
+    # Bound the search on noisy/foreign UI instead of choosing its best score.
+    if len(bars) > 12:
+        return mask
+    groups = []
+    for group in combinations(bars, 3):
+        group = sorted(group, key=lambda item: item[2])
+        widths = [b[3] for b in group]
+        centers = [b[1] + b[3] / 2 for b in group]
+        ys = [b[2] + b[4] / 2 for b in group]
+        gaps = [ys[1] - ys[0], ys[2] - ys[1]]
+        if (min(widths) / max(widths) >= .8
+                and max(centers) - min(centers) <= max(widths) * .15
+                and min(gaps) >= max(b[4] for b in group)
+                and max(gaps) <= max(widths) * .6
+                and min(gaps) / max(gaps) >= .65):
+            groups.append(group)
+    if len(groups) != 1:
+        return mask
+    return np.uint8(np.isin(labels, [b[0] for b in groups[0]])) * 255
+
 def _measure(rgb, native=False):
     a=rgb if native else cv2.resize(rgb,(400,704))
     hsv=cv2.cvtColor(a,cv2.COLOR_RGB2HSV)
@@ -23,6 +55,8 @@ def _measure(rgb, native=False):
         if native:
             x,y,w,h=round(x*rgb.shape[1]/400),round(y*rgb.shape[0]/704),round(w*rgb.shape[1]/400),round(h*rgb.shape[0]/704)
         mask=cv2.inRange(hsv[y:y+h,x:x+w],(38,90,65),(90,255,255))
+        if name=='menu' and np.any(mask):
+            mask=_menu_stripes(mask)
         if name=='chat' and np.any(mask):
             _,labels,stats,_=cv2.connectedComponentsWithStats(mask)
             mask=np.uint8(labels==(1+np.argmax(stats[1:,cv2.CC_STAT_AREA])))*255

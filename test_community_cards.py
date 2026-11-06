@@ -29,6 +29,16 @@ class BoardTests(unittest.TestCase):
         image[425:471,324:384]=(160,65,30)
         def forbidden(_):self.fail('Partial row reached OCR')
         self.assertEqual(read_board(image,_rank=forbidden)['status'],'BOARD_PARTIAL_OR_OBSTRUCTED')
+    def test_missing_first_cards_cannot_change_street(self):
+        for missing in (1,2):
+            image=self.scene(5)
+            image[380:470,120:120+68*missing]=(160,65,30)
+            def forbidden(_):self.fail('Unanchored board reached OCR')
+            result=read_board(image,_rank=forbidden)
+            self.assertEqual(result['status'],'BOARD_PARTIAL_OR_OBSTRUCTED')
+            self.assertEqual(result['reason'],'FIRST_CARD_ANCHOR_MISSING')
+            self.assertEqual(result['cards'],[])
+            self.assertIsNone(result['street'])
     def test_gap_in_row_rejected(self):
         image=self.scene(4);image[380:471,188:248]=(160,65,30)
         self.assertEqual(read_board(image)['status'],'BOARD_NOT_CONFIRMED')

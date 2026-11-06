@@ -29,6 +29,13 @@ class ButtonTests(unittest.TestCase):
         self.assertIsNone(parse_label('F/C')['action'])
         for text in ['Fold 2 BB','Raise garbage','Call 1,2,3 BB','Pagar','']:
             self.assertIsNone(parse_label(text))
+    def test_preselection_context_applies_to_entire_row(self):
+        values=iter(['F/C']*2+['Call 1,0 BB']*2+['Raise']*2)
+        result=read_action_buttons(self.image(),_ocr=lambda *_:next(values))
+        self.assertEqual(result['status'],'PRESELECTION_ROW')
+        self.assertTrue(all(b['action'] is None for b in result['buttons']))
+        self.assertEqual(result['buttons'][1]['label_action'],'CALL')
+        self.assertEqual(result['buttons'][1]['amount'],'1.0')
     def test_resize(self):
         result=read_action_buttons(cv2.resize(self.image(),(360,640)),_ocr=lambda *_:'Check')
         self.assertEqual(len(result['buttons']),3)

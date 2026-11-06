@@ -56,4 +56,14 @@ def read_action_buttons(crop, *, _ocr=None):
                 button.update(parsed[0],label=texts[0],status='PRESELECT' if parsed[0]['kind']=='PRESELECT' else 'EXPERIMENTAL_LABEL')
         except Exception as exc:button.update(status='OCR_ERROR',error=str(exc))
         result['buttons'].append(button)
+    # A row containing F/C is a preselection panel. Other textual labels in
+    # that same row must not be exposed as currently available actions.
+    if any(b.get('kind')=='PRESELECT' for b in result['buttons']):
+        result['status']='PRESELECTION_ROW'
+        for button in result['buttons']:
+            if button.get('action'):
+                button['label_action']=button['action']
+                button['action']=None
+                button['kind']='PRESELECT'
+                button['status']='PRESELECT'
     return result

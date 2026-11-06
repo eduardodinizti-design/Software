@@ -36,16 +36,16 @@ def read_segmented_rank(crop):
     if len(found)>1 or (2 in counts and any(r!='10' for r in found)):
         return {'rank':None,'status':'OCR_AMBIGUOUS','readings':readings,'evidence':'SEGMENTED_INK_CONFLICT'}
     if len(set(readings))==1 and readings[0] in VALID:
-        # Horizontal widening can turn a small A into an OCR 4. A four must
-        # also be positively confirmed without aspect-ratio distortion.
-        if readings[0]=='4':
+        # Horizontal widening confuses A/4 and can turn a reduced 7 into A.
+        # Both A and 4 require independent undistorted confirmation.
+        if readings[0] in {'4','A'}:
             original_shape=cv2.resize(original_shape,None,fx=8,fy=8,interpolation=cv2.INTER_NEAREST)
             original_shape=cv2.copyMakeBorder(original_shape,40,40,40,40,cv2.BORDER_CONSTANT,value=255)
             try:
                 confirmation=[pytesseract.image_to_string(original_shape,config=f'--psm {mode} -c tessedit_char_whitelist=AKQJT1098765432',timeout=3).strip() for mode in (7,10)]
             except Exception as exc:return {'rank':None,'status':'OCR_ERROR','error':str(exc)}
-            if confirmation!=['4','4']:
-                return {'rank':None,'status':'OCR_AMBIGUOUS','readings':readings,'aspect_confirmation':confirmation,'evidence':'FOUR_REQUIRES_ORIGINAL_ASPECT'}
+            if confirmation!=[readings[0],readings[0]]:
+                return {'rank':None,'status':'OCR_AMBIGUOUS','readings':readings,'aspect_confirmation':confirmation,'evidence':'FOUR_REQUIRES_ORIGINAL_ASPECT' if readings[0]=='4' else 'ACE_REQUIRES_ORIGINAL_ASPECT'}
         return {'rank':'T' if readings[0]=='10' else readings[0],'status':'CANDIDATE_ONLY',
                 'readings':readings,'evidence':'SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES'}
     if found:
