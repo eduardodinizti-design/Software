@@ -1,0 +1,182 @@
+test_arbitrary_executable_is_rejected (test_capture_regressions.OriginalRegressionTests.test_arbitrary_executable_is_rejected) ... ok
+test_linux_cannot_report_success (test_capture_regressions.OriginalRegressionTests.test_linux_cannot_report_success) ... ok
+test_process_access_denied_is_rejected (test_capture_regressions.OriginalRegressionTests.test_process_access_denied_is_rejected) ... ok
+test_ambiguous_and_explicit_selection (test_window_capture_engine.CaptureContracts.test_ambiguous_and_explicit_selection) ... ok
+test_blank_frame_not_success (test_window_capture_engine.CaptureContracts.test_blank_frame_not_success) ... ok
+test_client_dimensions_negative_origin_and_title_not_required (test_window_capture_engine.CaptureContracts.test_client_dimensions_negative_origin_and_title_not_required) ... ok
+test_dpi_failure_prevents_capture (test_window_capture_engine.CaptureContracts.test_dpi_failure_prevents_capture) ... ok
+test_explicit_invalid_does_not_select_other (test_window_capture_engine.CaptureContracts.test_explicit_invalid_does_not_select_other) ... ok
+test_identity_and_geometry_changes (test_window_capture_engine.CaptureContracts.test_identity_and_geometry_changes) ... ok
+test_large_unity_surface_not_rejected (test_window_capture_engine.CaptureContracts.test_large_unity_surface_not_rejected) ... ok
+test_minimized (test_window_capture_engine.CaptureContracts.test_minimized) ... ok
+test_query_failure (test_window_capture_engine.CaptureContracts.test_query_failure) ... ok
+test_unauthorized_process (test_window_capture_engine.CaptureContracts.test_unauthorized_process) ... ok
+test_bitblt_exception_restores_bitmap_and_frees_all (test_window_capture_engine.GDIContracts.test_bitblt_exception_restores_bitmap_and_frees_all) ... ok
+test_cleanup_failure_blocks_return (test_window_capture_engine.GDIContracts.test_cleanup_failure_blocks_return) ... ok
+test_native_process_query_exception_does_not_default_name (test_window_capture_engine.GDIContracts.test_native_process_query_exception_does_not_default_name) ... ok
+test_partial_acquisition_failure (test_window_capture_engine.GDIContracts.test_partial_acquisition_failure) ... ok
+test_success_uses_client_dc_and_releases_only_owned_dc (test_window_capture_engine.GDIContracts.test_success_uses_client_dc_and_releases_only_owned_dc) ... ok
+test_diagnostic_forwards_selected_hwnd (test_window_capture_audit.IntegrationContracts.test_diagnostic_forwards_selected_hwnd) ... ok
+test_diagnostic_saves_linux_failure_without_image (test_window_capture_audit.IntegrationContracts.test_diagnostic_saves_linux_failure_without_image) ... ok
+test_observer_routes_to_engine (test_window_capture_audit.IntegrationContracts.test_observer_routes_to_engine) ... ok
+test_standalone_routes_to_engine (test_window_capture_audit.IntegrationContracts.test_standalone_routes_to_engine) ... ok
+test_capture_client_pixels_and_resize (test_capture_windows_native.NativeGDISmoke.test_capture_client_pixels_and_resize) ... skipped 'Native Windows required'
+test_black_frame_has_no_tables (test_table_reading.PipelineContracts.test_black_frame_has_no_tables) ... ok
+test_board_is_opt_in_and_uses_accepted_native_crop (test_table_reading.PipelineContracts.test_board_is_opt_in_and_uses_accepted_native_crop) ... ok
+test_buttons_receive_only_accepted_crop_when_enabled (test_table_reading.PipelineContracts.test_buttons_receive_only_accepted_crop_when_enabled) ... ok
+test_duplicate_card_is_not_accepted (test_table_reading.PipelineContracts.test_duplicate_card_is_not_accepted) ... ok
+test_export_pixels_and_budget (test_table_reading.PipelineContracts.test_export_pixels_and_budget) ... ok
+test_latest_skips_failed_reports (test_table_reading.PipelineContracts.test_latest_skips_failed_reports) ... ok
+test_metadata_mismatch_blocks_reading (test_table_reading.PipelineContracts.test_metadata_mismatch_blocks_reading) ... ok
+test_missing_ocr_preserves_detected_crop (test_table_reading.PipelineContracts.test_missing_ocr_preserves_detected_crop) ... ok
+test_partial_is_not_read (test_table_reading.PipelineContracts.test_partial_is_not_read) ... ok
+test_real_pixels_are_cropped_and_routed (test_table_reading.PipelineContracts.test_real_pixels_are_cropped_and_routed) ... ok
+test_scaled_moved_table_preserves_native_crop (test_table_reading.PipelineContracts.test_scaled_moved_table_preserves_native_crop) ... ok
+test_separate_processes_and_snapshots_never_reuse_identity (test_table_reading.PipelineContracts.test_separate_processes_and_snapshots_never_reuse_identity) ... ok
+test_six_limit_and_seven_refusal (test_table_reading.PipelineContracts.test_six_limit_and_seven_refusal) ... ok
+test_blank_ace_can_use_four_smaller_undistorted_votes (test_rank_confirmation.AceAspectTests.test_blank_ace_can_use_four_smaller_undistorted_votes) ... ok
+test_blank_ace_retry_conflict_abstains (test_rank_confirmation.AceAspectTests.test_blank_ace_retry_conflict_abstains) ... ok
+test_blank_ace_retry_partial_abstains (test_rank_confirmation.AceAspectTests.test_blank_ace_retry_partial_abstains) ... ok
+test_blank_and_conflict_does_not_enable_smaller_retry (test_rank_confirmation.AceAspectTests.test_blank_and_conflict_does_not_enable_smaller_retry) ... ok
+test_confirmed_ace_remains_accepted (test_rank_confirmation.AceAspectTests.test_confirmed_ace_remains_accepted) ... ok
+test_distorted_ace_requires_undistorted_agreement (test_rank_confirmation.AceAspectTests.test_distorted_ace_requires_undistorted_agreement) ... ok
+test_one_blank_does_not_enable_smaller_retry (test_rank_confirmation.AceAspectTests.test_one_blank_does_not_enable_smaller_retry) ... ok
+test_blank_variants_require_four_fresh_confirmations (test_rank_confirmation.RankConfirmationTests.test_blank_variants_require_four_fresh_confirmations) ... ok
+test_conflicting_seven_nine_cannot_be_overridden (test_rank_confirmation.RankConfirmationTests.test_conflicting_seven_nine_cannot_be_overridden) ... ok
+test_full_agreement_has_no_extra_ocr (test_rank_confirmation.RankConfirmationTests.test_full_agreement_has_no_extra_ocr) ... ok
+test_retry_blank_abstains (test_rank_confirmation.RankConfirmationTests.test_retry_blank_abstains) ... ok
+test_retry_conflict_abstains (test_rank_confirmation.RankConfirmationTests.test_retry_conflict_abstains) ... ok
+test_retry_error_abstains (test_rank_confirmation.RankConfirmationTests.test_retry_error_abstains) ... ok
+test_oversized_does_not_delete (test_diagnostic_storage.StorageTests.test_oversized_does_not_delete) ... ok
+test_path_escape_rejected (test_diagnostic_storage.StorageTests.test_path_escape_rejected) ... ok
+test_shared_rotation_and_protection (test_diagnostic_storage.StorageTests.test_shared_rotation_and_protection) ... ok
+test_unknown_files_not_deleted (test_diagnostic_storage.StorageTests.test_unknown_files_not_deleted) ... ok
+test_exception_then_recovery (test_continuous_observer.ObserverTests.test_exception_then_recovery) ... ok
+test_expired_result_not_displayed (test_continuous_observer.ObserverTests.test_expired_result_not_displayed) ... ok
+test_failure_does_not_repeat_cards_and_recovery_uses_new_box (test_continuous_observer.ObserverTests.test_failure_does_not_repeat_cards_and_recovery_uses_new_box) ... ok
+test_interrupt_clean_exit (test_continuous_observer.ObserverTests.test_interrupt_clean_exit) ... ok
+test_invalid_interval (test_continuous_observer.ObserverTests.test_invalid_interval) ... ok
+test_source_change_stops_before_reading (test_continuous_observer.ObserverTests.test_source_change_stops_before_reading) ... ok
+test_diagnostics_copy_and_failure_replaces_success (test_capture_review.ReviewTests.test_diagnostics_copy_and_failure_replaces_success) ... ok
+test_metrics_bounded_and_percentiles (test_capture_review.ReviewTests.test_metrics_bounded_and_percentiles) ... ok
+test_missing_timing_not_reported_as_zero (test_capture_review.ReviewTests.test_missing_timing_not_reported_as_zero) ... ok
+test_missing_reason_and_empty_report (test_region_presentation.RegionPresentationTests.test_missing_reason_and_empty_report) ... ok
+test_rejected_region_not_a_table_or_card_reading (test_region_presentation.RegionPresentationTests.test_rejected_region_not_a_table_or_card_reading) ... ok
+test_unknown_reason_is_preserved (test_region_presentation.RegionPresentationTests.test_unknown_reason_is_preserved) ... ok
+test_conflicting_text_is_not_guessed (test_action_buttons.ButtonTests.test_conflicting_text_is_not_guessed) ... ok
+test_empty_does_not_call_ocr (test_action_buttons.ButtonTests.test_empty_does_not_call_ocr) ... ok
+test_error_cannot_reuse_previous_label (test_action_buttons.ButtonTests.test_error_cannot_reuse_previous_label) ... ok
+test_preselection_context_applies_to_entire_row (test_action_buttons.ButtonTests.test_preselection_context_applies_to_entire_row) ... ok
+test_preselection_not_action (test_action_buttons.ButtonTests.test_preselection_not_action) ... ok
+test_resize (test_action_buttons.ButtonTests.test_resize) ... ok
+test_three_labels_and_amount (test_action_buttons.ButtonTests.test_three_labels_and_amount) ... ok
+test_failures_and_rejections_bounded (test_lab_metrics.LabTests.test_failures_and_rejections_bounded) ... ok
+test_geometry_change_rejected_then_next_capture_recovers (test_lab_metrics.LabTests.test_geometry_change_rejected_then_next_capture_recovers) ... ok
+test_idle_zeros_do_not_dilute_ocr (test_lab_metrics.LabTests.test_idle_zeros_do_not_dilute_ocr) ... ok
+test_long_failure_run_has_no_reader_calls (test_lab_metrics.LabTests.test_long_failure_run_has_no_reader_calls) ... ok
+test_ocr_counts_are_bounded_and_not_reported_as_milliseconds (test_lab_metrics.OCRWorkTests.test_ocr_counts_are_bounded_and_not_reported_as_milliseconds) ... ok
+test_missing_corner_still_rejected (test_corner_sampling.CornerSamplingTests.test_missing_corner_still_rejected) ... ok
+test_native_mask_recovers_sampling_loss_without_controls (test_corner_sampling.CornerSamplingTests.test_native_mask_recovers_sampling_loss_without_controls) ... ok
+test_uniform_blue_is_not_table (test_corner_sampling.CornerSamplingTests.test_uniform_blue_is_not_table) ... ok
+test_bad_input_does_not_claim_street (test_community_cards.BoardTests.test_bad_input_does_not_claim_street) ... ok
+test_development_empty_screens (test_community_cards.BoardTests.test_development_empty_screens) ... ok
+test_duplicate_and_hero_conflict (test_community_cards.BoardTests.test_duplicate_and_hero_conflict) ... ok
+test_existing_suit_is_not_overridden (test_community_cards.BoardTests.test_existing_suit_is_not_overridden) ... ok
+test_gap_in_row_rejected (test_community_cards.BoardTests.test_gap_in_row_rejected) ... ok
+test_missing_first_cards_cannot_change_street (test_community_cards.BoardTests.test_missing_first_cards_cannot_change_street) ... ok
+test_move_and_resize_relative_table (test_community_cards.BoardTests.test_move_and_resize_relative_table) ... ok
+test_native_suit_retry_only_after_unreadable (test_community_cards.BoardTests.test_native_suit_retry_only_after_unreadable) ... ok
+test_no_cards_does_not_claim_preflop (test_community_cards.BoardTests.test_no_cards_does_not_claim_preflop) ... ok
+test_ocr_exception_discards_whole_board_then_recovers (test_community_cards.BoardTests.test_ocr_exception_discards_whole_board_then_recovers) ... ok
+test_partial_fourth_card_cannot_be_reported_as_flop (test_community_cards.BoardTests.test_partial_fourth_card_cannot_be_reported_as_flop) ... ok
+test_partial_rows_rejected (test_community_cards.BoardTests.test_partial_rows_rejected) ... ok
+test_sequence_never_reuses_previous_board (test_community_cards.BoardTests.test_sequence_never_reuses_previous_board) ... ok
+test_streets (test_community_cards.BoardTests.test_streets) ... ok
+test_unknown_rank_not_a_partial_valid_board (test_community_cards.BoardTests.test_unknown_rank_not_a_partial_valid_board) ... ok
+test_ambiguous_groups_are_not_cherry_picked (test_detector_batch.DetectorBatchTests.test_ambiguous_groups_are_not_cherry_picked) ... ok
+test_misaligned_bars_do_not_match (test_detector_batch.DetectorBatchTests.test_misaligned_bars_do_not_match) ... ok
+test_occluding_badge_is_not_menu (test_detector_batch.DetectorBatchTests.test_occluding_badge_is_not_menu) ... ok
+test_title_line_is_excluded_without_changing_three_bars (test_detector_batch.DetectorBatchTests.test_title_line_is_excluded_without_changing_three_bars) ... ok
+test_two_bars_do_not_synthesize_third (test_detector_batch.DetectorBatchTests.test_two_bars_do_not_synthesize_third) ... ok
+test_explicit_occlusion_remains_rejected (test_detector_proposals.DetectorProposalTests.test_explicit_occlusion_remains_rejected) ... ok
+test_frame_touching_table_is_still_partial (test_detector_proposals.DetectorProposalTests.test_frame_touching_table_is_still_partial) ... ok
+test_full_frame_rejection_does_not_suppress_real_table (test_detector_proposals.DetectorProposalTests.test_full_frame_rejection_does_not_suppress_real_table) ... ok
+test_nested_blue_regions_without_anchors_never_become_tables (test_detector_proposals.DetectorProposalTests.test_nested_blue_regions_without_anchors_never_become_tables) ... ok
+test_backend_path_change_invalidates (test_ocr_runtime.OCRFrameTests.test_backend_path_change_invalidates) ... ok
+test_empty_string_is_valid_cached_output (test_ocr_runtime.OCRFrameTests.test_empty_string_is_valid_cached_output) ... ok
+test_enabled_nested_context_reuses_same_frame (test_ocr_runtime.OCRFrameTests.test_enabled_nested_context_reuses_same_frame) ... ok
+test_entry_limit_is_bounded_and_uncached_values_still_work (test_ocr_runtime.OCRFrameTests.test_entry_limit_is_bounded_and_uncached_values_still_work) ... ok
+test_exception_not_cached_and_frame_cleanup (test_ocr_runtime.OCRFrameTests.test_exception_not_cached_and_frame_cleanup) ... ok
+test_exception_retry_within_frame (test_ocr_runtime.OCRFrameTests.test_exception_retry_within_frame) ... ok
+test_frames_never_share_results (test_ocr_runtime.OCRFrameTests.test_frames_never_share_results) ... ok
+test_identical_copy_reuses_result (test_ocr_runtime.OCRFrameTests.test_identical_copy_reuses_result) ... ok
+test_no_frame_is_passthrough (test_ocr_runtime.OCRFrameTests.test_no_frame_is_passthrough) ... ok
+test_noncontiguous_view_matches_identical_pixels (test_ocr_runtime.OCRFrameTests.test_noncontiguous_view_matches_identical_pixels) ... ok
+test_outer_disabled_cannot_be_enabled_by_nested_frame (test_ocr_runtime.OCRFrameTests.test_outer_disabled_cannot_be_enabled_by_nested_frame) ... ok
+test_payload_limit_includes_output_and_preserves_results (test_ocr_runtime.OCRFrameTests.test_payload_limit_includes_output_and_preserves_results) ... ok
+test_pixel_mutation_invalidates (test_ocr_runtime.OCRFrameTests.test_pixel_mutation_invalidates) ... ok
+test_shape_dtype_and_configuration_are_part_of_identity (test_ocr_runtime.OCRFrameTests.test_shape_dtype_and_configuration_are_part_of_identity) ... ok
+test_statistics_count_requests_and_real_calls (test_ocr_runtime.OCRFrameTests.test_statistics_count_requests_and_real_calls) ... ok
+test_threads_have_independent_frames (test_ocr_runtime.OCRFrameTests.test_threads_have_independent_frames) ... ok
+test_unsupported_objects_options_and_mutable_output_bypass (test_ocr_runtime.OCRFrameTests.test_unsupported_objects_options_and_mutable_output_bypass) ... ok
+test_ambiguous_families_cannot_shortcut_ocr (test_rank_templates.RankTemplateContracts.test_ambiguous_families_cannot_shortcut_ocr) ... ok
+test_atlas_keeps_frozen_source_split (test_rank_templates.RankTemplateContracts.test_atlas_keeps_frozen_source_split) ... ok
+test_blank_crop_delegates (test_rank_templates.RankTemplateContracts.test_blank_crop_delegates) ... ok
+test_competing_identical_glyph_rejected (test_rank_templates.RankTemplateContracts.test_competing_identical_glyph_rejected) ... ok
+test_component_count_rejects_non_ten_pair (test_rank_templates.RankTemplateContracts.test_component_count_rejects_non_ten_pair) ... ok
+test_exact_asset_self_match_contract_only (test_rank_templates.RankTemplateContracts.test_exact_asset_self_match_contract_only) ... ok
+test_fastpath_avoids_ocr_only_when_candidate_exists (test_rank_templates.RankTemplateContracts.test_fastpath_avoids_ocr_only_when_candidate_exists) ... ok
+test_margin_compares_distinct_ranks_not_variant_count (test_rank_templates.RankTemplateContracts.test_margin_compares_distinct_ranks_not_variant_count) ... ok
+test_missing_or_corrupt_atlas_delegates (test_rank_templates.RankTemplateContracts.test_missing_or_corrupt_atlas_delegates) ... ok
+test_toggle_disabled_never_invokes_template_reader (test_rank_templates.RankTemplateContracts.test_toggle_disabled_never_invokes_template_reader) ... ok
+test_two_thresholds_must_agree (test_rank_templates.RankTemplateContracts.test_two_thresholds_must_agree) ... ok
+test_vectorized_scores_exactly_match_scalar_reference (test_rank_templates.RankTemplateContracts.test_vectorized_scores_exactly_match_scalar_reference) ... ok
+test_vectorized_tie_keeps_first_template_geometry (test_rank_templates.RankTemplateContracts.test_vectorized_tie_keeps_first_template_geometry) ... ok
+test_ambiguous_templates_abstain (test_button_templates.ButtonTemplateTests.test_ambiguous_templates_abstain) ... ok
+test_disabled_mode_bypasses_templates (test_button_templates.ButtonTemplateTests.test_disabled_mode_bypasses_templates) ... ok
+test_extreme_aspect_abstains_before_resize (test_button_templates.ButtonTemplateTests.test_extreme_aspect_abstains_before_resize) ... ok
+test_hash_mismatch_disables_bank (test_button_templates.ButtonTemplateTests.test_hash_mismatch_disables_bank) ... ok
+test_injected_ocr_always_bypasses_templates (test_button_templates.ButtonTemplateTests.test_injected_ocr_always_bypasses_templates) ... ok
+test_missing_competitor_disables_entire_bank (test_button_templates.ButtonTemplateTests.test_missing_competitor_disables_entire_bank) ... ok
+test_packaged_static_labels (test_button_templates.ButtonTemplateTests.test_packaged_static_labels) ... ok
+test_template_evidence_does_not_fabricate_ocr (test_button_templates.ButtonTemplateTests.test_template_evidence_does_not_fabricate_ocr) ... ok
+test_unknown_blank_and_partial_do_not_match (test_button_templates.ButtonTemplateTests.test_unknown_blank_and_partial_do_not_match) ... ok
+test_whole_text_includes_added_amount (test_button_templates.ButtonTemplateTests.test_whole_text_includes_added_amount) ... ok
+test_cached_geometry_reads_current_frame_pixels (test_roi_geometry.RoiGeometryTests.test_cached_geometry_reads_current_frame_pixels) ... ok
+test_empty_board_crop_fails_cleanly (test_roi_geometry.RoiGeometryTests.test_empty_board_crop_fails_cleanly) ... ok
+test_geometry_is_immutable (test_roi_geometry.RoiGeometryTests.test_geometry_is_immutable) ... ok
+test_invalid_dimensions_and_unknown_profiles_rejected (test_roi_geometry.RoiGeometryTests.test_invalid_dimensions_and_unknown_profiles_rejected) ... ok
+test_matches_existing_board_band_across_resolutions (test_roi_geometry.RoiGeometryTests.test_matches_existing_board_band_across_resolutions) ... ok
+test_resize_uses_new_bounds_and_cache_is_bounded (test_roi_geometry.RoiGeometryTests.test_resize_uses_new_bounds_and_cache_is_bounded) ... ok
+test_translation_changes_only_diagnostics_not_cached_local_geometry (test_roi_geometry.RoiGeometryTests.test_translation_changes_only_diagnostics_not_cached_local_geometry) ... ok
+test_cli_requires_explicit_mode_and_paired_metadata (test_template_sample_collection.SampleCollectionTests.test_cli_requires_explicit_mode_and_paired_metadata) ... usage: - [-h] (--hwnd HWND | --image IMAGE) [--logs-root LOGS_ROOT]
+         [--metadata METADATA] [--max-tables {1,2,3,4,5,6}]
+-: error: one of the arguments --hwnd --image is required
+usage: - [-h] (--hwnd HWND | --image IMAGE) [--logs-root LOGS_ROOT]
+         [--metadata METADATA] [--max-tables {1,2,3,4,5,6}]
+-: error: --image exige --metadata; --hwnd nao aceita --metadata
+usage: - [-h] (--hwnd HWND | --image IMAGE) [--logs-root LOGS_ROOT]
+         [--metadata METADATA] [--max-tables {1,2,3,4,5,6}]
+-: error: --image exige --metadata; --hwnd nao aceita --metadata
+ok
+test_incoming_budget_failure_never_creates_logs (test_template_sample_collection.SampleCollectionTests.test_incoming_budget_failure_never_creates_logs) ... ok
+test_live_failure_or_other_hwnd_never_saves (test_template_sample_collection.SampleCollectionTests.test_live_failure_or_other_hwnd_never_saves) ... ok
+test_max_table_limit_and_missing_table_never_write (test_template_sample_collection.SampleCollectionTests.test_max_table_limit_and_missing_table_never_write) ... ok
+test_mock_strict_live_capture_passes_requested_hwnd (test_template_sample_collection.SampleCollectionTests.test_mock_strict_live_capture_passes_requested_hwnd) ... ok
+test_real_fixture_only_native_regions_and_unlabeled_manifest (test_template_sample_collection.SampleCollectionTests.test_real_fixture_only_native_regions_and_unlabeled_manifest) ... ok
+test_wrong_metadata_never_creates_logs (test_template_sample_collection.SampleCollectionTests.test_wrong_metadata_never_creates_logs) ... ok
+test_blank_and_suffix_rejected (test_exact_call_template.ExactCallTests.test_blank_and_suffix_rejected) ... ok
+test_exact_full_amount (test_exact_call_template.ExactCallTests.test_exact_full_amount) ... ok
+test_injected_reader_bypasses_exact_shortcut (test_exact_call_template.ExactCallTests.test_injected_reader_bypasses_exact_shortcut) ... ok
+test_missing_or_corrupt_asset_falls_back (test_exact_call_template.ExactCallTests.test_missing_or_corrupt_asset_falls_back) ... ok
+test_mixed_preselection_keeps_amount_but_disables_action (test_exact_call_template.ExactCallTests.test_mixed_preselection_keeps_amount_but_disables_action) ... ok
+test_resize_rejected (test_exact_call_template.ExactCallTests.test_resize_rejected) ... ok
+test_single_pixel_change_rejected (test_exact_call_template.ExactCallTests.test_single_pixel_change_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 165 tests in 4.865s
+
+OK (skipped=1)
+FALHA: Captura estrita falhou: {'status': 'WINDOW_INVALID_HWND'}
+FALHA: Returned HWND differs from requested HWND
+Amostras UNLABELED: /tmp/tmp1k59md62/logs/leitura/leitura-bde5c896da1043cdad3b61280b5ab7ce | 1 mesa(s). Sem OCR ou importacao para treino.

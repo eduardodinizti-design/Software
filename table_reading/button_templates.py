@@ -6,7 +6,7 @@ import cv2
 import numpy as np
 
 ASSETS=Path(__file__).with_name('button_template_assets')
-# Call-with-amount is deliberately unsupported; no prefix matching is performed.
+# Approximate Call-with-amount matching is unsupported; exact raster path is separate below.
 LABELS=('F/C','Check','Fold','Raise')
 # Enabled only after source-disjoint whole-label validation.
 ENABLED_LABELS=frozenset(('F/C','Check','Fold','Raise'))
@@ -59,3 +59,38 @@ def read_static_label(clean):
     margin=scores[0][0]-(scores[1][0] if len(scores)>1 else 0.)
     if margin<.12:return None
     return dict(label=scores[0][1],evidence='WHOLE_LABEL_TEMPLATE',template_iou=round(scores[0][0],4),template_margin=round(margin,4))
+
+
+def exact_ink(clean):
+    """Return all native raster ink without resampling, filtering or suffix removal."""
+    if not isinstance(clean,np.ndarray) or clean.dtype!=np.uint8 or clean.ndim!=2 or not clean.size or clean.size>2_000_000:
+        return None
+    ink=np.uint8(clean<128)
+    points=cv2.findNonZero(ink)
+    if points is None:return None
+    x,y,w,h=cv2.boundingRect(points)
+    return ink[y:y+h,x:x+w]
+
+
+@lru_cache(maxsize=1)
+def exact_call_template():
+    try:
+        row=json.loads((ASSETS/'exact_call_provenance.json').read_text())
+        if row['label']!='Call 1,0 BB' or row['native_ink_shape']!=[24,123] or row['clean_ink_shape']!=[72,369]:return None
+        name=row['asset']
+        if Path(name).name!=name:return None
+        path=ASSETS/name
+        if hashlib.sha256(path.read_bytes()).hexdigest()!=row['asset_sha256']:return None
+        clean=cv2.imread(str(path),cv2.IMREAD_GRAYSCALE)
+        ink=exact_ink(clean)
+        if ink is None or list(ink.shape)!=row['clean_ink_shape']:return None
+        return ink
+    except (OSError,ValueError,TypeError,KeyError):return None
+
+
+def read_exact_call(clean):
+    """Recognize only the validated complete 1.0-BB raster, never infer digits."""
+    ink=exact_ink(clean);template=exact_call_template()
+    if ink is None or template is None or ink.shape!=template.shape:return None
+    if not np.array_equal(ink,template):return None
+    return dict(label='Call 1,0 BB',evidence='EXACT_WHOLE_LABEL_RASTER')
