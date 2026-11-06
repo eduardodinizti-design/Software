@@ -32,3 +32,12 @@ class LabTests(unittest.TestCase):
             def capture_frame(self,hwnd):return None,{'status':'WINDOW_MINIMIZED'}
         def forbidden(*a,**k):raise AssertionError('reader called')
         self.assertEqual(observe(Engine(),1,max_cycles=1000,analyze=forbidden,emit=lambda _:None,sleep=lambda _:None),0)
+
+class OCRWorkTests(unittest.TestCase):
+    def test_ocr_counts_are_bounded_and_not_reported_as_milliseconds(self):
+        m=ObservationMetrics(limit=2)
+        for _ in range(3):m.add({},dict(ocr_work=dict(requests=10,calls=6,hits=4)),100)
+        self.assertEqual(m.counts()['ocr_work'],dict(requests=20,calls=12,hits=8))
+        self.assertNotIn('hits',m.summary())
+        m.failure('WINDOW_MINIMIZED')
+        self.assertEqual(m.counts()['ocr_work'],dict(requests=10,calls=6,hits=4))

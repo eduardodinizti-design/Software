@@ -8,6 +8,7 @@ import uuid
 import cv2
 import numpy as np
 from .automatic_table_crops import detect_table_crops
+from .ocr_runtime import snapshot_ocr
 
 
 def configure_ocr():
@@ -29,6 +30,7 @@ def configure_ocr():
     raise RuntimeError('TESSERACT_UNAVAILABLE: instale Tesseract com idioma English ou configure TESSERACT_CMD.')
 
 
+@snapshot_ocr
 def analyze_tables(frame_bgr, metadata, max_tables=6, *, _reader=None, read_buttons=False, read_community=False):
     if not isinstance(frame_bgr,np.ndarray) or frame_bgr.dtype!=np.uint8 or frame_bgr.ndim!=3 or frame_bgr.shape[2]!=3 or not frame_bgr.size:
         raise ValueError('Expected nonempty BGR uint8 frame')

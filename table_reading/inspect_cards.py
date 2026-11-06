@@ -5,6 +5,7 @@ from pathlib import Path
 import cv2
 import numpy as np
 import pytesseract
+from .ocr_runtime import image_to_string
 from .suit_reader import read_suit
 from .card_alignment import locate_card_pair
 from .segmented_rank import read_segmented_rank
@@ -50,7 +51,7 @@ def read_rank(crop):
     found = set()
     try:
         for variant in candidates:
-            text = pytesseract.image_to_string(variant,config='--psm 10 -c tessedit_char_whitelist=AKQJT1098765432',timeout=3).strip()
+            text = image_to_string(variant,config='--psm 10 -c tessedit_char_whitelist=AKQJT1098765432',timeout=3).strip()
             if text in list('AKQJT98765432') + ['10']:
                 found.add('T' if text == '10' else text)
     except Exception as exc:
@@ -62,7 +63,7 @@ def read_rank(crop):
         inverted=cv2.copyMakeBorder(255-binary,10,10,10,10,cv2.BORDER_CONSTANT,value=255)
         inverted=cv2.resize(inverted,None,fx=4,fy=4)
         try:
-            readings=[pytesseract.image_to_string(inverted,config=f'--psm {mode} -c tessedit_char_whitelist=AKQJT1098765432',timeout=3).strip() for mode in (7,10)]
+            readings=[image_to_string(inverted,config=f'--psm {mode} -c tessedit_char_whitelist=AKQJT1098765432',timeout=3).strip() for mode in (7,10)]
         except Exception as exc:
             return {'rank':None,'status':'OCR_ERROR','error':str(exc)}
         if readings[0]==readings[1] and readings[0] in list('AKQJT98765432')+['10']:
@@ -127,7 +128,7 @@ def _read_native_white_rank(table, left, bottom, clean_wide=False,vertical_offse
     clean=cv2.resize(clean,None,fx=12 if clean_wide else 8,fy=8,interpolation=cv2.INTER_NEAREST)
     clean=cv2.copyMakeBorder(clean,40,40,40,40,cv2.BORDER_CONSTANT,value=255)
     try:
-        readings=[pytesseract.image_to_string(clean,config=f'--psm {mode} -c tessedit_char_whitelist=AKQJT1098765432',timeout=3).strip() for mode in (7,10)]
+        readings=[image_to_string(clean,config=f'--psm {mode} -c tessedit_char_whitelist=AKQJT1098765432',timeout=3).strip() for mode in (7,10)]
     except Exception as exc:return {'rank':None,'status':'OCR_ERROR','error':str(exc)}
     value=readings[0] if readings[0]==readings[1] and readings[0] in list('AKQJT98765432')+['10'] else None
     return {'rank':'T' if value=='10' else value,'status':'CANDIDATE_ONLY' if value else 'NATIVE_OCR_UNREADABLE_OR_CONFLICT',

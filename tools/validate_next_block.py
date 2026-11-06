@@ -3,6 +3,7 @@ import os
 os.environ.setdefault('OMP_THREAD_LIMIT', '1')
 import argparse
 import hashlib
+import inspect
 import json
 import sys
 from pathlib import Path
@@ -66,7 +67,7 @@ def run(assets, output):
                             errors=errors,result=result))
         print(name,'PASS' if not errors else 'FAIL',accepted,flush=True)
     report=dict(scope='Seven offline pipeline calls using two reused development sources. Synthetic metadata does not validate Windows capture. Spectator, empty, partial and blank cases are explicit transformations. Detection is never injected or bypassed.',
-                detector_sha256=hashlib.sha256(Path(analyze_tables.__globals__['detect_table_crops'].__code__.co_filename).read_bytes()).hexdigest(),
+                detector_sha256=hashlib.sha256(Path(inspect.unwrap(analyze_tables).__globals__['detect_table_crops'].__code__.co_filename).read_bytes()).hexdigest(),
                 sources=sources,summary=dict(total=len(results),passed=sum(r['passed'] for r in results),failed=sum(not r['passed'] for r in results)),results=results)
     output.parent.mkdir(parents=True,exist_ok=True)
     output.write_text(json.dumps(report,indent=2))

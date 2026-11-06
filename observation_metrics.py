@@ -16,13 +16,15 @@ class ObservationMetrics:
         values['cycle_with_ocr' if any(attempts.values()) else 'cycle_without_ocr']=cycle_ms
         self.outcomes.append(dict(status='ANALYZED',card_attempts=attempts.get('card_reading',0),
             rejected=sum(r.get('status')!='COMPLETE_CANDIDATE' for r in report.get('tables',[])),
-            reasons=[reason for r in report.get('tables',[]) for reason in r.get('reasons',[])]))
+            reasons=[reason for r in report.get('tables',[]) for reason in r.get('reasons',[])],
+            ocr_work={k:report.get('ocr_work',{}).get(k,0) for k in ('requests','calls','hits')}))
         self.samples.append({k:float(v) for k,v in values.items()
                              if isinstance(v,(int,float)) and math.isfinite(v) and v>=0})
     def failure(self, status):
         self.outcomes.append(dict(status=status,card_attempts=0,rejected=0,reasons=[]))
     def counts(self):
         return dict(window=len(self.outcomes),statuses=dict(Counter(r['status'] for r in self.outcomes)),
+                    ocr_work={k:sum(r.get('ocr_work',{}).get(k,0) for r in self.outcomes) for k in ('requests','calls','hits')},
                     cycles_with_card_reader=sum(r['card_attempts']>0 for r in self.outcomes),
                     rejected_regions=sum(r['rejected'] for r in self.outcomes),
                     rejection_reasons=dict(Counter(v for r in self.outcomes for v in r['reasons'])))

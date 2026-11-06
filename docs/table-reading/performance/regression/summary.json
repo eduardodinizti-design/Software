@@ -1,0 +1,96 @@
+{
+  "timestamp": "2026-11-06T13:14:34.043289+00:00",
+  "scope": "Laboratory contracts and reused development replays. Windows-native test may be skipped on Linux; inspect contracts.log.",
+  "all_jobs_passed": true,
+  "jobs": [
+    {
+      "name": "contracts",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 4.54,
+      "log": "contracts.log",
+      "error": null
+    },
+    {
+      "name": "hero_development",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 11.91,
+      "log": "hero_development.log",
+      "error": null
+    },
+    {
+      "name": "colored_boards",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 10.34,
+      "log": "colored_boards.log",
+      "error": null
+    },
+    {
+      "name": "board_transitions",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 7.78,
+      "log": "board_transitions.log",
+      "error": null
+    },
+    {
+      "name": "turn_variants",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 7.36,
+      "log": "turn_variants.log",
+      "error": null
+    },
+    {
+      "name": "hero_extended",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 40.56,
+      "log": "hero_extended.log",
+      "error": null
+    },
+    {
+      "name": "board_extended",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 19.65,
+      "log": "board_extended.log",
+      "error": null
+    },
+    {
+      "name": "colored_eight",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 5.75,
+      "log": "colored_eight.log",
+      "error": null
+    },
+    {
+      "name": "pipeline_integrated",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": null,
+      "log": "pipeline_integrated.log",
+      "error": null,
+      "initial_attempt": {
+        "name": "pipeline_integrated",
+        "exit_code": 1,
+        "passed": false,
+        "seconds": 15.9,
+        "log": "pipeline_integrated.log",
+        "error": null
+      },
+      "retry_note": "Seven image cases passed initially; report provenance introspection failed after adding decorator. Fixed with inspect.unwrap and reran all seven cases successfully; retry duration not instrumented."
+    },
+    {
+      "name": "detector_extended",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 12.22,
+      "log": "detector_extended.log",
+      "error": null
+    }
+  ]
+}

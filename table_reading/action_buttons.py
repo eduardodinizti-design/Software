@@ -3,6 +3,7 @@ import re
 import cv2
 import numpy as np
 import pytesseract
+from .ocr_runtime import image_to_string
 
 
 def parse_label(text):
@@ -49,7 +50,7 @@ def read_action_buttons(crop, *, _ocr=None):
         clean=cv2.copyMakeBorder(clean,12,12,12,12,cv2.BORDER_CONSTANT,value=255)
         button=dict(box=[x,y+offset,bw,bh],status='NOT_IDENTIFIED',label=None,action=None,amount=None,unit=None)
         try:
-            texts=[(_ocr(clean,mode) if _ocr else pytesseract.image_to_string(clean,config=f'--psm {mode}',timeout=2)).strip() for mode in (7,6)]
+            texts=[(_ocr(clean,mode) if _ocr else image_to_string(clean,config=f'--psm {mode}',timeout=2)).strip() for mode in (7,6)]
             parsed=[parse_label(t) for t in texts]
             button['ocr_readings']=texts
             if parsed[0] is not None and parsed[0]==parsed[1]:

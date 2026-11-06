@@ -2,6 +2,7 @@
 import cv2
 import numpy as np
 import pytesseract
+from .ocr_runtime import image_to_string
 
 VALID=set('AKQJT98765432')|{'10'}
 
@@ -29,7 +30,7 @@ def read_segmented_rank(crop):
         clean=cv2.copyMakeBorder(clean,40,40,40,40,cv2.BORDER_CONSTANT,value=255)
         counts.append(len(parts))
         try:
-            readings.extend(pytesseract.image_to_string(clean,config=f'--psm {mode} -c tessedit_char_whitelist=AKQJT1098765432',timeout=3).strip() for mode in (7,10))
+            readings.extend(image_to_string(clean,config=f'--psm {mode} -c tessedit_char_whitelist=AKQJT1098765432',timeout=3).strip() for mode in (7,10))
         except Exception as exc:
             return {'rank':None,'status':'OCR_ERROR','error':str(exc)}
     found={r for r in readings if r in VALID}
@@ -42,7 +43,7 @@ def read_segmented_rank(crop):
             original_shape=cv2.resize(original_shape,None,fx=8,fy=8,interpolation=cv2.INTER_NEAREST)
             original_shape=cv2.copyMakeBorder(original_shape,40,40,40,40,cv2.BORDER_CONSTANT,value=255)
             try:
-                confirmation=[pytesseract.image_to_string(original_shape,config=f'--psm {mode} -c tessedit_char_whitelist=AKQJT1098765432',timeout=3).strip() for mode in (7,10)]
+                confirmation=[image_to_string(original_shape,config=f'--psm {mode} -c tessedit_char_whitelist=AKQJT1098765432',timeout=3).strip() for mode in (7,10)]
             except Exception as exc:return {'rank':None,'status':'OCR_ERROR','error':str(exc)}
             # An oversized isolated glyph can produce blank OCR despite intact
             # strokes. Retry only all-blank A confirmation at smaller, still
@@ -53,7 +54,7 @@ def read_segmented_rank(crop):
                     for glyph in original_shapes:
                         small=cv2.resize(glyph,None,fx=4,fy=4,interpolation=cv2.INTER_NEAREST)
                         small=cv2.copyMakeBorder(small,40,40,40,40,cv2.BORDER_CONSTANT,value=255)
-                        retry.extend(pytesseract.image_to_string(small,config=f'--psm {mode} -c tessedit_char_whitelist=AKQJT1098765432',timeout=3).strip() for mode in (7,10))
+                        retry.extend(image_to_string(small,config=f'--psm {mode} -c tessedit_char_whitelist=AKQJT1098765432',timeout=3).strip() for mode in (7,10))
                 except Exception as exc:return {'rank':None,'status':'OCR_ERROR','error':str(exc)}
                 if retry==['A']*4:
                     return {'rank':'A','status':'CANDIDATE_ONLY','readings':readings,
@@ -75,7 +76,7 @@ def read_segmented_rank(crop):
             for glyph in original_shapes:
                 clean=cv2.resize(glyph,None,fx=8,fy=8,interpolation=cv2.INTER_NEAREST)
                 clean=cv2.copyMakeBorder(clean,40,40,40,40,cv2.BORDER_CONSTANT,value=255)
-                confirmation.extend(pytesseract.image_to_string(clean,
+                confirmation.extend(image_to_string(clean,
                     config=f'--psm {mode} -c tessedit_char_whitelist=AKQJT1098765432',
                     timeout=3).strip() for mode in (7,10))
         except Exception as exc:
