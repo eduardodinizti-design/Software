@@ -1,5 +1,5 @@
-Run: 42220978373
-Source commit: 0897e8dfd591937d69b4cb43cfd6b75e62e30430
+Run: 42224176236
+Source commit: d06974db3b6c432d9dc7155dfafe3cfed16f85c9
 test_arbitrary_executable_is_rejected (test_capture_regressions.OriginalRegressionTests.test_arbitrary_executable_is_rejected) ... ok
 test_linux_cannot_report_success (test_capture_regressions.OriginalRegressionTests.test_linux_cannot_report_success) ... ok
 test_process_access_denied_is_rejected (test_capture_regressions.OriginalRegressionTests.test_process_access_denied_is_rejected) ... ok
@@ -76,6 +76,7 @@ test_failures_and_rejections_bounded (test_lab_metrics.LabTests.test_failures_an
 test_geometry_change_rejected_then_next_capture_recovers (test_lab_metrics.LabTests.test_geometry_change_rejected_then_next_capture_recovers) ... ok
 test_idle_zeros_do_not_dilute_ocr (test_lab_metrics.LabTests.test_idle_zeros_do_not_dilute_ocr) ... ok
 test_long_failure_run_has_no_reader_calls (test_lab_metrics.LabTests.test_long_failure_run_has_no_reader_calls) ... ok
+test_ocr_counts_are_bounded_and_not_reported_as_milliseconds (test_lab_metrics.OCRWorkTests.test_ocr_counts_are_bounded_and_not_reported_as_milliseconds) ... ok
 test_missing_corner_still_rejected (test_corner_sampling.CornerSamplingTests.test_missing_corner_still_rejected) ... ok
 test_native_mask_recovers_sampling_loss_without_controls (test_corner_sampling.CornerSamplingTests.test_native_mask_recovers_sampling_loss_without_controls) ... ok
 test_uniform_blue_is_not_table (test_corner_sampling.CornerSamplingTests.test_uniform_blue_is_not_table) ... ok
@@ -103,8 +104,25 @@ test_explicit_occlusion_remains_rejected (test_detector_proposals.DetectorPropos
 test_frame_touching_table_is_still_partial (test_detector_proposals.DetectorProposalTests.test_frame_touching_table_is_still_partial) ... ok
 test_full_frame_rejection_does_not_suppress_real_table (test_detector_proposals.DetectorProposalTests.test_full_frame_rejection_does_not_suppress_real_table) ... ok
 test_nested_blue_regions_without_anchors_never_become_tables (test_detector_proposals.DetectorProposalTests.test_nested_blue_regions_without_anchors_never_become_tables) ... ok
+test_backend_path_change_invalidates (test_ocr_runtime.OCRFrameTests.test_backend_path_change_invalidates) ... ok
+test_empty_string_is_valid_cached_output (test_ocr_runtime.OCRFrameTests.test_empty_string_is_valid_cached_output) ... ok
+test_enabled_nested_context_reuses_same_frame (test_ocr_runtime.OCRFrameTests.test_enabled_nested_context_reuses_same_frame) ... ok
+test_entry_limit_is_bounded_and_uncached_values_still_work (test_ocr_runtime.OCRFrameTests.test_entry_limit_is_bounded_and_uncached_values_still_work) ... ok
+test_exception_not_cached_and_frame_cleanup (test_ocr_runtime.OCRFrameTests.test_exception_not_cached_and_frame_cleanup) ... ok
+test_exception_retry_within_frame (test_ocr_runtime.OCRFrameTests.test_exception_retry_within_frame) ... ok
+test_frames_never_share_results (test_ocr_runtime.OCRFrameTests.test_frames_never_share_results) ... ok
+test_identical_copy_reuses_result (test_ocr_runtime.OCRFrameTests.test_identical_copy_reuses_result) ... ok
+test_no_frame_is_passthrough (test_ocr_runtime.OCRFrameTests.test_no_frame_is_passthrough) ... ok
+test_noncontiguous_view_matches_identical_pixels (test_ocr_runtime.OCRFrameTests.test_noncontiguous_view_matches_identical_pixels) ... ok
+test_outer_disabled_cannot_be_enabled_by_nested_frame (test_ocr_runtime.OCRFrameTests.test_outer_disabled_cannot_be_enabled_by_nested_frame) ... ok
+test_payload_limit_includes_output_and_preserves_results (test_ocr_runtime.OCRFrameTests.test_payload_limit_includes_output_and_preserves_results) ... ok
+test_pixel_mutation_invalidates (test_ocr_runtime.OCRFrameTests.test_pixel_mutation_invalidates) ... ok
+test_shape_dtype_and_configuration_are_part_of_identity (test_ocr_runtime.OCRFrameTests.test_shape_dtype_and_configuration_are_part_of_identity) ... ok
+test_statistics_count_requests_and_real_calls (test_ocr_runtime.OCRFrameTests.test_statistics_count_requests_and_real_calls) ... ok
+test_threads_have_independent_frames (test_ocr_runtime.OCRFrameTests.test_threads_have_independent_frames) ... ok
+test_unsupported_objects_options_and_mutable_output_bypass (test_ocr_runtime.OCRFrameTests.test_unsupported_objects_options_and_mutable_output_bypass) ... ok
 
 ----------------------------------------------------------------------
-Ran 103 tests in 6.739s
+Ran 121 tests in 6.090s
 
 OK
