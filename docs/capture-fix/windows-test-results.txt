@@ -1,5 +1,5 @@
-Run: 42212932247
-Source commit: 67c1b2fe24cc48c5762c8330e5d384c2a3fddd54
+Run: 42213253496
+Source commit: 63025be3bf0fcf9fa3a17797f08e0d2f7d806e1e
 test_arbitrary_executable_is_rejected (test_capture_regressions.OriginalRegressionTests.test_arbitrary_executable_is_rejected) ... ok
 test_linux_cannot_report_success (test_capture_regressions.OriginalRegressionTests.test_linux_cannot_report_success) ... ok
 test_process_access_denied_is_rejected (test_capture_regressions.OriginalRegressionTests.test_process_access_denied_is_rejected) ... ok
@@ -71,13 +71,16 @@ test_long_failure_run_has_no_reader_calls (test_lab_metrics.LabTests.test_long_f
 test_missing_corner_still_rejected (test_corner_sampling.CornerSamplingTests.test_missing_corner_still_rejected) ... ok
 test_native_mask_recovers_sampling_loss_without_controls (test_corner_sampling.CornerSamplingTests.test_native_mask_recovers_sampling_loss_without_controls) ... ok
 test_uniform_blue_is_not_table (test_corner_sampling.CornerSamplingTests.test_uniform_blue_is_not_table) ... ok
+test_bad_input_does_not_claim_street (test_community_cards.BoardTests.test_bad_input_does_not_claim_street) ... ok
 test_development_empty_screens (test_community_cards.BoardTests.test_development_empty_screens) ... ok
 test_duplicate_and_hero_conflict (test_community_cards.BoardTests.test_duplicate_and_hero_conflict) ... ok
 test_gap_in_row_rejected (test_community_cards.BoardTests.test_gap_in_row_rejected) ... ok
 test_move_and_resize_relative_table (test_community_cards.BoardTests.test_move_and_resize_relative_table) ... ok
 test_no_cards_does_not_claim_preflop (test_community_cards.BoardTests.test_no_cards_does_not_claim_preflop) ... ok
+test_ocr_exception_discards_whole_board_then_recovers (test_community_cards.BoardTests.test_ocr_exception_discards_whole_board_then_recovers) ... ok
 test_partial_fourth_card_cannot_be_reported_as_flop (test_community_cards.BoardTests.test_partial_fourth_card_cannot_be_reported_as_flop) ... ok
 test_partial_rows_rejected (test_community_cards.BoardTests.test_partial_rows_rejected) ... ok
+test_sequence_never_reuses_previous_board (test_community_cards.BoardTests.test_sequence_never_reuses_previous_board) ... ok
 test_streets (test_community_cards.BoardTests.test_streets) ... ok
 test_unknown_rank_not_a_partial_valid_board (test_community_cards.BoardTests.test_unknown_rank_not_a_partial_valid_board) ... ok
 
@@ -121,6 +124,6 @@ Traceback (most recent call last):
 RuntimeError: Limite global: arquivos protegidos ou externos impedem salvar. Nada removido.
 
 ----------------------------------------------------------------------
-Ran 80 tests in 5.975s
+Ran 83 tests in 3.955s
 
 FAILED (errors=3)
