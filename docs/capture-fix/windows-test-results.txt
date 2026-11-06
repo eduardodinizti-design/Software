@@ -1,5 +1,5 @@
-Run: 42153419886
-Source commit: 74d11007348de0f5157f496c5acd1387328e3a72
+Run: 42210152322
+Source commit: 119069e1df1e083d023b5a198648895d3a8da094
 test_arbitrary_executable_is_rejected (test_capture_regressions.OriginalRegressionTests.test_arbitrary_executable_is_rejected) ... ok
 test_linux_cannot_report_success (test_capture_regressions.OriginalRegressionTests.test_linux_cannot_report_success) ... ok
 test_process_access_denied_is_rejected (test_capture_regressions.OriginalRegressionTests.test_process_access_denied_is_rejected) ... ok
@@ -67,6 +67,9 @@ test_failures_and_rejections_bounded (test_lab_metrics.LabTests.test_failures_an
 test_geometry_change_rejected_then_next_capture_recovers (test_lab_metrics.LabTests.test_geometry_change_rejected_then_next_capture_recovers) ... ok
 test_idle_zeros_do_not_dilute_ocr (test_lab_metrics.LabTests.test_idle_zeros_do_not_dilute_ocr) ... ok
 test_long_failure_run_has_no_reader_calls (test_lab_metrics.LabTests.test_long_failure_run_has_no_reader_calls) ... ok
+test_missing_corner_still_rejected (test_corner_sampling.CornerSamplingTests.test_missing_corner_still_rejected) ... ok
+test_native_mask_recovers_sampling_loss_without_controls (test_corner_sampling.CornerSamplingTests.test_native_mask_recovers_sampling_loss_without_controls) ... ok
+test_uniform_blue_is_not_table (test_corner_sampling.CornerSamplingTests.test_uniform_blue_is_not_table) ... ok
 
 ======================================================================
 ERROR: test_diagnostic_forwards_selected_hwnd (test_window_capture_audit.IntegrationContracts.test_diagnostic_forwards_selected_hwnd)
@@ -108,6 +111,6 @@ Traceback (most recent call last):
 RuntimeError: Limite global: arquivos protegidos ou externos impedem salvar. Nada removido.
 
 ----------------------------------------------------------------------
-Ran 67 tests in 3.854s
+Ran 70 tests in 4.146s
 
 FAILED (errors=3)
