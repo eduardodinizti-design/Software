@@ -15,23 +15,7 @@ from typing import Optional, Tuple, Dict, List, Any
 import numpy as np
 import cv2
 
-# Ativar DPI Awareness no Windows (Per-Monitor DPI Aware / V2)
-try:
-    ctypes.windll.shcore.SetProcessDpiAwareness(2)
-except Exception:
-    try:
-        ctypes.windll.user32.SetProcessDPIAware()
-    except Exception:
-        pass
-
-try:
-    import win32gui
-    import win32ui
-    import win32con
-    import pygetwindow as gw
-    WIN32_AVAILABLE = True
-except ImportError:
-    WIN32_AVAILABLE = False
+from window_capture_engine import WindowCaptureEngine
 
 
 class PPPokerObserverPipeline:
@@ -74,68 +58,9 @@ class PPPokerObserverPipeline:
                 self.rank_templates[rank] = binary
 
     @staticmethod
-    def capture_window() -> Tuple[Optional[np.ndarray], str]:
-        """Captura estritamente a janela vertical do jogo via Win32 GDI BitBlt.
-        Suporta múltiplos monitores (coordenadas negativas X) e rejeita desktop inteiro.
-        Retorna (frame_bgr, status_code)."""
-        if not WIN32_AVAILABLE:
-            return None, "WIN32_UNAVAILABLE"
-
-        try:
-            wins = [w for w in gw.getWindowsWithTitle("PPPoker") if w.visible and "debug" not in w.title.lower()]
-            if not wins:
-                wins = [w for w in gw.getWindowsWithTitle("MPPoker") if w.visible and "debug" not in w.title.lower()]
-
-            if not wins:
-                return None, "WINDOW_NOT_FOUND"
-
-            # Filtrar janela vertical válida (largura < 1200, altura > largura)
-            target = None
-            for w in wins:
-                if 200 < w.width < 1200 and w.height > w.width:
-                    target = w
-                    break
-
-            if not target:
-                return None, "WINDOW_INVALID_GEOMETRY"
-
-            hwnd = target._hWnd
-            if not win32gui.IsWindow(hwnd):
-                return None, "WINDOW_INVALID_HWND"
-
-            # Verificar se está minimizada
-            if win32gui.IsIconic(hwnd):
-                return None, "WINDOW_MINIMIZED"
-
-            left, top, right, bottom = win32gui.GetClientRect(hwnd)
-            w = right - left
-            h = bottom - top
-
-            if w <= 100 or h <= 100 or w > 1400:
-                return None, "WINDOW_INVALID_CLIENT_SIZE"
-
-            hwnd_dc = win32gui.GetWindowDC(hwnd)
-            mfc_dc = win32ui.CreateDCFromHandle(hwnd_dc)
-            save_dc = mfc_dc.CreateCompatibleDC()
-            bitmap = win32ui.CreateBitmap()
-            bitmap.CreateCompatibleBitmap(mfc_dc, w, h)
-            save_dc.SelectObject(bitmap)
-
-            save_dc.BitBlt((0, 0), (w, h), mfc_dc, (0, 0), win32con.SRCCOPY)
-
-            bmp_info = bitmap.GetInfo()
-            bmp_str = bitmap.GetBitmapBits(True)
-            img = np.frombuffer(bmp_str, dtype=np.uint8).reshape((bmp_info['bmHeight'], bmp_info['bmWidth'], 4))
-
-            win32gui.DeleteObject(bitmap.GetHandle())
-            save_dc.DeleteDC()
-            mfc_dc.DeleteDC()
-            win32gui.ReleaseDC(hwnd, hwnd_dc)
-
-            frame = cv2.cvtColor(img, cv2.COLOR_BGRA2BGR)
-            return frame, "SUCCESS"
-        except Exception as e:
-            return None, f"CAPTURE_EXCEPTION_{type(e).__name__}"
+    def capture_window(hwnd=None) -> Tuple[Optional[np.ndarray], str]:
+        frame, metadata = WindowCaptureEngine().capture_frame(hwnd=hwnd)
+        return frame, metadata['status']
 
     def classify_suit(self, card_bgr: np.ndarray) -> Tuple[str, float]:
         """Identifica o naipe (s, h, d, c) analisando o espaço HSV e contagem de pixels (4-color deck)."""

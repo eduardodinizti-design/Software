@@ -1,280 +1,250 @@
-"""
-VisualPilot - Window Capture Engine (window_capture_engine.py)
-Refatoração rigorosa para captura estrita via GDI BitBlt:
-1. Validação estrita de identidade (executable whitelisting, rejeição de browsers e falhas de PID).
-2. Tratamento de múltiplos candidatos (retorna WINDOW_AMBIGUOUS se houver mais de uma mesa válida sem seleção explícita).
-3. Consistência de DC (GetDC(hwnd) para área cliente e revalidação de metadados antes/depois da captura).
-4. Gerenciamento seguro de recursos GDI via try/finally (restauração de bitmap e liberação garantida).
-5. Contexto de DPI Awareness robusto.
-"""
-from __future__ import annotations
-import os
-import sys
+"""Windows client-area capture only. No OCR, input injection or simulated fallback."""
+from contextlib import contextmanager
+from datetime import datetime, timezone
 import ctypes
+from ctypes import wintypes as W
+import ntpath
 import platform
-from typing import Optional, Tuple, Dict, Any, List
+import time
 
-# DPI Awareness
-DPI_AWARE_INITIALIZED = False
-try:
-    ctypes.windhd = ctypes.windll.shcore.SetProcessDpiAwareness(2)
-    DPI_AWARE_INITIALIZED = True
-except Exception:
-    try:
-        ctypes.windll.user32.SetProcessDPIAware()
-        DPI_AWARE_INITIALIZED = True
-    except Exception:
-        DPI_AWARE_INITIALIZED = False
+ALLOWED_EXECUTABLES = frozenset({'pppoker.exe', 'ppclient.exe'})
+MAX_PIXELS = 36_000_000
 
-WIN32_AVAILABLE = False
-try:
-    import win32gui
-    import win32ui
-    import win32con
-    import win32process
-    import pygetwindow as gw
-    WIN32_AVAILABLE = True
-except ImportError:
-    class MockDC:
-        def CreateCompatibleDC(self): return self
-        def SelectObject(self, *a): return 123
-        def DeleteDC(self): return True
-    class MockBitmap:
-        def CreateCompatibleBitmap(self, *a): return True
-        def GetInfo(self): return {'bmHeight': 800, 'bmWidth': 500}
-        def GetBitmapBits(self, *a): return b'\x00' * (500 * 800 * 4)
-        def GetHandle(self): return 999
-    class MockWin32:
-        def IsWindow(self, *a, **kw): return True
-        def GetWindowText(self, *a): return "PPPoker"
-        def IsIconic(self, *a): return False
-        def GetClientRect(self, *a): return (0, 0, 500, 800)
-        def ClientToScreen(self, *a, **kw): return (0, 0)
-        def GetDC(self, *a): return 123
-        def ReleaseDC(self, *a): return True
-        def DeleteObject(self, *a): return True
-        def GetWindowThreadProcessId(self, *a): return (0, 1234)
-        SRCCOPY = 0
-    class MockWin32UI:
-        def CreateDCFromHandle(self, *a): return MockDC()
-        def CreateBitmap(self): return MockBitmap()
-    win32gui = win32con = win32process = gw = MockWin32()
-    win32ui = MockWin32UI()
+class CaptureError(RuntimeError):
+    def __init__(self, status, detail=''):
+        super().__init__(detail or status)
+        self.status = status
 
-try:
-    import numpy as np
-    import cv2
-    HAS_CV_NUMPY = True
-except ImportError:
-    class MockNP:
-        uint8 = int
-        def frombuffer(self, *a, **kw): return self
-        def reshape(self, *a, **kw): return self
-    np = MockNP()
-    class MockCV2:
-        COLOR_BGRA2BGR = 0
-        def cvtColor(self, img, code): return img
-    cv2 = MockCV2()
+class _BitmapHeader(ctypes.Structure):
+    _fields_ = [('size', W.DWORD), ('width', W.LONG), ('height', W.LONG),
+                ('planes', W.WORD), ('bits', W.WORD), ('compression', W.DWORD),
+                ('image_size', W.DWORD), ('xppm', W.LONG), ('yppm', W.LONG),
+                ('used', W.DWORD), ('important', W.DWORD)]
 
+class _NativeBackend:
+    def __init__(self):
+        import numpy
+        import psutil
+        self.np, self.psutil = numpy, psutil
+        self.u = ctypes.WinDLL('user32', use_last_error=True)
+        self.g = ctypes.WinDLL('gdi32', use_last_error=True)
+        self.callback = ctypes.WINFUNCTYPE(W.BOOL, W.HWND, W.LPARAM)
+        signatures = [
+            (self.u.EnumWindows, [self.callback, W.LPARAM], W.BOOL),
+            (self.u.IsWindow, [W.HWND], W.BOOL),
+            (self.u.IsWindowVisible, [W.HWND], W.BOOL),
+            (self.u.IsIconic, [W.HWND], W.BOOL),
+            (self.u.GetWindowTextLengthW, [W.HWND], ctypes.c_int),
+            (self.u.GetWindowTextW, [W.HWND, W.LPWSTR, ctypes.c_int], ctypes.c_int),
+            (self.u.GetWindowThreadProcessId, [W.HWND, ctypes.POINTER(W.DWORD)], W.DWORD),
+            (self.u.GetClientRect, [W.HWND, ctypes.POINTER(W.RECT)], W.BOOL),
+            (self.u.ClientToScreen, [W.HWND, ctypes.POINTER(W.POINT)], W.BOOL),
+            (self.u.GetDC, [W.HWND], W.HDC),
+            (self.u.ReleaseDC, [W.HWND, W.HDC], ctypes.c_int),
+            (self.u.SetThreadDpiAwarenessContext, [ctypes.c_void_p], ctypes.c_void_p),
+            (self.u.GetThreadDpiAwarenessContext, [], ctypes.c_void_p),
+            (self.u.GetAwarenessFromDpiAwarenessContext, [ctypes.c_void_p], ctypes.c_int),
+            (self.g.CreateCompatibleDC, [W.HDC], W.HDC),
+            (self.g.CreateCompatibleBitmap, [W.HDC, ctypes.c_int, ctypes.c_int], W.HANDLE),
+            (self.g.SelectObject, [W.HDC, W.HANDLE], W.HANDLE),
+            (self.g.BitBlt, [W.HDC, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int,
+                            W.HDC, ctypes.c_int, ctypes.c_int, W.DWORD], W.BOOL),
+            (self.g.GetDIBits, [W.HDC, W.HANDLE, W.UINT, W.UINT, ctypes.c_void_p,
+                               ctypes.c_void_p, W.UINT], ctypes.c_int),
+            (self.g.DeleteObject, [W.HANDLE], W.BOOL),
+            (self.g.DeleteDC, [W.HDC], W.BOOL),
+        ]
+        for fn, args, result in signatures:
+            fn.argtypes, fn.restype = args, result
+
+    @contextmanager
+    def physical_pixels(self):
+        old = self.u.SetThreadDpiAwarenessContext(ctypes.c_void_p(-4))
+        if not old:
+            raise CaptureError('DPI_CONTEXT_FAILED')
+        try:
+            ctx = self.u.GetThreadDpiAwarenessContext()
+            if self.u.GetAwarenessFromDpiAwarenessContext(ctx) != 2:
+                raise CaptureError('DPI_CONTEXT_UNVERIFIED')
+            yield
+        finally:
+            if not self.u.SetThreadDpiAwarenessContext(old):
+                raise CaptureError('DPI_CONTEXT_RESTORE_FAILED')
+
+    def handles(self):
+        handles = []
+        cb = self.callback(lambda hwnd, _: handles.append(int(hwnd)) or True)
+        if not self.u.EnumWindows(cb, 0):
+            raise CaptureError('WINDOW_ENUMERATION_FAILED')
+        return handles
+
+    def state(self, hwnd):
+        if not self.u.IsWindow(hwnd):
+            raise CaptureError('WINDOW_INVALID_HWND')
+        if not self.u.IsWindowVisible(hwnd):
+            raise CaptureError('WINDOW_NOT_VISIBLE')
+        if self.u.IsIconic(hwnd):
+            raise CaptureError('WINDOW_MINIMIZED')
+        pid = W.DWORD()
+        if not self.u.GetWindowThreadProcessId(hwnd, ctypes.byref(pid)) or not pid.value:
+            raise CaptureError('PROCESS_QUERY_FAILED')
+        try:
+            process = self.psutil.Process(pid.value)
+            executable, created = process.exe(), process.create_time()
+        except Exception as exc:
+            raise CaptureError('PROCESS_QUERY_FAILED', str(exc)) from exc
+        name = ntpath.basename(executable).casefold()
+        if name not in ALLOWED_EXECUTABLES:
+            raise CaptureError('EXECUTABLE_NOT_ALLOWED', name)
+        rect, origin = W.RECT(), W.POINT(0, 0)
+        if not self.u.GetClientRect(hwnd, ctypes.byref(rect)):
+            raise CaptureError('INVALID_CLIENT_GEOMETRY')
+        if not self.u.ClientToScreen(hwnd, ctypes.byref(origin)):
+            raise CaptureError('INVALID_CLIENT_ORIGIN')
+        title = ctypes.create_unicode_buffer(self.u.GetWindowTextLengthW(hwnd)+1)
+        self.u.GetWindowTextW(hwnd, title, len(title))
+        return dict(hwnd=hwnd, pid=pid.value, executable=executable, process_created=created,
+                    title=title.value, client_rect=(rect.left, rect.top, rect.right, rect.bottom),
+                    screen_origin=(origin.x, origin.y))
+
+    def pixels(self, hwnd, width, height):
+        source = memory = bitmap = previous = None
+        selected = False
+        cleanup = []
+        def checked(value, label):
+            if not value or value == ctypes.c_void_p(-1).value:
+                raise CaptureError(label, f'Win32 error {ctypes.get_last_error()}')
+            return value
+        try:
+            source = checked(self.u.GetDC(hwnd), 'GET_CLIENT_DC_FAILED')
+            memory = checked(self.g.CreateCompatibleDC(source), 'CREATE_MEMORY_DC_FAILED')
+            bitmap = checked(self.g.CreateCompatibleBitmap(source, width, height), 'CREATE_BITMAP_FAILED')
+            previous = checked(self.g.SelectObject(memory, bitmap), 'SELECT_BITMAP_FAILED')
+            selected = True
+            checked(self.g.BitBlt(memory, 0, 0, width, height, source, 0, 0, 0x00CC0020), 'BITBLT_FAILED')
+            checked(self.g.SelectObject(memory, previous), 'RESTORE_BITMAP_FAILED')
+            selected = False
+            header = _BitmapHeader()
+            header.size = ctypes.sizeof(header)
+            header.width, header.height = width, -height  # Top-down BGRA, no vertical flip.
+            header.planes, header.bits = 1, 32
+            buffer = (ctypes.c_ubyte * (width*height*4))()
+            lines = self.g.GetDIBits(memory, bitmap, 0, height, buffer, ctypes.byref(header), 0)
+            if lines != height:
+                raise CaptureError('GET_BITMAP_PIXELS_FAILED')
+            return self.np.frombuffer(buffer, dtype=self.np.uint8).reshape(height, width, 4)[:, :, :3].copy()
+        finally:
+            # A borrowed client DC is released, NEVER DeleteDC'd.
+            def release(fn, *args):
+                try:
+                    if not fn(*args): cleanup.append(fn.__name__)
+                except Exception as exc:
+                    cleanup.append(str(exc))
+            if selected and memory and previous:
+                release(self.g.SelectObject, memory, previous)
+            if bitmap: release(self.g.DeleteObject, bitmap)
+            if memory: release(self.g.DeleteDC, memory)
+            if source: release(self.u.ReleaseDC, hwnd, source)
+            if cleanup:
+                raise CaptureError('GDI_CLEANUP_FAILED', '; '.join(cleanup))
 
 class WindowCaptureEngine:
-    VALID_EXECUTABLES = {"pppoker.exe", "mppoker.exe", "hd-player.exe", "nox.exe", "dnplayer.exe", "bluestacks.exe", "adb.exe", "python.exe", "python3.exe"}
-    BLACKLIST_EXECUTABLES = {"chrome.exe", "msedge.exe", "firefox.exe", "opera.exe", "cmd.exe", "powershell.exe", "code.exe", "notepad.exe"}
+    VALID_EXECUTABLES = ALLOWED_EXECUTABLES
 
-    def __init__(self, title_substring: str = "PPPoker"):
-        self.title_substring = title_substring
-        self.is_windows = platform.system() == "Windows" or not WIN32_AVAILABLE
-        self.dpi_status = DPI_AWARE_INITIALIZED
+    def __init__(self, title_substring='PPPoker', *, _backend=None):
+        self.title_substring = title_substring  # Compatibility only; never authorizes a process.
+        self._backend = _backend
+        self.is_windows = platform.system() == 'Windows'
+        self.dpi_status = False
+        self.last_diagnostics = []
 
-    def _validate_process(self, hwnd: int) -> Tuple[bool, str, Optional[int]]:
-        """Valida PID e executável associado ao HWND. Retorna (is_valid, executable_name, pid)."""
+    def _native(self):
+        if self._backend is not None:  # Explicit dependency injection only, used by tests.
+            return self._backend
+        if not self.is_windows:
+            raise CaptureError('ENVIRONMENT_NOT_WINDOWS')
         try:
-            if hasattr(win32process, 'GetWindowThreadProcessId'):
-                res = win32process.GetWindowThreadProcessId(hwnd)
-                pid = res[1] if isinstance(res, tuple) else res
-            else:
-                pid = 1234
+            self._backend = _NativeBackend()
+        except Exception as exc:
+            raise CaptureError('WINDOWS_BACKEND_UNAVAILABLE', str(exc)) from exc
+        return self._backend
 
-            if not pid:
-                return False, "UNKNOWN", None
+    def _state(self, backend, hwnd):
+        state = backend.state(hwnd)
+        if state['hwnd'] != hwnd or not state.get('pid') or state.get('process_created') is None:
+            raise CaptureError('PROCESS_QUERY_FAILED')
+        if ntpath.basename(state['executable']).casefold() not in ALLOWED_EXECUTABLES:
+            raise CaptureError('EXECUTABLE_NOT_ALLOWED')
+        l,t,r,b = state['client_rect']
+        if r <= l or b <= t or (r-l)*(b-t) > MAX_PIXELS:
+            raise CaptureError('INVALID_CLIENT_GEOMETRY')
+        return state
 
-            exe_name = "pppoker.exe"
+    @staticmethod
+    def _signature(s):
+        return (s['hwnd'], s['pid'], s['process_created'], s['executable'].casefold(),
+                tuple(s['client_rect']), tuple(s['screen_origin']))
+
+    def _candidates(self, backend):
+        accepted = []
+        self.last_diagnostics = []
+        for hwnd in backend.handles():
             try:
-                import psutil
-                p = psutil.Process(pid)
-                exe_name = p.name().lower()
-            except Exception:
-                pass
+                state = self._state(backend, hwnd)
+                accepted.append(state)
+                self.last_diagnostics.append(dict(state, status='ACCEPTED'))
+            except Exception as exc:
+                self.last_diagnostics.append(dict(hwnd=hwnd, status=getattr(exc, 'status', 'WINDOW_QUERY_FAILED'), error=str(exc)))
+        return accepted
 
-            if exe_name in self.BLACKLIST_EXECUTABLES:
-                return False, exe_name, pid
-            
-            return True, exe_name, pid
-        except Exception:
-            return False, "UNQUERYABLE", None
+    def locate_target_windows(self):
+        backend = self._native()
+        with backend.physical_pixels():
+            return self._candidates(backend)
 
-    def locate_target_windows(self) -> List[Dict[str, Any]]:
-        candidates = []
+    def _validate_process(self, hwnd):
         try:
-            def enum_handler(hwnd, lparam):
-                if win32gui.IsWindowVisible(hwnd):
-                    title = win32gui.GetWindowText(hwnd)
-                    if self.title_substring.lower() in title.lower() and "debug" not in title.lower():
-                        if not win32gui.IsIconic(hwnd):
-                            is_valid, exe, pid = self._validate_process(hwnd)
-                            if is_valid:
-                                try:
-                                    client_rect = win32gui.GetClientRect(hwnd)
-                                    w = client_rect[2] - client_rect[0]
-                                    h = client_rect[3] - client_rect[1]
-                                    if w > 50 and h > 50:
-                                        screen_origin = win32gui.ClientToScreen(hwnd, (0, 0))
-                                        candidates.append({
-                                            "hwnd": hwnd,
-                                            "pid": pid,
-                                            "executable": exe,
-                                            "title": title,
-                                            "client_rect": client_rect,
-                                            "screen_origin": screen_origin
-                                        })
-                                except Exception:
-                                    pass
-                return True
-
-            if hasattr(win32gui, 'EnumWindows'):
-                win32gui.EnumWindows(enum_handler, None)
-            else:
-                candidates.append({
-                    "hwnd": 12345, "pid": 100, "executable": "pppoker.exe", 
-                    "title": "PPPoker Table", "client_rect": (0, 0, 500, 800), "screen_origin": (0, 0)
-                })
+            backend = self._native()
+            with backend.physical_pixels():
+                state = self._state(backend, hwnd)
+            return True, state['executable'], state['pid']
         except Exception:
-            pass
+            return False, 'UNQUERYABLE', None
 
-        return candidates
-
-    def locate_target_window(self) -> Tuple[Optional[int], Dict[str, Any]]:
-        meta = {
-            "hwnd": None,
-            "pid": None,
-            "executable": "N/A",
-            "title": "N/A",
-            "client_rect": (0, 0, 0, 0),
-            "screen_origin": (0, 0),
-            "status": "WINDOW_NOT_FOUND",
-            "dpi_effective": self.dpi_status
-        }
-
-        candidates = self.locate_target_windows()
-        if not candidates:
-            return None, meta
-
-        if len(candidates) > 1:
-            meta["status"] = "WINDOW_AMBIGUOUS"
-            meta["candidates_count"] = len(candidates)
-            return None, meta
-
-        target = candidates[0]
-        meta.update({
-            "hwnd": target["hwnd"],
-            "pid": target["pid"],
-            "executable": target["executable"],
-            "title": target["title"],
-            "client_rect": target["client_rect"],
-            "screen_origin": target["screen_origin"],
-            "status": "SUCCESS"
-        })
-
-        return target["hwnd"], meta
-
-    def capture_frame(self) -> Tuple[Optional[np.ndarray], Dict[str, Any]]:
-        hwnd, meta = self.locate_target_window()
-        if hwnd is None:
-            return None, meta
-
-        is_valid_pre, exe_pre, pid_pre = self._validate_process(hwnd)
+    def capture_frame(self, hwnd=None):
+        meta = dict(status='CAPTURE_NOT_STARTED', timestamp=datetime.now(timezone.utc).isoformat(),
+                    backend='GDI_CLIENT_BITBLT', dpi_effective=False, native_windows_validated=False)
+        started = time.monotonic()
         try:
-            rect_pre = win32gui.GetClientRect(hwnd)
-            origin_pre = win32gui.ClientToScreen(hwnd, (0, 0))
-        except Exception:
-            meta["status"] = "VALIDATION_PRE_CAPTURE_FAILED"
-            return None, meta
-
-        if not is_valid_pre or rect_pre != meta["client_rect"] or origin_pre != meta["screen_origin"]:
-            meta["status"] = "CONSISTENCY_CHECK_FAILED_PRE"
-            return None, meta
-
-        left, top, right, bottom = rect_pre
-        w = right - left
-        h = bottom - top
-
-        if w <= 50 or h <= 50:
-            meta["status"] = "INVALID_CLIENT_DIMENSIONS"
-            return None, meta
-
-        hwnd_dc = None
-        mfc_dc = None
-        save_dc = None
-        bitmap = None
-        old_bitmap = None
-
-        try:
-            hwnd_dc = win32gui.GetDC(hwnd)
-            if not hwnd_dc:
-                meta["status"] = "GET_CLIENT_DC_FAILED"
-                return None, meta
-
-            mfc_dc = win32ui.CreateDCFromHandle(hwnd_dc) if hasattr(win32ui, 'CreateDCFromHandle') else None
-            if mfc_dc and hasattr(mfc_dc, 'CreateCompatibleDC'):
-                save_dc = mfc_dc.CreateCompatibleDC()
-                bitmap = win32ui.CreateBitmap()
-                bitmap.CreateCompatibleBitmap(mfc_dc, w, h)
-                old_bitmap = save_dc.SelectObject(bitmap)
-                save_dc.BitBlt((0, 0), (w, h), mfc_dc, (0, 0), win32con.SRCCOPY)
-
-                bmp_info = bitmap.GetInfo()
-                bmp_str = bitmap.GetBitmapBits(True)
-                img = np.frombuffer(bmp_str, dtype=np.uint8).reshape((bmp_info['bmHeight'], bmp_info['bmWidth'], 4))
-                frame = cv2.cvtColor(img, cv2.COLOR_BGRA2BGR)
-            else:
-                frame = np.zeros((h, w, 3), dtype=np.uint8)
-
-            is_valid_post, _, _ = self._validate_process(hwnd)
-            rect_post = win32gui.GetClientRect(hwnd)
-            if not is_valid_post or rect_post != rect_pre:
-                meta["status"] = "CONSISTENCY_CHECK_FAILED_POST"
-                return None, meta
-
-            meta["image_shape"] = getattr(frame, "shape", (h, w, 3))
+            backend = self._native()
+            with backend.physical_pixels():
+                self.dpi_status = meta['dpi_effective'] = True
+                if hwnd is None:
+                    candidates = self._candidates(backend)
+                    meta['candidates'] = self.last_diagnostics
+                    if not candidates: raise CaptureError('WINDOW_NOT_FOUND')
+                    if len(candidates) != 1: raise CaptureError('WINDOW_AMBIGUOUS')
+                    hwnd = candidates[0]['hwnd']
+                    selected = candidates[0]
+                else:
+                    if not isinstance(hwnd, int) or hwnd <= 0: raise CaptureError('WINDOW_INVALID_HWND')
+                    selected = self._state(backend, hwnd)
+                meta.update(selected)
+                before = self._state(backend, hwnd)
+                if self._signature(selected) != self._signature(before):
+                    raise CaptureError('WINDOW_CHANGED_PRE_CAPTURE')
+                l,t,r,b = before['client_rect']
+                frame = backend.pixels(hwnd, r-l, b-t)
+                after = self._state(backend, hwnd)
+                if self._signature(before) != self._signature(after):
+                    raise CaptureError('WINDOW_CHANGED_DURING_CAPTURE')
+                if frame is None or frame.shape != (b-t, r-l, 3):
+                    raise CaptureError('INVALID_FRAME_SHAPE')
+                if not frame.any(): raise CaptureError('BLACK_FRAME_UNVERIFIED')
+                meta.update(status='SUCCESS', image_shape=list(frame.shape))
             return frame, meta
-
-        except Exception as e:
-            meta["status"] = f"CAPTURE_EXCEPTION_{type(e).__name__}"
+        except Exception as exc:
+            meta.update(status=getattr(exc, 'status', 'CAPTURE_FAILED'), error=str(exc), exception_type=type(exc).__name__)
             return None, meta
-
         finally:
-            try:
-                if save_dc and old_bitmap and hasattr(save_dc, 'SelectObject'):
-                    save_dc.SelectObject(old_bitmap)
-            except Exception:
-                pass
-            try:
-                if bitmap and hasattr(bitmap, 'GetHandle'):
-                    win32gui.DeleteObject(bitmap.GetHandle())
-            except Exception:
-                pass
-            try:
-                if save_dc and hasattr(save_dc, 'DeleteDC'):
-                    save_dc.DeleteDC()
-            except Exception:
-                pass
-            try:
-                if mfc_dc and hasattr(mfc_dc, 'DeleteDC'):
-                    mfc_dc.DeleteDC()
-            except Exception:
-                pass
-            try:
-                if hwnd_dc:
-                    win32gui.ReleaseDC(hwnd, hwnd_dc)
-            except Exception:
-                pass
+            meta['duration_ms'] = (time.monotonic()-started)*1000

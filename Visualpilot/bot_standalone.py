@@ -18,10 +18,7 @@ from tkinter import ttk, scrolledtext
 import cv2
 import numpy as np
 
-try:
-    from PIL import ImageGrab
-except ImportError:
-    ImageGrab = None
+from window_capture_engine import WindowCaptureEngine
 
 # Importar detector YOLOv8 local
 try:
@@ -228,44 +225,17 @@ class StandaloneVisualPilotApp:
         except Exception:
             pass
 
-    def find_poker_windows(self) -> List[Tuple[int, str, Tuple[int, int, int, int]]]:
-        windows = []
-        if not WIN32_AVAILABLE:
-            return windows
-
-        user32 = ctypes.windll.user32
-
-        @ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, wintypes.LPARAM)
-        def fn_enum(hwnd, lparam):
-            if user32.IsWindowVisible(hwnd):
-                length = user32.GetWindowTextLengthW(hwnd)
-                if length > 0:
-                    buff = ctypes.create_unicode_buffer(length + 1)
-                    user32.GetWindowTextW(hwnd, buff, length + 1)
-                    title = buff.value
-                    title_lower = title.lower()
-
-                    blacklist = [
-                        "explorador", "explorer", "visualpilot", "downloads", "documentos", 
-                        "chrome", "edge", "firefox", "cmd", "powershell", "notepad", 
-                        "visual studio", "code", "gemini", "whatsapp", "telegram"
-                    ]
-                    if any(b in title_lower for b in blacklist):
-                        return True
-
-                    whitelist = ["pppoker", "mppoker"]
-                    if any(w in title_lower for w in whitelist):
-                        rect = wintypes.RECT()
-                        user32.GetWindowRect(hwnd, ctypes.byref(rect))
-                        width = rect.right - rect.left
-                        height = rect.bottom - rect.top
-                        
-                        if width > 350 and height > 350:
-                            windows.append((hwnd, title, (rect.left, rect.top, rect.right, rect.bottom)))
-            return True
-
-        user32.EnumWindows(fn_enum, 0)
-        return windows
+    def find_poker_windows(self):
+        try:
+            candidates = WindowCaptureEngine().locate_target_windows()
+            return [(s['hwnd'], s['title'],
+                     (s['screen_origin'][0], s['screen_origin'][1],
+                      s['screen_origin'][0]+s['client_rect'][2]-s['client_rect'][0],
+                      s['screen_origin'][1]+s['client_rect'][3]-s['client_rect'][1]))
+                    for s in candidates]
+        except Exception as exc:
+            self.capture_error = str(exc)
+            return []
 
     def monitor_loop(self):
         while self.running:
@@ -286,10 +256,11 @@ class StandaloneVisualPilotApp:
                         raise_info = {}
                         fps_val = 0.0
 
-                        if ImageGrab and right > left + 50 and bottom > top + 50:
+                        if right > left and bottom > top:
                             try:
-                                pil_img = ImageGrab.grab(bbox=(left, top, right, bottom))
-                                frame_bgr = cv2.cvtColor(np.array(pil_img), cv2.COLOR_RGB2BGR)
+                                frame_bgr, capture_meta = WindowCaptureEngine().capture_frame(hwnd=hwnd)
+                                if frame_bgr is None:
+                                    raise RuntimeError(capture_meta['status'] + ': ' + capture_meta.get('error', ''))
                                 
                                 # 1. Normalização CLAHE (Brilho/Contraste)
                                 frame_bgr = normalize_frame(frame_bgr)
