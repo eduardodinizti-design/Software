@@ -1,5 +1,5 @@
-Run: 42143535763
-Source commit: 2d7478f32493397ebd66f93f9c068d9e444bd2ed
+Run: 42147029131
+Source commit: ff297cd150b9e7b297a6c7a610bcc9380f237fe4
 test_arbitrary_executable_is_rejected (test_capture_regressions.OriginalRegressionTests.test_arbitrary_executable_is_rejected) ... ok
 test_linux_cannot_report_success (test_capture_regressions.OriginalRegressionTests.test_linux_cannot_report_success) ... ok
 test_process_access_denied_is_rejected (test_capture_regressions.OriginalRegressionTests.test_process_access_denied_is_rejected) ... ok
@@ -50,6 +50,9 @@ test_failure_does_not_repeat_cards_and_recovery_uses_new_box (test_continuous_ob
 test_interrupt_clean_exit (test_continuous_observer.ObserverTests.test_interrupt_clean_exit) ... ok
 test_invalid_interval (test_continuous_observer.ObserverTests.test_invalid_interval) ... ok
 test_source_change_stops_before_reading (test_continuous_observer.ObserverTests.test_source_change_stops_before_reading) ... ok
+test_diagnostics_copy_and_failure_replaces_success (test_capture_review.ReviewTests.test_diagnostics_copy_and_failure_replaces_success) ... ok
+test_metrics_bounded_and_percentiles (test_capture_review.ReviewTests.test_metrics_bounded_and_percentiles) ... ok
+test_missing_timing_not_reported_as_zero (test_capture_review.ReviewTests.test_missing_timing_not_reported_as_zero) ... ok
 
 ======================================================================
 ERROR: test_diagnostic_forwards_selected_hwnd (test_window_capture_audit.IntegrationContracts.test_diagnostic_forwards_selected_hwnd)
@@ -91,6 +94,6 @@ Traceback (most recent call last):
 RuntimeError: Limite global: arquivos protegidos ou externos impedem salvar. Nada removido.
 
 ----------------------------------------------------------------------
-Ran 50 tests in 3.676s
+Ran 53 tests in 3.369s
 
 FAILED (errors=3)
