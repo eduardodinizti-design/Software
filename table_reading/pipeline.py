@@ -59,6 +59,7 @@ def analyze_tables(frame_bgr, metadata, max_tables=6, *, _reader=None, read_butt
     ocr_setup_ms=(time.monotonic()-ocr_started)*1000
     reading_ms=0.0
     button_ms=0.0
+    card_attempts=button_attempts=0
     rows=[]
     for i,p in enumerate(proposals,1):
         x,y,w,h=map(int,p.box)
@@ -72,6 +73,7 @@ def analyze_tables(frame_bgr, metadata, max_tables=6, *, _reader=None, read_butt
             if ocr['status']=='UNAVAILABLE':row['reading_status']='OCR_UNAVAILABLE'
             else:
                 try:
+                    card_attempts+=1
                     read_started=time.monotonic()
                     try:
                         reading=_reader(crop)
@@ -89,6 +91,7 @@ def analyze_tables(frame_bgr, metadata, max_tables=6, *, _reader=None, read_butt
                 row['action_buttons']={'status':'OCR_UNAVAILABLE','buttons':[],'actions_allowed':False}
             else:
                 from .action_buttons import read_action_buttons
+                button_attempts+=1
                 button_started=time.monotonic()
                 try: row['action_buttons']=read_action_buttons(crop)
                 except Exception as exc:
@@ -100,5 +103,6 @@ def analyze_tables(frame_bgr, metadata, max_tables=6, *, _reader=None, read_butt
                 image_shape=list(frame_bgr.shape),max_tables=max_tables,ocr=ocr,tables=rows,
                 complete_count=sum(r['status']=='COMPLETE_CANDIDATE' for r in rows),
                 duration_ms=round((time.monotonic()-started)*1000,2),
+                attempts=dict(card_reading=card_attempts,button_reading=button_attempts),
                 timings_ms=dict(detection=detection_ms,ocr_setup=ocr_setup_ms,card_reading=reading_ms,button_reading=button_ms),actions_allowed=False,
                 persistent_tracking=False,scope='BLUE_LAYOUT_HERO_ONLY_EXPERIMENTAL')

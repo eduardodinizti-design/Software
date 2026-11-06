@@ -27,6 +27,7 @@ def observe(engine, hwnd, *, interval=2.0, max_age=10.0, max_tables=6,
             try:
                 frame,metadata=engine.capture_frame(hwnd=hwnd)
                 if frame is None:
+                    metrics.failure(metadata.get('status','CAPTURE_FAILED'))
                     emit(f"SEM LEITURA: {metadata.get('status','CAPTURE_FAILED')}")
                 else:
                     current=tuple(metadata.get(k) for k in ('hwnd','pid','process_created','executable'))
@@ -41,6 +42,7 @@ def observe(engine, hwnd, *, interval=2.0, max_age=10.0, max_tables=6,
                     metrics.add(metadata,report,age*1000)
                     if cycle % 10 == 0:
                         emit("TEMPOS (ms; ultimos 120 ciclos analisados): "+str(metrics.summary()))
+                    if cycle % 10 == 0:emit('DIAGNOSTICO: '+str(metrics.counts()))
                     if age > max_age:
                         emit(f'SEM LEITURA: RESULT_EXPIRED ({age:.1f}s)')
                     elif not report['tables']:
@@ -51,6 +53,7 @@ def observe(engine, hwnd, *, interval=2.0, max_age=10.0, max_tables=6,
                         if report.get('ocr',{}).get('status')=='UNAVAILABLE':
                             emit('OCR INDISPONIVEL: '+report['ocr'].get('error',''))
             except Exception as exc:
+                metrics.failure('PROCESSING_ERROR')
                 emit(f'SEM LEITURA: {type(exc).__name__}: {exc}')
             finally:
                 # No queue, cache, report history or full-frame retention.
@@ -59,5 +62,6 @@ def observe(engine, hwnd, *, interval=2.0, max_age=10.0, max_tables=6,
                 sleep(max(.05,interval-(clock()-started)))
     except KeyboardInterrupt:
         emit('Observador encerrado. Nenhuma imagem salva.')
+    emit("DIAGNOSTICO FINAL: "+str(metrics.counts()))
     emit("TEMPOS FINAIS (ms): "+str(metrics.summary()))
     return 0

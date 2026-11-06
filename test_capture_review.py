@@ -20,4 +20,4 @@ class ReviewTests(unittest.TestCase):
         self.assertEqual(summary,{'n':20,'median_ms':19.5,'p95_ms':28.0})
     def test_missing_timing_not_reported_as_zero(self):
         metrics=ObservationMetrics();metrics.add({}, {}, 100)
-        self.assertEqual(set(metrics.summary()),{'cycle'})
+        self.assertEqual(set(metrics.summary()),{'cycle','cycle_without_ocr'})
