@@ -1,7 +1,7 @@
 name: Strict client capture contracts and Windows GDI
 on:
   push:
-    branches: [fix/strict-client-capture]
+    branches: [main, fix/strict-client-capture]
     paths: ['**.py', '.github/workflows/strict-capture-tests.yml']
 permissions:
   contents: write
@@ -29,7 +29,7 @@ jobs:
           script: |
             const fs = require('fs');
             const filePath = 'docs/capture-fix/windows-test-results.txt';
-            const branch = 'fix/strict-client-capture';
+            const branch = context.ref.replace('refs/heads/', '');
             let sha;
             try {sha=(await github.rest.repos.getContent({...context.repo,path:filePath,ref:branch})).data.sha;}
             catch(e) {if(e.status!==404) throw e;}

@@ -1,8 +1,7 @@
-node_modules/
-build/
-dist/
-coverage/
-.DS_Store
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+logs/
 *.log
 .env*
-!.env.example

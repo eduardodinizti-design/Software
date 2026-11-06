@@ -1,26 +1,28 @@
-# VisualPilot: leitor Windows de console
+# VisualPilot — observador Windows de console
 
-Use a branch **fix/strict-client-capture**. A main antiga nao contem o mesmo leitor.
+O caminho operacional unico e `ler_mesas.py` → `window_capture_engine.py` → `table_reading/pipeline.py`. Sem interface grafica, previa de debug ou servidor web. A branch main recebe o mesmo codigo operacional de fix/strict-client-capture nesta consolidacao.
 
-O caminho oficial e `ler_mesas.py` -> `WindowCaptureEngine` -> `table_reading.pipeline.analyze_tables`.
-As quatro entradas `bot_standalone.py` agora apenas encaminham argumentos a esse leitor. Nao abrem interface, previa ou debug e nao executam detector alternativo.
+## Executar no Windows
 
-## Executar
+Use Python 3.12 e Tesseract com idioma English. Se o ambiente dos testes anteriores ja funciona, reutilize-o. Para instalar as dependencias Python: `python -m pip install -r requirements.txt`.
 
-Na raiz do checkout, com o Python e Tesseract usados nos testes anteriores:
+Na raiz do checkout completo:
 
 ```cmd
 python testar_windows.py --listar
 python ler_mesas.py --hwnd NUMERO --continuo --botoes --board
 ```
 
-Substitua NUMERO pelo HWND atual listado. Ctrl+C encerra. O observador trabalha em memoria e nao grava imagens por padrao. Nao executa cliques.
+Substitua NUMERO pelo HWND atual. Ctrl+C encerra. O observador nao clica e nao salva imagens por padrao. `bot_standalone.py` e apenas um alias desse mesmo leitor; sem argumentos, mostra ajuda.
 
-`python bot_standalone.py --hwnd NUMERO --continuo --botoes --board` usa exatamente a mesma entrada. Sem argumentos, mostra ajuda; nao escolhe uma captura antiga automaticamente.
+`testar_windows.py --hwnd NUMERO --cliques` e um executor MANUAL separado. Nao faz parte da reproducao do observador e nao decide jogadas.
 
-## Orientacao para agentes
+## Estrutura preservada
 
+- `table_reading/`: detector, leitores e templates.
+- Captura, observador, metricas e armazenamento limitado na raiz.
+- `test_*.py`, `tools/`, `scripts/`, `public/assets/aistudio/`: laboratorio e testes atuais.
+- `docs/` e `repo_visualpilot/docs/`: evidencias e documentos historicos; instrucoes antigas nao substituem este README.
+- `coletar_amostras.py` e `windows_capture_diagnostics.py`: coleta explicita e limitada.
 
-Os arquivos do motor e do reconhecimento nao foram alterados nesta limpeza. O executor manual `testar_windows.py --cliques` e separado e nao faz parte do observador validado. Arquivos historicos nao referenciados pelo caminho oficial nao devem ser executados como alternativa.
-
-A limpeza retira as implementacoes GUI das quatro entradas antigas; nao afirma que todo arquivo historico do repositorio seja defeituoso. O funcionamento no PPPoker depende da verificacao no Windows. Testes de laboratorio nao substituem essa verificacao.
+Nao copiar arquivos para distribuicoes antigas. Nao recriar GUI, preview, filtros globais ou outro reconhecedor. Use os modulos deste checkout completo. A captura e leitura reais precisam ser verificadas no Windows; resultados de laboratorio nao sao prova de desempenho ao vivo.
