@@ -41,8 +41,9 @@
         ],
         "board": []
       },
-      "label_status": "INHERITED_NOT_RECHECKED",
-      "current_reader_validated": false
+      "label_status": "VISUALLY_RECHECKED",
+      "current_reader_validated": false,
+      "current_reader_evaluated": true
     },
     {
       "file": "15_1.png",
@@ -58,8 +59,9 @@
           "Qh"
         ]
       },
-      "label_status": "INHERITED_NOT_RECHECKED",
-      "current_reader_validated": false
+      "label_status": "VISUALLY_RECHECKED",
+      "current_reader_validated": false,
+      "current_reader_evaluated": true
     },
     {
       "file": "48_0.png",
@@ -71,8 +73,9 @@
         ],
         "board": []
       },
-      "label_status": "INHERITED_NOT_RECHECKED",
-      "current_reader_validated": false
+      "label_status": "VISUALLY_RECHECKED",
+      "current_reader_validated": false,
+      "current_reader_evaluated": true
     },
     {
       "file": "48_1.png",
@@ -89,8 +92,9 @@
           "5d"
         ]
       },
-      "label_status": "INHERITED_NOT_RECHECKED",
-      "current_reader_validated": false
+      "label_status": "VISUALLY_RECHECKED",
+      "current_reader_validated": false,
+      "current_reader_evaluated": true
     },
     {
       "file": "82_0.png",
@@ -102,8 +106,9 @@
         ],
         "board": []
       },
-      "label_status": "INHERITED_NOT_RECHECKED",
-      "current_reader_validated": false
+      "label_status": "VISUALLY_RECHECKED",
+      "current_reader_validated": false,
+      "current_reader_evaluated": true
     },
     {
       "file": "82_1.png",
@@ -115,8 +120,9 @@
         ],
         "board": []
       },
-      "label_status": "INHERITED_NOT_RECHECKED",
-      "current_reader_validated": false
+      "label_status": "VISUALLY_RECHECKED",
+      "current_reader_validated": false,
+      "current_reader_evaluated": true
     },
     {
       "file": "116_0.png",
@@ -134,8 +140,9 @@
           "Kc"
         ]
       },
-      "label_status": "INHERITED_NOT_RECHECKED",
-      "current_reader_validated": false
+      "label_status": "VISUALLY_RECHECKED",
+      "current_reader_validated": false,
+      "current_reader_evaluated": true
     },
     {
       "file": "116_1.png",
@@ -147,8 +154,10 @@
         ],
         "board": []
       },
-      "label_status": "INHERITED_NOT_RECHECKED",
-      "current_reader_validated": false
+      "label_status": "VISUALLY_RECHECKED",
+      "current_reader_validated": false,
+      "current_reader_evaluated": true
     }
-  ]
+  ],
+  "replay_report": "legacy-replay-results.json"
 }

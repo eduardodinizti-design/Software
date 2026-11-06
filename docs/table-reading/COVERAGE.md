@@ -89,3 +89,7 @@ Hero: 2s, 3s, 4d, 5c, 7d, 8h, Jd, Js, Kd, Th
 Board: 5d, 7h, As, Kc, Kd, Qh, Th, Ts
 
 Próximo trabalho: inspecionar rótulos e executar estes recortes no leitor atual, especialmente os exemplos com 8h. Não são a captura exata que produziu 8h→3h no Windows.
+
+## Reavaliação concluída do legado
+
+Os oito PNGs foram reavaliados; veja LEGACY_REPLAY.md. Hero: 11/16 corretas, cinco abstenções, zero erros aceitos. Board branco: 12/12 não identificadas. Os rótulos foram reconferidos visualmente. Mantidos separados do tema de faces coloridas.
