@@ -44,6 +44,24 @@ def read_segmented_rank(crop):
             try:
                 confirmation=[pytesseract.image_to_string(original_shape,config=f'--psm {mode} -c tessedit_char_whitelist=AKQJT1098765432',timeout=3).strip() for mode in (7,10)]
             except Exception as exc:return {'rank':None,'status':'OCR_ERROR','error':str(exc)}
+            # An oversized isolated glyph can produce blank OCR despite intact
+            # strokes. Retry only all-blank A confirmation at smaller, still
+            # undistorted scale; an observed conflicting rank is never bypassed.
+            if readings[0]=='A' and confirmation==['','']:
+                retry=[]
+                try:
+                    for glyph in original_shapes:
+                        small=cv2.resize(glyph,None,fx=4,fy=4,interpolation=cv2.INTER_NEAREST)
+                        small=cv2.copyMakeBorder(small,40,40,40,40,cv2.BORDER_CONSTANT,value=255)
+                        retry.extend(pytesseract.image_to_string(small,config=f'--psm {mode} -c tessedit_char_whitelist=AKQJT1098765432',timeout=3).strip() for mode in (7,10))
+                except Exception as exc:return {'rank':None,'status':'OCR_ERROR','error':str(exc)}
+                if retry==['A']*4:
+                    return {'rank':'A','status':'CANDIDATE_ONLY','readings':readings,
+                            'aspect_confirmation':confirmation,'smaller_aspect_confirmation':retry,
+                            'evidence':'ACE_TWO_THRESHOLDS_SMALLER_ORIGINAL_ASPECT'}
+                return {'rank':None,'status':'OCR_AMBIGUOUS','readings':readings,
+                        'aspect_confirmation':confirmation,'smaller_aspect_confirmation':retry,
+                        'evidence':'ACE_REQUIRES_ORIGINAL_ASPECT'}
             if confirmation!=[readings[0],readings[0]]:
                 return {'rank':None,'status':'OCR_AMBIGUOUS','readings':readings,'aspect_confirmation':confirmation,'evidence':'FOUR_REQUIRES_ORIGINAL_ASPECT' if readings[0]=='4' else 'ACE_REQUIRES_ORIGINAL_ASPECT'}
         return {'rank':'T' if readings[0]=='10' else readings[0],'status':'CANDIDATE_ONLY',

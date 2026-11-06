@@ -40,6 +40,31 @@ class AceAspectTests(unittest.TestCase):
         self.assertEqual(result['evidence'],'ACE_REQUIRES_ORIGINAL_ASPECT')
         self.assertEqual(count,6)
 
+    def test_blank_ace_can_use_four_smaller_undistorted_votes(self):
+        result,count=self.read(['A']*4+['','']+['A']*4)
+        self.assertEqual(result['rank'],'A')
+        self.assertEqual(count,10)
+        self.assertEqual(result['evidence'],'ACE_TWO_THRESHOLDS_SMALLER_ORIGINAL_ASPECT')
+
+    def test_blank_ace_retry_conflict_abstains(self):
+        result,count=self.read(['A']*4+['','']+['A','4','A','A'])
+        self.assertIsNone(result['rank'])
+        self.assertEqual(count,10)
+
+    def test_one_blank_does_not_enable_smaller_retry(self):
+        result,count=self.read(['A']*4+['A',''])
+        self.assertIsNone(result['rank'])
+        self.assertEqual(count,6)
+
+    def test_blank_and_conflict_does_not_enable_smaller_retry(self):
+        result,count=self.read(['A']*4+['','4'])
+        self.assertIsNone(result['rank'])
+        self.assertEqual(count,6)
+
+    def test_blank_ace_retry_partial_abstains(self):
+        result,count=self.read(['A']*4+['','']+['A','','A','A'])
+        self.assertIsNone(result['rank'])
+
     def test_confirmed_ace_remains_accepted(self):
         result,count=self.read(['A']*6)
         self.assertEqual(result['rank'],'A')

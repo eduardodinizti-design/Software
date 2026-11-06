@@ -50,7 +50,16 @@ def detect_table_crops(rgb, blockers=(), max_tables=6):
         for contour in sorted(contours,key=lambda c: cv2.boundingRect(c)[2]*cv2.boundingRect(c)[3],reverse=True):
             box=cv2.boundingRect(contour);x,y,w,h=box
             if w<150 or h<250 or not .35<=w/h<=.85:continue
-            if any(intersection(box,b)/min(w*h,b[2]*b[3])>=.5 for b,_ in proposals):continue
+            # An edge-touching contour cannot establish a complete table and
+            # must not suppress an interior candidate (desktop blue regions
+            # can surround a genuine table). Keep ordinary enclosing-first
+            # deduplication elsewhere, including repeated partial proposals.
+            interior=x>1 and y>1 and x+w<width-1 and y+h<height-1
+            def suppresses(existing):
+                bx,by,bw,bh=existing
+                existing_partial=bx<=1 or by<=1 or bx+bw>=width-1 or by+bh>=height-1
+                return not (interior and existing_partial) and intersection(box,existing)/min(w*h,bw*bh)>=.5
+            if any(suppresses(b) for b,_ in proposals):continue
             proposals.append((box,'FELT_ONLY'))
     results=[]
     for box,evidence in proposals:

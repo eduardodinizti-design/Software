@@ -1,0 +1,2509 @@
+[
+  {
+    "source": "_10C5026D-6026-4B79-B301-D6A84327F860__06675261.png",
+    "before": [],
+    "after": []
+  },
+  {
+    "source": "_174B754B-2F65-41F4-8789-48F36C88B430__2ed2f963.png",
+    "before": [
+      {
+        "box": [
+          699,
+          52,
+          699,
+          1244
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "FOUR_CORNER_BLUE_SURFACE",
+        "corner_scores": {
+          "menu": 0.7213,
+          "signal": 0.8364,
+          "cards": 0.8713,
+          "chat": 0.8917
+        },
+        "corner_diagnostics": {
+          "accepted": true,
+          "scores": {
+            "menu": 0.7213,
+            "signal": 0.8364,
+            "cards": 0.8713,
+            "chat": 0.8917
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB"
+        }
+      },
+      {
+        "box": [
+          0,
+          362,
+          698,
+          942
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      }
+    ],
+    "after": [
+      {
+        "box": [
+          699,
+          52,
+          699,
+          1244
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "FOUR_CORNER_BLUE_SURFACE",
+        "corner_scores": {
+          "menu": 0.7213,
+          "signal": 0.8364,
+          "cards": 0.8713,
+          "chat": 0.8917
+        },
+        "corner_diagnostics": {
+          "accepted": true,
+          "scores": {
+            "menu": 0.7213,
+            "signal": 0.8364,
+            "cards": 0.8713,
+            "chat": 0.8917
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB"
+        }
+      },
+      {
+        "box": [
+          0,
+          362,
+          698,
+          942
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      }
+    ]
+  },
+  {
+    "source": "_206B21B4-9F7E-45F4-83BA-03E62E16B586__ec53a874.png",
+    "before": [
+      {
+        "box": [
+          696,
+          54,
+          716,
+          1240
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {
+          "menu": 0.854,
+          "signal": 0.76,
+          "cards": 0.8471,
+          "chat": 0.1681
+        },
+        "corner_diagnostics": {
+          "accepted": false,
+          "scores": {
+            "menu": 0.854,
+            "signal": 0.76,
+            "cards": 0.8471,
+            "chat": 0.1681
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB",
+          "native_scores": {
+            "menu": 0.8506,
+            "signal": 0.7532,
+            "cards": 0.9089,
+            "chat": 0.1684
+          }
+        }
+      },
+      {
+        "box": [
+          0,
+          351,
+          695,
+          943
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      }
+    ],
+    "after": [
+      {
+        "box": [
+          696,
+          54,
+          716,
+          1240
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {
+          "menu": 0.854,
+          "signal": 0.76,
+          "cards": 0.8471,
+          "chat": 0.1681
+        },
+        "corner_diagnostics": {
+          "accepted": false,
+          "scores": {
+            "menu": 0.854,
+            "signal": 0.76,
+            "cards": 0.8471,
+            "chat": 0.1681
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB",
+          "native_scores": {
+            "menu": 0.8506,
+            "signal": 0.7532,
+            "cards": 0.9089,
+            "chat": 0.1684
+          }
+        }
+      },
+      {
+        "box": [
+          0,
+          351,
+          695,
+          943
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      }
+    ]
+  },
+  {
+    "source": "_21D744E1-8BE6-4C79-82AF-5582DD6A9547__6988a9e2.png",
+    "before": [
+      {
+        "box": [
+          11,
+          36,
+          703,
+          1237
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "THREE_CONTROLS_BLUE_SURFACE",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      }
+    ],
+    "after": [
+      {
+        "box": [
+          11,
+          36,
+          703,
+          1237
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "THREE_CONTROLS_BLUE_SURFACE",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      }
+    ]
+  },
+  {
+    "source": "_22AFEE38-C581-4573-8EEE-A066396AE91A__d556a633.png",
+    "before": [
+      {
+        "box": [
+          0,
+          261,
+          699,
+          1151
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {
+          "menu": 0.0,
+          "signal": 0.2049,
+          "cards": 0.0,
+          "chat": 0.1739
+        },
+        "corner_diagnostics": {
+          "accepted": false,
+          "scores": {
+            "menu": 0.0,
+            "signal": 0.2049,
+            "cards": 0.0,
+            "chat": 0.1739
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB",
+          "native_scores": {
+            "menu": 0.0,
+            "signal": 0.2199,
+            "cards": 0.0,
+            "chat": 0.1412
+          }
+        }
+      },
+      {
+        "box": [
+          703,
+          264,
+          703,
+          1237
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "THREE_CONTROLS_BLUE_SURFACE",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      }
+    ],
+    "after": [
+      {
+        "box": [
+          0,
+          261,
+          699,
+          1151
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {
+          "menu": 0.0,
+          "signal": 0.2049,
+          "cards": 0.0,
+          "chat": 0.1739
+        },
+        "corner_diagnostics": {
+          "accepted": false,
+          "scores": {
+            "menu": 0.0,
+            "signal": 0.2049,
+            "cards": 0.0,
+            "chat": 0.1739
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB",
+          "native_scores": {
+            "menu": 0.0,
+            "signal": 0.2199,
+            "cards": 0.0,
+            "chat": 0.1412
+          }
+        }
+      },
+      {
+        "box": [
+          703,
+          264,
+          703,
+          1237
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "THREE_CONTROLS_BLUE_SURFACE",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      },
+      {
+        "box": [
+          61,
+          431,
+          569,
+          710
+        ],
+        "status": "UNCERTAIN",
+        "reasons": [
+          "FULL_BOUNDARY_NOT_ESTABLISHED"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      }
+    ]
+  },
+  {
+    "source": "_2A4D1182-731C-4224-9DAE-D014B7A003A6__f89d8719.png",
+    "before": [],
+    "after": []
+  },
+  {
+    "source": "_2DDE1911-9262-45F2-9D20-E90899BC739A__111d0a2e.png",
+    "before": [
+      {
+        "box": [
+          1,
+          210,
+          711,
+          1151
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {
+          "menu": 0.0,
+          "signal": 0.2971,
+          "cards": 0.0,
+          "chat": 0.1315
+        },
+        "corner_diagnostics": {
+          "accepted": false,
+          "scores": {
+            "menu": 0.0,
+            "signal": 0.2971,
+            "cards": 0.0,
+            "chat": 0.1315
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB",
+          "native_scores": {
+            "menu": 0.0,
+            "signal": 0.2199,
+            "cards": 0.0,
+            "chat": 0.1412
+          }
+        }
+      },
+      {
+        "box": [
+          716,
+          213,
+          703,
+          1237
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "THREE_CONTROLS_BLUE_SURFACE",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      }
+    ],
+    "after": [
+      {
+        "box": [
+          1,
+          210,
+          711,
+          1151
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {
+          "menu": 0.0,
+          "signal": 0.2971,
+          "cards": 0.0,
+          "chat": 0.1315
+        },
+        "corner_diagnostics": {
+          "accepted": false,
+          "scores": {
+            "menu": 0.0,
+            "signal": 0.2971,
+            "cards": 0.0,
+            "chat": 0.1315
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB",
+          "native_scores": {
+            "menu": 0.0,
+            "signal": 0.2199,
+            "cards": 0.0,
+            "chat": 0.1412
+          }
+        }
+      },
+      {
+        "box": [
+          9,
+          210,
+          699,
+          1151
+        ],
+        "status": "UNCERTAIN",
+        "reasons": [
+          "FULL_BOUNDARY_NOT_ESTABLISHED"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {
+          "menu": 0.0,
+          "signal": 0.2494,
+          "cards": 0.0,
+          "chat": 0.1278
+        },
+        "corner_diagnostics": {
+          "accepted": false,
+          "scores": {
+            "menu": 0.0,
+            "signal": 0.2494,
+            "cards": 0.0,
+            "chat": 0.1278
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB",
+          "native_scores": {
+            "menu": 0.0,
+            "signal": 0.2199,
+            "cards": 0.0,
+            "chat": 0.1412
+          }
+        }
+      },
+      {
+        "box": [
+          716,
+          213,
+          703,
+          1237
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "THREE_CONTROLS_BLUE_SURFACE",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      }
+    ]
+  },
+  {
+    "source": "_326D366F-C98E-422B-87DF-4BFD344085A4__5888ea9d.png",
+    "before": [],
+    "after": []
+  },
+  {
+    "source": "_3A75F7DE-7229-4137-BD19-4AF5AE363948__d560bf0f.png",
+    "before": [
+      {
+        "box": [
+          0,
+          222,
+          701,
+          1151
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {
+          "menu": 0.0,
+          "signal": 0.2057,
+          "cards": 0.0356,
+          "chat": 0.1307
+        },
+        "corner_diagnostics": {
+          "accepted": false,
+          "scores": {
+            "menu": 0.0,
+            "signal": 0.2057,
+            "cards": 0.0356,
+            "chat": 0.1307
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB",
+          "native_scores": {
+            "menu": 0.0,
+            "signal": 0.2199,
+            "cards": 0.0329,
+            "chat": 0.1412
+          }
+        }
+      },
+      {
+        "box": [
+          705,
+          225,
+          703,
+          1237
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "THREE_CONTROLS_BLUE_SURFACE",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      }
+    ],
+    "after": [
+      {
+        "box": [
+          0,
+          222,
+          701,
+          1151
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {
+          "menu": 0.0,
+          "signal": 0.2057,
+          "cards": 0.0356,
+          "chat": 0.1307
+        },
+        "corner_diagnostics": {
+          "accepted": false,
+          "scores": {
+            "menu": 0.0,
+            "signal": 0.2057,
+            "cards": 0.0356,
+            "chat": 0.1307
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB",
+          "native_scores": {
+            "menu": 0.0,
+            "signal": 0.2199,
+            "cards": 0.0329,
+            "chat": 0.1412
+          }
+        }
+      },
+      {
+        "box": [
+          705,
+          225,
+          703,
+          1237
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "THREE_CONTROLS_BLUE_SURFACE",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      },
+      {
+        "box": [
+          63,
+          391,
+          569,
+          711
+        ],
+        "status": "UNCERTAIN",
+        "reasons": [
+          "FULL_BOUNDARY_NOT_ESTABLISHED"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      }
+    ]
+  },
+  {
+    "source": "_3DBE45F5-D3B8-47DF-AD1E-9F2851D2F68C__bb86bd7b.png",
+    "before": [],
+    "after": []
+  },
+  {
+    "source": "_4342624F-9E50-4B21-ABAF-2D1DD4C9AFB7__886a1f03.png",
+    "before": [
+      {
+        "box": [
+          0,
+          179,
+          711,
+          1151
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {
+          "menu": 0.0,
+          "signal": 0.2971,
+          "cards": 0.0,
+          "chat": 0.1315
+        },
+        "corner_diagnostics": {
+          "accepted": false,
+          "scores": {
+            "menu": 0.0,
+            "signal": 0.2971,
+            "cards": 0.0,
+            "chat": 0.1315
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB",
+          "native_scores": {
+            "menu": 0.0,
+            "signal": 0.2199,
+            "cards": 0.0,
+            "chat": 0.1412
+          }
+        }
+      },
+      {
+        "box": [
+          712,
+          182,
+          702,
+          1271
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "FOUR_CORNER_BLUE_SURFACE",
+        "corner_scores": {
+          "menu": 0.7668,
+          "signal": 0.7629,
+          "cards": 0.8058,
+          "chat": 0.8886
+        },
+        "corner_diagnostics": {
+          "accepted": true,
+          "scores": {
+            "menu": 0.7668,
+            "signal": 0.7629,
+            "cards": 0.8058,
+            "chat": 0.8886
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB"
+        }
+      }
+    ],
+    "after": [
+      {
+        "box": [
+          0,
+          179,
+          711,
+          1151
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {
+          "menu": 0.0,
+          "signal": 0.2971,
+          "cards": 0.0,
+          "chat": 0.1315
+        },
+        "corner_diagnostics": {
+          "accepted": false,
+          "scores": {
+            "menu": 0.0,
+            "signal": 0.2971,
+            "cards": 0.0,
+            "chat": 0.1315
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB",
+          "native_scores": {
+            "menu": 0.0,
+            "signal": 0.2199,
+            "cards": 0.0,
+            "chat": 0.1412
+          }
+        }
+      },
+      {
+        "box": [
+          8,
+          179,
+          699,
+          1151
+        ],
+        "status": "UNCERTAIN",
+        "reasons": [
+          "FULL_BOUNDARY_NOT_ESTABLISHED"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {
+          "menu": 0.0,
+          "signal": 0.2494,
+          "cards": 0.0,
+          "chat": 0.1278
+        },
+        "corner_diagnostics": {
+          "accepted": false,
+          "scores": {
+            "menu": 0.0,
+            "signal": 0.2494,
+            "cards": 0.0,
+            "chat": 0.1278
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB",
+          "native_scores": {
+            "menu": 0.0,
+            "signal": 0.2199,
+            "cards": 0.0,
+            "chat": 0.1412
+          }
+        }
+      },
+      {
+        "box": [
+          712,
+          182,
+          702,
+          1271
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "FOUR_CORNER_BLUE_SURFACE",
+        "corner_scores": {
+          "menu": 0.7668,
+          "signal": 0.7629,
+          "cards": 0.8058,
+          "chat": 0.8886
+        },
+        "corner_diagnostics": {
+          "accepted": true,
+          "scores": {
+            "menu": 0.7668,
+            "signal": 0.7629,
+            "cards": 0.8058,
+            "chat": 0.8886
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB"
+        }
+      }
+    ]
+  },
+  {
+    "source": "_4528A8B5-F81C-4078-A8DB-C7ADBD91C311__85ee615d.png",
+    "before": [
+      {
+        "box": [
+          674,
+          100,
+          703,
+          1237
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "THREE_CONTROLS_BLUE_SURFACE",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      },
+      {
+        "box": [
+          0,
+          410,
+          673,
+          942
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      }
+    ],
+    "after": [
+      {
+        "box": [
+          674,
+          100,
+          703,
+          1237
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "THREE_CONTROLS_BLUE_SURFACE",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      },
+      {
+        "box": [
+          0,
+          410,
+          673,
+          942
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      }
+    ]
+  },
+  {
+    "source": "_4CCF9DD1-A945-450A-9C7C-2334847FE3E4__02419b13.png",
+    "before": [
+      {
+        "box": [
+          14,
+          36,
+          704,
+          1244
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "FOUR_CORNER_BLUE_SURFACE",
+        "corner_scores": {
+          "menu": 0.7628,
+          "signal": 0.759,
+          "cards": 0.881,
+          "chat": 0.8861
+        },
+        "corner_diagnostics": {
+          "accepted": true,
+          "scores": {
+            "menu": 0.7628,
+            "signal": 0.759,
+            "cards": 0.881,
+            "chat": 0.8861
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB"
+        }
+      }
+    ],
+    "after": [
+      {
+        "box": [
+          14,
+          36,
+          704,
+          1244
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "FOUR_CORNER_BLUE_SURFACE",
+        "corner_scores": {
+          "menu": 0.7628,
+          "signal": 0.759,
+          "cards": 0.881,
+          "chat": 0.8861
+        },
+        "corner_diagnostics": {
+          "accepted": true,
+          "scores": {
+            "menu": 0.7628,
+            "signal": 0.759,
+            "cards": 0.881,
+            "chat": 0.8861
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB"
+        }
+      }
+    ]
+  },
+  {
+    "source": "_50A0882F-5A5E-456C-8CE3-B5A41DDBB560__93c5a0ca.png",
+    "before": [],
+    "after": []
+  },
+  {
+    "source": "_518A0E64-4A66-475A-95DA-7855D6076909__6b869262.png",
+    "before": [],
+    "after": []
+  },
+  {
+    "source": "_52551F09-E0AA-493C-B89B-C142FEC5915F__609998b2.png",
+    "before": [],
+    "after": []
+  },
+  {
+    "source": "_58CB106F-09EA-4853-B7D9-98FD582FAD0E__581ae999.png",
+    "before": [
+      {
+        "box": [
+          710,
+          224,
+          703,
+          1237
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "THREE_CONTROLS_BLUE_SURFACE",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      },
+      {
+        "box": [
+          10,
+          534,
+          699,
+          942
+        ],
+        "status": "UNCERTAIN",
+        "reasons": [
+          "FULL_BOUNDARY_NOT_ESTABLISHED"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      }
+    ],
+    "after": [
+      {
+        "box": [
+          710,
+          224,
+          703,
+          1237
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "THREE_CONTROLS_BLUE_SURFACE",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      },
+      {
+        "box": [
+          10,
+          534,
+          699,
+          942
+        ],
+        "status": "UNCERTAIN",
+        "reasons": [
+          "FULL_BOUNDARY_NOT_ESTABLISHED"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      }
+    ]
+  },
+  {
+    "source": "_6A38ACDE-257F-4FE7-880B-973AABD1EBEA__fc5398b6.png",
+    "before": [],
+    "after": []
+  },
+  {
+    "source": "_72432B1C-F9F9-454A-A5D8-7DBE7A0E326A__aff0428c.png",
+    "before": [
+      {
+        "box": [
+          0,
+          0,
+          804,
+          1287
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {
+          "menu": 0.0411,
+          "signal": 0.1303,
+          "cards": 0.0489,
+          "chat": 0.382
+        },
+        "corner_diagnostics": {
+          "accepted": false,
+          "scores": {
+            "menu": 0.0411,
+            "signal": 0.1303,
+            "cards": 0.0489,
+            "chat": 0.382
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB",
+          "native_scores": {
+            "menu": 0.0283,
+            "signal": 0.1231,
+            "cards": 0.0518,
+            "chat": 0.4144
+          }
+        }
+      },
+      {
+        "box": [
+          687,
+          46,
+          686,
+          1237
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "FOUR_CORNER_BLUE_SURFACE",
+        "corner_scores": {
+          "menu": 0.7985,
+          "signal": 0.8941,
+          "cards": 0.8833,
+          "chat": 0.9825
+        },
+        "corner_diagnostics": {
+          "accepted": true,
+          "scores": {
+            "menu": 0.7985,
+            "signal": 0.8941,
+            "cards": 0.8833,
+            "chat": 0.9825
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB"
+        }
+      }
+    ],
+    "after": [
+      {
+        "box": [
+          0,
+          0,
+          804,
+          1287
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {
+          "menu": 0.0411,
+          "signal": 0.1303,
+          "cards": 0.0489,
+          "chat": 0.382
+        },
+        "corner_diagnostics": {
+          "accepted": false,
+          "scores": {
+            "menu": 0.0411,
+            "signal": 0.1303,
+            "cards": 0.0489,
+            "chat": 0.382
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB",
+          "native_scores": {
+            "menu": 0.0283,
+            "signal": 0.1231,
+            "cards": 0.0518,
+            "chat": 0.4144
+          }
+        }
+      },
+      {
+        "box": [
+          687,
+          46,
+          686,
+          1237
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "FOUR_CORNER_BLUE_SURFACE",
+        "corner_scores": {
+          "menu": 0.7985,
+          "signal": 0.8941,
+          "cards": 0.8833,
+          "chat": 0.9825
+        },
+        "corner_diagnostics": {
+          "accepted": true,
+          "scores": {
+            "menu": 0.7985,
+            "signal": 0.8941,
+            "cards": 0.8833,
+            "chat": 0.9825
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB"
+        }
+      }
+    ]
+  },
+  {
+    "source": "_76D7A22C-BC3A-435D-BB63-A4AC9AE0A1A0__78803c80.png",
+    "before": [
+      {
+        "box": [
+          0,
+          263,
+          698,
+          1151
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {
+          "menu": 0.0,
+          "signal": 0.2155,
+          "cards": 0.0,
+          "chat": 0.1739
+        },
+        "corner_diagnostics": {
+          "accepted": false,
+          "scores": {
+            "menu": 0.0,
+            "signal": 0.2155,
+            "cards": 0.0,
+            "chat": 0.1739
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB",
+          "native_scores": {
+            "menu": 0.0,
+            "signal": 0.2199,
+            "cards": 0.0,
+            "chat": 0.1412
+          }
+        }
+      },
+      {
+        "box": [
+          702,
+          266,
+          703,
+          1237
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "THREE_CONTROLS_BLUE_SURFACE",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      }
+    ],
+    "after": [
+      {
+        "box": [
+          0,
+          263,
+          698,
+          1151
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {
+          "menu": 0.0,
+          "signal": 0.2155,
+          "cards": 0.0,
+          "chat": 0.1739
+        },
+        "corner_diagnostics": {
+          "accepted": false,
+          "scores": {
+            "menu": 0.0,
+            "signal": 0.2155,
+            "cards": 0.0,
+            "chat": 0.1739
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB",
+          "native_scores": {
+            "menu": 0.0,
+            "signal": 0.2199,
+            "cards": 0.0,
+            "chat": 0.1412
+          }
+        }
+      },
+      {
+        "box": [
+          702,
+          266,
+          703,
+          1237
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "THREE_CONTROLS_BLUE_SURFACE",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      },
+      {
+        "box": [
+          60,
+          431,
+          569,
+          712
+        ],
+        "status": "UNCERTAIN",
+        "reasons": [
+          "FULL_BOUNDARY_NOT_ESTABLISHED"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      }
+    ]
+  },
+  {
+    "source": "_7C62D925-1CC9-4B7C-A92D-0E3379E07494__3d8f87c2.png",
+    "before": [
+      {
+        "box": [
+          689,
+          144,
+          703,
+          1237
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "THREE_CONTROLS_BLUE_SURFACE",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      },
+      {
+        "box": [
+          0,
+          447,
+          685,
+          968
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      }
+    ],
+    "after": [
+      {
+        "box": [
+          689,
+          144,
+          703,
+          1237
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "THREE_CONTROLS_BLUE_SURFACE",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      },
+      {
+        "box": [
+          0,
+          447,
+          685,
+          968
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      }
+    ]
+  },
+  {
+    "source": "_7D330F58-7619-4323-936F-39A32B8D3DDF__df2bbf46.png",
+    "before": [
+      {
+        "box": [
+          0,
+          1253,
+          237,
+          482
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      }
+    ],
+    "after": [
+      {
+        "box": [
+          0,
+          1253,
+          237,
+          482
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      }
+    ]
+  },
+  {
+    "source": "_7FE3A039-7AE8-4E00-8B2C-276EFA8CD116__59d739f3.png",
+    "before": [
+      {
+        "box": [
+          1,
+          251,
+          711,
+          1151
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {
+          "menu": 0.0,
+          "signal": 0.2971,
+          "cards": 0.0,
+          "chat": 0.1315
+        },
+        "corner_diagnostics": {
+          "accepted": false,
+          "scores": {
+            "menu": 0.0,
+            "signal": 0.2971,
+            "cards": 0.0,
+            "chat": 0.1315
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB",
+          "native_scores": {
+            "menu": 0.0,
+            "signal": 0.2199,
+            "cards": 0.0,
+            "chat": 0.1412
+          }
+        }
+      }
+    ],
+    "after": [
+      {
+        "box": [
+          1,
+          251,
+          711,
+          1151
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {
+          "menu": 0.0,
+          "signal": 0.2971,
+          "cards": 0.0,
+          "chat": 0.1315
+        },
+        "corner_diagnostics": {
+          "accepted": false,
+          "scores": {
+            "menu": 0.0,
+            "signal": 0.2971,
+            "cards": 0.0,
+            "chat": 0.1315
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB",
+          "native_scores": {
+            "menu": 0.0,
+            "signal": 0.2199,
+            "cards": 0.0,
+            "chat": 0.1412
+          }
+        }
+      },
+      {
+        "box": [
+          9,
+          251,
+          699,
+          1151
+        ],
+        "status": "UNCERTAIN",
+        "reasons": [
+          "FULL_BOUNDARY_NOT_ESTABLISHED"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {
+          "menu": 0.0,
+          "signal": 0.2494,
+          "cards": 0.0,
+          "chat": 0.1278
+        },
+        "corner_diagnostics": {
+          "accepted": false,
+          "scores": {
+            "menu": 0.0,
+            "signal": 0.2494,
+            "cards": 0.0,
+            "chat": 0.1278
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB",
+          "native_scores": {
+            "menu": 0.0,
+            "signal": 0.2199,
+            "cards": 0.0,
+            "chat": 0.1412
+          }
+        }
+      }
+    ]
+  },
+  {
+    "source": "_8C143E80-F85C-4DE6-ADCD-0641771AE2E6__2a4e7ea0.png",
+    "before": [
+      {
+        "box": [
+          0,
+          0,
+          1436,
+          1720
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      }
+    ],
+    "after": [
+      {
+        "box": [
+          0,
+          0,
+          1436,
+          1720
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      },
+      {
+        "box": [
+          703,
+          54,
+          686,
+          1237
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "FOUR_CORNER_BLUE_SURFACE",
+        "corner_scores": {
+          "menu": 0.7967,
+          "signal": 0.8872,
+          "cards": 0.887,
+          "chat": 0.9825
+        },
+        "corner_diagnostics": {
+          "accepted": true,
+          "scores": {
+            "menu": 0.7967,
+            "signal": 0.8872,
+            "cards": 0.887,
+            "chat": 0.9825
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB"
+        }
+      }
+    ]
+  },
+  {
+    "source": "_9134EF06-78F3-443A-9653-C19751D93C32__720a6eca.png",
+    "before": [
+      {
+        "box": [
+          698,
+          176,
+          702,
+          1271
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "FOUR_CORNER_BLUE_SURFACE",
+        "corner_scores": {
+          "menu": 0.7668,
+          "signal": 0.7629,
+          "cards": 0.8058,
+          "chat": 0.8886
+        },
+        "corner_diagnostics": {
+          "accepted": true,
+          "scores": {
+            "menu": 0.7668,
+            "signal": 0.7629,
+            "cards": 0.8058,
+            "chat": 0.8886
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB"
+        }
+      },
+      {
+        "box": [
+          0,
+          479,
+          697,
+          968
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      }
+    ],
+    "after": [
+      {
+        "box": [
+          698,
+          176,
+          702,
+          1271
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "FOUR_CORNER_BLUE_SURFACE",
+        "corner_scores": {
+          "menu": 0.7668,
+          "signal": 0.7629,
+          "cards": 0.8058,
+          "chat": 0.8886
+        },
+        "corner_diagnostics": {
+          "accepted": true,
+          "scores": {
+            "menu": 0.7668,
+            "signal": 0.7629,
+            "cards": 0.8058,
+            "chat": 0.8886
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB"
+        }
+      },
+      {
+        "box": [
+          0,
+          479,
+          697,
+          968
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      }
+    ]
+  },
+  {
+    "source": "_915D9A7E-1A06-4EDE-9703-380422A4770A__0a513952.png",
+    "before": [],
+    "after": []
+  },
+  {
+    "source": "_9518A7A8-6820-4B7B-8FD3-C180A4B812CD__cb0bafc3.png",
+    "before": [
+      {
+        "box": [
+          2282,
+          0,
+          959,
+          1159
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      }
+    ],
+    "after": [
+      {
+        "box": [
+          2282,
+          0,
+          959,
+          1159
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      }
+    ]
+  },
+  {
+    "source": "_99B12AC8-44FD-43FB-9AE9-9D8F1DDE2661__317ff0dd.png",
+    "before": [],
+    "after": []
+  },
+  {
+    "source": "_A9506C0A-934D-48E3-915A-A714062EE0F8__1f930c57.png",
+    "before": [
+      {
+        "box": [
+          0,
+          210,
+          694,
+          1151
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {
+          "menu": 0.0,
+          "signal": 0.2179,
+          "cards": 0.0,
+          "chat": 0.1692
+        },
+        "corner_diagnostics": {
+          "accepted": false,
+          "scores": {
+            "menu": 0.0,
+            "signal": 0.2179,
+            "cards": 0.0,
+            "chat": 0.1692
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB",
+          "native_scores": {
+            "menu": 0.0,
+            "signal": 0.2199,
+            "cards": 0.0,
+            "chat": 0.1412
+          }
+        }
+      },
+      {
+        "box": [
+          698,
+          213,
+          703,
+          1237
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "THREE_CONTROLS_BLUE_SURFACE",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      }
+    ],
+    "after": [
+      {
+        "box": [
+          0,
+          210,
+          694,
+          1151
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {
+          "menu": 0.0,
+          "signal": 0.2179,
+          "cards": 0.0,
+          "chat": 0.1692
+        },
+        "corner_diagnostics": {
+          "accepted": false,
+          "scores": {
+            "menu": 0.0,
+            "signal": 0.2179,
+            "cards": 0.0,
+            "chat": 0.1692
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB",
+          "native_scores": {
+            "menu": 0.0,
+            "signal": 0.2199,
+            "cards": 0.0,
+            "chat": 0.1412
+          }
+        }
+      },
+      {
+        "box": [
+          698,
+          213,
+          703,
+          1237
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "THREE_CONTROLS_BLUE_SURFACE",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      },
+      {
+        "box": [
+          56,
+          378,
+          569,
+          712
+        ],
+        "status": "UNCERTAIN",
+        "reasons": [
+          "FULL_BOUNDARY_NOT_ESTABLISHED"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      }
+    ]
+  },
+  {
+    "source": "_ABCB3886-A120-479F-9F0E-43096FB2D791__aaed78f0.png",
+    "before": [
+      {
+        "box": [
+          0,
+          0,
+          1368,
+          1755
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      }
+    ],
+    "after": [
+      {
+        "box": [
+          0,
+          0,
+          1368,
+          1755
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      },
+      {
+        "box": [
+          611,
+          104,
+          686,
+          1237
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "FOUR_CORNER_BLUE_SURFACE",
+        "corner_scores": {
+          "menu": 0.7967,
+          "signal": 0.8872,
+          "cards": 0.887,
+          "chat": 0.9825
+        },
+        "corner_diagnostics": {
+          "accepted": true,
+          "scores": {
+            "menu": 0.7967,
+            "signal": 0.8872,
+            "cards": 0.887,
+            "chat": 0.9825
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB"
+        }
+      }
+    ]
+  },
+  {
+    "source": "_B8B92E42-6C81-4DE3-BC29-426BB7A4AF42__3709d019.png",
+    "before": [],
+    "after": []
+  },
+  {
+    "source": "_BF8957B2-BF19-43B0-AADF-8D95779FC005__f3c8ecd9.png",
+    "before": [
+      {
+        "box": [
+          0,
+          222,
+          705,
+          1151
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {
+          "menu": 0.0,
+          "signal": 0.195,
+          "cards": 0.0,
+          "chat": 0.0219
+        },
+        "corner_diagnostics": {
+          "accepted": false,
+          "scores": {
+            "menu": 0.0,
+            "signal": 0.195,
+            "cards": 0.0,
+            "chat": 0.0219
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB",
+          "native_scores": {
+            "menu": 0.0,
+            "signal": 0.2199,
+            "cards": 0.0,
+            "chat": 0.1412
+          }
+        }
+      },
+      {
+        "box": [
+          709,
+          225,
+          699,
+          1244
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "FOUR_CORNER_BLUE_SURFACE",
+        "corner_scores": {
+          "menu": 0.7213,
+          "signal": 0.8364,
+          "cards": 0.8713,
+          "chat": 0.8917
+        },
+        "corner_diagnostics": {
+          "accepted": true,
+          "scores": {
+            "menu": 0.7213,
+            "signal": 0.8364,
+            "cards": 0.8713,
+            "chat": 0.8917
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB"
+        }
+      }
+    ],
+    "after": [
+      {
+        "box": [
+          0,
+          222,
+          705,
+          1151
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {
+          "menu": 0.0,
+          "signal": 0.195,
+          "cards": 0.0,
+          "chat": 0.0219
+        },
+        "corner_diagnostics": {
+          "accepted": false,
+          "scores": {
+            "menu": 0.0,
+            "signal": 0.195,
+            "cards": 0.0,
+            "chat": 0.0219
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB",
+          "native_scores": {
+            "menu": 0.0,
+            "signal": 0.2199,
+            "cards": 0.0,
+            "chat": 0.1412
+          }
+        }
+      },
+      {
+        "box": [
+          2,
+          222,
+          699,
+          1151
+        ],
+        "status": "UNCERTAIN",
+        "reasons": [
+          "FULL_BOUNDARY_NOT_ESTABLISHED"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {
+          "menu": 0.0,
+          "signal": 0.2494,
+          "cards": 0.0,
+          "chat": 0.0219
+        },
+        "corner_diagnostics": {
+          "accepted": false,
+          "scores": {
+            "menu": 0.0,
+            "signal": 0.2494,
+            "cards": 0.0,
+            "chat": 0.0219
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB",
+          "native_scores": {
+            "menu": 0.0,
+            "signal": 0.2199,
+            "cards": 0.0,
+            "chat": 0.1412
+          }
+        }
+      },
+      {
+        "box": [
+          709,
+          225,
+          699,
+          1244
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "FOUR_CORNER_BLUE_SURFACE",
+        "corner_scores": {
+          "menu": 0.7213,
+          "signal": 0.8364,
+          "cards": 0.8713,
+          "chat": 0.8917
+        },
+        "corner_diagnostics": {
+          "accepted": true,
+          "scores": {
+            "menu": 0.7213,
+            "signal": 0.8364,
+            "cards": 0.8713,
+            "chat": 0.8917
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB"
+        }
+      }
+    ]
+  },
+  {
+    "source": "_C8AD966C-DDAF-4BF6-90E6-F439BEA4FCD1__dd1452f2.png",
+    "before": [],
+    "after": []
+  },
+  {
+    "source": "_C998F597-5786-40A5-A73B-E450730D847E__475524bf.png",
+    "before": [
+      {
+        "box": [
+          1,
+          180,
+          719,
+          1151
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {
+          "menu": 0.0,
+          "signal": 0.2179,
+          "cards": 0.1316,
+          "chat": 0.1281
+        },
+        "corner_diagnostics": {
+          "accepted": false,
+          "scores": {
+            "menu": 0.0,
+            "signal": 0.2179,
+            "cards": 0.1316,
+            "chat": 0.1281
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB",
+          "native_scores": {
+            "menu": 0.0,
+            "signal": 0.2199,
+            "cards": 0.0356,
+            "chat": 0.1412
+          }
+        }
+      },
+      {
+        "box": [
+          724,
+          183,
+          703,
+          1237
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "THREE_CONTROLS_BLUE_SURFACE",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      }
+    ],
+    "after": [
+      {
+        "box": [
+          1,
+          180,
+          719,
+          1151
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {
+          "menu": 0.0,
+          "signal": 0.2179,
+          "cards": 0.1316,
+          "chat": 0.1281
+        },
+        "corner_diagnostics": {
+          "accepted": false,
+          "scores": {
+            "menu": 0.0,
+            "signal": 0.2179,
+            "cards": 0.1316,
+            "chat": 0.1281
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB",
+          "native_scores": {
+            "menu": 0.0,
+            "signal": 0.2199,
+            "cards": 0.0356,
+            "chat": 0.1412
+          }
+        }
+      },
+      {
+        "box": [
+          724,
+          183,
+          703,
+          1237
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "THREE_CONTROLS_BLUE_SURFACE",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      },
+      {
+        "box": [
+          82,
+          348,
+          569,
+          712
+        ],
+        "status": "UNCERTAIN",
+        "reasons": [
+          "FULL_BOUNDARY_NOT_ESTABLISHED"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      }
+    ]
+  },
+  {
+    "source": "_CF3E8BB0-477A-430E-A7D8-A966B6E04C60__0695e5d3.png",
+    "before": [],
+    "after": []
+  },
+  {
+    "source": "_D3F945BB-AB9B-4920-9920-25B6A7E37BCE__e2bd34d3.png",
+    "before": [],
+    "after": []
+  },
+  {
+    "source": "_E29A273A-77A7-470D-8330-137A6826401E__ecea453e.png",
+    "before": [],
+    "after": []
+  },
+  {
+    "source": "_E59537C2-2CA7-4FB2-9B22-728875057AAB__5c7b5161.png",
+    "before": [
+      {
+        "box": [
+          581,
+          38,
+          570,
+          1004
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "THREE_CONTROLS_BLUE_SURFACE",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      },
+      {
+        "box": [
+          1149,
+          38,
+          575,
+          1014
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "FOUR_CORNER_BLUE_SURFACE",
+        "corner_scores": {
+          "menu": 0.663,
+          "signal": 0.7492,
+          "cards": 0.7933,
+          "chat": 0.9288
+        },
+        "corner_diagnostics": {
+          "accepted": true,
+          "scores": {
+            "menu": 0.663,
+            "signal": 0.7492,
+            "cards": 0.7933,
+            "chat": 0.9288
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB"
+        }
+      },
+      {
+        "box": [
+          0,
+          286,
+          581,
+          775
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      }
+    ],
+    "after": [
+      {
+        "box": [
+          581,
+          38,
+          570,
+          1004
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "THREE_CONTROLS_BLUE_SURFACE",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      },
+      {
+        "box": [
+          1149,
+          38,
+          575,
+          1014
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "FOUR_CORNER_BLUE_SURFACE",
+        "corner_scores": {
+          "menu": 0.663,
+          "signal": 0.7492,
+          "cards": 0.7933,
+          "chat": 0.9288
+        },
+        "corner_diagnostics": {
+          "accepted": true,
+          "scores": {
+            "menu": 0.663,
+            "signal": 0.7492,
+            "cards": 0.7933,
+            "chat": 0.9288
+          },
+          "reason": "FOUR_CORNER_ANCHORS",
+          "method": "CANONICAL_RGB"
+        }
+      },
+      {
+        "box": [
+          0,
+          286,
+          581,
+          775
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      }
+    ]
+  },
+  {
+    "source": "_E8C7DF17-3CF3-4AA1-B9CC-C547B2239983__ffeb24be.png",
+    "before": [],
+    "after": []
+  },
+  {
+    "source": "_EE7F7594-6A89-4D3E-A824-790F67F0C1A3__d3dbebd6.png",
+    "before": [],
+    "after": []
+  },
+  {
+    "source": "_FDB60F6B-7FAD-4C6D-B8D9-7C8B884199AC__1a424c2e.png",
+    "before": [
+      {
+        "box": [
+          688,
+          63,
+          703,
+          1237
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "THREE_CONTROLS_BLUE_SURFACE",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      },
+      {
+        "box": [
+          0,
+          360,
+          684,
+          974
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      }
+    ],
+    "after": [
+      {
+        "box": [
+          688,
+          63,
+          703,
+          1237
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "THREE_CONTROLS_BLUE_SURFACE",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      },
+      {
+        "box": [
+          0,
+          360,
+          684,
+          974
+        ],
+        "status": "PARTIAL",
+        "reasons": [
+          "TOUCHES_FRAME_EDGE"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      }
+    ]
+  },
+  {
+    "source": "image_0ab850c8.png",
+    "before": [],
+    "after": []
+  },
+  {
+    "source": "image_25df0f81.png",
+    "before": [],
+    "after": []
+  },
+  {
+    "source": "image_2da5ef3e.png",
+    "before": [
+      {
+        "box": [
+          755,
+          31,
+          376,
+          663
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "THREE_CONTROLS_BLUE_SURFACE",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      },
+      {
+        "box": [
+          374,
+          192,
+          377,
+          510
+        ],
+        "status": "UNCERTAIN",
+        "reasons": [
+          "FULL_BOUNDARY_NOT_ESTABLISHED"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      }
+    ],
+    "after": [
+      {
+        "box": [
+          755,
+          31,
+          376,
+          663
+        ],
+        "status": "COMPLETE_CANDIDATE",
+        "reasons": [],
+        "evidence": "THREE_CONTROLS_BLUE_SURFACE",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      },
+      {
+        "box": [
+          374,
+          192,
+          377,
+          510
+        ],
+        "status": "UNCERTAIN",
+        "reasons": [
+          "FULL_BOUNDARY_NOT_ESTABLISHED"
+        ],
+        "evidence": "FELT_ONLY",
+        "corner_scores": {},
+        "corner_diagnostics": {}
+      }
+    ]
+  },
+  {
+    "source": "image_42569493.png",
+    "before": [],
+    "after": []
+  },
+  {
+    "source": "image_4e650e36.png",
+    "before": [],
+    "after": []
+  },
+  {
+    "source": "image_57b89655.png",
+    "before": [],
+    "after": []
+  },
+  {
+    "source": "image_66d52323.png",
+    "before": [],
+    "after": []
+  },
+  {
+    "source": "image_75a29f55.png",
+    "before": [],
+    "after": []
+  },
+  {
+    "source": "image_8325d0c4.png",
+    "before": [],
+    "after": []
+  },
+  {
+    "source": "image_a11c2fe5.png",
+    "before": [],
+    "after": []
+  },
+  {
+    "source": "image_a3a2fcae.png",
+    "before": [],
+    "after": []
+  },
+  {
+    "source": "image_c6a622fc.png",
+    "before": [],
+    "after": []
+  },
+  {
+    "source": "image_dc980d17.png",
+    "before": [],
+    "after": []
+  }
+]

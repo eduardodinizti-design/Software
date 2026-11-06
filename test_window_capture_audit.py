@@ -14,6 +14,7 @@ from vision_pipeline import PPPokerObserverPipeline
 class IntegrationContracts(unittest.TestCase):
     def test_diagnostic_saves_linux_failure_without_image(self):
         with tempfile.TemporaryDirectory() as folder, patch('platform.system',return_value='Linux'), contextlib.redirect_stdout(io.StringIO()):
+            folder=Path(folder)/"diagnostics"
             result=diagnostics.run_diagnostics(output_dir=folder)
             self.assertFalse(result['capture_success'])
             self.assertEqual(result['status'],'ENVIRONMENT_NOT_WINDOWS')
@@ -23,6 +24,7 @@ class IntegrationContracts(unittest.TestCase):
     def test_diagnostic_forwards_selected_hwnd(self):
         b=Backend();b.windows[2]=dict(b.windows[1],hwnd=2)
         with tempfile.TemporaryDirectory() as folder, contextlib.redirect_stdout(io.StringIO()):
+            folder=Path(folder)/"diagnostics"
             r=diagnostics.run_diagnostics(2,folder,_engine=WindowCaptureEngine(_backend=b))
             self.assertEqual(r['hwnd'],2);self.assertTrue(r['capture_success'])
             self.assertTrue(Path(r['image_path']).exists())

@@ -6,7 +6,7 @@ ROOT=Path(__file__).resolve().parents[1]
 CONTRACTS=['test_capture_regressions','test_window_capture_engine','test_window_capture_audit',
  'test_capture_windows_native','test_table_reading','test_rank_confirmation','test_diagnostic_storage',
  'test_continuous_observer','test_capture_review','test_region_presentation','test_action_buttons',
- 'test_lab_metrics','test_corner_sampling','test_community_cards','test_detector_batch']
+ 'test_lab_metrics','test_corner_sampling','test_community_cards','test_detector_batch','test_detector_proposals']
 
 def main():
     p=argparse.ArgumentParser(description=__doc__)
@@ -21,7 +21,7 @@ def main():
       ('colored_boards',[sys.executable,'tools/evaluate_colored_boards.py','--assets',str(assets)]),
       ('board_transitions',[sys.executable,'tools/replay_board_transitions.py','--assets',str(assets)]),
       ('turn_variants',[sys.executable,'tools/evaluate_turn_variants.py','--assets',str(assets)])]
-    commands += [(name,[sys.executable,script,'--assets',str(assets),'--output',str(out/(name+'.json'))]) for name,script in [('hero_extended','tools/hero_batch.py'),('board_extended','tools/board_batch_evaluation.py'),('colored_eight','tools/board_batch_eight.py'),('detector_extended','scripts/detector_batch.py')]]
+    commands += [(name,[sys.executable,script,'--assets',str(assets),'--output',str(out/(name+'.json'))]) for name,script in [('hero_extended','tools/hero_batch.py'),('board_extended','tools/board_batch_evaluation.py'),('colored_eight','tools/board_batch_eight.py'),('pipeline_integrated','tools/validate_next_block.py'),('detector_extended','scripts/detector_batch.py')]]
     # A bounded worker pool runs independent replay jobs, not live desktop tasks.
     def execute(job):
         name,command=job;started=time.monotonic();log=out/(name+'.log')

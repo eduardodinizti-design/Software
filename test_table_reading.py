@@ -99,7 +99,7 @@ class PipelineContracts(unittest.TestCase):
     def test_export_pixels_and_budget(self):
         r=analyze_tables(self.frame,metadata(self.frame),_reader=unknown)
         with tempfile.TemporaryDirectory() as f:
-            root=Path(f)
+            root=Path(f)/"leitura"
             with self.assertRaises(RuntimeError):save_result(self.frame,r,root,budget=1)
             folder=save_result(self.frame,r,root)
             result=json.loads((folder/'resultado.json').read_text())
