@@ -3,10 +3,15 @@ import cv2
 import numpy as np
 import pytesseract
 from .ocr_runtime import image_to_string
+from .fastpath import templates_enabled
+from .rank_templates import read_template_rank
 
 VALID=set('AKQJT98765432')|{'10'}
 
 def read_segmented_rank(crop):
+    if templates_enabled():
+        fast = read_template_rank(crop)
+        if fast is not None:return fast
     hsv=cv2.cvtColor(crop,cv2.COLOR_BGR2HSV)
     neutral=hsv[:,:,1]<70
     values=hsv[:,:,2][neutral]

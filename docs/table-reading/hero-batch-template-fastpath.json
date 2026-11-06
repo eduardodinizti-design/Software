@@ -1,0 +1,4653 @@
+{
+  "omp_thread_limit": "1",
+  "workers": 2,
+  "scope": "17 visually labeled colored Hero regions from existing development screenshots; scales are transformations, not independent samples. Includes dark/folded examples. No colored eight present.",
+  "summary": {
+    "1": {
+      "correct": 34,
+      "wrong": 0,
+      "unknown": 0,
+      "ocr_errors": 0
+    },
+    "0.75": {
+      "correct": 33,
+      "wrong": 0,
+      "unknown": 1,
+      "ocr_errors": 0
+    },
+    "0.5": {
+      "correct": 34,
+      "wrong": 0,
+      "unknown": 0,
+      "ocr_errors": 0
+    }
+  },
+  "results": [
+    {
+      "index": 1,
+      "source": "_22AFEE38-C581-4573-8EEE-A066396AE91A__d556a633.png",
+      "sha256": "d556a633e194a8dbd77a34252fc51db98eb50335e982d05fed013a7c86ca7f2e",
+      "box": [
+        703,
+        264,
+        703,
+        1237
+      ],
+      "scale": 1,
+      "expected": [
+        "Qd",
+        "4h"
+      ],
+      "got": [
+        "Qd",
+        "4h"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          703,
+          1237
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1024,
+          "bottom": 1132,
+          "vertical_offset": 0,
+          "top_score": 62.28964614868164,
+          "bottom_score": 150.50914001464844,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "Q",
+            "status": "CANDIDATE_ONLY",
+            "evidence": "REAL_GLYPH_TEMPLATES_TWO_THRESHOLDS",
+            "template_iou": 1.0,
+            "template_margin": 0.5429,
+            "suit_result": {
+              "suit": "d",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.899,
+              "margin": 0.191,
+              "evidence": "template_margin"
+            },
+            "suit": "d",
+            "card_candidate": "Qd",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "4",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "4"
+            ],
+            "suit": "h",
+            "suit_result": {
+              "suit": "h",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.911,
+              "margin": 0.321,
+              "evidence": "template_margin"
+            },
+            "card_candidate": "4h",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 717.1
+    },
+    {
+      "index": 1,
+      "source": "_22AFEE38-C581-4573-8EEE-A066396AE91A__d556a633.png",
+      "sha256": "d556a633e194a8dbd77a34252fc51db98eb50335e982d05fed013a7c86ca7f2e",
+      "box": [
+        703,
+        264,
+        703,
+        1237
+      ],
+      "scale": 0.75,
+      "expected": [
+        "Qd",
+        "4h"
+      ],
+      "got": [
+        "Qd",
+        "4h"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          527,
+          928
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1024,
+          "bottom": 1131,
+          "vertical_offset": 0,
+          "top_score": 59.236812591552734,
+          "bottom_score": 141.2657012939453,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "Q",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "Q"
+            ],
+            "suit": "d",
+            "suit_result": {
+              "suit": "d",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.911,
+              "margin": 0.22,
+              "evidence": "template_margin"
+            },
+            "card_candidate": "Qd",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "4",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "4"
+            ],
+            "suit": "h",
+            "suit_result": {
+              "suit": "h",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.909,
+              "margin": 0.372,
+              "evidence": "template_margin"
+            },
+            "card_candidate": "4h",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 1467.5
+    },
+    {
+      "index": 1,
+      "source": "_22AFEE38-C581-4573-8EEE-A066396AE91A__d556a633.png",
+      "sha256": "d556a633e194a8dbd77a34252fc51db98eb50335e982d05fed013a7c86ca7f2e",
+      "box": [
+        703,
+        264,
+        703,
+        1237
+      ],
+      "scale": 0.5,
+      "expected": [
+        "Qd",
+        "4h"
+      ],
+      "got": [
+        "Qd",
+        "4h"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          352,
+          618
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1026,
+          "bottom": 1133,
+          "vertical_offset": 0,
+          "top_score": 53.89805221557617,
+          "bottom_score": 123.30044555664062,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "Q",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "Q"
+            ],
+            "suit": "d",
+            "suit_result": {
+              "suit": "d",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.911,
+              "margin": 0.211,
+              "evidence": "template_margin"
+            },
+            "card_candidate": "Qd",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "4",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "4"
+            ],
+            "suit": "h",
+            "suit_result": {
+              "suit": "h",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.873,
+              "margin": 0.342,
+              "evidence": "template_margin"
+            },
+            "card_candidate": "4h",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 1377.0
+    },
+    {
+      "index": 2,
+      "source": "_2DDE1911-9262-45F2-9D20-E90899BC739A__111d0a2e.png",
+      "sha256": "111d0a2ee537dbd2a6b453d681e8ee6b7ad92520d262f276c0e6a9d029f0fe31",
+      "box": [
+        716,
+        213,
+        703,
+        1237
+      ],
+      "scale": 1,
+      "expected": [
+        "Ah",
+        "Ks"
+      ],
+      "got": [
+        "Ah",
+        "Ks"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          703,
+          1237
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1024,
+          "bottom": 1133,
+          "vertical_offset": 0,
+          "top_score": 98.07140350341797,
+          "bottom_score": 55.61474609375,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "A",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "A",
+              "A",
+              "A",
+              "A"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "h",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.911,
+              "margin": 0.337,
+              "evidence": "template_margin"
+            },
+            "suit": "h",
+            "card_candidate": "Ah",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "K",
+            "status": "CANDIDATE_ONLY",
+            "evidence": "REAL_GLYPH_TEMPLATES_TWO_THRESHOLDS",
+            "template_iou": 1.0,
+            "template_margin": 0.6582,
+            "suit_result": {
+              "suit": "s",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.778,
+              "margin": 0.011,
+              "evidence": "template_and_pointed_contour"
+            },
+            "suit": "s",
+            "card_candidate": "Ks",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 620.0
+    },
+    {
+      "index": 2,
+      "source": "_2DDE1911-9262-45F2-9D20-E90899BC739A__111d0a2e.png",
+      "sha256": "111d0a2ee537dbd2a6b453d681e8ee6b7ad92520d262f276c0e6a9d029f0fe31",
+      "box": [
+        716,
+        213,
+        703,
+        1237
+      ],
+      "scale": 0.75,
+      "expected": [
+        "Ah",
+        "Ks"
+      ],
+      "got": [
+        "Ah",
+        "Ks"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          527,
+          928
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1024,
+          "bottom": 1131,
+          "vertical_offset": 0,
+          "top_score": 97.20082092285156,
+          "bottom_score": 52.47856521606445,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "A",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "A",
+              "A",
+              "A",
+              "A"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "h",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.892,
+              "margin": 0.351,
+              "evidence": "template_margin"
+            },
+            "suit": "h",
+            "card_candidate": "Ah",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "K",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "K",
+              "K",
+              "K",
+              "K"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "s",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.72,
+              "margin": 0.059,
+              "evidence": "template_and_pointed_contour"
+            },
+            "suit": "s",
+            "card_candidate": "Ks",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 1270.0
+    },
+    {
+      "index": 2,
+      "source": "_2DDE1911-9262-45F2-9D20-E90899BC739A__111d0a2e.png",
+      "sha256": "111d0a2ee537dbd2a6b453d681e8ee6b7ad92520d262f276c0e6a9d029f0fe31",
+      "box": [
+        716,
+        213,
+        703,
+        1237
+      ],
+      "scale": 0.5,
+      "expected": [
+        "Ah",
+        "Ks"
+      ],
+      "got": [
+        "Ah",
+        "Ks"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          352,
+          618
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1025,
+          "bottom": 1133,
+          "vertical_offset": 0,
+          "top_score": 93.49331665039062,
+          "bottom_score": 51.16639709472656,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "A",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "A",
+              "A",
+              "A",
+              "A"
+            ],
+            "aspect_confirmation": [
+              "",
+              ""
+            ],
+            "smaller_aspect_confirmation": [
+              "A",
+              "A",
+              "A",
+              "A"
+            ],
+            "evidence": "ACE_TWO_THRESHOLDS_SMALLER_ORIGINAL_ASPECT",
+            "suit_result": {
+              "suit": "h",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.887,
+              "margin": 0.361,
+              "evidence": "template_margin"
+            },
+            "suit": "h",
+            "card_candidate": "Ah",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "K",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "K",
+              "K",
+              "K",
+              "K"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "s",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.727,
+              "margin": 0.059,
+              "evidence": "template_and_pointed_contour"
+            },
+            "suit": "s",
+            "card_candidate": "Ks",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 1741.5
+    },
+    {
+      "index": 3,
+      "source": "_3A75F7DE-7229-4137-BD19-4AF5AE363948__d560bf0f.png",
+      "sha256": "d560bf0fd1828a797fbeae678793e8412403267cb53817260bcab7464356da28",
+      "box": [
+        705,
+        225,
+        703,
+        1237
+      ],
+      "scale": 1,
+      "expected": [
+        "Qd",
+        "Qs"
+      ],
+      "got": [
+        "Qd",
+        "Qs"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          703,
+          1237
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1024,
+          "bottom": 1132,
+          "vertical_offset": 0,
+          "top_score": 62.28964614868164,
+          "bottom_score": 54.488529205322266,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "Q",
+            "status": "CANDIDATE_ONLY",
+            "evidence": "REAL_GLYPH_TEMPLATES_TWO_THRESHOLDS",
+            "template_iou": 1.0,
+            "template_margin": 0.5429,
+            "suit_result": {
+              "suit": "d",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.899,
+              "margin": 0.191,
+              "evidence": "template_margin"
+            },
+            "suit": "d",
+            "card_candidate": "Qd",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "Q",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "Q"
+            ],
+            "suit": "s",
+            "suit_result": {
+              "suit": "s",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.778,
+              "margin": 0.011,
+              "evidence": "template_and_pointed_contour"
+            },
+            "card_candidate": "Qs",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 923.8
+    },
+    {
+      "index": 3,
+      "source": "_3A75F7DE-7229-4137-BD19-4AF5AE363948__d560bf0f.png",
+      "sha256": "d560bf0fd1828a797fbeae678793e8412403267cb53817260bcab7464356da28",
+      "box": [
+        705,
+        225,
+        703,
+        1237
+      ],
+      "scale": 0.75,
+      "expected": [
+        "Qd",
+        "Qs"
+      ],
+      "got": [
+        "Qd",
+        "Qs"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          527,
+          928
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1024,
+          "bottom": 1131,
+          "vertical_offset": 0,
+          "top_score": 59.236812591552734,
+          "bottom_score": 52.92447280883789,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "Q",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "Q"
+            ],
+            "suit": "d",
+            "suit_result": {
+              "suit": "d",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.911,
+              "margin": 0.22,
+              "evidence": "template_margin"
+            },
+            "card_candidate": "Qd",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "Q",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "Q"
+            ],
+            "suit": "s",
+            "suit_result": {
+              "suit": "s",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.719,
+              "margin": 0.054,
+              "evidence": "template_and_pointed_contour"
+            },
+            "card_candidate": "Qs",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 1710.1
+    },
+    {
+      "index": 3,
+      "source": "_3A75F7DE-7229-4137-BD19-4AF5AE363948__d560bf0f.png",
+      "sha256": "d560bf0fd1828a797fbeae678793e8412403267cb53817260bcab7464356da28",
+      "box": [
+        705,
+        225,
+        703,
+        1237
+      ],
+      "scale": 0.5,
+      "expected": [
+        "Qd",
+        "Qs"
+      ],
+      "got": [
+        "Qd",
+        "Qs"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          352,
+          618
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1026,
+          "bottom": 1132,
+          "vertical_offset": 0,
+          "top_score": 53.89805221557617,
+          "bottom_score": 53.60969924926758,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "Q",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "Q"
+            ],
+            "suit": "d",
+            "suit_result": {
+              "suit": "d",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.911,
+              "margin": 0.211,
+              "evidence": "template_margin"
+            },
+            "card_candidate": "Qd",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "Q",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "Q"
+            ],
+            "suit": "s",
+            "suit_result": {
+              "suit": "s",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.723,
+              "margin": 0.062,
+              "evidence": "template_and_pointed_contour"
+            },
+            "card_candidate": "Qs",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 1634.8
+    },
+    {
+      "index": 4,
+      "source": "_4342624F-9E50-4B21-ABAF-2D1DD4C9AFB7__886a1f03.png",
+      "sha256": "886a1f030b752007fd036f2d01f9ae9e15b9c49c7c8b7d655e895af06aa4b697",
+      "box": [
+        712,
+        182,
+        702,
+        1271
+      ],
+      "scale": 1,
+      "expected": [
+        "Tc",
+        "Js"
+      ],
+      "got": [
+        "Tc",
+        "Js"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          702,
+          1271
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 997,
+          "bottom": 1101,
+          "vertical_offset": -27,
+          "top_score": 146.97618103027344,
+          "bottom_score": 42.8018684387207,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "T",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "10",
+              "10",
+              "10",
+              "10"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "c",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.791,
+              "margin": 0.105,
+              "evidence": "template_and_rounded_crown"
+            },
+            "suit": "c",
+            "card_candidate": "Tc",
+            "roi_canonical": [
+              402,
+              983,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "J",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "J",
+              "J",
+              "J",
+              "J"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "s",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.702,
+              "margin": 0.071,
+              "evidence": "template_and_pointed_contour",
+              "source": "NATIVE_PIXELS"
+            },
+            "native_suit_result": {
+              "suit": "s",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.702,
+              "margin": 0.071,
+              "evidence": "template_and_pointed_contour"
+            },
+            "suit": "s",
+            "card_candidate": "Js",
+            "roi_canonical": [
+              447,
+              983,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 1195.9
+    },
+    {
+      "index": 4,
+      "source": "_4342624F-9E50-4B21-ABAF-2D1DD4C9AFB7__886a1f03.png",
+      "sha256": "886a1f030b752007fd036f2d01f9ae9e15b9c49c7c8b7d655e895af06aa4b697",
+      "box": [
+        712,
+        182,
+        702,
+        1271
+      ],
+      "scale": 0.75,
+      "expected": [
+        "Tc",
+        "Js"
+      ],
+      "got": [
+        "Tc",
+        "Js"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          526,
+          953
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 997,
+          "bottom": 1102,
+          "vertical_offset": -27,
+          "top_score": 142.80755615234375,
+          "bottom_score": 39.77436447143555,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "T",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "10",
+              "10",
+              "10",
+              "10"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "c",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.773,
+              "margin": 0.1,
+              "evidence": "template_and_rounded_crown"
+            },
+            "suit": "c",
+            "card_candidate": "Tc",
+            "roi_canonical": [
+              402,
+              983,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "J",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "J",
+              "J",
+              "J",
+              "J"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "s",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.76,
+              "margin": 0.021,
+              "evidence": "template_and_pointed_contour",
+              "source": "NATIVE_PIXELS"
+            },
+            "native_suit_result": {
+              "suit": "s",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.76,
+              "margin": 0.021,
+              "evidence": "template_and_pointed_contour"
+            },
+            "suit": "s",
+            "card_candidate": "Js",
+            "roi_canonical": [
+              447,
+              983,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 1405.8
+    },
+    {
+      "index": 4,
+      "source": "_4342624F-9E50-4B21-ABAF-2D1DD4C9AFB7__886a1f03.png",
+      "sha256": "886a1f030b752007fd036f2d01f9ae9e15b9c49c7c8b7d655e895af06aa4b697",
+      "box": [
+        712,
+        182,
+        702,
+        1271
+      ],
+      "scale": 0.5,
+      "expected": [
+        "Tc",
+        "Js"
+      ],
+      "got": [
+        "Tc",
+        "Js"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          351,
+          636
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 996,
+          "bottom": 1101,
+          "vertical_offset": -28,
+          "top_score": 136.92698669433594,
+          "bottom_score": 38.79433059692383,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "T",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "10",
+              "10",
+              "10",
+              "10"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "c",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.819,
+              "margin": 0.078,
+              "evidence": "template_and_rounded_crown"
+            },
+            "suit": "c",
+            "card_candidate": "Tc",
+            "roi_canonical": [
+              402,
+              982,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "J",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "J",
+              "J",
+              "J",
+              "J"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "s",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.691,
+              "margin": 0.089,
+              "evidence": "template_and_pointed_contour"
+            },
+            "suit": "s",
+            "card_candidate": "Js",
+            "roi_canonical": [
+              447,
+              982,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 1411.9
+    },
+    {
+      "index": 5,
+      "source": "_4528A8B5-F81C-4078-A8DB-C7ADBD91C311__85ee615d.png",
+      "sha256": "85ee615d31918032b5782e88ed0e9370ec1c1f28b451457ed2f7dcba66e49c09",
+      "box": [
+        674,
+        100,
+        703,
+        1237
+      ],
+      "scale": 1,
+      "expected": [
+        "Tc",
+        "5c"
+      ],
+      "got": [
+        "Tc",
+        "5c"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          703,
+          1237
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1024,
+          "bottom": 1132,
+          "vertical_offset": 0,
+          "top_score": 155.4799041748047,
+          "bottom_score": 104.8093490600586,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "T",
+            "status": "CANDIDATE_ONLY",
+            "evidence": "REAL_GLYPH_TEMPLATES_TWO_THRESHOLDS",
+            "template_iou": 1.0,
+            "template_margin": 0.6358,
+            "suit_result": {
+              "suit": "c",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.758,
+              "margin": 0.111,
+              "evidence": "template_and_rounded_crown"
+            },
+            "suit": "c",
+            "card_candidate": "Tc",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "5",
+            "status": "CANDIDATE_ONLY",
+            "evidence": "REAL_GLYPH_TEMPLATES_TWO_THRESHOLDS",
+            "template_iou": 1.0,
+            "template_margin": 0.3873,
+            "suit_result": {
+              "suit": "c",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.764,
+              "margin": 0.068,
+              "evidence": "template_and_three_lobe_profile"
+            },
+            "suit": "c",
+            "card_candidate": "5c",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 40.3
+    },
+    {
+      "index": 5,
+      "source": "_4528A8B5-F81C-4078-A8DB-C7ADBD91C311__85ee615d.png",
+      "sha256": "85ee615d31918032b5782e88ed0e9370ec1c1f28b451457ed2f7dcba66e49c09",
+      "box": [
+        674,
+        100,
+        703,
+        1237
+      ],
+      "scale": 0.75,
+      "expected": [
+        "Tc",
+        "5c"
+      ],
+      "got": [
+        "Tc",
+        "5c"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          527,
+          928
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1024,
+          "bottom": 1131,
+          "vertical_offset": 0,
+          "top_score": 151.10923767089844,
+          "bottom_score": 99.74467468261719,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "T",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "10",
+              "10",
+              "10",
+              "10"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "c",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.874,
+              "margin": 0.138,
+              "evidence": "template_and_rounded_crown"
+            },
+            "suit": "c",
+            "card_candidate": "Tc",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "5",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "5",
+              "5",
+              "5",
+              "5"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "c",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.85,
+              "margin": 0.114,
+              "evidence": "template_and_rounded_crown"
+            },
+            "suit": "c",
+            "card_candidate": "5c",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 1362.1
+    },
+    {
+      "index": 5,
+      "source": "_4528A8B5-F81C-4078-A8DB-C7ADBD91C311__85ee615d.png",
+      "sha256": "85ee615d31918032b5782e88ed0e9370ec1c1f28b451457ed2f7dcba66e49c09",
+      "box": [
+        674,
+        100,
+        703,
+        1237
+      ],
+      "scale": 0.5,
+      "expected": [
+        "Tc",
+        "5c"
+      ],
+      "got": [
+        "Tc",
+        "5c"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          352,
+          618
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1025,
+          "bottom": 1133,
+          "vertical_offset": 0,
+          "top_score": 140.5062255859375,
+          "bottom_score": 99.0252456665039,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "T",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "10",
+              "10",
+              "10",
+              "10"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "c",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.777,
+              "margin": 0.098,
+              "evidence": "template_and_rounded_crown"
+            },
+            "suit": "c",
+            "card_candidate": "Tc",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "5",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "5",
+              "5",
+              "5",
+              "5"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "c",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.773,
+              "margin": 0.084,
+              "evidence": "template_and_rounded_crown"
+            },
+            "suit": "c",
+            "card_candidate": "5c",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 1386.6
+    },
+    {
+      "index": 7,
+      "source": "_58CB106F-09EA-4853-B7D9-98FD582FAD0E__581ae999.png",
+      "sha256": "581ae999225a9e7e442a7ffffab745f429b7f8b37e1104052329014afe9afbee",
+      "box": [
+        710,
+        224,
+        703,
+        1237
+      ],
+      "scale": 1,
+      "expected": [
+        "3h",
+        "Qd"
+      ],
+      "got": [
+        "3h",
+        "Qd"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          703,
+          1237
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1024,
+          "bottom": 1130,
+          "vertical_offset": 0,
+          "top_score": 63.88270568847656,
+          "bottom_score": 120.85528564453125,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "3",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "3",
+              "3",
+              "3",
+              "3"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "h",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.911,
+              "margin": 0.337,
+              "evidence": "template_margin"
+            },
+            "suit": "h",
+            "card_candidate": "3h",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "Q",
+            "status": "CANDIDATE_ONLY",
+            "evidence": "REAL_GLYPH_TEMPLATES_TWO_THRESHOLDS",
+            "template_iou": 0.946,
+            "template_margin": 0.4888,
+            "suit_result": {
+              "suit": "d",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.886,
+              "margin": 0.223,
+              "evidence": "template_margin"
+            },
+            "suit": "d",
+            "card_candidate": "Qd",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 709.6
+    },
+    {
+      "index": 7,
+      "source": "_58CB106F-09EA-4853-B7D9-98FD582FAD0E__581ae999.png",
+      "sha256": "581ae999225a9e7e442a7ffffab745f429b7f8b37e1104052329014afe9afbee",
+      "box": [
+        710,
+        224,
+        703,
+        1237
+      ],
+      "scale": 0.75,
+      "expected": [
+        "3h",
+        "Qd"
+      ],
+      "got": [
+        "3h",
+        "Qd"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          527,
+          928
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1024,
+          "bottom": 1131,
+          "vertical_offset": 0,
+          "top_score": 59.71599578857422,
+          "bottom_score": 110.68423461914062,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "3",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "3",
+              "3",
+              "3",
+              "3"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "h",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.892,
+              "margin": 0.351,
+              "evidence": "template_margin"
+            },
+            "suit": "h",
+            "card_candidate": "3h",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "Q",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "Q"
+            ],
+            "suit": "d",
+            "suit_result": {
+              "suit": "d",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.912,
+              "margin": 0.231,
+              "evidence": "template_margin"
+            },
+            "card_candidate": "Qd",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 1906.7
+    },
+    {
+      "index": 7,
+      "source": "_58CB106F-09EA-4853-B7D9-98FD582FAD0E__581ae999.png",
+      "sha256": "581ae999225a9e7e442a7ffffab745f429b7f8b37e1104052329014afe9afbee",
+      "box": [
+        710,
+        224,
+        703,
+        1237
+      ],
+      "scale": 0.5,
+      "expected": [
+        "3h",
+        "Qd"
+      ],
+      "got": [
+        "3h",
+        "Qd"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          352,
+          618
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1026,
+          "bottom": 1132,
+          "vertical_offset": 0,
+          "top_score": 56.36488342285156,
+          "bottom_score": 121.53600311279297,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "3",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "3",
+              "3",
+              "3",
+              "3"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "h",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.887,
+              "margin": 0.361,
+              "evidence": "template_margin"
+            },
+            "suit": "h",
+            "card_candidate": "3h",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "Q",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "Q"
+            ],
+            "suit": "d",
+            "suit_result": {
+              "suit": "d",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.859,
+              "margin": 0.174,
+              "evidence": "template_margin"
+            },
+            "card_candidate": "Qd",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 1856.4
+    },
+    {
+      "index": 8,
+      "source": "_72432B1C-F9F9-454A-A5D8-7DBE7A0E326A__aff0428c.png",
+      "sha256": "aff0428c7dd42730eb2978c55698eb089cdf734a858ad1e30c9c8a22b9972075",
+      "box": [
+        687,
+        46,
+        686,
+        1237
+      ],
+      "scale": 1,
+      "expected": [
+        "2h",
+        "Qc"
+      ],
+      "got": [
+        "2h",
+        "Qc"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          686,
+          1237
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1024,
+          "bottom": 1132,
+          "vertical_offset": 0,
+          "top_score": 155.4799041748047,
+          "bottom_score": 105.68821716308594,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "2",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "2",
+              "2",
+              "2",
+              "2"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "h",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.931,
+              "margin": 0.367,
+              "evidence": "template_margin"
+            },
+            "suit": "h",
+            "card_candidate": "2h",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "Q",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "Q"
+            ],
+            "suit": "c",
+            "suit_result": {
+              "suit": "c",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.807,
+              "margin": 0.081,
+              "evidence": "template_and_rounded_crown"
+            },
+            "card_candidate": "Qc",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 1791.2
+    },
+    {
+      "index": 8,
+      "source": "_72432B1C-F9F9-454A-A5D8-7DBE7A0E326A__aff0428c.png",
+      "sha256": "aff0428c7dd42730eb2978c55698eb089cdf734a858ad1e30c9c8a22b9972075",
+      "box": [
+        687,
+        46,
+        686,
+        1237
+      ],
+      "scale": 0.75,
+      "expected": [
+        "2h",
+        "Qc"
+      ],
+      "got": [
+        "2h",
+        "Qc"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          514,
+          928
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1024,
+          "bottom": 1131,
+          "vertical_offset": 0,
+          "top_score": 151.4100341796875,
+          "bottom_score": 100.98514556884766,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "2",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "2",
+              "2",
+              "2",
+              "2"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "h",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.9,
+              "margin": 0.372,
+              "evidence": "template_margin"
+            },
+            "suit": "h",
+            "card_candidate": "2h",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "Q",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "Q"
+            ],
+            "suit": "c",
+            "suit_result": {
+              "suit": "c",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.795,
+              "margin": 0.112,
+              "evidence": "template_and_rounded_crown",
+              "source": "NATIVE_PIXELS"
+            },
+            "native_suit_result": {
+              "suit": "c",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.795,
+              "margin": 0.112,
+              "evidence": "template_and_rounded_crown"
+            },
+            "card_candidate": "Qc",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 1845.3
+    },
+    {
+      "index": 8,
+      "source": "_72432B1C-F9F9-454A-A5D8-7DBE7A0E326A__aff0428c.png",
+      "sha256": "aff0428c7dd42730eb2978c55698eb089cdf734a858ad1e30c9c8a22b9972075",
+      "box": [
+        687,
+        46,
+        686,
+        1237
+      ],
+      "scale": 0.5,
+      "expected": [
+        "2h",
+        "Qc"
+      ],
+      "got": [
+        "2h",
+        "Qc"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          343,
+          618
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1025,
+          "bottom": 1133,
+          "vertical_offset": 0,
+          "top_score": 141.3470916748047,
+          "bottom_score": 99.659423828125,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "2",
+            "status": "CANDIDATE_ONLY",
+            "evidence": "REAL_GLYPH_TEMPLATES_TWO_THRESHOLDS",
+            "template_iou": 0.9599,
+            "template_margin": 0.4345,
+            "suit_result": {
+              "suit": "h",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.906,
+              "margin": 0.341,
+              "evidence": "template_margin"
+            },
+            "suit": "h",
+            "card_candidate": "2h",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "Q",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "Q"
+            ],
+            "suit": "c",
+            "suit_result": {
+              "suit": "c",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.772,
+              "margin": 0.1,
+              "evidence": "template_and_rounded_crown"
+            },
+            "card_candidate": "Qc",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 1222.0
+    },
+    {
+      "index": 9,
+      "source": "_76D7A22C-BC3A-435D-BB63-A4AC9AE0A1A0__78803c80.png",
+      "sha256": "78803c8043173a4558841d5932316cf56dc3beb58f08084ecb7088a8ee930a04",
+      "box": [
+        702,
+        266,
+        703,
+        1237
+      ],
+      "scale": 1,
+      "expected": [
+        "Jd",
+        "2d"
+      ],
+      "got": [
+        "Jd",
+        "2d"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          703,
+          1237
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1024,
+          "bottom": 1132,
+          "vertical_offset": 0,
+          "top_score": 62.28964614868164,
+          "bottom_score": 115.35163879394531,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "J",
+            "status": "CANDIDATE_ONLY",
+            "evidence": "REAL_GLYPH_TEMPLATES_TWO_THRESHOLDS",
+            "template_iou": 1.0,
+            "template_margin": 0.5194,
+            "suit_result": {
+              "suit": "d",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.899,
+              "margin": 0.191,
+              "evidence": "template_margin"
+            },
+            "suit": "d",
+            "card_candidate": "Jd",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "2",
+            "status": "CANDIDATE_ONLY",
+            "evidence": "REAL_GLYPH_TEMPLATES_TWO_THRESHOLDS",
+            "template_iou": 1.0,
+            "template_margin": 0.4793,
+            "suit_result": {
+              "suit": "d",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.886,
+              "margin": 0.223,
+              "evidence": "template_margin"
+            },
+            "suit": "d",
+            "card_candidate": "2d",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 24.2
+    },
+    {
+      "index": 9,
+      "source": "_76D7A22C-BC3A-435D-BB63-A4AC9AE0A1A0__78803c80.png",
+      "sha256": "78803c8043173a4558841d5932316cf56dc3beb58f08084ecb7088a8ee930a04",
+      "box": [
+        702,
+        266,
+        703,
+        1237
+      ],
+      "scale": 0.75,
+      "expected": [
+        "Jd",
+        "2d"
+      ],
+      "got": [
+        "Jd",
+        "2d"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          527,
+          928
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1024,
+          "bottom": 1131,
+          "vertical_offset": 0,
+          "top_score": 59.236812591552734,
+          "bottom_score": 108.70602416992188,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "J",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "J",
+              "J",
+              "J",
+              "J"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "d",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.911,
+              "margin": 0.22,
+              "evidence": "template_margin"
+            },
+            "suit": "d",
+            "card_candidate": "Jd",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "2",
+            "status": "CANDIDATE_ONLY",
+            "evidence": "REAL_GLYPH_TEMPLATES_TWO_THRESHOLDS",
+            "template_iou": 0.9737,
+            "template_margin": 0.4543,
+            "suit_result": {
+              "suit": "d",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.912,
+              "margin": 0.231,
+              "evidence": "template_margin"
+            },
+            "suit": "d",
+            "card_candidate": "2d",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 668.2
+    },
+    {
+      "index": 9,
+      "source": "_76D7A22C-BC3A-435D-BB63-A4AC9AE0A1A0__78803c80.png",
+      "sha256": "78803c8043173a4558841d5932316cf56dc3beb58f08084ecb7088a8ee930a04",
+      "box": [
+        702,
+        266,
+        703,
+        1237
+      ],
+      "scale": 0.5,
+      "expected": [
+        "Jd",
+        "2d"
+      ],
+      "got": [
+        "Jd",
+        "2d"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          352,
+          618
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1026,
+          "bottom": 1133,
+          "vertical_offset": 0,
+          "top_score": 53.99074172973633,
+          "bottom_score": 110.68423461914062,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "J",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "J",
+              "J",
+              "J",
+              "J"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "d",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.911,
+              "margin": 0.211,
+              "evidence": "template_margin"
+            },
+            "suit": "d",
+            "card_candidate": "Jd",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "2",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "2",
+              "2",
+              "2",
+              "2"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "d",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.859,
+              "margin": 0.174,
+              "evidence": "template_margin"
+            },
+            "suit": "d",
+            "card_candidate": "2d",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 1286.7
+    },
+    {
+      "index": 10,
+      "source": "_7C62D925-1CC9-4B7C-A92D-0E3379E07494__3d8f87c2.png",
+      "sha256": "3d8f87c2389a8ccaddb75a66e7a61d6b5a4af1250abee0d041c07c270cad8064",
+      "box": [
+        689,
+        144,
+        703,
+        1237
+      ],
+      "scale": 1,
+      "expected": [
+        "9d",
+        "2s"
+      ],
+      "got": [
+        "9d",
+        "2s"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          703,
+          1237
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1024,
+          "bottom": 1132,
+          "vertical_offset": 0,
+          "top_score": 62.28964614868164,
+          "bottom_score": 54.6534538269043,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "9",
+            "status": "CANDIDATE_ONLY",
+            "evidence": "REAL_GLYPH_TEMPLATES_TWO_THRESHOLDS",
+            "template_iou": 1.0,
+            "template_margin": 0.5188,
+            "suit_result": {
+              "suit": "d",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.899,
+              "margin": 0.191,
+              "evidence": "template_margin"
+            },
+            "suit": "d",
+            "card_candidate": "9d",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "2",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "2",
+              "2",
+              "2",
+              "2"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "s",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.778,
+              "margin": 0.011,
+              "evidence": "template_and_pointed_contour"
+            },
+            "suit": "s",
+            "card_candidate": "2s",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 580.8
+    },
+    {
+      "index": 10,
+      "source": "_7C62D925-1CC9-4B7C-A92D-0E3379E07494__3d8f87c2.png",
+      "sha256": "3d8f87c2389a8ccaddb75a66e7a61d6b5a4af1250abee0d041c07c270cad8064",
+      "box": [
+        689,
+        144,
+        703,
+        1237
+      ],
+      "scale": 0.75,
+      "expected": [
+        "9d",
+        "2s"
+      ],
+      "got": [
+        "9d",
+        "2s"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          527,
+          928
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1024,
+          "bottom": 1131,
+          "vertical_offset": 0,
+          "top_score": 59.236812591552734,
+          "bottom_score": 52.4404411315918,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "9",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "9"
+            ],
+            "suit": "d",
+            "suit_result": {
+              "suit": "d",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.911,
+              "margin": 0.22,
+              "evidence": "template_margin"
+            },
+            "card_candidate": "9d",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "2",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "2",
+              "2",
+              "2",
+              "2"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "s",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.72,
+              "margin": 0.059,
+              "evidence": "template_and_pointed_contour"
+            },
+            "suit": "s",
+            "card_candidate": "2s",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 2047.1
+    },
+    {
+      "index": 10,
+      "source": "_7C62D925-1CC9-4B7C-A92D-0E3379E07494__3d8f87c2.png",
+      "sha256": "3d8f87c2389a8ccaddb75a66e7a61d6b5a4af1250abee0d041c07c270cad8064",
+      "box": [
+        689,
+        144,
+        703,
+        1237
+      ],
+      "scale": 0.5,
+      "expected": [
+        "9d",
+        "2s"
+      ],
+      "got": [
+        "9d",
+        "2s"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          352,
+          618
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1026,
+          "bottom": 1133,
+          "vertical_offset": 0,
+          "top_score": 53.89805221557617,
+          "bottom_score": 51.16639709472656,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "9",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "9"
+            ],
+            "suit": "d",
+            "suit_result": {
+              "suit": "d",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.911,
+              "margin": 0.211,
+              "evidence": "template_margin"
+            },
+            "card_candidate": "9d",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "2",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "2",
+              "2",
+              "2",
+              "2"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "s",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.723,
+              "margin": 0.062,
+              "evidence": "template_and_pointed_contour"
+            },
+            "suit": "s",
+            "card_candidate": "2s",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 1576.4
+    },
+    {
+      "index": 11,
+      "source": "_9134EF06-78F3-443A-9653-C19751D93C32__720a6eca.png",
+      "sha256": "720a6eca56f82570d6ea373a544492ec99f744646119c4ce245c2b814d8e8ab1",
+      "box": [
+        698,
+        176,
+        702,
+        1271
+      ],
+      "scale": 1,
+      "expected": [
+        "Tc",
+        "5c"
+      ],
+      "got": [
+        "Tc",
+        "5c"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          702,
+          1271
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 997,
+          "bottom": 1101,
+          "vertical_offset": -27,
+          "top_score": 157.41029357910156,
+          "bottom_score": 62.585941314697266,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "T",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "10",
+              "10",
+              "10",
+              "10"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "c",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.791,
+              "margin": 0.105,
+              "evidence": "template_and_rounded_crown"
+            },
+            "suit": "c",
+            "card_candidate": "Tc",
+            "roi_canonical": [
+              402,
+              983,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "5",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "5",
+              "5",
+              "5",
+              "5"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "c",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.743,
+              "margin": 0.081,
+              "evidence": "template_and_rounded_crown"
+            },
+            "suit": "c",
+            "card_candidate": "5c",
+            "roi_canonical": [
+              447,
+              983,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 1359.8
+    },
+    {
+      "index": 11,
+      "source": "_9134EF06-78F3-443A-9653-C19751D93C32__720a6eca.png",
+      "sha256": "720a6eca56f82570d6ea373a544492ec99f744646119c4ce245c2b814d8e8ab1",
+      "box": [
+        698,
+        176,
+        702,
+        1271
+      ],
+      "scale": 0.75,
+      "expected": [
+        "Tc",
+        "5c"
+      ],
+      "got": [
+        "Tc",
+        "5c"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          526,
+          953
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 997,
+          "bottom": 1102,
+          "vertical_offset": -27,
+          "top_score": 153.6066436767578,
+          "bottom_score": 60.530982971191406,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "T",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "10",
+              "10",
+              "10",
+              "10"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "c",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.773,
+              "margin": 0.1,
+              "evidence": "template_and_rounded_crown"
+            },
+            "suit": "c",
+            "card_candidate": "Tc",
+            "roi_canonical": [
+              402,
+              983,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "5",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "5",
+              "5",
+              "5",
+              "5"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "c",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.796,
+              "margin": 0.064,
+              "evidence": "template_and_three_lobe_profile"
+            },
+            "suit": "c",
+            "card_candidate": "5c",
+            "roi_canonical": [
+              447,
+              983,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 1175.1
+    },
+    {
+      "index": 11,
+      "source": "_9134EF06-78F3-443A-9653-C19751D93C32__720a6eca.png",
+      "sha256": "720a6eca56f82570d6ea373a544492ec99f744646119c4ce245c2b814d8e8ab1",
+      "box": [
+        698,
+        176,
+        702,
+        1271
+      ],
+      "scale": 0.5,
+      "expected": [
+        "Tc",
+        "5c"
+      ],
+      "got": [
+        "Tc",
+        "5c"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          351,
+          636
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 996,
+          "bottom": 1101,
+          "vertical_offset": -28,
+          "top_score": 145.742919921875,
+          "bottom_score": 58.92367935180664,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "T",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "10",
+              "10",
+              "10",
+              "10"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "c",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.819,
+              "margin": 0.078,
+              "evidence": "template_and_rounded_crown"
+            },
+            "suit": "c",
+            "card_candidate": "Tc",
+            "roi_canonical": [
+              402,
+              982,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "5",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "5",
+              "5",
+              "5",
+              "5"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "c",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.764,
+              "margin": 0.077,
+              "evidence": "template_and_rounded_crown"
+            },
+            "suit": "c",
+            "card_candidate": "5c",
+            "roi_canonical": [
+              447,
+              982,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 1384.7
+    },
+    {
+      "index": 12,
+      "source": "_A9506C0A-934D-48E3-915A-A714062EE0F8__1f930c57.png",
+      "sha256": "1f930c5729fc1042e8b7ea26b4f9192323662816ceb38f694bc1e6c3f87e8a38",
+      "box": [
+        698,
+        213,
+        703,
+        1237
+      ],
+      "scale": 1,
+      "expected": [
+        "Ah",
+        "Ks"
+      ],
+      "got": [
+        "Ah",
+        "Ks"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          703,
+          1237
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1024,
+          "bottom": 1133,
+          "vertical_offset": 0,
+          "top_score": 98.07140350341797,
+          "bottom_score": 55.61474609375,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "A",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "A",
+              "A",
+              "A",
+              "A"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "h",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.911,
+              "margin": 0.337,
+              "evidence": "template_margin"
+            },
+            "suit": "h",
+            "card_candidate": "Ah",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "K",
+            "status": "CANDIDATE_ONLY",
+            "evidence": "REAL_GLYPH_TEMPLATES_TWO_THRESHOLDS",
+            "template_iou": 1.0,
+            "template_margin": 0.6582,
+            "suit_result": {
+              "suit": "s",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.778,
+              "margin": 0.011,
+              "evidence": "template_and_pointed_contour"
+            },
+            "suit": "s",
+            "card_candidate": "Ks",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 978.4
+    },
+    {
+      "index": 12,
+      "source": "_A9506C0A-934D-48E3-915A-A714062EE0F8__1f930c57.png",
+      "sha256": "1f930c5729fc1042e8b7ea26b4f9192323662816ceb38f694bc1e6c3f87e8a38",
+      "box": [
+        698,
+        213,
+        703,
+        1237
+      ],
+      "scale": 0.75,
+      "expected": [
+        "Ah",
+        "Ks"
+      ],
+      "got": [
+        "Ah",
+        "Ks"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          527,
+          928
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1024,
+          "bottom": 1131,
+          "vertical_offset": 0,
+          "top_score": 97.20082092285156,
+          "bottom_score": 52.47856521606445,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "A",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "A",
+              "A",
+              "A",
+              "A"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "h",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.892,
+              "margin": 0.351,
+              "evidence": "template_margin"
+            },
+            "suit": "h",
+            "card_candidate": "Ah",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "K",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "K",
+              "K",
+              "K",
+              "K"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "s",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.72,
+              "margin": 0.059,
+              "evidence": "template_and_pointed_contour"
+            },
+            "suit": "s",
+            "card_candidate": "Ks",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 1759.1
+    },
+    {
+      "index": 12,
+      "source": "_A9506C0A-934D-48E3-915A-A714062EE0F8__1f930c57.png",
+      "sha256": "1f930c5729fc1042e8b7ea26b4f9192323662816ceb38f694bc1e6c3f87e8a38",
+      "box": [
+        698,
+        213,
+        703,
+        1237
+      ],
+      "scale": 0.5,
+      "expected": [
+        "Ah",
+        "Ks"
+      ],
+      "got": [
+        "Ah",
+        "Ks"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          352,
+          618
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1025,
+          "bottom": 1133,
+          "vertical_offset": 0,
+          "top_score": 93.49331665039062,
+          "bottom_score": 51.16639709472656,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "A",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "A",
+              "A",
+              "A",
+              "A"
+            ],
+            "aspect_confirmation": [
+              "",
+              ""
+            ],
+            "smaller_aspect_confirmation": [
+              "A",
+              "A",
+              "A",
+              "A"
+            ],
+            "evidence": "ACE_TWO_THRESHOLDS_SMALLER_ORIGINAL_ASPECT",
+            "suit_result": {
+              "suit": "h",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.887,
+              "margin": 0.361,
+              "evidence": "template_margin"
+            },
+            "suit": "h",
+            "card_candidate": "Ah",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "K",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "K",
+              "K",
+              "K",
+              "K"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "s",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.727,
+              "margin": 0.059,
+              "evidence": "template_and_pointed_contour"
+            },
+            "suit": "s",
+            "card_candidate": "Ks",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 2140.5
+    },
+    {
+      "index": 13,
+      "source": "_BF8957B2-BF19-43B0-AADF-8D95779FC005__f3c8ecd9.png",
+      "sha256": "f3c8ecd99f5145cba406db22564ccc5f8aaf36a82dd73c2b576684b5073f4f6e",
+      "box": [
+        709,
+        225,
+        699,
+        1244
+      ],
+      "scale": 1,
+      "expected": [
+        "7c",
+        "6h"
+      ],
+      "got": [
+        "7c",
+        "6h"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          699,
+          1244
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1018,
+          "bottom": 1125,
+          "vertical_offset": 0,
+          "top_score": 152.6728515625,
+          "bottom_score": 91.52595520019531,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "7",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "7"
+            ],
+            "suit": "c",
+            "suit_result": {
+              "suit": "c",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.812,
+              "margin": 0.141,
+              "evidence": "template_and_rounded_crown"
+            },
+            "card_candidate": "7c",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "6",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "6"
+            ],
+            "suit": "h",
+            "suit_result": {
+              "suit": "h",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.882,
+              "margin": 0.36,
+              "evidence": "template_margin"
+            },
+            "card_candidate": "6h",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 1772.8
+    },
+    {
+      "index": 13,
+      "source": "_BF8957B2-BF19-43B0-AADF-8D95779FC005__f3c8ecd9.png",
+      "sha256": "f3c8ecd99f5145cba406db22564ccc5f8aaf36a82dd73c2b576684b5073f4f6e",
+      "box": [
+        709,
+        225,
+        699,
+        1244
+      ],
+      "scale": 0.75,
+      "expected": [
+        "7c",
+        "6h"
+      ],
+      "got": [
+        "7c",
+        "6h"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          524,
+          933
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1018,
+          "bottom": 1125,
+          "vertical_offset": 0,
+          "top_score": 146.77874755859375,
+          "bottom_score": 88.8200454711914,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "7",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "7"
+            ],
+            "suit": "c",
+            "suit_result": {
+              "suit": "c",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.808,
+              "margin": 0.124,
+              "evidence": "template_and_rounded_crown"
+            },
+            "card_candidate": "7c",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "6",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "6"
+            ],
+            "suit": "h",
+            "suit_result": {
+              "suit": "h",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.864,
+              "margin": 0.322,
+              "evidence": "template_margin"
+            },
+            "card_candidate": "6h",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 1638.5
+    },
+    {
+      "index": 13,
+      "source": "_BF8957B2-BF19-43B0-AADF-8D95779FC005__f3c8ecd9.png",
+      "sha256": "f3c8ecd99f5145cba406db22564ccc5f8aaf36a82dd73c2b576684b5073f4f6e",
+      "box": [
+        709,
+        225,
+        699,
+        1244
+      ],
+      "scale": 0.5,
+      "expected": [
+        "7c",
+        "6h"
+      ],
+      "got": [
+        "7c",
+        "6h"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          350,
+          622
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1019,
+          "bottom": 1126,
+          "vertical_offset": 0,
+          "top_score": 146.25320434570312,
+          "bottom_score": 88.32893371582031,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "7",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "7"
+            ],
+            "suit": "c",
+            "suit_result": {
+              "suit": "c",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.791,
+              "margin": 0.101,
+              "evidence": "template_and_rounded_crown"
+            },
+            "card_candidate": "7c",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "6",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "6",
+              "6",
+              "6",
+              "6"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "h",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.903,
+              "margin": 0.327,
+              "evidence": "template_margin"
+            },
+            "suit": "h",
+            "card_candidate": "6h",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 1117.3
+    },
+    {
+      "index": 14,
+      "source": "_C998F597-5786-40A5-A73B-E450730D847E__475524bf.png",
+      "sha256": "475524bf61a48c2662d1b27b2efa2fa1b40af9e5972b1ed68b0c4999a0a0d6aa",
+      "box": [
+        724,
+        183,
+        703,
+        1237
+      ],
+      "scale": 1,
+      "expected": [
+        "7c",
+        "6h"
+      ],
+      "got": [
+        "7c",
+        "6h"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          703,
+          1237
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1024,
+          "bottom": 1132,
+          "vertical_offset": 0,
+          "top_score": 159.1571502685547,
+          "bottom_score": 107.96295928955078,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "7",
+            "status": "CANDIDATE_ONLY",
+            "evidence": "REAL_GLYPH_TEMPLATES_TWO_THRESHOLDS",
+            "template_iou": 1.0,
+            "template_margin": 0.5417,
+            "suit_result": {
+              "suit": "c",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.758,
+              "margin": 0.111,
+              "evidence": "template_and_rounded_crown"
+            },
+            "suit": "c",
+            "card_candidate": "7c",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "6",
+            "status": "CANDIDATE_ONLY",
+            "evidence": "REAL_GLYPH_TEMPLATES_TWO_THRESHOLDS",
+            "template_iou": 1.0,
+            "template_margin": 0.3873,
+            "suit_result": {
+              "suit": "h",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.911,
+              "margin": 0.321,
+              "evidence": "template_margin"
+            },
+            "suit": "h",
+            "card_candidate": "6h",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 14.7
+    },
+    {
+      "index": 14,
+      "source": "_C998F597-5786-40A5-A73B-E450730D847E__475524bf.png",
+      "sha256": "475524bf61a48c2662d1b27b2efa2fa1b40af9e5972b1ed68b0c4999a0a0d6aa",
+      "box": [
+        724,
+        183,
+        703,
+        1237
+      ],
+      "scale": 0.75,
+      "expected": [
+        "7c",
+        "6h"
+      ],
+      "got": [
+        "7c",
+        "6h"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          527,
+          928
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1024,
+          "bottom": 1132,
+          "vertical_offset": 0,
+          "top_score": 154.3632049560547,
+          "bottom_score": 103.66291809082031,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "7",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "7"
+            ],
+            "suit": "c",
+            "suit_result": {
+              "suit": "c",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.874,
+              "margin": 0.138,
+              "evidence": "template_and_rounded_crown"
+            },
+            "card_candidate": "7c",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "6",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "6",
+              "6",
+              "6",
+              "6"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "h",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.909,
+              "margin": 0.372,
+              "evidence": "template_margin"
+            },
+            "suit": "h",
+            "card_candidate": "6h",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 1214.4
+    },
+    {
+      "index": 14,
+      "source": "_C998F597-5786-40A5-A73B-E450730D847E__475524bf.png",
+      "sha256": "475524bf61a48c2662d1b27b2efa2fa1b40af9e5972b1ed68b0c4999a0a0d6aa",
+      "box": [
+        724,
+        183,
+        703,
+        1237
+      ],
+      "scale": 0.5,
+      "expected": [
+        "7c",
+        "6h"
+      ],
+      "got": [
+        "7c",
+        "6h"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          352,
+          618
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1025,
+          "bottom": 1133,
+          "vertical_offset": 0,
+          "top_score": 144.73768615722656,
+          "bottom_score": 103.66291809082031,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "7",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "7"
+            ],
+            "suit": "c",
+            "suit_result": {
+              "suit": "c",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.777,
+              "margin": 0.098,
+              "evidence": "template_and_rounded_crown"
+            },
+            "card_candidate": "7c",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "6",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "6"
+            ],
+            "suit": "h",
+            "suit_result": {
+              "suit": "h",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.873,
+              "margin": 0.342,
+              "evidence": "template_margin"
+            },
+            "card_candidate": "6h",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 1385.0
+    },
+    {
+      "index": 15,
+      "source": "_E59537C2-2CA7-4FB2-9B22-728875057AAB__5c7b5161.png",
+      "sha256": "5c7b5161179073429b030a9bc8ea42e4c1ac6e70a87a4d2ffd7a069f494d022d",
+      "box": [
+        581,
+        38,
+        570,
+        1004
+      ],
+      "scale": 1,
+      "expected": [
+        "5h",
+        "Kc"
+      ],
+      "got": [
+        "5h",
+        "Kc"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          570,
+          1004
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1025,
+          "bottom": 1133,
+          "vertical_offset": 0,
+          "top_score": 154.98709106445312,
+          "bottom_score": 106.28734588623047,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "5",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "5",
+              "5",
+              "5",
+              "5"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "h",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.909,
+              "margin": 0.371,
+              "evidence": "template_margin"
+            },
+            "suit": "h",
+            "card_candidate": "5h",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "K",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "K",
+              "K",
+              "K",
+              "K"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "c",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.865,
+              "margin": 0.136,
+              "evidence": "template_and_rounded_crown"
+            },
+            "suit": "c",
+            "card_candidate": "Kc",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 819.1
+    },
+    {
+      "index": 15,
+      "source": "_E59537C2-2CA7-4FB2-9B22-728875057AAB__5c7b5161.png",
+      "sha256": "5c7b5161179073429b030a9bc8ea42e4c1ac6e70a87a4d2ffd7a069f494d022d",
+      "box": [
+        581,
+        38,
+        570,
+        1004
+      ],
+      "scale": 0.75,
+      "expected": [
+        "5h",
+        "Kc"
+      ],
+      "got": [
+        "5h",
+        null
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          428,
+          753
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1025,
+          "bottom": 1133,
+          "vertical_offset": 0,
+          "top_score": 152.2399444580078,
+          "bottom_score": 99.62931060791016,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "5",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "5",
+              "5",
+              "5",
+              "5"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "h",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.901,
+              "margin": 0.344,
+              "evidence": "template_margin"
+            },
+            "suit": "h",
+            "card_candidate": "5h",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "K",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "K",
+              "K",
+              "K",
+              "K"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": null,
+              "status": "SUIT_UNREADABLE"
+            },
+            "native_suit_result": {
+              "suit": null,
+              "status": "SUIT_UNREADABLE"
+            },
+            "suit": null,
+            "card_candidate": null,
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 804.8
+    },
+    {
+      "index": 15,
+      "source": "_E59537C2-2CA7-4FB2-9B22-728875057AAB__5c7b5161.png",
+      "sha256": "5c7b5161179073429b030a9bc8ea42e4c1ac6e70a87a4d2ffd7a069f494d022d",
+      "box": [
+        581,
+        38,
+        570,
+        1004
+      ],
+      "scale": 0.5,
+      "expected": [
+        "5h",
+        "Kc"
+      ],
+      "got": [
+        "5h",
+        "Kc"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          285,
+          502
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1025,
+          "bottom": 1132,
+          "vertical_offset": 0,
+          "top_score": 141.3470916748047,
+          "bottom_score": 82.69219970703125,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "5",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "5",
+              "5",
+              "5",
+              "5"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "h",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.891,
+              "margin": 0.304,
+              "evidence": "template_margin"
+            },
+            "suit": "h",
+            "card_candidate": "5h",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "K",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "K",
+              "K",
+              "K",
+              "K"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "c",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.794,
+              "margin": 0.102,
+              "evidence": "template_and_rounded_crown"
+            },
+            "suit": "c",
+            "card_candidate": "Kc",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 818.1
+    },
+    {
+      "index": 16,
+      "source": "_E59537C2-2CA7-4FB2-9B22-728875057AAB__5c7b5161.png",
+      "sha256": "5c7b5161179073429b030a9bc8ea42e4c1ac6e70a87a4d2ffd7a069f494d022d",
+      "box": [
+        1149,
+        38,
+        575,
+        1014
+      ],
+      "scale": 1,
+      "expected": [
+        "Qs",
+        "6h"
+      ],
+      "got": [
+        "Qs",
+        "6h"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          575,
+          1014
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1016,
+          "bottom": 1123,
+          "vertical_offset": 0,
+          "top_score": 149.97999572753906,
+          "bottom_score": 30.64310646057129,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "Q",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "Q"
+            ],
+            "suit": "s",
+            "suit_result": {
+              "suit": "s",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.743,
+              "margin": 0.037,
+              "evidence": "template_and_pointed_contour"
+            },
+            "card_candidate": "Qs",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "6",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "6"
+            ],
+            "suit": "h",
+            "suit_result": {
+              "suit": "h",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.9,
+              "margin": 0.304,
+              "evidence": "template_margin"
+            },
+            "card_candidate": "6h",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 1885.2
+    },
+    {
+      "index": 16,
+      "source": "_E59537C2-2CA7-4FB2-9B22-728875057AAB__5c7b5161.png",
+      "sha256": "5c7b5161179073429b030a9bc8ea42e4c1ac6e70a87a4d2ffd7a069f494d022d",
+      "box": [
+        1149,
+        38,
+        575,
+        1014
+      ],
+      "scale": 0.75,
+      "expected": [
+        "Qs",
+        "6h"
+      ],
+      "got": [
+        "Qs",
+        "6h"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          431,
+          760
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1016,
+          "bottom": 1124,
+          "vertical_offset": 0,
+          "top_score": 149.09393310546875,
+          "bottom_score": 26.07680892944336,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "Q",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "Q"
+            ],
+            "suit": "s",
+            "suit_result": {
+              "suit": "s",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.731,
+              "margin": 0.02,
+              "evidence": "template_and_pointed_contour"
+            },
+            "card_candidate": "Qs",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "6",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "6"
+            ],
+            "suit": "h",
+            "suit_result": {
+              "suit": "h",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.893,
+              "margin": 0.336,
+              "evidence": "template_margin"
+            },
+            "card_candidate": "6h",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 1934.7
+    },
+    {
+      "index": 16,
+      "source": "_E59537C2-2CA7-4FB2-9B22-728875057AAB__5c7b5161.png",
+      "sha256": "5c7b5161179073429b030a9bc8ea42e4c1ac6e70a87a4d2ffd7a069f494d022d",
+      "box": [
+        1149,
+        38,
+        575,
+        1014
+      ],
+      "scale": 0.5,
+      "expected": [
+        "Qs",
+        "6h"
+      ],
+      "got": [
+        "Qs",
+        "6h"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          288,
+          507
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1016,
+          "bottom": 1134,
+          "vertical_offset": 0,
+          "top_score": 120.72282409667969,
+          "bottom_score": 31.048349380493164,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "Q",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "Q"
+            ],
+            "suit": "s",
+            "suit_result": {
+              "suit": "s",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.738,
+              "margin": 0.019,
+              "evidence": "template_and_pointed_contour"
+            },
+            "card_candidate": "Qs",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "6",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "6"
+            ],
+            "suit": "h",
+            "suit_result": {
+              "suit": "h",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.86,
+              "margin": 0.275,
+              "evidence": "template_margin"
+            },
+            "card_candidate": "6h",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 1678.0
+    },
+    {
+      "index": 17,
+      "source": "_FDB60F6B-7FAD-4C6D-B8D9-7C8B884199AC__1a424c2e.png",
+      "sha256": "1a424c2e7ec35e07dfdab800d8c12d5891f687d90ad00176b773736a31f93488",
+      "box": [
+        688,
+        63,
+        703,
+        1237
+      ],
+      "scale": 1,
+      "expected": [
+        "2d",
+        "Ks"
+      ],
+      "got": [
+        "2d",
+        "Ks"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          703,
+          1237
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1024,
+          "bottom": 1132,
+          "vertical_offset": 0,
+          "top_score": 62.28964614868164,
+          "bottom_score": 54.488529205322266,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "2",
+            "status": "CANDIDATE_ONLY",
+            "evidence": "REAL_GLYPH_TEMPLATES_TWO_THRESHOLDS",
+            "template_iou": 0.9506,
+            "template_margin": 0.4174,
+            "suit_result": {
+              "suit": "d",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.899,
+              "margin": 0.191,
+              "evidence": "template_margin"
+            },
+            "suit": "d",
+            "card_candidate": "2d",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "K",
+            "status": "CANDIDATE_ONLY",
+            "evidence": "REAL_GLYPH_TEMPLATES_TWO_THRESHOLDS",
+            "template_iou": 1.0,
+            "template_margin": 0.6582,
+            "suit_result": {
+              "suit": "s",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.778,
+              "margin": 0.011,
+              "evidence": "template_and_pointed_contour"
+            },
+            "suit": "s",
+            "card_candidate": "Ks",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 21.9
+    },
+    {
+      "index": 17,
+      "source": "_FDB60F6B-7FAD-4C6D-B8D9-7C8B884199AC__1a424c2e.png",
+      "sha256": "1a424c2e7ec35e07dfdab800d8c12d5891f687d90ad00176b773736a31f93488",
+      "box": [
+        688,
+        63,
+        703,
+        1237
+      ],
+      "scale": 0.75,
+      "expected": [
+        "2d",
+        "Ks"
+      ],
+      "got": [
+        "2d",
+        "Ks"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          527,
+          928
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1024,
+          "bottom": 1131,
+          "vertical_offset": 0,
+          "top_score": 59.27900314331055,
+          "bottom_score": 52.47856521606445,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "2",
+            "status": "CANDIDATE_ONLY",
+            "evidence": "REAL_GLYPH_TEMPLATES_TWO_THRESHOLDS",
+            "template_iou": 0.9515,
+            "template_margin": 0.4181,
+            "suit_result": {
+              "suit": "d",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.911,
+              "margin": 0.22,
+              "evidence": "template_margin"
+            },
+            "suit": "d",
+            "card_candidate": "2d",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "K",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "K",
+              "K",
+              "K",
+              "K"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "s",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.72,
+              "margin": 0.059,
+              "evidence": "template_and_pointed_contour"
+            },
+            "suit": "s",
+            "card_candidate": "Ks",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 470.4
+    },
+    {
+      "index": 17,
+      "source": "_FDB60F6B-7FAD-4C6D-B8D9-7C8B884199AC__1a424c2e.png",
+      "sha256": "1a424c2e7ec35e07dfdab800d8c12d5891f687d90ad00176b773736a31f93488",
+      "box": [
+        688,
+        63,
+        703,
+        1237
+      ],
+      "scale": 0.5,
+      "expected": [
+        "2d",
+        "Ks"
+      ],
+      "got": [
+        "2d",
+        "Ks"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          352,
+          618
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1026,
+          "bottom": 1133,
+          "vertical_offset": 0,
+          "top_score": 53.99074172973633,
+          "bottom_score": 51.16639709472656,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "2",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "2",
+              "2",
+              "2",
+              "2"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "d",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.911,
+              "margin": 0.211,
+              "evidence": "template_margin"
+            },
+            "suit": "d",
+            "card_candidate": "2d",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "K",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "K",
+              "K",
+              "K",
+              "K"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "s",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.727,
+              "margin": 0.059,
+              "evidence": "template_and_pointed_contour"
+            },
+            "suit": "s",
+            "card_candidate": "Ks",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 957.4
+    },
+    {
+      "index": 18,
+      "source": "image_2da5ef3e.png",
+      "sha256": "2da5ef3ef8c622de5e16c2dc620ec0e9e86aff31f46bf334f7c2cb0f7e82fc18",
+      "box": [
+        755,
+        31,
+        376,
+        663
+      ],
+      "scale": 1,
+      "expected": [
+        "Td",
+        "5d"
+      ],
+      "got": [
+        "Td",
+        "5d"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          376,
+          663
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1025,
+          "bottom": 1131,
+          "vertical_offset": 0,
+          "top_score": 62.56196975708008,
+          "bottom_score": 113.17684936523438,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "T",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "10",
+              "10",
+              "10",
+              "10"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "d",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.868,
+              "margin": 0.188,
+              "evidence": "template_margin"
+            },
+            "suit": "d",
+            "card_candidate": "Td",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "5",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "5",
+              "5",
+              "5",
+              "5"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "d",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.874,
+              "margin": 0.196,
+              "evidence": "template_margin"
+            },
+            "suit": "d",
+            "card_candidate": "5d",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 1064.2
+    },
+    {
+      "index": 18,
+      "source": "image_2da5ef3e.png",
+      "sha256": "2da5ef3ef8c622de5e16c2dc620ec0e9e86aff31f46bf334f7c2cb0f7e82fc18",
+      "box": [
+        755,
+        31,
+        376,
+        663
+      ],
+      "scale": 0.75,
+      "expected": [
+        "Td",
+        "5d"
+      ],
+      "got": [
+        "Td",
+        "5d"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          282,
+          497
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1025,
+          "bottom": 1132,
+          "vertical_offset": 0,
+          "top_score": 54.267852783203125,
+          "bottom_score": 88.23831176757812,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "T",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "10",
+              "10",
+              "10",
+              "10"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "d",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.826,
+              "margin": 0.153,
+              "evidence": "template_margin"
+            },
+            "suit": "d",
+            "card_candidate": "Td",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "5",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "5",
+              "5",
+              "5",
+              "5"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "d",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.883,
+              "margin": 0.163,
+              "evidence": "template_margin"
+            },
+            "suit": "d",
+            "card_candidate": "5d",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 981.3
+    },
+    {
+      "index": 18,
+      "source": "image_2da5ef3e.png",
+      "sha256": "2da5ef3ef8c622de5e16c2dc620ec0e9e86aff31f46bf334f7c2cb0f7e82fc18",
+      "box": [
+        755,
+        31,
+        376,
+        663
+      ],
+      "scale": 0.5,
+      "expected": [
+        "Td",
+        "5d"
+      ],
+      "got": [
+        "Td",
+        "5d"
+      ],
+      "report": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          188,
+          332
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1021,
+          "bottom": 1129,
+          "vertical_offset": 0,
+          "top_score": 32.69556427001953,
+          "bottom_score": 111.1980209350586,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "T",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [],
+            "suit": "d",
+            "native_fallback": {
+              "rank": "T",
+              "status": "CANDIDATE_ONLY",
+              "attempts": [
+                {
+                  "rank": null,
+                  "status": "NATIVE_OCR_UNREADABLE_OR_CONFLICT",
+                  "readings": [
+                    "",
+                    ""
+                  ],
+                  "clean_wide": false,
+                  "native_ink_box": [
+                    104,
+                    267,
+                    9,
+                    8
+                  ]
+                },
+                {
+                  "rank": "T",
+                  "status": "CANDIDATE_ONLY",
+                  "readings": [
+                    "T",
+                    "T"
+                  ],
+                  "clean_wide": false,
+                  "native_ink_box": [
+                    104,
+                    267,
+                    11,
+                    11
+                  ]
+                }
+              ]
+            },
+            "suit_result": {
+              "suit": "d",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.736,
+              "margin": 0.077,
+              "evidence": "template_margin"
+            },
+            "card_candidate": "Td",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "5",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "5",
+              "5",
+              "5",
+              "5"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "d",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.747,
+              "margin": 0.098,
+              "evidence": "template_margin"
+            },
+            "suit": "d",
+            "card_candidate": "5d",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "duration_ms": 1808.8
+    }
+  ]
+}

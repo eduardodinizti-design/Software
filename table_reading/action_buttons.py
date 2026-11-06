@@ -4,6 +4,8 @@ import cv2
 import numpy as np
 import pytesseract
 from .ocr_runtime import image_to_string
+from .fastpath import templates_enabled
+from .button_templates import read_static_label
 
 
 def parse_label(text):
@@ -49,6 +51,12 @@ def read_action_buttons(crop, *, _ocr=None):
         clean=cv2.resize(255-ink,None,fx=3,fy=3,interpolation=cv2.INTER_NEAREST)
         clean=cv2.copyMakeBorder(clean,12,12,12,12,cv2.BORDER_CONSTANT,value=255)
         button=dict(box=[x,y+offset,bw,bh],status='NOT_IDENTIFIED',label=None,action=None,amount=None,unit=None)
+        template=read_static_label(clean) if _ocr is None and templates_enabled() else None
+        if template is not None:
+            parsed=parse_label(template['label'])
+            button.update(parsed,**template,status='PRESELECT' if parsed['kind']=='PRESELECT' else 'EXPERIMENTAL_LABEL')
+            result['buttons'].append(button)
+            continue
         try:
             texts=[(_ocr(clean,mode) if _ocr else image_to_string(clean,config=f'--psm {mode}',timeout=2)).strip() for mode in (7,6)]
             parsed=[parse_label(t) for t in texts]

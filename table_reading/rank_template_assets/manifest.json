@@ -1,0 +1,589 @@
+{
+  "scope": "Real development glyphs; training sources are excluded from source-disjoint evaluation. No synthetic glyphs.",
+  "templates": [
+    {
+      "rank": "Q",
+      "asset": "Q-0.png",
+      "asset_sha256": "71dd5872ec49bfffb97be285ce7976ff7285101f8796e48df0ebd3e561b78bd7",
+      "threshold_fraction": 0.6,
+      "source": "_22AFEE38-C581-4573-8EEE-A066396AE91A__d556a633.png",
+      "source_sha256": "d556a633e194a8dbd77a34252fc51db98eb50335e982d05fed013a7c86ca7f2e",
+      "table_box": [
+        703,
+        264,
+        703,
+        1237
+      ],
+      "roi_canonical": [
+        402,
+        1010,
+        42,
+        60
+      ],
+      "label_basis": "Hero batch visual transcription",
+      "role": "candidate"
+    },
+    {
+      "rank": "Q",
+      "asset": "Q-1.png",
+      "asset_sha256": "71dd5872ec49bfffb97be285ce7976ff7285101f8796e48df0ebd3e561b78bd7",
+      "threshold_fraction": 0.8,
+      "source": "_22AFEE38-C581-4573-8EEE-A066396AE91A__d556a633.png",
+      "source_sha256": "d556a633e194a8dbd77a34252fc51db98eb50335e982d05fed013a7c86ca7f2e",
+      "table_box": [
+        703,
+        264,
+        703,
+        1237
+      ],
+      "roi_canonical": [
+        402,
+        1010,
+        42,
+        60
+      ],
+      "label_basis": "Hero batch visual transcription",
+      "role": "candidate"
+    },
+    {
+      "rank": "4",
+      "asset": "4-0.png",
+      "asset_sha256": "b787e8f07a8ff891f3b08bceea334e67e463f36878fd4b8c4f3861f65b7a41b1",
+      "threshold_fraction": 0.6,
+      "source": "_22AFEE38-C581-4573-8EEE-A066396AE91A__d556a633.png",
+      "source_sha256": "d556a633e194a8dbd77a34252fc51db98eb50335e982d05fed013a7c86ca7f2e",
+      "table_box": [
+        703,
+        264,
+        703,
+        1237
+      ],
+      "roi_canonical": [
+        447,
+        1010,
+        42,
+        60
+      ],
+      "label_basis": "Hero batch visual transcription",
+      "role": "competitor_only"
+    },
+    {
+      "rank": "4",
+      "asset": "4-1.png",
+      "asset_sha256": "b787e8f07a8ff891f3b08bceea334e67e463f36878fd4b8c4f3861f65b7a41b1",
+      "threshold_fraction": 0.8,
+      "source": "_22AFEE38-C581-4573-8EEE-A066396AE91A__d556a633.png",
+      "source_sha256": "d556a633e194a8dbd77a34252fc51db98eb50335e982d05fed013a7c86ca7f2e",
+      "table_box": [
+        703,
+        264,
+        703,
+        1237
+      ],
+      "roi_canonical": [
+        447,
+        1010,
+        42,
+        60
+      ],
+      "label_basis": "Hero batch visual transcription",
+      "role": "competitor_only"
+    },
+    {
+      "rank": "A",
+      "asset": "A-0.png",
+      "asset_sha256": "796ac75b1371e83891ec9589667155b8d3cfde025c044a89ac49396e037faee7",
+      "threshold_fraction": 0.6,
+      "source": "_2DDE1911-9262-45F2-9D20-E90899BC739A__111d0a2e.png",
+      "source_sha256": "111d0a2ee537dbd2a6b453d681e8ee6b7ad92520d262f276c0e6a9d029f0fe31",
+      "table_box": [
+        716,
+        213,
+        703,
+        1237
+      ],
+      "roi_canonical": [
+        402,
+        1010,
+        42,
+        60
+      ],
+      "label_basis": "Hero batch visual transcription",
+      "role": "competitor_only"
+    },
+    {
+      "rank": "A",
+      "asset": "A-1.png",
+      "asset_sha256": "796ac75b1371e83891ec9589667155b8d3cfde025c044a89ac49396e037faee7",
+      "threshold_fraction": 0.8,
+      "source": "_2DDE1911-9262-45F2-9D20-E90899BC739A__111d0a2e.png",
+      "source_sha256": "111d0a2ee537dbd2a6b453d681e8ee6b7ad92520d262f276c0e6a9d029f0fe31",
+      "table_box": [
+        716,
+        213,
+        703,
+        1237
+      ],
+      "roi_canonical": [
+        402,
+        1010,
+        42,
+        60
+      ],
+      "label_basis": "Hero batch visual transcription",
+      "role": "competitor_only"
+    },
+    {
+      "rank": "K",
+      "asset": "K-0.png",
+      "asset_sha256": "b0efccd05e5ed1a03767be6b40c06d0ffdc3afccf5c7592618b60a92b0f23682",
+      "threshold_fraction": 0.6,
+      "source": "_2DDE1911-9262-45F2-9D20-E90899BC739A__111d0a2e.png",
+      "source_sha256": "111d0a2ee537dbd2a6b453d681e8ee6b7ad92520d262f276c0e6a9d029f0fe31",
+      "table_box": [
+        716,
+        213,
+        703,
+        1237
+      ],
+      "roi_canonical": [
+        447,
+        1010,
+        42,
+        60
+      ],
+      "label_basis": "Hero batch visual transcription",
+      "role": "candidate"
+    },
+    {
+      "rank": "K",
+      "asset": "K-1.png",
+      "asset_sha256": "61f72bd0b7ef165a9d29e372d27a02248d9bc5213d79b278419b6a1184c42eee",
+      "threshold_fraction": 0.8,
+      "source": "_2DDE1911-9262-45F2-9D20-E90899BC739A__111d0a2e.png",
+      "source_sha256": "111d0a2ee537dbd2a6b453d681e8ee6b7ad92520d262f276c0e6a9d029f0fe31",
+      "table_box": [
+        716,
+        213,
+        703,
+        1237
+      ],
+      "roi_canonical": [
+        447,
+        1010,
+        42,
+        60
+      ],
+      "label_basis": "Hero batch visual transcription",
+      "role": "candidate"
+    },
+    {
+      "rank": "T",
+      "asset": "T-0.png",
+      "asset_sha256": "98b93e7a2de5cc7c0e9e7c8588bb9e359f31f42f2ee5f8373930dcf1a2a14c69",
+      "threshold_fraction": 0.6,
+      "source": "_4528A8B5-F81C-4078-A8DB-C7ADBD91C311__85ee615d.png",
+      "source_sha256": "85ee615d31918032b5782e88ed0e9370ec1c1f28b451457ed2f7dcba66e49c09",
+      "table_box": [
+        674,
+        100,
+        703,
+        1237
+      ],
+      "roi_canonical": [
+        402,
+        1010,
+        42,
+        60
+      ],
+      "label_basis": "Hero batch visual transcription",
+      "role": "candidate"
+    },
+    {
+      "rank": "T",
+      "asset": "T-1.png",
+      "asset_sha256": "98b93e7a2de5cc7c0e9e7c8588bb9e359f31f42f2ee5f8373930dcf1a2a14c69",
+      "threshold_fraction": 0.8,
+      "source": "_4528A8B5-F81C-4078-A8DB-C7ADBD91C311__85ee615d.png",
+      "source_sha256": "85ee615d31918032b5782e88ed0e9370ec1c1f28b451457ed2f7dcba66e49c09",
+      "table_box": [
+        674,
+        100,
+        703,
+        1237
+      ],
+      "roi_canonical": [
+        402,
+        1010,
+        42,
+        60
+      ],
+      "label_basis": "Hero batch visual transcription",
+      "role": "candidate"
+    },
+    {
+      "rank": "5",
+      "asset": "5-0.png",
+      "asset_sha256": "be48fb2742b0d9874a93348b9cc715cb09b1d3369af313acc482a950456c6940",
+      "threshold_fraction": 0.6,
+      "source": "_4528A8B5-F81C-4078-A8DB-C7ADBD91C311__85ee615d.png",
+      "source_sha256": "85ee615d31918032b5782e88ed0e9370ec1c1f28b451457ed2f7dcba66e49c09",
+      "table_box": [
+        674,
+        100,
+        703,
+        1237
+      ],
+      "roi_canonical": [
+        447,
+        1010,
+        42,
+        60
+      ],
+      "label_basis": "Hero batch visual transcription",
+      "role": "candidate"
+    },
+    {
+      "rank": "5",
+      "asset": "5-1.png",
+      "asset_sha256": "be48fb2742b0d9874a93348b9cc715cb09b1d3369af313acc482a950456c6940",
+      "threshold_fraction": 0.8,
+      "source": "_4528A8B5-F81C-4078-A8DB-C7ADBD91C311__85ee615d.png",
+      "source_sha256": "85ee615d31918032b5782e88ed0e9370ec1c1f28b451457ed2f7dcba66e49c09",
+      "table_box": [
+        674,
+        100,
+        703,
+        1237
+      ],
+      "roi_canonical": [
+        447,
+        1010,
+        42,
+        60
+      ],
+      "label_basis": "Hero batch visual transcription",
+      "role": "candidate"
+    },
+    {
+      "rank": "3",
+      "asset": "3-0.png",
+      "asset_sha256": "209cd3a85a5dff5866e8be6f0f5353b93e8d4dfa8f67716144b99c0e796107ba",
+      "threshold_fraction": 0.6,
+      "source": "_58CB106F-09EA-4853-B7D9-98FD582FAD0E__581ae999.png",
+      "source_sha256": "581ae999225a9e7e442a7ffffab745f429b7f8b37e1104052329014afe9afbee",
+      "table_box": [
+        710,
+        224,
+        703,
+        1237
+      ],
+      "roi_canonical": [
+        402,
+        1010,
+        42,
+        60
+      ],
+      "label_basis": "Hero batch visual transcription",
+      "role": "competitor_only"
+    },
+    {
+      "rank": "3",
+      "asset": "3-1.png",
+      "asset_sha256": "209cd3a85a5dff5866e8be6f0f5353b93e8d4dfa8f67716144b99c0e796107ba",
+      "threshold_fraction": 0.8,
+      "source": "_58CB106F-09EA-4853-B7D9-98FD582FAD0E__581ae999.png",
+      "source_sha256": "581ae999225a9e7e442a7ffffab745f429b7f8b37e1104052329014afe9afbee",
+      "table_box": [
+        710,
+        224,
+        703,
+        1237
+      ],
+      "roi_canonical": [
+        402,
+        1010,
+        42,
+        60
+      ],
+      "label_basis": "Hero batch visual transcription",
+      "role": "competitor_only"
+    },
+    {
+      "rank": "J",
+      "asset": "J-0.png",
+      "asset_sha256": "70ff6efc09755cd3d4a9cad8458563bb613fc20c8edb1c9c47bafbbafe22943a",
+      "threshold_fraction": 0.6,
+      "source": "_76D7A22C-BC3A-435D-BB63-A4AC9AE0A1A0__78803c80.png",
+      "source_sha256": "78803c8043173a4558841d5932316cf56dc3beb58f08084ecb7088a8ee930a04",
+      "table_box": [
+        702,
+        266,
+        703,
+        1237
+      ],
+      "roi_canonical": [
+        402,
+        1010,
+        42,
+        60
+      ],
+      "label_basis": "Hero batch visual transcription",
+      "role": "candidate"
+    },
+    {
+      "rank": "J",
+      "asset": "J-1.png",
+      "asset_sha256": "70ff6efc09755cd3d4a9cad8458563bb613fc20c8edb1c9c47bafbbafe22943a",
+      "threshold_fraction": 0.8,
+      "source": "_76D7A22C-BC3A-435D-BB63-A4AC9AE0A1A0__78803c80.png",
+      "source_sha256": "78803c8043173a4558841d5932316cf56dc3beb58f08084ecb7088a8ee930a04",
+      "table_box": [
+        702,
+        266,
+        703,
+        1237
+      ],
+      "roi_canonical": [
+        402,
+        1010,
+        42,
+        60
+      ],
+      "label_basis": "Hero batch visual transcription",
+      "role": "candidate"
+    },
+    {
+      "rank": "2",
+      "asset": "2-0.png",
+      "asset_sha256": "541c9d6fecd61e20b6036279552ad486250ef92a834c510145990995964edc59",
+      "threshold_fraction": 0.6,
+      "source": "_76D7A22C-BC3A-435D-BB63-A4AC9AE0A1A0__78803c80.png",
+      "source_sha256": "78803c8043173a4558841d5932316cf56dc3beb58f08084ecb7088a8ee930a04",
+      "table_box": [
+        702,
+        266,
+        703,
+        1237
+      ],
+      "roi_canonical": [
+        447,
+        1010,
+        42,
+        60
+      ],
+      "label_basis": "Hero batch visual transcription",
+      "role": "candidate"
+    },
+    {
+      "rank": "2",
+      "asset": "2-1.png",
+      "asset_sha256": "541c9d6fecd61e20b6036279552ad486250ef92a834c510145990995964edc59",
+      "threshold_fraction": 0.8,
+      "source": "_76D7A22C-BC3A-435D-BB63-A4AC9AE0A1A0__78803c80.png",
+      "source_sha256": "78803c8043173a4558841d5932316cf56dc3beb58f08084ecb7088a8ee930a04",
+      "table_box": [
+        702,
+        266,
+        703,
+        1237
+      ],
+      "roi_canonical": [
+        447,
+        1010,
+        42,
+        60
+      ],
+      "label_basis": "Hero batch visual transcription",
+      "role": "candidate"
+    },
+    {
+      "rank": "9",
+      "asset": "9-0.png",
+      "asset_sha256": "e631e23fb05a42e833122e705665f62f0b0f81f61fe7e132b14d68ba353c71f0",
+      "threshold_fraction": 0.6,
+      "source": "_7C62D925-1CC9-4B7C-A92D-0E3379E07494__3d8f87c2.png",
+      "source_sha256": "3d8f87c2389a8ccaddb75a66e7a61d6b5a4af1250abee0d041c07c270cad8064",
+      "table_box": [
+        689,
+        144,
+        703,
+        1237
+      ],
+      "roi_canonical": [
+        402,
+        1010,
+        42,
+        60
+      ],
+      "label_basis": "Hero batch visual transcription",
+      "role": "candidate"
+    },
+    {
+      "rank": "9",
+      "asset": "9-1.png",
+      "asset_sha256": "e631e23fb05a42e833122e705665f62f0b0f81f61fe7e132b14d68ba353c71f0",
+      "threshold_fraction": 0.8,
+      "source": "_7C62D925-1CC9-4B7C-A92D-0E3379E07494__3d8f87c2.png",
+      "source_sha256": "3d8f87c2389a8ccaddb75a66e7a61d6b5a4af1250abee0d041c07c270cad8064",
+      "table_box": [
+        689,
+        144,
+        703,
+        1237
+      ],
+      "roi_canonical": [
+        402,
+        1010,
+        42,
+        60
+      ],
+      "label_basis": "Hero batch visual transcription",
+      "role": "candidate"
+    },
+    {
+      "rank": "7",
+      "asset": "7-0.png",
+      "asset_sha256": "6cad501a8d0ecc04250bd2af57bbd16b4b6dffe7631d2a95fe098a318b0de6b3",
+      "threshold_fraction": 0.6,
+      "source": "_C998F597-5786-40A5-A73B-E450730D847E__475524bf.png",
+      "source_sha256": "475524bf61a48c2662d1b27b2efa2fa1b40af9e5972b1ed68b0c4999a0a0d6aa",
+      "table_box": [
+        724,
+        183,
+        703,
+        1237
+      ],
+      "roi_canonical": [
+        402,
+        1010,
+        42,
+        60
+      ],
+      "label_basis": "Hero batch visual transcription",
+      "role": "candidate"
+    },
+    {
+      "rank": "7",
+      "asset": "7-1.png",
+      "asset_sha256": "6cad501a8d0ecc04250bd2af57bbd16b4b6dffe7631d2a95fe098a318b0de6b3",
+      "threshold_fraction": 0.8,
+      "source": "_C998F597-5786-40A5-A73B-E450730D847E__475524bf.png",
+      "source_sha256": "475524bf61a48c2662d1b27b2efa2fa1b40af9e5972b1ed68b0c4999a0a0d6aa",
+      "table_box": [
+        724,
+        183,
+        703,
+        1237
+      ],
+      "roi_canonical": [
+        402,
+        1010,
+        42,
+        60
+      ],
+      "label_basis": "Hero batch visual transcription",
+      "role": "candidate"
+    },
+    {
+      "rank": "6",
+      "asset": "6-0.png",
+      "asset_sha256": "4204b8abc204856d50a4882a5c91566ff06fa5f930d719a5a3372f697759302b",
+      "threshold_fraction": 0.6,
+      "source": "_C998F597-5786-40A5-A73B-E450730D847E__475524bf.png",
+      "source_sha256": "475524bf61a48c2662d1b27b2efa2fa1b40af9e5972b1ed68b0c4999a0a0d6aa",
+      "table_box": [
+        724,
+        183,
+        703,
+        1237
+      ],
+      "roi_canonical": [
+        447,
+        1010,
+        42,
+        60
+      ],
+      "label_basis": "Hero batch visual transcription",
+      "role": "candidate"
+    },
+    {
+      "rank": "6",
+      "asset": "6-1.png",
+      "asset_sha256": "4204b8abc204856d50a4882a5c91566ff06fa5f930d719a5a3372f697759302b",
+      "threshold_fraction": 0.8,
+      "source": "_C998F597-5786-40A5-A73B-E450730D847E__475524bf.png",
+      "source_sha256": "475524bf61a48c2662d1b27b2efa2fa1b40af9e5972b1ed68b0c4999a0a0d6aa",
+      "table_box": [
+        724,
+        183,
+        703,
+        1237
+      ],
+      "roi_canonical": [
+        447,
+        1010,
+        42,
+        60
+      ],
+      "label_basis": "Hero batch visual transcription",
+      "role": "candidate"
+    },
+    {
+      "rank": "8",
+      "asset": "8-0.png",
+      "asset_sha256": "845687d623e0f2f499d455603211308197cea9080a9283890ceaee40ce57d1c8",
+      "threshold_fraction": 0.6,
+      "source": "_8C143E80-F85C-4DE6-ADCD-0641771AE2E6__2a4e7ea0.png",
+      "source_sha256": "2a4e7ea0153b94c241a76bd73f2f88b147504ca779cf0e99f48686b54a7d1d49",
+      "table_box": [
+        703,
+        54,
+        703,
+        1237
+      ],
+      "board_card_box": [
+        219,
+        471,
+        78,
+        115
+      ],
+      "face_roi": [
+        4,
+        3,
+        40,
+        50
+      ],
+      "label_basis": "Manually labeled real board 2s/8h/5h",
+      "role": "competitor_only"
+    },
+    {
+      "rank": "8",
+      "asset": "8-1.png",
+      "asset_sha256": "845687d623e0f2f499d455603211308197cea9080a9283890ceaee40ce57d1c8",
+      "threshold_fraction": 0.8,
+      "source": "_8C143E80-F85C-4DE6-ADCD-0641771AE2E6__2a4e7ea0.png",
+      "source_sha256": "2a4e7ea0153b94c241a76bd73f2f88b147504ca779cf0e99f48686b54a7d1d49",
+      "table_box": [
+        703,
+        54,
+        703,
+        1237
+      ],
+      "board_card_box": [
+        219,
+        471,
+        78,
+        115
+      ],
+      "face_roi": [
+        4,
+        3,
+        40,
+        50
+      ],
+      "label_basis": "Manually labeled real board 2s/8h/5h",
+      "role": "competitor_only"
+    }
+  ]
+}

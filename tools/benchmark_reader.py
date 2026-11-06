@@ -7,6 +7,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 import cv2,numpy as np
 from table_reading.pipeline import analyze_tables
 from table_reading.ocr_runtime import ocr_frame
+from table_reading.fastpath import template_mode
 cv2.setNumThreads(1)
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -58,7 +59,7 @@ def main():
             mode='memo' if enabled else 'baseline';samples=[]
             for sample in range(a.samples+1):
                 started=time.perf_counter()
-                with ocr_frame(enabled=enabled):result=analyze_tables(frame,metadata,read_buttons=True,read_community=True)
+                with template_mode(False),ocr_frame(enabled=enabled):result=analyze_tables(frame,metadata,read_buttons=True,read_community=True)
                 elapsed=(time.perf_counter()-started)*1000
                 signature=semantic(result)
                 if reference is None:reference=signature

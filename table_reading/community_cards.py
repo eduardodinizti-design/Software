@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 from .inspect_cards import read_rank
 from .suit_reader import read_suit
+from .roi_geometry import get_roi
 
 
 def read_board(table, *, _rank=read_rank, _suit=read_suit, hero_cards=()):
@@ -10,8 +11,10 @@ def read_board(table, *, _rank=read_rank, _suit=read_suit, hero_cards=()):
     if not isinstance(table,np.ndarray) or table.dtype!=np.uint8 or table.ndim!=3 or table.shape[2]!=3:
         return dict(result,status='INVALID_CROP')
     h,w=table.shape[:2]
-    x0,y0=round(w*.17),round(h*.35)
-    roi=table[y0:round(h*.50),x0:round(w*.85)]
+    if not h or not w:return dict(result,status='INVALID_CROP')
+    band=get_roi(w,h)
+    x0,y0=band.left,band.top
+    roi=table[band.slices]
     if not roi.size:return result
     hsv=cv2.cvtColor(roi,cv2.COLOR_BGR2HSV)
     hue,sat,val=cv2.split(hsv)
