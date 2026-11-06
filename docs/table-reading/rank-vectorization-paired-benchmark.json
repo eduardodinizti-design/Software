@@ -1,0 +1,224 @@
+{
+  "scope": "Rank shortcut only, no OCR; 102 reused real development crops,20 alternating paired repetitions. Excludes cold loading and capture. Not Windows latency.",
+  "baseline_sha256": "d0643e4e43ff9adf0e1ba64b42a5d5c8882a7d34649d0b59b120f02784726bc8",
+  "current_sha256": "6b0bfff397066dc64c7b835f5114644ead4ba88e5336cc7df94e936c907f92e0",
+  "crop_count": 102,
+  "repetitions": 20,
+  "summary": {
+    "baseline": {
+      "median_batch_ms": 205.471928,
+      "mean_batch_ms": 206.0260015,
+      "median_per_crop_ms": 2.0144306666666667
+    },
+    "current": {
+      "median_batch_ms": 115.7469605,
+      "mean_batch_ms": 115.99628515,
+      "median_per_crop_ms": 1.1347741225490195
+    },
+    "paired_delta_median_ms": -88.965796,
+    "current_faster_pairs": 20,
+    "exact_parity": true
+  },
+  "pairs": [
+    {
+      "repetition": 0,
+      "order": [
+        "baseline",
+        "current"
+      ],
+      "baseline": 206.960822,
+      "current": 115.511659,
+      "delta_ms": -91.44916300000001
+    },
+    {
+      "repetition": 1,
+      "order": [
+        "current",
+        "baseline"
+      ],
+      "current": 118.903832,
+      "baseline": 203.581694,
+      "delta_ms": -84.677862
+    },
+    {
+      "repetition": 2,
+      "order": [
+        "baseline",
+        "current"
+      ],
+      "baseline": 205.103481,
+      "current": 117.960831,
+      "delta_ms": -87.14264999999999
+    },
+    {
+      "repetition": 3,
+      "order": [
+        "current",
+        "baseline"
+      ],
+      "current": 111.501165,
+      "baseline": 215.642762,
+      "delta_ms": -104.141597
+    },
+    {
+      "repetition": 4,
+      "order": [
+        "baseline",
+        "current"
+      ],
+      "baseline": 207.901654,
+      "current": 116.81227,
+      "delta_ms": -91.08938400000001
+    },
+    {
+      "repetition": 5,
+      "order": [
+        "current",
+        "baseline"
+      ],
+      "current": 117.372431,
+      "baseline": 203.659182,
+      "delta_ms": -86.28675099999998
+    },
+    {
+      "repetition": 6,
+      "order": [
+        "baseline",
+        "current"
+      ],
+      "baseline": 203.041556,
+      "current": 119.456664,
+      "delta_ms": -83.58489200000001
+    },
+    {
+      "repetition": 7,
+      "order": [
+        "current",
+        "baseline"
+      ],
+      "current": 113.248827,
+      "baseline": 206.348771,
+      "delta_ms": -93.099944
+    },
+    {
+      "repetition": 8,
+      "order": [
+        "baseline",
+        "current"
+      ],
+      "baseline": 207.36017,
+      "current": 122.025613,
+      "delta_ms": -85.334557
+    },
+    {
+      "repetition": 9,
+      "order": [
+        "current",
+        "baseline"
+      ],
+      "current": 117.587115,
+      "baseline": 205.840375,
+      "delta_ms": -88.25326
+    },
+    {
+      "repetition": 10,
+      "order": [
+        "baseline",
+        "current"
+      ],
+      "baseline": 209.435002,
+      "current": 114.537314,
+      "delta_ms": -94.897688
+    },
+    {
+      "repetition": 11,
+      "order": [
+        "current",
+        "baseline"
+      ],
+      "current": 113.806875,
+      "baseline": 203.485207,
+      "delta_ms": -89.678332
+    },
+    {
+      "repetition": 12,
+      "order": [
+        "baseline",
+        "current"
+      ],
+      "baseline": 201.017708,
+      "current": 116.890985,
+      "delta_ms": -84.126723
+    },
+    {
+      "repetition": 13,
+      "order": [
+        "current",
+        "baseline"
+      ],
+      "current": 114.242856,
+      "baseline": 206.895905,
+      "delta_ms": -92.653049
+    },
+    {
+      "repetition": 14,
+      "order": [
+        "baseline",
+        "current"
+      ],
+      "baseline": 203.546187,
+      "current": 113.665899,
+      "delta_ms": -89.88028800000001
+    },
+    {
+      "repetition": 15,
+      "order": [
+        "current",
+        "baseline"
+      ],
+      "current": 114.162535,
+      "baseline": 201.500513,
+      "delta_ms": -87.337978
+    },
+    {
+      "repetition": 16,
+      "order": [
+        "baseline",
+        "current"
+      ],
+      "baseline": 203.716389,
+      "current": 118.131566,
+      "delta_ms": -85.58482299999999
+    },
+    {
+      "repetition": 17,
+      "order": [
+        "current",
+        "baseline"
+      ],
+      "current": 112.615252,
+      "baseline": 215.065811,
+      "delta_ms": -102.450559
+    },
+    {
+      "repetition": 18,
+      "order": [
+        "baseline",
+        "current"
+      ],
+      "baseline": 203.095278,
+      "current": 115.509752,
+      "delta_ms": -87.585526
+    },
+    {
+      "repetition": 19,
+      "order": [
+        "current",
+        "baseline"
+      ],
+      "current": 115.982262,
+      "baseline": 207.321563,
+      "delta_ms": -91.33930099999999
+    }
+  ]
+}

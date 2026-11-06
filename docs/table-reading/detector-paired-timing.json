@@ -1,0 +1,116 @@
+{
+  "scope": "Same-process alternating ten warm pairs, OpenCV one thread, no OCR/capture. Six tiled reused crops are synthetic; not live Windows capacity.",
+  "candidate_parity": true,
+  "summary": {
+    "before": {
+      "n": 10,
+      "median_ms": 419.1175590021885
+    },
+    "after": {
+      "n": 10,
+      "median_ms": 397.59285199761507
+    }
+  },
+  "results": [
+    {
+      "pair": 0,
+      "mode": "before",
+      "ms": 412.7940880061942
+    },
+    {
+      "pair": 0,
+      "mode": "after",
+      "ms": 396.7818629971589
+    },
+    {
+      "pair": 1,
+      "mode": "after",
+      "ms": 411.2084689986659
+    },
+    {
+      "pair": 1,
+      "mode": "before",
+      "ms": 434.3057879959815
+    },
+    {
+      "pair": 2,
+      "mode": "before",
+      "ms": 421.56765700201504
+    },
+    {
+      "pair": 2,
+      "mode": "after",
+      "ms": 391.8476489998284
+    },
+    {
+      "pair": 3,
+      "mode": "after",
+      "ms": 391.9483229983598
+    },
+    {
+      "pair": 3,
+      "mode": "before",
+      "ms": 418.4084799999255
+    },
+    {
+      "pair": 4,
+      "mode": "before",
+      "ms": 412.5816629966721
+    },
+    {
+      "pair": 4,
+      "mode": "after",
+      "ms": 392.284246001509
+    },
+    {
+      "pair": 5,
+      "mode": "after",
+      "ms": 385.00886900146725
+    },
+    {
+      "pair": 5,
+      "mode": "before",
+      "ms": 417.0998019981198
+    },
+    {
+      "pair": 6,
+      "mode": "before",
+      "ms": 411.91094600071665
+    },
+    {
+      "pair": 6,
+      "mode": "after",
+      "ms": 400.1604410004802
+    },
+    {
+      "pair": 7,
+      "mode": "after",
+      "ms": 398.40384099807125
+    },
+    {
+      "pair": 7,
+      "mode": "before",
+      "ms": 427.3132949965657
+    },
+    {
+      "pair": 8,
+      "mode": "before",
+      "ms": 447.6579690017388
+    },
+    {
+      "pair": 8,
+      "mode": "after",
+      "ms": 443.5324860023684
+    },
+    {
+      "pair": 9,
+      "mode": "after",
+      "ms": 404.17488000093726
+    },
+    {
+      "pair": 9,
+      "mode": "before",
+      "ms": 419.8266380044515
+    }
+  ]
+}

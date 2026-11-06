@@ -1,0 +1,66 @@
+[
+  {
+    "source": "_72432B1C-F9F9-454A-A5D8-7DBE7A0E326A__aff0428c.png",
+    "box": [
+      687,
+      46,
+      686,
+      1237
+    ],
+    "sha256": "aff0428c7dd42730eb2978c55698eb089cdf734a858ad1e30c9c8a22b9972075",
+    "expected_labels": [
+      "Fold",
+      "Call 2,0 BB",
+      "Raise"
+    ],
+    "label_basis": "Visually transcribed from real source bottom row; detected rectangle used only to locate crop"
+  },
+  {
+    "source": "_8C143E80-F85C-4DE6-ADCD-0641771AE2E6__2a4e7ea0.png",
+    "box": [
+      703,
+      54,
+      686,
+      1237
+    ],
+    "sha256": "2a4e7ea0153b94c241a76bd73f2f88b147504ca779cf0e99f48686b54a7d1d49",
+    "expected_labels": [
+      "Fold",
+      "Check",
+      "Bet"
+    ],
+    "label_basis": "Visually transcribed from real source bottom row; detected rectangle used only to locate crop"
+  },
+  {
+    "source": "_ABCB3886-A120-479F-9F0E-43096FB2D791__aaed78f0.png",
+    "box": [
+      611,
+      104,
+      686,
+      1237
+    ],
+    "sha256": "aaed78f09eaddb12ebcc48922a32f5d0693c639647b04974032bc1b79e0639c6",
+    "expected_labels": [
+      "Fold",
+      "Call 1,6 BB",
+      "Raise"
+    ],
+    "label_basis": "Visually transcribed from real source bottom row; detected rectangle used only to locate crop"
+  },
+  {
+    "source": "_C998F597-5786-40A5-A73B-E450730D847E__475524bf.png",
+    "box": [
+      724,
+      183,
+      703,
+      1237
+    ],
+    "sha256": "475524bf61a48c2662d1b27b2efa2fa1b40af9e5972b1ed68b0c4999a0a0d6aa",
+    "expected_labels": [
+      "Fold",
+      "Call 13,5 BB",
+      "Raise"
+    ],
+    "label_basis": "Visually transcribed from real source bottom row; detected rectangle used only to locate crop"
+  }
+]

@@ -1,0 +1,163 @@
+{
+  "scope": "Legacy video crops, separate from current validated development set",
+  "independent_video": false,
+  "available": 8,
+  "missing_labels_without_png": [
+    "145_0",
+    "145_1",
+    "158_0",
+    "158_1"
+  ],
+  "hero_distinct": [
+    "2s",
+    "3s",
+    "4d",
+    "5c",
+    "7d",
+    "8h",
+    "Jd",
+    "Js",
+    "Kd",
+    "Th"
+  ],
+  "board_distinct": [
+    "5d",
+    "7h",
+    "As",
+    "Kc",
+    "Kd",
+    "Qh",
+    "Th",
+    "Ts"
+  ],
+  "entries": [
+    {
+      "file": "15_0.png",
+      "sha256": "93dd0b8ceeb4b672341242264e7984096d0faec341c10aeddbf5577b9cec69cc",
+      "labels": {
+        "hero": [
+          "7d",
+          "3s"
+        ],
+        "board": []
+      },
+      "label_status": "VISUALLY_RECHECKED",
+      "current_reader_validated": false,
+      "current_reader_evaluated": true
+    },
+    {
+      "file": "15_1.png",
+      "sha256": "509be7d4a2d9fd4cd6a439549a2317a4ee2cc1f632da93e8ad53148bbfb45ca1",
+      "labels": {
+        "hero": [
+          "Kd",
+          "Js"
+        ],
+        "board": [
+          "Ts",
+          "Th",
+          "Qh"
+        ]
+      },
+      "label_status": "VISUALLY_RECHECKED",
+      "current_reader_validated": false,
+      "current_reader_evaluated": true
+    },
+    {
+      "file": "48_0.png",
+      "sha256": "f5ed5c9f9017efd278d5c670edf2d52820266fc5d35b72af7b2109490023b7cb",
+      "labels": {
+        "hero": [
+          "8h",
+          "Jd"
+        ],
+        "board": []
+      },
+      "label_status": "VISUALLY_RECHECKED",
+      "current_reader_validated": false,
+      "current_reader_evaluated": true
+    },
+    {
+      "file": "48_1.png",
+      "sha256": "3ab273c97f170930e7540cb83516dc311084e1cb4808bd6dc223dc7d37d34282",
+      "labels": {
+        "hero": [
+          "Kd",
+          "Js"
+        ],
+        "board": [
+          "Ts",
+          "Th",
+          "Qh",
+          "5d"
+        ]
+      },
+      "label_status": "VISUALLY_RECHECKED",
+      "current_reader_validated": false,
+      "current_reader_evaluated": true
+    },
+    {
+      "file": "82_0.png",
+      "sha256": "13697590ceb46c9d6f3e21c51bfb7f53c7e01818e8ab66afc1d654baa5ae5c85",
+      "labels": {
+        "hero": [
+          "Th",
+          "4d"
+        ],
+        "board": []
+      },
+      "label_status": "VISUALLY_RECHECKED",
+      "current_reader_validated": false,
+      "current_reader_evaluated": true
+    },
+    {
+      "file": "82_1.png",
+      "sha256": "094e573413fad94e274acab6ba7fc67fe561fd540ab970bc2327fee64484c8e6",
+      "labels": {
+        "hero": [
+          "5c",
+          "2s"
+        ],
+        "board": []
+      },
+      "label_status": "VISUALLY_RECHECKED",
+      "current_reader_validated": false,
+      "current_reader_evaluated": true
+    },
+    {
+      "file": "116_0.png",
+      "sha256": "e033f331ebc2a7fc38baa1169047bd4fd4302a5f14db4329b5e53fb9086b750e",
+      "labels": {
+        "hero": [
+          "Th",
+          "4d"
+        ],
+        "board": [
+          "7h",
+          "As",
+          "Ts",
+          "Kd",
+          "Kc"
+        ]
+      },
+      "label_status": "VISUALLY_RECHECKED",
+      "current_reader_validated": false,
+      "current_reader_evaluated": true
+    },
+    {
+      "file": "116_1.png",
+      "sha256": "3b476052db7bbaeb8a7da3c5af5fd622c7fd177d1311b8516d563aefb515e473",
+      "labels": {
+        "hero": [
+          "5c",
+          "2s"
+        ],
+        "board": []
+      },
+      "label_status": "VISUALLY_RECHECKED",
+      "current_reader_validated": false,
+      "current_reader_evaluated": true
+    }
+  ],
+  "replay_report": "legacy-replay-results.json"
+}

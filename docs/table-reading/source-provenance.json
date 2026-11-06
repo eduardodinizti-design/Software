@@ -1,0 +1,62 @@
+{
+  "basis": "Laboratory blue-layout detector and Hero reader in software-review; relative imports adapted, pipeline newly integrated. No new accuracy certification.",
+  "files": {
+    "table_reading/__init__.py": {
+      "sha256": "449bf4cc53dfa0e5fc1d7f14318c924d3c652f86adf63ae84763147912618c89"
+    },
+    "table_reading/suit_reader.py": {
+      "sha256": "63a17b171f8f11f799510337a4b7fc6a3b692b37beb208d9967ceefb11db4834"
+    },
+    "table_reading/table_boundaries.py": {
+      "sha256": "7600faec2856db90165a52ea3cf0660f832ae33a8a5a9ee1881d4c27888b3c28"
+    },
+    "table_reading/inspect_cards.py": {
+      "sha256": "53a948c84eddea44f03d42fceaafa994b1bd4c3d4c9fbe4a8e6cb79a9e3348f6"
+    },
+    "table_reading/segmented_rank.py": {
+      "sha256": "3a3f7d9f7597b28efda5ee65780ab5d3d7e2c7f3c45bc8261a258b1207c12e52"
+    },
+    "table_reading/automatic_table_crops.py": {
+      "sha256": "6cc29ab5c63eda6a29863a49e9b2d9f003239d7bcdd9b19027e585028cb88c01"
+    },
+    "table_reading/pipeline.py": {
+      "sha256": "eee23f51d86d7dbec6be208ef7479b0022be40aaee5f3efcc509b01a10813633"
+    },
+    "table_reading/table_corner_anchors.py": {
+      "sha256": "c4278e1ddc3ee1001d96fef073209299378661b61cd7588215438530fbab6e23"
+    },
+    "table_reading/card_alignment.py": {
+      "sha256": "230471a8d66f3fc55614f6213e61c1da97c16e3f90f32cff4c74568952a60e07"
+    },
+    "table_reading/suit_templates/h.png": {
+      "sha256": "baf5317a895352da216a509c435ed44715d35a01b70fd40aef4c480721afdf03"
+    },
+    "table_reading/suit_templates/c.png": {
+      "sha256": "82418e0035e6ffb6764dbad6e00b8d520f1f8cf4d8bdd05e7032d146930e7281"
+    },
+    "table_reading/suit_templates/d.png": {
+      "sha256": "b811939e64f656b74c6360115f3492eb5ddcf535759de778179297ca4ff25f8c"
+    },
+    "table_reading/suit_templates/LICENSE-DejaVu.txt": {
+      "sha256": "63d3ba759d12804c5b31a9d5940d855c1820d1f5999e6b0872eb1c7ff045fbc9"
+    },
+    "table_reading/suit_templates/s.png": {
+      "sha256": "9c9ee0a0554f2fa910766a73b8c0a02697dbb1ce4f2fb2326ba0e48a76bc5568"
+    },
+    "table_reading/table_anchor_templates/cards.png": {
+      "sha256": "75143eef2ee4a9b903268f68430d0442d57959a00f789eec9d0688b434b1fa70"
+    },
+    "table_reading/table_anchor_templates/provenance.json": {
+      "sha256": "2976729e36fdc5eea084dc6afa90d28529f22fc942a5bc32b277e9d301da0fa9"
+    },
+    "table_reading/table_anchor_templates/menu.png": {
+      "sha256": "f3fbeb591dd61666650bfb9c064730e66323b443525eb5d7465bfa909afb13ad"
+    },
+    "table_reading/table_anchor_templates/chat.png": {
+      "sha256": "cccffe72f23ad9c08bdb3778d4702761c977d59aea5f8291e4f1b22c4aaaf5b2"
+    },
+    "table_reading/table_anchor_templates/signal.png": {
+      "sha256": "a4478fe476ae6914219caedd907c049b5c3e541e1e9244d63296fd4f2b7ec2a7"
+    }
+  }
+}

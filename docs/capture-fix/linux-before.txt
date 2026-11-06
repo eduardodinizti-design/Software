@@ -1,0 +1,80 @@
+test_arbitrary_executable_is_rejected (test_capture_regressions.OriginalRegressionTests.test_arbitrary_executable_is_rejected) ... FAIL
+test_linux_cannot_report_success (test_capture_regressions.OriginalRegressionTests.test_linux_cannot_report_success) ... FAIL
+test_process_access_denied_is_rejected (test_capture_regressions.OriginalRegressionTests.test_process_access_denied_is_rejected) ... FAIL
+
+======================================================================
+FAIL: test_arbitrary_executable_is_rejected (test_capture_regressions.OriginalRegressionTests.test_arbitrary_executable_is_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/capture-review-053a1e3/test_capture_regressions.py", line 25, in test_arbitrary_executable_is_rejected
+    self.assertFalse(valid)
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_linux_cannot_report_success (test_capture_regressions.OriginalRegressionTests.test_linux_cannot_report_success)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/capture-review-053a1e3/test_capture_regressions.py", line 10, in test_linux_cannot_report_success
+    self.assertIsNone(frame)
+AssertionError: array([[[0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0],
+        ...,
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]],
+
+       [[0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0],
+        ...,
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]],
+
+       [[0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0],
+        ...,
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]],
+
+       ...,
+
+       [[0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0],
+        ...,
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]],
+
+       [[0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0],
+        ...,
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]],
+
+       [[0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0],
+        ...,
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]]], shape=(800, 500, 3), dtype=uint8) is not None
+
+======================================================================
+FAIL: test_process_access_denied_is_rejected (test_capture_regressions.OriginalRegressionTests.test_process_access_denied_is_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/capture-review-053a1e3/test_capture_regressions.py", line 18, in test_process_access_denied_is_rejected
+    self.assertFalse(valid)
+AssertionError: True is not false
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.025s
+
+FAILED (failures=3)

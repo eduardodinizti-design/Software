@@ -1,0 +1,13 @@
+{
+  "scope": "One existing laboratory fixture; no native Windows capture. Temporary crop PNGs removed after measuring.",
+  "tables": 1,
+  "files": {
+    "resultado.json": 3247,
+    "mesa-01-buttons.png": 56298,
+    "mesa-01-board.png": 114584,
+    "mesa-01-hero.png": 60632
+  },
+  "total_bytes": 234761,
+  "unlabeled": true,
+  "resized": false
+}

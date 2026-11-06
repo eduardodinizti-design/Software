@@ -1,0 +1,118 @@
+{
+  "label_basis": "Human visual transcription of hero crops before running card OCR. Seven screenshots not used to tune card reader; some previously used for geometry/identity audits.",
+  "reader_commit": "3b8f4a1",
+  "tables": [
+    {
+      "source": "_4528A8B5-F81C-4078-A8DB-C7ADBD91C311__85ee615d.png",
+      "box": [
+        674,
+        100,
+        703,
+        1237
+      ],
+      "sha256": "85ee615d31918032b5782e88ed0e9370ec1c1f28b451457ed2f7dcba66e49c09",
+      "expected": [
+        "Tc",
+        "5c"
+      ]
+    },
+    {
+      "source": "_3A75F7DE-7229-4137-BD19-4AF5AE363948__d560bf0f.png",
+      "box": [
+        705,
+        225,
+        703,
+        1237
+      ],
+      "sha256": "d560bf0fd1828a797fbeae678793e8412403267cb53817260bcab7464356da28",
+      "expected": [
+        "Qd",
+        "Qs"
+      ]
+    },
+    {
+      "source": "_58CB106F-09EA-4853-B7D9-98FD582FAD0E__581ae999.png",
+      "box": [
+        710,
+        224,
+        703,
+        1237
+      ],
+      "sha256": "581ae999225a9e7e442a7ffffab745f429b7f8b37e1104052329014afe9afbee",
+      "expected": [
+        "3h",
+        "Qd"
+      ]
+    },
+    {
+      "source": "_76D7A22C-BC3A-435D-BB63-A4AC9AE0A1A0__78803c80.png",
+      "box": [
+        702,
+        266,
+        703,
+        1237
+      ],
+      "sha256": "78803c8043173a4558841d5932316cf56dc3beb58f08084ecb7088a8ee930a04",
+      "expected": [
+        "Jd",
+        "2d"
+      ]
+    },
+    {
+      "source": "_7C62D925-1CC9-4B7C-A92D-0E3379E07494__3d8f87c2.png",
+      "box": [
+        689,
+        144,
+        703,
+        1237
+      ],
+      "sha256": "3d8f87c2389a8ccaddb75a66e7a61d6b5a4af1250abee0d041c07c270cad8064",
+      "expected": [
+        "9d",
+        "2s"
+      ]
+    },
+    {
+      "source": "_BF8957B2-BF19-43B0-AADF-8D95779FC005__f3c8ecd9.png",
+      "box": [
+        709,
+        225,
+        699,
+        1244
+      ],
+      "sha256": "f3c8ecd99f5145cba406db22564ccc5f8aaf36a82dd73c2b576684b5073f4f6e",
+      "expected": [
+        "7c",
+        "6h"
+      ]
+    },
+    {
+      "source": "_E59537C2-2CA7-4FB2-9B22-728875057AAB__5c7b5161.png",
+      "box": [
+        581,
+        38,
+        570,
+        1004
+      ],
+      "sha256": "5c7b5161179073429b030a9bc8ea42e4c1ac6e70a87a4d2ffd7a069f494d022d",
+      "expected": [
+        "5h",
+        "Kc"
+      ]
+    },
+    {
+      "source": "_E59537C2-2CA7-4FB2-9B22-728875057AAB__5c7b5161.png",
+      "box": [
+        1149,
+        38,
+        575,
+        1014
+      ],
+      "sha256": "5c7b5161179073429b030a9bc8ea42e4c1ac6e70a87a4d2ffd7a069f494d022d",
+      "expected": [
+        "Qs",
+        "6h"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,773 @@
+{
+  "scope": "Eight existing crops from the same legacy video, visually rechecked. White-face card style differs from current colored-face calibration.",
+  "summary": {
+    "images": 8,
+    "hero_correct": 11,
+    "hero_wrong": 0,
+    "hero_unknown": 5,
+    "board_card_correct": 0,
+    "board_card_wrong": 0,
+    "board_card_unknown": 12,
+    "empty_boards_correct": 5
+  },
+  "results": [
+    {
+      "file": "15_0.png",
+      "sha256": "93dd0b8ceeb4b672341242264e7984096d0faec341c10aeddbf5577b9cec69cc",
+      "expected": {
+        "hero": [
+          "7d",
+          "3s"
+        ],
+        "board": []
+      },
+      "hero_cards": [
+        "7d",
+        "3s"
+      ],
+      "hero": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          835,
+          1485
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1024,
+          "bottom": 1127,
+          "vertical_offset": 0,
+          "top_score": 267.91229248046875,
+          "bottom_score": 320.505859375,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "7",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "7"
+            ],
+            "suit": "d",
+            "suit_result": {
+              "suit": "d",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.849,
+              "margin": 0.137,
+              "evidence": "template_margin"
+            },
+            "card_candidate": "7d",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "3",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "3"
+            ],
+            "suit": "s",
+            "suit_result": {
+              "suit": "s",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.789,
+              "margin": 0.001,
+              "evidence": "template_and_pointed_contour"
+            },
+            "card_candidate": "3s",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "board": {
+        "status": "BOARD_NOT_CONFIRMED",
+        "street": null,
+        "cards": [],
+        "candidates": [],
+        "actions_allowed": false
+      },
+      "card_style": "WHITE_FACE",
+      "labels_visually_rechecked": true
+    },
+    {
+      "file": "15_1.png",
+      "sha256": "509be7d4a2d9fd4cd6a439549a2317a4ee2cc1f632da93e8ad53148bbfb45ca1",
+      "expected": {
+        "hero": [
+          "Kd",
+          "Js"
+        ],
+        "board": [
+          "Ts",
+          "Th",
+          "Qh"
+        ]
+      },
+      "hero_cards": [
+        "Kd",
+        "Js"
+      ],
+      "hero": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          835,
+          1485
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1023,
+          "bottom": 1127,
+          "vertical_offset": 0,
+          "top_score": 261.9102783203125,
+          "bottom_score": 324.4580078125,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "K",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "K"
+            ],
+            "suit": "d",
+            "suit_result": {
+              "suit": "d",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.866,
+              "margin": 0.145,
+              "evidence": "template_margin"
+            },
+            "card_candidate": "Kd",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "J",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "J"
+            ],
+            "suit": "s",
+            "suit_result": {
+              "suit": "s",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.795,
+              "margin": 0.01,
+              "evidence": "template_and_pointed_contour"
+            },
+            "card_candidate": "Js",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "board": {
+        "status": "BOARD_NOT_CONFIRMED",
+        "street": null,
+        "cards": [],
+        "candidates": [],
+        "actions_allowed": false
+      },
+      "card_style": "WHITE_FACE",
+      "labels_visually_rechecked": true
+    },
+    {
+      "file": "48_0.png",
+      "sha256": "f5ed5c9f9017efd278d5c670edf2d52820266fc5d35b72af7b2109490023b7cb",
+      "expected": {
+        "hero": [
+          "8h",
+          "Jd"
+        ],
+        "board": []
+      },
+      "hero_cards": [
+        "8h",
+        "Jd"
+      ],
+      "hero": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          835,
+          1485
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1024,
+          "bottom": 1127,
+          "vertical_offset": 0,
+          "top_score": 267.31256103515625,
+          "bottom_score": 320.4653015136719,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "8",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "8"
+            ],
+            "suit": "h",
+            "suit_result": {
+              "suit": "h",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.897,
+              "margin": 0.317,
+              "evidence": "template_margin"
+            },
+            "card_candidate": "8h",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "J",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "J"
+            ],
+            "suit": "d",
+            "suit_result": {
+              "suit": "d",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.825,
+              "margin": 0.116,
+              "evidence": "template_margin"
+            },
+            "card_candidate": "Jd",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "board": {
+        "status": "BOARD_NOT_CONFIRMED",
+        "street": null,
+        "cards": [],
+        "candidates": [],
+        "actions_allowed": false
+      },
+      "card_style": "WHITE_FACE",
+      "labels_visually_rechecked": true
+    },
+    {
+      "file": "48_1.png",
+      "sha256": "3ab273c97f170930e7540cb83516dc311084e1cb4808bd6dc223dc7d37d34282",
+      "expected": {
+        "hero": [
+          "Kd",
+          "Js"
+        ],
+        "board": [
+          "Ts",
+          "Th",
+          "Qh",
+          "5d"
+        ]
+      },
+      "hero_cards": [
+        "Kd",
+        "Js"
+      ],
+      "hero": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          835,
+          1485
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1023,
+          "bottom": 1127,
+          "vertical_offset": 0,
+          "top_score": 265.294189453125,
+          "bottom_score": 330.140869140625,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "K",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "K"
+            ],
+            "suit": "d",
+            "suit_result": {
+              "suit": "d",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.871,
+              "margin": 0.142,
+              "evidence": "template_margin"
+            },
+            "card_candidate": "Kd",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "J",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "J"
+            ],
+            "suit": "s",
+            "suit_result": {
+              "suit": "s",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.795,
+              "margin": 0.01,
+              "evidence": "template_and_pointed_contour"
+            },
+            "card_candidate": "Js",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "board": {
+        "status": "BOARD_NOT_CONFIRMED",
+        "street": null,
+        "cards": [],
+        "candidates": [],
+        "actions_allowed": false
+      },
+      "card_style": "WHITE_FACE",
+      "labels_visually_rechecked": true
+    },
+    {
+      "file": "82_0.png",
+      "sha256": "13697590ceb46c9d6f3e21c51bfb7f53c7e01818e8ab66afc1d654baa5ae5c85",
+      "expected": {
+        "hero": [
+          "Th",
+          "4d"
+        ],
+        "board": []
+      },
+      "hero_cards": [
+        null,
+        "4d"
+      ],
+      "hero": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          835,
+          1485
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1024,
+          "bottom": 1127,
+          "vertical_offset": 0,
+          "top_score": 267.91229248046875,
+          "bottom_score": 320.9158630371094,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": null,
+            "status": "OCR_UNREADABLE",
+            "alternatives": [],
+            "suit": "h",
+            "native_fallback": {
+              "rank": null,
+              "status": "NATIVE_OCR_UNREADABLE_OR_CONFLICT",
+              "attempts": [
+                {
+                  "rank": null,
+                  "status": "NATIVE_OCR_UNREADABLE_OR_CONFLICT",
+                  "readings": [
+                    "",
+                    "10"
+                  ],
+                  "clean_wide": false,
+                  "native_ink_box": [
+                    460,
+                    1187,
+                    55,
+                    50
+                  ]
+                },
+                {
+                  "rank": null,
+                  "status": "NATIVE_OCR_UNREADABLE_OR_CONFLICT",
+                  "readings": [
+                    "",
+                    "10"
+                  ],
+                  "clean_wide": false,
+                  "native_ink_box": [
+                    460,
+                    1187,
+                    55,
+                    54
+                  ]
+                }
+              ]
+            },
+            "suit_result": {
+              "suit": "h",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.877,
+              "margin": 0.281,
+              "evidence": "template_margin"
+            },
+            "card_candidate": null,
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "4",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "4"
+            ],
+            "suit": "d",
+            "suit_result": {
+              "suit": "d",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.831,
+              "margin": 0.112,
+              "evidence": "template_margin"
+            },
+            "card_candidate": "4d",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "board": {
+        "status": "BOARD_NOT_CONFIRMED",
+        "street": null,
+        "cards": [],
+        "candidates": [],
+        "actions_allowed": false
+      },
+      "card_style": "WHITE_FACE",
+      "labels_visually_rechecked": true
+    },
+    {
+      "file": "82_1.png",
+      "sha256": "094e573413fad94e274acab6ba7fc67fe561fd540ab970bc2327fee64484c8e6",
+      "expected": {
+        "hero": [
+          "5c",
+          "2s"
+        ],
+        "board": []
+      },
+      "hero_cards": [
+        "5c",
+        "2s"
+      ],
+      "hero": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          835,
+          1485
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1023,
+          "bottom": 1127,
+          "vertical_offset": 0,
+          "top_score": 265.294189453125,
+          "bottom_score": 323.8425598144531,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "5",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "5"
+            ],
+            "suit": "c",
+            "suit_result": {
+              "suit": "c",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.761,
+              "margin": 0.089,
+              "evidence": "template_and_rounded_crown"
+            },
+            "card_candidate": "5c",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "2",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "2"
+            ],
+            "suit": "s",
+            "suit_result": {
+              "suit": "s",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.795,
+              "margin": 0.01,
+              "evidence": "template_and_pointed_contour"
+            },
+            "card_candidate": "2s",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "board": {
+        "status": "BOARD_NOT_CONFIRMED",
+        "street": null,
+        "cards": [],
+        "candidates": [],
+        "actions_allowed": false
+      },
+      "card_style": "WHITE_FACE",
+      "labels_visually_rechecked": true
+    },
+    {
+      "file": "116_0.png",
+      "sha256": "e033f331ebc2a7fc38baa1169047bd4fd4302a5f14db4329b5e53fb9086b750e",
+      "expected": {
+        "hero": [
+          "Th",
+          "4d"
+        ],
+        "board": [
+          "7h",
+          "As",
+          "Ts",
+          "Kd",
+          "Kc"
+        ]
+      },
+      "hero_cards": [
+        null,
+        null
+      ],
+      "hero": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          835,
+          1485
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1023,
+          "bottom": 1127,
+          "vertical_offset": 0,
+          "top_score": 72.37403106689453,
+          "bottom_score": 139.27670288085938,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "T",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "T"
+            ],
+            "suit": null,
+            "suit_result": {
+              "suit": null,
+              "status": "SUIT_UNREADABLE"
+            },
+            "native_suit_result": {
+              "suit": null,
+              "status": "SUIT_UNREADABLE"
+            },
+            "card_candidate": null,
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "4",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "4"
+            ],
+            "suit": null,
+            "suit_result": {
+              "suit": null,
+              "status": "SUIT_UNREADABLE"
+            },
+            "native_suit_result": {
+              "suit": null,
+              "status": "SUIT_UNREADABLE"
+            },
+            "card_candidate": null,
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "board": {
+        "status": "BOARD_NOT_CONFIRMED",
+        "street": null,
+        "cards": [],
+        "candidates": [],
+        "actions_allowed": false
+      },
+      "card_style": "WHITE_FACE",
+      "labels_visually_rechecked": true
+    },
+    {
+      "file": "116_1.png",
+      "sha256": "3b476052db7bbaeb8a7da3c5af5fd622c7fd177d1311b8516d563aefb515e473",
+      "expected": {
+        "hero": [
+          "5c",
+          "2s"
+        ],
+        "board": []
+      },
+      "hero_cards": [
+        null,
+        null
+      ],
+      "hero": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          835,
+          1485
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1023,
+          "bottom": 1126,
+          "vertical_offset": 0,
+          "top_score": 76.32168579101562,
+          "bottom_score": 135.42156982421875,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": null,
+            "status": "OCR_AMBIGUOUS",
+            "alternatives": [
+              "3",
+              "5"
+            ],
+            "suit": null,
+            "suit_result": {
+              "suit": null,
+              "status": "SUIT_UNREADABLE"
+            },
+            "native_suit_result": {
+              "suit": null,
+              "status": "SUIT_UNREADABLE"
+            },
+            "card_candidate": null,
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "2",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "2"
+            ],
+            "suit": null,
+            "suit_result": {
+              "suit": null,
+              "status": "SUIT_UNREADABLE"
+            },
+            "native_suit_result": {
+              "suit": null,
+              "status": "SUIT_UNREADABLE"
+            },
+            "card_candidate": null,
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "board": {
+        "status": "BOARD_NOT_CONFIRMED",
+        "street": null,
+        "cards": [],
+        "candidates": [],
+        "actions_allowed": false
+      },
+      "card_style": "WHITE_FACE",
+      "labels_visually_rechecked": true
+    }
+  ]
+}
