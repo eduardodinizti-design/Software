@@ -1,0 +1,103 @@
+{
+  "timestamp": "2026-11-06T14:22:01.551931+00:00",
+  "scope": "Laboratory contracts and reused development replays. Windows-native test may be skipped on Linux; inspect contracts.log.",
+  "all_jobs_passed": true,
+  "jobs": [
+    {
+      "name": "contracts",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 4.94,
+      "log": "contracts.log",
+      "error": null
+    },
+    {
+      "name": "hero_development",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 9.1,
+      "log": "hero_development.log",
+      "error": null
+    },
+    {
+      "name": "colored_boards",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 9.65,
+      "log": "colored_boards.log",
+      "error": null
+    },
+    {
+      "name": "board_transitions",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 8.61,
+      "log": "board_transitions.log",
+      "error": null
+    },
+    {
+      "name": "turn_variants",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 8.58,
+      "log": "turn_variants.log",
+      "error": null
+    },
+    {
+      "name": "hero_extended",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 27.18,
+      "log": "hero_extended.log",
+      "error": null
+    },
+    {
+      "name": "board_extended",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 19.22,
+      "log": "board_extended.log",
+      "error": null
+    },
+    {
+      "name": "colored_eight",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 5.94,
+      "log": "colored_eight.log",
+      "error": null
+    },
+    {
+      "name": "rank_template_coverage",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 6.73,
+      "log": "rank_template_coverage.log",
+      "error": null
+    },
+    {
+      "name": "protected_rank_regression",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 17.12,
+      "log": "protected_rank_regression.log",
+      "error": null
+    },
+    {
+      "name": "pipeline_integrated",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 16.45,
+      "log": "pipeline_integrated.log",
+      "error": null
+    },
+    {
+      "name": "detector_extended",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 12.49,
+      "log": "detector_extended.log",
+      "error": null
+    }
+  ]
+}

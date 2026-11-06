@@ -1,0 +1,54 @@
+{
+  "baseline_commit": "04719c19f6b33de2daa4df3c41af211728402677",
+  "all_semantics_equal": true,
+  "results": [
+    {
+      "tables": 1,
+      "before": {
+        "n": 5,
+        "median_ms": 528.17,
+        "p95_ms": 586.56
+      },
+      "after": {
+        "n": 5,
+        "median_ms": 517.72,
+        "p95_ms": 520.75
+      },
+      "before_calls": 4,
+      "after_calls": 4,
+      "semantic_equal": true
+    },
+    {
+      "tables": 3,
+      "before": {
+        "n": 5,
+        "median_ms": 1607.77,
+        "p95_ms": 1649.03
+      },
+      "after": {
+        "n": 5,
+        "median_ms": 1648.51,
+        "p95_ms": 1724.51
+      },
+      "before_calls": 14,
+      "after_calls": 14,
+      "semantic_equal": true
+    },
+    {
+      "tables": 6,
+      "before": {
+        "n": 5,
+        "median_ms": 4418.27,
+        "p95_ms": 4427.9
+      },
+      "after": {
+        "n": 5,
+        "median_ms": 4029.29,
+        "p95_ms": 4059.22
+      },
+      "before_calls": 39,
+      "after_calls": 35,
+      "semantic_equal": true
+    }
+  ]
+}

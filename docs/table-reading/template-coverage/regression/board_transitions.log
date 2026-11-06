@@ -1,0 +1,8 @@
+original correct ['Jc', '5d', '3c'] EXPERIMENTAL_BOARD
+empty abstained [] BOARD_NOT_CONFIRMED
+middle_card_hidden abstained [] BOARD_NOT_CONFIRMED
+recovered correct ['Jc', '5d', '3c'] EXPERIMENTAL_BOARD
+dim_70_percent correct ['Jc', '5d', '3c'] EXPERIMENTAL_BOARD
+blurred correct ['Jc', '5d', '3c'] EXPERIMENTAL_BOARD
+rank_obstructed abstained [] BOARD_INCOMPLETE
+recovered_again correct ['Jc', '5d', '3c'] EXPERIMENTAL_BOARD

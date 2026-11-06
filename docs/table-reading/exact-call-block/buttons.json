@@ -1,0 +1,1861 @@
+{
+  "scope": "Real reused source crops. Disjoint means source PNG excluded from all template construction; OCR comparison is regression evidence, not new human ground truth.",
+  "results": [
+    {
+      "source": "_4528A8B5-F81C-4078-A8DB-C7ADBD91C311__85ee615d.png",
+      "sha256": "85ee615d31918032b5782e88ed0e9370ec1c1f28b451457ed2f7dcba66e49c09",
+      "table_box": [
+        674,
+        100,
+        703,
+        1237
+      ],
+      "split": "training_source",
+      "same": true,
+      "outputs": {
+        "False": {
+          "result": {
+            "status": "PRESELECTION_ROW",
+            "buttons": [
+              {
+                "box": [
+                  14,
+                  1157,
+                  218,
+                  66
+                ],
+                "status": "PRESELECT",
+                "label": "F/C",
+                "action": null,
+                "amount": null,
+                "unit": null,
+                "ocr_readings": [
+                  "F/C",
+                  "F/C"
+                ],
+                "kind": "PRESELECT"
+              },
+              {
+                "box": [
+                  242,
+                  1158,
+                  219,
+                  65
+                ],
+                "status": "PRESELECT",
+                "label": "Call 1,0 BB",
+                "action": null,
+                "amount": "1.0",
+                "unit": "BB",
+                "ocr_readings": [
+                  "Call 1,0 BB",
+                  "Call 1,0 BB"
+                ],
+                "kind": "PRESELECT",
+                "label_action": "CALL"
+              },
+              {
+                "box": [
+                  471,
+                  1157,
+                  218,
+                  66
+                ],
+                "status": "NOT_IDENTIFIED",
+                "label": null,
+                "action": null,
+                "amount": null,
+                "unit": null,
+                "ocr_readings": [
+                  "Pagar",
+                  "Pagar"
+                ]
+              }
+            ],
+            "hero_turn_confirmed": false,
+            "actions_allowed": false
+          },
+          "ocr_work": {
+            "requests": 6,
+            "calls": 6,
+            "hits": 0,
+            "bytes": 514106
+          }
+        },
+        "True": {
+          "result": {
+            "status": "PRESELECTION_ROW",
+            "buttons": [
+              {
+                "box": [
+                  14,
+                  1157,
+                  218,
+                  66
+                ],
+                "status": "PRESELECT",
+                "label": "F/C",
+                "action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "evidence": "WHOLE_LABEL_TEMPLATE",
+                "template_iou": 1.0,
+                "template_margin": 1.0
+              },
+              {
+                "box": [
+                  242,
+                  1158,
+                  219,
+                  65
+                ],
+                "status": "PRESELECT",
+                "label": "Call 1,0 BB",
+                "action": null,
+                "amount": "1.0",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "evidence": "EXACT_WHOLE_LABEL_RASTER",
+                "label_action": "CALL"
+              },
+              {
+                "box": [
+                  471,
+                  1157,
+                  218,
+                  66
+                ],
+                "status": "NOT_IDENTIFIED",
+                "label": null,
+                "action": null,
+                "amount": null,
+                "unit": null,
+                "ocr_readings": [
+                  "Pagar",
+                  "Pagar"
+                ]
+              }
+            ],
+            "hero_turn_confirmed": false,
+            "actions_allowed": false
+          },
+          "ocr_work": {
+            "requests": 2,
+            "calls": 2,
+            "hits": 0,
+            "bytes": 172812
+          }
+        }
+      }
+    },
+    {
+      "source": "_3A75F7DE-7229-4137-BD19-4AF5AE363948__d560bf0f.png",
+      "sha256": "d560bf0fd1828a797fbeae678793e8412403267cb53817260bcab7464356da28",
+      "table_box": [
+        705,
+        225,
+        703,
+        1237
+      ],
+      "split": "training_source",
+      "same": true,
+      "outputs": {
+        "False": {
+          "result": {
+            "status": "PRESELECTION_ROW",
+            "buttons": [
+              {
+                "box": [
+                  14,
+                  1157,
+                  218,
+                  66
+                ],
+                "status": "PRESELECT",
+                "label": "F/C",
+                "action": null,
+                "amount": null,
+                "unit": null,
+                "ocr_readings": [
+                  "F/C",
+                  "F/C"
+                ],
+                "kind": "PRESELECT"
+              },
+              {
+                "box": [
+                  242,
+                  1158,
+                  219,
+                  65
+                ],
+                "status": "PRESELECT",
+                "label": "Check",
+                "action": null,
+                "amount": null,
+                "unit": null,
+                "ocr_readings": [
+                  "Check",
+                  "Check"
+                ],
+                "kind": "PRESELECT",
+                "label_action": "CHECK"
+              },
+              {
+                "box": [
+                  471,
+                  1157,
+                  218,
+                  66
+                ],
+                "status": "NOT_IDENTIFIED",
+                "label": null,
+                "action": null,
+                "amount": null,
+                "unit": null,
+                "ocr_readings": [
+                  "Pagar",
+                  "Pagar"
+                ]
+              }
+            ],
+            "hero_turn_confirmed": false,
+            "actions_allowed": false
+          },
+          "ocr_work": {
+            "requests": 6,
+            "calls": 6,
+            "hits": 0,
+            "bytes": 514094
+          }
+        },
+        "True": {
+          "result": {
+            "status": "PRESELECTION_ROW",
+            "buttons": [
+              {
+                "box": [
+                  14,
+                  1157,
+                  218,
+                  66
+                ],
+                "status": "PRESELECT",
+                "label": "F/C",
+                "action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "evidence": "WHOLE_LABEL_TEMPLATE",
+                "template_iou": 1.0,
+                "template_margin": 1.0
+              },
+              {
+                "box": [
+                  242,
+                  1158,
+                  219,
+                  65
+                ],
+                "status": "PRESELECT",
+                "label": "Check",
+                "action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "evidence": "WHOLE_LABEL_TEMPLATE",
+                "template_iou": 1.0,
+                "template_margin": 1.0,
+                "label_action": "CHECK"
+              },
+              {
+                "box": [
+                  471,
+                  1157,
+                  218,
+                  66
+                ],
+                "status": "NOT_IDENTIFIED",
+                "label": null,
+                "action": null,
+                "amount": null,
+                "unit": null,
+                "ocr_readings": [
+                  "Pagar",
+                  "Pagar"
+                ]
+              }
+            ],
+            "hero_turn_confirmed": false,
+            "actions_allowed": false
+          },
+          "ocr_work": {
+            "requests": 2,
+            "calls": 2,
+            "hits": 0,
+            "bytes": 172812
+          }
+        }
+      }
+    },
+    {
+      "source": "_58CB106F-09EA-4853-B7D9-98FD582FAD0E__581ae999.png",
+      "sha256": "581ae999225a9e7e442a7ffffab745f429b7f8b37e1104052329014afe9afbee",
+      "table_box": [
+        710,
+        224,
+        703,
+        1237
+      ],
+      "split": "source_disjoint",
+      "same": true,
+      "outputs": {
+        "False": {
+          "result": {
+            "status": "PRESELECTION_ROW",
+            "buttons": [
+              {
+                "box": [
+                  14,
+                  1157,
+                  218,
+                  66
+                ],
+                "status": "PRESELECT",
+                "label": "F/C",
+                "action": null,
+                "amount": null,
+                "unit": null,
+                "ocr_readings": [
+                  "F/C",
+                  "F/C"
+                ],
+                "kind": "PRESELECT"
+              },
+              {
+                "box": [
+                  242,
+                  1158,
+                  219,
+                  65
+                ],
+                "status": "PRESELECT",
+                "label": "Call 1,0 BB",
+                "action": null,
+                "amount": "1.0",
+                "unit": "BB",
+                "ocr_readings": [
+                  "Call 1,0 BB",
+                  "Call 1,0 BB"
+                ],
+                "kind": "PRESELECT",
+                "label_action": "CALL"
+              },
+              {
+                "box": [
+                  471,
+                  1157,
+                  218,
+                  66
+                ],
+                "status": "NOT_IDENTIFIED",
+                "label": null,
+                "action": null,
+                "amount": null,
+                "unit": null,
+                "ocr_readings": [
+                  "Pagar",
+                  "Pagar"
+                ]
+              }
+            ],
+            "hero_turn_confirmed": false,
+            "actions_allowed": false
+          },
+          "ocr_work": {
+            "requests": 6,
+            "calls": 6,
+            "hits": 0,
+            "bytes": 514106
+          }
+        },
+        "True": {
+          "result": {
+            "status": "PRESELECTION_ROW",
+            "buttons": [
+              {
+                "box": [
+                  14,
+                  1157,
+                  218,
+                  66
+                ],
+                "status": "PRESELECT",
+                "label": "F/C",
+                "action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "evidence": "WHOLE_LABEL_TEMPLATE",
+                "template_iou": 0.9961,
+                "template_margin": 0.9961
+              },
+              {
+                "box": [
+                  242,
+                  1158,
+                  219,
+                  65
+                ],
+                "status": "PRESELECT",
+                "label": "Call 1,0 BB",
+                "action": null,
+                "amount": "1.0",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "evidence": "EXACT_WHOLE_LABEL_RASTER",
+                "label_action": "CALL"
+              },
+              {
+                "box": [
+                  471,
+                  1157,
+                  218,
+                  66
+                ],
+                "status": "NOT_IDENTIFIED",
+                "label": null,
+                "action": null,
+                "amount": null,
+                "unit": null,
+                "ocr_readings": [
+                  "Pagar",
+                  "Pagar"
+                ]
+              }
+            ],
+            "hero_turn_confirmed": false,
+            "actions_allowed": false
+          },
+          "ocr_work": {
+            "requests": 2,
+            "calls": 2,
+            "hits": 0,
+            "bytes": 172812
+          }
+        }
+      }
+    },
+    {
+      "source": "_76D7A22C-BC3A-435D-BB63-A4AC9AE0A1A0__78803c80.png",
+      "sha256": "78803c8043173a4558841d5932316cf56dc3beb58f08084ecb7088a8ee930a04",
+      "table_box": [
+        702,
+        266,
+        703,
+        1237
+      ],
+      "split": "source_disjoint",
+      "same": true,
+      "outputs": {
+        "False": {
+          "result": {
+            "status": "PRESELECTION_ROW",
+            "buttons": [
+              {
+                "box": [
+                  14,
+                  1157,
+                  218,
+                  66
+                ],
+                "status": "PRESELECT",
+                "label": "F/C",
+                "action": null,
+                "amount": null,
+                "unit": null,
+                "ocr_readings": [
+                  "F/C",
+                  "F/C"
+                ],
+                "kind": "PRESELECT"
+              },
+              {
+                "box": [
+                  242,
+                  1158,
+                  219,
+                  65
+                ],
+                "status": "PRESELECT",
+                "label": "Call 1,0 BB",
+                "action": null,
+                "amount": "1.0",
+                "unit": "BB",
+                "ocr_readings": [
+                  "Call 1,0 BB",
+                  "Call 1,0 BB"
+                ],
+                "kind": "PRESELECT",
+                "label_action": "CALL"
+              },
+              {
+                "box": [
+                  471,
+                  1157,
+                  218,
+                  66
+                ],
+                "status": "NOT_IDENTIFIED",
+                "label": null,
+                "action": null,
+                "amount": null,
+                "unit": null,
+                "ocr_readings": [
+                  "Pagar",
+                  "Pagar"
+                ]
+              }
+            ],
+            "hero_turn_confirmed": false,
+            "actions_allowed": false
+          },
+          "ocr_work": {
+            "requests": 6,
+            "calls": 6,
+            "hits": 0,
+            "bytes": 514106
+          }
+        },
+        "True": {
+          "result": {
+            "status": "PRESELECTION_ROW",
+            "buttons": [
+              {
+                "box": [
+                  14,
+                  1157,
+                  218,
+                  66
+                ],
+                "status": "PRESELECT",
+                "label": "F/C",
+                "action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "evidence": "WHOLE_LABEL_TEMPLATE",
+                "template_iou": 1.0,
+                "template_margin": 1.0
+              },
+              {
+                "box": [
+                  242,
+                  1158,
+                  219,
+                  65
+                ],
+                "status": "PRESELECT",
+                "label": "Call 1,0 BB",
+                "action": null,
+                "amount": "1.0",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "evidence": "EXACT_WHOLE_LABEL_RASTER",
+                "label_action": "CALL"
+              },
+              {
+                "box": [
+                  471,
+                  1157,
+                  218,
+                  66
+                ],
+                "status": "NOT_IDENTIFIED",
+                "label": null,
+                "action": null,
+                "amount": null,
+                "unit": null,
+                "ocr_readings": [
+                  "Pagar",
+                  "Pagar"
+                ]
+              }
+            ],
+            "hero_turn_confirmed": false,
+            "actions_allowed": false
+          },
+          "ocr_work": {
+            "requests": 2,
+            "calls": 2,
+            "hits": 0,
+            "bytes": 172812
+          }
+        }
+      }
+    },
+    {
+      "source": "_7C62D925-1CC9-4B7C-A92D-0E3379E07494__3d8f87c2.png",
+      "sha256": "3d8f87c2389a8ccaddb75a66e7a61d6b5a4af1250abee0d041c07c270cad8064",
+      "table_box": [
+        689,
+        144,
+        703,
+        1237
+      ],
+      "split": "source_disjoint",
+      "same": true,
+      "outputs": {
+        "False": {
+          "result": {
+            "status": "PRESELECTION_ROW",
+            "buttons": [
+              {
+                "box": [
+                  14,
+                  1157,
+                  218,
+                  66
+                ],
+                "status": "PRESELECT",
+                "label": "F/C",
+                "action": null,
+                "amount": null,
+                "unit": null,
+                "ocr_readings": [
+                  "F/C",
+                  "F/C"
+                ],
+                "kind": "PRESELECT"
+              },
+              {
+                "box": [
+                  242,
+                  1158,
+                  219,
+                  65
+                ],
+                "status": "PRESELECT",
+                "label": "Call 1,6 BB",
+                "action": null,
+                "amount": "1.6",
+                "unit": "BB",
+                "ocr_readings": [
+                  "Call 1,6 BB",
+                  "Call 1,6 BB"
+                ],
+                "kind": "PRESELECT",
+                "label_action": "CALL"
+              },
+              {
+                "box": [
+                  471,
+                  1157,
+                  218,
+                  66
+                ],
+                "status": "NOT_IDENTIFIED",
+                "label": null,
+                "action": null,
+                "amount": null,
+                "unit": null,
+                "ocr_readings": [
+                  "Pagar",
+                  "Pagar"
+                ]
+              }
+            ],
+            "hero_turn_confirmed": false,
+            "actions_allowed": false
+          },
+          "ocr_work": {
+            "requests": 6,
+            "calls": 6,
+            "hits": 0,
+            "bytes": 514106
+          }
+        },
+        "True": {
+          "result": {
+            "status": "PRESELECTION_ROW",
+            "buttons": [
+              {
+                "box": [
+                  14,
+                  1157,
+                  218,
+                  66
+                ],
+                "status": "PRESELECT",
+                "label": "F/C",
+                "action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "evidence": "WHOLE_LABEL_TEMPLATE",
+                "template_iou": 1.0,
+                "template_margin": 1.0
+              },
+              {
+                "box": [
+                  242,
+                  1158,
+                  219,
+                  65
+                ],
+                "status": "PRESELECT",
+                "label": "Call 1,6 BB",
+                "action": null,
+                "amount": "1.6",
+                "unit": "BB",
+                "ocr_readings": [
+                  "Call 1,6 BB",
+                  "Call 1,6 BB"
+                ],
+                "kind": "PRESELECT",
+                "label_action": "CALL"
+              },
+              {
+                "box": [
+                  471,
+                  1157,
+                  218,
+                  66
+                ],
+                "status": "NOT_IDENTIFIED",
+                "label": null,
+                "action": null,
+                "amount": null,
+                "unit": null,
+                "ocr_readings": [
+                  "Pagar",
+                  "Pagar"
+                ]
+              }
+            ],
+            "hero_turn_confirmed": false,
+            "actions_allowed": false
+          },
+          "ocr_work": {
+            "requests": 4,
+            "calls": 4,
+            "hits": 0,
+            "bytes": 341298
+          }
+        }
+      }
+    },
+    {
+      "source": "_BF8957B2-BF19-43B0-AADF-8D95779FC005__f3c8ecd9.png",
+      "sha256": "f3c8ecd99f5145cba406db22564ccc5f8aaf36a82dd73c2b576684b5073f4f6e",
+      "table_box": [
+        709,
+        225,
+        699,
+        1244
+      ],
+      "split": "source_disjoint",
+      "same": true,
+      "outputs": {
+        "False": {
+          "result": {
+            "status": "NO_BUTTON_ROW",
+            "buttons": [],
+            "hero_turn_confirmed": false,
+            "actions_allowed": false
+          },
+          "ocr_work": {
+            "requests": 0,
+            "calls": 0,
+            "hits": 0,
+            "bytes": 0
+          }
+        },
+        "True": {
+          "result": {
+            "status": "NO_BUTTON_ROW",
+            "buttons": [],
+            "hero_turn_confirmed": false,
+            "actions_allowed": false
+          },
+          "ocr_work": {
+            "requests": 0,
+            "calls": 0,
+            "hits": 0,
+            "bytes": 0
+          }
+        }
+      }
+    },
+    {
+      "source": "_E59537C2-2CA7-4FB2-9B22-728875057AAB__5c7b5161.png",
+      "sha256": "5c7b5161179073429b030a9bc8ea42e4c1ac6e70a87a4d2ffd7a069f494d022d",
+      "table_box": [
+        581,
+        38,
+        570,
+        1004
+      ],
+      "split": "training_source",
+      "same": true,
+      "outputs": {
+        "False": {
+          "result": {
+            "status": "EXPERIMENTAL_BUTTON_ROW",
+            "buttons": [
+              {
+                "box": [
+                  11,
+                  940,
+                  178,
+                  53
+                ],
+                "status": "EXPERIMENTAL_LABEL",
+                "label": "Fold",
+                "action": "FOLD",
+                "amount": null,
+                "unit": null,
+                "ocr_readings": [
+                  "Fold",
+                  "Fold"
+                ],
+                "kind": "ACTION_LABEL"
+              },
+              {
+                "box": [
+                  197,
+                  940,
+                  177,
+                  53
+                ],
+                "status": "EXPERIMENTAL_LABEL",
+                "label": "Call 1,0 BB",
+                "action": "CALL",
+                "amount": "1.0",
+                "unit": "BB",
+                "ocr_readings": [
+                  "Call 1,0 BB",
+                  "Call 1,0 BB"
+                ],
+                "kind": "ACTION_LABEL"
+              },
+              {
+                "box": [
+                  382,
+                  940,
+                  177,
+                  53
+                ],
+                "status": "EXPERIMENTAL_LABEL",
+                "label": "Raise",
+                "action": "RAISE",
+                "amount": null,
+                "unit": null,
+                "ocr_readings": [
+                  "Raise",
+                  "Raise"
+                ],
+                "kind": "ACTION_LABEL"
+              }
+            ],
+            "hero_turn_confirmed": false,
+            "actions_allowed": false
+          },
+          "ocr_work": {
+            "requests": 6,
+            "calls": 6,
+            "hits": 0,
+            "bytes": 348382
+          }
+        },
+        "True": {
+          "result": {
+            "status": "EXPERIMENTAL_BUTTON_ROW",
+            "buttons": [
+              {
+                "box": [
+                  11,
+                  940,
+                  178,
+                  53
+                ],
+                "status": "EXPERIMENTAL_LABEL",
+                "label": "Fold",
+                "action": "FOLD",
+                "amount": null,
+                "unit": null,
+                "kind": "ACTION_LABEL",
+                "evidence": "WHOLE_LABEL_TEMPLATE",
+                "template_iou": 1.0,
+                "template_margin": 1.0
+              },
+              {
+                "box": [
+                  197,
+                  940,
+                  177,
+                  53
+                ],
+                "status": "EXPERIMENTAL_LABEL",
+                "label": "Call 1,0 BB",
+                "action": "CALL",
+                "amount": "1.0",
+                "unit": "BB",
+                "ocr_readings": [
+                  "Call 1,0 BB",
+                  "Call 1,0 BB"
+                ],
+                "kind": "ACTION_LABEL"
+              },
+              {
+                "box": [
+                  382,
+                  940,
+                  177,
+                  53
+                ],
+                "status": "EXPERIMENTAL_LABEL",
+                "label": "Raise",
+                "action": "RAISE",
+                "amount": null,
+                "unit": null,
+                "kind": "ACTION_LABEL",
+                "evidence": "WHOLE_LABEL_TEMPLATE",
+                "template_iou": 1.0,
+                "template_margin": 1.0
+              }
+            ],
+            "hero_turn_confirmed": false,
+            "actions_allowed": false
+          },
+          "ocr_work": {
+            "requests": 2,
+            "calls": 2,
+            "hits": 0,
+            "bytes": 115890
+          }
+        }
+      }
+    },
+    {
+      "source": "_E59537C2-2CA7-4FB2-9B22-728875057AAB__5c7b5161.png",
+      "sha256": "5c7b5161179073429b030a9bc8ea42e4c1ac6e70a87a4d2ffd7a069f494d022d",
+      "table_box": [
+        1149,
+        38,
+        575,
+        1014
+      ],
+      "split": "training_source",
+      "same": true,
+      "outputs": {
+        "False": {
+          "result": {
+            "status": "NO_BUTTON_ROW",
+            "buttons": [],
+            "hero_turn_confirmed": false,
+            "actions_allowed": false
+          },
+          "ocr_work": {
+            "requests": 0,
+            "calls": 0,
+            "hits": 0,
+            "bytes": 0
+          }
+        },
+        "True": {
+          "result": {
+            "status": "NO_BUTTON_ROW",
+            "buttons": [],
+            "hero_turn_confirmed": false,
+            "actions_allowed": false
+          },
+          "ocr_work": {
+            "requests": 0,
+            "calls": 0,
+            "hits": 0,
+            "bytes": 0
+          }
+        }
+      }
+    },
+    {
+      "source": "_2DDE1911-9262-45F2-9D20-E90899BC739A__111d0a2e.png",
+      "sha256": "111d0a2ee537dbd2a6b453d681e8ee6b7ad92520d262f276c0e6a9d029f0fe31",
+      "table_box": [
+        716,
+        213,
+        703,
+        1237
+      ],
+      "split": "source_disjoint",
+      "same": true,
+      "outputs": {
+        "False": {
+          "result": {
+            "status": "PRESELECTION_ROW",
+            "buttons": [
+              {
+                "box": [
+                  14,
+                  1157,
+                  218,
+                  66
+                ],
+                "status": "PRESELECT",
+                "label": "F/C",
+                "action": null,
+                "amount": null,
+                "unit": null,
+                "ocr_readings": [
+                  "F/C",
+                  "F/C"
+                ],
+                "kind": "PRESELECT"
+              },
+              {
+                "box": [
+                  242,
+                  1158,
+                  219,
+                  65
+                ],
+                "status": "PRESELECT",
+                "label": "Check",
+                "action": null,
+                "amount": null,
+                "unit": null,
+                "ocr_readings": [
+                  "Check",
+                  "Check"
+                ],
+                "kind": "PRESELECT",
+                "label_action": "CHECK"
+              },
+              {
+                "box": [
+                  471,
+                  1157,
+                  218,
+                  66
+                ],
+                "status": "NOT_IDENTIFIED",
+                "label": null,
+                "action": null,
+                "amount": null,
+                "unit": null,
+                "ocr_readings": [
+                  "Pagar",
+                  "Pagar"
+                ]
+              }
+            ],
+            "hero_turn_confirmed": false,
+            "actions_allowed": false
+          },
+          "ocr_work": {
+            "requests": 6,
+            "calls": 6,
+            "hits": 0,
+            "bytes": 514094
+          }
+        },
+        "True": {
+          "result": {
+            "status": "PRESELECTION_ROW",
+            "buttons": [
+              {
+                "box": [
+                  14,
+                  1157,
+                  218,
+                  66
+                ],
+                "status": "PRESELECT",
+                "label": "F/C",
+                "action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "evidence": "WHOLE_LABEL_TEMPLATE",
+                "template_iou": 1.0,
+                "template_margin": 1.0
+              },
+              {
+                "box": [
+                  242,
+                  1158,
+                  219,
+                  65
+                ],
+                "status": "PRESELECT",
+                "label": "Check",
+                "action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "evidence": "WHOLE_LABEL_TEMPLATE",
+                "template_iou": 1.0,
+                "template_margin": 1.0,
+                "label_action": "CHECK"
+              },
+              {
+                "box": [
+                  471,
+                  1157,
+                  218,
+                  66
+                ],
+                "status": "NOT_IDENTIFIED",
+                "label": null,
+                "action": null,
+                "amount": null,
+                "unit": null,
+                "ocr_readings": [
+                  "Pagar",
+                  "Pagar"
+                ]
+              }
+            ],
+            "hero_turn_confirmed": false,
+            "actions_allowed": false
+          },
+          "ocr_work": {
+            "requests": 2,
+            "calls": 2,
+            "hits": 0,
+            "bytes": 172812
+          }
+        }
+      }
+    },
+    {
+      "source": "_4342624F-9E50-4B21-ABAF-2D1DD4C9AFB7__886a1f03.png",
+      "sha256": "886a1f030b752007fd036f2d01f9ae9e15b9c49c7c8b7d655e895af06aa4b697",
+      "table_box": [
+        712,
+        182,
+        702,
+        1271
+      ],
+      "split": "source_disjoint",
+      "same": true,
+      "outputs": {
+        "False": {
+          "result": {
+            "status": "NO_BUTTON_ROW",
+            "buttons": [],
+            "hero_turn_confirmed": false,
+            "actions_allowed": false
+          },
+          "ocr_work": {
+            "requests": 0,
+            "calls": 0,
+            "hits": 0,
+            "bytes": 0
+          }
+        },
+        "True": {
+          "result": {
+            "status": "NO_BUTTON_ROW",
+            "buttons": [],
+            "hero_turn_confirmed": false,
+            "actions_allowed": false
+          },
+          "ocr_work": {
+            "requests": 0,
+            "calls": 0,
+            "hits": 0,
+            "bytes": 0
+          }
+        }
+      }
+    },
+    {
+      "source": "_9134EF06-78F3-443A-9653-C19751D93C32__720a6eca.png",
+      "sha256": "720a6eca56f82570d6ea373a544492ec99f744646119c4ce245c2b814d8e8ab1",
+      "table_box": [
+        698,
+        176,
+        702,
+        1271
+      ],
+      "split": "source_disjoint",
+      "same": true,
+      "outputs": {
+        "False": {
+          "result": {
+            "status": "NO_BUTTON_ROW",
+            "buttons": [],
+            "hero_turn_confirmed": false,
+            "actions_allowed": false
+          },
+          "ocr_work": {
+            "requests": 0,
+            "calls": 0,
+            "hits": 0,
+            "bytes": 0
+          }
+        },
+        "True": {
+          "result": {
+            "status": "NO_BUTTON_ROW",
+            "buttons": [],
+            "hero_turn_confirmed": false,
+            "actions_allowed": false
+          },
+          "ocr_work": {
+            "requests": 0,
+            "calls": 0,
+            "hits": 0,
+            "bytes": 0
+          }
+        }
+      }
+    },
+    {
+      "source": "image_2da5ef3e.png",
+      "sha256": "2da5ef3ef8c622de5e16c2dc620ec0e9e86aff31f46bf334f7c2cb0f7e82fc18",
+      "table_box": [
+        755,
+        31,
+        376,
+        663
+      ],
+      "split": "source_disjoint",
+      "same": true,
+      "outputs": {
+        "False": {
+          "result": {
+            "status": "NO_BUTTON_ROW",
+            "buttons": [],
+            "hero_turn_confirmed": false,
+            "actions_allowed": false
+          },
+          "ocr_work": {
+            "requests": 0,
+            "calls": 0,
+            "hits": 0,
+            "bytes": 0
+          }
+        },
+        "True": {
+          "result": {
+            "status": "NO_BUTTON_ROW",
+            "buttons": [],
+            "hero_turn_confirmed": false,
+            "actions_allowed": false
+          },
+          "ocr_work": {
+            "requests": 0,
+            "calls": 0,
+            "hits": 0,
+            "bytes": 0
+          }
+        }
+      }
+    },
+    {
+      "source": "_72432B1C-F9F9-454A-A5D8-7DBE7A0E326A__aff0428c.png",
+      "sha256": "aff0428c7dd42730eb2978c55698eb089cdf734a858ad1e30c9c8a22b9972075",
+      "table_box": [
+        687,
+        46,
+        686,
+        1237
+      ],
+      "split": "training_source",
+      "same": true,
+      "outputs": {
+        "False": {
+          "result": {
+            "status": "EXPERIMENTAL_BUTTON_ROW",
+            "buttons": [
+              {
+                "box": [
+                  7,
+                  1158,
+                  218,
+                  65
+                ],
+                "status": "EXPERIMENTAL_LABEL",
+                "label": "Fold",
+                "action": "FOLD",
+                "amount": null,
+                "unit": null,
+                "ocr_readings": [
+                  "Fold",
+                  "Fold"
+                ],
+                "kind": "ACTION_LABEL"
+              },
+              {
+                "box": [
+                  235,
+                  1158,
+                  219,
+                  65
+                ],
+                "status": "EXPERIMENTAL_LABEL",
+                "label": "Call 2,0 BB",
+                "action": "CALL",
+                "amount": "2.0",
+                "unit": "BB",
+                "ocr_readings": [
+                  "Call 2,0 BB",
+                  "Call 2,0 BB"
+                ],
+                "kind": "ACTION_LABEL"
+              },
+              {
+                "box": [
+                  464,
+                  1158,
+                  218,
+                  65
+                ],
+                "status": "EXPERIMENTAL_LABEL",
+                "label": "Raise",
+                "action": "RAISE",
+                "amount": null,
+                "unit": null,
+                "ocr_readings": [
+                  "Raise",
+                  "Raise"
+                ],
+                "kind": "ACTION_LABEL"
+              }
+            ],
+            "hero_turn_confirmed": false,
+            "actions_allowed": false
+          },
+          "ocr_work": {
+            "requests": 6,
+            "calls": 6,
+            "hits": 0,
+            "bytes": 507196
+          }
+        },
+        "True": {
+          "result": {
+            "status": "EXPERIMENTAL_BUTTON_ROW",
+            "buttons": [
+              {
+                "box": [
+                  7,
+                  1158,
+                  218,
+                  65
+                ],
+                "status": "EXPERIMENTAL_LABEL",
+                "label": "Fold",
+                "action": "FOLD",
+                "amount": null,
+                "unit": null,
+                "kind": "ACTION_LABEL",
+                "evidence": "WHOLE_LABEL_TEMPLATE",
+                "template_iou": 1.0,
+                "template_margin": 1.0
+              },
+              {
+                "box": [
+                  235,
+                  1158,
+                  219,
+                  65
+                ],
+                "status": "EXPERIMENTAL_LABEL",
+                "label": "Call 2,0 BB",
+                "action": "CALL",
+                "amount": "2.0",
+                "unit": "BB",
+                "ocr_readings": [
+                  "Call 2,0 BB",
+                  "Call 2,0 BB"
+                ],
+                "kind": "ACTION_LABEL"
+              },
+              {
+                "box": [
+                  464,
+                  1158,
+                  218,
+                  65
+                ],
+                "status": "EXPERIMENTAL_LABEL",
+                "label": "Raise",
+                "action": "RAISE",
+                "amount": null,
+                "unit": null,
+                "kind": "ACTION_LABEL",
+                "evidence": "WHOLE_LABEL_TEMPLATE",
+                "template_iou": 1.0,
+                "template_margin": 1.0
+              }
+            ],
+            "hero_turn_confirmed": false,
+            "actions_allowed": false
+          },
+          "ocr_work": {
+            "requests": 2,
+            "calls": 2,
+            "hits": 0,
+            "bytes": 168486
+          }
+        }
+      }
+    },
+    {
+      "source": "_8C143E80-F85C-4DE6-ADCD-0641771AE2E6__2a4e7ea0.png",
+      "sha256": "2a4e7ea0153b94c241a76bd73f2f88b147504ca779cf0e99f48686b54a7d1d49",
+      "table_box": [
+        703,
+        54,
+        686,
+        1237
+      ],
+      "split": "source_disjoint",
+      "same": true,
+      "outputs": {
+        "False": {
+          "result": {
+            "status": "EXPERIMENTAL_BUTTON_ROW",
+            "buttons": [
+              {
+                "box": [
+                  7,
+                  1158,
+                  218,
+                  65
+                ],
+                "status": "EXPERIMENTAL_LABEL",
+                "label": "Fold",
+                "action": "FOLD",
+                "amount": null,
+                "unit": null,
+                "ocr_readings": [
+                  "Fold",
+                  "Fold"
+                ],
+                "kind": "ACTION_LABEL"
+              },
+              {
+                "box": [
+                  235,
+                  1158,
+                  219,
+                  65
+                ],
+                "status": "EXPERIMENTAL_LABEL",
+                "label": "Check",
+                "action": "CHECK",
+                "amount": null,
+                "unit": null,
+                "ocr_readings": [
+                  "Check",
+                  "Check"
+                ],
+                "kind": "ACTION_LABEL"
+              },
+              {
+                "box": [
+                  464,
+                  1158,
+                  218,
+                  65
+                ],
+                "status": "EXPERIMENTAL_LABEL",
+                "label": "Bet",
+                "action": "BET",
+                "amount": null,
+                "unit": null,
+                "ocr_readings": [
+                  "Bet",
+                  "Bet"
+                ],
+                "kind": "ACTION_LABEL"
+              }
+            ],
+            "hero_turn_confirmed": false,
+            "actions_allowed": false
+          },
+          "ocr_work": {
+            "requests": 6,
+            "calls": 6,
+            "hits": 0,
+            "bytes": 507180
+          }
+        },
+        "True": {
+          "result": {
+            "status": "EXPERIMENTAL_BUTTON_ROW",
+            "buttons": [
+              {
+                "box": [
+                  7,
+                  1158,
+                  218,
+                  65
+                ],
+                "status": "EXPERIMENTAL_LABEL",
+                "label": "Fold",
+                "action": "FOLD",
+                "amount": null,
+                "unit": null,
+                "kind": "ACTION_LABEL",
+                "evidence": "WHOLE_LABEL_TEMPLATE",
+                "template_iou": 0.9962,
+                "template_margin": 0.9962
+              },
+              {
+                "box": [
+                  235,
+                  1158,
+                  219,
+                  65
+                ],
+                "status": "EXPERIMENTAL_LABEL",
+                "label": "Check",
+                "action": "CHECK",
+                "amount": null,
+                "unit": null,
+                "ocr_readings": [
+                  "Check",
+                  "Check"
+                ],
+                "kind": "ACTION_LABEL"
+              },
+              {
+                "box": [
+                  464,
+                  1158,
+                  218,
+                  65
+                ],
+                "status": "EXPERIMENTAL_LABEL",
+                "label": "Bet",
+                "action": "BET",
+                "amount": null,
+                "unit": null,
+                "ocr_readings": [
+                  "Bet",
+                  "Bet"
+                ],
+                "kind": "ACTION_LABEL"
+              }
+            ],
+            "hero_turn_confirmed": false,
+            "actions_allowed": false
+          },
+          "ocr_work": {
+            "requests": 4,
+            "calls": 4,
+            "hits": 0,
+            "bytes": 337826
+          }
+        }
+      }
+    },
+    {
+      "source": "_ABCB3886-A120-479F-9F0E-43096FB2D791__aaed78f0.png",
+      "sha256": "aaed78f09eaddb12ebcc48922a32f5d0693c639647b04974032bc1b79e0639c6",
+      "table_box": [
+        611,
+        104,
+        686,
+        1237
+      ],
+      "split": "source_disjoint",
+      "same": true,
+      "outputs": {
+        "False": {
+          "result": {
+            "status": "EXPERIMENTAL_BUTTON_ROW",
+            "buttons": [
+              {
+                "box": [
+                  7,
+                  1158,
+                  218,
+                  65
+                ],
+                "status": "EXPERIMENTAL_LABEL",
+                "label": "Fold",
+                "action": "FOLD",
+                "amount": null,
+                "unit": null,
+                "ocr_readings": [
+                  "Fold",
+                  "Fold"
+                ],
+                "kind": "ACTION_LABEL"
+              },
+              {
+                "box": [
+                  235,
+                  1158,
+                  219,
+                  65
+                ],
+                "status": "EXPERIMENTAL_LABEL",
+                "label": "Call 1,6 BB",
+                "action": "CALL",
+                "amount": "1.6",
+                "unit": "BB",
+                "ocr_readings": [
+                  "Call 1,6 BB",
+                  "Call 1,6 BB"
+                ],
+                "kind": "ACTION_LABEL"
+              },
+              {
+                "box": [
+                  464,
+                  1158,
+                  218,
+                  65
+                ],
+                "status": "EXPERIMENTAL_LABEL",
+                "label": "Raise",
+                "action": "RAISE",
+                "amount": null,
+                "unit": null,
+                "ocr_readings": [
+                  "Raise",
+                  "Raise"
+                ],
+                "kind": "ACTION_LABEL"
+              }
+            ],
+            "hero_turn_confirmed": false,
+            "actions_allowed": false
+          },
+          "ocr_work": {
+            "requests": 6,
+            "calls": 6,
+            "hits": 0,
+            "bytes": 507196
+          }
+        },
+        "True": {
+          "result": {
+            "status": "EXPERIMENTAL_BUTTON_ROW",
+            "buttons": [
+              {
+                "box": [
+                  7,
+                  1158,
+                  218,
+                  65
+                ],
+                "status": "EXPERIMENTAL_LABEL",
+                "label": "Fold",
+                "action": "FOLD",
+                "amount": null,
+                "unit": null,
+                "kind": "ACTION_LABEL",
+                "evidence": "WHOLE_LABEL_TEMPLATE",
+                "template_iou": 0.9962,
+                "template_margin": 0.9962
+              },
+              {
+                "box": [
+                  235,
+                  1158,
+                  219,
+                  65
+                ],
+                "status": "EXPERIMENTAL_LABEL",
+                "label": "Call 1,6 BB",
+                "action": "CALL",
+                "amount": "1.6",
+                "unit": "BB",
+                "ocr_readings": [
+                  "Call 1,6 BB",
+                  "Call 1,6 BB"
+                ],
+                "kind": "ACTION_LABEL"
+              },
+              {
+                "box": [
+                  464,
+                  1158,
+                  218,
+                  65
+                ],
+                "status": "EXPERIMENTAL_LABEL",
+                "label": "Raise",
+                "action": "RAISE",
+                "amount": null,
+                "unit": null,
+                "kind": "ACTION_LABEL",
+                "evidence": "WHOLE_LABEL_TEMPLATE",
+                "template_iou": 0.9827,
+                "template_margin": 0.9827
+              }
+            ],
+            "hero_turn_confirmed": false,
+            "actions_allowed": false
+          },
+          "ocr_work": {
+            "requests": 2,
+            "calls": 2,
+            "hits": 0,
+            "bytes": 168486
+          }
+        }
+      }
+    },
+    {
+      "source": "_C998F597-5786-40A5-A73B-E450730D847E__475524bf.png",
+      "sha256": "475524bf61a48c2662d1b27b2efa2fa1b40af9e5972b1ed68b0c4999a0a0d6aa",
+      "table_box": [
+        724,
+        183,
+        703,
+        1237
+      ],
+      "split": "source_disjoint",
+      "same": true,
+      "outputs": {
+        "False": {
+          "result": {
+            "status": "EXPERIMENTAL_BUTTON_ROW",
+            "buttons": [
+              {
+                "box": [
+                  14,
+                  1158,
+                  218,
+                  65
+                ],
+                "status": "EXPERIMENTAL_LABEL",
+                "label": "Fold",
+                "action": "FOLD",
+                "amount": null,
+                "unit": null,
+                "ocr_readings": [
+                  "Fold",
+                  "Fold"
+                ],
+                "kind": "ACTION_LABEL"
+              },
+              {
+                "box": [
+                  242,
+                  1158,
+                  219,
+                  65
+                ],
+                "status": "EXPERIMENTAL_LABEL",
+                "label": "Call 13,5 BB",
+                "action": "CALL",
+                "amount": "13.5",
+                "unit": "BB",
+                "ocr_readings": [
+                  "Call 13,5 BB",
+                  "Call 13,5 BB"
+                ],
+                "kind": "ACTION_LABEL"
+              },
+              {
+                "box": [
+                  471,
+                  1158,
+                  218,
+                  65
+                ],
+                "status": "EXPERIMENTAL_LABEL",
+                "label": "Raise",
+                "action": "RAISE",
+                "amount": null,
+                "unit": null,
+                "ocr_readings": [
+                  "Raise",
+                  "Raise"
+                ],
+                "kind": "ACTION_LABEL"
+              }
+            ],
+            "hero_turn_confirmed": false,
+            "actions_allowed": false
+          },
+          "ocr_work": {
+            "requests": 6,
+            "calls": 6,
+            "hits": 0,
+            "bytes": 507198
+          }
+        },
+        "True": {
+          "result": {
+            "status": "EXPERIMENTAL_BUTTON_ROW",
+            "buttons": [
+              {
+                "box": [
+                  14,
+                  1158,
+                  218,
+                  65
+                ],
+                "status": "EXPERIMENTAL_LABEL",
+                "label": "Fold",
+                "action": "FOLD",
+                "amount": null,
+                "unit": null,
+                "kind": "ACTION_LABEL",
+                "evidence": "WHOLE_LABEL_TEMPLATE",
+                "template_iou": 0.9962,
+                "template_margin": 0.9962
+              },
+              {
+                "box": [
+                  242,
+                  1158,
+                  219,
+                  65
+                ],
+                "status": "EXPERIMENTAL_LABEL",
+                "label": "Call 13,5 BB",
+                "action": "CALL",
+                "amount": "13.5",
+                "unit": "BB",
+                "ocr_readings": [
+                  "Call 13,5 BB",
+                  "Call 13,5 BB"
+                ],
+                "kind": "ACTION_LABEL"
+              },
+              {
+                "box": [
+                  471,
+                  1158,
+                  218,
+                  65
+                ],
+                "status": "EXPERIMENTAL_LABEL",
+                "label": "Raise",
+                "action": "RAISE",
+                "amount": null,
+                "unit": null,
+                "kind": "ACTION_LABEL",
+                "evidence": "WHOLE_LABEL_TEMPLATE",
+                "template_iou": 0.9827,
+                "template_margin": 0.9827
+              }
+            ],
+            "hero_turn_confirmed": false,
+            "actions_allowed": false
+          },
+          "ocr_work": {
+            "requests": 2,
+            "calls": 2,
+            "hits": 0,
+            "bytes": 168488
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,924 @@
+{
+  "scope": "Linux offline synthetic tiled development crops; both modes use exact per-frame OCR memo. Not independent accuracy, Windows capture or live multi-table capacity. Five warm samples and first call separate; fixed baseline-first order may bias timings.",
+  "environment": {
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "opencv": "4.11.0",
+    "opencv_threads": 1,
+    "OMP_THREAD_LIMIT": 1
+  },
+  "sources": {
+    "_4528A8B5-F81C-4078-A8DB-C7ADBD91C311__85ee615d.png": "85ee615d31918032b5782e88ed0e9370ec1c1f28b451457ed2f7dcba66e49c09",
+    "_3A75F7DE-7229-4137-BD19-4AF5AE363948__d560bf0f.png": "d560bf0fd1828a797fbeae678793e8412403267cb53817260bcab7464356da28",
+    "_58CB106F-09EA-4853-B7D9-98FD582FAD0E__581ae999.png": "581ae999225a9e7e442a7ffffab745f429b7f8b37e1104052329014afe9afbee",
+    "_76D7A22C-BC3A-435D-BB63-A4AC9AE0A1A0__78803c80.png": "78803c8043173a4558841d5932316cf56dc3beb58f08084ecb7088a8ee930a04",
+    "_7C62D925-1CC9-4B7C-A92D-0E3379E07494__3d8f87c2.png": "3d8f87c2389a8ccaddb75a66e7a61d6b5a4af1250abee0d041c07c270cad8064",
+    "_E59537C2-2CA7-4FB2-9B22-728875057AAB__5c7b5161.png": "5c7b5161179073429b030a9bc8ea42e4c1ac6e70a87a4d2ffd7a069f494d022d"
+  },
+  "scenarios": [
+    {
+      "tables": 1,
+      "modes": {
+        "templates": {
+          "first_call": {
+            "wall_ms": 565.8618849993218,
+            "timings_ms": {
+              "detection": 73.59986699884757,
+              "ocr_setup": 33.20281999913277,
+              "card_reading": 33.12973900028737,
+              "button_reading": 420.49954399408307,
+              "board_reading": 1.0492500005057082
+            },
+            "ocr_work": {
+              "requests": 4,
+              "calls": 4,
+              "hits": 0,
+              "bytes": 341298
+            },
+            "matched": true
+          },
+          "semantic": {
+            "rows": [
+              {
+                "box": [
+                  30,
+                  30,
+                  703,
+                  1237
+                ],
+                "status": "COMPLETE_CANDIDATE",
+                "hero": [
+                  "Tc",
+                  "5c"
+                ],
+                "reading_status": "EXPERIMENTAL_CANDIDATES",
+                "board": {
+                  "cards": [],
+                  "status": "BOARD_NOT_CONFIRMED",
+                  "street": null
+                },
+                "buttons": {
+                  "status": "PRESELECTION_ROW",
+                  "items": [
+                    {
+                      "action": null,
+                      "label_action": null,
+                      "amount": null,
+                      "unit": null,
+                      "kind": "PRESELECT",
+                      "status": "PRESELECT"
+                    },
+                    {
+                      "action": null,
+                      "label_action": "CALL",
+                      "amount": "1.0",
+                      "unit": "BB",
+                      "kind": "PRESELECT",
+                      "status": "PRESELECT"
+                    },
+                    {
+                      "action": null,
+                      "label_action": null,
+                      "amount": null,
+                      "unit": null,
+                      "kind": null,
+                      "status": "NOT_IDENTIFIED"
+                    }
+                  ]
+                }
+              }
+            ],
+            "actions_allowed": false
+          },
+          "samples": [
+            {
+              "wall_ms": 521.4954260009108,
+              "timings_ms": {
+                "detection": 65.07820700062439,
+                "ocr_setup": 31.555647001368925,
+                "card_reading": 18.57471899711527,
+                "button_reading": 403.0248560011387,
+                "board_reading": 0.5477589947986417
+              },
+              "ocr_work": {
+                "requests": 4,
+                "calls": 4,
+                "hits": 0,
+                "bytes": 341298
+              },
+              "matched": true
+            },
+            {
+              "wall_ms": 517.774265994376,
+              "timings_ms": {
+                "detection": 66.87142000009771,
+                "ocr_setup": 32.953554997220635,
+                "card_reading": 18.853916000807658,
+                "button_reading": 395.86195399897406,
+                "board_reading": 0.5300769989844412
+              },
+              "ocr_work": {
+                "requests": 4,
+                "calls": 4,
+                "hits": 0,
+                "bytes": 341298
+              },
+              "matched": true
+            },
+            {
+              "wall_ms": 512.4689189979108,
+              "timings_ms": {
+                "detection": 65.54602600226644,
+                "ocr_setup": 31.45337599562481,
+                "card_reading": 18.568662999314256,
+                "button_reading": 393.7389290003921,
+                "board_reading": 0.6022759989718907
+              },
+              "ocr_work": {
+                "requests": 4,
+                "calls": 4,
+                "hits": 0,
+                "bytes": 341298
+              },
+              "matched": true
+            },
+            {
+              "wall_ms": 517.723990000377,
+              "timings_ms": {
+                "detection": 69.56971799809253,
+                "ocr_setup": 30.66207600204507,
+                "card_reading": 18.62181800242979,
+                "button_reading": 395.63563500269083,
+                "board_reading": 0.5068190002930351
+              },
+              "ocr_work": {
+                "requests": 4,
+                "calls": 4,
+                "hits": 0,
+                "bytes": 341298
+              },
+              "matched": true
+            },
+            {
+              "wall_ms": 511.24176000303123,
+              "timings_ms": {
+                "detection": 65.02491399442079,
+                "ocr_setup": 30.222433000744786,
+                "card_reading": 18.285327998455614,
+                "button_reading": 394.3136130037601,
+                "board_reading": 0.5655620043398812
+              },
+              "ocr_work": {
+                "requests": 4,
+                "calls": 4,
+                "hits": 0,
+                "bytes": 341298
+              },
+              "matched": true
+            }
+          ],
+          "wall": {
+            "n": 5,
+            "median_ms": 517.72,
+            "p95_ms": 520.75
+          },
+          "stages": {
+            "detection": {
+              "n": 5,
+              "median_ms": 65.55,
+              "p95_ms": 69.03
+            },
+            "ocr_setup": {
+              "n": 5,
+              "median_ms": 31.45,
+              "p95_ms": 32.67
+            },
+            "card_reading": {
+              "n": 5,
+              "median_ms": 18.57,
+              "p95_ms": 18.81
+            },
+            "button_reading": {
+              "n": 5,
+              "median_ms": 395.64,
+              "p95_ms": 401.59
+            },
+            "board_reading": {
+              "n": 5,
+              "median_ms": 0.55,
+              "p95_ms": 0.59
+            }
+          }
+        }
+      }
+    },
+    {
+      "tables": 3,
+      "modes": {
+        "templates": {
+          "first_call": {
+            "wall_ms": 1614.2448730024626,
+            "timings_ms": {
+              "detection": 179.82436800230062,
+              "ocr_setup": 30.579123995266855,
+              "card_reading": 998.9495339978021,
+              "button_reading": 393.76447298855055,
+              "board_reading": 1.944896997883916
+            },
+            "ocr_work": {
+              "requests": 22,
+              "calls": 14,
+              "hits": 8,
+              "bytes": 1148458
+            },
+            "matched": true
+          },
+          "semantic": {
+            "rows": [
+              {
+                "box": [
+                  30,
+                  30,
+                  703,
+                  1237
+                ],
+                "status": "COMPLETE_CANDIDATE",
+                "hero": [
+                  "Tc",
+                  "5c"
+                ],
+                "reading_status": "EXPERIMENTAL_CANDIDATES",
+                "board": {
+                  "cards": [],
+                  "status": "BOARD_NOT_CONFIRMED",
+                  "street": null
+                },
+                "buttons": {
+                  "status": "PRESELECTION_ROW",
+                  "items": [
+                    {
+                      "action": null,
+                      "label_action": null,
+                      "amount": null,
+                      "unit": null,
+                      "kind": "PRESELECT",
+                      "status": "PRESELECT"
+                    },
+                    {
+                      "action": null,
+                      "label_action": "CALL",
+                      "amount": "1.0",
+                      "unit": "BB",
+                      "kind": "PRESELECT",
+                      "status": "PRESELECT"
+                    },
+                    {
+                      "action": null,
+                      "label_action": null,
+                      "amount": null,
+                      "unit": null,
+                      "kind": null,
+                      "status": "NOT_IDENTIFIED"
+                    }
+                  ]
+                }
+              },
+              {
+                "box": [
+                  763,
+                  30,
+                  703,
+                  1237
+                ],
+                "status": "COMPLETE_CANDIDATE",
+                "hero": [
+                  "Qd",
+                  "Qs"
+                ],
+                "reading_status": "EXPERIMENTAL_CANDIDATES",
+                "board": {
+                  "cards": [],
+                  "status": "BOARD_NOT_CONFIRMED",
+                  "street": null
+                },
+                "buttons": {
+                  "status": "PRESELECTION_ROW",
+                  "items": [
+                    {
+                      "action": null,
+                      "label_action": null,
+                      "amount": null,
+                      "unit": null,
+                      "kind": "PRESELECT",
+                      "status": "PRESELECT"
+                    },
+                    {
+                      "action": null,
+                      "label_action": "CHECK",
+                      "amount": null,
+                      "unit": null,
+                      "kind": "PRESELECT",
+                      "status": "PRESELECT"
+                    },
+                    {
+                      "action": null,
+                      "label_action": null,
+                      "amount": null,
+                      "unit": null,
+                      "kind": null,
+                      "status": "NOT_IDENTIFIED"
+                    }
+                  ]
+                }
+              },
+              {
+                "box": [
+                  1496,
+                  30,
+                  703,
+                  1237
+                ],
+                "status": "COMPLETE_CANDIDATE",
+                "hero": [
+                  "3h",
+                  "Qd"
+                ],
+                "reading_status": "EXPERIMENTAL_CANDIDATES",
+                "board": {
+                  "cards": [],
+                  "status": "BOARD_NOT_CONFIRMED",
+                  "street": null
+                },
+                "buttons": {
+                  "status": "PRESELECTION_ROW",
+                  "items": [
+                    {
+                      "action": null,
+                      "label_action": null,
+                      "amount": null,
+                      "unit": null,
+                      "kind": "PRESELECT",
+                      "status": "PRESELECT"
+                    },
+                    {
+                      "action": null,
+                      "label_action": "CALL",
+                      "amount": "1.0",
+                      "unit": "BB",
+                      "kind": "PRESELECT",
+                      "status": "PRESELECT"
+                    },
+                    {
+                      "action": null,
+                      "label_action": null,
+                      "amount": null,
+                      "unit": null,
+                      "kind": null,
+                      "status": "NOT_IDENTIFIED"
+                    }
+                  ]
+                }
+              }
+            ],
+            "actions_allowed": false
+          },
+          "samples": [
+            {
+              "wall_ms": 1638.5561220013187,
+              "timings_ms": {
+                "detection": 183.9405149949016,
+                "ocr_setup": 30.414717002713587,
+                "card_reading": 1017.3158870020416,
+                "button_reading": 396.3869509898359,
+                "board_reading": 1.5889859932940453
+              },
+              "ocr_work": {
+                "requests": 22,
+                "calls": 14,
+                "hits": 8,
+                "bytes": 1148458
+              },
+              "matched": true
+            },
+            {
+              "wall_ms": 1648.5088499975973,
+              "timings_ms": {
+                "detection": 185.58051600120962,
+                "ocr_setup": 28.56534500460839,
+                "card_reading": 1029.372819000855,
+                "button_reading": 394.7142079996411,
+                "board_reading": 1.3653169880853966
+              },
+              "ocr_work": {
+                "requests": 22,
+                "calls": 14,
+                "hits": 8,
+                "bytes": 1148458
+              },
+              "matched": true
+            },
+            {
+              "wall_ms": 1685.458018000645,
+              "timings_ms": {
+                "detection": 179.73077300121076,
+                "ocr_setup": 29.872633997001685,
+                "card_reading": 1036.3093000050867,
+                "button_reading": 425.5307960047503,
+                "board_reading": 1.874497000244446
+              },
+              "ocr_work": {
+                "requests": 22,
+                "calls": 14,
+                "hits": 8,
+                "bytes": 1148458
+              },
+              "matched": true
+            },
+            {
+              "wall_ms": 1734.2694430044503,
+              "timings_ms": {
+                "detection": 198.5660319987801,
+                "ocr_setup": 29.656480000994634,
+                "card_reading": 1080.8446999944863,
+                "button_reading": 415.0056980070076,
+                "board_reading": 1.6342460075975396
+              },
+              "ocr_work": {
+                "requests": 22,
+                "calls": 14,
+                "hits": 8,
+                "bytes": 1148458
+              },
+              "matched": true
+            },
+            {
+              "wall_ms": 1635.1705279957969,
+              "timings_ms": {
+                "detection": 182.3398679989623,
+                "ocr_setup": 34.55127000052016,
+                "card_reading": 1007.9318069983856,
+                "button_reading": 399.9686189927161,
+                "board_reading": 1.5401550044771284
+              },
+              "ocr_work": {
+                "requests": 22,
+                "calls": 14,
+                "hits": 8,
+                "bytes": 1148458
+              },
+              "matched": true
+            }
+          ],
+          "wall": {
+            "n": 5,
+            "median_ms": 1648.51,
+            "p95_ms": 1724.51
+          },
+          "stages": {
+            "detection": {
+              "n": 5,
+              "median_ms": 183.94,
+              "p95_ms": 195.97
+            },
+            "ocr_setup": {
+              "n": 5,
+              "median_ms": 29.87,
+              "p95_ms": 33.72
+            },
+            "card_reading": {
+              "n": 5,
+              "median_ms": 1029.37,
+              "p95_ms": 1071.94
+            },
+            "button_reading": {
+              "n": 5,
+              "median_ms": 399.97,
+              "p95_ms": 423.43
+            },
+            "board_reading": {
+              "n": 5,
+              "median_ms": 1.59,
+              "p95_ms": 1.83
+            }
+          }
+        }
+      }
+    },
+    {
+      "tables": 6,
+      "modes": {
+        "templates": {
+          "first_call": {
+            "wall_ms": 3948.2961779940524,
+            "timings_ms": {
+              "detection": 437.3379169992404,
+              "ocr_setup": 34.66174699860858,
+              "card_reading": 2280.893989998731,
+              "button_reading": 599.3631799938157,
+              "board_reading": 578.3880420058267
+            },
+            "ocr_work": {
+              "requests": 57,
+              "calls": 35,
+              "hits": 22,
+              "bytes": 2982982
+            },
+            "matched": true
+          },
+          "semantic": {
+            "rows": [
+              {
+                "box": [
+                  30,
+                  30,
+                  703,
+                  1237
+                ],
+                "status": "COMPLETE_CANDIDATE",
+                "hero": [
+                  "Tc",
+                  "5c"
+                ],
+                "reading_status": "EXPERIMENTAL_CANDIDATES",
+                "board": {
+                  "cards": [],
+                  "status": "BOARD_NOT_CONFIRMED",
+                  "street": null
+                },
+                "buttons": {
+                  "status": "PRESELECTION_ROW",
+                  "items": [
+                    {
+                      "action": null,
+                      "label_action": null,
+                      "amount": null,
+                      "unit": null,
+                      "kind": "PRESELECT",
+                      "status": "PRESELECT"
+                    },
+                    {
+                      "action": null,
+                      "label_action": "CALL",
+                      "amount": "1.0",
+                      "unit": "BB",
+                      "kind": "PRESELECT",
+                      "status": "PRESELECT"
+                    },
+                    {
+                      "action": null,
+                      "label_action": null,
+                      "amount": null,
+                      "unit": null,
+                      "kind": null,
+                      "status": "NOT_IDENTIFIED"
+                    }
+                  ]
+                }
+              },
+              {
+                "box": [
+                  763,
+                  30,
+                  703,
+                  1237
+                ],
+                "status": "COMPLETE_CANDIDATE",
+                "hero": [
+                  "Qd",
+                  "Qs"
+                ],
+                "reading_status": "EXPERIMENTAL_CANDIDATES",
+                "board": {
+                  "cards": [],
+                  "status": "BOARD_NOT_CONFIRMED",
+                  "street": null
+                },
+                "buttons": {
+                  "status": "PRESELECTION_ROW",
+                  "items": [
+                    {
+                      "action": null,
+                      "label_action": null,
+                      "amount": null,
+                      "unit": null,
+                      "kind": "PRESELECT",
+                      "status": "PRESELECT"
+                    },
+                    {
+                      "action": null,
+                      "label_action": "CHECK",
+                      "amount": null,
+                      "unit": null,
+                      "kind": "PRESELECT",
+                      "status": "PRESELECT"
+                    },
+                    {
+                      "action": null,
+                      "label_action": null,
+                      "amount": null,
+                      "unit": null,
+                      "kind": null,
+                      "status": "NOT_IDENTIFIED"
+                    }
+                  ]
+                }
+              },
+              {
+                "box": [
+                  1496,
+                  30,
+                  703,
+                  1237
+                ],
+                "status": "COMPLETE_CANDIDATE",
+                "hero": [
+                  "3h",
+                  "Qd"
+                ],
+                "reading_status": "EXPERIMENTAL_CANDIDATES",
+                "board": {
+                  "cards": [],
+                  "status": "BOARD_NOT_CONFIRMED",
+                  "street": null
+                },
+                "buttons": {
+                  "status": "PRESELECTION_ROW",
+                  "items": [
+                    {
+                      "action": null,
+                      "label_action": null,
+                      "amount": null,
+                      "unit": null,
+                      "kind": "PRESELECT",
+                      "status": "PRESELECT"
+                    },
+                    {
+                      "action": null,
+                      "label_action": "CALL",
+                      "amount": "1.0",
+                      "unit": "BB",
+                      "kind": "PRESELECT",
+                      "status": "PRESELECT"
+                    },
+                    {
+                      "action": null,
+                      "label_action": null,
+                      "amount": null,
+                      "unit": null,
+                      "kind": null,
+                      "status": "NOT_IDENTIFIED"
+                    }
+                  ]
+                }
+              },
+              {
+                "box": [
+                  30,
+                  1297,
+                  703,
+                  1237
+                ],
+                "status": "COMPLETE_CANDIDATE",
+                "hero": [
+                  "Jd",
+                  "2d"
+                ],
+                "reading_status": "EXPERIMENTAL_CANDIDATES",
+                "board": {
+                  "cards": [],
+                  "status": "BOARD_NOT_CONFIRMED",
+                  "street": null
+                },
+                "buttons": {
+                  "status": "PRESELECTION_ROW",
+                  "items": [
+                    {
+                      "action": null,
+                      "label_action": null,
+                      "amount": null,
+                      "unit": null,
+                      "kind": "PRESELECT",
+                      "status": "PRESELECT"
+                    },
+                    {
+                      "action": null,
+                      "label_action": "CALL",
+                      "amount": "1.0",
+                      "unit": "BB",
+                      "kind": "PRESELECT",
+                      "status": "PRESELECT"
+                    },
+                    {
+                      "action": null,
+                      "label_action": null,
+                      "amount": null,
+                      "unit": null,
+                      "kind": null,
+                      "status": "NOT_IDENTIFIED"
+                    }
+                  ]
+                }
+              },
+              {
+                "box": [
+                  763,
+                  1297,
+                  703,
+                  1237
+                ],
+                "status": "COMPLETE_CANDIDATE",
+                "hero": [
+                  "9d",
+                  "2s"
+                ],
+                "reading_status": "EXPERIMENTAL_CANDIDATES",
+                "board": {
+                  "cards": [],
+                  "status": "BOARD_NOT_CONFIRMED",
+                  "street": null
+                },
+                "buttons": {
+                  "status": "PRESELECTION_ROW",
+                  "items": [
+                    {
+                      "action": null,
+                      "label_action": null,
+                      "amount": null,
+                      "unit": null,
+                      "kind": "PRESELECT",
+                      "status": "PRESELECT"
+                    },
+                    {
+                      "action": null,
+                      "label_action": "CALL",
+                      "amount": "1.6",
+                      "unit": "BB",
+                      "kind": "PRESELECT",
+                      "status": "PRESELECT"
+                    },
+                    {
+                      "action": null,
+                      "label_action": null,
+                      "amount": null,
+                      "unit": null,
+                      "kind": null,
+                      "status": "NOT_IDENTIFIED"
+                    }
+                  ]
+                }
+              },
+              {
+                "box": [
+                  1496,
+                  1297,
+                  575,
+                  1014
+                ],
+                "status": "COMPLETE_CANDIDATE",
+                "hero": [
+                  "Qs",
+                  "6h"
+                ],
+                "reading_status": "EXPERIMENTAL_CANDIDATES",
+                "board": {
+                  "cards": [
+                    "Jc",
+                    "5d",
+                    "3c"
+                  ],
+                  "status": "EXPERIMENTAL_BOARD",
+                  "street": "FLOP"
+                },
+                "buttons": {
+                  "status": "NO_BUTTON_ROW",
+                  "items": []
+                }
+              }
+            ],
+            "actions_allowed": false
+          },
+          "samples": [
+            {
+              "wall_ms": 3997.6642160036135,
+              "timings_ms": {
+                "detection": 435.34235499828355,
+                "ocr_setup": 33.725744993716944,
+                "card_reading": 2307.48071900598,
+                "button_reading": 607.3127129857312,
+                "board_reading": 596.7823550236062
+              },
+              "ocr_work": {
+                "requests": 57,
+                "calls": 35,
+                "hits": 22,
+                "bytes": 2982982
+              },
+              "matched": true
+            },
+            {
+              "wall_ms": 3997.2648059992935,
+              "timings_ms": {
+                "detection": 431.5891950027435,
+                "ocr_setup": 34.79033499752404,
+                "card_reading": 2328.2794789993204,
+                "button_reading": 594.1767110125511,
+                "board_reading": 591.0694269987289
+              },
+              "ocr_work": {
+                "requests": 57,
+                "calls": 35,
+                "hits": 22,
+                "bytes": 2982982
+              },
+              "matched": true
+            },
+            {
+              "wall_ms": 4058.6040589987533,
+              "timings_ms": {
+                "detection": 432.94783100282075,
+                "ocr_setup": 31.61202200135449,
+                "card_reading": 2376.689153003099,
+                "button_reading": 608.6206000036327,
+                "board_reading": 590.1506400114158
+              },
+              "ocr_work": {
+                "requests": 57,
+                "calls": 35,
+                "hits": 22,
+                "bytes": 2982982
+              },
+              "matched": true
+            },
+            {
+              "wall_ms": 4059.370517003117,
+              "timings_ms": {
+                "detection": 442.73783399694366,
+                "ocr_setup": 31.932869998854585,
+                "card_reading": 2368.597749999026,
+                "button_reading": 611.2998630051152,
+                "board_reading": 588.3509220002452
+              },
+              "ocr_work": {
+                "requests": 57,
+                "calls": 35,
+                "hits": 22,
+                "bytes": 2982982
+              },
+              "matched": true
+            },
+            {
+              "wall_ms": 4029.285404998518,
+              "timings_ms": {
+                "detection": 436.0086440065061,
+                "ocr_setup": 30.30478199798381,
+                "card_reading": 2351.800942000409,
+                "button_reading": 613.2465460032108,
+                "board_reading": 579.4943880100618
+              },
+              "ocr_work": {
+                "requests": 57,
+                "calls": 35,
+                "hits": 22,
+                "bytes": 2982982
+              },
+              "matched": true
+            }
+          ],
+          "wall": {
+            "n": 5,
+            "median_ms": 4029.29,
+            "p95_ms": 4059.22
+          },
+          "stages": {
+            "detection": {
+              "n": 5,
+              "median_ms": 435.34,
+              "p95_ms": 441.39
+            },
+            "ocr_setup": {
+              "n": 5,
+              "median_ms": 31.93,
+              "p95_ms": 34.58
+            },
+            "card_reading": {
+              "n": 5,
+              "median_ms": 2351.8,
+              "p95_ms": 2375.07
+            },
+            "button_reading": {
+              "n": 5,
+              "median_ms": 608.62,
+              "p95_ms": 612.86
+            },
+            "board_reading": {
+              "n": 5,
+              "median_ms": 590.15,
+              "p95_ms": 595.64
+            }
+          }
+        }
+      }
+    }
+  ],
+  "errors": [],
+  "all_matched": true
+}
