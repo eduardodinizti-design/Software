@@ -45,6 +45,8 @@ def analyze_tables(frame_bgr, metadata, max_tables=6, *, _reader=None):
     # Conversion only; do not resize the whole Unity surface.
     proposals=detect_table_crops(cv2.cvtColor(frame_bgr,cv2.COLOR_BGR2RGB),
                                 blockers=metadata.get('blockers',()),max_tables=max_tables)
+    detection_ms=(time.monotonic()-started)*1000
+    ocr_started=time.monotonic()
     ocr={'status':'NOT_NEEDED'}
     if any(p.status=='COMPLETE_CANDIDATE' for p in proposals):
         try:
@@ -54,6 +56,8 @@ def analyze_tables(frame_bgr, metadata, max_tables=6, *, _reader=None):
                 _reader=lambda crop:inspect(crop,(0,0,crop.shape[1],crop.shape[0]))
             else:ocr={'status':'TEST_READER_INJECTED'}
         except Exception as exc:ocr={'status':'UNAVAILABLE','error':str(exc)}
+    ocr_setup_ms=(time.monotonic()-ocr_started)*1000
+    reading_ms=0.0
     rows=[]
     for i,p in enumerate(proposals,1):
         x,y,w,h=map(int,p.box)
@@ -67,7 +71,11 @@ def analyze_tables(frame_bgr, metadata, max_tables=6, *, _reader=None):
             if ocr['status']=='UNAVAILABLE':row['reading_status']='OCR_UNAVAILABLE'
             else:
                 try:
-                    reading=_reader(crop)
+                    read_started=time.monotonic()
+                    try:
+                        reading=_reader(crop)
+                    finally:
+                        reading_ms+=(time.monotonic()-read_started)*1000
                     cards=[c.get('card_candidate') for c in reading.get('hero_rank_candidates',[])]
                     if len(cards)!=2:cards=[None,None]
                     if cards[0] and cards[0]==cards[1]:
@@ -80,5 +88,6 @@ def analyze_tables(frame_bgr, metadata, max_tables=6, *, _reader=None):
                 capture_timestamp=metadata.get('timestamp'),origin=metadata['screen_origin'],
                 image_shape=list(frame_bgr.shape),max_tables=max_tables,ocr=ocr,tables=rows,
                 complete_count=sum(r['status']=='COMPLETE_CANDIDATE' for r in rows),
-                duration_ms=round((time.monotonic()-started)*1000,2),actions_allowed=False,
+                duration_ms=round((time.monotonic()-started)*1000,2),
+                timings_ms=dict(detection=detection_ms,ocr_setup=ocr_setup_ms,card_reading=reading_ms),actions_allowed=False,
                 persistent_tracking=False,scope='BLUE_LAYOUT_HERO_ONLY_EXPERIMENTAL')

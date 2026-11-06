@@ -2,6 +2,7 @@
 import math
 import time
 from table_reading.pipeline import analyze_tables
+from observation_metrics import ObservationMetrics
 
 
 def observe(engine, hwnd, *, interval=2.0, max_age=10.0, max_tables=6,
@@ -11,6 +12,7 @@ def observe(engine, hwnd, *, interval=2.0, max_age=10.0, max_tables=6,
         raise ValueError('Intervalo minimo: 0.25 segundos')
     if not math.isfinite(max_age) or max_age <= 0 or max_cycles < 0:
         raise ValueError('Limites invalidos')
+    metrics=ObservationMetrics()
     identity=None
     cycle=0
     emit('OBSERVADOR: somente RAM, sem cliques ou arquivos. Ctrl+C para encerrar.')
@@ -35,6 +37,9 @@ def observe(engine, hwnd, *, interval=2.0, max_age=10.0, max_tables=6,
                     identity=current
                     report=analyze(frame,metadata,max_tables=max_tables)
                     age=clock()-started
+                    metrics.add(metadata,report,age*1000)
+                    if cycle % 10 == 0:
+                        emit("TEMPOS (ms; ultimos 120 ciclos analisados): "+str(metrics.summary()))
                     if age > max_age:
                         emit(f'SEM LEITURA: RESULT_EXPIRED ({age:.1f}s)')
                     elif not report['tables']:
@@ -56,4 +61,5 @@ def observe(engine, hwnd, *, interval=2.0, max_age=10.0, max_tables=6,
                 sleep(max(.05,interval-(clock()-started)))
     except KeyboardInterrupt:
         emit('Observador encerrado. Nenhuma imagem salva.')
+    emit("TEMPOS FINAIS (ms): "+str(metrics.summary()))
     return 0

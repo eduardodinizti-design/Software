@@ -2,6 +2,7 @@
 from contextlib import contextmanager
 from datetime import datetime, timezone
 import ctypes
+from copy import deepcopy
 from ctypes import wintypes as W
 import ntpath
 import platform
@@ -157,6 +158,11 @@ class WindowCaptureEngine:
         self.is_windows = platform.system() == 'Windows'
         self.dpi_status = False
         self.last_diagnostics = []
+        self._last_capture_info = {'status': 'CAPTURE_NOT_STARTED'}
+
+    def get_diagnostic_info(self):
+        """Copy of last capture metadata; no capture, OCR or disk write."""
+        return deepcopy(self._last_capture_info)
 
     def _native(self):
         if self._backend is not None:  # Explicit dependency injection only, used by tests.
@@ -215,6 +221,8 @@ class WindowCaptureEngine:
         meta = dict(status='CAPTURE_NOT_STARTED', timestamp=datetime.now(timezone.utc).isoformat(),
                     backend='GDI_CLIENT_BITBLT', dpi_effective=False, native_windows_validated=False)
         started = time.monotonic()
+        self.dpi_status = False
+        self.last_diagnostics = []
         try:
             backend = self._native()
             with backend.physical_pixels():
@@ -248,3 +256,4 @@ class WindowCaptureEngine:
             return None, meta
         finally:
             meta['duration_ms'] = (time.monotonic()-started)*1000
+            self._last_capture_info = deepcopy(meta)
