@@ -1,5 +1,5 @@
-Run: 42219431270
-Source commit: f21ee568165b7ca4cb6caf55cc85840f701f088f
+Run: 42220978373
+Source commit: 0897e8dfd591937d69b4cb43cfd6b75e62e30430
 test_arbitrary_executable_is_rejected (test_capture_regressions.OriginalRegressionTests.test_arbitrary_executable_is_rejected) ... ok
 test_linux_cannot_report_success (test_capture_regressions.OriginalRegressionTests.test_linux_cannot_report_success) ... ok
 test_process_access_denied_is_rejected (test_capture_regressions.OriginalRegressionTests.test_process_access_denied_is_rejected) ... ok
@@ -18,8 +18,8 @@ test_cleanup_failure_blocks_return (test_window_capture_engine.GDIContracts.test
 test_native_process_query_exception_does_not_default_name (test_window_capture_engine.GDIContracts.test_native_process_query_exception_does_not_default_name) ... ok
 test_partial_acquisition_failure (test_window_capture_engine.GDIContracts.test_partial_acquisition_failure) ... ok
 test_success_uses_client_dc_and_releases_only_owned_dc (test_window_capture_engine.GDIContracts.test_success_uses_client_dc_and_releases_only_owned_dc) ... ok
-test_diagnostic_forwards_selected_hwnd (test_window_capture_audit.IntegrationContracts.test_diagnostic_forwards_selected_hwnd) ... ERROR
-test_diagnostic_saves_linux_failure_without_image (test_window_capture_audit.IntegrationContracts.test_diagnostic_saves_linux_failure_without_image) ... ERROR
+test_diagnostic_forwards_selected_hwnd (test_window_capture_audit.IntegrationContracts.test_diagnostic_forwards_selected_hwnd) ... ok
+test_diagnostic_saves_linux_failure_without_image (test_window_capture_audit.IntegrationContracts.test_diagnostic_saves_linux_failure_without_image) ... ok
 test_observer_routes_to_engine (test_window_capture_audit.IntegrationContracts.test_observer_routes_to_engine) ... ok
 test_standalone_routes_to_engine (test_window_capture_audit.IntegrationContracts.test_standalone_routes_to_engine) ... ok
 test_capture_client_pixels_and_resize (test_capture_windows_native.NativeGDISmoke.test_capture_client_pixels_and_resize) ... ok
@@ -27,7 +27,7 @@ test_black_frame_has_no_tables (test_table_reading.PipelineContracts.test_black_
 test_board_is_opt_in_and_uses_accepted_native_crop (test_table_reading.PipelineContracts.test_board_is_opt_in_and_uses_accepted_native_crop) ... ok
 test_buttons_receive_only_accepted_crop_when_enabled (test_table_reading.PipelineContracts.test_buttons_receive_only_accepted_crop_when_enabled) ... ok
 test_duplicate_card_is_not_accepted (test_table_reading.PipelineContracts.test_duplicate_card_is_not_accepted) ... ok
-test_export_pixels_and_budget (test_table_reading.PipelineContracts.test_export_pixels_and_budget) ... ERROR
+test_export_pixels_and_budget (test_table_reading.PipelineContracts.test_export_pixels_and_budget) ... ok
 test_latest_skips_failed_reports (test_table_reading.PipelineContracts.test_latest_skips_failed_reports) ... ok
 test_metadata_mismatch_blocks_reading (test_table_reading.PipelineContracts.test_metadata_mismatch_blocks_reading) ... ok
 test_missing_ocr_preserves_detected_crop (test_table_reading.PipelineContracts.test_missing_ocr_preserves_detected_crop) ... ok
@@ -36,8 +36,13 @@ test_real_pixels_are_cropped_and_routed (test_table_reading.PipelineContracts.te
 test_scaled_moved_table_preserves_native_crop (test_table_reading.PipelineContracts.test_scaled_moved_table_preserves_native_crop) ... ok
 test_separate_processes_and_snapshots_never_reuse_identity (test_table_reading.PipelineContracts.test_separate_processes_and_snapshots_never_reuse_identity) ... ok
 test_six_limit_and_seven_refusal (test_table_reading.PipelineContracts.test_six_limit_and_seven_refusal) ... ok
+test_blank_ace_can_use_four_smaller_undistorted_votes (test_rank_confirmation.AceAspectTests.test_blank_ace_can_use_four_smaller_undistorted_votes) ... ok
+test_blank_ace_retry_conflict_abstains (test_rank_confirmation.AceAspectTests.test_blank_ace_retry_conflict_abstains) ... ok
+test_blank_ace_retry_partial_abstains (test_rank_confirmation.AceAspectTests.test_blank_ace_retry_partial_abstains) ... ok
+test_blank_and_conflict_does_not_enable_smaller_retry (test_rank_confirmation.AceAspectTests.test_blank_and_conflict_does_not_enable_smaller_retry) ... ok
 test_confirmed_ace_remains_accepted (test_rank_confirmation.AceAspectTests.test_confirmed_ace_remains_accepted) ... ok
 test_distorted_ace_requires_undistorted_agreement (test_rank_confirmation.AceAspectTests.test_distorted_ace_requires_undistorted_agreement) ... ok
+test_one_blank_does_not_enable_smaller_retry (test_rank_confirmation.AceAspectTests.test_one_blank_does_not_enable_smaller_retry) ... ok
 test_blank_variants_require_four_fresh_confirmations (test_rank_confirmation.RankConfirmationTests.test_blank_variants_require_four_fresh_confirmations) ... ok
 test_conflicting_seven_nine_cannot_be_overridden (test_rank_confirmation.RankConfirmationTests.test_conflicting_seven_nine_cannot_be_overridden) ... ok
 test_full_agreement_has_no_extra_ocr (test_rank_confirmation.RankConfirmationTests.test_full_agreement_has_no_extra_ocr) ... ok
@@ -94,47 +99,12 @@ test_misaligned_bars_do_not_match (test_detector_batch.DetectorBatchTests.test_m
 test_occluding_badge_is_not_menu (test_detector_batch.DetectorBatchTests.test_occluding_badge_is_not_menu) ... ok
 test_title_line_is_excluded_without_changing_three_bars (test_detector_batch.DetectorBatchTests.test_title_line_is_excluded_without_changing_three_bars) ... ok
 test_two_bars_do_not_synthesize_third (test_detector_batch.DetectorBatchTests.test_two_bars_do_not_synthesize_third) ... ok
-
-======================================================================
-ERROR: test_diagnostic_forwards_selected_hwnd (test_window_capture_audit.IntegrationContracts.test_diagnostic_forwards_selected_hwnd)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "D:\a\Software\Software\test_window_capture_audit.py", line 26, in test_diagnostic_forwards_selected_hwnd
-    r=diagnostics.run_diagnostics(2,folder,_engine=WindowCaptureEngine(_backend=b))
-      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "D:\a\Software\Software\windows_capture_diagnostics.py", line 31, in run_diagnostics
-    store_bundle(directory.parent, files)
-  File "D:\a\Software\Software\diagnostic_storage.py", line 73, in store_bundle
-    raise RuntimeError('Limite global: arquivos protegidos ou externos impedem salvar. Nada removido.')
-RuntimeError: Limite global: arquivos protegidos ou externos impedem salvar. Nada removido.
-
-======================================================================
-ERROR: test_diagnostic_saves_linux_failure_without_image (test_window_capture_audit.IntegrationContracts.test_diagnostic_saves_linux_failure_without_image)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "D:\a\Software\Software\test_window_capture_audit.py", line 17, in test_diagnostic_saves_linux_failure_without_image
-    result=diagnostics.run_diagnostics(output_dir=folder)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "D:\a\Software\Software\windows_capture_diagnostics.py", line 31, in run_diagnostics
-    store_bundle(directory.parent, files)
-  File "D:\a\Software\Software\diagnostic_storage.py", line 73, in store_bundle
-    raise RuntimeError('Limite global: arquivos protegidos ou externos impedem salvar. Nada removido.')
-RuntimeError: Limite global: arquivos protegidos ou externos impedem salvar. Nada removido.
-
-======================================================================
-ERROR: test_export_pixels_and_budget (test_table_reading.PipelineContracts.test_export_pixels_and_budget)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "D:\a\Software\Software\test_table_reading.py", line 104, in test_export_pixels_and_budget
-    folder=save_result(self.frame,r,root)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "D:\a\Software\Software\ler_mesas.py", line 46, in save_result
-    store_bundle(root,{str(Path(directory.name)/target.name/name):data for name,data in files.items()},budget)
-  File "D:\a\Software\Software\diagnostic_storage.py", line 73, in store_bundle
-    raise RuntimeError('Limite global: arquivos protegidos ou externos impedem salvar. Nada removido.')
-RuntimeError: Limite global: arquivos protegidos ou externos impedem salvar. Nada removido.
+test_explicit_occlusion_remains_rejected (test_detector_proposals.DetectorProposalTests.test_explicit_occlusion_remains_rejected) ... ok
+test_frame_touching_table_is_still_partial (test_detector_proposals.DetectorProposalTests.test_frame_touching_table_is_still_partial) ... ok
+test_full_frame_rejection_does_not_suppress_real_table (test_detector_proposals.DetectorProposalTests.test_full_frame_rejection_does_not_suppress_real_table) ... ok
+test_nested_blue_regions_without_anchors_never_become_tables (test_detector_proposals.DetectorProposalTests.test_nested_blue_regions_without_anchors_never_become_tables) ... ok
 
 ----------------------------------------------------------------------
-Ran 94 tests in 6.671s
+Ran 103 tests in 6.739s
 
-FAILED (errors=3)
+OK
