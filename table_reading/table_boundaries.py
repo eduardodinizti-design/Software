@@ -8,8 +8,9 @@ import cv2
 import numpy as np
 
 
-def detect_control_anchored_tables(rgb):
-    hsv = cv2.cvtColor(rgb, cv2.COLOR_RGB2HSV)
+def detect_control_anchored_tables(rgb, *, _hsv=None):
+    # Caller may share a conversion from this same frame; never retained.
+    hsv = cv2.cvtColor(rgb, cv2.COLOR_RGB2HSV) if _hsv is None else _hsv
     green = cv2.inRange(hsv, (38,70,60), (90,255,255))
     # PPPoker also displays red Fold and yellow Raise controls.
     green = cv2.bitwise_or(green, cv2.inRange(hsv, (0,90,70), (35,255,255)))
@@ -28,7 +29,7 @@ def detect_control_anchored_tables(rgb):
     for group in combinations(controls,3):
         group = sorted(group)
         widths = [b[2] for b in group]; heights = [b[3] for b in group]
-        unit = float(np.median(widths)); bh = float(np.median(heights))
+        unit = float(sorted(widths)[1]); bh = float(sorted(heights)[1])
         if max(widths)/min(widths)>1.2 or max(heights)/min(heights)>1.2:
             continue
         if max(b[1] for b in group)-min(b[1] for b in group) > bh*.15:

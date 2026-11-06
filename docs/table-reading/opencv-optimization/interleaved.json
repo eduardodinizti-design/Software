@@ -1,0 +1,3532 @@
+{
+  "scope": "Six tiled reused development crops; isolated reader processes, alternating before/after order, never simultaneous OCR. First sample per mode excluded from summary; five samples per mode. Linux only, no capture, exploratory p95.",
+  "passed": true,
+  "summary": {
+    "before": {
+      "wall": {
+        "median_ms": 4366.54,
+        "p95_ms": 4729.25
+      },
+      "stages": {
+        "detection": {
+          "median_ms": 447.86,
+          "p95_ms": 506.7
+        },
+        "ocr_setup": {
+          "median_ms": 37.26,
+          "p95_ms": 56.9
+        },
+        "card_reading": {
+          "median_ms": 2555.58,
+          "p95_ms": 2696.81
+        },
+        "button_reading": {
+          "median_ms": 636.31,
+          "p95_ms": 714.19
+        },
+        "board_reading": {
+          "median_ms": 650.99,
+          "p95_ms": 892.39
+        }
+      }
+    },
+    "after": {
+      "wall": {
+        "median_ms": 4546.87,
+        "p95_ms": 4969.88
+      },
+      "stages": {
+        "detection": {
+          "median_ms": 449.92,
+          "p95_ms": 583.64
+        },
+        "ocr_setup": {
+          "median_ms": 36.62,
+          "p95_ms": 69.54
+        },
+        "card_reading": {
+          "median_ms": 2719.45,
+          "p95_ms": 2844.75
+        },
+        "button_reading": {
+          "median_ms": 682.63,
+          "p95_ms": 860.91
+        },
+        "board_reading": {
+          "median_ms": 629.29,
+          "p95_ms": 688.64
+        }
+      }
+    }
+  },
+  "results": [
+    {
+      "wall_ms": 5133.887673000572,
+      "stages": {
+        "detection": 518.940935995488,
+        "ocr_setup": 34.85229500074638,
+        "card_reading": 3022.1877509902697,
+        "button_reading": 734.4630410007085,
+        "board_reading": 779.606018011691
+      },
+      "ocr_work": {
+        "requests": 57,
+        "calls": 35,
+        "hits": 22,
+        "bytes": 2982982
+      },
+      "semantic": [
+        {
+          "box": [
+            30,
+            30,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Tc",
+            "5c"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.0",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            763,
+            30,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Qd",
+            "Qs"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CHECK",
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            1496,
+            30,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "3h",
+            "Qd"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.0",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            30,
+            1297,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Jd",
+            "2d"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.0",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            763,
+            1297,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "9d",
+            "2s"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.6",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            1496,
+            1297,
+            575,
+            1014
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Qs",
+            "6h"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [
+              "Jc",
+              "5d",
+              "3c"
+            ],
+            "street": "FLOP",
+            "status": "EXPERIMENTAL_BOARD"
+          },
+          "buttons": {
+            "status": "NO_BUTTON_ROW",
+            "items": []
+          }
+        }
+      ],
+      "expected_match": true,
+      "mode": "before",
+      "sample": 0,
+      "semantic_equal": true
+    },
+    {
+      "wall_ms": 6156.867738995061,
+      "stages": {
+        "detection": 633.8497440010542,
+        "ocr_setup": 55.14532500092173,
+        "card_reading": 3629.845512994507,
+        "button_reading": 1105.9789970022393,
+        "board_reading": 691.936421993887
+      },
+      "ocr_work": {
+        "requests": 57,
+        "calls": 35,
+        "hits": 22,
+        "bytes": 2982982
+      },
+      "semantic": [
+        {
+          "box": [
+            30,
+            30,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Tc",
+            "5c"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.0",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            763,
+            30,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Qd",
+            "Qs"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CHECK",
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            1496,
+            30,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "3h",
+            "Qd"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.0",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            30,
+            1297,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Jd",
+            "2d"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.0",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            763,
+            1297,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "9d",
+            "2s"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.6",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            1496,
+            1297,
+            575,
+            1014
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Qs",
+            "6h"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [
+              "Jc",
+              "5d",
+              "3c"
+            ],
+            "street": "FLOP",
+            "status": "EXPERIMENTAL_BOARD"
+          },
+          "buttons": {
+            "status": "NO_BUTTON_ROW",
+            "items": []
+          }
+        }
+      ],
+      "expected_match": true,
+      "mode": "after",
+      "sample": 0,
+      "semantic_equal": true
+    },
+    {
+      "wall_ms": 5044.396667995898,
+      "stages": {
+        "detection": 609.8475309991045,
+        "ocr_setup": 43.9620660035871,
+        "card_reading": 2775.293197017163,
+        "button_reading": 902.1772870037239,
+        "board_reading": 691.8331770066288
+      },
+      "ocr_work": {
+        "requests": 57,
+        "calls": 35,
+        "hits": 22,
+        "bytes": 2982982
+      },
+      "semantic": [
+        {
+          "box": [
+            30,
+            30,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Tc",
+            "5c"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.0",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            763,
+            30,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Qd",
+            "Qs"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CHECK",
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            1496,
+            30,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "3h",
+            "Qd"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.0",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            30,
+            1297,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Jd",
+            "2d"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.0",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            763,
+            1297,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "9d",
+            "2s"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.6",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            1496,
+            1297,
+            575,
+            1014
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Qs",
+            "6h"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [
+              "Jc",
+              "5d",
+              "3c"
+            ],
+            "street": "FLOP",
+            "status": "EXPERIMENTAL_BOARD"
+          },
+          "buttons": {
+            "status": "NO_BUTTON_ROW",
+            "items": []
+          }
+        }
+      ],
+      "expected_match": true,
+      "mode": "after",
+      "sample": 1,
+      "semantic_equal": true
+    },
+    {
+      "wall_ms": 4366.536743000324,
+      "stages": {
+        "detection": 435.396048000257,
+        "ocr_setup": 31.869383004959673,
+        "card_reading": 2555.5775410030037,
+        "button_reading": 733.0522970078164,
+        "board_reading": 589.9134479986969
+      },
+      "ocr_work": {
+        "requests": 57,
+        "calls": 35,
+        "hits": 22,
+        "bytes": 2982982
+      },
+      "semantic": [
+        {
+          "box": [
+            30,
+            30,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Tc",
+            "5c"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.0",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            763,
+            30,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Qd",
+            "Qs"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CHECK",
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            1496,
+            30,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "3h",
+            "Qd"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.0",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            30,
+            1297,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Jd",
+            "2d"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.0",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            763,
+            1297,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "9d",
+            "2s"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.6",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            1496,
+            1297,
+            575,
+            1014
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Qs",
+            "6h"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [
+              "Jc",
+              "5d",
+              "3c"
+            ],
+            "street": "FLOP",
+            "status": "EXPERIMENTAL_BOARD"
+          },
+          "buttons": {
+            "status": "NO_BUTTON_ROW",
+            "items": []
+          }
+        }
+      ],
+      "expected_match": true,
+      "mode": "before",
+      "sample": 1,
+      "semantic_equal": true
+    },
+    {
+      "wall_ms": 4146.452329005115,
+      "stages": {
+        "detection": 443.8592759979656,
+        "ocr_setup": 34.71892300149193,
+        "card_reading": 2387.9380940052215,
+        "button_reading": 610.7830469991313,
+        "board_reading": 650.9858729987172
+      },
+      "ocr_work": {
+        "requests": 57,
+        "calls": 35,
+        "hits": 22,
+        "bytes": 2982982
+      },
+      "semantic": [
+        {
+          "box": [
+            30,
+            30,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Tc",
+            "5c"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.0",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            763,
+            30,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Qd",
+            "Qs"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CHECK",
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            1496,
+            30,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "3h",
+            "Qd"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.0",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            30,
+            1297,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Jd",
+            "2d"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.0",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            763,
+            1297,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "9d",
+            "2s"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.6",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            1496,
+            1297,
+            575,
+            1014
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Qs",
+            "6h"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [
+              "Jc",
+              "5d",
+              "3c"
+            ],
+            "street": "FLOP",
+            "status": "EXPERIMENTAL_BOARD"
+          },
+          "buttons": {
+            "status": "NO_BUTTON_ROW",
+            "items": []
+          }
+        }
+      ],
+      "expected_match": true,
+      "mode": "before",
+      "sample": 2,
+      "semantic_equal": true
+    },
+    {
+      "wall_ms": 4546.86770200351,
+      "stages": {
+        "detection": 449.92120700044325,
+        "ocr_setup": 36.61924399784766,
+        "card_reading": 2719.4484720166656,
+        "button_reading": 638.6780770044425,
+        "board_reading": 675.8800599927781
+      },
+      "ocr_work": {
+        "requests": 57,
+        "calls": 35,
+        "hits": 22,
+        "bytes": 2982982
+      },
+      "semantic": [
+        {
+          "box": [
+            30,
+            30,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Tc",
+            "5c"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.0",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            763,
+            30,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Qd",
+            "Qs"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CHECK",
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            1496,
+            30,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "3h",
+            "Qd"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.0",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            30,
+            1297,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Jd",
+            "2d"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.0",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            763,
+            1297,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "9d",
+            "2s"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.6",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            1496,
+            1297,
+            575,
+            1014
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Qs",
+            "6h"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [
+              "Jc",
+              "5d",
+              "3c"
+            ],
+            "street": "FLOP",
+            "status": "EXPERIMENTAL_BOARD"
+          },
+          "buttons": {
+            "status": "NO_BUTTON_ROW",
+            "items": []
+          }
+        }
+      ],
+      "expected_match": true,
+      "mode": "after",
+      "sample": 2,
+      "semantic_equal": true
+    },
+    {
+      "wall_ms": 4671.831977997499,
+      "stages": {
+        "detection": 427.9924829970696,
+        "ocr_setup": 75.93619300314458,
+        "card_reading": 2862.1095650014468,
+        "button_reading": 682.6312940029311,
+        "board_reading": 606.5095109952381
+      },
+      "ocr_work": {
+        "requests": 57,
+        "calls": 35,
+        "hits": 22,
+        "bytes": 2982982
+      },
+      "semantic": [
+        {
+          "box": [
+            30,
+            30,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Tc",
+            "5c"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.0",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            763,
+            30,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Qd",
+            "Qs"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CHECK",
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            1496,
+            30,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "3h",
+            "Qd"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.0",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            30,
+            1297,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Jd",
+            "2d"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.0",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            763,
+            1297,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "9d",
+            "2s"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.6",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            1496,
+            1297,
+            575,
+            1014
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Qs",
+            "6h"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [
+              "Jc",
+              "5d",
+              "3c"
+            ],
+            "street": "FLOP",
+            "status": "EXPERIMENTAL_BOARD"
+          },
+          "buttons": {
+            "status": "NO_BUTTON_ROW",
+            "items": []
+          }
+        }
+      ],
+      "expected_match": true,
+      "mode": "after",
+      "sample": 3,
+      "semantic_equal": true
+    },
+    {
+      "wall_ms": 4622.949994001829,
+      "stages": {
+        "detection": 473.29948299739044,
+        "ocr_setup": 61.37059700267855,
+        "card_reading": 2702.204356013681,
+        "button_reading": 636.3137329972233,
+        "board_reading": 728.8985190025414
+      },
+      "ocr_work": {
+        "requests": 57,
+        "calls": 35,
+        "hits": 22,
+        "bytes": 2982982
+      },
+      "semantic": [
+        {
+          "box": [
+            30,
+            30,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Tc",
+            "5c"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.0",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            763,
+            30,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Qd",
+            "Qs"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CHECK",
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            1496,
+            30,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "3h",
+            "Qd"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.0",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            30,
+            1297,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Jd",
+            "2d"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.0",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            763,
+            1297,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "9d",
+            "2s"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.6",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            1496,
+            1297,
+            575,
+            1014
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Qs",
+            "6h"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [
+              "Jc",
+              "5d",
+              "3c"
+            ],
+            "street": "FLOP",
+            "status": "EXPERIMENTAL_BOARD"
+          },
+          "buttons": {
+            "status": "NO_BUTTON_ROW",
+            "items": []
+          }
+        }
+      ],
+      "expected_match": true,
+      "mode": "before",
+      "sample": 3,
+      "semantic_equal": true
+    },
+    {
+      "wall_ms": 4755.828845001815,
+      "stages": {
+        "detection": 447.8571110012126,
+        "ocr_setup": 37.25843499705661,
+        "card_reading": 2675.2308790019015,
+        "button_reading": 638.7408150039846,
+        "board_reading": 933.2635699975071
+      },
+      "ocr_work": {
+        "requests": 57,
+        "calls": 35,
+        "hits": 22,
+        "bytes": 2982982
+      },
+      "semantic": [
+        {
+          "box": [
+            30,
+            30,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Tc",
+            "5c"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.0",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            763,
+            30,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Qd",
+            "Qs"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CHECK",
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            1496,
+            30,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "3h",
+            "Qd"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.0",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            30,
+            1297,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Jd",
+            "2d"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.0",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            763,
+            1297,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "9d",
+            "2s"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.6",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            1496,
+            1297,
+            575,
+            1014
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Qs",
+            "6h"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [
+              "Jc",
+              "5d",
+              "3c"
+            ],
+            "street": "FLOP",
+            "status": "EXPERIMENTAL_BOARD"
+          },
+          "buttons": {
+            "status": "NO_BUTTON_ROW",
+            "items": []
+          }
+        }
+      ],
+      "expected_match": true,
+      "mode": "before",
+      "sample": 4,
+      "semantic_equal": true
+    },
+    {
+      "wall_ms": 4450.838313998247,
+      "stages": {
+        "detection": 478.80829499627,
+        "ocr_setup": 33.45217300375225,
+        "card_reading": 2596.1372119927546,
+        "button_reading": 695.8543310101959,
+        "board_reading": 623.043432002305
+      },
+      "ocr_work": {
+        "requests": 57,
+        "calls": 35,
+        "hits": 22,
+        "bytes": 2982982
+      },
+      "semantic": [
+        {
+          "box": [
+            30,
+            30,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Tc",
+            "5c"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.0",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            763,
+            30,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Qd",
+            "Qs"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CHECK",
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            1496,
+            30,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "3h",
+            "Qd"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.0",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            30,
+            1297,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Jd",
+            "2d"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.0",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            763,
+            1297,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "9d",
+            "2s"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.6",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            1496,
+            1297,
+            575,
+            1014
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Qs",
+            "6h"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [
+              "Jc",
+              "5d",
+              "3c"
+            ],
+            "street": "FLOP",
+            "status": "EXPERIMENTAL_BOARD"
+          },
+          "buttons": {
+            "status": "NO_BUTTON_ROW",
+            "items": []
+          }
+        }
+      ],
+      "expected_match": true,
+      "mode": "after",
+      "sample": 4,
+      "semantic_equal": true
+    },
+    {
+      "wall_ms": 4320.001907995902,
+      "stages": {
+        "detection": 446.65985999745317,
+        "ocr_setup": 29.927775001851842,
+        "card_reading": 2578.121982005541,
+        "button_reading": 617.3273749955115,
+        "board_reading": 629.2874499922618
+      },
+      "ocr_work": {
+        "requests": 57,
+        "calls": 35,
+        "hits": 22,
+        "bytes": 2982982
+      },
+      "semantic": [
+        {
+          "box": [
+            30,
+            30,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Tc",
+            "5c"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.0",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            763,
+            30,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Qd",
+            "Qs"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CHECK",
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            1496,
+            30,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "3h",
+            "Qd"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.0",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            30,
+            1297,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Jd",
+            "2d"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.0",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            763,
+            1297,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "9d",
+            "2s"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.6",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            1496,
+            1297,
+            575,
+            1014
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Qs",
+            "6h"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [
+              "Jc",
+              "5d",
+              "3c"
+            ],
+            "street": "FLOP",
+            "status": "EXPERIMENTAL_BOARD"
+          },
+          "buttons": {
+            "status": "NO_BUTTON_ROW",
+            "items": []
+          }
+        }
+      ],
+      "expected_match": true,
+      "mode": "after",
+      "sample": 5,
+      "semantic_equal": true
+    },
+    {
+      "wall_ms": 4139.816763999988,
+      "stages": {
+        "detection": 515.0517670044792,
+        "ocr_setup": 39.003705998766236,
+        "card_reading": 2358.9561199987656,
+        "button_reading": 622.3170200028108,
+        "board_reading": 586.3634439883754
+      },
+      "ocr_work": {
+        "requests": 57,
+        "calls": 35,
+        "hits": 22,
+        "bytes": 2982982
+      },
+      "semantic": [
+        {
+          "box": [
+            30,
+            30,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Tc",
+            "5c"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.0",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            763,
+            30,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Qd",
+            "Qs"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CHECK",
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            1496,
+            30,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "3h",
+            "Qd"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.0",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            30,
+            1297,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Jd",
+            "2d"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.0",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            763,
+            1297,
+            703,
+            1237
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "9d",
+            "2s"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [],
+            "street": null,
+            "status": "BOARD_NOT_CONFIRMED"
+          },
+          "buttons": {
+            "status": "PRESELECTION_ROW",
+            "items": [
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": "CALL",
+                "amount": "1.6",
+                "unit": "BB",
+                "kind": "PRESELECT",
+                "status": "PRESELECT"
+              },
+              {
+                "action": null,
+                "label_action": null,
+                "amount": null,
+                "unit": null,
+                "kind": null,
+                "status": "NOT_IDENTIFIED"
+              }
+            ]
+          }
+        },
+        {
+          "box": [
+            1496,
+            1297,
+            575,
+            1014
+          ],
+          "status": "COMPLETE_CANDIDATE",
+          "hero": [
+            "Qs",
+            "6h"
+          ],
+          "reading_status": "EXPERIMENTAL_CANDIDATES",
+          "board": {
+            "cards": [
+              "Jc",
+              "5d",
+              "3c"
+            ],
+            "street": "FLOP",
+            "status": "EXPERIMENTAL_BOARD"
+          },
+          "buttons": {
+            "status": "NO_BUTTON_ROW",
+            "items": []
+          }
+        }
+      ],
+      "expected_match": true,
+      "mode": "before",
+      "sample": 5,
+      "semantic_equal": true
+    }
+  ]
+}

@@ -21,7 +21,7 @@ def main():
       ('colored_boards',[sys.executable,'tools/evaluate_colored_boards.py','--assets',str(assets)]),
       ('board_transitions',[sys.executable,'tools/replay_board_transitions.py','--assets',str(assets)]),
       ('turn_variants',[sys.executable,'tools/evaluate_turn_variants.py','--assets',str(assets)])]
-    commands += [(name,[sys.executable,script,'--assets',str(assets),'--output',str(out/(name+'.json'))]) for name,script in [('hero_extended','tools/hero_batch.py'),('board_extended','tools/board_batch_evaluation.py'),('colored_eight','tools/board_batch_eight.py'),('rank_template_coverage','tools/evaluate_rank_fastpath.py'),('pipeline_integrated','tools/validate_next_block.py'),('detector_extended','scripts/detector_batch.py')]]
+    commands += [(name,[sys.executable,script,'--assets',str(assets),'--output',str(out/(name+'.json'))]) for name,script in [('hero_extended','tools/hero_batch.py'),('board_extended','tools/board_batch_evaluation.py'),('colored_eight','tools/board_batch_eight.py'),('rank_template_coverage','tools/evaluate_rank_fastpath.py'),('protected_rank_regression','tools/validate_guarded_ranks.py'),('pipeline_integrated','tools/validate_next_block.py'),('detector_extended','scripts/detector_batch.py')]]
     # A bounded worker pool runs independent replay jobs, not live desktop tasks.
     def execute(job):
         name,command=job;started=time.monotonic();log=out/(name+'.log')

@@ -53,6 +53,28 @@ def hole_count(glyph):
     return sum(h[3]>=0 and cv2.contourArea(c)>=2 for c,h in zip(contours,hierarchy[0]))
 
 
+class TemplateAtlas:
+    """Immutable precomputed masks; each pixel comparison runs in one NumPy batch."""
+    def __init__(self, rows):
+        self.rows = tuple(rows)
+        self.masks = np.stack([row[1].ravel() for row in self.rows])
+        self.areas = np.count_nonzero(self.masks, axis=1)
+        self.masks.flags.writeable = False
+        self.areas.flags.writeable = False
+
+    def scores(self, candidate, holes, ratio):
+        intersections = np.count_nonzero(self.masks & candidate.ravel(), axis=1)
+        unions = self.areas + np.count_nonzero(candidate) - intersections
+        values = intersections / np.maximum(1, unions)
+        result = {}
+        # Preserve stable rank ordering and first-template tie behavior exactly.
+        for index, (rank, _, expected_holes, expected_ratio) in enumerate(self.rows):
+            score = float(values[index])
+            if score > result.get(rank, (-1, False))[0]:
+                result[rank] = (score, holes == expected_holes and abs(ratio / expected_ratio - 1) <= .12)
+        return result
+
+
 @lru_cache(maxsize=1)
 def load_templates():
     manifest=json.loads((ASSET_DIR/'manifest.json').read_text())
@@ -64,23 +86,19 @@ def load_templates():
         if glyph is None or not glyph.size:raise ValueError('Missing rank template')
         result.append((row['rank'],normalized(glyph),hole_count(glyph),glyph.shape[1]/glyph.shape[0]))
     if {r[0] for r in result}!=set('23456789TJQKA'):raise ValueError('Incomplete competitor atlas')
-    return result
+    return TemplateAtlas(result)
 
 
 def read_template_rank(crop):
     try:templates=load_templates()
     except (OSError,ValueError,KeyError):return None
+    if not isinstance(templates, TemplateAtlas):templates = TemplateAtlas(templates)
     glyphs=segmented_masks(crop)
     if len(glyphs)!=2:return None
     decisions=[]
     for glyph,parts in glyphs:
         candidate=normalized(glyph);holes=hole_count(glyph);ratio=glyph.shape[1]/glyph.shape[0]
-        scores={}
-        for rank,template,expected_holes,expected_ratio in templates:
-            # Score every competing rank; topology and aspect gate only winner.
-            iou=float(np.logical_and(candidate,template).sum()/max(1,np.logical_or(candidate,template).sum()))
-            old=scores.get(rank,(-1,False))
-            if iou>old[0]:scores[rank]=(iou,holes==expected_holes and abs(ratio/expected_ratio-1)<=.12)
+        scores=templates.scores(candidate,holes,ratio)
         ranked=sorted(scores.items(),key=lambda item:item[1][0],reverse=True)
         if len(ranked)<2:return None
         rank,(score,geometry)=ranked[0];margin=score-ranked[1][1][0]

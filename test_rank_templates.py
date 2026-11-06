@@ -35,6 +35,25 @@ class RankTemplateContracts(unittest.TestCase):
         with patch.object(templates,'load_templates',return_value=[good,good,good,bad]):
             self.assertEqual(self.read()['rank'],'2')
 
+    def test_vectorized_scores_exactly_match_scalar_reference(self):
+        atlas=templates.load_templates()
+        random=np.random.default_rng(704)
+        candidates=[np.zeros((64,48),bool),np.ones((64,48),bool)]
+        candidates.extend(random.random((64,48))>.8 for _ in range(32))
+        candidates.extend(row[1] for row in atlas.rows)
+        for candidate in candidates:
+            expected={}
+            for rank,mask,holes,ratio in atlas.rows:
+                score=float(np.logical_and(candidate,mask).sum()/max(1,np.logical_or(candidate,mask).sum()))
+                if score>expected.get(rank,(-1,False))[0]:
+                    expected[rank]=(score,1==holes and abs(.5/ratio-1)<=.12)
+            self.assertEqual(atlas.scores(candidate,1,.5),expected)
+
+    def test_vectorized_tie_keeps_first_template_geometry(self):
+        mask=templates.normalized(self.glyph)
+        atlas=templates.TemplateAtlas([('2',mask,0,.5),('2',mask,1,.5)])
+        self.assertEqual(atlas.scores(mask,1,.5)['2'],(1.,False))
+
     def test_exact_asset_self_match_contract_only(self):
         self.assertEqual(self.read()['rank'],'2')
 

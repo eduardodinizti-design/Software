@@ -49,12 +49,13 @@ def _menu_stripes(mask):
 
 def _measure(rgb, native=False):
     a=rgb if native else cv2.resize(rgb,(400,704))
-    hsv=cv2.cvtColor(a,cv2.COLOR_RGB2HSV)
     scores={}
     for name,(x,y,w,h) in REGIONS.items():
         if native:
             x,y,w,h=round(x*rgb.shape[1]/400),round(y*rgb.shape[0]/704),round(w*rgb.shape[1]/400),round(h*rgb.shape[0]/704)
-        mask=cv2.inRange(hsv[y:y+h,x:x+w],(38,90,65),(90,255,255))
+        region=a[y:y+h,x:x+w]
+        hsv=cv2.cvtColor(region,cv2.COLOR_RGB2HSV)
+        mask=cv2.inRange(hsv,(38,90,65),(90,255,255))
         if name=='menu' and np.any(mask):
             mask=_menu_stripes(mask)
         if name=='chat' and np.any(mask):

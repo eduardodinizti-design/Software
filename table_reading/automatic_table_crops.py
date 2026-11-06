@@ -38,14 +38,15 @@ def detect_table_crops(rgb, blockers=(), max_tables=6):
     if height*width>36_000_000:raise ValueError('Frame exceeds laboratory pixel limit')
     for b in blockers:
         if len(b)!=4 or b[2]<=0 or b[3]<=0:raise ValueError('Invalid blocker')
-    anchors=detect_control_anchored_tables(rgb)
     hsv=cv2.cvtColor(rgb,cv2.COLOR_RGB2HSV)
+    anchors=detect_control_anchored_tables(rgb,_hsv=hsv)
     proposals=[(b,'THREE_CONTROLS_BLUE_SURFACE') for b in anchors]
     for lower,upper in [((35,45,30),(130,255,255)),((105,45,30),(130,255,255)),((110,45,30),(130,255,255))]:
         mask=cv2.inRange(hsv,lower,upper)
-        if lower[0]!=110 and any(cv2.boundingRect(c)[0]==0 for c in cv2.findContours(mask,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)[0]):
-            mask=cv2.morphologyEx(mask,cv2.MORPH_OPEN,np.ones((3,3),np.uint8))
         contours=cv2.findContours(mask,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)[0]
+        if lower[0]!=110 and any(cv2.boundingRect(c)[0]==0 for c in contours):
+            mask=cv2.morphologyEx(mask,cv2.MORPH_OPEN,np.ones((3,3),np.uint8))
+            contours=cv2.findContours(mask,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)[0]
         # Prefer enclosing proposals over interior felt fragments.
         for contour in sorted(contours,key=lambda c: cv2.boundingRect(c)[2]*cv2.boundingRect(c)[3],reverse=True):
             box=cv2.boundingRect(contour);x,y,w,h=box
