@@ -1,6 +1,5 @@
 # Snapshot-scoped OCR optimization
 
-The current reader uses OpenCV and Tesseract. This change removes redundant Tesseract subprocess calls for exactly identical prepared pixels with the same shape, dtype, OCR keyword arguments and executable path. It does not add YOLO, change recognition thresholds, infer labels from button colors or reuse results from previous screenshots.
 
 `analyze_tables` opens a ContextVar-scoped memo and closes it in a finally block. Only uint8 arrays and string OCR outputs are retained; exceptions are not cached. The memo has a 256-entry / 16 MiB payload cap (Python metadata overhead is additional). Every snapshot starts empty. Contexts are isolated between ordinary threads; nested calls share the outer policy so the benchmark can disable reuse. Standalone readers outside a context retain their previous behavior.
 

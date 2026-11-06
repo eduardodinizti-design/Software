@@ -43,7 +43,6 @@ Source decoding and tiling happen outside timed calls. Each call runs the real d
 
 The 250 ms p95 end-to-end target is **not met**, even before Windows capture. Six diverse crops still require 7706.5 ms exploratory p95. The optimized median stage times are approximately: detection 413 ms, OCR setup 31 ms, Hero reading 4888 ms, button reading 1163 ms and board reading 571 ms. Stage medians do not necessarily sum to the total median.
 
-Prioritize reducing rank/button OCR subprocess dependence next. Compare a template-based fast path or persistent OCR backend against the preserved fallback and existing negative cases before considering a trained detector/classifier replacement. YOLO alone localizes objects; card rank/suit and variable action amounts still need explicit recognition and validation. Detection's own 413 ms also exceeds the whole-system target in this synthetic scene, so OCR optimization alone cannot establish the target.
 
 Exact snapshot memoization is retained because outputs match and work decreases. No capture identity checks, recognition thresholds or frame freshness rules were relaxed. Cache payload is bounded and discarded after each snapshot; the observer reports requests/calls/hits without storing images.
 

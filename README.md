@@ -20,7 +20,6 @@ Substitua NUMERO pelo HWND atual listado. Ctrl+C encerra. O observador trabalha 
 
 ## Orientacao para agentes
 
-Mantenha o leitor de console existente. Nao crie GUI, previa de debug, YOLO paralelo, filtros adicionais, redimensionamento para reconhecimento ou outra implementacao de ROIs. Nao copie arquivos isolados para uma distribuicao antiga. Use o checkout completo desta branch, preservando templates e dependencias.
 
 Os arquivos do motor e do reconhecimento nao foram alterados nesta limpeza. O executor manual `testar_windows.py --cliques` e separado e nao faz parte do observador validado. Arquivos historicos nao referenciados pelo caminho oficial nao devem ser executados como alternativa.
 

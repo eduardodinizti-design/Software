@@ -96,36 +96,8 @@ def pending(reason='leitura incompleta'):
     return {'status': 'pending', 'value': None, 'reason': reason}
 
 
-def read_card(image, templates=None, threshold=.98, margin=.04, use_yolo=True):
-    """
-    Reconhecimento de cartas com arquitetura de Redes Neurais YOLOv8 Nano (~8ms na CPU).
-    Resiliente a skins customizadas, cartas em animação/movimento e resoluções arbitrárias.
-    Fallback automático para Template Matching tradicional se YOLO desabilitado.
-    """
-    if use_yolo:
-        try:
-            from yolo_card_detector import YOLOv8CardDetector
-            # Instanciação singleton ou detector rápido
-            detector = getattr(read_card, '_yolo_detector', None)
-            if detector is None:
-                detector = YOLOv8CardDetector()
-                setattr(read_card, '_yolo_detector', detector)
-            
-            res = detector.detect(image)
-            if res.status == 'SUCCESS' and len(res.cards) > 0:
-                top_card = max(res.cards, key=lambda c: c.confidence)
-                if top_card.confidence >= 0.70:
-                    return {
-                        'status': 'recognized',
-                        'value': top_card.class_name,
-                        'confidence': top_card.confidence,
-                        'engine': 'YOLOv8_Nano',
-                        'latency_ms': res.inference_time_ms
-                    }
-        except Exception:
-            pass
-
-    # Fallback: Template Matching Tradicional
+def read_card(image, templates=None, threshold=.98, margin=.04):
+    # Template matching on native pixels.
     if not templates:
         return pending('modelos de cartas ausentes')
     sample = gray(image)
