@@ -1,5 +1,5 @@
-Run: 42213511134
-Source commit: e8853506a068270e2111457ae71b5914a9403a7b
+Run: 42214831270
+Source commit: af8461d156d295d594337f32f187cbbed8b06276
 test_arbitrary_executable_is_rejected (test_capture_regressions.OriginalRegressionTests.test_arbitrary_executable_is_rejected) ... ok
 test_linux_cannot_report_success (test_capture_regressions.OriginalRegressionTests.test_linux_cannot_report_success) ... ok
 test_process_access_denied_is_rejected (test_capture_regressions.OriginalRegressionTests.test_process_access_denied_is_rejected) ... ok
@@ -124,6 +124,6 @@ Traceback (most recent call last):
 RuntimeError: Limite global: arquivos protegidos ou externos impedem salvar. Nada removido.
 
 ----------------------------------------------------------------------
-Ran 83 tests in 5.541s
+Ran 83 tests in 5.244s
 
 FAILED (errors=3)
