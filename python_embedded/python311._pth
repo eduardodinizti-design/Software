@@ -1,7 +1,0 @@
-python311.zip
-.
-Lib\site-packages
-..\Lib\site-packages
-..
-..\repo_visualpilot
-import site

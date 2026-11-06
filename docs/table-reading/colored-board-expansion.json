@@ -1,0 +1,720 @@
+[
+  {
+    "source": "_2DDE1911-9262-45F2-9D20-E90899BC739A__111d0a2e.png",
+    "sha256": "111d0a2ee537dbd2a6b453d681e8ee6b7ad92520d262f276c0e6a9d029f0fe31",
+    "box": [
+      716,
+      213,
+      703,
+      1237
+    ],
+    "detection_status": "COMPLETE_CANDIDATE",
+    "board_status": "BOARD_INCOMPLETE",
+    "candidates": [
+      [
+        141,
+        471,
+        79,
+        116
+      ],
+      [
+        226,
+        471,
+        79,
+        116
+      ],
+      [
+        311,
+        471,
+        78,
+        115
+      ]
+    ],
+    "expected": [
+      "3d",
+      "Ad",
+      "3s"
+    ],
+    "result": {
+      "status": "EXPERIMENTAL_BOARD",
+      "street": "FLOP",
+      "cards": [
+        "3d",
+        "Ad",
+        "3s"
+      ],
+      "candidates": [
+        [
+          141,
+          471,
+          79,
+          116
+        ],
+        [
+          226,
+          471,
+          79,
+          116
+        ],
+        [
+          311,
+          471,
+          78,
+          115
+        ]
+      ],
+      "actions_allowed": false,
+      "readings": [
+        {
+          "card": "3d",
+          "rank": {
+            "rank": "3",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "3",
+              "3",
+              "3",
+              "3"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES"
+          },
+          "suit": {
+            "suit": "d",
+            "status": "CANDIDATE_ONLY",
+            "shape_iou": 0.889,
+            "margin": 0.226,
+            "evidence": "template_margin"
+          }
+        },
+        {
+          "card": "Ad",
+          "rank": {
+            "rank": "A",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "A",
+              "A",
+              "A",
+              "A"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES"
+          },
+          "suit": {
+            "suit": "d",
+            "status": "CANDIDATE_ONLY",
+            "shape_iou": 0.881,
+            "margin": 0.217,
+            "evidence": "template_margin"
+          }
+        },
+        {
+          "card": "3s",
+          "rank": {
+            "rank": "3",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "3",
+              "3",
+              "3",
+              "3"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES"
+          },
+          "suit": {
+            "suit": "s",
+            "status": "CANDIDATE_ONLY",
+            "shape_iou": 0.727,
+            "margin": 0.052,
+            "evidence": "template_and_pointed_contour"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "source": "_4342624F-9E50-4B21-ABAF-2D1DD4C9AFB7__886a1f03.png",
+    "sha256": "886a1f030b752007fd036f2d01f9ae9e15b9c49c7c8b7d655e895af06aa4b697",
+    "box": [
+      712,
+      182,
+      702,
+      1271
+    ],
+    "detection_status": "COMPLETE_CANDIDATE",
+    "board_status": "BOARD_INCOMPLETE",
+    "candidates": [
+      [
+        144,
+        471,
+        79,
+        116
+      ],
+      [
+        229,
+        471,
+        79,
+        116
+      ],
+      [
+        314,
+        471,
+        78,
+        115
+      ]
+    ],
+    "expected": [
+      "Kd",
+      "Jd",
+      "2s"
+    ],
+    "result": {
+      "status": "EXPERIMENTAL_BOARD",
+      "street": "FLOP",
+      "cards": [
+        "Kd",
+        "Jd",
+        "2s"
+      ],
+      "candidates": [
+        [
+          144,
+          471,
+          79,
+          116
+        ],
+        [
+          229,
+          471,
+          79,
+          116
+        ],
+        [
+          314,
+          471,
+          78,
+          115
+        ]
+      ],
+      "actions_allowed": false,
+      "readings": [
+        {
+          "card": "Kd",
+          "rank": {
+            "rank": "K",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "K",
+              "K",
+              "K",
+              "K"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES"
+          },
+          "suit": {
+            "suit": "d",
+            "status": "CANDIDATE_ONLY",
+            "shape_iou": 0.889,
+            "margin": 0.226,
+            "evidence": "template_margin"
+          }
+        },
+        {
+          "card": "Jd",
+          "rank": {
+            "rank": "J",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "J",
+              "J",
+              "J",
+              "J"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES"
+          },
+          "suit": {
+            "suit": "d",
+            "status": "CANDIDATE_ONLY",
+            "shape_iou": 0.881,
+            "margin": 0.217,
+            "evidence": "template_margin"
+          }
+        },
+        {
+          "card": "2s",
+          "rank": {
+            "rank": "2",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "2",
+              "2",
+              "2",
+              "2"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES"
+          },
+          "suit": {
+            "suit": "s",
+            "status": "CANDIDATE_ONLY",
+            "shape_iou": 0.724,
+            "margin": 0.052,
+            "evidence": "template_and_pointed_contour"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "source": "_9134EF06-78F3-443A-9653-C19751D93C32__720a6eca.png",
+    "sha256": "720a6eca56f82570d6ea373a544492ec99f744646119c4ce245c2b814d8e8ab1",
+    "box": [
+      698,
+      176,
+      702,
+      1271
+    ],
+    "detection_status": "COMPLETE_CANDIDATE",
+    "board_status": "BOARD_INCOMPLETE",
+    "candidates": [
+      [
+        145,
+        471,
+        77,
+        115
+      ],
+      [
+        229,
+        471,
+        78,
+        115
+      ],
+      [
+        313,
+        471,
+        79,
+        116
+      ],
+      [
+        399,
+        471,
+        78,
+        115
+      ],
+      [
+        484,
+        471,
+        78,
+        115
+      ]
+    ],
+    "expected": [
+      "4s",
+      "2s",
+      "Qd",
+      "Kh",
+      "4h"
+    ],
+    "result": {
+      "status": "EXPERIMENTAL_BOARD",
+      "street": "RIVER",
+      "cards": [
+        "4s",
+        "2s",
+        "Qd",
+        "Kh",
+        "4h"
+      ],
+      "candidates": [
+        [
+          145,
+          471,
+          77,
+          115
+        ],
+        [
+          229,
+          471,
+          78,
+          115
+        ],
+        [
+          313,
+          471,
+          79,
+          116
+        ],
+        [
+          399,
+          471,
+          78,
+          115
+        ],
+        [
+          484,
+          471,
+          78,
+          115
+        ]
+      ],
+      "actions_allowed": false,
+      "readings": [
+        {
+          "card": "4s",
+          "rank": {
+            "rank": "4",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "4"
+            ],
+            "suit": null
+          },
+          "suit": {
+            "suit": "s",
+            "status": "CANDIDATE_ONLY",
+            "shape_iou": 0.732,
+            "margin": 0.065,
+            "evidence": "template_and_pointed_contour"
+          }
+        },
+        {
+          "card": "2s",
+          "rank": {
+            "rank": "2",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "2",
+              "2",
+              "2",
+              "2"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES"
+          },
+          "suit": {
+            "suit": "s",
+            "status": "CANDIDATE_ONLY",
+            "shape_iou": 0.738,
+            "margin": 0.047,
+            "evidence": "template_and_pointed_contour"
+          }
+        },
+        {
+          "card": "Qd",
+          "rank": {
+            "rank": "Q",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "Q"
+            ],
+            "suit": null
+          },
+          "suit": {
+            "suit": "d",
+            "status": "CANDIDATE_ONLY",
+            "shape_iou": 0.864,
+            "margin": 0.206,
+            "evidence": "template_margin"
+          }
+        },
+        {
+          "card": "Kh",
+          "rank": {
+            "rank": "K",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "K",
+              "K",
+              "K",
+              "K"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES"
+          },
+          "suit": {
+            "suit": "h",
+            "status": "CANDIDATE_ONLY",
+            "shape_iou": 0.939,
+            "margin": 0.381,
+            "evidence": "template_margin"
+          }
+        },
+        {
+          "card": "4h",
+          "rank": {
+            "rank": "4",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "4"
+            ],
+            "suit": null
+          },
+          "suit": {
+            "suit": "h",
+            "status": "CANDIDATE_ONLY",
+            "shape_iou": 0.951,
+            "margin": 0.393,
+            "evidence": "template_margin"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "source": "_E59537C2-2CA7-4FB2-9B22-728875057AAB__5c7b5161.png",
+    "sha256": "5c7b5161179073429b030a9bc8ea42e4c1ac6e70a87a4d2ffd7a069f494d022d",
+    "box": [
+      1149,
+      38,
+      575,
+      1014
+    ],
+    "detection_status": "COMPLETE_CANDIDATE",
+    "board_status": "BOARD_INCOMPLETE",
+    "candidates": [
+      [
+        120,
+        383,
+        64,
+        94
+      ],
+      [
+        189,
+        383,
+        64,
+        94
+      ],
+      [
+        257,
+        383,
+        65,
+        95
+      ]
+    ],
+    "expected": [
+      "Jc",
+      "5d",
+      "3c"
+    ],
+    "result": {
+      "status": "EXPERIMENTAL_BOARD",
+      "street": "FLOP",
+      "cards": [
+        "Jc",
+        "5d",
+        "3c"
+      ],
+      "candidates": [
+        [
+          120,
+          383,
+          64,
+          94
+        ],
+        [
+          189,
+          383,
+          64,
+          94
+        ],
+        [
+          257,
+          383,
+          65,
+          95
+        ]
+      ],
+      "actions_allowed": false,
+      "readings": [
+        {
+          "card": "Jc",
+          "rank": {
+            "rank": "J",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "J",
+              "J",
+              "J",
+              "J"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES"
+          },
+          "suit": {
+            "suit": "c",
+            "status": "CANDIDATE_ONLY",
+            "shape_iou": 0.81,
+            "margin": 0.088,
+            "evidence": "template_and_rounded_crown"
+          }
+        },
+        {
+          "card": "5d",
+          "rank": {
+            "rank": "5",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "5",
+              "5",
+              "5",
+              "5"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES"
+          },
+          "suit": {
+            "suit": "d",
+            "status": "CANDIDATE_ONLY",
+            "shape_iou": 0.867,
+            "margin": 0.22,
+            "evidence": "template_margin"
+          }
+        },
+        {
+          "card": "3c",
+          "rank": {
+            "rank": "3",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "3",
+              "3",
+              "3",
+              "3"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES"
+          },
+          "suit": {
+            "suit": "c",
+            "status": "CANDIDATE_ONLY",
+            "shape_iou": 0.824,
+            "margin": 0.114,
+            "evidence": "template_and_rounded_crown"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "source": "image_2da5ef3e.png",
+    "sha256": "2da5ef3ef8c622de5e16c2dc620ec0e9e86aff31f46bf334f7c2cb0f7e82fc18",
+    "box": [
+      755,
+      31,
+      376,
+      663
+    ],
+    "detection_status": "COMPLETE_CANDIDATE",
+    "board_status": "BOARD_INCOMPLETE",
+    "candidates": [
+      [
+        75,
+        252,
+        42,
+        62
+      ],
+      [
+        120,
+        252,
+        43,
+        62
+      ],
+      [
+        166,
+        252,
+        42,
+        62
+      ]
+    ],
+    "expected": [
+      "2h",
+      "7d",
+      "6h"
+    ],
+    "result": {
+      "status": "EXPERIMENTAL_BOARD",
+      "street": "FLOP",
+      "cards": [
+        "2h",
+        "7d",
+        "6h"
+      ],
+      "candidates": [
+        [
+          75,
+          252,
+          42,
+          62
+        ],
+        [
+          120,
+          252,
+          43,
+          62
+        ],
+        [
+          166,
+          252,
+          42,
+          62
+        ]
+      ],
+      "actions_allowed": false,
+      "readings": [
+        {
+          "card": "2h",
+          "rank": {
+            "rank": "2",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "2",
+              "2",
+              "2",
+              "2"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES"
+          },
+          "suit": {
+            "suit": "h",
+            "status": "CANDIDATE_ONLY",
+            "shape_iou": 0.916,
+            "margin": 0.354,
+            "evidence": "template_margin"
+          }
+        },
+        {
+          "card": "7d",
+          "rank": {
+            "rank": "7",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "7",
+              "7",
+              "7",
+              "7"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES"
+          },
+          "suit": {
+            "suit": "d",
+            "status": "CANDIDATE_ONLY",
+            "shape_iou": 0.889,
+            "margin": 0.195,
+            "evidence": "template_margin"
+          }
+        },
+        {
+          "card": "6h",
+          "rank": {
+            "rank": "6",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "6"
+            ],
+            "suit": null
+          },
+          "suit": {
+            "suit": "h",
+            "status": "CANDIDATE_ONLY",
+            "shape_iou": 0.916,
+            "margin": 0.354,
+            "evidence": "template_margin"
+          }
+        }
+      ]
+    }
+  }
+]

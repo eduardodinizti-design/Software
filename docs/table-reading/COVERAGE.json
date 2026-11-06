@@ -1,0 +1,330 @@
+{
+  "scope": "Labeled local corpus only. Distinct screenshots/crops are not necessarily independent hands.",
+  "source_images": 7,
+  "table_crops": 8,
+  "independent_holdout_images": 0,
+  "hero": {
+    "occurrences": 16,
+    "unique_cards": 13,
+    "card_counts": {
+      "2d": 1,
+      "2s": 1,
+      "3h": 1,
+      "5c": 1,
+      "5h": 1,
+      "6h": 2,
+      "7c": 1,
+      "9d": 1,
+      "Jd": 1,
+      "Kc": 1,
+      "Qd": 2,
+      "Qs": 2,
+      "Tc": 1
+    },
+    "rank_counts": {
+      "T": 1,
+      "5": 2,
+      "Q": 4,
+      "3": 1,
+      "J": 1,
+      "2": 2,
+      "9": 1,
+      "7": 1,
+      "6": 2,
+      "K": 1
+    },
+    "suit_counts": {
+      "c": 4,
+      "d": 5,
+      "s": 3,
+      "h": 4
+    },
+    "missing_cards": [
+      "2c",
+      "2h",
+      "3c",
+      "3d",
+      "3s",
+      "4c",
+      "4d",
+      "4h",
+      "4s",
+      "5d",
+      "5s",
+      "6c",
+      "6d",
+      "6s",
+      "7d",
+      "7h",
+      "7s",
+      "8c",
+      "8d",
+      "8h",
+      "8s",
+      "9c",
+      "9h",
+      "9s",
+      "Ac",
+      "Ad",
+      "Ah",
+      "As",
+      "Jc",
+      "Jh",
+      "Js",
+      "Kd",
+      "Kh",
+      "Ks",
+      "Qc",
+      "Qh",
+      "Td",
+      "Th",
+      "Ts"
+    ],
+    "missing_ranks": [
+      "4",
+      "8",
+      "A"
+    ]
+  },
+  "board": {
+    "occurrences": 3,
+    "unique_cards": 3,
+    "card_counts": {
+      "3c": 1,
+      "5d": 1,
+      "Jc": 1
+    },
+    "rank_counts": {
+      "J": 1,
+      "5": 1,
+      "3": 1
+    },
+    "suit_counts": {
+      "c": 2,
+      "d": 1
+    },
+    "missing_cards": [
+      "2c",
+      "2d",
+      "2h",
+      "2s",
+      "3d",
+      "3h",
+      "3s",
+      "4c",
+      "4d",
+      "4h",
+      "4s",
+      "5c",
+      "5h",
+      "5s",
+      "6c",
+      "6d",
+      "6h",
+      "6s",
+      "7c",
+      "7d",
+      "7h",
+      "7s",
+      "8c",
+      "8d",
+      "8h",
+      "8s",
+      "9c",
+      "9d",
+      "9h",
+      "9s",
+      "Ac",
+      "Ad",
+      "Ah",
+      "As",
+      "Jd",
+      "Jh",
+      "Js",
+      "Kc",
+      "Kd",
+      "Kh",
+      "Ks",
+      "Qc",
+      "Qd",
+      "Qh",
+      "Qs",
+      "Tc",
+      "Td",
+      "Th",
+      "Ts"
+    ],
+    "missing_ranks": [
+      "2",
+      "4",
+      "6",
+      "7",
+      "8",
+      "9",
+      "T",
+      "Q",
+      "K",
+      "A"
+    ]
+  },
+  "board_rows_by_count": {
+    "0": 7,
+    "3": 1
+  },
+  "crop_sizes": [
+    "570x1004",
+    "575x1014",
+    "699x1244",
+    "703x1237"
+  ],
+  "buttons": {
+    "scope": "OCR observations; not a fully human-labeled acceptance set",
+    "observations": {
+      "PRESELECT": 5,
+      "CALL": 5,
+      "UNIDENTIFIED": 5,
+      "CHECK": 1,
+      "FOLD": 1,
+      "RAISE": 1
+    },
+    "rows_detected": 6,
+    "total_regions": 8
+  },
+  "excluded_from_independent_coverage": [
+    "resizes",
+    "brightness/blur variants",
+    "synthetic scenes",
+    "mock OCR",
+    "chat images without locally available original PNG"
+  ],
+  "entries": [
+    {
+      "source": "_4528A8B5-F81C-4078-A8DB-C7ADBD91C311__85ee615d.png",
+      "sha256": "85ee615d31918032b5782e88ed0e9370ec1c1f28b451457ed2f7dcba66e49c09",
+      "box": [
+        674,
+        100,
+        703,
+        1237
+      ],
+      "hero_expected": [
+        "Tc",
+        "5c"
+      ],
+      "evidence": "REAL_IMAGE_DEVELOPMENT",
+      "independent_holdout": false
+    },
+    {
+      "source": "_3A75F7DE-7229-4137-BD19-4AF5AE363948__d560bf0f.png",
+      "sha256": "d560bf0fd1828a797fbeae678793e8412403267cb53817260bcab7464356da28",
+      "box": [
+        705,
+        225,
+        703,
+        1237
+      ],
+      "hero_expected": [
+        "Qd",
+        "Qs"
+      ],
+      "evidence": "REAL_IMAGE_DEVELOPMENT",
+      "independent_holdout": false
+    },
+    {
+      "source": "_58CB106F-09EA-4853-B7D9-98FD582FAD0E__581ae999.png",
+      "sha256": "581ae999225a9e7e442a7ffffab745f429b7f8b37e1104052329014afe9afbee",
+      "box": [
+        710,
+        224,
+        703,
+        1237
+      ],
+      "hero_expected": [
+        "3h",
+        "Qd"
+      ],
+      "evidence": "REAL_IMAGE_DEVELOPMENT",
+      "independent_holdout": false
+    },
+    {
+      "source": "_76D7A22C-BC3A-435D-BB63-A4AC9AE0A1A0__78803c80.png",
+      "sha256": "78803c8043173a4558841d5932316cf56dc3beb58f08084ecb7088a8ee930a04",
+      "box": [
+        702,
+        266,
+        703,
+        1237
+      ],
+      "hero_expected": [
+        "Jd",
+        "2d"
+      ],
+      "evidence": "REAL_IMAGE_DEVELOPMENT",
+      "independent_holdout": false
+    },
+    {
+      "source": "_7C62D925-1CC9-4B7C-A92D-0E3379E07494__3d8f87c2.png",
+      "sha256": "3d8f87c2389a8ccaddb75a66e7a61d6b5a4af1250abee0d041c07c270cad8064",
+      "box": [
+        689,
+        144,
+        703,
+        1237
+      ],
+      "hero_expected": [
+        "9d",
+        "2s"
+      ],
+      "evidence": "REAL_IMAGE_DEVELOPMENT",
+      "independent_holdout": false
+    },
+    {
+      "source": "_BF8957B2-BF19-43B0-AADF-8D95779FC005__f3c8ecd9.png",
+      "sha256": "f3c8ecd99f5145cba406db22564ccc5f8aaf36a82dd73c2b576684b5073f4f6e",
+      "box": [
+        709,
+        225,
+        699,
+        1244
+      ],
+      "hero_expected": [
+        "7c",
+        "6h"
+      ],
+      "evidence": "REAL_IMAGE_DEVELOPMENT",
+      "independent_holdout": false
+    },
+    {
+      "source": "_E59537C2-2CA7-4FB2-9B22-728875057AAB__5c7b5161.png",
+      "sha256": "5c7b5161179073429b030a9bc8ea42e4c1ac6e70a87a4d2ffd7a069f494d022d",
+      "box": [
+        581,
+        38,
+        570,
+        1004
+      ],
+      "hero_expected": [
+        "5h",
+        "Kc"
+      ],
+      "evidence": "REAL_IMAGE_DEVELOPMENT",
+      "independent_holdout": false
+    },
+    {
+      "source": "_E59537C2-2CA7-4FB2-9B22-728875057AAB__5c7b5161.png",
+      "sha256": "5c7b5161179073429b030a9bc8ea42e4c1ac6e70a87a4d2ffd7a069f494d022d",
+      "box": [
+        1149,
+        38,
+        575,
+        1014
+      ],
+      "hero_expected": [
+        "Qs",
+        "6h"
+      ],
+      "evidence": "REAL_IMAGE_DEVELOPMENT",
+      "independent_holdout": false
+    }
+  ]
+}

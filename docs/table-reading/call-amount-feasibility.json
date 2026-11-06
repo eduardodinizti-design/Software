@@ -1,0 +1,178 @@
+{
+  "scope": "Eight whole Call labels from the existing sixteen-crop development report; no new OCR. Exact-mask equality gate only, not a generalized digit reader.",
+  "calls": [
+    {
+      "source": "_4528A8B5-F81C-4078-A8DB-C7ADBD91C311__85ee615d.png",
+      "label": "Call 1,0 BB",
+      "shape": [
+        24,
+        123
+      ],
+      "hash": "8caabda966042251adffb5e6aa4f511a0f7f6f4e38982d994cfb4c6cc8e522b5",
+      "aspect": 5.125
+    },
+    {
+      "source": "_58CB106F-09EA-4853-B7D9-98FD582FAD0E__581ae999.png",
+      "label": "Call 1,0 BB",
+      "shape": [
+        24,
+        123
+      ],
+      "hash": "8caabda966042251adffb5e6aa4f511a0f7f6f4e38982d994cfb4c6cc8e522b5",
+      "aspect": 5.125
+    },
+    {
+      "source": "_76D7A22C-BC3A-435D-BB63-A4AC9AE0A1A0__78803c80.png",
+      "label": "Call 1,0 BB",
+      "shape": [
+        24,
+        123
+      ],
+      "hash": "8caabda966042251adffb5e6aa4f511a0f7f6f4e38982d994cfb4c6cc8e522b5",
+      "aspect": 5.125
+    },
+    {
+      "source": "_7C62D925-1CC9-4B7C-A92D-0E3379E07494__3d8f87c2.png",
+      "label": "Call 1,6 BB",
+      "shape": [
+        24,
+        123
+      ],
+      "hash": "f7b977bf12beb9d289f0e0dbf61522464f8912efc1289a7391d974c14723ba7c",
+      "aspect": 5.125
+    },
+    {
+      "source": "_E59537C2-2CA7-4FB2-9B22-728875057AAB__5c7b5161.png",
+      "label": "Call 1,0 BB",
+      "shape": [
+        19,
+        100
+      ],
+      "hash": "c7bd8f8f8f0d515f541a5684594a5f32056c5d66e329a28e286c78c749d170fb",
+      "aspect": 5.2631578947368425
+    },
+    {
+      "source": "_72432B1C-F9F9-454A-A5D8-7DBE7A0E326A__aff0428c.png",
+      "label": "Call 2,0 BB",
+      "shape": [
+        23,
+        123
+      ],
+      "hash": "e41096a1f5c7ef41d3b3ecdbb494d044383c87454e8375f33fe1c5d324cf471f",
+      "aspect": 5.3478260869565215
+    },
+    {
+      "source": "_ABCB3886-A120-479F-9F0E-43096FB2D791__aaed78f0.png",
+      "label": "Call 1,6 BB",
+      "shape": [
+        23,
+        123
+      ],
+      "hash": "f1e2a2f7f975317f8b033b0410bfca527de7680ec531303034f29a0281277f97",
+      "aspect": 5.3478260869565215
+    },
+    {
+      "source": "_C998F597-5786-40A5-A73B-E450730D847E__475524bf.png",
+      "label": "Call 13,5 BB",
+      "shape": [
+        23,
+        138
+      ],
+      "hash": "0f362838fa66e1bfe9fd7d04abd38cb5a71735364ccd3dbab21b555a6662f1b7",
+      "aspect": 6.0
+    }
+  ],
+  "iou_matrix": [
+    [
+      1.0,
+      1.0,
+      1.0,
+      0.9394,
+      0.6644,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      1.0,
+      1.0,
+      1.0,
+      0.9394,
+      0.6644,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      1.0,
+      1.0,
+      1.0,
+      0.9394,
+      0.6644,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.9394,
+      0.9394,
+      0.9394,
+      1.0,
+      0.6369,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.7736,
+      0.7736,
+      0.7736,
+      0.7368,
+      1.0,
+      0.7026,
+      0.7454,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.5789,
+      1.0,
+      0.8272,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.6085,
+      0.8272,
+      1.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "missing_digits": [
+    "4",
+    "7",
+    "8",
+    "9"
+  ],
+  "feasibility": {
+    "approximate_match": "REJECT: Call1.0 vs Call1.6 IoU0.9394 leaves margin0.0606 below0.12",
+    "native_exact_match": "Call1.0 native24x123 has identical masks in three distinct screenshot sources; other values/scales lack independently matching exemplars",
+    "generalized_amount_reader": "NOT_VALIDATED"
+  }
+}

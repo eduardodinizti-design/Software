@@ -1,0 +1,2137 @@
+{
+  "summary": {
+    "tables": 8,
+    "detected": 8,
+    "correct": 16,
+    "wrong": 0,
+    "unknown": 0
+  },
+  "scope": "Previously used development screenshots; not independent generalization or latest user GDI frame.",
+  "results": [
+    {
+      "source": "_4528A8B5-F81C-4078-A8DB-C7ADBD91C311__85ee615d.png",
+      "expected": [
+        "Tc",
+        "5c"
+      ],
+      "cards": [
+        "Tc",
+        "5c"
+      ],
+      "report": {
+        "status": "SNAPSHOT_ANALYZED",
+        "snapshot_id": "80dea56dcaac41db995e337ef688e375",
+        "source": {
+          "hwnd": 1,
+          "pid": 1,
+          "process_created": 1,
+          "executable": "PPPoker.exe"
+        },
+        "source_key": "pid:1:created:1:hwnd:1",
+        "capture_timestamp": "DEVELOPMENT_FIXTURE",
+        "origin": [
+          0,
+          0
+        ],
+        "image_shape": [
+          1802,
+          3076,
+          3
+        ],
+        "max_tables": 6,
+        "ocr": {
+          "status": "READY",
+          "version": "5.5.0"
+        },
+        "tables": [
+          {
+            "box": [
+              674,
+              100,
+              703,
+              1237
+            ],
+            "status": "COMPLETE_CANDIDATE",
+            "reasons": [],
+            "evidence": "THREE_CONTROLS_BLUE_SURFACE",
+            "corner_scores": {},
+            "corner_diagnostics": {},
+            "table_index": 1,
+            "snapshot_table_id": "80dea56dcaac41db995e337ef688e375:1",
+            "source_key": "pid:1:created:1:hwnd:1",
+            "local_box": [
+              674,
+              100,
+              703,
+              1237
+            ],
+            "desktop_box": [
+              674,
+              100,
+              703,
+              1237
+            ],
+            "reading_status": "EXPERIMENTAL_CANDIDATES",
+            "hero_cards": [
+              "Tc",
+              "5c"
+            ],
+            "actions_allowed": false,
+            "crop_sha256": "d15985478cf2582c7d05beeb727c16c832b81fdca51007544a7a1503c1a48bef",
+            "crop_shape": [
+              1237,
+              703,
+              3
+            ],
+            "reading": {
+              "status": "LAB_ONLY_NOT_CALIBRATED",
+              "table_box": [
+                0,
+                0,
+                703,
+                1237
+              ],
+              "alignment": {
+                "status": "LOCALIZED",
+                "top": 1024,
+                "bottom": 1132,
+                "vertical_offset": 0,
+                "top_score": 155.4799041748047,
+                "bottom_score": 104.8093490600586,
+                "scope": "Vertical alignment only; calibrated blue-layout search bands."
+              },
+              "hero_rank_candidates": [
+                {
+                  "rank": "T",
+                  "status": "CANDIDATE_ONLY",
+                  "evidence": "REAL_GLYPH_TEMPLATES_TWO_THRESHOLDS",
+                  "template_iou": 1.0,
+                  "template_margin": 0.6358,
+                  "suit_result": {
+                    "suit": "c",
+                    "status": "CANDIDATE_ONLY",
+                    "shape_iou": 0.758,
+                    "margin": 0.111,
+                    "evidence": "template_and_rounded_crown"
+                  },
+                  "suit": "c",
+                  "card_candidate": "Tc",
+                  "roi_canonical": [
+                    402,
+                    1010,
+                    42,
+                    60
+                  ]
+                },
+                {
+                  "rank": "5",
+                  "status": "CANDIDATE_ONLY",
+                  "evidence": "REAL_GLYPH_TEMPLATES_TWO_THRESHOLDS",
+                  "template_iou": 1.0,
+                  "template_margin": 0.3873,
+                  "suit_result": {
+                    "suit": "c",
+                    "status": "CANDIDATE_ONLY",
+                    "shape_iou": 0.764,
+                    "margin": 0.068,
+                    "evidence": "template_and_three_lobe_profile"
+                  },
+                  "suit": "c",
+                  "card_candidate": "5c",
+                  "roi_canonical": [
+                    447,
+                    1010,
+                    42,
+                    60
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "box": [
+              0,
+              410,
+              673,
+              942
+            ],
+            "status": "PARTIAL",
+            "reasons": [
+              "TOUCHES_FRAME_EDGE"
+            ],
+            "evidence": "FELT_ONLY",
+            "corner_scores": {},
+            "corner_diagnostics": {},
+            "table_index": 2,
+            "snapshot_table_id": "80dea56dcaac41db995e337ef688e375:2",
+            "source_key": "pid:1:created:1:hwnd:1",
+            "local_box": [
+              0,
+              410,
+              673,
+              942
+            ],
+            "desktop_box": [
+              0,
+              410,
+              673,
+              942
+            ],
+            "reading_status": "NOT_READ",
+            "hero_cards": [
+              null,
+              null
+            ],
+            "actions_allowed": false
+          }
+        ],
+        "complete_count": 1,
+        "duration_ms": 266.11,
+        "attempts": {
+          "card_reading": 1,
+          "button_reading": 0,
+          "board_reading": 0
+        },
+        "timings_ms": {
+          "detection": 198.68412100186106,
+          "ocr_setup": 41.407695003726985,
+          "card_reading": 19.48387200536672,
+          "button_reading": 0.0,
+          "board_reading": 0.0
+        },
+        "actions_allowed": false,
+        "persistent_tracking": false,
+        "scope": "BLUE_LAYOUT_PASSIVE_READING_EXPERIMENTAL",
+        "enabled_readers": {
+          "hero": true,
+          "buttons": false,
+          "board": false
+        },
+        "ocr_work": {
+          "requests": 0,
+          "calls": 0,
+          "hits": 0,
+          "bytes": 0
+        }
+      }
+    },
+    {
+      "source": "_3A75F7DE-7229-4137-BD19-4AF5AE363948__d560bf0f.png",
+      "expected": [
+        "Qd",
+        "Qs"
+      ],
+      "cards": [
+        "Qd",
+        "Qs"
+      ],
+      "report": {
+        "status": "SNAPSHOT_ANALYZED",
+        "snapshot_id": "a5d4b860bcf34b3a941c6fac2c5cc49a",
+        "source": {
+          "hwnd": 1,
+          "pid": 1,
+          "process_created": 1,
+          "executable": "PPPoker.exe"
+        },
+        "source_key": "pid:1:created:1:hwnd:1",
+        "capture_timestamp": "DEVELOPMENT_FIXTURE",
+        "origin": [
+          0,
+          0
+        ],
+        "image_shape": [
+          1811,
+          2860,
+          3
+        ],
+        "max_tables": 6,
+        "ocr": {
+          "status": "READY",
+          "version": "5.5.0"
+        },
+        "tables": [
+          {
+            "box": [
+              0,
+              222,
+              701,
+              1151
+            ],
+            "status": "PARTIAL",
+            "reasons": [
+              "TOUCHES_FRAME_EDGE"
+            ],
+            "evidence": "FELT_ONLY",
+            "corner_scores": {
+              "menu": 0.0,
+              "signal": 0.2057,
+              "cards": 0.0356,
+              "chat": 0.1307
+            },
+            "corner_diagnostics": {
+              "accepted": false,
+              "scores": {
+                "menu": 0.0,
+                "signal": 0.2057,
+                "cards": 0.0356,
+                "chat": 0.1307
+              },
+              "reason": "FOUR_CORNER_ANCHORS",
+              "method": "CANONICAL_RGB",
+              "native_scores": {
+                "menu": 0.0,
+                "signal": 0.2199,
+                "cards": 0.0329,
+                "chat": 0.1412
+              }
+            },
+            "table_index": 1,
+            "snapshot_table_id": "a5d4b860bcf34b3a941c6fac2c5cc49a:1",
+            "source_key": "pid:1:created:1:hwnd:1",
+            "local_box": [
+              0,
+              222,
+              701,
+              1151
+            ],
+            "desktop_box": [
+              0,
+              222,
+              701,
+              1151
+            ],
+            "reading_status": "NOT_READ",
+            "hero_cards": [
+              null,
+              null
+            ],
+            "actions_allowed": false
+          },
+          {
+            "box": [
+              705,
+              225,
+              703,
+              1237
+            ],
+            "status": "COMPLETE_CANDIDATE",
+            "reasons": [],
+            "evidence": "THREE_CONTROLS_BLUE_SURFACE",
+            "corner_scores": {},
+            "corner_diagnostics": {},
+            "table_index": 2,
+            "snapshot_table_id": "a5d4b860bcf34b3a941c6fac2c5cc49a:2",
+            "source_key": "pid:1:created:1:hwnd:1",
+            "local_box": [
+              705,
+              225,
+              703,
+              1237
+            ],
+            "desktop_box": [
+              705,
+              225,
+              703,
+              1237
+            ],
+            "reading_status": "EXPERIMENTAL_CANDIDATES",
+            "hero_cards": [
+              "Qd",
+              "Qs"
+            ],
+            "actions_allowed": false,
+            "crop_sha256": "3e4726c20d4de0050910e1c7bbe0818aa1ff290c94c60290d054885149525f01",
+            "crop_shape": [
+              1237,
+              703,
+              3
+            ],
+            "reading": {
+              "status": "LAB_ONLY_NOT_CALIBRATED",
+              "table_box": [
+                0,
+                0,
+                703,
+                1237
+              ],
+              "alignment": {
+                "status": "LOCALIZED",
+                "top": 1024,
+                "bottom": 1132,
+                "vertical_offset": 0,
+                "top_score": 62.28964614868164,
+                "bottom_score": 54.488529205322266,
+                "scope": "Vertical alignment only; calibrated blue-layout search bands."
+              },
+              "hero_rank_candidates": [
+                {
+                  "rank": "Q",
+                  "status": "CANDIDATE_ONLY",
+                  "evidence": "REAL_GLYPH_TEMPLATES_TWO_THRESHOLDS",
+                  "template_iou": 1.0,
+                  "template_margin": 0.5429,
+                  "suit_result": {
+                    "suit": "d",
+                    "status": "CANDIDATE_ONLY",
+                    "shape_iou": 0.899,
+                    "margin": 0.191,
+                    "evidence": "template_margin"
+                  },
+                  "suit": "d",
+                  "card_candidate": "Qd",
+                  "roi_canonical": [
+                    402,
+                    1010,
+                    42,
+                    60
+                  ]
+                },
+                {
+                  "rank": "Q",
+                  "status": "CANDIDATE_ONLY",
+                  "alternatives": [
+                    "Q"
+                  ],
+                  "suit": "s",
+                  "suit_result": {
+                    "suit": "s",
+                    "status": "CANDIDATE_ONLY",
+                    "shape_iou": 0.778,
+                    "margin": 0.011,
+                    "evidence": "template_and_pointed_contour"
+                  },
+                  "card_candidate": "Qs",
+                  "roi_canonical": [
+                    447,
+                    1010,
+                    42,
+                    60
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "box": [
+              63,
+              391,
+              569,
+              711
+            ],
+            "status": "UNCERTAIN",
+            "reasons": [
+              "FULL_BOUNDARY_NOT_ESTABLISHED"
+            ],
+            "evidence": "FELT_ONLY",
+            "corner_scores": {},
+            "corner_diagnostics": {},
+            "table_index": 3,
+            "snapshot_table_id": "a5d4b860bcf34b3a941c6fac2c5cc49a:3",
+            "source_key": "pid:1:created:1:hwnd:1",
+            "local_box": [
+              63,
+              391,
+              569,
+              711
+            ],
+            "desktop_box": [
+              63,
+              391,
+              569,
+              711
+            ],
+            "reading_status": "NOT_READ",
+            "hero_cards": [
+              null,
+              null
+            ],
+            "actions_allowed": false
+          }
+        ],
+        "complete_count": 1,
+        "duration_ms": 1116.43,
+        "attempts": {
+          "card_reading": 1,
+          "button_reading": 0,
+          "board_reading": 0
+        },
+        "timings_ms": {
+          "detection": 183.37377400166588,
+          "ocr_setup": 35.218655997596215,
+          "card_reading": 893.8661450010841,
+          "button_reading": 0.0,
+          "board_reading": 0.0
+        },
+        "actions_allowed": false,
+        "persistent_tracking": false,
+        "scope": "BLUE_LAYOUT_PASSIVE_READING_EXPERIMENTAL",
+        "enabled_readers": {
+          "hero": true,
+          "buttons": false,
+          "board": false
+        },
+        "ocr_work": {
+          "requests": 8,
+          "calls": 8,
+          "hits": 0,
+          "bytes": 603508
+        }
+      }
+    },
+    {
+      "source": "_58CB106F-09EA-4853-B7D9-98FD582FAD0E__581ae999.png",
+      "expected": [
+        "3h",
+        "Qd"
+      ],
+      "cards": [
+        "3h",
+        "Qd"
+      ],
+      "report": {
+        "status": "SNAPSHOT_ANALYZED",
+        "snapshot_id": "0e48e49bf2c342daa505cde02c954057",
+        "source": {
+          "hwnd": 1,
+          "pid": 1,
+          "process_created": 1,
+          "executable": "PPPoker.exe"
+        },
+        "source_key": "pid:1:created:1:hwnd:1",
+        "capture_timestamp": "DEVELOPMENT_FIXTURE",
+        "origin": [
+          0,
+          0
+        ],
+        "image_shape": [
+          1834,
+          3051,
+          3
+        ],
+        "max_tables": 6,
+        "ocr": {
+          "status": "READY",
+          "version": "5.5.0"
+        },
+        "tables": [
+          {
+            "box": [
+              710,
+              224,
+              703,
+              1237
+            ],
+            "status": "COMPLETE_CANDIDATE",
+            "reasons": [],
+            "evidence": "THREE_CONTROLS_BLUE_SURFACE",
+            "corner_scores": {},
+            "corner_diagnostics": {},
+            "table_index": 1,
+            "snapshot_table_id": "0e48e49bf2c342daa505cde02c954057:1",
+            "source_key": "pid:1:created:1:hwnd:1",
+            "local_box": [
+              710,
+              224,
+              703,
+              1237
+            ],
+            "desktop_box": [
+              710,
+              224,
+              703,
+              1237
+            ],
+            "reading_status": "EXPERIMENTAL_CANDIDATES",
+            "hero_cards": [
+              "3h",
+              "Qd"
+            ],
+            "actions_allowed": false,
+            "crop_sha256": "cf3de3a076233848a6fbf3e4407157f52e9e692661e2d8db3560cb8cbaa0a10a",
+            "crop_shape": [
+              1237,
+              703,
+              3
+            ],
+            "reading": {
+              "status": "LAB_ONLY_NOT_CALIBRATED",
+              "table_box": [
+                0,
+                0,
+                703,
+                1237
+              ],
+              "alignment": {
+                "status": "LOCALIZED",
+                "top": 1024,
+                "bottom": 1130,
+                "vertical_offset": 0,
+                "top_score": 63.88270568847656,
+                "bottom_score": 120.85528564453125,
+                "scope": "Vertical alignment only; calibrated blue-layout search bands."
+              },
+              "hero_rank_candidates": [
+                {
+                  "rank": "3",
+                  "status": "CANDIDATE_ONLY",
+                  "readings": [
+                    "3",
+                    "3",
+                    "3",
+                    "3"
+                  ],
+                  "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+                  "suit_result": {
+                    "suit": "h",
+                    "status": "CANDIDATE_ONLY",
+                    "shape_iou": 0.911,
+                    "margin": 0.337,
+                    "evidence": "template_margin"
+                  },
+                  "suit": "h",
+                  "card_candidate": "3h",
+                  "roi_canonical": [
+                    402,
+                    1010,
+                    42,
+                    60
+                  ]
+                },
+                {
+                  "rank": "Q",
+                  "status": "CANDIDATE_ONLY",
+                  "evidence": "REAL_GLYPH_TEMPLATES_TWO_THRESHOLDS",
+                  "template_iou": 0.946,
+                  "template_margin": 0.4888,
+                  "suit_result": {
+                    "suit": "d",
+                    "status": "CANDIDATE_ONLY",
+                    "shape_iou": 0.886,
+                    "margin": 0.223,
+                    "evidence": "template_margin"
+                  },
+                  "suit": "d",
+                  "card_candidate": "Qd",
+                  "roi_canonical": [
+                    447,
+                    1010,
+                    42,
+                    60
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "box": [
+              10,
+              534,
+              699,
+              942
+            ],
+            "status": "UNCERTAIN",
+            "reasons": [
+              "FULL_BOUNDARY_NOT_ESTABLISHED"
+            ],
+            "evidence": "FELT_ONLY",
+            "corner_scores": {},
+            "corner_diagnostics": {},
+            "table_index": 2,
+            "snapshot_table_id": "0e48e49bf2c342daa505cde02c954057:2",
+            "source_key": "pid:1:created:1:hwnd:1",
+            "local_box": [
+              10,
+              534,
+              699,
+              942
+            ],
+            "desktop_box": [
+              10,
+              534,
+              699,
+              942
+            ],
+            "reading_status": "NOT_READ",
+            "hero_cards": [
+              null,
+              null
+            ],
+            "actions_allowed": false
+          }
+        ],
+        "complete_count": 1,
+        "duration_ms": 435.47,
+        "attempts": {
+          "card_reading": 1,
+          "button_reading": 0,
+          "board_reading": 0
+        },
+        "timings_ms": {
+          "detection": 190.3727320022881,
+          "ocr_setup": 31.825044003198855,
+          "card_reading": 210.1248589970055,
+          "button_reading": 0.0,
+          "board_reading": 0.0
+        },
+        "actions_allowed": false,
+        "persistent_tracking": false,
+        "scope": "BLUE_LAYOUT_PASSIVE_READING_EXPERIMENTAL",
+        "enabled_readers": {
+          "hero": true,
+          "buttons": false,
+          "board": false
+        },
+        "ocr_work": {
+          "requests": 4,
+          "calls": 2,
+          "hits": 2,
+          "bytes": 203652
+        }
+      }
+    },
+    {
+      "source": "_76D7A22C-BC3A-435D-BB63-A4AC9AE0A1A0__78803c80.png",
+      "expected": [
+        "Jd",
+        "2d"
+      ],
+      "cards": [
+        "Jd",
+        "2d"
+      ],
+      "report": {
+        "status": "SNAPSHOT_ANALYZED",
+        "snapshot_id": "6e671c81aa4d4bf3b2b975622d5a00ba",
+        "source": {
+          "hwnd": 1,
+          "pid": 1,
+          "process_created": 1,
+          "executable": "PPPoker.exe"
+        },
+        "source_key": "pid:1:created:1:hwnd:1",
+        "capture_timestamp": "DEVELOPMENT_FIXTURE",
+        "origin": [
+          0,
+          0
+        ],
+        "image_shape": [
+          1668,
+          2791,
+          3
+        ],
+        "max_tables": 6,
+        "ocr": {
+          "status": "READY",
+          "version": "5.5.0"
+        },
+        "tables": [
+          {
+            "box": [
+              0,
+              263,
+              698,
+              1151
+            ],
+            "status": "PARTIAL",
+            "reasons": [
+              "TOUCHES_FRAME_EDGE"
+            ],
+            "evidence": "FELT_ONLY",
+            "corner_scores": {
+              "menu": 0.0,
+              "signal": 0.2155,
+              "cards": 0.0,
+              "chat": 0.1739
+            },
+            "corner_diagnostics": {
+              "accepted": false,
+              "scores": {
+                "menu": 0.0,
+                "signal": 0.2155,
+                "cards": 0.0,
+                "chat": 0.1739
+              },
+              "reason": "FOUR_CORNER_ANCHORS",
+              "method": "CANONICAL_RGB",
+              "native_scores": {
+                "menu": 0.0,
+                "signal": 0.2199,
+                "cards": 0.0,
+                "chat": 0.1412
+              }
+            },
+            "table_index": 1,
+            "snapshot_table_id": "6e671c81aa4d4bf3b2b975622d5a00ba:1",
+            "source_key": "pid:1:created:1:hwnd:1",
+            "local_box": [
+              0,
+              263,
+              698,
+              1151
+            ],
+            "desktop_box": [
+              0,
+              263,
+              698,
+              1151
+            ],
+            "reading_status": "NOT_READ",
+            "hero_cards": [
+              null,
+              null
+            ],
+            "actions_allowed": false
+          },
+          {
+            "box": [
+              702,
+              266,
+              703,
+              1237
+            ],
+            "status": "COMPLETE_CANDIDATE",
+            "reasons": [],
+            "evidence": "THREE_CONTROLS_BLUE_SURFACE",
+            "corner_scores": {},
+            "corner_diagnostics": {},
+            "table_index": 2,
+            "snapshot_table_id": "6e671c81aa4d4bf3b2b975622d5a00ba:2",
+            "source_key": "pid:1:created:1:hwnd:1",
+            "local_box": [
+              702,
+              266,
+              703,
+              1237
+            ],
+            "desktop_box": [
+              702,
+              266,
+              703,
+              1237
+            ],
+            "reading_status": "EXPERIMENTAL_CANDIDATES",
+            "hero_cards": [
+              "Jd",
+              "2d"
+            ],
+            "actions_allowed": false,
+            "crop_sha256": "1b4061274bea5fdd4d0b17620b687e06c4fd1519890450bceaa95dc863b363d1",
+            "crop_shape": [
+              1237,
+              703,
+              3
+            ],
+            "reading": {
+              "status": "LAB_ONLY_NOT_CALIBRATED",
+              "table_box": [
+                0,
+                0,
+                703,
+                1237
+              ],
+              "alignment": {
+                "status": "LOCALIZED",
+                "top": 1024,
+                "bottom": 1132,
+                "vertical_offset": 0,
+                "top_score": 62.28964614868164,
+                "bottom_score": 115.35163879394531,
+                "scope": "Vertical alignment only; calibrated blue-layout search bands."
+              },
+              "hero_rank_candidates": [
+                {
+                  "rank": "J",
+                  "status": "CANDIDATE_ONLY",
+                  "evidence": "REAL_GLYPH_TEMPLATES_TWO_THRESHOLDS",
+                  "template_iou": 1.0,
+                  "template_margin": 0.5194,
+                  "suit_result": {
+                    "suit": "d",
+                    "status": "CANDIDATE_ONLY",
+                    "shape_iou": 0.899,
+                    "margin": 0.191,
+                    "evidence": "template_margin"
+                  },
+                  "suit": "d",
+                  "card_candidate": "Jd",
+                  "roi_canonical": [
+                    402,
+                    1010,
+                    42,
+                    60
+                  ]
+                },
+                {
+                  "rank": "2",
+                  "status": "CANDIDATE_ONLY",
+                  "evidence": "REAL_GLYPH_TEMPLATES_TWO_THRESHOLDS",
+                  "template_iou": 1.0,
+                  "template_margin": 0.4793,
+                  "suit_result": {
+                    "suit": "d",
+                    "status": "CANDIDATE_ONLY",
+                    "shape_iou": 0.886,
+                    "margin": 0.223,
+                    "evidence": "template_margin"
+                  },
+                  "suit": "d",
+                  "card_candidate": "2d",
+                  "roi_canonical": [
+                    447,
+                    1010,
+                    42,
+                    60
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "box": [
+              60,
+              431,
+              569,
+              712
+            ],
+            "status": "UNCERTAIN",
+            "reasons": [
+              "FULL_BOUNDARY_NOT_ESTABLISHED"
+            ],
+            "evidence": "FELT_ONLY",
+            "corner_scores": {},
+            "corner_diagnostics": {},
+            "table_index": 3,
+            "snapshot_table_id": "6e671c81aa4d4bf3b2b975622d5a00ba:3",
+            "source_key": "pid:1:created:1:hwnd:1",
+            "local_box": [
+              60,
+              431,
+              569,
+              712
+            ],
+            "desktop_box": [
+              60,
+              431,
+              569,
+              712
+            ],
+            "reading_status": "NOT_READ",
+            "hero_cards": [
+              null,
+              null
+            ],
+            "actions_allowed": false
+          }
+        ],
+        "complete_count": 1,
+        "duration_ms": 217.8,
+        "attempts": {
+          "card_reading": 1,
+          "button_reading": 0,
+          "board_reading": 0
+        },
+        "timings_ms": {
+          "detection": 163.30475499853492,
+          "ocr_setup": 35.351504004211165,
+          "card_reading": 16.160808998392895,
+          "button_reading": 0.0,
+          "board_reading": 0.0
+        },
+        "actions_allowed": false,
+        "persistent_tracking": false,
+        "scope": "BLUE_LAYOUT_PASSIVE_READING_EXPERIMENTAL",
+        "enabled_readers": {
+          "hero": true,
+          "buttons": false,
+          "board": false
+        },
+        "ocr_work": {
+          "requests": 0,
+          "calls": 0,
+          "hits": 0,
+          "bytes": 0
+        }
+      }
+    },
+    {
+      "source": "_7C62D925-1CC9-4B7C-A92D-0E3379E07494__3d8f87c2.png",
+      "expected": [
+        "9d",
+        "2s"
+      ],
+      "cards": [
+        "9d",
+        "2s"
+      ],
+      "report": {
+        "status": "SNAPSHOT_ANALYZED",
+        "snapshot_id": "2ed1eea10cb34e1ebfc3d881aeed4ec6",
+        "source": {
+          "hwnd": 1,
+          "pid": 1,
+          "process_created": 1,
+          "executable": "PPPoker.exe"
+        },
+        "source_key": "pid:1:created:1:hwnd:1",
+        "capture_timestamp": "DEVELOPMENT_FIXTURE",
+        "origin": [
+          0,
+          0
+        ],
+        "image_shape": [
+          1819,
+          2896,
+          3
+        ],
+        "max_tables": 6,
+        "ocr": {
+          "status": "READY",
+          "version": "5.5.0"
+        },
+        "tables": [
+          {
+            "box": [
+              689,
+              144,
+              703,
+              1237
+            ],
+            "status": "COMPLETE_CANDIDATE",
+            "reasons": [],
+            "evidence": "THREE_CONTROLS_BLUE_SURFACE",
+            "corner_scores": {},
+            "corner_diagnostics": {},
+            "table_index": 1,
+            "snapshot_table_id": "2ed1eea10cb34e1ebfc3d881aeed4ec6:1",
+            "source_key": "pid:1:created:1:hwnd:1",
+            "local_box": [
+              689,
+              144,
+              703,
+              1237
+            ],
+            "desktop_box": [
+              689,
+              144,
+              703,
+              1237
+            ],
+            "reading_status": "EXPERIMENTAL_CANDIDATES",
+            "hero_cards": [
+              "9d",
+              "2s"
+            ],
+            "actions_allowed": false,
+            "crop_sha256": "0c8dfb57a8cd4f161b4d71053cf27c6ad7e8c8745c4c1bc28a1b5bb4bc6ed921",
+            "crop_shape": [
+              1237,
+              703,
+              3
+            ],
+            "reading": {
+              "status": "LAB_ONLY_NOT_CALIBRATED",
+              "table_box": [
+                0,
+                0,
+                703,
+                1237
+              ],
+              "alignment": {
+                "status": "LOCALIZED",
+                "top": 1024,
+                "bottom": 1132,
+                "vertical_offset": 0,
+                "top_score": 62.28964614868164,
+                "bottom_score": 54.6534538269043,
+                "scope": "Vertical alignment only; calibrated blue-layout search bands."
+              },
+              "hero_rank_candidates": [
+                {
+                  "rank": "9",
+                  "status": "CANDIDATE_ONLY",
+                  "evidence": "REAL_GLYPH_TEMPLATES_TWO_THRESHOLDS",
+                  "template_iou": 1.0,
+                  "template_margin": 0.5188,
+                  "suit_result": {
+                    "suit": "d",
+                    "status": "CANDIDATE_ONLY",
+                    "shape_iou": 0.899,
+                    "margin": 0.191,
+                    "evidence": "template_margin"
+                  },
+                  "suit": "d",
+                  "card_candidate": "9d",
+                  "roi_canonical": [
+                    402,
+                    1010,
+                    42,
+                    60
+                  ]
+                },
+                {
+                  "rank": "2",
+                  "status": "CANDIDATE_ONLY",
+                  "readings": [
+                    "2",
+                    "2",
+                    "2",
+                    "2"
+                  ],
+                  "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+                  "suit_result": {
+                    "suit": "s",
+                    "status": "CANDIDATE_ONLY",
+                    "shape_iou": 0.778,
+                    "margin": 0.011,
+                    "evidence": "template_and_pointed_contour"
+                  },
+                  "suit": "s",
+                  "card_candidate": "2s",
+                  "roi_canonical": [
+                    447,
+                    1010,
+                    42,
+                    60
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "box": [
+              0,
+              447,
+              685,
+              968
+            ],
+            "status": "PARTIAL",
+            "reasons": [
+              "TOUCHES_FRAME_EDGE"
+            ],
+            "evidence": "FELT_ONLY",
+            "corner_scores": {},
+            "corner_diagnostics": {},
+            "table_index": 2,
+            "snapshot_table_id": "2ed1eea10cb34e1ebfc3d881aeed4ec6:2",
+            "source_key": "pid:1:created:1:hwnd:1",
+            "local_box": [
+              0,
+              447,
+              685,
+              968
+            ],
+            "desktop_box": [
+              0,
+              447,
+              685,
+              968
+            ],
+            "reading_status": "NOT_READ",
+            "hero_cards": [
+              null,
+              null
+            ],
+            "actions_allowed": false
+          }
+        ],
+        "complete_count": 1,
+        "duration_ms": 586.01,
+        "attempts": {
+          "card_reading": 1,
+          "button_reading": 0,
+          "board_reading": 0
+        },
+        "timings_ms": {
+          "detection": 157.8670279996004,
+          "ocr_setup": 31.218200994771905,
+          "card_reading": 394.38939700630726,
+          "button_reading": 0.0,
+          "board_reading": 0.0
+        },
+        "actions_allowed": false,
+        "persistent_tracking": false,
+        "scope": "BLUE_LAYOUT_PASSIVE_READING_EXPERIMENTAL",
+        "enabled_readers": {
+          "hero": true,
+          "buttons": false,
+          "board": false
+        },
+        "ocr_work": {
+          "requests": 4,
+          "calls": 4,
+          "hits": 0,
+          "bytes": 386440
+        }
+      }
+    },
+    {
+      "source": "_BF8957B2-BF19-43B0-AADF-8D95779FC005__f3c8ecd9.png",
+      "expected": [
+        "7c",
+        "6h"
+      ],
+      "cards": [
+        "7c",
+        "6h"
+      ],
+      "report": {
+        "status": "SNAPSHOT_ANALYZED",
+        "snapshot_id": "426bb9dd2fc7404ca50579f3c3b99138",
+        "source": {
+          "hwnd": 1,
+          "pid": 1,
+          "process_created": 1,
+          "executable": "PPPoker.exe"
+        },
+        "source_key": "pid:1:created:1:hwnd:1",
+        "capture_timestamp": "DEVELOPMENT_FIXTURE",
+        "origin": [
+          0,
+          0
+        ],
+        "image_shape": [
+          1898,
+          2824,
+          3
+        ],
+        "max_tables": 6,
+        "ocr": {
+          "status": "READY",
+          "version": "5.5.0"
+        },
+        "tables": [
+          {
+            "box": [
+              0,
+              222,
+              705,
+              1151
+            ],
+            "status": "PARTIAL",
+            "reasons": [
+              "TOUCHES_FRAME_EDGE"
+            ],
+            "evidence": "FELT_ONLY",
+            "corner_scores": {
+              "menu": 0.0,
+              "signal": 0.195,
+              "cards": 0.0,
+              "chat": 0.0219
+            },
+            "corner_diagnostics": {
+              "accepted": false,
+              "scores": {
+                "menu": 0.0,
+                "signal": 0.195,
+                "cards": 0.0,
+                "chat": 0.0219
+              },
+              "reason": "FOUR_CORNER_ANCHORS",
+              "method": "CANONICAL_RGB",
+              "native_scores": {
+                "menu": 0.0,
+                "signal": 0.2199,
+                "cards": 0.0,
+                "chat": 0.1412
+              }
+            },
+            "table_index": 1,
+            "snapshot_table_id": "426bb9dd2fc7404ca50579f3c3b99138:1",
+            "source_key": "pid:1:created:1:hwnd:1",
+            "local_box": [
+              0,
+              222,
+              705,
+              1151
+            ],
+            "desktop_box": [
+              0,
+              222,
+              705,
+              1151
+            ],
+            "reading_status": "NOT_READ",
+            "hero_cards": [
+              null,
+              null
+            ],
+            "actions_allowed": false
+          },
+          {
+            "box": [
+              2,
+              222,
+              699,
+              1151
+            ],
+            "status": "UNCERTAIN",
+            "reasons": [
+              "FULL_BOUNDARY_NOT_ESTABLISHED"
+            ],
+            "evidence": "FELT_ONLY",
+            "corner_scores": {
+              "menu": 0.0,
+              "signal": 0.2494,
+              "cards": 0.0,
+              "chat": 0.0219
+            },
+            "corner_diagnostics": {
+              "accepted": false,
+              "scores": {
+                "menu": 0.0,
+                "signal": 0.2494,
+                "cards": 0.0,
+                "chat": 0.0219
+              },
+              "reason": "FOUR_CORNER_ANCHORS",
+              "method": "CANONICAL_RGB",
+              "native_scores": {
+                "menu": 0.0,
+                "signal": 0.2199,
+                "cards": 0.0,
+                "chat": 0.1412
+              }
+            },
+            "table_index": 2,
+            "snapshot_table_id": "426bb9dd2fc7404ca50579f3c3b99138:2",
+            "source_key": "pid:1:created:1:hwnd:1",
+            "local_box": [
+              2,
+              222,
+              699,
+              1151
+            ],
+            "desktop_box": [
+              2,
+              222,
+              699,
+              1151
+            ],
+            "reading_status": "NOT_READ",
+            "hero_cards": [
+              null,
+              null
+            ],
+            "actions_allowed": false
+          },
+          {
+            "box": [
+              709,
+              225,
+              699,
+              1244
+            ],
+            "status": "COMPLETE_CANDIDATE",
+            "reasons": [],
+            "evidence": "FOUR_CORNER_BLUE_SURFACE",
+            "corner_scores": {
+              "menu": 0.7213,
+              "signal": 0.8364,
+              "cards": 0.8713,
+              "chat": 0.8917
+            },
+            "corner_diagnostics": {
+              "accepted": true,
+              "scores": {
+                "menu": 0.7213,
+                "signal": 0.8364,
+                "cards": 0.8713,
+                "chat": 0.8917
+              },
+              "reason": "FOUR_CORNER_ANCHORS",
+              "method": "CANONICAL_RGB"
+            },
+            "table_index": 3,
+            "snapshot_table_id": "426bb9dd2fc7404ca50579f3c3b99138:3",
+            "source_key": "pid:1:created:1:hwnd:1",
+            "local_box": [
+              709,
+              225,
+              699,
+              1244
+            ],
+            "desktop_box": [
+              709,
+              225,
+              699,
+              1244
+            ],
+            "reading_status": "EXPERIMENTAL_CANDIDATES",
+            "hero_cards": [
+              "7c",
+              "6h"
+            ],
+            "actions_allowed": false,
+            "crop_sha256": "8e3ae9f2cc07bd8952ff09e0d477705f4ac72da4502d94968079296113b5e660",
+            "crop_shape": [
+              1244,
+              699,
+              3
+            ],
+            "reading": {
+              "status": "LAB_ONLY_NOT_CALIBRATED",
+              "table_box": [
+                0,
+                0,
+                699,
+                1244
+              ],
+              "alignment": {
+                "status": "LOCALIZED",
+                "top": 1018,
+                "bottom": 1125,
+                "vertical_offset": 0,
+                "top_score": 152.6728515625,
+                "bottom_score": 91.52595520019531,
+                "scope": "Vertical alignment only; calibrated blue-layout search bands."
+              },
+              "hero_rank_candidates": [
+                {
+                  "rank": "7",
+                  "status": "CANDIDATE_ONLY",
+                  "alternatives": [
+                    "7"
+                  ],
+                  "suit": "c",
+                  "suit_result": {
+                    "suit": "c",
+                    "status": "CANDIDATE_ONLY",
+                    "shape_iou": 0.812,
+                    "margin": 0.141,
+                    "evidence": "template_and_rounded_crown"
+                  },
+                  "card_candidate": "7c",
+                  "roi_canonical": [
+                    402,
+                    1010,
+                    42,
+                    60
+                  ]
+                },
+                {
+                  "rank": "6",
+                  "status": "CANDIDATE_ONLY",
+                  "alternatives": [
+                    "6"
+                  ],
+                  "suit": "h",
+                  "suit_result": {
+                    "suit": "h",
+                    "status": "CANDIDATE_ONLY",
+                    "shape_iou": 0.882,
+                    "margin": 0.36,
+                    "evidence": "template_margin"
+                  },
+                  "card_candidate": "6h",
+                  "roi_canonical": [
+                    447,
+                    1010,
+                    42,
+                    60
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "complete_count": 1,
+        "duration_ms": 1203.35,
+        "attempts": {
+          "card_reading": 1,
+          "button_reading": 0,
+          "board_reading": 0
+        },
+        "timings_ms": {
+          "detection": 151.73717099969508,
+          "ocr_setup": 34.79025400156388,
+          "card_reading": 1014.068275995669,
+          "button_reading": 0.0,
+          "board_reading": 0.0
+        },
+        "actions_allowed": false,
+        "persistent_tracking": false,
+        "scope": "BLUE_LAYOUT_PASSIVE_READING_EXPERIMENTAL",
+        "enabled_readers": {
+          "hero": true,
+          "buttons": false,
+          "board": false
+        },
+        "ocr_work": {
+          "requests": 14,
+          "calls": 10,
+          "hits": 4,
+          "bytes": 593676
+        }
+      }
+    },
+    {
+      "source": "_E59537C2-2CA7-4FB2-9B22-728875057AAB__5c7b5161.png",
+      "expected": [
+        "5h",
+        "Kc"
+      ],
+      "cards": [
+        "5h",
+        "Kc"
+      ],
+      "report": {
+        "status": "SNAPSHOT_ANALYZED",
+        "snapshot_id": "c8c3724e6c25490bb6fc5c3fc203f053",
+        "source": {
+          "hwnd": 1,
+          "pid": 1,
+          "process_created": 1,
+          "executable": "PPPoker.exe"
+        },
+        "source_key": "pid:1:created:1:hwnd:1",
+        "capture_timestamp": "DEVELOPMENT_FIXTURE",
+        "origin": [
+          0,
+          0
+        ],
+        "image_shape": [
+          1575,
+          3079,
+          3
+        ],
+        "max_tables": 6,
+        "ocr": {
+          "status": "READY",
+          "version": "5.5.0"
+        },
+        "tables": [
+          {
+            "box": [
+              581,
+              38,
+              570,
+              1004
+            ],
+            "status": "COMPLETE_CANDIDATE",
+            "reasons": [],
+            "evidence": "THREE_CONTROLS_BLUE_SURFACE",
+            "corner_scores": {},
+            "corner_diagnostics": {},
+            "table_index": 1,
+            "snapshot_table_id": "c8c3724e6c25490bb6fc5c3fc203f053:1",
+            "source_key": "pid:1:created:1:hwnd:1",
+            "local_box": [
+              581,
+              38,
+              570,
+              1004
+            ],
+            "desktop_box": [
+              581,
+              38,
+              570,
+              1004
+            ],
+            "reading_status": "EXPERIMENTAL_CANDIDATES",
+            "hero_cards": [
+              "5h",
+              "Kc"
+            ],
+            "actions_allowed": false,
+            "crop_sha256": "1f48b477336a6687ff7b0f806269da76be13918a62a2795e83e97be898b87afa",
+            "crop_shape": [
+              1004,
+              570,
+              3
+            ],
+            "reading": {
+              "status": "LAB_ONLY_NOT_CALIBRATED",
+              "table_box": [
+                0,
+                0,
+                570,
+                1004
+              ],
+              "alignment": {
+                "status": "LOCALIZED",
+                "top": 1025,
+                "bottom": 1133,
+                "vertical_offset": 0,
+                "top_score": 154.98709106445312,
+                "bottom_score": 106.28734588623047,
+                "scope": "Vertical alignment only; calibrated blue-layout search bands."
+              },
+              "hero_rank_candidates": [
+                {
+                  "rank": "5",
+                  "status": "CANDIDATE_ONLY",
+                  "readings": [
+                    "5",
+                    "5",
+                    "5",
+                    "5"
+                  ],
+                  "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+                  "suit_result": {
+                    "suit": "h",
+                    "status": "CANDIDATE_ONLY",
+                    "shape_iou": 0.909,
+                    "margin": 0.371,
+                    "evidence": "template_margin"
+                  },
+                  "suit": "h",
+                  "card_candidate": "5h",
+                  "roi_canonical": [
+                    402,
+                    1010,
+                    42,
+                    60
+                  ]
+                },
+                {
+                  "rank": "K",
+                  "status": "CANDIDATE_ONLY",
+                  "readings": [
+                    "K",
+                    "K",
+                    "K",
+                    "K"
+                  ],
+                  "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+                  "suit_result": {
+                    "suit": "c",
+                    "status": "CANDIDATE_ONLY",
+                    "shape_iou": 0.865,
+                    "margin": 0.136,
+                    "evidence": "template_and_rounded_crown"
+                  },
+                  "suit": "c",
+                  "card_candidate": "Kc",
+                  "roi_canonical": [
+                    447,
+                    1010,
+                    42,
+                    60
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "box": [
+              1149,
+              38,
+              575,
+              1014
+            ],
+            "status": "COMPLETE_CANDIDATE",
+            "reasons": [],
+            "evidence": "FOUR_CORNER_BLUE_SURFACE",
+            "corner_scores": {
+              "menu": 0.663,
+              "signal": 0.7492,
+              "cards": 0.7933,
+              "chat": 0.9288
+            },
+            "corner_diagnostics": {
+              "accepted": true,
+              "scores": {
+                "menu": 0.663,
+                "signal": 0.7492,
+                "cards": 0.7933,
+                "chat": 0.9288
+              },
+              "reason": "FOUR_CORNER_ANCHORS",
+              "method": "CANONICAL_RGB"
+            },
+            "table_index": 2,
+            "snapshot_table_id": "c8c3724e6c25490bb6fc5c3fc203f053:2",
+            "source_key": "pid:1:created:1:hwnd:1",
+            "local_box": [
+              1149,
+              38,
+              575,
+              1014
+            ],
+            "desktop_box": [
+              1149,
+              38,
+              575,
+              1014
+            ],
+            "reading_status": "EXPERIMENTAL_CANDIDATES",
+            "hero_cards": [
+              "Qs",
+              "6h"
+            ],
+            "actions_allowed": false,
+            "crop_sha256": "053fd412c7760e9902bc98552f481f31c2c8e7bcbd742fb6bee77ff7307713c0",
+            "crop_shape": [
+              1014,
+              575,
+              3
+            ],
+            "reading": {
+              "status": "LAB_ONLY_NOT_CALIBRATED",
+              "table_box": [
+                0,
+                0,
+                575,
+                1014
+              ],
+              "alignment": {
+                "status": "LOCALIZED",
+                "top": 1016,
+                "bottom": 1123,
+                "vertical_offset": 0,
+                "top_score": 149.97999572753906,
+                "bottom_score": 30.64310646057129,
+                "scope": "Vertical alignment only; calibrated blue-layout search bands."
+              },
+              "hero_rank_candidates": [
+                {
+                  "rank": "Q",
+                  "status": "CANDIDATE_ONLY",
+                  "alternatives": [
+                    "Q"
+                  ],
+                  "suit": "s",
+                  "suit_result": {
+                    "suit": "s",
+                    "status": "CANDIDATE_ONLY",
+                    "shape_iou": 0.743,
+                    "margin": 0.037,
+                    "evidence": "template_and_pointed_contour"
+                  },
+                  "card_candidate": "Qs",
+                  "roi_canonical": [
+                    402,
+                    1010,
+                    42,
+                    60
+                  ]
+                },
+                {
+                  "rank": "6",
+                  "status": "CANDIDATE_ONLY",
+                  "alternatives": [
+                    "6"
+                  ],
+                  "suit": "h",
+                  "suit_result": {
+                    "suit": "h",
+                    "status": "CANDIDATE_ONLY",
+                    "shape_iou": 0.9,
+                    "margin": 0.304,
+                    "evidence": "template_margin"
+                  },
+                  "card_candidate": "6h",
+                  "roi_canonical": [
+                    447,
+                    1010,
+                    42,
+                    60
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "box": [
+              0,
+              286,
+              581,
+              775
+            ],
+            "status": "PARTIAL",
+            "reasons": [
+              "TOUCHES_FRAME_EDGE"
+            ],
+            "evidence": "FELT_ONLY",
+            "corner_scores": {},
+            "corner_diagnostics": {},
+            "table_index": 3,
+            "snapshot_table_id": "c8c3724e6c25490bb6fc5c3fc203f053:3",
+            "source_key": "pid:1:created:1:hwnd:1",
+            "local_box": [
+              0,
+              286,
+              581,
+              775
+            ],
+            "desktop_box": [
+              0,
+              286,
+              581,
+              775
+            ],
+            "reading_status": "NOT_READ",
+            "hero_cards": [
+              null,
+              null
+            ],
+            "actions_allowed": false
+          }
+        ],
+        "complete_count": 2,
+        "duration_ms": 2201.86,
+        "attempts": {
+          "card_reading": 2,
+          "button_reading": 0,
+          "board_reading": 0
+        },
+        "timings_ms": {
+          "detection": 206.15580899902852,
+          "ocr_setup": 34.88111000478966,
+          "card_reading": 1956.6115139969043,
+          "button_reading": 0.0,
+          "board_reading": 0.0
+        },
+        "actions_allowed": false,
+        "persistent_tracking": false,
+        "scope": "BLUE_LAYOUT_PASSIVE_READING_EXPERIMENTAL",
+        "enabled_readers": {
+          "hero": true,
+          "buttons": false,
+          "board": false
+        },
+        "ocr_work": {
+          "requests": 23,
+          "calls": 17,
+          "hits": 6,
+          "bytes": 1298930
+        }
+      }
+    },
+    {
+      "source": "_E59537C2-2CA7-4FB2-9B22-728875057AAB__5c7b5161.png",
+      "expected": [
+        "Qs",
+        "6h"
+      ],
+      "cards": [
+        "Qs",
+        "6h"
+      ],
+      "report": {
+        "status": "SNAPSHOT_ANALYZED",
+        "snapshot_id": "9c5ce26a8ef8431ab2b5a1051e0250e6",
+        "source": {
+          "hwnd": 1,
+          "pid": 1,
+          "process_created": 1,
+          "executable": "PPPoker.exe"
+        },
+        "source_key": "pid:1:created:1:hwnd:1",
+        "capture_timestamp": "DEVELOPMENT_FIXTURE",
+        "origin": [
+          0,
+          0
+        ],
+        "image_shape": [
+          1575,
+          3079,
+          3
+        ],
+        "max_tables": 6,
+        "ocr": {
+          "status": "READY",
+          "version": "5.5.0"
+        },
+        "tables": [
+          {
+            "box": [
+              581,
+              38,
+              570,
+              1004
+            ],
+            "status": "COMPLETE_CANDIDATE",
+            "reasons": [],
+            "evidence": "THREE_CONTROLS_BLUE_SURFACE",
+            "corner_scores": {},
+            "corner_diagnostics": {},
+            "table_index": 1,
+            "snapshot_table_id": "9c5ce26a8ef8431ab2b5a1051e0250e6:1",
+            "source_key": "pid:1:created:1:hwnd:1",
+            "local_box": [
+              581,
+              38,
+              570,
+              1004
+            ],
+            "desktop_box": [
+              581,
+              38,
+              570,
+              1004
+            ],
+            "reading_status": "EXPERIMENTAL_CANDIDATES",
+            "hero_cards": [
+              "5h",
+              "Kc"
+            ],
+            "actions_allowed": false,
+            "crop_sha256": "1f48b477336a6687ff7b0f806269da76be13918a62a2795e83e97be898b87afa",
+            "crop_shape": [
+              1004,
+              570,
+              3
+            ],
+            "reading": {
+              "status": "LAB_ONLY_NOT_CALIBRATED",
+              "table_box": [
+                0,
+                0,
+                570,
+                1004
+              ],
+              "alignment": {
+                "status": "LOCALIZED",
+                "top": 1025,
+                "bottom": 1133,
+                "vertical_offset": 0,
+                "top_score": 154.98709106445312,
+                "bottom_score": 106.28734588623047,
+                "scope": "Vertical alignment only; calibrated blue-layout search bands."
+              },
+              "hero_rank_candidates": [
+                {
+                  "rank": "5",
+                  "status": "CANDIDATE_ONLY",
+                  "readings": [
+                    "5",
+                    "5",
+                    "5",
+                    "5"
+                  ],
+                  "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+                  "suit_result": {
+                    "suit": "h",
+                    "status": "CANDIDATE_ONLY",
+                    "shape_iou": 0.909,
+                    "margin": 0.371,
+                    "evidence": "template_margin"
+                  },
+                  "suit": "h",
+                  "card_candidate": "5h",
+                  "roi_canonical": [
+                    402,
+                    1010,
+                    42,
+                    60
+                  ]
+                },
+                {
+                  "rank": "K",
+                  "status": "CANDIDATE_ONLY",
+                  "readings": [
+                    "K",
+                    "K",
+                    "K",
+                    "K"
+                  ],
+                  "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+                  "suit_result": {
+                    "suit": "c",
+                    "status": "CANDIDATE_ONLY",
+                    "shape_iou": 0.865,
+                    "margin": 0.136,
+                    "evidence": "template_and_rounded_crown"
+                  },
+                  "suit": "c",
+                  "card_candidate": "Kc",
+                  "roi_canonical": [
+                    447,
+                    1010,
+                    42,
+                    60
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "box": [
+              1149,
+              38,
+              575,
+              1014
+            ],
+            "status": "COMPLETE_CANDIDATE",
+            "reasons": [],
+            "evidence": "FOUR_CORNER_BLUE_SURFACE",
+            "corner_scores": {
+              "menu": 0.663,
+              "signal": 0.7492,
+              "cards": 0.7933,
+              "chat": 0.9288
+            },
+            "corner_diagnostics": {
+              "accepted": true,
+              "scores": {
+                "menu": 0.663,
+                "signal": 0.7492,
+                "cards": 0.7933,
+                "chat": 0.9288
+              },
+              "reason": "FOUR_CORNER_ANCHORS",
+              "method": "CANONICAL_RGB"
+            },
+            "table_index": 2,
+            "snapshot_table_id": "9c5ce26a8ef8431ab2b5a1051e0250e6:2",
+            "source_key": "pid:1:created:1:hwnd:1",
+            "local_box": [
+              1149,
+              38,
+              575,
+              1014
+            ],
+            "desktop_box": [
+              1149,
+              38,
+              575,
+              1014
+            ],
+            "reading_status": "EXPERIMENTAL_CANDIDATES",
+            "hero_cards": [
+              "Qs",
+              "6h"
+            ],
+            "actions_allowed": false,
+            "crop_sha256": "053fd412c7760e9902bc98552f481f31c2c8e7bcbd742fb6bee77ff7307713c0",
+            "crop_shape": [
+              1014,
+              575,
+              3
+            ],
+            "reading": {
+              "status": "LAB_ONLY_NOT_CALIBRATED",
+              "table_box": [
+                0,
+                0,
+                575,
+                1014
+              ],
+              "alignment": {
+                "status": "LOCALIZED",
+                "top": 1016,
+                "bottom": 1123,
+                "vertical_offset": 0,
+                "top_score": 149.97999572753906,
+                "bottom_score": 30.64310646057129,
+                "scope": "Vertical alignment only; calibrated blue-layout search bands."
+              },
+              "hero_rank_candidates": [
+                {
+                  "rank": "Q",
+                  "status": "CANDIDATE_ONLY",
+                  "alternatives": [
+                    "Q"
+                  ],
+                  "suit": "s",
+                  "suit_result": {
+                    "suit": "s",
+                    "status": "CANDIDATE_ONLY",
+                    "shape_iou": 0.743,
+                    "margin": 0.037,
+                    "evidence": "template_and_pointed_contour"
+                  },
+                  "card_candidate": "Qs",
+                  "roi_canonical": [
+                    402,
+                    1010,
+                    42,
+                    60
+                  ]
+                },
+                {
+                  "rank": "6",
+                  "status": "CANDIDATE_ONLY",
+                  "alternatives": [
+                    "6"
+                  ],
+                  "suit": "h",
+                  "suit_result": {
+                    "suit": "h",
+                    "status": "CANDIDATE_ONLY",
+                    "shape_iou": 0.9,
+                    "margin": 0.304,
+                    "evidence": "template_margin"
+                  },
+                  "card_candidate": "6h",
+                  "roi_canonical": [
+                    447,
+                    1010,
+                    42,
+                    60
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "box": [
+              0,
+              286,
+              581,
+              775
+            ],
+            "status": "PARTIAL",
+            "reasons": [
+              "TOUCHES_FRAME_EDGE"
+            ],
+            "evidence": "FELT_ONLY",
+            "corner_scores": {},
+            "corner_diagnostics": {},
+            "table_index": 3,
+            "snapshot_table_id": "9c5ce26a8ef8431ab2b5a1051e0250e6:3",
+            "source_key": "pid:1:created:1:hwnd:1",
+            "local_box": [
+              0,
+              286,
+              581,
+              775
+            ],
+            "desktop_box": [
+              0,
+              286,
+              581,
+              775
+            ],
+            "reading_status": "NOT_READ",
+            "hero_cards": [
+              null,
+              null
+            ],
+            "actions_allowed": false
+          }
+        ],
+        "complete_count": 2,
+        "duration_ms": 1945.44,
+        "attempts": {
+          "card_reading": 2,
+          "button_reading": 0,
+          "board_reading": 0
+        },
+        "timings_ms": {
+          "detection": 150.40465899801347,
+          "ocr_setup": 39.09734999615466,
+          "card_reading": 1752.0698260050267,
+          "button_reading": 0.0,
+          "board_reading": 0.0
+        },
+        "actions_allowed": false,
+        "persistent_tracking": false,
+        "scope": "BLUE_LAYOUT_PASSIVE_READING_EXPERIMENTAL",
+        "enabled_readers": {
+          "hero": true,
+          "buttons": false,
+          "board": false
+        },
+        "ocr_work": {
+          "requests": 23,
+          "calls": 17,
+          "hits": 6,
+          "bytes": 1298930
+        }
+      }
+    }
+  ]
+}
