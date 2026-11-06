@@ -1,5 +1,5 @@
-Run: 42260584447
-Source commit: 2bc1f64e2e3ba4372d4e67b5ec2c6ffed49ad891
+Run: 42299261813
+Source commit: 465e2d12d538c024720a2c461e0f5617599d7a25
 test_arbitrary_executable_is_rejected (test_capture_regressions.OriginalRegressionTests.test_arbitrary_executable_is_rejected) ... ok
 test_linux_cannot_report_success (test_capture_regressions.OriginalRegressionTests.test_linux_cannot_report_success) ... ok
 test_process_access_denied_is_rejected (test_capture_regressions.OriginalRegressionTests.test_process_access_denied_is_rejected) ... ok
@@ -185,8 +185,8 @@ test_preselect_and_unknown (test_manual_windows.ManualTests.test_preselect_and_u
 test_same_pixels (test_manual_windows.ManualTests.test_same_pixels) ... ok
 FALHA: Captura estrita falhou: {'status': 'WINDOW_INVALID_HWND'}
 FALHA: Returned HWND differs from requested HWND
-Amostras UNLABELED: C:\Users\RUNNER~1\AppData\Local\Temp\tmpp0l8bn6b\logs\leitura\leitura-9fb1187c215e46d19ee92b270a39e592 | 1 mesa(s). Sem OCR ou importacao para treino.
-Pasta: C:\Users\runneradmin\AppData\Local\Temp\tmpojaz6w2x\sessao-20261106-172023-36e1c708
+Amostras UNLABELED: C:\Users\RUNNER~1\AppData\Local\Temp\tmpomyoq2pa\logs\leitura\leitura-4754927a1be04889b9b4ecc50c593979 | 1 mesa(s). Sem OCR ou importacao para treino.
+Pasta: C:\Users\runneradmin\AppData\Local\Temp\tmpmebfexh8\sessao-20261106-214536-aa0c2a5c
 COLETA V2: texto; imagens DESLIGADAS.
 Sem cliques. Limite por sessao: 1 MiB. Ctrl+C encerra.
 Cota de texto atingida: leitura continua; registros adicionais nao serao salvos.
@@ -198,9 +198,9 @@ Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
 Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
 4: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
 Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
-Encerrado: DURATION_COMPLETE | Resultado: C:\Users\runneradmin\AppData\Local\Temp\tmpojaz6w2x\sessao-20261106-172023-36e1c708
+Encerrado: DURATION_COMPLETE | Resultado: C:\Users\runneradmin\AppData\Local\Temp\tmpmebfexh8\sessao-20261106-214536-aa0c2a5c
 test_budget (test_session_collection.SessionTests.test_budget) ... ok
-Pasta: C:\Users\runneradmin\AppData\Local\Temp\tmpmi264qn7\sessao-20261106-172023-967fd6f7
+Pasta: C:\Users\runneradmin\AppData\Local\Temp\tmpwwqyml94\sessao-20261106-214536-1bef48ec
 COLETA V2: texto; imagens DESLIGADAS.
 Sem cliques. Limite por sessao: 16 MiB. Ctrl+C encerra.
 1: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
@@ -211,9 +211,9 @@ Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
 Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
 4: HWND 2 | ANALYZED | 15000 ms | 0.0 MiB
 Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
-Encerrado: DURATION_COMPLETE | Resultado: C:\Users\runneradmin\AppData\Local\Temp\tmpmi264qn7\sessao-20261106-172023-967fd6f7
+Encerrado: DURATION_COMPLETE | Resultado: C:\Users\runneradmin\AppData\Local\Temp\tmpwwqyml94\sessao-20261106-214536-1bef48ec
 test_default_never_encodes_images (test_session_collection.SessionTests.test_default_never_encodes_images) ... ok
-Pasta: C:\Users\runneradmin\AppData\Local\Temp\tmpn4oul5gn\sessao-20261106-172023-25799841
+Pasta: C:\Users\runneradmin\AppData\Local\Temp\tmpup16f3ie\sessao-20261106-214536-6e157b2c
 COLETA V2: texto; imagens DESLIGADAS.
 Sem cliques. Limite por sessao: 16 MiB. Ctrl+C encerra.
 1: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
@@ -224,9 +224,9 @@ Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
 Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
 4: HWND 2 | ANALYZED | 15000 ms | 0.0 MiB
 Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
-Encerrado: DURATION_COMPLETE | Resultado: C:\Users\runneradmin\AppData\Local\Temp\tmpn4oul5gn\sessao-20261106-172023-25799841
+Encerrado: DURATION_COMPLETE | Resultado: C:\Users\runneradmin\AppData\Local\Temp\tmpup16f3ie\sessao-20261106-214536-6e157b2c
 test_duration_and_all_captures (test_session_collection.SessionTests.test_duration_and_all_captures) ... ok
-Pasta: C:\Users\runneradmin\AppData\Local\Temp\tmp7sk6qj9k\sessao-20261106-172023-10419f6b
+Pasta: C:\Users\runneradmin\AppData\Local\Temp\tmp72wh_xde\sessao-20261106-214536-8e8a461c
 COLETA V2: texto; imagens DESLIGADAS.
 Sem cliques. Limite por sessao: 16 MiB. Ctrl+C encerra.
 1: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
@@ -234,28 +234,33 @@ Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
 2: HWND 2 | ANALYZED | 15000 ms | 0.0 MiB
 Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
 3: HWND 1 | SOURCE_CHANGED | 15000 ms | 0.0 MiB
-Encerrado: SOURCE_CHANGED | Resultado: C:\Users\runneradmin\AppData\Local\Temp\tmp7sk6qj9k\sessao-20261106-172023-10419f6b
+Encerrado: SOURCE_CHANGED | Resultado: C:\Users\runneradmin\AppData\Local\Temp\tmp72wh_xde\sessao-20261106-214536-8e8a461c
 test_identity_change_stops (test_session_collection.SessionTests.test_identity_change_stops) ... ok
-Pasta: C:\Users\runneradmin\AppData\Local\Temp\tmp7wdovkef\sessao-20261106-172023-74732583
+Pasta: C:\Users\runneradmin\AppData\Local\Temp\tmpv86n9jxy\sessao-20261106-214536-d2e3b545
 COLETA V2: texto e recortes aceitos/rejeitados; nova condicao ou 60s, com cota.
 Sem cliques. Limite por sessao: 16 MiB. Ctrl+C encerra.
 1: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
 2: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
 3: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
 4: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
-Encerrado: DURATION_COMPLETE | Resultado: C:\Users\runneradmin\AppData\Local\Temp\tmp7wdovkef\sessao-20261106-172023-74732583
+Encerrado: DURATION_COMPLETE | Resultado: C:\Users\runneradmin\AppData\Local\Temp\tmpv86n9jxy\sessao-20261106-214536-d2e3b545
 test_optional_samples_are_native_crops (test_session_collection.SessionTests.test_optional_samples_are_native_crops) ... ok
-Pasta: C:\Users\runneradmin\AppData\Local\Temp\tmperteyx39\sessao-20261106-172023-e4fac445
+Pasta: C:\Users\runneradmin\AppData\Local\Temp\tmpsn6d4hrd\sessao-20261106-214536-c89f5523
 COLETA V2: texto e recortes aceitos/rejeitados; nova condicao ou 60s, com cota.
 Sem cliques. Limite por sessao: 16 MiB. Ctrl+C encerra.
 1: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
 2: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
 3: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
 4: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
-Encerrado: DURATION_COMPLETE | Resultado: C:\Users\runneradmin\AppData\Local\Temp\tmperteyx39\sessao-20261106-172023-e4fac445
+Encerrado: DURATION_COMPLETE | Resultado: C:\Users\runneradmin\AppData\Local\Temp\tmpsn6d4hrd\sessao-20261106-214536-c89f5523
 test_rejection_transition_saved_without_waiting_one_minute (test_session_collection.SessionTests.test_rejection_transition_saved_without_waiting_one_minute) ... ok
+test_exception_is_propagated (test_concurrent_reads.ConcurrentTests.test_exception_is_propagated) ... ok
+test_frame_cache_propagates_but_does_not_survive_snapshot (test_concurrent_reads.ConcurrentTests.test_frame_cache_propagates_but_does_not_survive_snapshot) ... ok
+test_injected_reader_stays_serial (test_concurrent_reads.ConcurrentTests.test_injected_reader_stays_serial) ... ok
+test_shared_cache_memory_limit (test_concurrent_reads.ConcurrentTests.test_shared_cache_memory_limit) ... ok
+test_two_workers_overlap_and_preserve_order (test_concurrent_reads.ConcurrentTests.test_two_workers_overlap_and_preserve_order) ... ok
 
 ----------------------------------------------------------------------
-Ran 177 tests in 9.336s
+Ran 182 tests in 7.321s
 
 OK
