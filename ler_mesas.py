@@ -55,10 +55,18 @@ def main(argv=None):
     parser.add_argument('--output-dir',type=Path,default=Path('logs/leitura'))
     parser.add_argument('--max-tables',type=int,choices=range(1,7),default=6)
     parser.add_argument('--save',action='store_true',help='Salvar evidencia; captura ao vivo fica em RAM por padrao')
+    parser.add_argument('--continuo',action='store_true',help='Observador continuo em memoria')
+    parser.add_argument('--intervalo',type=float,default=2.0,help='Intervalo minimo entre inicios de captura em segundos')
     args=parser.parse_args(argv)
+    if args.continuo and (args.hwnd is None or args.image or args.metadata or args.save):
+        parser.error('--continuo exige --hwnd e nao aceita --image, --metadata ou --save')
     if args.hwnd is not None and (args.image or args.metadata):parser.error('Use --hwnd OU --image/--metadata')
     if bool(args.image)!=bool(args.metadata):parser.error('--image exige --metadata e vice-versa')
     try:
+        if args.continuo:
+            from continuous_observer import observe
+            from window_capture_engine import WindowCaptureEngine
+            return observe(WindowCaptureEngine(),args.hwnd,interval=args.intervalo,max_tables=args.max_tables)
         if args.hwnd is not None:
             from window_capture_engine import WindowCaptureEngine
             frame,metadata=WindowCaptureEngine().capture_frame(hwnd=args.hwnd)
