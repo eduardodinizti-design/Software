@@ -1,0 +1,118 @@
+{
+  "status": "SNAPSHOT_ANALYZED",
+  "snapshot_id": "54c9707430cb402f9a22fad91cced386",
+  "source": {
+    "hwnd": 264430,
+    "pid": 26504,
+    "process_created": 1793889943.660312,
+    "executable": "C:\\Program Files (x86)\\PPPokerGame\\PPPoker\\PPPoker.exe"
+  },
+  "source_key": "pid:26504:created:1793889943.660312:hwnd:264430",
+  "capture_timestamp": "2026-11-06T02:06:56.133024+00:00",
+  "origin": [
+    -1920,
+    0
+  ],
+  "image_shape": [
+    2160,
+    5760,
+    3
+  ],
+  "max_tables": 6,
+  "ocr": {
+    "status": "NOT_NEEDED"
+  },
+  "tables": [
+    {
+      "box": [
+        1941,
+        63,
+        764,
+        1359
+      ],
+      "status": "UNCERTAIN",
+      "reasons": [
+        "FULL_BOUNDARY_NOT_ESTABLISHED"
+      ],
+      "evidence": "FELT_ONLY",
+      "corner_scores": {
+        "menu": 0.0774,
+        "signal": 0.0636,
+        "cards": 0.0375,
+        "chat": 0.0
+      },
+      "table_index": 1,
+      "snapshot_table_id": "54c9707430cb402f9a22fad91cced386:1",
+      "source_key": "pid:26504:created:1793889943.660312:hwnd:264430",
+      "local_box": [
+        1941,
+        63,
+        764,
+        1359
+      ],
+      "desktop_box": [
+        21,
+        63,
+        764,
+        1359
+      ],
+      "reading_status": "NOT_READ",
+      "hero_cards": [
+        null,
+        null
+      ],
+      "actions_allowed": false
+    },
+    {
+      "box": [
+        2739,
+        80,
+        764,
+        1360
+      ],
+      "status": "UNCERTAIN",
+      "reasons": [
+        "FULL_BOUNDARY_NOT_ESTABLISHED"
+      ],
+      "evidence": "FELT_ONLY",
+      "corner_scores": {
+        "menu": 0.6351,
+        "signal": 0.8388,
+        "cards": 0.8181,
+        "chat": 0.8921
+      },
+      "table_index": 2,
+      "snapshot_table_id": "54c9707430cb402f9a22fad91cced386:2",
+      "source_key": "pid:26504:created:1793889943.660312:hwnd:264430",
+      "local_box": [
+        2739,
+        80,
+        764,
+        1360
+      ],
+      "desktop_box": [
+        819,
+        80,
+        764,
+        1360
+      ],
+      "reading_status": "NOT_READ",
+      "hero_cards": [
+        null,
+        null
+      ],
+      "actions_allowed": false
+    }
+  ],
+  "complete_count": 0,
+  "duration_ms": 110.0,
+  "timings_ms": {
+    "detection": 110.00000000058208,
+    "ocr_setup": 0.0,
+    "card_reading": 0.0
+  },
+  "actions_allowed": false,
+  "persistent_tracking": false,
+  "scope": "BLUE_LAYOUT_HERO_ONLY_EXPERIMENTAL",
+  "frame_sha256": "0865791b14fb6ef7a71e5d6f6b9d5edb7aee6517f79987e3c4b9509297087663"
+}

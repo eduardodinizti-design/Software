@@ -1,0 +1,192 @@
+{
+  "status": "SNAPSHOT_ANALYZED",
+  "snapshot_id": "86c2adc8799a4479bb3beef2d26214d7",
+  "source": {
+    "hwnd": 264430,
+    "pid": 26504,
+    "process_created": 1793889943.660312,
+    "executable": "C:\\Program Files (x86)\\PPPokerGame\\PPPoker\\PPPoker.exe"
+  },
+  "source_key": "pid:26504:created:1793889943.660312:hwnd:264430",
+  "capture_timestamp": "2026-11-06T02:15:19.715099+00:00",
+  "origin": [
+    -1920,
+    0
+  ],
+  "image_shape": [
+    2160,
+    5760,
+    3
+  ],
+  "max_tables": 6,
+  "ocr": {
+    "status": "READY",
+    "version": "5.5.3.20260724"
+  },
+  "tables": [
+    {
+      "box": [
+        1941,
+        63,
+        764,
+        1359
+      ],
+      "status": "UNCERTAIN",
+      "reasons": [
+        "FULL_BOUNDARY_NOT_ESTABLISHED"
+      ],
+      "evidence": "FELT_ONLY",
+      "corner_scores": {
+        "menu": 0.0774,
+        "signal": 0.0636,
+        "cards": 0.0375,
+        "chat": 0.0
+      },
+      "table_index": 1,
+      "snapshot_table_id": "86c2adc8799a4479bb3beef2d26214d7:1",
+      "source_key": "pid:26504:created:1793889943.660312:hwnd:264430",
+      "local_box": [
+        1941,
+        63,
+        764,
+        1359
+      ],
+      "desktop_box": [
+        21,
+        63,
+        764,
+        1359
+      ],
+      "reading_status": "NOT_READ",
+      "hero_cards": [
+        null,
+        null
+      ],
+      "actions_allowed": false
+    },
+    {
+      "box": [
+        2746,
+        80,
+        750,
+        1353
+      ],
+      "status": "COMPLETE_CANDIDATE",
+      "reasons": [],
+      "evidence": "FOUR_CORNER_BLUE_SURFACE",
+      "corner_scores": {
+        "menu": 0.7421,
+        "signal": 0.8872,
+        "cards": 0.8084,
+        "chat": 0.8918
+      },
+      "table_index": 2,
+      "snapshot_table_id": "86c2adc8799a4479bb3beef2d26214d7:2",
+      "source_key": "pid:26504:created:1793889943.660312:hwnd:264430",
+      "local_box": [
+        2746,
+        80,
+        750,
+        1353
+      ],
+      "desktop_box": [
+        826,
+        80,
+        750,
+        1353
+      ],
+      "reading_status": "EXPERIMENTAL_CANDIDATES",
+      "hero_cards": [
+        "3h",
+        "4h"
+      ],
+      "actions_allowed": false,
+      "crop_sha256": "17bf2bd4e53432661ee872e10175262ababfb767a2aa9a66bc2766ac1c0b0d22",
+      "crop_shape": [
+        1353,
+        750,
+        3
+      ],
+      "reading": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          750,
+          1353
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1024,
+          "bottom": 1132,
+          "vertical_offset": 0,
+          "top_score": 192.26284790039062,
+          "bottom_score": 170.22926330566406,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "3",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "3",
+              "3",
+              "3",
+              "3"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "h",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.915,
+              "margin": 0.342,
+              "evidence": "template_margin"
+            },
+            "suit": "h",
+            "card_candidate": "3h",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "4",
+            "status": "CANDIDATE_ONLY",
+            "alternatives": [
+              "4"
+            ],
+            "suit": "h",
+            "suit_result": {
+              "suit": "h",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.92,
+              "margin": 0.349,
+              "evidence": "template_margin"
+            },
+            "card_candidate": "4h",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "crop_file": "mesa-02.png"
+    }
+  ],
+  "complete_count": 1,
+  "duration_ms": 1391.0,
+  "timings_ms": {
+    "detection": 125.0,
+    "ocr_setup": 296.9999999986612,
+    "card_reading": 968.9999999973224
+  },
+  "actions_allowed": false,
+  "persistent_tracking": false,
+  "scope": "BLUE_LAYOUT_HERO_ONLY_EXPERIMENTAL",
+  "frame_sha256": "09d494cedb443dc06d988be809bf29dcc3da48455b49e5924edfc30c2c8ce98a"
+}
