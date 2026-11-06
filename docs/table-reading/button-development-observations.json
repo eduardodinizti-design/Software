@@ -1,0 +1,447 @@
+[
+  {
+    "source": "_4528A8B5-F81C-4078-A8DB-C7ADBD91C311__85ee615d.png",
+    "box": [
+      674,
+      100,
+      703,
+      1237
+    ],
+    "result": {
+      "status": "EXPERIMENTAL_BUTTON_ROW",
+      "buttons": [
+        {
+          "box": [
+            14,
+            1157,
+            218,
+            66
+          ],
+          "status": "PRESELECT",
+          "label": "F/C",
+          "action": null,
+          "amount": null,
+          "unit": null,
+          "ocr_readings": [
+            "F/C",
+            "F/C"
+          ],
+          "kind": "PRESELECT"
+        },
+        {
+          "box": [
+            242,
+            1158,
+            219,
+            65
+          ],
+          "status": "EXPERIMENTAL_LABEL",
+          "label": "Call 1,0 BB",
+          "action": "CALL",
+          "amount": "1.0",
+          "unit": "BB",
+          "ocr_readings": [
+            "Call 1,0 BB",
+            "Call 1,0 BB"
+          ],
+          "kind": "ACTION_LABEL"
+        },
+        {
+          "box": [
+            471,
+            1157,
+            218,
+            66
+          ],
+          "status": "NOT_IDENTIFIED",
+          "label": null,
+          "action": null,
+          "amount": null,
+          "unit": null,
+          "ocr_readings": [
+            "Pagar",
+            "Pagar"
+          ]
+        }
+      ],
+      "hero_turn_confirmed": false,
+      "actions_allowed": false
+    }
+  },
+  {
+    "source": "_3A75F7DE-7229-4137-BD19-4AF5AE363948__d560bf0f.png",
+    "box": [
+      705,
+      225,
+      703,
+      1237
+    ],
+    "result": {
+      "status": "EXPERIMENTAL_BUTTON_ROW",
+      "buttons": [
+        {
+          "box": [
+            14,
+            1157,
+            218,
+            66
+          ],
+          "status": "PRESELECT",
+          "label": "F/C",
+          "action": null,
+          "amount": null,
+          "unit": null,
+          "ocr_readings": [
+            "F/C",
+            "F/C"
+          ],
+          "kind": "PRESELECT"
+        },
+        {
+          "box": [
+            242,
+            1158,
+            219,
+            65
+          ],
+          "status": "EXPERIMENTAL_LABEL",
+          "label": "Check",
+          "action": "CHECK",
+          "amount": null,
+          "unit": null,
+          "ocr_readings": [
+            "Check",
+            "Check"
+          ],
+          "kind": "ACTION_LABEL"
+        },
+        {
+          "box": [
+            471,
+            1157,
+            218,
+            66
+          ],
+          "status": "NOT_IDENTIFIED",
+          "label": null,
+          "action": null,
+          "amount": null,
+          "unit": null,
+          "ocr_readings": [
+            "Pagar",
+            "Pagar"
+          ]
+        }
+      ],
+      "hero_turn_confirmed": false,
+      "actions_allowed": false
+    }
+  },
+  {
+    "source": "_58CB106F-09EA-4853-B7D9-98FD582FAD0E__581ae999.png",
+    "box": [
+      710,
+      224,
+      703,
+      1237
+    ],
+    "result": {
+      "status": "EXPERIMENTAL_BUTTON_ROW",
+      "buttons": [
+        {
+          "box": [
+            14,
+            1157,
+            218,
+            66
+          ],
+          "status": "PRESELECT",
+          "label": "F/C",
+          "action": null,
+          "amount": null,
+          "unit": null,
+          "ocr_readings": [
+            "F/C",
+            "F/C"
+          ],
+          "kind": "PRESELECT"
+        },
+        {
+          "box": [
+            242,
+            1158,
+            219,
+            65
+          ],
+          "status": "EXPERIMENTAL_LABEL",
+          "label": "Call 1,0 BB",
+          "action": "CALL",
+          "amount": "1.0",
+          "unit": "BB",
+          "ocr_readings": [
+            "Call 1,0 BB",
+            "Call 1,0 BB"
+          ],
+          "kind": "ACTION_LABEL"
+        },
+        {
+          "box": [
+            471,
+            1157,
+            218,
+            66
+          ],
+          "status": "NOT_IDENTIFIED",
+          "label": null,
+          "action": null,
+          "amount": null,
+          "unit": null,
+          "ocr_readings": [
+            "Pagar",
+            "Pagar"
+          ]
+        }
+      ],
+      "hero_turn_confirmed": false,
+      "actions_allowed": false
+    }
+  },
+  {
+    "source": "_76D7A22C-BC3A-435D-BB63-A4AC9AE0A1A0__78803c80.png",
+    "box": [
+      702,
+      266,
+      703,
+      1237
+    ],
+    "result": {
+      "status": "EXPERIMENTAL_BUTTON_ROW",
+      "buttons": [
+        {
+          "box": [
+            14,
+            1157,
+            218,
+            66
+          ],
+          "status": "PRESELECT",
+          "label": "F/C",
+          "action": null,
+          "amount": null,
+          "unit": null,
+          "ocr_readings": [
+            "F/C",
+            "F/C"
+          ],
+          "kind": "PRESELECT"
+        },
+        {
+          "box": [
+            242,
+            1158,
+            219,
+            65
+          ],
+          "status": "EXPERIMENTAL_LABEL",
+          "label": "Call 1,0 BB",
+          "action": "CALL",
+          "amount": "1.0",
+          "unit": "BB",
+          "ocr_readings": [
+            "Call 1,0 BB",
+            "Call 1,0 BB"
+          ],
+          "kind": "ACTION_LABEL"
+        },
+        {
+          "box": [
+            471,
+            1157,
+            218,
+            66
+          ],
+          "status": "NOT_IDENTIFIED",
+          "label": null,
+          "action": null,
+          "amount": null,
+          "unit": null,
+          "ocr_readings": [
+            "Pagar",
+            "Pagar"
+          ]
+        }
+      ],
+      "hero_turn_confirmed": false,
+      "actions_allowed": false
+    }
+  },
+  {
+    "source": "_7C62D925-1CC9-4B7C-A92D-0E3379E07494__3d8f87c2.png",
+    "box": [
+      689,
+      144,
+      703,
+      1237
+    ],
+    "result": {
+      "status": "EXPERIMENTAL_BUTTON_ROW",
+      "buttons": [
+        {
+          "box": [
+            14,
+            1157,
+            218,
+            66
+          ],
+          "status": "PRESELECT",
+          "label": "F/C",
+          "action": null,
+          "amount": null,
+          "unit": null,
+          "ocr_readings": [
+            "F/C",
+            "F/C"
+          ],
+          "kind": "PRESELECT"
+        },
+        {
+          "box": [
+            242,
+            1158,
+            219,
+            65
+          ],
+          "status": "EXPERIMENTAL_LABEL",
+          "label": "Call 1,6 BB",
+          "action": "CALL",
+          "amount": "1.6",
+          "unit": "BB",
+          "ocr_readings": [
+            "Call 1,6 BB",
+            "Call 1,6 BB"
+          ],
+          "kind": "ACTION_LABEL"
+        },
+        {
+          "box": [
+            471,
+            1157,
+            218,
+            66
+          ],
+          "status": "NOT_IDENTIFIED",
+          "label": null,
+          "action": null,
+          "amount": null,
+          "unit": null,
+          "ocr_readings": [
+            "Pagar",
+            "Pagar"
+          ]
+        }
+      ],
+      "hero_turn_confirmed": false,
+      "actions_allowed": false
+    }
+  },
+  {
+    "source": "_BF8957B2-BF19-43B0-AADF-8D95779FC005__f3c8ecd9.png",
+    "box": [
+      709,
+      225,
+      699,
+      1244
+    ],
+    "result": {
+      "status": "NO_BUTTON_ROW",
+      "buttons": [],
+      "hero_turn_confirmed": false,
+      "actions_allowed": false
+    }
+  },
+  {
+    "source": "_E59537C2-2CA7-4FB2-9B22-728875057AAB__5c7b5161.png",
+    "box": [
+      581,
+      38,
+      570,
+      1004
+    ],
+    "result": {
+      "status": "EXPERIMENTAL_BUTTON_ROW",
+      "buttons": [
+        {
+          "box": [
+            11,
+            940,
+            178,
+            53
+          ],
+          "status": "EXPERIMENTAL_LABEL",
+          "label": "Fold",
+          "action": "FOLD",
+          "amount": null,
+          "unit": null,
+          "ocr_readings": [
+            "Fold",
+            "Fold"
+          ],
+          "kind": "ACTION_LABEL"
+        },
+        {
+          "box": [
+            197,
+            940,
+            177,
+            53
+          ],
+          "status": "EXPERIMENTAL_LABEL",
+          "label": "Call 1,0 BB",
+          "action": "CALL",
+          "amount": "1.0",
+          "unit": "BB",
+          "ocr_readings": [
+            "Call 1,0 BB",
+            "Call 1,0 BB"
+          ],
+          "kind": "ACTION_LABEL"
+        },
+        {
+          "box": [
+            382,
+            940,
+            177,
+            53
+          ],
+          "status": "EXPERIMENTAL_LABEL",
+          "label": "Raise",
+          "action": "RAISE",
+          "amount": null,
+          "unit": null,
+          "ocr_readings": [
+            "Raise",
+            "Raise"
+          ],
+          "kind": "ACTION_LABEL"
+        }
+      ],
+      "hero_turn_confirmed": false,
+      "actions_allowed": false
+    }
+  },
+  {
+    "source": "_E59537C2-2CA7-4FB2-9B22-728875057AAB__5c7b5161.png",
+    "box": [
+      1149,
+      38,
+      575,
+      1014
+    ],
+    "result": {
+      "status": "NO_BUTTON_ROW",
+      "buttons": [],
+      "hero_turn_confirmed": false,
+      "actions_allowed": false
+    }
+  }
+]

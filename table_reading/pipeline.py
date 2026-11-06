@@ -29,7 +29,7 @@ def configure_ocr():
     raise RuntimeError('TESSERACT_UNAVAILABLE: instale Tesseract com idioma English ou configure TESSERACT_CMD.')
 
 
-def analyze_tables(frame_bgr, metadata, max_tables=6, *, _reader=None):
+def analyze_tables(frame_bgr, metadata, max_tables=6, *, _reader=None, read_buttons=False):
     if not isinstance(frame_bgr,np.ndarray) or frame_bgr.dtype!=np.uint8 or frame_bgr.ndim!=3 or frame_bgr.shape[2]!=3 or not frame_bgr.size:
         raise ValueError('Expected nonempty BGR uint8 frame')
     if not 1 <= max_tables <= 6:raise ValueError('Current limit is 1..6 tables per snapshot')
@@ -58,6 +58,7 @@ def analyze_tables(frame_bgr, metadata, max_tables=6, *, _reader=None):
         except Exception as exc:ocr={'status':'UNAVAILABLE','error':str(exc)}
     ocr_setup_ms=(time.monotonic()-ocr_started)*1000
     reading_ms=0.0
+    button_ms=0.0
     rows=[]
     for i,p in enumerate(proposals,1):
         x,y,w,h=map(int,p.box)
@@ -83,11 +84,21 @@ def analyze_tables(frame_bgr, metadata, max_tables=6, *, _reader=None):
                     else:row['reading_status']='EXPERIMENTAL_CANDIDATES' if all(cards) else 'NOT_IDENTIFIED'
                     row.update(hero_cards=cards,reading=reading)
                 except Exception as exc:row.update(reading_status='READING_ERROR',error=str(exc))
+        if read_buttons and p.status=='COMPLETE_CANDIDATE':
+            if ocr['status']=='UNAVAILABLE':
+                row['action_buttons']={'status':'OCR_UNAVAILABLE','buttons':[],'actions_allowed':False}
+            else:
+                from .action_buttons import read_action_buttons
+                button_started=time.monotonic()
+                try: row['action_buttons']=read_action_buttons(crop)
+                except Exception as exc:
+                    row['action_buttons']={'status':'READING_ERROR','buttons':[],'error':str(exc),'actions_allowed':False}
+                finally: button_ms+=(time.monotonic()-button_started)*1000
         rows.append(row)
     return dict(status='SNAPSHOT_ANALYZED',snapshot_id=snapshot,source=source,source_key=source_key,
                 capture_timestamp=metadata.get('timestamp'),origin=metadata['screen_origin'],
                 image_shape=list(frame_bgr.shape),max_tables=max_tables,ocr=ocr,tables=rows,
                 complete_count=sum(r['status']=='COMPLETE_CANDIDATE' for r in rows),
                 duration_ms=round((time.monotonic()-started)*1000,2),
-                timings_ms=dict(detection=detection_ms,ocr_setup=ocr_setup_ms,card_reading=reading_ms),actions_allowed=False,
+                timings_ms=dict(detection=detection_ms,ocr_setup=ocr_setup_ms,card_reading=reading_ms,button_reading=button_ms),actions_allowed=False,
                 persistent_tracking=False,scope='BLUE_LAYOUT_HERO_ONLY_EXPERIMENTAL')

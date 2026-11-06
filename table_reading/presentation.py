@@ -23,4 +23,8 @@ def describe_regions(report):
         else:
             cards=' / '.join(c or 'NAO IDENTIFICADO' for c in row['hero_cards'])
             lines.append(f'MESA ACEITA (regiao {index}) | caixa {box} | Hero: {cards} | {row["reading_status"]}')
+            if 'action_buttons' in row:
+                result=row['action_buttons']
+                labels=[f"{b.get('label') or 'NAO IDENTIFICADO'} [{b['status']}]" for b in result['buttons']]
+                lines.append('BOTOES: '+(' | '.join(labels) if labels else result['status'])+' | vez do Hero nao confirmada')
     return lines
