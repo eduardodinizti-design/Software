@@ -14,26 +14,30 @@ def identity(meta):
     return tuple(meta.get(k) for k in ('hwnd','pid','process_created','executable'))
 
 
-def run_session(engine, hwnds, *, minutes=30, interval=2, budget_mb=1024,
+def run_session(engine, hwnds, *, minutes=30, interval=2, budget_mb=16, samples=False,
                 output=Path('logs/sessoes'), analyze=analyze_tables,
                 clock=time.monotonic, sleep=time.sleep):
-    if not 1<=minutes<=120 or not .25<=interval<=60 or not 1<=budget_mb<=10240:
-        raise ValueError('Duracao 1..120 min; intervalo .25..60 s; limite 1..10240 MiB')
+    if not 1<=minutes<=120 or not .25<=interval<=60 or not 1<=budget_mb<=64:
+        raise ValueError('Duracao 1..120 min; intervalo .25..60 s; limite 1..64 MiB')
     hwnds=list(dict.fromkeys(hwnds))
     if not hwnds or len(hwnds)>6 or any(h<=0 for h in hwnds):raise ValueError('Selecione 1..6 HWNDs validos')
     folder=Path(output)/('sessao-'+datetime.now().strftime('%Y%m%d-%H%M%S')+'-'+uuid.uuid4().hex[:8])
     folder.mkdir(parents=True,exist_ok=False)
     start=clock();deadline=start+minutes*60;counts=Counter();known={};used=0;seq=0;stop='DURATION_COMPLETE';durations=[]
     limit=int(budget_mb*1024*1024);reserve=65536
+    image_limit=limit//4 if samples else 0
+    log_limit=limit-image_limit-reserve
+    image_used=0;log_used=0;last_sample={}
     print('Pasta:',folder.resolve(),flush=True)
-    print('Sem cliques. Capturas PNG nativas e leituras; Ctrl+C encerra. Limite:',budget_mb,'MiB.',flush=True)
+    print('COLETA V2: texto; imagens DESLIGADAS.' if not samples else 'COLETA V2: texto e amostras de mesas a cada 60s, com cota.',flush=True)
+    print('Sem cliques. Limite por sessao:',budget_mb,'MiB. Ctrl+C encerra.',flush=True)
     try:
         with (folder/'leituras.jsonl').open('wb') as log:
             while clock()<deadline:
                 cycle=clock()
                 for hwnd in hwnds:
                     if clock()>=deadline:break
-                    seq+=1;t=clock();frame=None;png=None
+                    seq+=1;t=clock();frame=None;report=None
                     record=dict(sequence=seq,hwnd=hwnd,started_utc=datetime.now(timezone.utc).isoformat(),elapsed_s=round(t-start,3),actions_executed=False)
                     try:
                         frame,meta=engine.capture_frame(hwnd=hwnd);record['capture']=meta
@@ -45,9 +49,6 @@ def run_session(engine, hwnds, *, minutes=30, interval=2, budget_mb=1024,
                                 record['status']='SOURCE_CHANGED';stop='SOURCE_CHANGED'
                             else:
                                 known[hwnd]=ident
-                                ok,encoded=cv2.imencode('.png',frame,[cv2.IMWRITE_PNG_COMPRESSION,3])
-                                if not ok:raise RuntimeError('PNG encoding failed')
-                                png=encoded.tobytes();record['image']=f'frame-{seq:06d}-hwnd-{hwnd}.png'
                                 try:
                                     report=analyze(frame,meta,max_tables=6,read_buttons=True,read_community=True)
                                     record.update(status='ANALYZED',report=report)
@@ -66,12 +67,27 @@ def run_session(engine, hwnds, *, minutes=30, interval=2, budget_mb=1024,
                         record.update(status='ERROR',error=repr(exc));counts['errors']+=1
                     ms=(clock()-t)*1000;durations.append(ms)
                     record['duration_ms']=round(ms,2)
-                    payload=(json.dumps(record,ensure_ascii=False)+'\n').encode('utf8')
-                    if used+len(payload)+(len(png) if png else 0)+reserve>limit:
-                        stop='STORAGE_LIMIT';counts['unsaved_attempts']+=1;break
-                    if png:
-                        (folder/record['image']).write_bytes(png);used+=len(png);counts['saved_frames']+=1
-                    log.write(payload);log.flush();used+=len(payload);counts['saved_records']+=1
+                    # Optional bounded native table samples; never encode the full surface.
+                    if samples and frame is not None and report is not None and image_used<image_limit and clock()-last_sample.get(hwnd,-1e9)>=60:
+                        last_sample[hwnd]=clock();record['samples']=[]
+                        for row in report.get('tables',[])[:6]:
+                            if row.get('status')!='COMPLETE_CANDIDATE':continue
+                            x,y,w,h=map(int,row['local_box'])
+                            if min(x,y)<0 or min(w,h)<=0 or x+w>frame.shape[1] or y+h>frame.shape[0]:continue
+                            ok,encoded=cv2.imencode('.png',frame[y:y+h,x:x+w],[cv2.IMWRITE_PNG_COMPRESSION,3])
+                            if not ok:continue
+                            data=encoded.tobytes()
+                            if image_used+len(data)>image_limit:counts['sample_budget_skips']+=1;continue
+                            name=f"sample-{seq:06d}-mesa-{row['table_index']}.png"
+                            (folder/name).write_bytes(data);image_used+=len(data);used+=len(data)
+                            record['samples'].append(dict(file=name,local_box=[x,y,w,h]))
+                            counts['saved_samples']+=1
+                    payload=(json.dumps(record,ensure_ascii=False,separators=(',',':'))+'\n').encode('utf8')
+                    if log_used+len(payload)<=log_limit:
+                        log.write(payload);log.flush();log_used+=len(payload);used+=len(payload);counts['saved_records']+=1
+                    else:
+                        counts['records_omitted_at_budget']+=1
+                        if counts['records_omitted_at_budget']==1:print('Cota de texto atingida: leitura continua; registros adicionais nao serao salvos.',flush=True)
                     print(f"{seq}: HWND {hwnd} | {record['status']} | {ms:.0f} ms | {used/1024/1024:.1f} MiB",flush=True)
                     if 'report' in record:
                         from table_reading.presentation import describe_regions
@@ -85,6 +101,8 @@ def run_session(engine, hwnds, *, minutes=30, interval=2, budget_mb=1024,
         values=sorted(durations)
         summary=dict(stop_reason=stop,elapsed_s=round(clock()-start,2),requested_minutes=minutes,
                      hwnds=hwnds,interval_s=interval,budget_mib=budget_mb,bytes_written_before_summary=used,
+                     format_version=2,images_enabled=samples,image_bytes=image_used,log_bytes=log_used,
+                     image_budget_bytes=image_limit,log_budget_bytes=log_limit,
                      counts=dict(counts),capture_and_read_ms=dict(n=len(values),median=values[len(values)//2] if values else None,
                      p95=values[min(len(values)-1,int(len(values)*.95))] if values else None),
                      accuracy_validated=False,actions_executed=False,
@@ -92,7 +110,7 @@ def run_session(engine, hwnds, *, minutes=30, interval=2, budget_mb=1024,
                      'Displayed buttons do not prove which action the user took.',
                      'No persistent table identity across moves; source HWND plus per-frame boxes only.',
                      'Pots, stacks and full action history are not decoded by this reader.',
-                     'Counts include attempted processing; saved_records/saved_frames describe persisted evidence.'])
+                     'No full-frame images saved. Optional table samples only; quotas can omit evidence, counted explicitly.'])
         (folder/'resumo.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2),encoding='utf8')
         print('Encerrado:',stop,'| Resultado:',folder.resolve(),flush=True)
     return folder,summary
@@ -103,7 +121,8 @@ def main():
     p.add_argument('--hwnds',nargs='+',type=lambda s:int(s,0))
     p.add_argument('--minutos',type=float,default=30)
     p.add_argument('--intervalo',type=float,default=2)
-    p.add_argument('--limite-mb',type=int,default=1024)
+    p.add_argument('--limite-mb',type=int,default=16)
+    p.add_argument('--amostras',action='store_true',help='Recortes nativos de mesas a cada 60s; cota de 25% do limite')
     args=p.parse_args()
     from window_capture_engine import WindowCaptureEngine
     engine=WindowCaptureEngine()
@@ -115,7 +134,7 @@ def main():
         if not set(args.hwnds)<=set(w['hwnd'] for w in windows):raise SystemExit('HWND nao listado')
     from table_reading.pipeline import configure_ocr
     configure_ocr()
-    _,summary=run_session(engine,args.hwnds,minutes=args.minutos,interval=args.intervalo,budget_mb=args.limite_mb)
+    _,summary=run_session(engine,args.hwnds,minutes=args.minutos,interval=args.intervalo,budget_mb=args.limite_mb,samples=args.amostras)
     return 0 if summary['stop_reason'] in ('DURATION_COMPLETE','USER_STOP') else 1
 
 if __name__=='__main__':raise SystemExit(main())

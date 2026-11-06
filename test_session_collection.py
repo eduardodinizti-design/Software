@@ -18,12 +18,26 @@ class SessionTests(unittest.TestCase):
         tmp=tempfile.TemporaryDirectory();self.addCleanup(tmp.cleanup);clock=Clock()
         return run_session(Engine(clock,kwargs.pop('change',False)),[1,2],minutes=1,output=Path(tmp.name),clock=clock,sleep=clock.sleep,analyze=lambda *a,**k:{'tables':[]},**kwargs)
     def test_duration_and_all_captures(self):
-        folder,s=self.run_case();self.assertEqual(s['stop_reason'],'DURATION_COMPLETE');self.assertEqual(s['counts']['saved_frames'],4)
-        self.assertEqual(len(list(folder.glob('*.png'))),4);self.assertFalse(s['accuracy_validated']);self.assertFalse(s['actions_executed'])
+        folder,s=self.run_case();self.assertEqual(s['stop_reason'],'DURATION_COMPLETE');self.assertEqual(s['counts']['saved_records'],4)
+        self.assertEqual(len(list(folder.glob('*.png'))),0);self.assertFalse(s['accuracy_validated']);self.assertFalse(s['actions_executed'])
     def test_identity_change_stops(self):
         _,s=self.run_case(change=True);self.assertEqual(s['stop_reason'],'SOURCE_CHANGED')
     def test_budget(self):
         tmp=tempfile.TemporaryDirectory();self.addCleanup(tmp.cleanup);c=Clock()
         _,s=run_session(Engine(c),[1],minutes=1,budget_mb=1,output=Path(tmp.name),clock=c,sleep=c.sleep,analyze=lambda *a,**k:{'tables':[],'large':'x'*1100000})
-        self.assertEqual(s['stop_reason'],'STORAGE_LIMIT');self.assertEqual(s['counts'].get('saved_frames',0),0)
-if __name__=='__main__':unittest.main()
+        self.assertEqual(s['stop_reason'],'DURATION_COMPLETE');self.assertEqual(s['counts']['records_omitted_at_budget'],4);self.assertLess(sum(p.stat().st_size for p in Path(tmp.name).rglob('*') if p.is_file()),1024*1024)
+    def test_default_never_encodes_images(self):
+        from unittest.mock import patch
+        with patch('coletar_sessao.cv2.imencode',side_effect=AssertionError('must not encode')):
+            _,s=self.run_case()
+        self.assertEqual(s['counts']['saved_records'],4)
+    def test_optional_samples_are_native_crops(self):
+        import cv2
+        tmp=tempfile.TemporaryDirectory();self.addCleanup(tmp.cleanup);c=Clock()
+        row={'status':'COMPLETE_CANDIDATE','table_index':1,'local_box':[2,3,10,12],'hero_cards':[None,None]}
+        from unittest.mock import patch
+        with patch('table_reading.presentation.describe_regions',return_value=[]):
+            folder,s=run_session(Engine(c),[1],minutes=1,samples=True,output=Path(tmp.name),clock=c,sleep=c.sleep,analyze=lambda *a,**k:{'tables':[row]})
+        images=list(folder.glob('*.png'));self.assertEqual(len(images),1)
+        self.assertEqual(cv2.imread(str(images[0])).shape,(12,10,3))
+if __name__=='__main__' :unittest.main()
