@@ -1,5 +1,5 @@
-Run: 42140333964
-Source commit: baa1e6e577b1b90aed95126a3fa46e8f69204446
+Run: 42142459869
+Source commit: 1c4d8f420bdd9402dc4c5fc7d560373caa35408f
 test_arbitrary_executable_is_rejected (test_capture_regressions.OriginalRegressionTests.test_arbitrary_executable_is_rejected) ... ok
 test_linux_cannot_report_success (test_capture_regressions.OriginalRegressionTests.test_linux_cannot_report_success) ... ok
 test_process_access_denied_is_rejected (test_capture_regressions.OriginalRegressionTests.test_process_access_denied_is_rejected) ... ok
@@ -34,8 +34,14 @@ test_real_pixels_are_cropped_and_routed (test_table_reading.PipelineContracts.te
 test_scaled_moved_table_preserves_native_crop (test_table_reading.PipelineContracts.test_scaled_moved_table_preserves_native_crop) ... ok
 test_separate_processes_and_snapshots_never_reuse_identity (test_table_reading.PipelineContracts.test_separate_processes_and_snapshots_never_reuse_identity) ... ok
 test_six_limit_and_seven_refusal (test_table_reading.PipelineContracts.test_six_limit_and_seven_refusal) ... ok
+test_blank_variants_require_four_fresh_confirmations (test_rank_confirmation.RankConfirmationTests.test_blank_variants_require_four_fresh_confirmations) ... ok
+test_conflicting_seven_nine_cannot_be_overridden (test_rank_confirmation.RankConfirmationTests.test_conflicting_seven_nine_cannot_be_overridden) ... ok
+test_full_agreement_has_no_extra_ocr (test_rank_confirmation.RankConfirmationTests.test_full_agreement_has_no_extra_ocr) ... ok
+test_retry_blank_abstains (test_rank_confirmation.RankConfirmationTests.test_retry_blank_abstains) ... ok
+test_retry_conflict_abstains (test_rank_confirmation.RankConfirmationTests.test_retry_conflict_abstains) ... ok
+test_retry_error_abstains (test_rank_confirmation.RankConfirmationTests.test_retry_error_abstains) ... ok
 
 ----------------------------------------------------------------------
-Ran 34 tests in 3.114s
+Ran 40 tests in 3.299s
 
 OK
