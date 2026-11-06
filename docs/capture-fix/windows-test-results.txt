@@ -1,5 +1,5 @@
-Run: 42147029131
-Source commit: ff297cd150b9e7b297a6c7a610bcc9380f237fe4
+Run: 42148448092
+Source commit: b91a86cdfd57fdd2e274f9ac917ab3fe81d8e76c
 test_arbitrary_executable_is_rejected (test_capture_regressions.OriginalRegressionTests.test_arbitrary_executable_is_rejected) ... ok
 test_linux_cannot_report_success (test_capture_regressions.OriginalRegressionTests.test_linux_cannot_report_success) ... ok
 test_process_access_denied_is_rejected (test_capture_regressions.OriginalRegressionTests.test_process_access_denied_is_rejected) ... ok
@@ -53,6 +53,9 @@ test_source_change_stops_before_reading (test_continuous_observer.ObserverTests.
 test_diagnostics_copy_and_failure_replaces_success (test_capture_review.ReviewTests.test_diagnostics_copy_and_failure_replaces_success) ... ok
 test_metrics_bounded_and_percentiles (test_capture_review.ReviewTests.test_metrics_bounded_and_percentiles) ... ok
 test_missing_timing_not_reported_as_zero (test_capture_review.ReviewTests.test_missing_timing_not_reported_as_zero) ... ok
+test_missing_reason_and_empty_report (test_region_presentation.RegionPresentationTests.test_missing_reason_and_empty_report) ... ok
+test_rejected_region_not_a_table_or_card_reading (test_region_presentation.RegionPresentationTests.test_rejected_region_not_a_table_or_card_reading) ... ok
+test_unknown_reason_is_preserved (test_region_presentation.RegionPresentationTests.test_unknown_reason_is_preserved) ... ok
 
 ======================================================================
 ERROR: test_diagnostic_forwards_selected_hwnd (test_window_capture_audit.IntegrationContracts.test_diagnostic_forwards_selected_hwnd)
@@ -87,13 +90,13 @@ Traceback (most recent call last):
   File "D:\a\Software\Software\test_table_reading.py", line 89, in test_export_pixels_and_budget
     folder=save_result(self.frame,r,root)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "D:\a\Software\Software\ler_mesas.py", line 45, in save_result
+  File "D:\a\Software\Software\ler_mesas.py", line 46, in save_result
     store_bundle(root,{str(Path(directory.name)/target.name/name):data for name,data in files.items()},budget)
   File "D:\a\Software\Software\diagnostic_storage.py", line 73, in store_bundle
     raise RuntimeError('Limite global: arquivos protegidos ou externos impedem salvar. Nada removido.')
 RuntimeError: Limite global: arquivos protegidos ou externos impedem salvar. Nada removido.
 
 ----------------------------------------------------------------------
-Ran 53 tests in 3.369s
+Ran 56 tests in 4.281s
 
 FAILED (errors=3)
