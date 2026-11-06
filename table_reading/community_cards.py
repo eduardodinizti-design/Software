@@ -21,8 +21,10 @@ def read_board(table, *, _rank=read_rank, _suit=read_suit, hero_cards=()):
     mask=np.uint8(colored|neutral)*255
     contours,_=cv2.findContours(mask,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
     boxes=[]
+    fragments=[]
     for c in contours:
         x,y,bw,bh=cv2.boundingRect(c)
+        fragments.append((x+x0,y+y0,bw,bh))
         if .07*w<=bw<=.14*w and .06*h<=bh<=.12*h and .45<=bw/bh<=.85 and cv2.contourArea(c)/(bw*bh)>.75:
             if x==0 or y==0 or x+bw>=roi.shape[1] or y+bh>=roi.shape[0]:continue
             boxes.append((x+x0,y+y0,bw,bh))
@@ -33,6 +35,15 @@ def read_board(table, *, _rank=read_rank, _suit=read_suit, hero_cards=()):
     if max(b[1] for b in boxes)-min(b[1] for b in boxes)>.012*h:return result
     if max(heights)/min(heights)>1.15 or max(widths)/min(widths)>1.15:return result
     if any(not 0<=b[0]-a[0]-a[2]<=.03*w for a,b in zip(boxes,boxes[1:])):return result
+    # A fourth/fifth card fragment must not turn a partial turn/river into flop.
+    row_top=min(b[1] for b in boxes);row_bottom=max(b[1]+b[3] for b in boxes)
+    median_width=float(np.median(widths));median_height=float(np.median(heights))
+    for fx,fy,fw,fh in fragments:
+        if (fx,fy,fw,fh) in boxes:continue
+        overlap=max(0,min(fy+fh,row_bottom)-max(fy,row_top))
+        if (boxes[0][0]-median_width*.3 <= fx <= boxes[-1][0]+median_width*1.5
+                and fw>=median_width*.18 and overlap>=median_height*.25):
+            return dict(result,status='BOARD_PARTIAL_OR_OBSTRUCTED')
     readings=[]
     for x,y,bw,bh in boxes:
         face=cv2.resize(table[y:y+bh,x:x+bw],(90,130))

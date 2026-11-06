@@ -24,6 +24,21 @@ class BoardTests(unittest.TestCase):
     def test_duplicate_and_hero_conflict(self):
         self.assertEqual(self.read(3,['A','A','3'])['status'],'BOARD_DUPLICATE_REJECTED')
         self.assertEqual(self.read(3,['A','2','3'],hero_cards=['Ac','Kh'])['status'],'BOARD_DUPLICATE_REJECTED')
+    def test_partial_fourth_card_cannot_be_reported_as_flop(self):
+        image=self.scene(4)
+        image[425:471,324:384]=(160,65,30)
+        def forbidden(_):self.fail('Partial row reached OCR')
+        self.assertEqual(read_board(image,_rank=forbidden)['status'],'BOARD_PARTIAL_OR_OBSTRUCTED')
+    def test_gap_in_row_rejected(self):
+        image=self.scene(4);image[380:471,188:248]=(160,65,30)
+        self.assertEqual(read_board(image)['status'],'BOARD_NOT_CONFIRMED')
+    def test_move_and_resize_relative_table(self):
+        image=self.scene(3)
+        for width in (450,600,750):
+            resized=cv2.resize(image,(width,round(width*1000/600)))
+            ranks=iter('A23')
+            result=read_board(resized,_rank=lambda _:dict(rank=next(ranks)),_suit=lambda _:dict(suit='c'))
+            self.assertEqual(result['cards'],['Ac','2c','3c'])
     def test_development_empty_screens(self):
         root=Path(os.environ.get('VISUALPILOT_ASSETS','public/assets/aistudio'))
         rows=json.loads(Path('docs/table-reading/development-labels.json').read_text())['tables']

@@ -19,3 +19,9 @@ Pendências acumuladas para uma rodada real:
 6. Tempos finais com board habilitado. Salvar apenas evidência pontual de falha com --save (fora do modo contínuo).
 
 As falhas de Hero 8h→3h e a limitação da mesa pequena continuam pendentes. O board reutiliza o leitor de ranks experimental, portanto também pode errar: não serve como validação de prontidão operacional.
+
+## Rodada adicional de laboratório
+
+Mesma captura real Jc/5d/3c redimensionada para larguras 450, 575 e 750 pixels: as três variantes retornaram as três cartas esperadas. O teste de translação coloca a imagem em outro canvas e usa o recorte conhecido; valida independência de coordenadas externas no leitor, NÃO valida detecção automática da mesa. Uma única cena reutilizada, não nove cartas independentes nem certificação dessa faixa de tamanhos.
+
+Corrigida vulnerabilidade geométrica reproduzida em cena sintética: quarta carta cortada poderia ser descartada pelo filtro e deixar três cartas interpretadas como flop. Fragmentos de tamanho significativo alinhados à fileira agora causam BOARD_PARTIAL_OR_OBSTRUCTED antes do OCR. Testes cobrem fragmento da quarta carta, lacuna interna e três escalas. Se uma carta for completamente escondida sem evidência residual, esta heurística isolada não pode provar sua existência; confirmação temporal/visibilidade permanece pendente.
