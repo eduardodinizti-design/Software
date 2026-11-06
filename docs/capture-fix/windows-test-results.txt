@@ -1,5 +1,5 @@
-Run: 42215447157
-Source commit: 7594737960fb8cca7f801834253a316f51b90863
+Run: 42216829738
+Source commit: 5a5331d080bc24bc9a98c0aa52784f42a532f171
 test_arbitrary_executable_is_rejected (test_capture_regressions.OriginalRegressionTests.test_arbitrary_executable_is_rejected) ... ok
 test_linux_cannot_report_success (test_capture_regressions.OriginalRegressionTests.test_linux_cannot_report_success) ... ok
 test_process_access_denied_is_rejected (test_capture_regressions.OriginalRegressionTests.test_process_access_denied_is_rejected) ... ok
@@ -74,8 +74,10 @@ test_uniform_blue_is_not_table (test_corner_sampling.CornerSamplingTests.test_un
 test_bad_input_does_not_claim_street (test_community_cards.BoardTests.test_bad_input_does_not_claim_street) ... ok
 test_development_empty_screens (test_community_cards.BoardTests.test_development_empty_screens) ... ok
 test_duplicate_and_hero_conflict (test_community_cards.BoardTests.test_duplicate_and_hero_conflict) ... ok
+test_existing_suit_is_not_overridden (test_community_cards.BoardTests.test_existing_suit_is_not_overridden) ... ok
 test_gap_in_row_rejected (test_community_cards.BoardTests.test_gap_in_row_rejected) ... ok
 test_move_and_resize_relative_table (test_community_cards.BoardTests.test_move_and_resize_relative_table) ... ok
+test_native_suit_retry_only_after_unreadable (test_community_cards.BoardTests.test_native_suit_retry_only_after_unreadable) ... ok
 test_no_cards_does_not_claim_preflop (test_community_cards.BoardTests.test_no_cards_does_not_claim_preflop) ... ok
 test_ocr_exception_discards_whole_board_then_recovers (test_community_cards.BoardTests.test_ocr_exception_discards_whole_board_then_recovers) ... ok
 test_partial_fourth_card_cannot_be_reported_as_flop (test_community_cards.BoardTests.test_partial_fourth_card_cannot_be_reported_as_flop) ... ok
@@ -124,6 +126,6 @@ Traceback (most recent call last):
 RuntimeError: Limite global: arquivos protegidos ou externos impedem salvar. Nada removido.
 
 ----------------------------------------------------------------------
-Ran 83 tests in 4.098s
+Ran 85 tests in 5.810s
 
 FAILED (errors=3)
