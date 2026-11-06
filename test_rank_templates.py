@@ -3,6 +3,7 @@ import unittest
 from unittest.mock import patch
 from pathlib import Path
 import tempfile
+import json
 import cv2
 import numpy as np
 from table_reading import rank_templates as templates
@@ -18,6 +19,21 @@ class RankTemplateContracts(unittest.TestCase):
         glyph=self.glyph if glyph is None else glyph
         with patch.object(templates,'segmented_masks',return_value=[(glyph,parts)]*2):
             return templates.read_template_rank(self.crop)
+
+    def test_atlas_keeps_frozen_source_split(self):
+        manifest=json.loads((templates.ASSET_DIR/'manifest.json').read_text())
+        split=json.loads((templates.ASSET_DIR/'source_split.json').read_text())
+        actual={r['source_sha256'] for r in manifest['templates']}
+        self.assertEqual(actual,set(split['training_sources']))
+        self.assertFalse(actual & set(split['evaluation_sources']))
+        self.assertEqual(len(split['evaluation_sources']),9)
+
+    def test_margin_compares_distinct_ranks_not_variant_count(self):
+        norm=templates.normalized(self.glyph);holes=templates.hole_count(self.glyph);ratio=self.glyph.shape[1]/self.glyph.shape[0]
+        good=('2',norm,holes,ratio)
+        bad=('5',np.logical_not(norm),holes,ratio)
+        with patch.object(templates,'load_templates',return_value=[good,good,good,bad]):
+            self.assertEqual(self.read()['rank'],'2')
 
     def test_exact_asset_self_match_contract_only(self):
         self.assertEqual(self.read()['rank'],'2')

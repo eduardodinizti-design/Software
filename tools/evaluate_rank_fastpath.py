@@ -21,3 +21,6 @@ for group in ('all','source_disjoint','training_source'):
  subset=[r for r in out if group=='all' or (r['source_disjoint'] if group=='source_disjoint' else not r['source_disjoint'])]
  summary[group]={k:sum(r['outcome']==k for r in subset) for k in ('correct','wrong','fallback')}
 args.output.write_text(json.dumps(dict(scope='Shortcut acceptance only. Reused development sources; transformations are not independent hands. Training-source matches are not validation.',summary=summary,results=out),indent=2));print(summary)
+
+if summary["all"]["wrong"]:
+ raise SystemExit("Incorrect accepted template rank; inspect report")

@@ -11,13 +11,10 @@ class ButtonTemplateTests(unittest.TestCase):
     def clean(self,label='Check'):
         return cv2.imread(str(ASSETS/(label+'.png')),cv2.IMREAD_GRAYSCALE)
     def test_packaged_static_labels(self):
-        for label in ('F_C','Check'):
+        for label in ('F_C','Check','Fold','Raise'):
             result=read_static_label(self.clean(label))
             self.assertEqual(result['label'],label.replace('_','/'))
             self.assertEqual(result['evidence'],'WHOLE_LABEL_TEMPLATE')
-    def test_unvalidated_prototypes_stay_on_ocr(self):
-        for label in ('Fold','Raise'):
-            self.assertIsNone(read_static_label(self.clean(label)))
     def test_whole_text_includes_added_amount(self):
         clean=self.clean();points=cv2.findNonZero(np.uint8(clean<128));x,y,w,h=cv2.boundingRect(points)
         changed=clean.copy();cv2.putText(changed,' 2 BB',(x+w+5,y+h),cv2.FONT_HERSHEY_SIMPLEX,.7,0,2)
@@ -34,6 +31,13 @@ class ButtonTemplateTests(unittest.TestCase):
         templates.cache_clear()
         try:
             with patch('table_reading.button_templates.cv2.imread',side_effect=missing):
+                self.assertIsNone(read_static_label(clean))
+        finally:templates.cache_clear()
+    def test_hash_mismatch_disables_bank(self):
+        clean=self.clean()
+        templates.cache_clear()
+        try:
+            with patch('table_reading.button_templates.Path.read_bytes',return_value=b'corrupt'):
                 self.assertIsNone(read_static_label(clean))
         finally:templates.cache_clear()
     def test_extreme_aspect_abstains_before_resize(self):

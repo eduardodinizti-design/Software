@@ -3,7 +3,7 @@ import os
 os.environ['OMP_THREAD_LIMIT']='1'
 import argparse,hashlib,json,math,platform,statistics,sys,time
 from pathlib import Path
-sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
+sys.path.insert(0,os.environ.get('VISUALPILOT_READER_ROOT',str(Path(__file__).resolve().parents[1])))
 import cv2,numpy as np
 from table_reading.pipeline import analyze_tables
 from table_reading.fastpath import template_mode
@@ -23,7 +23,7 @@ def meaning(result):
  return dict(rows=rows,actions_allowed=result['actions_allowed'])
 
 def main():
- p=argparse.ArgumentParser();p.add_argument('--assets',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--samples',type=int,default=5);a=p.parse_args()
+ p=argparse.ArgumentParser();p.add_argument('--assets',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--samples',type=int,default=5);p.add_argument('--modes',choices=('both','templates'),default='both');a=p.parse_args()
  if a.samples<5:p.error('Use at least five warm samples')
  labels=json.loads((ROOT/'docs/table-reading/development-labels.json').read_text())['tables']
  labels=[dict(labels[i],board=['Jc','5d','3c'] if i==7 else []) for i in (0,1,2,3,4,7)]
@@ -40,7 +40,7 @@ def main():
    x=pad+i%cols*(cw+pad);y=pad+i//cols*(ch+pad);frame[y:y+c.shape[0],x:x+c.shape[1]]=c
   meta=dict(status='SUCCESS',image_shape=list(frame.shape),screen_origin=[0,0],hwnd=1,pid=1,process_created=0,executable='offline-fixture')
   expected=sorted((tuple(r['expected']),tuple(r['board'])) for r in labels[:n]);entry=dict(tables=n,modes={});reference=None
-  for enabled in (False,True):
+  for enabled in ((False,True) if a.modes=='both' else (True,)):
    name='templates' if enabled else 'ocr';samples=[]
    for i in range(a.samples+1):
     start=time.perf_counter()

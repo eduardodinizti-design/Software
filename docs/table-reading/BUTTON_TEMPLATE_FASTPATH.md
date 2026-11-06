@@ -1,24 +1,34 @@
 # Conservative static-button templates
 
-Enabled whole-label templates: **F/C and Check**. Fold and Raise remain diagnostic competitors only; Call, Bet, variable amounts and all unknown labels retain the existing OCR path. No system-font templates were invented.
+Enabled whole-label templates: **F/C, Check, Fold and Raise**. Bare Call, Bet, variable amounts and all unknown labels retain the existing OCR path. Six masks from four real source images are recorded with source hashes, rectangles and template hashes in `table_reading/button_template_assets/provenance.json`. No font-rendered templates were invented.
 
-Four prototype masks come from three real source images. Their source hashes, table/button rectangles and template hashes are in `table_reading/button_template_assets/provenance.json`; `tools/build_button_templates.py` reproduces them. Labels were visually checked on the extracted masks.
+## Coverage expansion
 
-The recognizer preserves the entire text mask, including amount/suffix ink; it never matches only a word prefix. It requires aspect agreement within 3.5%, whole-mask IoU at least 0.90 and competitor margin at least 0.12. Ambiguity, any absent/invalid atlas member, extreme aspect or invalid input falls back to OCR. Fold/Raise cannot be accepted even when their prototype matches perfectly. Injected `_ocr` always bypasses templates.
+The original small Fold/Raise prototypes abstained on larger real labels. Rather than lower thresholds, two larger masks were extracted from `_72432B1C…aff0428c.png`, visibly showing Fold / Call 2.0 BB / Raise. Neither `_ABCB3886…aaed78f0.png` nor `_C998F597…475524bf.png` contributed to the atlas; both independently matched Fold (IoU 0.9962) and Raise (0.9827). `_8C143E80…2a4e7ea0.png` independently matched Fold and provided a visually checked **Bet** example; Bet remains OCR because only one such source is identified. No bare Call example was found in the inspected rows.
 
-Template successes carry `WHOLE_LABEL_TEMPLATE` evidence, not fabricated `ocr_readings`. F/C still changes the entire button row into preselection: neither Check nor any neighboring label becomes a currently available action. `hero_turn_confirmed` and `actions_allowed` remain false.
+The new real labels and source hashes are saved in `button-additional-labels.json`. Candidate rectangles locate the real image regions; this exercise is button-reader coverage, not new detector accuracy evidence. The existing 22 detected regions were inspected visually as bottom-row contact sheets; no claim is made that all 54 full sources have exhaustive button annotations.
+
+## Recognition and fallback
+
+The whole ink mask includes suffix/amount pixels: matching is never based on a word prefix. Thresholds remain aspect tolerance 3.5%, IoU 0.90, inter-label margin 0.12. Multiple exemplars compete by maximum per label, so two same-label prototypes do not create false ambiguity. Invalid/missing assets or mismatched SHA-256 disable the entire atlas, including competitor templates. Input size/aspect are bounded before resize.
+
+Ambiguity and unsupported labels use the original OCR. Injected `_ocr` always bypasses templates. Template evidence is `WHOLE_LABEL_TEMPLATE`, with no invented `ocr_readings`. F/C still makes the entire row preselection; actions and hero-turn confirmation remain disabled.
 
 ## Validation
 
-- Twelve real table crops compared with templates enabled/disabled: all semantic outputs unchanged.
-- Eight crops use source PNGs absent from template construction. Five template hits across four such sources: four F/C and one Check, all preserving OCR semantics.
-- Variable Call 1.0/1.6 labels, Pagar and empty button regions remained on the previous path; no variable amount was discarded.
-- Seventeen unit tests pass (ten new, seven existing), including missing-competitor fail-closed behavior, extreme aspect, ambiguity, suffix preservation, injected OCR bypass and preselection/evidence semantics.
-- Shared rank-template regression on 23 board transforms remains 18 exact, zero wrong accepted and five abstentions (`board-template-regression.json`). That board result is separate from button-template validation.
+- **16/16 real crops** preserve semantic output with templates enabled versus disabled.
+- **17 template hits**, including **10 hits in 11 crops whose source PNGs never contributed to template construction**. Four newly annotated rows additionally match their visually transcribed labels.
+- Variable Call 1.0/1.6/2.0/13.5 and Pagar remain OCR; amounts are preserved. Bet also remains OCR. Empty/unsupported rows remain unchanged.
+- OCR subprocess calls across this replay: **66 → 32**. This count is not a latency benchmark.
+- **17 unit tests** pass, including whole suffix handling, ambiguity, atlas hash/missing-member failure, extreme aspect, injected OCR bypass and evidence/preselection semantics.
+- Shared expanded-rank atlas replay: **18 exact, zero accepted wrong, five abstentions** across 23 board transformations (`board-expanded-atlas-regression.json`). This is separate from button coverage.
 
-The comparison uses development images and preserved OCR output; it is not a complete independent human-labeled button dataset or Windows live validation. Fold/Raise await source-disjoint evidence; Call/Bet await suitable real source exemplars. No performance claim follows from these correctness tests alone.
+These are reused development images. Source-disjoint verification excludes the entire PNG used in atlas construction, but it is not a production accuracy estimate or a live Windows test.
 
 ```sh
+python tools/build_button_templates.py --assets "$VISUALPILOT_ASSETS"
 python -m unittest test_button_templates test_action_buttons -q
-python tools/validate_button_templates.py --assets "$VISUALPILOT_ASSETS" --output docs/table-reading/button-template-validation.json
+python tools/validate_button_templates.py --assets "$VISUALPILOT_ASSETS" --output docs/table-reading/button-expanded-validation.json
 ```
+
+The builder verifies original source hashes and the rebuilt mask hashes. The earlier `button-template-validation.json` preserves the initial smaller coverage result; current expanded evidence is `button-expanded-validation.json`.
