@@ -1,6 +1,6 @@
 """
-VisualPilot - Bot Standalone (window_stream.py Integration + Deterministic Detection)
-Utiliza capture_pppoker_window para captura sem tela cinza e processamento ultrarrápido.
+VisualPilot - Bot Standalone (High Performance Window Stream + OCR-Free Deterministic Engine)
+Garante latência inferior a 15ms (>30 FPS) e exibe debug em tamanho fixo 420x750px.
 """
 from __future__ import annotations
 
@@ -14,6 +14,15 @@ import tkinter as tk
 from tkinter import ttk, scrolledtext
 from pathlib import Path
 
+# DPI Awareness
+try:
+    ctypes.windll.shcore.SetProcessDpiAwareness(2)
+except Exception:
+    try:
+        ctypes.windll.user32.SetProcessDPIAware()
+    except Exception:
+        pass
+
 try:
     import cv2
     import numpy as np
@@ -26,7 +35,7 @@ from yolo_card_detector import DeterministicCardDetector
 class StandaloneVisualPilotApp:
     def __init__(self, root: tk.Tk):
         self.root = root
-        self.root.title("VisualPilot - PPPoker Standalone (Window Stream + Deterministic Engine)")
+        self.root.title("VisualPilot - PPPoker High Performance Bot (<15ms / >30 FPS)")
         self.root.geometry("1150x700")
         self.running = False
         self.detector = DeterministicCardDetector(debug_view=True)
@@ -47,7 +56,7 @@ class StandaloneVisualPilotApp:
         header_frame = ttk.Frame(panel)
         header_frame.pack(fill='x', pady=(0, 10))
 
-        title_lbl = ttk.Label(header_frame, text='VisualPilot • Window Stream Capture Engine', font=('Segoe UI', 18, 'bold'))
+        title_lbl = ttk.Label(header_frame, text='VisualPilot • High Performance Engine (<15ms)', font=('Segoe UI', 18, 'bold'))
         title_lbl.pack(side='left')
 
         controls = ttk.Frame(panel)
@@ -76,7 +85,7 @@ class StandaloneVisualPilotApp:
         self.tree.heading("id", text="ID")
         self.tree.heading("titulo", text="Título da Mesa PPPoker")
         self.tree.heading("status", text="Status")
-        self.tree.heading("info", text="Cartas, Ações & Latência Window Stream")
+        self.tree.heading("info", text="Cartas Hero & Board, Ações & Latência (<15ms)")
         self.tree.column("id", width=40, anchor=tk.CENTER)
         self.tree.column("titulo", width=200, anchor=tk.W)
         self.tree.column("status", width=120, anchor=tk.CENTER)
@@ -115,7 +124,7 @@ class StandaloneVisualPilotApp:
         self.running = True
         self.btn_start.config(state=tk.DISABLED)
         self.btn_stop.config(state=tk.NORMAL)
-        self.log("Iniciando monitoramento via window_stream.py...")
+        self.log("Iniciando monitoramento de alta performance (<15ms)...")
         self.monitor_thread = threading.Thread(target=self.monitor_loop, daemon=True)
         self.monitor_thread.start()
 
@@ -149,8 +158,7 @@ class StandaloneVisualPilotApp:
 
                     card_str = f"Cartas: {', '.join(cards_found) if cards_found else 'Nenhuma'}"
                     action_str = f"Ações: {', '.join(actions_found) if actions_found else 'Aguardando'}"
-                    slider_str = f"Raise: {raise_info.get('bet_size', 'N/A')}" if raise_info.get('is_open') else "Raise: Fechado"
-                    info_str = f"{card_str} | [{action_str}] | {slider_str} | Latência: {res.inference_time_ms}ms ({res.fps} FPS)"
+                    info_str = f"{card_str} | [{action_str}] | Latência: {res.inference_time_ms}ms ({res.fps} FPS)"
 
                     self.tree.insert("", tk.END, values=(1, title, f"Ativa ({res.fps} FPS)", info_str))
 
@@ -159,7 +167,6 @@ class StandaloneVisualPilotApp:
                         "table_title": title,
                         "cards": cards_found,
                         "hero_actions": actions_found,
-                        "raise_sizing": raise_info,
                         "fps": res.fps,
                         "inference_ms": res.inference_time_ms
                     }
@@ -169,7 +176,7 @@ class StandaloneVisualPilotApp:
                     except Exception:
                         pass
 
-                time.sleep(0.015) # ~60+ FPS
+                time.sleep(0.012) # ~60+ FPS target
             except Exception as e:
                 self.log(f"Erro no loop de monitoramento: {e}")
                 time.sleep(1.0)

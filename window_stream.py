@@ -1,13 +1,13 @@
 """
-VisualPilot - Window Stream (Passo 3: Capturador sem Tela Cinza)
-Captura estritamente o canvas interno da janela vertical do PPPoker via win32gui.GetClientRect e BitBlt (~1-3ms).
+VisualPilot - window_stream.py (Capturador Rigoroso sem Tela Cinza ou Multi-Monitor)
+Filtra estritamente a janela vertical do PPPoker, evitando coordenadas negativas ou desktop estendido.
 """
 from __future__ import annotations
 
 import os
 import sys
 import time
-from typing import Optional, Tuple, List
+from typing import Optional, Tuple
 import numpy as np
 import cv2
 
@@ -21,35 +21,43 @@ except ImportError:
     WIN32_AVAILABLE = False
 
 def capture_pppoker_window() -> Optional[np.ndarray]:
-    """Captura apenas a mesa de jogo real pelo handle da janela, evitando tela cinza ou desktop inteiro."""
+    """Captura exclusivamente a janela vertical da mesa do PPPoker, evitando multi-monitores e tela cinza."""
     if not WIN32_AVAILABLE:
         return None
 
     try:
+        # Encontrar janelas visíveis contendo "PPPoker" ou "MPPoker"
         wins = [w for w in gw.getWindowsWithTitle("PPPoker") if w.visible and "debug" not in w.title.lower()]
-        
-        # Filtra para pegar a janela vertical da mesa (evita janelas de tela inteira ou lobby horizontal)
+        if not wins:
+            wins = [w for w in gw.getWindowsWithTitle("MPPoker") if w.visible and "debug" not in w.title.lower()]
+
+        if not wins:
+            return None
+
+        # Filtrar estritamente para encontrar a janela vertical da mesa (width < 1000 e height > width)
         target = None
         for w in wins:
-            if w.width < 1200 and w.height > w.width:
+            if 200 < w.width < 1000 and w.height > w.width and w.left >= 0 and w.top >= 0:
                 target = w
                 break
-                
+
+        # Fallback se nenhuma estritamente vertical for encontrada
         if not target:
-            if wins:
-                target = min(wins, key=lambda w: w.width * w.height)
-            else:
+            valid_wins = [w for w in wins if w.width > 150 and w.height > 150 and w.left >= 0 and w.top >= 0]
+            if not valid_wins:
                 return None
+            target = min(valid_wins, key=lambda w: w.width * w.height)
 
         hwnd = target._hWnd
         if not win32gui.IsWindow(hwnd):
             return None
 
+        # Obter área cliente exata da janela
         left, top, right, bottom = win32gui.GetClientRect(hwnd)
         w = right - left
         h = bottom - top
 
-        if w <= 0 or h <= 0:
+        if w <= 100 or h <= 100 or w > 1200:
             return None
 
         hwnd_dc = win32gui.GetWindowDC(hwnd)
@@ -59,7 +67,7 @@ def capture_pppoker_window() -> Optional[np.ndarray]:
         bitmap.CreateCompatibleBitmap(mfc_dc, w, h)
         save_dc.SelectObject(bitmap)
 
-        # BitBlt direto da janela (leva de 1 a 3ms)
+        # BitBlt direto da janela (1 a 3ms)
         save_dc.BitBlt((0, 0), (w, h), mfc_dc, (0, 0), win32con.SRCCOPY)
 
         bmp_info = bitmap.GetInfo()
@@ -74,31 +82,3 @@ def capture_pppoker_window() -> Optional[np.ndarray]:
         return cv2.cvtColor(img, cv2.COLOR_BGRA2BGR)
     except Exception:
         return None
-
-
-if __name__ == "__main__":
-    print("[*] Teste do Window Stream iniciado. Pressione 'q' para sair.")
-    
-    cv2.namedWindow("VisualPilot - Window Stream", cv2.WINDOW_NORMAL)
-    cv2.resizeWindow("VisualPilot - Window Stream", 420, 720)
-
-    while True:
-        t0 = time.perf_counter()
-        frame = capture_pppoker_window()
-
-        if frame is None:
-            time.sleep(0.1)
-            continue
-
-        dt_ms = (time.perf_counter() - t0) * 1000
-        fps = 1000.0 / max(0.1, dt_ms)
-
-        cv2.putText(frame, f"Capture: {dt_ms:.1f}ms | {fps:.1f} FPS", (10, 25), 
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
-
-        cv2.imshow("VisualPilot - Window Stream", frame)
-
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-
-    cv2.destroyAllWindows()

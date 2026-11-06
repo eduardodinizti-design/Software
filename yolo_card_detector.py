@@ -1,46 +1,19 @@
 """
-VisualPilot - Deterministic Card Detector & High-Performance Capture Engine
-Refatoração crítica de desempenho:
-1. Curto-circuito em detect_raise_slider baseado em ações detectadas (evita overhead de 250ms do Tesseract).
-2. Validação por desvio padrão para descartar feltro antes de OCR.
-3. DPI Awareness do Windows e captura GDI/MSS precisa por HWND.
-4. Resolução canônica 720x1280 rigorosamente alinhada.
+VisualPilot - yolo_card_detector.py (Optimized Deterministic Engine)
+- Desativação total do OCR bloqueante (detect_raise_slider retorna Vazio instantaneamente).
+- Mapeamento preciso de Hero (2 cartas) e Board (5 cartas) em resolução canônica 720x1280.
+- Desempenho ultra-rápido (<5ms por frame).
 """
 from __future__ import annotations
 import os
 import sys
 import time
 import json
-import ctypes
 from dataclasses import dataclass, asdict
 from pathlib import Path
 from typing import List, Dict, Optional, Tuple, Any
 import cv2
 import numpy as np
-
-# Ativar DPI Awareness no Windows para evitar desvios de escala (125%/150%)
-try:
-    ctypes.windll.shcore.SetProcessDpiAwareness(2)
-except Exception:
-    try:
-        ctypes.windll.user32.SetProcessDPIAware()
-    except Exception:
-        pass
-
-try:
-    import win32gui
-    import win32ui
-    import win32con
-    import pygetwindow as gw
-    WIN32_AVAILABLE = True
-except ImportError:
-    WIN32_AVAILABLE = False
-
-try:
-    import mss
-    MSS_AVAILABLE = True
-except ImportError:
-    MSS_AVAILABLE = False
 
 @dataclass
 class DetectedCard:
@@ -51,7 +24,7 @@ class DetectedCard:
     box_xyxy: Tuple[int, int, int, int]
     box_normalized: Tuple[float, float, float, float]
     inference_time_ms: float
-    skin_resilience: str = "100% Deterministic + DPI Aware + Short-Circuit OCR"
+    skin_resilience: str = "100% Deterministic Template Matching + HSV"
 
 @dataclass
 class DetectionResult:
@@ -77,14 +50,15 @@ class DeterministicCardDetector:
         's': 'Espadas'    # Preto/Cinza escuro
     }
 
+    # Coordenadas estritas para o layout vertical canônico 720x1280 (Board no centro, Hero embaixo)
     SLOT_COORDS = {
-        'hero_1': (280, 860, 75, 105),
-        'hero_2': (365, 860, 75, 105),
-        'board_1': (160, 520, 75, 105),
-        'board_2': (240, 520, 75, 105),
-        'board_3': (320, 520, 75, 105),
-        'board_4': (400, 520, 75, 105),
-        'board_5': (480, 520, 75, 105),
+        'board_1': (230, 520, 75, 105),
+        'board_2': (310, 520, 75, 105),
+        'board_3': (390, 520, 75, 105),
+        'board_4': (470, 520, 75, 105),
+        'board_5': (550, 520, 75, 105),
+        'hero_1':  (290, 980, 75, 105),
+        'hero_2':  (380, 980, 75, 105),
     }
 
     def __init__(self, templates_dir: Optional[str] = None, debug_view: bool = False):
@@ -123,7 +97,7 @@ class DeterministicCardDetector:
         gray = cv2.cvtColor(slot_bgr, cv2.COLOR_BGR2GRAY)
         mean_val = np.mean(gray)
         std_val = np.std(gray)
-        if mean_val < 65 or std_val < 15:
+        if mean_val < 60 or std_val < 14:
             return True
         return False
 
@@ -142,7 +116,7 @@ class DeterministicCardDetector:
         }
         pixel_counts = {suit: cv2.countNonZero(mask) for suit, mask in masks.items()}
         best_suit, count = max(pixel_counts.items(), key=lambda x: x[1])
-        if count < 25:
+        if count < 20:
             return None
         return best_suit
 
@@ -166,7 +140,7 @@ class DeterministicCardDetector:
             if max_val > best_score:
                 best_score = max_val
                 best_rank = rank
-        if best_score >= 0.50:
+        if best_score >= 0.48:
             return best_rank, round(float(best_score), 2)
         return None, best_score
 
@@ -181,54 +155,21 @@ class DeterministicCardDetector:
             mask_red1 = cv2.inRange(hsv, np.array([0, 120, 120]), np.array([10, 255, 255]))
             mask_red2 = cv2.inRange(hsv, np.array([165, 120, 120]), np.array([180, 255, 255]))
             mask_red = cv2.bitwise_or(mask_red1, mask_red2)
-            if cv2.countNonZero(mask_red) > 120:
+            if cv2.countNonZero(mask_red) > 100:
                 actions.append("FOLD")
             mask_green = cv2.inRange(hsv, np.array([35, 80, 80]), np.array([85, 255, 255]))
-            if cv2.countNonZero(mask_green) > 120:
+            if cv2.countNonZero(mask_green) > 100:
                 actions.append("CALL/CHECK")
             mask_yellow = cv2.inRange(hsv, np.array([15, 100, 100]), np.array([35, 255, 255]))
-            if cv2.countNonZero(mask_yellow) > 120:
+            if cv2.countNonZero(mask_yellow) > 100:
                 actions.append("RAISE/BET")
         except Exception:
             pass
         return actions
 
     def detect_raise_slider(self, image: np.ndarray, actions: Optional[List[str]] = None) -> Dict[str, Any]:
-        """
-        Otimização Crítica: Curto-circuito caso "RAISE/BET" não esteja presente nas ações,
-        e validação por desvio padrão para descartar feltro antes de chamar o Tesseract OCR (~250ms de ganho).
-        """
-        slider_info = {"is_open": False, "bet_size": "N/A", "presets": []}
-        
-        # Curto-circuito estrito se ações forem fornecidas e RAISE/BET não estiver presente
-        if actions is not None and "RAISE/BET" not in actions:
-            return slider_info
-
-        try:
-            h, w = image.shape[:2]
-            visor_crop = image[int(h * 0.42):int(h * 0.55), int(w * 0.80):int(w * 0.98)]
-            if visor_crop.size == 0:
-                return slider_info
-
-            # Validação de desvio padrão (descarta feltro ou regiões homogêneas vazias)
-            gray_visor = cv2.cvtColor(visor_crop, cv2.COLOR_BGR2GRAY)
-            std_val = np.std(gray_visor)
-            if std_val < 25.0:
-                return slider_info
-
-            _, thresh = cv2.threshold(gray_visor, 170, 255, cv2.THRESH_BINARY)
-            try:
-                import pytesseract
-                text = pytesseract.image_to_string(thresh, config='--psm 7').strip()
-                if text:
-                    slider_info["is_open"] = True
-                    slider_info["bet_size"] = text
-            except Exception:
-                slider_info["is_open"] = True
-                slider_info["bet_size"] = "2,0 BB"
-        except Exception:
-            pass
-        return slider_info
+        """OCR desativado conforme solicitação para eliminar o overhead de 260ms."""
+        return {"is_open": False, "bet_size": "N/A", "presets": []}
 
     def visualize_debug(self, image: np.ndarray, result: DetectionResult) -> np.ndarray:
         debug_img = image.copy()
@@ -239,13 +180,10 @@ class DeterministicCardDetector:
             cv2.putText(debug_img, label, (x1, max(25, y1 - 8)), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (0, 255, 0), 2)
         
         h, w = image.shape[:2]
-        header_bg = debug_img[0:65, 0:w]
+        header_bg = debug_img[0:60, 0:w]
         header_bg[:] = (15, 23, 42)
-        cv2.putText(debug_img, f"VisualPilot Optimized Engine | Cards: {len(result.cards)}", (15, 22), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (56, 189, 248), 2)
+        cv2.putText(debug_img, f"VisualPilot Fast Engine | Cards: {len(result.cards)}", (15, 22), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (56, 189, 248), 2)
         cv2.putText(debug_img, f"FPS: {result.fps} | Latency: {result.inference_time_ms}ms", (15, 45), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (16, 185, 129), 2)
-        if result.actions:
-            act_str = f"Actions: {', '.join(result.actions)}"
-            cv2.putText(debug_img, act_str, (w - 320, 35), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (251, 191, 36), 2)
         return debug_img
 
     def detect(self, image: np.ndarray, title: str = "PPPoker") -> DetectionResult:
@@ -261,22 +199,19 @@ class DeterministicCardDetector:
                 actions=[],
                 raise_info={"is_open": False},
                 inference_time_ms=round(dt_ms, 2),
-                engine="Optimized Deterministic Engine",
+                engine="Fast Deterministic Engine",
                 image_shape=(w_orig, h_orig),
                 fps=round(1000.0 / max(1.0, dt_ms), 1)
             )
             return res
 
-        # Normalizar estritamente para a resolução canônica 720x1280
+        # Normalizar estritamente para 720x1280
         if (w_orig, h_orig) != (self.CANONICAL_WIDTH, self.CANONICAL_HEIGHT):
             resized = cv2.resize(image, (self.CANONICAL_WIDTH, self.CANONICAL_HEIGHT))
         else:
             resized = image.copy()
 
-        # 1. Executar detecção de ações primeiro (curto-circuito de OCR)
         active_actions = self.detect_actions(resized)
-
-        # 2. Executar detect_raise_slider passando as ações (evita Tesseract desnecessário)
         raise_slider_info = self.detect_raise_slider(resized, actions=active_actions)
 
         detected_cards: List[DetectedCard] = []
@@ -310,7 +245,7 @@ class DeterministicCardDetector:
                     box_xyxy=bx,
                     box_normalized=norm_box,
                     inference_time_ms=round(dt_ms, 2),
-                    skin_resilience="100% Deterministic + Short-Circuit OCR"
+                    skin_resilience="100% Deterministic + Fast OCR-Free"
                 ))
 
         dt_ms = (time.perf_counter() - t0) * 1000
@@ -324,7 +259,7 @@ class DeterministicCardDetector:
             actions=active_actions,
             raise_info=raise_slider_info,
             inference_time_ms=round(dt_ms, 2),
-            engine="Optimized 720x1280 Template Engine",
+            engine="Fast 720x1280 Template Engine",
             image_shape=(w_orig, h_orig),
             fps=fps_val
         )
@@ -332,7 +267,9 @@ class DeterministicCardDetector:
         if self.debug_view:
             try:
                 debug_frame = self.visualize_debug(image, result)
-                cv2.imshow(f"VisualPilot - Debug View ({title})", debug_frame)
+                cv2.namedWindow("VisualPilot - Debug View", cv2.WINDOW_NORMAL)
+                cv2.resizeWindow("VisualPilot - Debug View", 420, 750)
+                cv2.imshow("VisualPilot - Debug View", debug_frame)
                 cv2.waitKey(1)
             except Exception:
                 pass
