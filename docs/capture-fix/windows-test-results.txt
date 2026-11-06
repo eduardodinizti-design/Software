@@ -1,5 +1,5 @@
-Run: 42247777861
-Source commit: e323f120dbf529ae04a2684d446b3e6037b45293
+Run: 42248152333
+Source commit: 509bd8ca9538a3ee2afe16b9177597a14d436921
 test_arbitrary_executable_is_rejected (test_capture_regressions.OriginalRegressionTests.test_arbitrary_executable_is_rejected) ... ok
 test_linux_cannot_report_success (test_capture_regressions.OriginalRegressionTests.test_linux_cannot_report_success) ... ok
 test_process_access_denied_is_rejected (test_capture_regressions.OriginalRegressionTests.test_process_access_denied_is_rejected) ... ok
@@ -185,9 +185,9 @@ test_preselect_and_unknown (test_manual_windows.ManualTests.test_preselect_and_u
 test_same_pixels (test_manual_windows.ManualTests.test_same_pixels) ... ok
 
 ----------------------------------------------------------------------
-Ran 171 tests in 7.129s
+Ran 171 tests in 8.007s
 
 OK
 FALHA: Captura estrita falhou: {'status': 'WINDOW_INVALID_HWND'}
 FALHA: Returned HWND differs from requested HWND
-Amostras UNLABELED: C:\Users\RUNNER~1\AppData\Local\Temp\tmpw4a9z9e4\logs\leitura\leitura-8d3919583bb24dd18c62b0390ae423f5 | 1 mesa(s). Sem OCR ou importacao para treino.
+Amostras UNLABELED: C:\Users\RUNNER~1\AppData\Local\Temp\tmpeq4ahxge\logs\leitura\leitura-6bbdf334480942249731abedab89551a | 1 mesa(s). Sem OCR ou importacao para treino.
