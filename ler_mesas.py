@@ -38,12 +38,11 @@ def save_result(frame, report, directory, budget=100*1024*1024):
     files['mesas-anotadas.png']=data.tobytes()
     report['frame_sha256']=hashlib.sha256(frame.tobytes()).hexdigest()
     files['resultado.json']=json.dumps(report,ensure_ascii=False,indent=2).encode('utf-8')
-    used=sum(p.stat().st_size for p in directory.rglob('*') if p.is_file()) if directory.exists() else 0
-    if used+sum(map(len,files.values()))>budget:
-        raise RuntimeError('Limite de 100 MiB em logs/leitura. Arquive resultados antigos antes de salvar mais.')
+    from diagnostic_storage import store_bundle
     target=directory/('leitura-'+report['snapshot_id'])
-    target.mkdir(parents=True,exist_ok=False)
-    for name,data in files.items():(target/name).write_bytes(data)
+    # Both standard diagnostic producers share the parent logs budget.
+    root=directory.parent
+    store_bundle(root,{str(Path(directory.name)/target.name/name):data for name,data in files.items()},budget)
     return target
 
 
@@ -55,6 +54,7 @@ def main(argv=None):
     parser.add_argument('--diagnostics-dir',type=Path,default=Path('logs/diagnostics'))
     parser.add_argument('--output-dir',type=Path,default=Path('logs/leitura'))
     parser.add_argument('--max-tables',type=int,choices=range(1,7),default=6)
+    parser.add_argument('--save',action='store_true',help='Salvar evidencia; captura ao vivo fica em RAM por padrao')
     args=parser.parse_args(argv)
     if args.hwnd is not None and (args.image or args.metadata):parser.error('Use --hwnd OU --image/--metadata')
     if bool(args.image)!=bool(args.metadata):parser.error('--image exige --metadata e vice-versa')
@@ -70,14 +70,14 @@ def main(argv=None):
             print('Captura existente:',image)
             frame=cv2.imdecode(np.frombuffer(image.read_bytes(),np.uint8),cv2.IMREAD_COLOR)
         report=analyze_tables(frame,metadata,max_tables=args.max_tables)
-        target=save_result(frame,report,args.output_dir)
+        target=save_result(frame,report,args.output_dir) if args.hwnd is None or args.save else None
         print(f"Mesas completas candidatas: {report['complete_count']} | Fonte: {report['source_key']}")
         for row in report['tables']:
             cards=' / '.join(c or 'NAO IDENTIFICADO' for c in row['hero_cards'])
             print(f"Mesa {row['table_index']}: {row['status']} | Hero: {cards} | {row['reading_status']}")
         if report['ocr']['status']=='UNAVAILABLE':print('OCR:',report['ocr']['error'])
-        print('Resultado salvo em:',target)
-        print('Leitura experimental de captura salva; sem cliques, sem rastreamento continuo.')
+        print('Resultado salvo em:',target) if target else print('Processado em memoria; nenhuma imagem salva. Use --save para diagnostico.')
+        print('Leitura experimental de captura unica; sem cliques, sem rastreamento continuo.')
         return 0
     except Exception as exc:
         print('FALHA:',exc)

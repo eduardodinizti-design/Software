@@ -14,18 +14,21 @@ def run_diagnostics(target_hwnd=None, output_dir='logs/diagnostics', *, _engine=
     report = dict(metadata, requested_hwnd=target_hwnd, capture_success=frame is not None,
                   actions_allowed=False, candidates=metadata.get('candidates', engine.last_diagnostics))
     stamp = str(time.time_ns())
+    files = {}
     if frame is not None:
         try:
             import cv2
             ok, encoded = cv2.imencode('.png', frame)
             if not ok: raise RuntimeError('PNG encoding failed')
             image = directory / f'capture-{stamp}.png'
-            image.write_bytes(encoded.tobytes())
+            files[str(Path(directory.name)/image.name)] = encoded.tobytes()
             report['image_path'] = str(image)
         except Exception as exc:
             report['image_save_error'] = str(exc)
     target = directory / f'capture-{stamp}.json'
-    target.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
+    files[str(Path(directory.name)/target.name)] = json.dumps(report, ensure_ascii=False, indent=2).encode('utf-8')
+    from diagnostic_storage import store_bundle
+    store_bundle(directory.parent, files)
     print(json.dumps(report, ensure_ascii=False, indent=2))
     print('Diagnostic:', target)
     return report
