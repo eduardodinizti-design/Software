@@ -7,6 +7,7 @@ import time
 import cv2
 import numpy as np
 from table_reading.pipeline import analyze_tables
+from table_reading.presentation import describe_regions
 
 
 def latest_capture(directory):
@@ -79,10 +80,8 @@ def main(argv=None):
             frame=cv2.imdecode(np.frombuffer(image.read_bytes(),np.uint8),cv2.IMREAD_COLOR)
         report=analyze_tables(frame,metadata,max_tables=args.max_tables)
         target=save_result(frame,report,args.output_dir) if args.hwnd is None or args.save else None
-        print(f"Mesas completas candidatas: {report['complete_count']} | Fonte: {report['source_key']}")
-        for row in report['tables']:
-            cards=' / '.join(c or 'NAO IDENTIFICADO' for c in row['hero_cards'])
-            print(f"Mesa {row['table_index']}: {row['status']} | Hero: {cards} | {row['reading_status']}")
+        print('Fonte:',report['source_key'])
+        for line in describe_regions(report): print(line)
         if report['ocr']['status']=='UNAVAILABLE':print('OCR:',report['ocr']['error'])
         print('Resultado salvo em:',target) if target else print('Processado em memoria; nenhuma imagem salva. Use --save para diagnostico.')
         print('Leitura experimental de captura unica; sem cliques, sem rastreamento continuo.')

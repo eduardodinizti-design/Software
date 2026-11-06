@@ -3,6 +3,7 @@ import math
 import time
 from table_reading.pipeline import analyze_tables
 from observation_metrics import ObservationMetrics
+from table_reading.presentation import describe_regions
 
 
 def observe(engine, hwnd, *, interval=2.0, max_age=10.0, max_tables=6,
@@ -45,11 +46,8 @@ def observe(engine, hwnd, *, interval=2.0, max_age=10.0, max_tables=6,
                     elif not report['tables']:
                         emit('SEM LEITURA: nenhuma mesa completa localizada.')
                     else:
-                        for row in report['tables']:
-                            cards=' / '.join(c or 'NAO IDENTIFICADO' for c in row['hero_cards'])
-                            emit(f"Ciclo {cycle} | mesa candidata {row['table_index']} | "
-                                 f"caixa {row['local_box']} | Hero: {cards} | "
-                                 f"{row['reading_status']} | idade {age:.1f}s")
+                        for line in describe_regions(report):
+                            emit(f'Ciclo {cycle} | {line} | idade {age:.1f}s')
                         if report.get('ocr',{}).get('status')=='UNAVAILABLE':
                             emit('OCR INDISPONIVEL: '+report['ocr'].get('error',''))
             except Exception as exc:

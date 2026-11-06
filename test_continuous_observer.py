@@ -4,7 +4,7 @@ from continuous_observer import observe
 
 META=dict(status='SUCCESS',hwnd=1,pid=2,process_created=3,executable='PPPoker.exe')
 def report(cards,box=None):
-    return dict(tables=[dict(table_index=1,hero_cards=cards,local_box=box or [1,2,3,4],reading_status='EXPERIMENTAL_CANDIDATES')])
+    return dict(tables=[dict(status="COMPLETE_CANDIDATE",table_index=1,hero_cards=cards,local_box=box or [1,2,3,4],reading_status='EXPERIMENTAL_CANDIDATES')])
 
 class ObserverTests(unittest.TestCase):
     def run_loop(self,captures,outputs,**kw):
