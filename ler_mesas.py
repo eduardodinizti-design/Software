@@ -1,0 +1,86 @@
+"""Read-only table crop diagnostic. Default: analyze latest successful saved capture."""
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import time
+import cv2
+import numpy as np
+from table_reading.pipeline import analyze_tables
+
+
+def latest_capture(directory):
+    for path in sorted(directory.glob('capture-*.json'),key=lambda p:p.stat().st_mtime_ns,reverse=True):
+        try:
+            metadata=json.loads(path.read_text(encoding='utf-8-sig'))
+            if metadata.get('status')!='SUCCESS' or not metadata.get('capture_success'):continue
+            image=Path(str(metadata.get('image_path','')).replace('\\','/'))
+            if not image.is_file():image=path.with_suffix('.png')
+            if image.is_file():return image,metadata
+        except (ValueError,OSError):continue
+    raise RuntimeError('Nenhuma captura SUCCESS com PNG em logs/diagnostics. Execute windows_capture_diagnostics.py primeiro.')
+
+
+def save_result(frame, report, directory, budget=100*1024*1024):
+    files={}
+    overlay=frame.copy()
+    for row in report['tables']:
+        x,y,w,h=row['local_box']
+        valid=row['status']=='COMPLETE_CANDIDATE'
+        cv2.rectangle(overlay,(x,y),(x+w-1,y+h-1),(0,200,0) if valid else (0,180,255),2)
+        cv2.putText(overlay,f"Mesa {row['table_index']}: {row['status']}",(x,max(18,y-8)),cv2.FONT_HERSHEY_SIMPLEX,.65,(255,255,255),2)
+        if valid:
+            ok,data=cv2.imencode('.png',frame[y:y+h,x:x+w])
+            if not ok:raise RuntimeError('Erro ao salvar recorte')
+            name=f"mesa-{row['table_index']:02d}.png";files[name]=data.tobytes();row['crop_file']=name
+    ok,data=cv2.imencode('.png',overlay)
+    if not ok:raise RuntimeError('Erro ao salvar imagem anotada')
+    files['mesas-anotadas.png']=data.tobytes()
+    report['frame_sha256']=hashlib.sha256(frame.tobytes()).hexdigest()
+    files['resultado.json']=json.dumps(report,ensure_ascii=False,indent=2).encode('utf-8')
+    used=sum(p.stat().st_size for p in directory.rglob('*') if p.is_file()) if directory.exists() else 0
+    if used+sum(map(len,files.values()))>budget:
+        raise RuntimeError('Limite de 100 MiB em logs/leitura. Arquive resultados antigos antes de salvar mais.')
+    target=directory/('leitura-'+report['snapshot_id'])
+    target.mkdir(parents=True,exist_ok=False)
+    for name,data in files.items():(target/name).write_bytes(data)
+    return target
+
+
+def main(argv=None):
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--image',type=Path)
+    parser.add_argument('--metadata',type=Path)
+    parser.add_argument('--hwnd',type=lambda s:int(s,0),help='Optional live capture of an explicitly selected HWND')
+    parser.add_argument('--diagnostics-dir',type=Path,default=Path('logs/diagnostics'))
+    parser.add_argument('--output-dir',type=Path,default=Path('logs/leitura'))
+    parser.add_argument('--max-tables',type=int,choices=range(1,7),default=6)
+    args=parser.parse_args(argv)
+    if args.hwnd is not None and (args.image or args.metadata):parser.error('Use --hwnd OU --image/--metadata')
+    if bool(args.image)!=bool(args.metadata):parser.error('--image exige --metadata e vice-versa')
+    try:
+        if args.hwnd is not None:
+            from window_capture_engine import WindowCaptureEngine
+            frame,metadata=WindowCaptureEngine().capture_frame(hwnd=args.hwnd)
+            if frame is None:raise RuntimeError(json.dumps(metadata,ensure_ascii=False))
+        else:
+            if args.image:
+                image=args.image;metadata=json.loads(args.metadata.read_text(encoding='utf-8-sig'))
+            else:image,metadata=latest_capture(args.diagnostics_dir)
+            print('Captura existente:',image)
+            frame=cv2.imdecode(np.frombuffer(image.read_bytes(),np.uint8),cv2.IMREAD_COLOR)
+        report=analyze_tables(frame,metadata,max_tables=args.max_tables)
+        target=save_result(frame,report,args.output_dir)
+        print(f"Mesas completas candidatas: {report['complete_count']} | Fonte: {report['source_key']}")
+        for row in report['tables']:
+            cards=' / '.join(c or 'NAO IDENTIFICADO' for c in row['hero_cards'])
+            print(f"Mesa {row['table_index']}: {row['status']} | Hero: {cards} | {row['reading_status']}")
+        if report['ocr']['status']=='UNAVAILABLE':print('OCR:',report['ocr']['error'])
+        print('Resultado salvo em:',target)
+        print('Leitura experimental de captura salva; sem cliques, sem rastreamento continuo.')
+        return 0
+    except Exception as exc:
+        print('FALHA:',exc)
+        return 1
+
+if __name__=='__main__':raise SystemExit(main())

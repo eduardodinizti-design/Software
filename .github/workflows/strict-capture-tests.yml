@@ -14,11 +14,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: python -m pip install numpy==2.2.6 opencv-python==4.11.0.86 psutil==6.1.1
+      - run: python -m pip install numpy==2.2.6 opencv-python==4.11.0.86 psutil==6.1.1 pytesseract==0.3.13
       - name: Run contracts and native GDI on controlled Tk window
         shell: pwsh
         run: |
-          python -m unittest test_capture_regressions test_window_capture_engine test_window_capture_audit test_capture_windows_native -v *> capture-test-results.txt
+          python -m unittest test_capture_regressions test_window_capture_engine test_window_capture_audit test_capture_windows_native test_table_reading -v *> capture-test-results.txt
           $code = $LASTEXITCODE
           Get-Content capture-test-results.txt
           exit $code
