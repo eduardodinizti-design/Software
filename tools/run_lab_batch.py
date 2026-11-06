@@ -6,7 +6,7 @@ ROOT=Path(__file__).resolve().parents[1]
 CONTRACTS=['test_capture_regressions','test_window_capture_engine','test_window_capture_audit',
  'test_capture_windows_native','test_table_reading','test_rank_confirmation','test_diagnostic_storage',
  'test_continuous_observer','test_capture_review','test_region_presentation','test_action_buttons',
- 'test_lab_metrics','test_corner_sampling','test_community_cards','test_detector_batch','test_detector_proposals','test_ocr_runtime','test_rank_templates','test_button_templates','test_roi_geometry','test_template_sample_collection','test_exact_call_template']
+ 'test_lab_metrics','test_corner_sampling','test_community_cards','test_detector_batch','test_detector_proposals','test_ocr_runtime','test_rank_templates','test_button_templates','test_roi_geometry','test_template_sample_collection','test_exact_call_template','test_concurrent_reads']
 
 def main():
     p=argparse.ArgumentParser(description=__doc__)

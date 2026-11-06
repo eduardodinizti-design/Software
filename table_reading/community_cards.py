@@ -51,8 +51,8 @@ def read_board(table, *, _rank=read_rank, _suit=read_suit, hero_cards=()):
         if (boxes[0][0]-median_width*.3 <= fx <= boxes[-1][0]+median_width*1.5
                 and fw>=median_width*.18 and overlap>=median_height*.25):
             return dict(result,status='BOARD_PARTIAL_OR_OBSTRUCTED')
-    readings=[]
-    for x,y,bw,bh in boxes:
+    def read_face(box):
+        x,y,bw,bh=box
         face=cv2.resize(table[y:y+bh,x:x+bw],(90,130))
         try:
             rank=_rank(face[3:53,4:44]);suit=_suit(face[45:86,3:43])
@@ -62,8 +62,10 @@ def read_board(table, *, _rank=read_rank, _suit=read_suit, hero_cards=()):
                 retry=_suit(native)
                 if retry.get('suit'):suit=dict(retry,source='NATIVE_PIXELS')
             card=(rank.get('rank') or '')+(suit.get('suit') or '') if rank.get('rank') and suit.get('suit') else None
-            readings.append(dict(card=card,rank=rank,suit=suit))
-        except Exception as exc:readings.append(dict(card=None,error=str(exc)))
+            return dict(card=card,rank=rank,suit=suit)
+        except Exception as exc:return dict(card=None,error=str(exc))
+    from .concurrent_reads import ordered_board_reads
+    readings=ordered_board_reads(read_face,boxes,enabled=_rank is read_rank and _suit is read_suit)
     result['readings']=readings
     cards=[r['card'] for r in readings]
     if not all(cards):return dict(result,status='BOARD_INCOMPLETE')

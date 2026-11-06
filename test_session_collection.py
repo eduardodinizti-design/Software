@@ -40,4 +40,22 @@ class SessionTests(unittest.TestCase):
             folder,s=run_session(Engine(c),[1],minutes=1,samples=True,output=Path(tmp.name),clock=c,sleep=c.sleep,analyze=lambda *a,**k:{'tables':[row]})
         images=list(folder.glob('*.png'));self.assertEqual(len(images),1)
         self.assertEqual(cv2.imread(str(images[0])).shape,(12,10,3))
+    def test_rejection_transition_saved_without_waiting_one_minute(self):
+        import json
+        from unittest.mock import patch
+        tmp=tempfile.TemporaryDirectory();self.addCleanup(tmp.cleanup);c=Clock()
+        def analyze(*args,**kwargs):
+            return {'tables':[{'status':'COMPLETE_CANDIDATE' if c.t<=15 else 'UNCERTAIN',
+                'table_index':1,'local_box':[2,3,10,12],'hero_cards':[None,None],
+                'reasons':[] if c.t<=15 else ['FULL_BOUNDARY_NOT_ESTABLISHED']}]}
+        with patch('table_reading.presentation.describe_regions',return_value=[]):
+            folder,s=run_session(Engine(c),[1],minutes=1,samples=True,output=Path(tmp.name),clock=c,sleep=c.sleep,analyze=analyze)
+        self.assertEqual(s['counts']['saved_samples'],2)
+        self.assertEqual(s['counts']['saved_rejected_samples'],1)
+        rows=[json.loads(line) for line in (folder/'leituras.jsonl').read_text().splitlines()]
+        sample=rows[1]['samples'][0]
+        self.assertEqual(sample['region_status'],'UNCERTAIN')
+        self.assertEqual(sample['reasons'],['FULL_BOUNDARY_NOT_ESTABLISHED'])
+        self.assertEqual(sample['sequence'],2)
+        self.assertTrue((folder/sample['file']).exists())
 if __name__=='__main__' :unittest.main()

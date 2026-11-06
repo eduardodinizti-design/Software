@@ -2,6 +2,7 @@
 from contextlib import contextmanager
 from contextvars import ContextVar
 from functools import wraps
+from threading import RLock
 import numpy as np
 import pytesseract
 
@@ -15,7 +16,7 @@ def ocr_frame(enabled=True):
     if existing is not None:
         yield existing['stats']
         return
-    state = dict(enabled=enabled, cache={}, stats=dict(requests=0, calls=0, hits=0, bytes=0))
+    state = dict(enabled=enabled, cache={}, lock=RLock(), stats=dict(requests=0, calls=0, hits=0, bytes=0))
     token = _state.set(state)
     try:
         yield state['stats']
@@ -28,7 +29,8 @@ def image_to_string(image, **kwargs):
     state = _state.get()
     if state is None:
         return pytesseract.image_to_string(image, **kwargs)
-    stats = state['stats']; stats['requests'] += 1
+    stats = state['stats']
+    with state['lock']:stats['requests'] += 1
     key = None
     if state['enabled'] and isinstance(image, np.ndarray) and image.dtype == np.uint8 and image.nbytes <= MAX_BYTES:
         try:
@@ -37,17 +39,19 @@ def image_to_string(image, **kwargs):
             key = (image.shape, image.dtype.str, image.tobytes(), options, pytesseract.pytesseract.tesseract_cmd)
         except TypeError:
             pass
-    if key is not None and key in state['cache']:
-        stats['hits'] += 1
-        return state['cache'][key]
-    stats['calls'] += 1
+    with state['lock']:
+        if key is not None and key in state['cache']:
+            stats['hits'] += 1
+            return state['cache'][key]
+        stats['calls'] += 1
     result = pytesseract.image_to_string(image, **kwargs)
     # Errors never reach here, and mutable/non-string outputs are not retained.
     if key is not None and isinstance(result, str):
         size = len(key[2]) + len(result.encode('utf8'))
-        if len(state['cache']) < MAX_ENTRIES and stats['bytes'] + size <= MAX_BYTES:
-            state['cache'][key] = result
-            stats['bytes'] += size
+        with state['lock']:
+            if key not in state['cache'] and len(state['cache']) < MAX_ENTRIES and stats['bytes'] + size <= MAX_BYTES:
+                state['cache'][key] = result
+                stats['bytes'] += size
     return result
 
 
