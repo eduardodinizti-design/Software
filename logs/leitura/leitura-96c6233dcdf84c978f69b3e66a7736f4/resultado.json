@@ -1,0 +1,151 @@
+{
+  "status": "SNAPSHOT_ANALYZED",
+  "snapshot_id": "96c6233dcdf84c978f69b3e66a7736f4",
+  "source": {
+    "hwnd": 264430,
+    "pid": 26504,
+    "process_created": 1793889943.660312,
+    "executable": "C:\\Program Files (x86)\\PPPokerGame\\PPPoker\\PPPoker.exe"
+  },
+  "source_key": "pid:26504:created:1793889943.660312:hwnd:264430",
+  "capture_timestamp": "2026-11-06T00:38:15.039430+00:00",
+  "origin": [
+    -1920,
+    0
+  ],
+  "image_shape": [
+    2160,
+    5760,
+    3
+  ],
+  "max_tables": 6,
+  "ocr": {
+    "status": "READY",
+    "version": "5.5.3.20260724"
+  },
+  "tables": [
+    {
+      "box": [
+        1939,
+        207,
+        644,
+        1162
+      ],
+      "status": "COMPLETE_CANDIDATE",
+      "reasons": [],
+      "evidence": "FOUR_CORNER_BLUE_SURFACE",
+      "corner_scores": {
+        "menu": 0.7956,
+        "signal": 0.6522,
+        "cards": 0.8606,
+        "chat": 0.9676
+      },
+      "table_index": 1,
+      "snapshot_table_id": "96c6233dcdf84c978f69b3e66a7736f4:1",
+      "source_key": "pid:26504:created:1793889943.660312:hwnd:264430",
+      "local_box": [
+        1939,
+        207,
+        644,
+        1162
+      ],
+      "desktop_box": [
+        19,
+        207,
+        644,
+        1162
+      ],
+      "reading_status": "EXPERIMENTAL_CANDIDATES",
+      "hero_cards": [
+        "Ks",
+        "Js"
+      ],
+      "actions_allowed": false,
+      "crop_sha256": "4bc3fd35f3898a6329572634a23b0c246d116bb5fc1569be52bfee7ac1594a21",
+      "crop_shape": [
+        1162,
+        644,
+        3
+      ],
+      "reading": {
+        "status": "LAB_ONLY_NOT_CALIBRATED",
+        "table_box": [
+          0,
+          0,
+          644,
+          1162
+        ],
+        "alignment": {
+          "status": "LOCALIZED",
+          "top": 1024,
+          "bottom": 1132,
+          "vertical_offset": 0,
+          "top_score": 98.07140350341797,
+          "bottom_score": 56.08921432495117,
+          "scope": "Vertical alignment only; calibrated blue-layout search bands."
+        },
+        "hero_rank_candidates": [
+          {
+            "rank": "K",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "K",
+              "K",
+              "K",
+              "K"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "s",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.748,
+              "margin": 0.026,
+              "evidence": "template_and_pointed_contour"
+            },
+            "suit": "s",
+            "card_candidate": "Ks",
+            "roi_canonical": [
+              402,
+              1010,
+              42,
+              60
+            ]
+          },
+          {
+            "rank": "J",
+            "status": "CANDIDATE_ONLY",
+            "readings": [
+              "J",
+              "J",
+              "J",
+              "J"
+            ],
+            "evidence": "SEGMENTED_INK_TWO_THRESHOLDS_TWO_MODES",
+            "suit_result": {
+              "suit": "s",
+              "status": "CANDIDATE_ONLY",
+              "shape_iou": 0.747,
+              "margin": 0.026,
+              "evidence": "template_and_pointed_contour"
+            },
+            "suit": "s",
+            "card_candidate": "Js",
+            "roi_canonical": [
+              447,
+              1010,
+              42,
+              60
+            ]
+          }
+        ]
+      },
+      "crop_file": "mesa-01.png"
+    }
+  ],
+  "complete_count": 1,
+  "duration_ms": 2578.0,
+  "actions_allowed": false,
+  "persistent_tracking": false,
+  "scope": "BLUE_LAYOUT_HERO_ONLY_EXPERIMENTAL",
+  "frame_sha256": "a8d85111f2607407a1db511334266690cd860166cf6abf44a9397e4ecbb904fa"
+}

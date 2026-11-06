@@ -1,0 +1,33 @@
+{
+  "status": "SUCCESS",
+  "timestamp": "2026-11-06T00:38:15.039430+00:00",
+  "backend": "GDI_CLIENT_BITBLT",
+  "dpi_effective": true,
+  "native_windows_validated": false,
+  "hwnd": 264430,
+  "pid": 26504,
+  "executable": "C:\\Program Files (x86)\\PPPokerGame\\PPPoker\\PPPoker.exe",
+  "process_created": 1793889943.660312,
+  "title": "PPPoker",
+  "client_rect": [
+    0,
+    0,
+    5760,
+    2160
+  ],
+  "screen_origin": [
+    -1920,
+    0
+  ],
+  "image_shape": [
+    2160,
+    5760,
+    3
+  ],
+  "duration_ms": 155.9999999954016,
+  "requested_hwnd": 264430,
+  "capture_success": true,
+  "actions_allowed": false,
+  "candidates": [],
+  "image_path": "logs\\diagnostics\\capture-1793925495196552000.png"
+}

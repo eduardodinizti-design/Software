@@ -1,0 +1,1441 @@
+{
+  "status": "WINDOW_AMBIGUOUS",
+  "timestamp": "2026-11-06T00:35:04.582582+00:00",
+  "backend": "GDI_CLIENT_BITBLT",
+  "dpi_effective": true,
+  "native_windows_validated": false,
+  "candidates": [
+    {
+      "hwnd": 197710,
+      "status": "EXECUTABLE_NOT_ALLOWED",
+      "error": "explorer.exe"
+    },
+    {
+      "hwnd": 65956,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 65882,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 65770,
+      "status": "EXECUTABLE_NOT_ALLOWED",
+      "error": "explorer.exe"
+    },
+    {
+      "hwnd": 66058,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66084,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 1640440,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 65800,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 198956,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 132496,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 65840,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 3279042,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 65790,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 2033834,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 8194064,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 3999944,
+      "status": "EXECUTABLE_NOT_ALLOWED",
+      "error": "cmd.exe"
+    },
+    {
+      "hwnd": 8980372,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 788594,
+      "status": "EXECUTABLE_NOT_ALLOWED",
+      "error": "chrome.exe"
+    },
+    {
+      "hwnd": 1312720,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 6883358,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 1181936,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 919364,
+      "status": "WINDOW_MINIMIZED",
+      "error": "WINDOW_MINIMIZED"
+    },
+    {
+      "hwnd": 197332,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 3672192,
+      "pid": 11208,
+      "executable": "C:\\Program Files (x86)\\PPPokerGame\\PPPoker\\PPPoker.exe",
+      "process_created": 1793923868.591178,
+      "title": "PPPoker",
+      "client_rect": [
+        0,
+        0,
+        5760,
+        2160
+      ],
+      "screen_origin": [
+        -1920,
+        0
+      ],
+      "status": "ACCEPTED"
+    },
+    {
+      "hwnd": 1705918,
+      "status": "EXECUTABLE_NOT_ALLOWED",
+      "error": "githubdesktop.exe"
+    },
+    {
+      "hwnd": 264430,
+      "pid": 26504,
+      "executable": "C:\\Program Files (x86)\\PPPokerGame\\PPPoker\\PPPoker.exe",
+      "process_created": 1793889943.660312,
+      "title": "PPPoker",
+      "client_rect": [
+        0,
+        0,
+        5760,
+        2160
+      ],
+      "screen_origin": [
+        -1920,
+        0
+      ],
+      "status": "ACCEPTED"
+    },
+    {
+      "hwnd": 854174,
+      "status": "EXECUTABLE_NOT_ALLOWED",
+      "error": "chrome.exe"
+    },
+    {
+      "hwnd": 1771400,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 329546,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 2099280,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 4065556,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 2491670,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 1507526,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 65868,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 788628,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 2426932,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 3671852,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 2950962,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66646,
+      "status": "EXECUTABLE_NOT_ALLOWED",
+      "error": "spotify.exe"
+    },
+    {
+      "hwnd": 854128,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 3017066,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 3147556,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 1706068,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 2492516,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 985034,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 2033582,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 131954,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 2426140,
+      "status": "EXECUTABLE_NOT_ALLOWED",
+      "error": "explorer.exe"
+    },
+    {
+      "hwnd": 66384,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 2359428,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 1509056,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 198990,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 526486,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 328468,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 198988,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 460544,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 1312928,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 984950,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 526606,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 852754,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 132750,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 1574506,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 263962,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 67192,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 67182,
+      "status": "EXECUTABLE_NOT_ALLOWED",
+      "error": "systemsettings.exe"
+    },
+    {
+      "hwnd": 394854,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 394494,
+      "status": "EXECUTABLE_NOT_ALLOWED",
+      "error": "applicationframehost.exe"
+    },
+    {
+      "hwnd": 197402,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 262198,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 131734,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 197338,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 655828,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 197648,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 67098,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 67090,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 67086,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 67078,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 67074,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 67066,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 67062,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 67054,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 67050,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 67042,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 67038,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 67030,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 67026,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 67018,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 67014,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 67006,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 67002,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 132502,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66992,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66984,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66980,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66972,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66968,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 132412,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 132486,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66940,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 132466,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66934,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66922,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66912,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 132444,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66896,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66898,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66894,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66892,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66888,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66872,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66868,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66866,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66860,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66776,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66754,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66746,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66734,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66714,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66664,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66628,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66624,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66620,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66608,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66602,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66580,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 131910,
+      "status": "EXECUTABLE_NOT_ALLOWED",
+      "error": "quantumengine.exe"
+    },
+    {
+      "hwnd": 66568,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66538,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66530,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66514,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66498,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 132024,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66466,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66464,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66442,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 131974,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 131968,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66434,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66390,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66388,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 262450,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 131888,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66358,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66356,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66346,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 459364,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66282,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 131506,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 131268,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66250,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 459344,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66114,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66112,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66102,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66096,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 196854,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 65920,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 65938,
+      "status": "EXECUTABLE_NOT_ALLOWED",
+      "error": "explorer.exe"
+    },
+    {
+      "hwnd": 66028,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66030,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 65944,
+      "status": "EXECUTABLE_NOT_ALLOWED",
+      "error": "explorer.exe"
+    },
+    {
+      "hwnd": 65890,
+      "status": "EXECUTABLE_NOT_ALLOWED",
+      "error": "explorer.exe"
+    },
+    {
+      "hwnd": 65888,
+      "status": "EXECUTABLE_NOT_ALLOWED",
+      "error": "explorer.exe"
+    },
+    {
+      "hwnd": 65886,
+      "status": "EXECUTABLE_NOT_ALLOWED",
+      "error": "explorer.exe"
+    },
+    {
+      "hwnd": 65884,
+      "status": "EXECUTABLE_NOT_ALLOWED",
+      "error": "explorer.exe"
+    },
+    {
+      "hwnd": 196950,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 65866,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 65862,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 65854,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 65852,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 65812,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 65808,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 65764,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 65736,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 65716,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 131120,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 131234,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 65696,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 131150,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66162,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 197518,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66440,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66560,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 328436,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 199006,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 919718,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 198996,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 394924,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 1378168,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 199012,
+      "status": "WINDOW_MINIMIZED",
+      "error": "WINDOW_MINIMIZED"
+    },
+    {
+      "hwnd": 1968172,
+      "status": "WINDOW_MINIMIZED",
+      "error": "WINDOW_MINIMIZED"
+    },
+    {
+      "hwnd": 66426,
+      "status": "WINDOW_MINIMIZED",
+      "error": "WINDOW_MINIMIZED"
+    },
+    {
+      "hwnd": 65792,
+      "status": "EXECUTABLE_NOT_ALLOWED",
+      "error": "explorer.exe"
+    },
+    {
+      "hwnd": 65820,
+      "status": "EXECUTABLE_NOT_ALLOWED",
+      "error": "explorer.exe"
+    },
+    {
+      "hwnd": 65958,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66086,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 3081926,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 1116036,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 131778,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 1179708,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 1114720,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 2492268,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 4129534,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 3147046,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 2820144,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 1310912,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 198332,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 198322,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 65804,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 65772,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 17039840,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 329582,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 4392734,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 198424,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 65864,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 984888,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 1443662,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66622,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 1968162,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 263426,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 788708,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 131958,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 1771240,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 2033586,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66382,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 2426414,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 329468,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 854044,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 131142,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 394896,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 198898,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 330006,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 132764,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 198392,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 67194,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 67184,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 198252,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 131814,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 262356,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 458868,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 131508,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66886,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66914,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 132446,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66870,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66862,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66748,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66736,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66718,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66666,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66610,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66604,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 328598,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 197438,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66570,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66534,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66516,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66492,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66420,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66392,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66348,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66284,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66252,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66104,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66098,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 66052,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 65814,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 65766,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 131118,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 198466,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 788696,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 394812,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 198984,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 526010,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 2492236,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 1050340,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 590256,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 131890,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 65860,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    },
+    {
+      "hwnd": 65720,
+      "status": "WINDOW_NOT_VISIBLE",
+      "error": "WINDOW_NOT_VISIBLE"
+    }
+  ],
+  "error": "WINDOW_AMBIGUOUS",
+  "exception_type": "CaptureError",
+  "duration_ms": 656.0000000026776,
+  "requested_hwnd": null,
+  "capture_success": false,
+  "actions_allowed": false
+}

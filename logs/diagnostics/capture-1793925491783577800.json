@@ -1,0 +1,14 @@
+{
+  "status": "WINDOW_INVALID_HWND",
+  "timestamp": "2026-11-06T00:38:11.711511+00:00",
+  "backend": "GDI_CLIENT_BITBLT",
+  "dpi_effective": true,
+  "native_windows_validated": false,
+  "error": "WINDOW_INVALID_HWND",
+  "exception_type": "CaptureError",
+  "duration_ms": 78.00000000133878,
+  "requested_hwnd": 3672192,
+  "capture_success": false,
+  "actions_allowed": false,
+  "candidates": []
+}
