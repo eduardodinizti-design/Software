@@ -1,5 +1,5 @@
-Run: 42237498222
-Source commit: 53881008c8f260c18004534e2212bb8fd3855dea
+Run: 42239076916
+Source commit: 4b08297c54e4e0bafa8516c4d8c2b348fed1da08
 test_arbitrary_executable_is_rejected (test_capture_regressions.OriginalRegressionTests.test_arbitrary_executable_is_rejected) ... ok
 test_linux_cannot_report_success (test_capture_regressions.OriginalRegressionTests.test_linux_cannot_report_success) ... ok
 test_process_access_denied_is_rejected (test_capture_regressions.OriginalRegressionTests.test_process_access_denied_is_rejected) ... ok
@@ -177,11 +177,17 @@ test_missing_or_corrupt_asset_falls_back (test_exact_call_template.ExactCallTest
 test_mixed_preselection_keeps_amount_but_disables_action (test_exact_call_template.ExactCallTests.test_mixed_preselection_keeps_amount_but_disables_action) ... ok
 test_resize_rejected (test_exact_call_template.ExactCallTests.test_resize_rejected) ... ok
 test_single_pixel_change_rejected (test_exact_call_template.ExactCallTests.test_single_pixel_change_rejected) ... ok
+test_amount_and_cards_change (test_manual_windows.ManualTests.test_amount_and_cards_change) ... ok
+test_changed_pixel (test_manual_windows.ManualTests.test_changed_pixel) ... ok
+test_failed_capture (test_manual_windows.ManualTests.test_failed_capture) ... ok
+test_identity_and_geometry (test_manual_windows.ManualTests.test_identity_and_geometry) ... ok
+test_preselect_and_unknown (test_manual_windows.ManualTests.test_preselect_and_unknown) ... ok
+test_same_pixels (test_manual_windows.ManualTests.test_same_pixels) ... ok
 
 ----------------------------------------------------------------------
-FALHA: Captura estrita falhou: {'status': 'WINDOW_INVALID_HWND'}
-FALHA: Returned HWND differs from requested HWND
-Amostras UNLABELED: C:\Users\RUNNER~1\AppData\Local\Temp\tmppod25mdo\logs\leitura\leitura-3b19b5898c954b2fa49c6f65159f3503 | 1 mesa(s). Sem OCR ou importacao para treino.
-Ran 165 tests in 9.122s
+Ran 171 tests in 7.219s
 
 OK
+FALHA: Captura estrita falhou: {'status': 'WINDOW_INVALID_HWND'}
+FALHA: Returned HWND differs from requested HWND
+Amostras UNLABELED: C:\Users\RUNNER~1\AppData\Local\Temp\tmp4j22hy4i\logs\leitura\leitura-1a421e9273174d6dbb45ab448aa1d39e | 1 mesa(s). Sem OCR ou importacao para treino.
