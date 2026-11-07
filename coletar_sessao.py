@@ -125,7 +125,7 @@ def main():
     p.add_argument('--minutos',type=float,default=30)
     p.add_argument('--intervalo',type=float,default=2)
     p.add_argument('--limite-mb',type=int,default=16)
-    p.add_argument('--amostras',action='store_true',help='Recortes aceitos/rejeitados por estado a cada 60s; cota de 25% do limite')
+    p.add_argument('--amostras',action='store_true',help='Recortes aceitos/rejeitados por estado a cada 60s; cota de 25%% do limite')
     args=p.parse_args()
     from window_capture_engine import WindowCaptureEngine
     engine=WindowCaptureEngine()
