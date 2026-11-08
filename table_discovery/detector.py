@@ -58,6 +58,52 @@ def looks_like_green_table(hwnd: int, ttl: float = 3.0) -> bool:
     return ok
 
 
+_blue_cache: dict = {}
+
+
+def looks_like_blue_table(hwnd: int, ttl: float = 3.0) -> bool:
+    """Capture the window (PrintWindow) and check for the PPPoker BLUE felt vs a
+    dark lobby/login. Calibrated on real crops: table ~0.64 blue fraction, lobby
+    ~0.15; threshold 0.35. Cached a few seconds. Read-only; sends no input."""
+    import time
+    now = time.time()
+    hit = _blue_cache.get(hwnd)
+    if hit and now - hit[0] < ttl:
+        return hit[1]
+    ok = True
+    try:
+        import ctypes
+        import numpy as np
+        import win32gui
+        import win32ui
+        from PIL import Image
+        l, t, r, b = win32gui.GetWindowRect(hwnd)
+        W, H = max(1, r - l), max(1, b - t)
+        hwdc = win32gui.GetWindowDC(hwnd)
+        mdc = win32ui.CreateDCFromHandle(hwdc)
+        sdc = mdc.CreateCompatibleDC()
+        bmp = win32ui.CreateBitmap()
+        bmp.CreateCompatibleBitmap(mdc, W, H)
+        sdc.SelectObject(bmp)
+        try:
+            ctypes.windll.user32.PrintWindow(hwnd, sdc.GetSafeHdc(), 2)
+            info = bmp.GetInfo()
+            img = Image.frombuffer('RGB', (info['bmWidth'], info['bmHeight']), bmp.GetBitmapBits(True), 'raw', 'BGRX', 0, 1)
+        finally:
+            sdc.DeleteDC()
+            mdc.DeleteDC()
+            win32gui.ReleaseDC(hwnd, hwdc)
+            win32gui.DeleteObject(bmp.GetHandle())
+        a = np.array(img.resize((max(1, W // 4), max(1, H // 4))))
+        rr, gg, bb = a[:, :, 0].astype(int), a[:, :, 1].astype(int), a[:, :, 2].astype(int)
+        blue = ((bb > rr + 20) & (bb > gg + 10) & (bb > 60)).mean()
+        ok = blue >= 0.35
+    except Exception:
+        ok = True
+    _blue_cache[hwnd] = (now, ok)
+    return ok
+
+
 @dataclass
 class RoomRule:
     name: str
@@ -85,6 +131,8 @@ class RoomRule:
             return True
         if self.content_check == 'green' and w.w >= 150 and w.h >= 150:
             return not looks_like_green_table(w.hwnd)
+        if self.content_check == 'blue' and w.w >= 150 and w.h >= 150:
+            return not looks_like_blue_table(w.hwnd)
         return False
 
     def is_table(self, w: WindowInfo) -> bool:

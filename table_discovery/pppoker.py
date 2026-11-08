@@ -1,54 +1,53 @@
-"""PPPoker table discovery for VisualPilot (discovery/identity only).
+"""PPPoker window discovery for VisualPilot (discovery/identity only).
 
 Scope is deliberately PPPoker-only (see the handoff: do not pull multi-room
-support into the recognizer). This layer answers one question: among the live
-top-level windows, which are PPPoker TABLES (green felt) and which are lobby/
-login. It does not capture cards, move windows, open accounts or send input.
+support into the recognizer). This layer answers one question: which live
+top-level windows belong to PPPoker, with their identity and geometry. It does
+not capture cards, move windows, open accounts or send input.
 
-VisualPilot keeps its own validated capture: this only tells it which HWNDs to
-observe. Identity still comes from VisualPilot binding each HWND to
-pid + process_created at capture time; the pid here is informational.
+It deliberately does NOT try to tell a table from a lobby at the window level.
+On real setups one PPPoker window is a large canvas (e.g. 3840x1440) holding a
+table, the lobby and side panels at once, and a GPU (Unity) window does not
+render through PrintWindow, so a whole-window felt-colour test is both wrong and
+unreliable. Separating the blue table region from the lobby is VisualPilot's own
+detector job, downstream and already validated. Discovery just hands the HWNDs
+to observe; the pipeline rejects the lobby regions.
+
+Identity still comes from VisualPilot binding each HWND to pid + process_created
+at capture time; the pid here is informational.
 """
 import argparse
 
-from .detector import Detector, RoomRule
 from .windows import enum_windows
 
 PPPOKER_PROCESS = 'PPPoker.exe'
-
-# A table window is PPPoker.exe, at least 150x150, showing green felt. The lobby
-# and login windows are the same process without felt, so they are excluded.
-PPPOKER_RULE = RoomRule(name='PPPoker', processes=[PPPOKER_PROCESS],
-                        min_w=150, min_h=150, content_check='green')
+MIN_SIZE = 150
 
 
-def _as_dict(w, kind):
+def _as_dict(w):
     return dict(hwnd=w.hwnd, pid=w.pid, process=w.process, title=w.title,
-                rect=list(w.rect), x=w.x, y=w.y, w=w.w, h=w.h,
-                minimized=w.minimized, room=w.room, kind=kind)
+                rect=list(w.rect), x=w.x, y=w.y, w=w.w, h=w.h, minimized=w.minimized)
 
 
 def discover_pppoker(windows=None):
-    """Return {'tables': [...], 'lobbies': [...]} for PPPoker windows only.
+    """Return {'windows': [...]} — the live, visible PPPoker windows to observe.
 
     `windows` is an optional pre-enumerated list of WindowInfo (injected in
     tests); otherwise the live top-level windows are enumerated."""
-    detector = Detector([PPPOKER_RULE])
-    windows = detector.classify(windows if windows is not None else enum_windows())
-    pppoker = [w for w in windows if w.process.lower() == PPPOKER_PROCESS.lower()]
-    tables = [_as_dict(w, 'table') for w in pppoker if w.extra.get('is_table')]
-    lobbies = [_as_dict(w, 'lobby') for w in pppoker if w.extra.get('is_lobby')]
-    return {'tables': tables, 'lobbies': lobbies}
+    windows = windows if windows is not None else enum_windows()
+    found = [_as_dict(w) for w in windows
+             if w.process.lower() == PPPOKER_PROCESS.lower()
+             and not w.minimized and w.w >= MIN_SIZE and w.h >= MIN_SIZE]
+    return {'windows': found}
 
 
 def pppoker_table_hwnds(windows=None, max_tables=6):
-    """Live PPPoker table HWNDs (lobbies excluded), capped at max_tables."""
-    tables = discover_pppoker(windows)['tables']
-    return [t['hwnd'] for t in tables[:max_tables]]
+    """Live PPPoker window HWNDs to observe, capped at max_tables."""
+    return [w['hwnd'] for w in discover_pppoker(windows)['windows'][:max_tables]]
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(description='Lista as mesas PPPoker abertas (sem cliques, sem captura de cartas).')
+    parser = argparse.ArgumentParser(description='Lista as janelas PPPoker abertas (sem cliques, sem captura de cartas).')
     parser.add_argument('--json', action='store_true', help='Saida em JSON')
     args = parser.parse_args(argv)
     found = discover_pppoker()
@@ -56,15 +55,13 @@ def main(argv=None):
         import json
         print(json.dumps(found, ensure_ascii=False, indent=2))
         return 0
-    tables, lobbies = found['tables'], found['lobbies']
-    if not tables and not lobbies:
+    windows = found['windows']
+    if not windows:
         print('Nenhuma janela PPPoker encontrada. Abra o PPPoker e tente novamente.')
         return 2
-    for t in tables:
-        print(f"MESA  | HWND {t['hwnd']} | PID {t['pid']} | {t['w']}x{t['h']} em ({t['x']},{t['y']}) | {t['title']}")
-    for lob in lobbies:
-        print(f"LOBBY | HWND {lob['hwnd']} | PID {lob['pid']} | {lob['title']} (ignorado para leitura)")
-    print(f"\n{len(tables)} mesa(s) PPPoker, {len(lobbies)} lobby/login.")
+    for w in windows:
+        print(f"PPPoker | HWND {w['hwnd']} | PID {w['pid']} | {w['w']}x{w['h']} em ({w['x']},{w['y']}) | {w['title']}")
+    print(f"\n{len(windows)} janela(s) PPPoker. A mesa (feltro azul) e o lobby sao separados na leitura.")
     return 0
 
 

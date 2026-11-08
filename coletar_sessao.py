@@ -138,11 +138,11 @@ def main():
     engine=WindowCaptureEngine()
     if args.pppoker and not args.hwnds:
         from table_discovery.pppoker import discover_pppoker
-        found=discover_pppoker()
-        for t in found['tables']:print('MESA PPPoker | HWND',t['hwnd'],'| PID',t['pid'],'|',f"{t['w']}x{t['h']}",'em',f"({t['x']},{t['y']})",'|',t['title'],flush=True)
-        for lob in found['lobbies']:print('LOBBY ignorado | HWND',lob['hwnd'],'|',lob['title'],flush=True)
-        if not found['tables']:raise SystemExit('Nenhuma MESA PPPoker aberta (apenas lobby/login?). Abra uma mesa e tente de novo.')
-        args.hwnds=[t['hwnd'] for t in found['tables'][:6]]
+        found=discover_pppoker()['windows']
+        for w in found:print('PPPoker | HWND',w['hwnd'],'| PID',w['pid'],'|',f"{w['w']}x{w['h']}",'em',f"({w['x']},{w['y']})",'|',w['title'],flush=True)
+        if not found:raise SystemExit('Nenhuma janela PPPoker aberta. Abra o PPPoker (lobby ou mesa) e tente de novo.')
+        args.hwnds=[w['hwnd'] for w in found[:6]]
+        print('Observando',len(args.hwnds),'janela(s). A mesa (feltro azul) e o lobby sao separados na leitura.',flush=True)
     if not args.hwnds:
         windows=engine.locate_target_windows()
         for w in windows:print('HWND:',w['hwnd'],'PID:',w['pid'],'Titulo:',w.get('title'),'Area:',w['client_rect'])
