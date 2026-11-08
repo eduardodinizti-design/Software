@@ -5,3 +5,7 @@ pytesseract==0.3.13
 # PPPoker table discovery (table_discovery/); Win32 only, so the lab (Linux) skips pywin32.
 pywin32==312; platform_system == "Windows"
 Pillow==13.0.0
+# In-process OCR backend (table_reading/ocr_runtime.py); ~180x faster per call than the
+# tesseract.exe subprocess, byte-identical output. Optional: without it OCR stays on
+# pytesseract. The Windows wheel bundles libtesseract; the lab (Linux) skips it.
+tesserocr==2.12.0; platform_system == "Windows"

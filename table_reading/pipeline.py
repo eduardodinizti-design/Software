@@ -11,6 +11,36 @@ from .automatic_table_crops import detect_table_crops
 from .ocr_runtime import snapshot_ocr
 
 
+def _tessdata_dir(tesseract_cmd):
+    """Locate the tessdata directory holding eng.traineddata for the engine."""
+    roots=[os.environ.get('TESSDATA_PREFIX'),
+           str(Path(tesseract_cmd).resolve().parent/'tessdata')]
+    for root in roots:
+        if root and (Path(root)/'eng.traineddata').is_file():
+            return root
+        if root and (Path(root)/'tessdata'/'eng.traineddata').is_file():
+            return str(Path(root)/'tessdata')
+    return None
+
+
+def _enable_inprocess_ocr(tesseract_cmd):
+    """Turn on the in-process tesserocr backend if it and the traineddata exist.
+    Pure speedup over the subprocess; silently stays on pytesseract otherwise."""
+    try:
+        import tesserocr  # noqa: F401
+    except Exception:
+        return 'subprocess'
+    tessdata=_tessdata_dir(tesseract_cmd)
+    if not tessdata:
+        return 'subprocess'
+    try:
+        from .ocr_runtime import use_inprocess_ocr
+        use_inprocess_ocr(tessdata)
+        return 'inprocess'
+    except Exception:
+        return 'subprocess'
+
+
 def configure_ocr():
     import pytesseract
     candidates=[os.environ.get('TESSERACT_CMD'),shutil.which('tesseract')]
@@ -24,7 +54,7 @@ def configure_ocr():
             try:
                 version=str(pytesseract.get_tesseract_version())
                 if 'eng' in pytesseract.get_languages(config=''):
-                    return {'status':'READY','version':version}
+                    return {'status':'READY','version':version,'engine':_enable_inprocess_ocr(candidate)}
             except Exception:
                 pass
     raise RuntimeError('TESSERACT_UNAVAILABLE: instale Tesseract com idioma English ou configure TESSERACT_CMD.')

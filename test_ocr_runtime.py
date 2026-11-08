@@ -5,6 +5,12 @@ import numpy as np
 from table_reading import ocr_runtime as runtime
 
 
+def setUpModule():
+    # These tests pin the subprocess cache/counting path; keep them deterministic
+    # even if an earlier module left the in-process backend enabled.
+    runtime.disable_inprocess_ocr()
+
+
 class OCRFrameTests(unittest.TestCase):
     def setUp(self):
         self.image=np.arange(24,dtype=np.uint8).reshape(4,6)

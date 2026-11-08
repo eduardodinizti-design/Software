@@ -11,6 +11,13 @@ import numpy as np
 from table_reading.pipeline import analyze_tables
 from ler_mesas import save_result, latest_capture
 
+
+def tearDownModule():
+    # analyze_tables may enable the in-process OCR backend via configure_ocr;
+    # restore the default so later test modules are not affected.
+    from table_reading import ocr_runtime
+    ocr_runtime.disable_inprocess_ocr()
+
 ASSETS=Path(os.environ.get('VISUALPILOT_ASSETS','public/assets/aistudio'))
 SOURCE='_21D744E1-8BE6-4C79-82AF-5582DD6A9547__6988a9e2.png'
 def metadata(frame,**kwargs):
