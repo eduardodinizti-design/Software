@@ -74,5 +74,30 @@ class AdvisorTests(unittest.TestCase):
         self.assertEqual(r['reason'], 'HERO_POSITION_UNKNOWN')
 
 
+def pack_with_shove():
+    idx = HANDS.index('AA')
+    freq = {'all_in': [1.0 if k == idx else 0.0 for k in range(169)],
+            'fold': [0.0 if k == idx else 1.0 for k in range(169)]}
+    node = dict(id='s1', context=dict(mode='chip_ev', format='regular', stage='mid', players=9, stack=10),
+                spot='open_shove', hero='BTN', vs=[], validated=True, evUnit='bb',
+                legalActions=['fold', 'all_in'], actions=['all_in', 'fold'], freq=freq,
+                ev={'all_in': [1.0] * 169, 'fold': [0.0] * 169}, outOfRange=[], source='test')
+    return dict(format='nvt-range-export', version=1, engineCommit='test', hands=HANDS, nodes=[node])
+
+
+class FirstInTests(unittest.TestCase):
+    def test_prefers_open_raise_when_present(self):
+        r = PreflopAdvisor(pack_with_node()).advise_first_in(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=25)
+        self.assertEqual(r['recommended'], 'raise')
+
+    def test_falls_back_to_open_shove(self):
+        r = PreflopAdvisor(pack_with_shove()).advise_first_in(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=10)
+        self.assertEqual((r['status'], r['recommended']), ('ADVICE', 'all_in'))
+
+    def test_abstains_when_no_first_in_node(self):
+        r = PreflopAdvisor(pack_with_node()).advise_first_in(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=10)
+        self.assertEqual(r['status'], 'ABSTAIN')  # pack only has open_raise at 25
+
+
 if __name__ == '__main__':
     unittest.main()

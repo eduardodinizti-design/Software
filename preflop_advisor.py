@@ -89,14 +89,25 @@ class PreflopAdvisor:
         recommended = max(mix, key=lambda m: m['frequency'])['action'] if mix else None
         return dict(base, status='ADVICE', mix=mix, ev=ev, ev_unit=node['evUnit'], recommended=recommended)
 
+    def advise_first_in(self, **kwargs):
+        """First-in (unopened) decision: open_raise where the pack has it, else
+        open_shove (short stacks). Covers 5-25bb; 20bb has no first-in node here."""
+        kwargs.pop('spot', None)
+        kwargs.pop('vs', None)
+        primary = self.advise(spot='open_raise', vs=(), **kwargs)
+        if not (primary['status'] == 'ABSTAIN' and primary.get('reason') == 'NO_VALIDATED_NODE_FOR_CONTEXT'):
+            return primary
+        return self.advise(spot='open_shove', vs=(), **kwargs)
+
     def advise_from_reading(self, table_state, hero_cards, **kwargs):
-        """Pull hero's position and stack from a read_table_state result and advise."""
+        """Pull hero's position and stack from a read_table_state result and give
+        the first-in decision (open_raise or open_shove)."""
         positions = table_state.get('positions') or {}
         hero = table_state.get('seats', {}).get('hero', {})
         if 'hero' not in positions:
             return self._abstain('HERO_POSITION_UNKNOWN')
-        return self.advise(hero_cards=hero_cards, hero_position=positions['hero'],
-                           stack_bb=hero.get('stack_bb'), **kwargs)
+        return self.advise_first_in(hero_cards=hero_cards, hero_position=positions['hero'],
+                                    stack_bb=hero.get('stack_bb'), **kwargs)
 
     def _caveats(self, bucket, stack_bb, players, mode):
         out = ['EXPLORATORY_NOT_FOR_EXECUTION', 'NVT_REFERENCE_SHORT_STACK_ONLY']

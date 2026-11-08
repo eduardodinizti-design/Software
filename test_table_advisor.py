@@ -39,7 +39,7 @@ class AdviseTableTests(unittest.TestCase):
     def test_preflop_with_hero_gets_advice(self):
         r = self._run(['As', 'Ks'], [])
         self.assertEqual(r['advice']['status'], 'ADVICE')
-        self.assertIn('SPOT_ASSUMED_OPEN_RAISE_UNOPENED', r['advice']['caveats'])
+        self.assertIn('SPOT_ASSUMED_FIRST_IN_UNOPENED', r['advice']['caveats'])
         self.assertFalse(r['advice']['execution_allowed'])
 
     def test_postflop_abstains(self):

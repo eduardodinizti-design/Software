@@ -41,9 +41,9 @@ def advise_table(crop, advisor, *, mode='chip_ev', stage='mid'):
     elif hero is None:
         advice = dict(status='ABSTAIN', reason='HERO_CARDS_UNKNOWN', exploratory=True, execution_allowed=False)
     else:
-        advice = advisor.advise_from_reading(state, hero, mode=mode, stage=stage, spot='open_raise')
+        advice = advisor.advise_from_reading(state, hero, mode=mode, stage=stage)
         if isinstance(advice, dict):
-            advice.setdefault('caveats', []).append('SPOT_ASSUMED_OPEN_RAISE_UNOPENED')
+            advice.setdefault('caveats', []).append('SPOT_ASSUMED_FIRST_IN_UNOPENED')
     return dict(hand=hand, hero_cards=hero, board=board, table_state=state, advice=advice)
 
 
