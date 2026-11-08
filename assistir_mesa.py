@@ -36,10 +36,11 @@ def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--hwnd', type=lambda s: int(s, 0), required=True, help='HWND da janela PPPoker')
     p.add_argument('--ranges', required=True, help='nvt-ranges-validados.json')
+    p.add_argument('--deep', default=None, help='Pacote deep 40/100bb opcional (reference, nao validado)')
     p.add_argument('--intervalo', type=float, default=2.0, help='Segundos entre leituras')
     p.add_argument('--max-tables', type=int, default=6)
     args = p.parse_args(argv)
-    advisor = PreflopAdvisor.from_file(args.ranges)
+    advisor = PreflopAdvisor.from_files(args.ranges, args.deep) if args.deep else PreflopAdvisor.from_file(args.ranges)
     from window_capture_engine import WindowCaptureEngine
     engine = WindowCaptureEngine()
     configure_ocr()

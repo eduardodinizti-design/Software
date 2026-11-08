@@ -90,12 +90,13 @@ def _summary(result):
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--ranges', required=True, help='nvt-ranges-validados.json')
+    p.add_argument('--deep', default=None, help='Pacote deep 40/100bb opcional (reference, nao validado)')
     p.add_argument('--imagem', required=True, help='Recorte de uma mesa (PNG)')
     p.add_argument('--mode', default=None, help='Forca o modo; padrao: detecta da fase do torneio')
     p.add_argument('--stage', default=None, help='Forca o estagio; padrao: detecta da fase')
     p.add_argument('--json', action='store_true')
     args = p.parse_args(argv)
-    advisor = PreflopAdvisor.from_file(args.ranges)
+    advisor = PreflopAdvisor.from_files(args.ranges, args.deep) if args.deep else PreflopAdvisor.from_file(args.ranges)
     crop = cv2.imread(args.imagem)
     if crop is None:
         raise SystemExit('Nao consegui ler a imagem: ' + args.imagem)

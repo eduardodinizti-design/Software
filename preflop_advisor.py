@@ -42,8 +42,10 @@ def infer_live_spot(table_state):
 
 
 class PreflopAdvisor:
-    STACK_BUCKETS = (5, 8, 10, 12, 15, 20, 25)
-    DEEP_MARGIN = 2  # bb above the top bucket still rounded down; beyond is 'deep'
+    # Short stacks (5-25) come from the validated NVT pack; 40/100 from the deep
+    # reference pack (not HRC-validated, flagged in every answer).
+    STACK_BUCKETS = (5, 8, 10, 12, 15, 20, 25, 40, 100)
+    DEEP_MARGIN = 4  # bb above the top bucket still rounded down; beyond is 'deep'
 
     def __init__(self, pack):
         if pack.get('format') != 'nvt-range-export' or pack.get('version') != 1:
@@ -51,7 +53,7 @@ class PreflopAdvisor:
         self.hands = pack['hands']
         if len(self.hands) != 169:
             raise Blocked('INVALID_HAND_INDEX')
-        self.nodes = [n for n in pack['nodes'] if n.get('validated') is True]
+        self.nodes = list(pack['nodes'])   # includes unvalidated reference (deep) nodes
         self.engine_commit = pack.get('engineCommit')
         self._index = {}
         for n in self.nodes:
@@ -60,6 +62,21 @@ class PreflopAdvisor:
     @classmethod
     def from_file(cls, path):
         return cls(json.loads(Path(path).read_text(encoding='utf-8')))
+
+    @classmethod
+    def from_files(cls, *paths):
+        """Merge several packs (e.g. the validated short pack plus the deep
+        reference pack). They must share format/version and the 169-hand index."""
+        merged = None
+        for path in paths:
+            pack = json.loads(Path(path).read_text(encoding='utf-8'))
+            if merged is None:
+                merged = dict(pack)
+            elif pack.get('hands') != merged['hands']:
+                raise Blocked('HAND_INDEX_MISMATCH_BETWEEN_PACKS')
+            else:
+                merged = dict(merged, nodes=merged['nodes'] + pack['nodes'])
+        return cls(merged)
 
     @staticmethod
     def _key_of(node):
@@ -100,11 +117,14 @@ class PreflopAdvisor:
                                  context=dict(mode=mode, stage=stage, stack=bucket, spot=spot,
                                               hero=hero_position, players=players))
         i = self.hands.index(hand)
+        validated = bool(node.get('validated'))
+        caveats = self._caveats(bucket, stack_bb, players, mode)
+        if not validated:
+            caveats.append('UNVALIDATED_REFERENCE_RANGE')
         base = dict(spot=spot, hero_position=hero_position, hand=hand, node_id=node['id'],
-                    source=node['source'], validated=True, exploratory=True,
+                    source=node['source'], validated=validated, exploratory=True,
                     execution_allowed=False, stack_bb=stack_bb, stack_bucket=bucket,
-                    bucketed=bucket != stack_bb, players_assumed=players,
-                    caveats=self._caveats(bucket, stack_bb, players, mode))
+                    bucketed=bucket != stack_bb, players_assumed=players, caveats=caveats)
         if i in (node.get('outOfRange') or []):
             return dict(base, status='OUT_OF_RANGE')
         mix, ev = [], {}

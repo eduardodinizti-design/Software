@@ -28,8 +28,10 @@ class AdvisorTests(unittest.TestCase):
 
     def test_bucket_stack(self):
         self.assertEqual(self.a.bucket_stack(20.8)[0], 20)
-        self.assertEqual(self.a.bucket_stack(26)[0], 25)       # within deep margin
-        self.assertEqual(self.a.bucket_stack(65), (None, 'DEEP_STACK_NOT_COVERED'))
+        self.assertEqual(self.a.bucket_stack(26)[0], 25)
+        self.assertEqual(self.a.bucket_stack(65)[0], 40)        # deep bucket now exists
+        self.assertEqual(self.a.bucket_stack(90)[0], 100)
+        self.assertEqual(self.a.bucket_stack(150), (None, 'DEEP_STACK_NOT_COVERED'))
         self.assertEqual(self.a.bucket_stack(0), (None, 'STACK_UNKNOWN'))
 
     def test_advice_for_covered_hand(self):
@@ -47,7 +49,7 @@ class AdvisorTests(unittest.TestCase):
         self.assertIn('STACK_BUCKETED_24_TO_25BB', r['caveats'])
 
     def test_deep_stack_abstains(self):
-        r = self.a.advise(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=80)
+        r = self.a.advise(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=200)
         self.assertEqual((r['status'], r['reason']), ('ABSTAIN', 'DEEP_STACK_NOT_COVERED'))
 
     def test_unknown_context_abstains(self):
@@ -97,6 +99,37 @@ class FirstInTests(unittest.TestCase):
     def test_abstains_when_no_first_in_node(self):
         r = PreflopAdvisor(pack_with_node()).advise_first_in(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=10)
         self.assertEqual(r['status'], 'ABSTAIN')  # pack only has open_raise at 25
+
+
+def pack_with_reference():
+    idx = HANDS.index('AA')
+    freq = {'raise': [1.0 if k == idx else 0.0 for k in range(169)],
+            'fold': [0.0 if k == idx else 1.0 for k in range(169)]}
+    node = dict(id='d1', context=dict(mode='chip_ev', format='regular', stage='mid', players=9, stack=100),
+                spot='open_raise', hero='BTN', vs=[], validated=False, evUnit='bb',
+                legalActions=['fold', 'raise'], actions=['raise', 'fold'], freq=freq, ev=None,
+                outOfRange=[], source='reference')
+    return dict(format='nvt-range-export', version=1, engineCommit='deep', hands=HANDS, nodes=[node])
+
+
+class ReferenceTests(unittest.TestCase):
+    def test_unvalidated_deep_node_is_flagged(self):
+        r = PreflopAdvisor(pack_with_reference()).advise(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=100)
+        self.assertEqual(r['status'], 'ADVICE')
+        self.assertFalse(r['validated'])
+        self.assertIn('UNVALIDATED_REFERENCE_RANGE', r['caveats'])
+
+    def test_from_files_merges_validated_and_reference(self):
+        import json
+        import os
+        import tempfile
+        d = tempfile.mkdtemp()
+        p1, p2 = os.path.join(d, 'a.json'), os.path.join(d, 'b.json')
+        json.dump(pack_with_node(), open(p1, 'w'))        # validated BTN 25
+        json.dump(pack_with_reference(), open(p2, 'w'))   # reference BTN 100
+        a = PreflopAdvisor.from_files(p1, p2)
+        self.assertTrue(a.advise(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=25)['validated'])
+        self.assertFalse(a.advise(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=100)['validated'])
 
 
 def pack_with_vsopen():
