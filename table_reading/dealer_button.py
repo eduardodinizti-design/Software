@@ -55,7 +55,10 @@ def derive_positions(dealer_seat, occupied_seats):
     dealer). Returns {seat: position} or {} when it cannot be derived. For a full
     9-handed ring the canonical names are used; with fewer players BTN/SB/BB are
     named and the rest are labelled EP/MP by distance from the button."""
-    occupied = [s for s in CLOCKWISE if s in set(occupied_seats)]
+    seats = set(occupied_seats)
+    if dealer_seat is not None:
+        seats.add(dealer_seat)   # the button is always on a seated player
+    occupied = [s for s in CLOCKWISE if s in seats]
     if dealer_seat not in occupied or not 2 <= len(occupied) <= 9:
         return {}
     i, n = occupied.index(dealer_seat), len(occupied)

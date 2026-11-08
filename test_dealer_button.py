@@ -39,8 +39,15 @@ class PositionTests(unittest.TestCase):
         self.assertEqual(pos['bot_left'], 'CO')     # last before the button
         self.assertEqual(len(pos), 9)
 
-    def test_button_must_be_occupied(self):
-        self.assertEqual(dealer_button.derive_positions('hero', ['bot_right', 'right_low']), {})
+    def test_detected_button_is_added_to_occupancy(self):
+        # The button is always on a seated player, so a dealer the occupancy
+        # missed is still counted and positions derive.
+        pos = dealer_button.derive_positions('hero', ['bot_right', 'right_low'])
+        self.assertEqual(pos['hero'], 'BTN')
+        self.assertEqual(len(pos), 3)
+
+    def test_no_dealer_returns_empty(self):
+        self.assertEqual(dealer_button.derive_positions(None, ['bot_right', 'right_low']), {})
 
     def test_short_ring_names_blinds(self):
         pos = dealer_button.derive_positions('hero', ['hero', 'bot_right', 'right_low'])
