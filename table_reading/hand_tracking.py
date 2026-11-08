@@ -29,20 +29,28 @@ def read_hand_id(crop):
     """{hand_id, table_ref, hand_number, confidence, raw}. hand_number is the key
     temporal signal; hand_id/table_ref come only from a clean full read."""
     h, w = crop.shape[:2]
-    region = crop[int(0.645 * h):int(0.685 * h), int(0.22 * w):int(0.78 * w)]
-    gray = cv2.cvtColor(region, cv2.COLOR_BGR2GRAY)
-    gray = cv2.resize(gray, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
-    raw = ' '.join(image_to_string(gray, config='--psm 7').split())
-    compact = raw.replace(' ', '')
-    full = _HAND_ID.search(compact)
-    if full:
-        return dict(hand_id=full.group(0), table_ref='%s-%s' % (full.group(1), full.group(2)),
-                    hand_number=int(full.group(3)), confidence='high', raw=raw)
-    partial = _HAND_NUM.search(compact)
-    if partial:
-        return dict(hand_id=None, table_ref=None, hand_number=int(partial.group(1)),
-                    confidence='medium', raw=raw)
-    return dict(hand_id=None, table_ref=None, hand_number=None, confidence='abstain', raw=raw)
+    # The ID line sits at different heights per skin: NVT ~0.665, Evolution
+    # (Karekas/Veneza) ~0.72. Try each band with psm 7; the first full match wins,
+    # so NVT keeps reading exactly as before and the lower skin is also covered.
+    raws, partial_hit = [], None
+    for y0, y1 in ((0.645, 0.685), (0.70, 0.74)):
+        region = crop[int(y0 * h):int(y1 * h), int(0.22 * w):int(0.78 * w)]
+        gray = cv2.cvtColor(region, cv2.COLOR_BGR2GRAY)
+        gray = cv2.resize(gray, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
+        raw = ' '.join(image_to_string(gray, config='--psm 7').split())
+        raws.append(raw)
+        compact = raw.replace(' ', '')
+        full = _HAND_ID.search(compact)
+        if full:
+            return dict(hand_id=full.group(0), table_ref='%s-%s' % (full.group(1), full.group(2)),
+                        hand_number=int(full.group(3)), confidence='high', raw=raw)
+        partial = _HAND_NUM.search(compact)
+        if partial and partial_hit is None:
+            partial_hit = (int(partial.group(1)), raw)
+    if partial_hit:
+        return dict(hand_id=None, table_ref=None, hand_number=partial_hit[0],
+                    confidence='medium', raw=partial_hit[1])
+    return dict(hand_id=None, table_ref=None, hand_number=None, confidence='abstain', raw=' | '.join(raws))
 
 
 class HandTracker:
