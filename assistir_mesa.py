@@ -23,12 +23,13 @@ def advise_frame(frame_bgr, meta, advisor, max_tables=6):
     proposals = detect_table_crops(cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB),
                                    blockers=meta.get('blockers', ()), max_tables=max_tables)
     out = []
-    for i, proposal in enumerate([p for p in proposals if p.status == 'COMPLETE_CANDIDATE'], 1):
+    for proposal in [p for p in proposals if p.status == 'COMPLETE_CANDIDATE']:
         x, y, w, h = map(int, proposal.box)
         crop = frame_bgr[y:y + h, x:x + w]
         with ocr_frame():
             result = advise_table(crop, advisor)
-        out.append(dict(table_index=i, box=[x, y, w, h], result=result))
+        if result.get('is_table'):   # skip lobby/non-table false positives
+            out.append(dict(table_index=len(out) + 1, box=[x, y, w, h], result=result))
     return out
 
 

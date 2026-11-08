@@ -41,6 +41,15 @@ def advise_table(crop, advisor, *, mode=None, stage=None):
     tourney = read_tournament(crop)
     auto_mode, auto_stage = tournament_context(tourney)
     use_mode, use_stage = mode or auto_mode, stage or auto_stage
+    # Reject a crop that carries no table field at all (a lobby/tournament list the
+    # detector picked up as a false-positive blue table).
+    is_table = (state['pot'].get('pot_bb') is not None or state['dealer'].get('seat') is not None
+                or tourney.get('paid') is not None or hero is not None
+                or any(s['stack_bb'] is not None for s in state['seats'].values()))
+    if not is_table:
+        return dict(hand=hand, hero_cards=hero, board=board, table_state=state, tournament=tourney,
+                    context=dict(mode=use_mode, stage=use_stage), is_table=False,
+                    advice=dict(status='SKIP', reason='NAO_PARECE_MESA_LOBBY', exploratory=True, execution_allowed=False))
     if board.get('cards'):
         advice = dict(status='ABSTAIN', reason='POSTFLOP_NOT_COVERED', exploratory=True, execution_allowed=False)
     elif hero is None:
@@ -49,7 +58,7 @@ def advise_table(crop, advisor, *, mode=None, stage=None):
         advice = advisor.advise_from_reading(state, hero, mode=use_mode, stage=use_stage)
         if isinstance(advice, dict):
             advice.setdefault('caveats', []).append('SPOT_INFERRED_FROM_BETS')
-    return dict(hand=hand, hero_cards=hero, board=board, table_state=state,
+    return dict(hand=hand, hero_cards=hero, board=board, table_state=state, is_table=True,
                 tournament=tourney, context=dict(mode=use_mode, stage=use_stage), advice=advice)
 
 

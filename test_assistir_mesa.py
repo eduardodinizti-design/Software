@@ -23,7 +23,7 @@ class AdviseFrameTests(unittest.TestCase):
                  _Prop((120, 0, 100, 100), 'UNCERTAIN'),
                  _Prop((0, 110, 100, 80), 'COMPLETE_CANDIDATE')]
         with patch('assistir_mesa.detect_table_crops', return_value=props), \
-             patch('assistir_mesa.advise_table', return_value={'ok': True}) as adv:
+             patch('assistir_mesa.advise_table', return_value={'is_table': True, 'ok': True}) as adv:
             out = assistir_mesa.advise_frame(frame, {}, advisor=object(), max_tables=6)
         self.assertEqual([r['table_index'] for r in out], [1, 2])     # only the two COMPLETE ones
         self.assertEqual(out[0]['box'], [0, 0, 100, 100])

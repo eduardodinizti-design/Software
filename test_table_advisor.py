@@ -51,6 +51,23 @@ class AdviseTableTests(unittest.TestCase):
         r = self._run(None, [])
         self.assertEqual(r['advice']['reason'], 'HERO_CARDS_UNKNOWN')
 
+    def test_lobby_crop_is_skipped(self):
+        patches = [
+            patch('table_advisor.read_table_state', return_value=dict(
+                positions={}, seats={'hero': {'stack_bb': None, 'occupied': True}},
+                pot={'pot_bb': None}, to_call={'to_call_bb': None}, dealer={'seat': None})),
+            patch('table_advisor.read_hand_id', return_value=dict(hand_number=None)),
+            patch('table_advisor.read_board', return_value=dict(cards=[])),
+            patch('table_advisor.read_hero_cards', return_value=None),
+            patch('table_advisor.read_tournament', return_value=dict(paid=None, players_left=None, confidence='abstain')),
+        ]
+        for p in patches:
+            p.start()
+        self.addCleanup(lambda: [p.stop() for p in patches])
+        r = table_advisor.advise_table(self.crop, FakeAdvisor())
+        self.assertFalse(r['is_table'])
+        self.assertEqual(r['advice']['status'], 'SKIP')
+
 
 if __name__ == '__main__':
     unittest.main()
