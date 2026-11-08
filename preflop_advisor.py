@@ -129,8 +129,9 @@ class PreflopAdvisor:
 
     def advise_from_reading(self, table_state, hero_cards, **kwargs):
         """Pull hero's position/stack from a read_table_state result, infer the
-        spot from the bets (first_in or vs_open) and advise. The spot inference is
-        approximate (it rides on the nearest-seat bet attribution)."""
+        spot from the bets (first_in or vs_open), advise, and attach a founded
+        raise size for the recommended action. The spot inference is approximate
+        (it rides on the nearest-seat bet attribution)."""
         positions = table_state.get('positions') or {}
         hero = table_state.get('seats', {}).get('hero', {})
         if 'hero' not in positions:
@@ -141,10 +142,15 @@ class PreflopAdvisor:
             result = self.advise(spot='vs_open', vs=(spot['opener'],), **base, **kwargs)
             if isinstance(result, dict):
                 result.setdefault('caveats', []).append('OPENER_INFERRED_%s' % spot['opener'])
-            return result
-        if spot['spot'] == 'first_in':
-            return self.advise_first_in(**base, **kwargs)
-        return self._abstain(spot.get('reason', 'SPOT_NOT_COVERED'))
+        elif spot['spot'] == 'first_in':
+            result = self.advise_first_in(**base, **kwargs)
+        else:
+            return self._abstain(spot.get('reason', 'SPOT_NOT_COVERED'))
+        if isinstance(result, dict) and result.get('status') == 'ADVICE' and result.get('recommended'):
+            import sizing
+            result['sizing'] = sizing.size_from_reading(result['recommended'], table_state,
+                                                        positions['hero'], spot.get('opener'))
+        return result
 
     def _caveats(self, bucket, stack_bb, players, mode):
         out = ['EXPLORATORY_NOT_FOR_EXECUTION', 'NVT_REFERENCE_SHORT_STACK_ONLY']

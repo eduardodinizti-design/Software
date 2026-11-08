@@ -1,0 +1,3761 @@
+Microsoft Windows [versão 10.0.26200.9711]
+(c) Microsoft Corporation. Todos os direitos reservados.
+
+C:\Meus Projetos\Aplicativos\_repo_software>python testar_windows.py
+usage: testar_windows.py [-h] [--hwnd HWND] [--listar] [--cliques]
+testar_windows.py: error: Informe --hwnd NUMERO ou --listar
+
+C:\Meus Projetos\Aplicativos\_repo_software>python testar_windows.py --listar
+HWND: 1116028 PID: 8520 Titulo: PPPoker
+
+C:\Meus Projetos\Aplicativos\_repo_software>python assistir_mesa.py --hwnd 1116028 --ranges
+usage: assistir_mesa.py [-h] --hwnd HWND --ranges RANGES [--intervalo INTERVALO] [--max-tables MAX_TABLES]
+assistir_mesa.py: error: argument --ranges: expected one argument
+
+C:\Meus Projetos\Aplicativos\_repo_software>python assistir_mesa.py --hwnd 1116028 --ranges "c:\Meus Projetos\Aplicativos\nvt-ranges-validados.json"
+CONSELHEIRO AO VIVO: somente leitura, sem cliques, sem execucao. Ctrl+C encerra.
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: None BB | Pagar: None BB
+Fase: pagos=30 restantes=120 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 4
+  hero      pos=-     stack=37.3 BB
+  right_low pos=-     stack=None BB
+  right_up  pos=-     stack=49.8 BB
+  left_up   pos=-     stack=45.0 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: None BB | Pagar: None BB
+Fase: pagos=30 restantes=120 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 4
+  hero      pos=-     stack=37.3 BB
+  right_low pos=-     stack=None BB
+  right_up  pos=-     stack=49.8 BB
+  left_up   pos=-     stack=45.0 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: None BB | Pagar: None BB
+Fase: pagos=30 restantes=120 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 4
+  hero      pos=-     stack=37.3 BB
+  right_low pos=-     stack=None BB
+  right_up  pos=-     stack=49.8 BB
+  left_up   pos=-     stack=45.0 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: None BB | Pagar: None BB
+Fase: pagos=30 restantes=120 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 4
+  hero      pos=-     stack=37.3 BB
+  right_low pos=-     stack=None BB
+  right_up  pos=-     stack=49.8 BB
+  left_up   pos=-     stack=45.0 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: None BB | Pagar: None BB
+Fase: pagos=30 restantes=120 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 4
+  hero      pos=-     stack=37.3 BB
+  right_low pos=-     stack=None BB
+  right_up  pos=-     stack=49.8 BB
+  left_up   pos=-     stack=45.0 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: None BB | Pagar: None BB
+Fase: pagos=30 restantes=120 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 4
+  hero      pos=-     stack=37.3 BB
+  right_low pos=-     stack=None BB
+  right_up  pos=-     stack=49.8 BB
+  left_up   pos=-     stack=45.0 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: None BB | Pagar: None BB
+Fase: pagos=30 restantes=120 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 4
+  hero      pos=-     stack=37.3 BB
+  right_low pos=-     stack=None BB
+  right_up  pos=-     stack=49.8 BB
+  left_up   pos=-     stack=45.0 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: None BB | Pagar: None BB
+Fase: pagos=30 restantes=120 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 4
+  hero      pos=-     stack=37.3 BB
+  right_low pos=-     stack=None BB
+  right_up  pos=-     stack=49.8 BB
+  left_up   pos=-     stack=45.0 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: None BB | Pagar: None BB
+Fase: pagos=30 restantes=120 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 4
+  hero      pos=-     stack=37.3 BB
+  right_low pos=-     stack=None BB
+  right_up  pos=-     stack=49.8 BB
+  left_up   pos=-     stack=42.6 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: None BB | Pagar: None BB
+Fase: pagos=30 restantes=120 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 4
+  hero      pos=-     stack=37.3 BB
+  right_low pos=-     stack=None BB
+  right_up  pos=-     stack=49.8 BB
+  left_up   pos=-     stack=42.6 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: None BB | Pagar: None BB
+Fase: pagos=30 restantes=120 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 4
+  hero      pos=-     stack=37.3 BB
+  right_low pos=-     stack=None BB
+  right_up  pos=-     stack=49.8 BB
+  left_up   pos=-     stack=42.6 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 11.8 BB | Pagar: None BB
+Fase: pagos=30 restantes=120 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 4
+  hero      pos=-     stack=37.3 BB
+  right_low pos=-     stack=None BB
+  right_up  pos=-     stack=49.8 BB
+  left_up   pos=-     stack=42.6 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 11.8 BB | Pagar: None BB
+Fase: pagos=30 restantes=120 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 4
+  hero      pos=-     stack=37.3 BB
+  right_low pos=-     stack=None BB
+  right_up  pos=-     stack=49.8 BB
+  left_up   pos=-     stack=42.6 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 11.8 BB | Pagar: None BB
+Fase: pagos=30 restantes=120 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 4
+  hero      pos=-     stack=37.3 BB
+  right_low pos=-     stack=None BB
+  right_up  pos=-     stack=49.8 BB
+  left_up   pos=-     stack=42.6 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 11.8 BB | Pagar: None BB
+Fase: pagos=30 restantes=120 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 4
+  hero      pos=-     stack=37.3 BB
+  right_low pos=-     stack=None BB
+  right_up  pos=-     stack=49.8 BB
+  left_up   pos=-     stack=42.6 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 11.8 BB | Pagar: None BB
+Fase: pagos=30 restantes=120 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 4
+  hero      pos=-     stack=37.3 BB
+  right_low pos=-     stack=None BB
+  right_up  pos=-     stack=49.8 BB
+  left_up   pos=-     stack=42.6 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 11.8 BB | Pagar: None BB
+Fase: pagos=30 restantes=120 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 4
+  hero      pos=-     stack=37.3 BB
+  right_low pos=-     stack=None BB
+  right_up  pos=-     stack=49.8 BB
+  left_up   pos=-     stack=42.6 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 11.8 BB | Pagar: None BB
+Fase: pagos=30 restantes=120 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 4
+  hero      pos=-     stack=37.3 BB
+  right_low pos=-     stack=None BB
+  right_up  pos=-     stack=49.8 BB
+  left_up   pos=-     stack=42.6 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 11.8 BB | Pagar: None BB
+Fase: pagos=30 restantes=120 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 4
+  hero      pos=-     stack=37.3 BB
+  right_low pos=-     stack=None BB
+  right_up  pos=-     stack=49.8 BB
+  left_up   pos=-     stack=42.6 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 11.8 BB | Pagar: None BB
+Fase: pagos=30 restantes=120 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 4
+  hero      pos=-     stack=37.3 BB
+  right_low pos=-     stack=None BB
+  right_up  pos=-     stack=49.8 BB
+  left_up   pos=-     stack=42.6 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 11.8 BB | Pagar: None BB
+Fase: pagos=30 restantes=120 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 4
+  hero      pos=-     stack=37.3 BB
+  right_low pos=-     stack=None BB
+  right_up  pos=-     stack=49.8 BB
+  left_up   pos=-     stack=42.6 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 11.8 BB | Pagar: None BB
+Fase: pagos=30 restantes=120 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 5
+  hero      pos=SB    stack=37.3 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=49.8 BB
+  left_up   pos=CO    stack=42.6 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 14.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=120 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 5
+  hero      pos=SB    stack=37.3 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=49.8 BB
+  left_up   pos=CO    stack=40.2 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_CARDS_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 14.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=120 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 5
+  hero      pos=SB    stack=37.3 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=49.8 BB
+  left_up   pos=CO    stack=40.2 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 14.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=120 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 5
+  hero      pos=SB    stack=37.3 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=49.8 BB
+  left_up   pos=CO    stack=40.2 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 14.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=120 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 5
+  hero      pos=SB    stack=37.3 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=49.8 BB
+  left_up   pos=CO    stack=40.2 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 14.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=120 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 5
+  hero      pos=SB    stack=37.3 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=49.8 BB
+  left_up   pos=CO    stack=40.2 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 14.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=120 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 5
+  hero      pos=SB    stack=37.3 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=49.8 BB
+  left_up   pos=CO    stack=40.2 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 24.9 BB | Pagar: None BB
+Fase: pagos=30 restantes=120 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 5
+  hero      pos=SB    stack=37.3 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=49.8 BB
+  left_up   pos=CO    stack=40.2 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: None BB | Pagar: None BB
+Fase: pagos=30 restantes=120 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 5
+  hero      pos=SB    stack=37.3 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=49.8 BB
+  left_up   pos=CO    stack=40.2 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: None BB | Pagar: None BB
+Fase: pagos=30 restantes=120 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 5
+  hero      pos=SB    stack=37.3 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=49.8 BB
+  left_up   pos=CO    stack=40.2 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_up | Pote: 2.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=122 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 5
+  hero      pos=BB    stack=37.2 BB
+  right_low pos=HJ    stack=None BB
+  right_up  pos=CO    stack=48.7 BB
+  left_up   pos=BTN   stack=40.1 BB [DEALER]
+  left_low  pos=SB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_CARDS_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_up | Pote: None BB | Pagar: None BB
+Fase: pagos=30 restantes=122 -> chip_ev/mid
+Hero: ['2d', '9d']
+Assentos ocupados: 4
+  hero      pos=SB    stack=37.2 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=CO    stack=48.7 BB
+  left_up   pos=BTN   stack=40.1 BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: DEEP_STACK_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_up | Pote: None BB | Pagar: 1.0 BB
+Fase: pagos=30 restantes=122 -> chip_ev/mid
+Hero: ['2d', '9d']
+Assentos ocupados: 4
+  hero      pos=SB    stack=37.2 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=CO    stack=48.7 BB
+  left_up   pos=BTN   stack=40.1 BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: DEEP_STACK_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_up | Pote: 6.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=122 -> chip_ev/mid
+Hero: ['2d', '9d']
+Assentos ocupados: 5
+  hero      pos=BB    stack=33.2 BB
+  right_low pos=HJ    stack=None BB
+  right_up  pos=CO    stack=48.7 BB
+  left_up   pos=BTN   stack=40.1 BB [DEALER]
+  left_low  pos=SB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: DEEP_STACK_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_up | Pote: 10.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=122 -> chip_ev/mid
+Hero: ['2d', '9d']
+Assentos ocupados: 5
+  hero      pos=BB    stack=33.2 BB
+  right_low pos=HJ    stack=None BB
+  right_up  pos=CO    stack=48.7 BB
+  left_up   pos=BTN   stack=36.1 BB [DEALER]
+  left_low  pos=SB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: DEEP_STACK_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_up | Pote: 10.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=122 -> chip_ev/mid
+Hero: ['2d', '9d']
+Assentos ocupados: 5
+  hero      pos=BB    stack=33.2 BB
+  right_low pos=HJ    stack=None BB
+  right_up  pos=CO    stack=48.7 BB
+  left_up   pos=BTN   stack=36.1 BB [DEALER]
+  left_low  pos=SB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: DEEP_STACK_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_up | Pote: 10.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=122 -> chip_ev/mid
+Hero: ['2d', '9d']
+Assentos ocupados: 5
+  hero      pos=BB    stack=33.2 BB
+  right_low pos=HJ    stack=None BB
+  right_up  pos=CO    stack=48.7 BB
+  left_up   pos=BTN   stack=36.1 BB [DEALER]
+  left_low  pos=SB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: DEEP_STACK_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_up | Pote: 10.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=122 -> chip_ev/mid
+Hero: ['2d', '9d']
+Assentos ocupados: 5
+  hero      pos=BB    stack=33.2 BB
+  right_low pos=HJ    stack=None BB
+  right_up  pos=CO    stack=48.7 BB
+  left_up   pos=BTN   stack=36.1 BB [DEALER]
+  left_low  pos=SB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: DEEP_STACK_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_up | Pote: 10.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=122 -> chip_ev/mid
+Hero: ['2d', '9d']
+Assentos ocupados: 5
+  hero      pos=BB    stack=33.2 BB
+  right_low pos=HJ    stack=None BB
+  right_up  pos=CO    stack=48.7 BB
+  left_up   pos=BTN   stack=36.1 BB [DEALER]
+  left_low  pos=SB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: DEEP_STACK_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_up | Pote: 10.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=122 -> chip_ev/mid
+Hero: ['2d', '9d']
+Assentos ocupados: 5
+  hero      pos=BB    stack=33.2 BB
+  right_low pos=HJ    stack=None BB
+  right_up  pos=CO    stack=48.7 BB
+  left_up   pos=BTN   stack=36.1 BB [DEALER]
+  left_low  pos=SB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: DEEP_STACK_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_up | Pote: 10.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=122 -> chip_ev/mid
+Hero: ['2d', '9d']
+Assentos ocupados: 5
+  hero      pos=BB    stack=33.2 BB
+  right_low pos=HJ    stack=None BB
+  right_up  pos=CO    stack=48.7 BB
+  left_up   pos=BTN   stack=36.1 BB [DEALER]
+  left_low  pos=SB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: DEEP_STACK_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_up | Pote: 10.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=122 -> chip_ev/mid
+Hero: ['2d', '9d']
+Assentos ocupados: 5
+  hero      pos=BB    stack=33.2 BB
+  right_low pos=HJ    stack=None BB
+  right_up  pos=CO    stack=48.7 BB
+  left_up   pos=BTN   stack=36.1 BB [DEALER]
+  left_low  pos=SB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: DEEP_STACK_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_up | Pote: 10.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=122 -> chip_ev/mid
+Hero: ['2d', '9d']
+Assentos ocupados: 5
+  hero      pos=BB    stack=33.2 BB
+  right_low pos=HJ    stack=None BB
+  right_up  pos=CO    stack=48.7 BB
+  left_up   pos=BTN   stack=36.1 BB [DEALER]
+  left_low  pos=SB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: DEEP_STACK_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_up | Pote: 10.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=122 -> chip_ev/mid
+Hero: ['2d', '9d']
+Assentos ocupados: 5
+  hero      pos=BB    stack=33.2 BB
+  right_low pos=HJ    stack=None BB
+  right_up  pos=CO    stack=48.7 BB
+  left_up   pos=BTN   stack=36.1 BB [DEALER]
+  left_low  pos=SB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: DEEP_STACK_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_up | Pote: 10.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=122 -> chip_ev/mid
+Hero: ['2d', '9d']
+Assentos ocupados: 5
+  hero      pos=BB    stack=33.2 BB
+  right_low pos=HJ    stack=None BB
+  right_up  pos=CO    stack=48.7 BB
+  left_up   pos=BTN   stack=36.1 BB [DEALER]
+  left_low  pos=SB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: DEEP_STACK_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_up | Pote: 10.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=122 -> chip_ev/mid
+Hero: ['2d', '9d']
+Assentos ocupados: 5
+  hero      pos=BB    stack=33.2 BB
+  right_low pos=HJ    stack=None BB
+  right_up  pos=CO    stack=48.7 BB
+  left_up   pos=BTN   stack=36.1 BB [DEALER]
+  left_low  pos=SB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: DEEP_STACK_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_up | Pote: 10.2 BB | Pagar: 0.0 BB
+Fase: pagos=30 restantes=122 -> chip_ev/mid
+Hero: ['2d', '9d']
+Assentos ocupados: 5
+  hero      pos=BB    stack=None BB
+  right_low pos=HJ    stack=None BB
+  right_up  pos=CO    stack=48.7 BB
+  left_up   pos=BTN   stack=36.1 BB [DEALER]
+  left_low  pos=SB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+Nenhuma mesa completa localizada neste frame.
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_up | Pote: 13.6 BB | Pagar: None BB
+Fase: pagos=30 restantes=122 -> chip_ev/mid
+Hero: ['2d', '9d']
+Assentos ocupados: 5
+  hero      pos=BB    stack=None BB
+  right_low pos=HJ    stack=None BB
+  right_up  pos=CO    stack=48.7 BB
+  left_up   pos=BTN   stack=36.1 BB [DEALER]
+  left_low  pos=SB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_up | Pote: 13.6 BB | Pagar: None BB
+Fase: pagos=30 restantes=122 -> chip_ev/mid
+Hero: ['2d', '9d']
+Assentos ocupados: 5
+  hero      pos=BB    stack=None BB
+  right_low pos=HJ    stack=None BB
+  right_up  pos=CO    stack=48.7 BB
+  left_up   pos=BTN   stack=36.1 BB [DEALER]
+  left_low  pos=SB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_up | Pote: None BB | Pagar: None BB
+Fase: pagos=30 restantes=122 -> chip_ev/mid
+Hero: ['2d', '9d']
+Assentos ocupados: 5
+  hero      pos=BB    stack=43.5 BB
+  right_low pos=HJ    stack=None BB
+  right_up  pos=CO    stack=48.7 BB
+  left_up   pos=BTN   stack=36.1 BB [DEALER]
+  left_low  pos=SB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_up | Pote: None BB | Pagar: None BB
+Fase: pagos=30 restantes=122 -> chip_ev/mid
+Hero: ['2d', '9d']
+Assentos ocupados: 5
+  hero      pos=BB    stack=43.5 BB
+  right_low pos=HJ    stack=None BB
+  right_up  pos=CO    stack=48.7 BB
+  left_up   pos=BTN   stack=36.1 BB [DEALER]
+  left_low  pos=SB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: top_right | Pote: 0.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=122 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 4
+  hero      pos=-     stack=43.3 BB
+  right_up  pos=-     stack=48.6 BB
+  left_up   pos=-     stack=36.0 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_CARDS_UNKNOWN
+Nenhuma mesa completa localizada neste frame.
+Nenhuma mesa completa localizada neste frame.
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: top_right | Pote: 2.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=123 -> chip_ev/mid
+Hero: ['8c', 'Js']
+Assentos ocupados: 3
+  hero      pos=-     stack=43.3 BB
+  right_up  pos=-     stack=48.1 BB
+  left_up   pos=-     stack=36.0 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_POSITION_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: top_right | Pote: 7.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=123 -> chip_ev/mid
+Hero: ['8c', 'Js']
+Assentos ocupados: 4
+  hero      pos=-     stack=35.6 BB
+  right_up  pos=-     stack=48.1 BB
+  left_up   pos=-     stack=36.0 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_POSITION_UNKNOWN
+Nenhuma mesa completa localizada neste frame.
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: top_right | Pote: 7.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=123 -> chip_ev/mid
+Hero: ['8c', 'Js']
+Assentos ocupados: 4
+  hero      pos=-     stack=35.6 BB
+  right_up  pos=-     stack=48.1 BB
+  left_up   pos=-     stack=36.0 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_POSITION_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: top_right | Pote: 7.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=123 -> chip_ev/mid
+Hero: ['8c', 'Js']
+Assentos ocupados: 4
+  hero      pos=-     stack=35.6 BB
+  right_up  pos=-     stack=48.1 BB
+  left_up   pos=-     stack=36.0 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_POSITION_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: top_right | Pote: 7.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=123 -> chip_ev/mid
+Hero: ['8c', 'Js']
+Assentos ocupados: 4
+  hero      pos=-     stack=35.6 BB
+  right_up  pos=-     stack=48.1 BB
+  left_up   pos=-     stack=36.0 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_POSITION_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: top_right | Pote: 7.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=123 -> chip_ev/mid
+Hero: ['8c', 'Js']
+Assentos ocupados: 4
+  hero      pos=-     stack=35.6 BB
+  right_up  pos=-     stack=48.1 BB
+  left_up   pos=-     stack=36.0 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_POSITION_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: top_right | Pote: 108.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=123 -> chip_ev/mid
+Hero: ['8c', 'Js']
+Assentos ocupados: 4
+  hero      pos=-     stack=35.6 BB
+  right_up  pos=-     stack=48.1 BB
+  left_up   pos=-     stack=36.0 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_POSITION_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: top_right | Pote: 108.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=123 -> chip_ev/mid
+Hero: ['8c', 'Js']
+Assentos ocupados: 4
+  hero      pos=-     stack=35.6 BB
+  right_up  pos=-     stack=48.1 BB
+  left_up   pos=-     stack=36.0 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_POSITION_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: top_right | Pote: 108.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=121 -> chip_ev/mid
+Hero: ['8c', 'Js']
+Assentos ocupados: 4
+  hero      pos=-     stack=35.6 BB
+  right_up  pos=-     stack=48.1 BB
+  left_up   pos=-     stack=36.0 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_POSITION_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: top_right | Pote: 108.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=121 -> chip_ev/mid
+Hero: ['8c', 'Js']
+Assentos ocupados: 4
+  hero      pos=-     stack=35.6 BB
+  right_up  pos=-     stack=48.1 BB
+  left_up   pos=-     stack=36.0 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_POSITION_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: top_right | Pote: 108.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=121 -> chip_ev/mid
+Hero: ['8c', 'Js']
+Assentos ocupados: 4
+  hero      pos=-     stack=35.6 BB
+  right_up  pos=-     stack=48.1 BB
+  left_up   pos=-     stack=36.0 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_POSITION_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: top_right | Pote: 108.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=121 -> chip_ev/mid
+Hero: ['8c', 'Js']
+Assentos ocupados: 4
+  hero      pos=-     stack=35.6 BB
+  right_up  pos=-     stack=48.1 BB
+  left_up   pos=-     stack=36.0 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_POSITION_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: top_right | Pote: 108.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=121 -> chip_ev/mid
+Hero: ['8c', 'Js']
+Assentos ocupados: 4
+  hero      pos=-     stack=35.6 BB
+  right_up  pos=-     stack=48.1 BB
+  left_up   pos=-     stack=36.0 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_POSITION_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: top_right | Pote: 108.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=121 -> chip_ev/mid
+Hero: ['8c', 'Js']
+Assentos ocupados: 4
+  hero      pos=-     stack=35.6 BB
+  right_up  pos=-     stack=48.1 BB
+  left_up   pos=-     stack=36.0 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_POSITION_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: top_right | Pote: 108.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=121 -> chip_ev/mid
+Hero: ['8c', 'Js']
+Assentos ocupados: 4
+  hero      pos=-     stack=35.6 BB
+  right_up  pos=-     stack=48.1 BB
+  left_up   pos=-     stack=36.0 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_POSITION_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: top_right | Pote: 108.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=121 -> chip_ev/mid
+Hero: ['8c', 'Js']
+Assentos ocupados: 4
+  hero      pos=-     stack=35.6 BB
+  right_up  pos=-     stack=48.1 BB
+  left_up   pos=-     stack=36.0 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_POSITION_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: top_right | Pote: 108.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=121 -> chip_ev/mid
+Hero: ['8c', 'Js']
+Assentos ocupados: 5
+  hero      pos=-     stack=35.6 BB
+  right_low pos=-     stack=None BB
+  right_up  pos=-     stack=48.1 BB
+  left_up   pos=-     stack=36.0 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_POSITION_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: top_right | Pote: 108.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=121 -> chip_ev/mid
+Hero: ['8c', 'Js']
+Assentos ocupados: 5
+  hero      pos=-     stack=35.6 BB
+  right_low pos=-     stack=None BB
+  right_up  pos=-     stack=48.1 BB
+  left_up   pos=-     stack=36.0 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_POSITION_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: top_right | Pote: 108.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=121 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 5
+  hero      pos=-     stack=35.6 BB
+  right_low pos=-     stack=None BB
+  right_up  pos=-     stack=48.1 BB
+  left_up   pos=-     stack=36.0 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_CARDS_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: top_right | Pote: 151.5 BB | Pagar: None BB
+Fase: pagos=30 restantes=121 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 4
+  hero      pos=-     stack=35.6 BB
+  right_low pos=-     stack=None BB
+  right_up  pos=-     stack=48.1 BB
+  left_up   pos=-     stack=36.0 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_CARDS_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: top_right | Pote: 151.5 BB | Pagar: None BB
+Fase: pagos=30 restantes=121 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 4
+  hero      pos=-     stack=None BB
+  right_low pos=-     stack=None BB
+  right_up  pos=-     stack=48.1 BB
+  left_up   pos=-     stack=36.0 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_CARDS_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: top_right | Pote: 151.5 BB | Pagar: None BB
+Fase: pagos=30 restantes=121 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 4
+  hero      pos=-     stack=None BB
+  right_low pos=-     stack=None BB
+  right_up  pos=-     stack=48.1 BB
+  left_up   pos=-     stack=36.0 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_CARDS_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: top_right | Pote: None BB | Pagar: None BB
+Fase: pagos=30 restantes=121 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 5
+  hero      pos=-     stack=35.6 BB
+  right_low pos=-     stack=None BB
+  right_up  pos=-     stack=48.1 BB
+  left_up   pos=-     stack=36.0 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_CARDS_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: top_right | Pote: None BB | Pagar: None BB
+Fase: pagos=30 restantes=121 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 4
+  hero      pos=-     stack=35.6 BB
+  right_low pos=-     stack=None BB
+  right_up  pos=-     stack=48.1 BB
+  left_up   pos=-     stack=36.0 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_CARDS_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_up | Pote: 0.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=121 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 5
+  hero      pos=HJ    stack=35.5 BB
+  right_low pos=CO    stack=None BB
+  right_up  pos=BTN   stack=47.9 BB [DEALER]
+  left_up   pos=SB    stack=35.8 BB
+  left_low  pos=BB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_CARDS_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_up | Pote: 2.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=123 -> chip_ev/mid
+Hero: ['4s', '2s']
+Assentos ocupados: 4
+  hero      pos=CO    stack=34.5 BB
+  right_up  pos=BTN   stack=47.9 BB [DEALER]
+  left_up   pos=SB    stack=35.8 BB
+  left_low  pos=BB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: DEEP_STACK_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_up | Pote: 2.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=123 -> chip_ev/mid
+Hero: ['4s', '2s']
+Assentos ocupados: 4
+  hero      pos=CO    stack=34.5 BB
+  right_up  pos=BTN   stack=47.9 BB [DEALER]
+  left_up   pos=SB    stack=35.8 BB
+  left_low  pos=BB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: DEEP_STACK_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_up | Pote: 2.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=123 -> chip_ev/mid
+Hero: ['4s', '2s']
+Assentos ocupados: 4
+  hero      pos=CO    stack=34.5 BB
+  right_up  pos=BTN   stack=47.9 BB [DEALER]
+  left_up   pos=SB    stack=35.8 BB
+  left_low  pos=BB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: DEEP_STACK_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_up | Pote: 2.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=123 -> chip_ev/mid
+Hero: ['4s', '2s']
+Assentos ocupados: 4
+  hero      pos=CO    stack=34.5 BB
+  right_up  pos=BTN   stack=47.9 BB [DEALER]
+  left_up   pos=SB    stack=35.8 BB
+  left_low  pos=BB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: DEEP_STACK_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_up | Pote: 2.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=123 -> chip_ev/mid
+Hero: ['4s', '2s']
+Assentos ocupados: 4
+  hero      pos=CO    stack=34.5 BB
+  right_up  pos=BTN   stack=47.9 BB [DEALER]
+  left_up   pos=SB    stack=35.8 BB
+  left_low  pos=BB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: DEEP_STACK_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_up | Pote: 2.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=123 -> chip_ev/mid
+Hero: ['4s', '2s']
+Assentos ocupados: 4
+  hero      pos=CO    stack=34.5 BB
+  right_up  pos=BTN   stack=47.9 BB [DEALER]
+  left_up   pos=SB    stack=35.8 BB
+  left_low  pos=BB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: DEEP_STACK_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_up | Pote: 2.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=123 -> chip_ev/mid
+Hero: ['4s', '2s']
+Assentos ocupados: 4
+  hero      pos=CO    stack=34.5 BB
+  right_up  pos=BTN   stack=47.9 BB [DEALER]
+  left_up   pos=SB    stack=35.8 BB
+  left_low  pos=BB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: DEEP_STACK_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_up | Pote: 2.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=123 -> chip_ev/mid
+Hero: ['4s', '2s']
+Assentos ocupados: 4
+  hero      pos=CO    stack=34.5 BB
+  right_up  pos=BTN   stack=47.9 BB [DEALER]
+  left_up   pos=SB    stack=35.8 BB
+  left_low  pos=BB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: DEEP_STACK_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_up | Pote: 2.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=123 -> chip_ev/mid
+Hero: ['4s', '2s']
+Assentos ocupados: 4
+  hero      pos=CO    stack=34.5 BB
+  right_up  pos=BTN   stack=47.9 BB [DEALER]
+  left_up   pos=SB    stack=35.8 BB
+  left_low  pos=BB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: DEEP_STACK_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_up | Pote: 2.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=124 -> chip_ev/mid
+Hero: ['4s', '2s']
+Assentos ocupados: 4
+  hero      pos=CO    stack=34.5 BB
+  right_up  pos=BTN   stack=47.9 BB [DEALER]
+  left_up   pos=SB    stack=35.8 BB
+  left_low  pos=BB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: DEEP_STACK_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_up | Pote: 2.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=124 -> chip_ev/mid
+Hero: ['4s', '2s']
+Assentos ocupados: 4
+  hero      pos=CO    stack=34.5 BB
+  right_up  pos=BTN   stack=47.9 BB [DEALER]
+  left_up   pos=SB    stack=35.8 BB
+  left_low  pos=BB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: DEEP_STACK_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_up | Pote: 2.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=124 -> chip_ev/mid
+Hero: ['4s', '2s']
+Assentos ocupados: 4
+  hero      pos=CO    stack=34.5 BB
+  right_up  pos=BTN   stack=47.9 BB [DEALER]
+  left_up   pos=SB    stack=35.8 BB
+  left_low  pos=BB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: DEEP_STACK_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_up | Pote: 2.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=124 -> chip_ev/mid
+Hero: ['4s', '2s']
+Assentos ocupados: 4
+  hero      pos=CO    stack=34.5 BB
+  right_up  pos=BTN   stack=47.9 BB [DEALER]
+  left_up   pos=SB    stack=35.8 BB
+  left_low  pos=BB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: DEEP_STACK_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_up | Pote: 7.5 BB | Pagar: 4.2 BB
+Fase: pagos=30 restantes=124 -> chip_ev/mid
+Hero: ['4s', '2s']
+Assentos ocupados: 5
+  hero      pos=HJ    stack=34.5 BB
+  right_low pos=CO    stack=None BB
+  right_up  pos=BTN   stack=42.7 BB [DEALER]
+  left_up   pos=SB    stack=35.8 BB
+  left_low  pos=BB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: DEEP_STACK_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_up | Pote: 7.5 BB | Pagar: 4.2 BB
+Fase: pagos=30 restantes=124 -> chip_ev/mid
+Hero: ['4s', '2s']
+Assentos ocupados: 5
+  hero      pos=HJ    stack=34.5 BB
+  right_low pos=CO    stack=None BB
+  right_up  pos=BTN   stack=42.7 BB [DEALER]
+  left_up   pos=SB    stack=35.8 BB
+  left_low  pos=BB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: DEEP_STACK_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_up | Pote: 1.7 BB | Pagar: 0.0 BB
+Fase: pagos=30 restantes=124 -> chip_ev/mid
+Hero: ['4s', '2s']
+Assentos ocupados: 5
+  hero      pos=HJ    stack=30.2 BB
+  right_low pos=CO    stack=None BB
+  right_up  pos=BTN   stack=42.7 BB [DEALER]
+  left_up   pos=SB    stack=35.8 BB
+  left_low  pos=BB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: DEEP_STACK_NOT_COVERED
+Nenhuma mesa completa localizada neste frame.
+Nenhuma mesa completa localizada neste frame.
+Nenhuma mesa completa localizada neste frame.
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_up | Pote: 18.1 BB | Pagar: None BB
+Fase: pagos=30 restantes=124 -> chip_ev/mid
+Hero: ['4s', '2s']
+Assentos ocupados: 5
+  hero      pos=HJ    stack=None BB
+  right_low pos=CO    stack=None BB
+  right_up  pos=BTN   stack=42.7 BB [DEALER]
+  left_up   pos=SB    stack=35.8 BB
+  left_low  pos=BB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: STACK_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_up | Pote: 24.5 BB | Pagar: 0.0 BB
+Fase: pagos=30 restantes=124 -> chip_ev/mid
+Hero: ['4s', '2s']
+Assentos ocupados: 5
+  hero      pos=HJ    stack=23.8 BB
+  right_low pos=CO    stack=None BB
+  right_up  pos=BTN   stack=36.3 BB [DEALER]
+  left_up   pos=SB    stack=35.8 BB
+  left_low  pos=BB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ACAO: FOLD | mix: fold 100% | stack usado: 25bb | no: chip_ev|mid|25|open_raise|HJ||-
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_up | Pote: 24.5 BB | Pagar: None BB
+Fase: pagos=30 restantes=124 -> chip_ev/mid
+Hero: ['4s', '2s']
+Assentos ocupados: 5
+  hero      pos=HJ    stack=None BB
+  right_low pos=CO    stack=None BB
+  right_up  pos=BTN   stack=36.3 BB [DEALER]
+  left_up   pos=SB    stack=35.8 BB
+  left_low  pos=BB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: STACK_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_up | Pote: 24.5 BB | Pagar: 0.0 BB
+Fase: pagos=30 restantes=124 -> chip_ev/mid
+Hero: ['4s', '2s']
+Assentos ocupados: 5
+  hero      pos=HJ    stack=None BB
+  right_low pos=CO    stack=None BB
+  right_up  pos=BTN   stack=36.3 BB [DEALER]
+  left_up   pos=SB    stack=35.8 BB
+  left_low  pos=BB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: STACK_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_up | Pote: 24.5 BB | Pagar: 0.0 BB
+Fase: pagos=30 restantes=124 -> chip_ev/mid
+Hero: ['4s', '2s']
+Assentos ocupados: 5
+  hero      pos=HJ    stack=23.8 BB
+  right_low pos=CO    stack=None BB
+  right_up  pos=BTN   stack=36.3 BB [DEALER]
+  left_up   pos=SB    stack=35.8 BB
+  left_low  pos=BB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ACAO: FOLD | mix: fold 100% | stack usado: 25bb | no: chip_ev|mid|25|open_raise|HJ||-
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_up | Pote: 24.5 BB | Pagar: 0.0 BB
+Fase: pagos=30 restantes=124 -> chip_ev/mid
+Hero: ['4s', '2s']
+Assentos ocupados: 5
+  hero      pos=HJ    stack=23.8 BB
+  right_low pos=CO    stack=None BB
+  right_up  pos=BTN   stack=36.3 BB [DEALER]
+  left_up   pos=SB    stack=35.8 BB
+  left_low  pos=BB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ACAO: FOLD | mix: fold 100% | stack usado: 25bb | no: chip_ev|mid|25|open_raise|HJ||-
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_up | Pote: 24.5 BB | Pagar: 0.0 BB
+Fase: pagos=30 restantes=124 -> chip_ev/mid
+Hero: ['4s', '2s']
+Assentos ocupados: 5
+  hero      pos=HJ    stack=23.8 BB
+  right_low pos=CO    stack=None BB
+  right_up  pos=BTN   stack=36.3 BB [DEALER]
+  left_up   pos=SB    stack=35.8 BB
+  left_low  pos=BB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ACAO: FOLD | mix: fold 100% | stack usado: 25bb | no: chip_ev|mid|25|open_raise|HJ||-
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_up | Pote: 24.5 BB | Pagar: 0.0 BB
+Fase: pagos=30 restantes=124 -> chip_ev/mid
+Hero: ['4s', '2s']
+Assentos ocupados: 5
+  hero      pos=HJ    stack=23.8 BB
+  right_low pos=CO    stack=None BB
+  right_up  pos=BTN   stack=36.3 BB [DEALER]
+  left_up   pos=SB    stack=35.8 BB
+  left_low  pos=BB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ACAO: FOLD | mix: fold 100% | stack usado: 25bb | no: chip_ev|mid|25|open_raise|HJ||-
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_up | Pote: 24.5 BB | Pagar: None BB
+Fase: pagos=30 restantes=124 -> chip_ev/mid
+Hero: ['4s', '2s']
+Assentos ocupados: 5
+  hero      pos=HJ    stack=None BB
+  right_low pos=CO    stack=None BB
+  right_up  pos=BTN   stack=36.3 BB [DEALER]
+  left_up   pos=SB    stack=35.8 BB
+  left_low  pos=BB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: STACK_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_up | Pote: 49.0 BB | Pagar: None BB
+Fase: pagos=30 restantes=124 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 5
+  hero      pos=HJ    stack=23.8 BB
+  right_low pos=CO    stack=None BB
+  right_up  pos=BTN   stack=11.8 BB [DEALER]
+  left_up   pos=SB    stack=35.8 BB
+  left_low  pos=BB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_CARDS_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_up | Pote: 49.0 BB | Pagar: None BB
+Fase: pagos=30 restantes=124 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 5
+  hero      pos=HJ    stack=23.8 BB
+  right_low pos=CO    stack=None BB
+  right_up  pos=BTN   stack=11.8 BB [DEALER]
+  left_up   pos=SB    stack=35.8 BB
+  left_low  pos=BB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_CARDS_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_up | Pote: 49.0 BB | Pagar: None BB
+Fase: pagos=30 restantes=124 -> chip_ev/mid
+Hero: ['4s', '2s']
+Assentos ocupados: 5
+  hero      pos=HJ    stack=23.8 BB
+  right_low pos=CO    stack=None BB
+  right_up  pos=BTN   stack=11.8 BB [DEALER]
+  left_up   pos=SB    stack=35.8 BB
+  left_low  pos=BB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: None | Pote: None BB | Pagar: None BB
+Fase: pagos=30 restantes=124 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 5
+  hero      pos=-     stack=23.8 BB
+  right_low pos=-     stack=None BB
+  right_up  pos=-     stack=60.8 BB
+  left_up   pos=-     stack=35.8 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_CARDS_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_up | Pote: None BB | Pagar: None BB
+Fase: pagos=30 restantes=124 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 5
+  hero      pos=HJ    stack=23.8 BB
+  right_low pos=CO    stack=None BB
+  right_up  pos=BTN   stack=60.8 BB [DEALER]
+  left_up   pos=SB    stack=35.8 BB
+  left_low  pos=BB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_CARDS_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 0.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=124 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 5
+  hero      pos=CO    stack=23.7 BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=60.7 BB
+  left_up   pos=BB    stack=35.7 BB
+  left_low  pos=HJ    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_CARDS_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 2.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 3
+  hero      pos=-     stack=23.2 BB
+  right_up  pos=-     stack=60.7 BB
+  left_up   pos=-     stack=35.7 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_POSITION_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 3.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 3
+  hero      pos=-     stack=23.2 BB
+  right_up  pos=-     stack=60.7 BB
+  left_up   pos=-     stack=34.7 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_POSITION_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 3.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 3
+  hero      pos=-     stack=23.2 BB
+  right_up  pos=-     stack=60.7 BB
+  left_up   pos=-     stack=34.7 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_POSITION_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 3.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 3
+  hero      pos=-     stack=23.2 BB
+  right_up  pos=-     stack=60.7 BB
+  left_up   pos=-     stack=34.7 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_POSITION_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 3.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 3
+  hero      pos=-     stack=23.2 BB
+  right_up  pos=-     stack=60.7 BB
+  left_up   pos=-     stack=34.7 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_POSITION_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 3.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 3
+  hero      pos=-     stack=23.2 BB
+  right_up  pos=-     stack=60.7 BB
+  left_up   pos=-     stack=34.7 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_POSITION_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 3.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 3
+  hero      pos=-     stack=23.2 BB
+  right_up  pos=-     stack=60.7 BB
+  left_up   pos=-     stack=34.7 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_POSITION_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 3.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 3
+  hero      pos=-     stack=23.2 BB
+  right_up  pos=-     stack=60.7 BB
+  left_up   pos=-     stack=34.7 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_POSITION_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 3.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 3
+  hero      pos=-     stack=23.2 BB
+  right_up  pos=-     stack=60.7 BB
+  left_up   pos=-     stack=34.7 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_POSITION_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 4.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 3
+  hero      pos=-     stack=23.2 BB
+  right_up  pos=-     stack=59.7 BB
+  left_up   pos=-     stack=34.7 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_POSITION_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 4.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 4
+  hero      pos=CO    stack=23.2 BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=59.7 BB
+  left_up   pos=BB    stack=34.7 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ACAO: RAISE | mix: raise 100% | stack usado: 25bb | no: chip_ev|mid|25|open_raise|CO||-
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.2 BB | Pagar: 0.5 BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 4
+  hero      pos=CO    stack=23.2 BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=59.7 BB
+  left_up   pos=BB    stack=34.7 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ACAO: RAISE | mix: raise 100% | stack usado: 25bb | no: chip_ev|mid|25|open_raise|CO||-
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.2 BB | Pagar: 0.5 BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 4
+  hero      pos=CO    stack=23.2 BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=59.7 BB
+  left_up   pos=BB    stack=34.7 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ACAO: RAISE | mix: raise 100% | stack usado: 25bb | no: chip_ev|mid|25|open_raise|CO||-
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.2 BB | Pagar: 0.5 BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 4
+  hero      pos=CO    stack=23.2 BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=59.7 BB
+  left_up   pos=BB    stack=34.7 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ACAO: RAISE | mix: raise 100% | stack usado: 25bb | no: chip_ev|mid|25|open_raise|CO||-
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.2 BB | Pagar: 0.5 BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 4
+  hero      pos=CO    stack=23.2 BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=59.7 BB
+  left_up   pos=BB    stack=34.7 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ACAO: RAISE | mix: raise 100% | stack usado: 25bb | no: chip_ev|mid|25|open_raise|CO||-
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.2 BB | Pagar: 0.5 BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 4
+  hero      pos=CO    stack=23.2 BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=59.7 BB
+  left_up   pos=BB    stack=34.7 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ACAO: RAISE | mix: raise 100% | stack usado: 25bb | no: chip_ev|mid|25|open_raise|CO||-
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.2 BB | Pagar: 0.5 BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 4
+  hero      pos=CO    stack=23.2 BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=59.7 BB
+  left_up   pos=BB    stack=34.7 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ACAO: RAISE | mix: raise 100% | stack usado: 25bb | no: chip_ev|mid|25|open_raise|CO||-
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.2 BB | Pagar: 0.5 BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 4
+  hero      pos=CO    stack=23.2 BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=59.7 BB
+  left_up   pos=BB    stack=34.7 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ACAO: RAISE | mix: raise 100% | stack usado: 25bb | no: chip_ev|mid|25|open_raise|CO||-
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 5
+  hero      pos=CO    stack=22.7 BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=59.7 BB
+  left_up   pos=BB    stack=34.7 BB
+  left_low  pos=HJ    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ACAO: RAISE | mix: raise 100% | stack usado: 25bb | no: chip_ev|mid|25|open_raise|CO||-
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.7 BB | Pagar: 0.0 BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 3
+  hero      pos=-     stack=22.7 BB
+  right_up  pos=-     stack=59.7 BB
+  left_up   pos=-     stack=34.7 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_POSITION_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.7 BB | Pagar: 0.0 BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 3
+  hero      pos=-     stack=22.7 BB
+  right_up  pos=-     stack=59.7 BB
+  left_up   pos=-     stack=34.7 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.7 BB | Pagar: 0.0 BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 3
+  hero      pos=-     stack=22.7 BB
+  right_up  pos=-     stack=59.7 BB
+  left_up   pos=-     stack=34.7 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.7 BB | Pagar: 0.0 BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 3
+  hero      pos=-     stack=22.7 BB
+  right_up  pos=-     stack=59.7 BB
+  left_up   pos=-     stack=34.7 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.7 BB | Pagar: 0.0 BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 3
+  hero      pos=-     stack=22.7 BB
+  right_up  pos=-     stack=59.7 BB
+  left_up   pos=-     stack=34.7 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.7 BB | Pagar: 0.0 BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 3
+  hero      pos=-     stack=22.7 BB
+  right_up  pos=-     stack=59.7 BB
+  left_up   pos=-     stack=34.7 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.7 BB | Pagar: 0.0 BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 3
+  hero      pos=-     stack=22.7 BB
+  right_up  pos=-     stack=59.7 BB
+  left_up   pos=-     stack=34.7 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.7 BB | Pagar: 0.0 BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 3
+  hero      pos=-     stack=22.7 BB
+  right_up  pos=-     stack=59.7 BB
+  left_up   pos=-     stack=34.7 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.7 BB | Pagar: 0.0 BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 3
+  hero      pos=-     stack=22.7 BB
+  right_up  pos=-     stack=59.7 BB
+  left_up   pos=-     stack=34.7 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.7 BB | Pagar: 0.0 BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 3
+  hero      pos=-     stack=22.7 BB
+  right_up  pos=-     stack=59.7 BB
+  left_up   pos=-     stack=34.7 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 4
+  hero      pos=-     stack=None BB
+  right_up  pos=-     stack=59.7 BB
+  left_up   pos=-     stack=34.7 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 4
+  hero      pos=-     stack=None BB
+  right_up  pos=-     stack=59.7 BB
+  left_up   pos=-     stack=34.7 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 4
+  hero      pos=-     stack=None BB
+  right_up  pos=-     stack=59.7 BB
+  left_up   pos=-     stack=34.7 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 4
+  hero      pos=-     stack=None BB
+  right_up  pos=-     stack=59.7 BB
+  left_up   pos=-     stack=34.7 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 4
+  hero      pos=-     stack=None BB
+  right_up  pos=-     stack=59.7 BB
+  left_up   pos=-     stack=34.7 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 4
+  hero      pos=-     stack=None BB
+  right_up  pos=-     stack=59.7 BB
+  left_up   pos=-     stack=34.7 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 4
+  hero      pos=-     stack=None BB
+  right_up  pos=-     stack=59.7 BB
+  left_up   pos=-     stack=34.7 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 4
+  hero      pos=-     stack=None BB
+  right_up  pos=-     stack=59.7 BB
+  left_up   pos=-     stack=34.7 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 4
+  hero      pos=-     stack=None BB
+  right_up  pos=-     stack=59.7 BB
+  left_up   pos=-     stack=34.7 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.7 BB | Pagar: 0.0 BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 3
+  hero      pos=-     stack=None BB
+  right_up  pos=-     stack=59.7 BB
+  left_up   pos=-     stack=34.7 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.7 BB | Pagar: 0.0 BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 3
+  hero      pos=-     stack=22.7 BB
+  right_up  pos=-     stack=59.7 BB
+  left_up   pos=-     stack=34.7 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.7 BB | Pagar: 0.0 BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 3
+  hero      pos=-     stack=22.7 BB
+  right_up  pos=-     stack=59.7 BB
+  left_up   pos=-     stack=34.7 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 4
+  hero      pos=-     stack=None BB
+  right_up  pos=-     stack=59.7 BB
+  left_up   pos=-     stack=34.7 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 4
+  hero      pos=-     stack=None BB
+  right_up  pos=-     stack=59.7 BB
+  left_up   pos=-     stack=34.7 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 4
+  hero      pos=-     stack=None BB
+  right_up  pos=-     stack=59.7 BB
+  left_up   pos=-     stack=34.7 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 4
+  hero      pos=-     stack=None BB
+  right_up  pos=-     stack=59.7 BB
+  left_up   pos=-     stack=34.7 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 4
+  hero      pos=-     stack=None BB
+  right_up  pos=-     stack=59.7 BB
+  left_up   pos=-     stack=34.7 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 4
+  hero      pos=-     stack=None BB
+  right_up  pos=-     stack=59.7 BB
+  left_up   pos=-     stack=34.7 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 4
+  hero      pos=-     stack=None BB
+  right_up  pos=-     stack=59.7 BB
+  left_up   pos=-     stack=34.7 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 3
+  hero      pos=-     stack=None BB
+  right_up  pos=-     stack=59.7 BB
+  left_up   pos=-     stack=34.7 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 3
+  hero      pos=-     stack=None BB
+  right_up  pos=-     stack=59.7 BB
+  left_up   pos=-     stack=34.7 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 3
+  hero      pos=-     stack=None BB
+  right_up  pos=-     stack=59.7 BB
+  left_up   pos=-     stack=34.7 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 4
+  hero      pos=-     stack=None BB
+  right_up  pos=-     stack=59.7 BB
+  left_up   pos=-     stack=34.7 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 4
+  hero      pos=-     stack=None BB
+  right_up  pos=-     stack=59.7 BB
+  left_up   pos=-     stack=34.7 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 5
+  hero      pos=CO    stack=None BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=59.7 BB
+  left_up   pos=BB    stack=34.7 BB
+  left_low  pos=HJ    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 5.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 5
+  hero      pos=CO    stack=None BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=59.7 BB
+  left_up   pos=BB    stack=34.7 BB
+  left_low  pos=HJ    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 8.6 BB | Pagar: 2.8 BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 5
+  hero      pos=CO    stack=None BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=59.7 BB
+  left_up   pos=BB    stack=34.7 BB
+  left_low  pos=HJ    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 8.6 BB | Pagar: 2.8 BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 5
+  hero      pos=CO    stack=22.7 BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=59.7 BB
+  left_up   pos=BB    stack=34.7 BB
+  left_low  pos=HJ    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 8.6 BB | Pagar: 2.8 BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 5
+  hero      pos=CO    stack=22.7 BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=59.7 BB
+  left_up   pos=BB    stack=34.7 BB
+  left_low  pos=HJ    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 8.6 BB | Pagar: 2.8 BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 5
+  hero      pos=CO    stack=None BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=59.7 BB
+  left_up   pos=BB    stack=34.7 BB
+  left_low  pos=HJ    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 8.6 BB | Pagar: None BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 5
+  hero      pos=CO    stack=22.7 BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=59.7 BB
+  left_up   pos=BB    stack=34.7 BB
+  left_low  pos=HJ    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 8.6 BB | Pagar: None BB
+Fase: pagos=30 restantes=None -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 5
+  hero      pos=CO    stack=22.7 BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=59.7 BB
+  left_up   pos=BB    stack=34.7 BB
+  left_low  pos=HJ    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 8.6 BB | Pagar: None BB
+Fase: pagos=30 restantes=129 -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 5
+  hero      pos=CO    stack=22.7 BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=59.7 BB
+  left_up   pos=BB    stack=34.7 BB
+  left_low  pos=HJ    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 8.6 BB | Pagar: None BB
+Fase: pagos=30 restantes=129 -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 5
+  hero      pos=CO    stack=22.7 BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=59.7 BB
+  left_up   pos=BB    stack=34.7 BB
+  left_low  pos=HJ    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 8.6 BB | Pagar: None BB
+Fase: pagos=30 restantes=129 -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 5
+  hero      pos=CO    stack=22.7 BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=59.7 BB
+  left_up   pos=BB    stack=34.7 BB
+  left_low  pos=HJ    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 8.6 BB | Pagar: None BB
+Fase: pagos=30 restantes=129 -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 5
+  hero      pos=CO    stack=22.7 BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=59.7 BB
+  left_up   pos=BB    stack=34.7 BB
+  left_low  pos=HJ    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 8.6 BB | Pagar: None BB
+Fase: pagos=30 restantes=129 -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 5
+  hero      pos=CO    stack=22.7 BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=59.7 BB
+  left_up   pos=BB    stack=34.7 BB
+  left_low  pos=HJ    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 8.6 BB | Pagar: None BB
+Fase: pagos=30 restantes=129 -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 5
+  hero      pos=CO    stack=22.7 BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=59.7 BB
+  left_up   pos=BB    stack=34.7 BB
+  left_low  pos=HJ    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 8.6 BB | Pagar: None BB
+Fase: pagos=30 restantes=129 -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 5
+  hero      pos=CO    stack=22.7 BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=59.7 BB
+  left_up   pos=BB    stack=34.7 BB
+  left_low  pos=HJ    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 8.6 BB | Pagar: None BB
+Fase: pagos=30 restantes=129 -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 5
+  hero      pos=CO    stack=22.7 BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=59.7 BB
+  left_up   pos=BB    stack=34.7 BB
+  left_low  pos=HJ    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 8.6 BB | Pagar: None BB
+Fase: pagos=30 restantes=129 -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 5
+  hero      pos=CO    stack=22.7 BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=59.7 BB
+  left_up   pos=BB    stack=34.7 BB
+  left_low  pos=HJ    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 8.6 BB | Pagar: None BB
+Fase: pagos=30 restantes=129 -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 5
+  hero      pos=CO    stack=22.7 BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=59.7 BB
+  left_up   pos=BB    stack=34.7 BB
+  left_low  pos=HJ    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 8.6 BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 5
+  hero      pos=CO    stack=22.7 BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=59.7 BB
+  left_up   pos=BB    stack=34.7 BB
+  left_low  pos=HJ    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 1.5 BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 4
+  hero      pos=-     stack=22.7 BB
+  right_up  pos=-     stack=56.8 BB
+  left_up   pos=-     stack=34.7 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_POSITION_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 1.5 BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 4
+  hero      pos=-     stack=22.7 BB
+  right_up  pos=-     stack=56.8 BB
+  left_up   pos=-     stack=34.7 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 1.5 BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 4
+  hero      pos=-     stack=22.7 BB
+  right_up  pos=-     stack=56.8 BB
+  left_up   pos=-     stack=34.7 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 1.5 BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 4
+  hero      pos=-     stack=22.7 BB
+  right_up  pos=-     stack=56.8 BB
+  left_up   pos=-     stack=34.7 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 1.5 BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 4
+  hero      pos=-     stack=22.7 BB
+  right_up  pos=-     stack=56.8 BB
+  left_up   pos=-     stack=34.7 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 1.5 BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 4
+  hero      pos=-     stack=22.7 BB
+  right_up  pos=-     stack=56.8 BB
+  left_up   pos=-     stack=34.7 BB
+  left_low  pos=-     stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 1.5 BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 5
+  hero      pos=CO    stack=22.7 BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=56.8 BB
+  left_up   pos=BB    stack=34.7 BB
+  left_low  pos=HJ    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 1.5 BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 5
+  hero      pos=CO    stack=22.7 BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=56.8 BB
+  left_up   pos=BB    stack=34.7 BB
+  left_low  pos=HJ    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 19.1 BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 5
+  hero      pos=CO    stack=22.7 BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=56.8 BB
+  left_up   pos=BB    stack=34.7 BB
+  left_low  pos=HJ    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 19.1 BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 5
+  hero      pos=CO    stack=22.7 BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=56.8 BB
+  left_up   pos=BB    stack=34.7 BB
+  left_low  pos=HJ    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 19.1 BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 5
+  hero      pos=CO    stack=22.7 BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=56.8 BB
+  left_up   pos=BB    stack=34.7 BB
+  left_low  pos=HJ    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 19.1 BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 5
+  hero      pos=CO    stack=22.7 BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=56.8 BB
+  left_up   pos=BB    stack=34.7 BB
+  left_low  pos=HJ    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 19.1 BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 5
+  hero      pos=CO    stack=22.7 BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=56.8 BB
+  left_up   pos=BB    stack=34.7 BB
+  left_low  pos=HJ    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 19.1 BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 5
+  hero      pos=CO    stack=22.7 BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=56.8 BB
+  left_up   pos=BB    stack=34.7 BB
+  left_low  pos=HJ    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 19.1 BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 5
+  hero      pos=CO    stack=22.7 BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=56.8 BB
+  left_up   pos=BB    stack=34.7 BB
+  left_low  pos=HJ    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 19.1 BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 5
+  hero      pos=CO    stack=22.7 BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=56.8 BB
+  left_up   pos=BB    stack=34.7 BB
+  left_low  pos=HJ    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: 26.8 BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 5
+  hero      pos=CO    stack=None BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=49.1 BB
+  left_up   pos=BB    stack=34.7 BB
+  left_low  pos=HJ    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: None BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 5
+  hero      pos=CO    stack=None BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=76.0 BB
+  left_up   pos=BB    stack=34.7 BB
+  left_low  pos=HJ    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: right_low | Pote: None BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['Ad', '7d']
+Assentos ocupados: 5
+  hero      pos=CO    stack=None BB
+  right_low pos=BTN   stack=None BB [DEALER]
+  right_up  pos=SB    stack=76.0 BB
+  left_up   pos=BB    stack=34.7 BB
+  left_low  pos=HJ    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: hero | Pote: 2.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 5
+  hero      pos=BTN   stack=22.6 BB [DEALER]
+  right_low pos=SB    stack=None BB
+  right_up  pos=BB    stack=75.8 BB
+  left_up   pos=HJ    stack=33.6 BB
+  left_low  pos=CO    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_CARDS_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: hero | Pote: 2.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['9h', '6c']
+Assentos ocupados: 3
+  hero      pos=BTN   stack=22.6 BB [DEALER]
+  right_up  pos=SB    stack=75.8 BB
+  left_up   pos=BB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ACAO: FOLD | mix: fold 100% | stack usado: 25bb | no: chip_ev|mid|25|open_raise|BTN||-
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: hero | Pote: 2.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['9h', '6c']
+Assentos ocupados: 3
+  hero      pos=BTN   stack=22.6 BB [DEALER]
+  right_up  pos=SB    stack=75.8 BB
+  left_up   pos=BB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ACAO: FOLD | mix: fold 100% | stack usado: 25bb | no: chip_ev|mid|25|open_raise|BTN||-
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: hero | Pote: 2.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['9h', '6c']
+Assentos ocupados: 3
+  hero      pos=BTN   stack=22.6 BB [DEALER]
+  right_up  pos=SB    stack=75.8 BB
+  left_up   pos=BB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ACAO: FOLD | mix: fold 100% | stack usado: 25bb | no: chip_ev|mid|25|open_raise|BTN||-
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: hero | Pote: 3.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['9h', '6c']
+Assentos ocupados: 4
+  hero      pos=BTN   stack=22.6 BB [DEALER]
+  right_low pos=SB    stack=None BB
+  right_up  pos=BB    stack=74.8 BB
+  left_up   pos=CO    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ACAO: FOLD | mix: fold 100% | stack usado: 25bb | no: chip_ev|mid|25|open_raise|BTN||-
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: hero | Pote: 3.2 BB | Pagar: 1.0 BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['9h', '6c']
+Assentos ocupados: 4
+  hero      pos=BTN   stack=22.6 BB [DEALER]
+  right_low pos=SB    stack=None BB
+  right_up  pos=BB    stack=74.8 BB
+  left_up   pos=CO    stack=33.6 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ACAO: FOLD | mix: fold 100% | stack usado: 25bb | no: chip_ev|mid|25|open_raise|BTN||-
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: hero | Pote: 3.2 BB | Pagar: 1.0 BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['9h', '6c']
+Assentos ocupados: 4
+  hero      pos=BTN   stack=22.6 BB [DEALER]
+  right_low pos=SB    stack=None BB
+  right_up  pos=BB    stack=74.8 BB
+  left_up   pos=CO    stack=33.6 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ACAO: FOLD | mix: fold 100% | stack usado: 25bb | no: chip_ev|mid|25|open_raise|BTN||-
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: hero | Pote: 3.2 BB | Pagar: 1.0 BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['9h', '6c']
+Assentos ocupados: 4
+  hero      pos=BTN   stack=22.6 BB [DEALER]
+  right_low pos=SB    stack=None BB
+  right_up  pos=BB    stack=74.8 BB
+  left_up   pos=CO    stack=33.6 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ACAO: FOLD | mix: fold 100% | stack usado: 25bb | no: chip_ev|mid|25|open_raise|BTN||-
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: hero | Pote: 3.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['9h', '6c']
+Assentos ocupados: 4
+  hero      pos=BTN   stack=22.6 BB [DEALER]
+  right_low pos=SB    stack=None BB
+  right_up  pos=BB    stack=74.8 BB
+  left_up   pos=CO    stack=33.6 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ACAO: FOLD | mix: fold 100% | stack usado: 25bb | no: chip_ev|mid|25|open_raise|BTN||-
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: hero | Pote: 3.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['9h', '6c']
+Assentos ocupados: 5
+  hero      pos=BTN   stack=22.6 BB [DEALER]
+  right_low pos=SB    stack=None BB
+  right_up  pos=BB    stack=74.8 BB
+  left_up   pos=HJ    stack=33.6 BB
+  left_low  pos=CO    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ACAO: FOLD | mix: fold 100% | stack usado: 25bb | no: chip_ev|mid|25|open_raise|BTN||-
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: hero | Pote: 3.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['9h', '6c']
+Assentos ocupados: 5
+  hero      pos=BTN   stack=22.6 BB [DEALER]
+  right_low pos=SB    stack=None BB
+  right_up  pos=BB    stack=74.8 BB
+  left_up   pos=HJ    stack=33.6 BB
+  left_low  pos=CO    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ACAO: FOLD | mix: fold 100% | stack usado: 25bb | no: chip_ev|mid|25|open_raise|BTN||-
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: hero | Pote: 3.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['9h', '6c']
+Assentos ocupados: 5
+  hero      pos=BTN   stack=22.6 BB [DEALER]
+  right_low pos=SB    stack=None BB
+  right_up  pos=BB    stack=74.8 BB
+  left_up   pos=HJ    stack=33.6 BB
+  left_low  pos=CO    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ACAO: FOLD | mix: fold 100% | stack usado: 25bb | no: chip_ev|mid|25|open_raise|BTN||-
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: hero | Pote: 3.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['9h', '6c']
+Assentos ocupados: 4
+  hero      pos=BTN   stack=22.6 BB [DEALER]
+  right_low pos=SB    stack=None BB
+  right_up  pos=BB    stack=74.8 BB
+  left_up   pos=CO    stack=33.6 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ACAO: FOLD | mix: fold 100% | stack usado: 25bb | no: chip_ev|mid|25|open_raise|BTN||-
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: hero | Pote: 3.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['9h', '6c']
+Assentos ocupados: 5
+  hero      pos=BTN   stack=22.6 BB [DEALER]
+  right_low pos=SB    stack=None BB
+  right_up  pos=BB    stack=74.8 BB
+  left_up   pos=HJ    stack=33.6 BB
+  left_low  pos=CO    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: hero | Pote: 3.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['9h', '6c']
+Assentos ocupados: 5
+  hero      pos=BTN   stack=22.6 BB [DEALER]
+  right_low pos=SB    stack=None BB
+  right_up  pos=BB    stack=74.8 BB
+  left_up   pos=HJ    stack=33.6 BB
+  left_low  pos=CO    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: hero | Pote: 3.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['9h', '6c']
+Assentos ocupados: 5
+  hero      pos=BTN   stack=22.6 BB [DEALER]
+  right_low pos=SB    stack=None BB
+  right_up  pos=BB    stack=74.8 BB
+  left_up   pos=HJ    stack=33.6 BB
+  left_low  pos=CO    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: hero | Pote: 3.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['9h', '6c']
+Assentos ocupados: 5
+  hero      pos=BTN   stack=22.6 BB [DEALER]
+  right_low pos=SB    stack=None BB
+  right_up  pos=BB    stack=74.8 BB
+  left_up   pos=HJ    stack=33.6 BB
+  left_low  pos=CO    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: hero | Pote: 3.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['9h', '6c']
+Assentos ocupados: 5
+  hero      pos=BTN   stack=22.6 BB [DEALER]
+  right_low pos=SB    stack=None BB
+  right_up  pos=BB    stack=74.8 BB
+  left_up   pos=HJ    stack=33.6 BB
+  left_low  pos=CO    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: hero | Pote: 3.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['9h', '6c']
+Assentos ocupados: 5
+  hero      pos=BTN   stack=22.6 BB [DEALER]
+  right_low pos=SB    stack=None BB
+  right_up  pos=BB    stack=74.8 BB
+  left_up   pos=HJ    stack=33.6 BB
+  left_low  pos=CO    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: hero | Pote: 3.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['9h', '6c']
+Assentos ocupados: 5
+  hero      pos=BTN   stack=22.6 BB [DEALER]
+  right_low pos=SB    stack=None BB
+  right_up  pos=BB    stack=74.8 BB
+  left_up   pos=HJ    stack=33.6 BB
+  left_low  pos=CO    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: hero | Pote: 3.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['9h', '6c']
+Assentos ocupados: 5
+  hero      pos=BTN   stack=22.6 BB [DEALER]
+  right_low pos=SB    stack=None BB
+  right_up  pos=BB    stack=74.8 BB
+  left_up   pos=HJ    stack=33.6 BB
+  left_low  pos=CO    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: hero | Pote: 3.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['9h', '6c']
+Assentos ocupados: 5
+  hero      pos=BTN   stack=22.6 BB [DEALER]
+  right_low pos=SB    stack=None BB
+  right_up  pos=BB    stack=74.8 BB
+  left_up   pos=HJ    stack=33.6 BB
+  left_low  pos=CO    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: hero | Pote: 3.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=129 -> chip_ev/mid
+Hero: ['9h', '6c']
+Assentos ocupados: 5
+  hero      pos=BTN   stack=22.6 BB [DEALER]
+  right_low pos=SB    stack=None BB
+  right_up  pos=BB    stack=74.8 BB
+  left_up   pos=HJ    stack=33.6 BB
+  left_low  pos=CO    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: hero | Pote: 3.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=129 -> chip_ev/mid
+Hero: ['9h', '6c']
+Assentos ocupados: 5
+  hero      pos=BTN   stack=22.6 BB [DEALER]
+  right_low pos=SB    stack=None BB
+  right_up  pos=BB    stack=74.8 BB
+  left_up   pos=HJ    stack=33.6 BB
+  left_low  pos=CO    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: hero | Pote: 3.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=129 -> chip_ev/mid
+Hero: ['9h', '6c']
+Assentos ocupados: 5
+  hero      pos=BTN   stack=22.6 BB [DEALER]
+  right_low pos=SB    stack=None BB
+  right_up  pos=BB    stack=74.8 BB
+  left_up   pos=HJ    stack=33.6 BB
+  left_low  pos=CO    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: hero | Pote: 7.5 BB | Pagar: None BB
+Fase: pagos=30 restantes=129 -> chip_ev/mid
+Hero: ['9h', '6c']
+Assentos ocupados: 5
+  hero      pos=BTN   stack=22.6 BB [DEALER]
+  right_low pos=SB    stack=None BB
+  right_up  pos=BB    stack=74.8 BB
+  left_up   pos=HJ    stack=33.6 BB
+  left_low  pos=CO    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: hero | Pote: 7.5 BB | Pagar: None BB
+Fase: pagos=30 restantes=129 -> chip_ev/mid
+Hero: ['9h', '6c']
+Assentos ocupados: 5
+  hero      pos=BTN   stack=22.6 BB [DEALER]
+  right_low pos=SB    stack=None BB
+  right_up  pos=BB    stack=74.8 BB
+  left_up   pos=HJ    stack=33.6 BB
+  left_low  pos=CO    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: hero | Pote: 22.5 BB | Pagar: None BB
+Fase: pagos=30 restantes=129 -> chip_ev/mid
+Hero: ['9h', '6c']
+Assentos ocupados: 5
+  hero      pos=BTN   stack=22.6 BB [DEALER]
+  right_low pos=SB    stack=None BB
+  right_up  pos=BB    stack=59.8 BB
+  left_up   pos=HJ    stack=33.6 BB
+  left_low  pos=CO    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: hero | Pote: 22.5 BB | Pagar: None BB
+Fase: pagos=30 restantes=129 -> chip_ev/mid
+Hero: ['9h', '6c']
+Assentos ocupados: 5
+  hero      pos=BTN   stack=22.6 BB [DEALER]
+  right_low pos=SB    stack=None BB
+  right_up  pos=BB    stack=59.8 BB
+  left_up   pos=HJ    stack=33.6 BB
+  left_low  pos=CO    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: hero | Pote: 33.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=129 -> chip_ev/mid
+Hero: ['9h', '6c']
+Assentos ocupados: 5
+  hero      pos=BTN   stack=22.6 BB [DEALER]
+  right_low pos=SB    stack=None BB
+  right_up  pos=BB    stack=59.8 BB
+  left_up   pos=HJ    stack=33.6 BB
+  left_low  pos=CO    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: hero | Pote: 33.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=129 -> chip_ev/mid
+Hero: ['9h', '6c']
+Assentos ocupados: 5
+  hero      pos=BTN   stack=22.6 BB [DEALER]
+  right_low pos=SB    stack=None BB
+  right_up  pos=BB    stack=59.8 BB
+  left_up   pos=HJ    stack=33.6 BB
+  left_low  pos=CO    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: hero | Pote: 33.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=129 -> chip_ev/mid
+Hero: ['9h', '6c']
+Assentos ocupados: 5
+  hero      pos=BTN   stack=22.6 BB [DEALER]
+  right_low pos=SB    stack=None BB
+  right_up  pos=BB    stack=59.8 BB
+  left_up   pos=HJ    stack=33.6 BB
+  left_low  pos=CO    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: hero | Pote: 33.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=129 -> chip_ev/mid
+Hero: ['9h', '6c']
+Assentos ocupados: 5
+  hero      pos=BTN   stack=22.6 BB [DEALER]
+  right_low pos=SB    stack=None BB
+  right_up  pos=BB    stack=59.8 BB
+  left_up   pos=HJ    stack=33.6 BB
+  left_low  pos=CO    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: hero | Pote: 93.6 BB | Pagar: None BB
+Fase: pagos=30 restantes=129 -> chip_ev/mid
+Hero: ['9h', '6c']
+Assentos ocupados: 5
+  hero      pos=BTN   stack=22.6 BB [DEALER]
+  right_low pos=SB    stack=None BB
+  right_up  pos=BB    stack=0.0 BB
+  left_up   pos=HJ    stack=33.6 BB
+  left_low  pos=CO    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: hero | Pote: None BB | Pagar: None BB
+Fase: pagos=30 restantes=129 -> chip_ev/mid
+Hero: ['9h', '6c']
+Assentos ocupados: 5
+  hero      pos=BTN   stack=22.6 BB [DEALER]
+  right_low pos=SB    stack=None BB
+  right_up  pos=BB    stack=153.5 BB
+  left_up   pos=HJ    stack=33.6 BB
+  left_low  pos=CO    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: hero | Pote: None BB | Pagar: None BB
+Fase: pagos=30 restantes=129 -> chip_ev/mid
+Hero: ['9h', '6c']
+Assentos ocupados: 5
+  hero      pos=BTN   stack=22.6 BB [DEALER]
+  right_low pos=SB    stack=None BB
+  right_up  pos=BB    stack=153.5 BB
+  left_up   pos=HJ    stack=33.6 BB
+  left_low  pos=CO    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: hero | Pote: None BB | Pagar: None BB
+Fase: pagos=30 restantes=129 -> chip_ev/mid
+Hero: ['9h', '6c']
+Assentos ocupados: 5
+  hero      pos=BTN   stack=22.6 BB [DEALER]
+  right_low pos=SB    stack=None BB
+  right_up  pos=BB    stack=153.5 BB
+  left_up   pos=HJ    stack=33.6 BB
+  left_low  pos=CO    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: POSTFLOP_NOT_COVERED
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 2.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=129 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 3
+  hero      pos=-     stack=22.5 BB
+  right_up  pos=-     stack=153.4 BB
+  left_up   pos=-     stack=33.0 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_POSITION_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 2.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=129 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 3
+  hero      pos=-     stack=22.5 BB
+  right_up  pos=-     stack=153.4 BB
+  left_up   pos=-     stack=33.0 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_POSITION_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 2.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=129 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 3
+  hero      pos=-     stack=22.5 BB
+  right_up  pos=-     stack=153.4 BB
+  left_up   pos=-     stack=33.0 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_POSITION_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 3.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=129 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 4
+  hero      pos=-     stack=22.5 BB
+  right_low pos=-     stack=None BB
+  right_up  pos=-     stack=152.4 BB
+  left_up   pos=-     stack=33.0 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_POSITION_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 3.2 BB | Pagar: 1.0 BB
+Fase: pagos=30 restantes=129 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 4
+  hero      pos=-     stack=22.5 BB
+  right_low pos=-     stack=None BB
+  right_up  pos=-     stack=152.4 BB
+  left_up   pos=-     stack=33.0 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_POSITION_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 3.2 BB | Pagar: 1.0 BB
+Fase: pagos=30 restantes=129 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 4
+  hero      pos=-     stack=22.5 BB
+  right_low pos=-     stack=None BB
+  right_up  pos=-     stack=152.4 BB
+  left_up   pos=-     stack=33.0 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_CARDS_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 3.2 BB | Pagar: 1.0 BB
+Fase: pagos=30 restantes=129 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 4
+  hero      pos=-     stack=22.5 BB
+  right_low pos=-     stack=None BB
+  right_up  pos=-     stack=152.4 BB
+  left_up   pos=-     stack=33.0 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_POSITION_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 3.2 BB | Pagar: 1.0 BB
+Fase: pagos=30 restantes=129 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 4
+  hero      pos=-     stack=22.5 BB
+  right_low pos=-     stack=None BB
+  right_up  pos=-     stack=152.4 BB
+  left_up   pos=-     stack=33.0 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_POSITION_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 3.2 BB | Pagar: 1.0 BB
+Fase: pagos=30 restantes=129 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 4
+  hero      pos=-     stack=22.5 BB
+  right_low pos=-     stack=None BB
+  right_up  pos=-     stack=152.4 BB
+  left_up   pos=-     stack=33.0 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_POSITION_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 3.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=129 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=152.4 BB
+  left_up   pos=CO    stack=33.0 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 3.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=129 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=152.4 BB
+  left_up   pos=CO    stack=33.0 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 3.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=129 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=152.4 BB
+  left_up   pos=CO    stack=33.0 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 3.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=129 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=152.4 BB
+  left_up   pos=CO    stack=33.0 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 3.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=152.4 BB
+  left_up   pos=CO    stack=33.0 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 3.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=152.4 BB
+  left_up   pos=CO    stack=33.0 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 3.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=152.4 BB
+  left_up   pos=CO    stack=33.0 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 3.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=152.4 BB
+  left_up   pos=CO    stack=33.0 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 3.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=152.4 BB
+  left_up   pos=CO    stack=33.0 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 3.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=152.4 BB
+  left_up   pos=CO    stack=33.0 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 3.2 BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=152.4 BB
+  left_up   pos=CO    stack=33.0 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 3.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=152.4 BB
+  left_up   pos=CO    stack=32.5 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 3.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=152.4 BB
+  left_up   pos=CO    stack=32.5 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 3.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=152.4 BB
+  left_up   pos=CO    stack=32.5 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 3.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=152.4 BB
+  left_up   pos=CO    stack=32.5 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 3.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=152.4 BB
+  left_up   pos=CO    stack=32.5 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 3.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=152.4 BB
+  left_up   pos=CO    stack=32.5 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 6.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=152.4 BB
+  left_up   pos=CO    stack=32.5 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 6.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=152.4 BB
+  left_up   pos=CO    stack=32.5 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 9.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=149.4 BB
+  left_up   pos=CO    stack=32.5 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 9.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=149.4 BB
+  left_up   pos=CO    stack=32.5 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 9.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=149.4 BB
+  left_up   pos=CO    stack=32.5 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 12.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=149.4 BB
+  left_up   pos=CO    stack=29.5 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 12.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=149.4 BB
+  left_up   pos=CO    stack=29.5 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 12.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=149.4 BB
+  left_up   pos=CO    stack=29.5 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 12.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=149.4 BB
+  left_up   pos=CO    stack=29.5 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 12.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=149.4 BB
+  left_up   pos=CO    stack=29.5 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 12.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=149.4 BB
+  left_up   pos=CO    stack=29.5 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 12.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=149.4 BB
+  left_up   pos=CO    stack=29.5 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 12.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=149.4 BB
+  left_up   pos=CO    stack=29.5 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 19.1 BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=149.4 BB
+  left_up   pos=CO    stack=29.5 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 19.1 BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=149.4 BB
+  left_up   pos=CO    stack=29.5 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 25.5 BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=143.0 BB
+  left_up   pos=CO    stack=29.5 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 25.5 BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=143.0 BB
+  left_up   pos=CO    stack=29.5 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 25.5 BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=143.0 BB
+  left_up   pos=CO    stack=29.5 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 25.5 BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=143.0 BB
+  left_up   pos=CO    stack=29.5 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 25.5 BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=143.0 BB
+  left_up   pos=CO    stack=29.5 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: 34.8 BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=143.0 BB
+  left_up   pos=CO    stack=29.5 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: None BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=133.7 BB
+  left_up   pos=CO    stack=29.5 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: None BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=133.7 BB
+  left_up   pos=CO    stack=29.5 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: None BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=177.8 BB
+  left_up   pos=CO    stack=29.5 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_low | Pote: None BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['5d', '6h']
+Assentos ocupados: 5
+  hero      pos=SB    stack=22.5 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=HJ    stack=177.8 BB
+  left_up   pos=CO    stack=29.5 BB
+  left_low  pos=BTN   stack=None BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: None | Pote: 1.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: nao identificado
+Assentos ocupados: 3
+  hero      pos=-     stack=17.8 BB
+  right_up  pos=-     stack=141.1 BB
+  left_up   pos=-     stack=23.4 BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: HERO_CARDS_UNKNOWN
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_up | Pote: 3.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['Qh', '4s']
+Assentos ocupados: 5
+  hero      pos=BB    stack=17.8 BB
+  right_low pos=HJ    stack=None BB
+  right_up  pos=CO    stack=141.1 BB
+  left_up   pos=BTN   stack=23.4 BB [DEALER]
+  left_low  pos=SB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_up | Pote: 3.7 BB | Pagar: 2.0 BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['Qh', '4s']
+Assentos ocupados: 4
+  hero      pos=SB    stack=17.8 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=CO    stack=141.1 BB
+  left_up   pos=BTN   stack=23.4 BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_up | Pote: 3.7 BB | Pagar: 2.0 BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['Qh', '4s']
+Assentos ocupados: 4
+  hero      pos=SB    stack=17.8 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=CO    stack=141.1 BB
+  left_up   pos=BTN   stack=23.4 BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_up | Pote: 3.7 BB | Pagar: 2.0 BB
+Fase: pagos=30 restantes=131 -> chip_ev/mid
+Hero: ['Qh', '4s']
+Assentos ocupados: 4
+  hero      pos=SB    stack=17.8 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=CO    stack=141.1 BB
+  left_up   pos=BTN   stack=23.4 BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_up | Pote: 3.7 BB | Pagar: 2.0 BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['Qh', '4s']
+Assentos ocupados: 4
+  hero      pos=SB    stack=17.8 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=CO    stack=141.1 BB
+  left_up   pos=BTN   stack=23.4 BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_up | Pote: 3.7 BB | Pagar: 2.0 BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['Qh', '4s']
+Assentos ocupados: 4
+  hero      pos=SB    stack=17.8 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=CO    stack=141.1 BB
+  left_up   pos=BTN   stack=23.4 BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_up | Pote: 3.7 BB | Pagar: 2.0 BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['Qh', '4s']
+Assentos ocupados: 4
+  hero      pos=SB    stack=17.8 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=CO    stack=141.1 BB
+  left_up   pos=BTN   stack=23.4 BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_up | Pote: 3.7 BB | Pagar: 2.0 BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['Qh', '4s']
+Assentos ocupados: 4
+  hero      pos=SB    stack=17.8 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=CO    stack=141.1 BB
+  left_up   pos=BTN   stack=23.4 BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_up | Pote: 3.7 BB | Pagar: 2.0 BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['Qh', '4s']
+Assentos ocupados: 4
+  hero      pos=SB    stack=17.8 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=CO    stack=141.1 BB
+  left_up   pos=BTN   stack=23.4 BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_up | Pote: 3.7 BB | Pagar: 2.0 BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['Qh', '4s']
+Assentos ocupados: 4
+  hero      pos=SB    stack=17.8 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=CO    stack=141.1 BB
+  left_up   pos=BTN   stack=23.4 BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_up | Pote: 3.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['Qh', '4s']
+Assentos ocupados: 4
+  hero      pos=SB    stack=17.8 BB
+  right_low pos=BB    stack=None BB
+  right_up  pos=CO    stack=141.1 BB
+  left_up   pos=BTN   stack=23.4 BB [DEALER]
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: NO_VALIDATED_NODE_FOR_CONTEXT
+--- Mesa 1 ---
+=== LEITURA DA MESA (observacao, sem cliques) ===
+Mao: None | Dealer: left_up | Pote: 5.7 BB | Pagar: None BB
+Fase: pagos=30 restantes=130 -> chip_ev/mid
+Hero: ['Qh', '4s']
+Assentos ocupados: 5
+  hero      pos=BB    stack=17.8 BB
+  right_low pos=HJ    stack=None BB
+  right_up  pos=CO    stack=141.1 BB
+  left_up   pos=BTN   stack=23.4 BB [DEALER]
+  left_low  pos=SB    stack=None BB
+=== RECOMENDACAO (exploratoria, nao-executar) ===
+ABSTEM: MULTIWAY_OR_3BET_NOT_COVERED
+Encerrado. Nenhuma imagem salva, nenhum clique enviado.
+
+C:\Meus Projetos\Aplicativos\_repo_software>

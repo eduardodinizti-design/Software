@@ -75,8 +75,13 @@ def _summary(result):
     lines.append('=== RECOMENDACAO (exploratoria, nao-executar) ===')
     if adv.get('status') == 'ADVICE':
         mix = ', '.join('%s %d%%' % (m['action'], round(m['frequency'] * 100)) for m in adv['mix'])
-        lines.append('ACAO: %s | mix: %s | stack usado: %sbb | no: %s' % (
-            adv['recommended'].upper(), mix, adv['stack_bucket'], adv['node_id']))
+        sz = adv.get('sizing') or {}
+        size_txt = ''
+        if sz.get('size_bb') is not None:
+            size_txt = ' -> %s BB (%s%s)' % (sz['size_bb'], sz.get('basis', ''),
+                                             '; heuristica' if sz.get('heuristic') else '')
+        lines.append('ACAO: %s%s | mix: %s | stack usado: %sbb | no: %s' % (
+            adv['recommended'].upper(), size_txt, mix, adv['stack_bucket'], adv['node_id']))
     else:
         lines.append('ABSTEM: %s' % adv.get('reason'))
     return '\n'.join(lines)
