@@ -17,6 +17,29 @@ from pathlib import Path
 
 from preflop_study import hand_key, Blocked
 
+RAISE_FLOOR_BB = 1.5  # a bet above the BB (1.0) is a raise, not a blind post
+
+
+def infer_live_spot(table_state):
+    """Guess the preflop spot from the bets on the table (approximate, by the
+    nearest-seat bet attribution). No non-hero raiser -> first_in (hero opens);
+    exactly one -> vs_open against that position; two or more -> not covered
+    (3bet/multiway). Returns {spot, opener, reason?}."""
+    positions = table_state.get('positions') or {}
+    raisers = {}
+    for bet in (table_state.get('bets') or []):
+        seat, amount = bet.get('seat'), bet.get('bet_bb')
+        if seat == 'hero' or not isinstance(amount, (int, float)):
+            continue
+        if amount > RAISE_FLOOR_BB and seat in positions:
+            pos = positions[seat]
+            raisers[pos] = max(raisers.get(pos, 0.0), amount)
+    if not raisers:
+        return dict(spot='first_in', opener=None)
+    if len(raisers) == 1:
+        return dict(spot='vs_open', opener=next(iter(raisers)))
+    return dict(spot='abstain', opener=None, reason='MULTIWAY_OR_3BET_NOT_COVERED')
+
 
 class PreflopAdvisor:
     STACK_BUCKETS = (5, 8, 10, 12, 15, 20, 25)
@@ -100,14 +123,23 @@ class PreflopAdvisor:
         return self.advise(spot='open_shove', vs=(), **kwargs)
 
     def advise_from_reading(self, table_state, hero_cards, **kwargs):
-        """Pull hero's position and stack from a read_table_state result and give
-        the first-in decision (open_raise or open_shove)."""
+        """Pull hero's position/stack from a read_table_state result, infer the
+        spot from the bets (first_in or vs_open) and advise. The spot inference is
+        approximate (it rides on the nearest-seat bet attribution)."""
         positions = table_state.get('positions') or {}
         hero = table_state.get('seats', {}).get('hero', {})
         if 'hero' not in positions:
             return self._abstain('HERO_POSITION_UNKNOWN')
-        return self.advise_first_in(hero_cards=hero_cards, hero_position=positions['hero'],
-                                    stack_bb=hero.get('stack_bb'), **kwargs)
+        spot = infer_live_spot(table_state)
+        base = dict(hero_cards=hero_cards, hero_position=positions['hero'], stack_bb=hero.get('stack_bb'))
+        if spot['spot'] == 'vs_open':
+            result = self.advise(spot='vs_open', vs=(spot['opener'],), **base, **kwargs)
+            if isinstance(result, dict):
+                result.setdefault('caveats', []).append('OPENER_INFERRED_%s' % spot['opener'])
+            return result
+        if spot['spot'] == 'first_in':
+            return self.advise_first_in(**base, **kwargs)
+        return self._abstain(spot.get('reason', 'SPOT_NOT_COVERED'))
 
     def _caveats(self, bucket, stack_bb, players, mode):
         out = ['EXPLORATORY_NOT_FOR_EXECUTION', 'NVT_REFERENCE_SHORT_STACK_ONLY']

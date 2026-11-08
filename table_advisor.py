@@ -43,7 +43,7 @@ def advise_table(crop, advisor, *, mode='chip_ev', stage='mid'):
     else:
         advice = advisor.advise_from_reading(state, hero, mode=mode, stage=stage)
         if isinstance(advice, dict):
-            advice.setdefault('caveats', []).append('SPOT_ASSUMED_FIRST_IN_UNOPENED')
+            advice.setdefault('caveats', []).append('SPOT_INFERRED_FROM_BETS')
     return dict(hand=hand, hero_cards=hero, board=board, table_state=state, advice=advice)
 
 

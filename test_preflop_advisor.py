@@ -5,7 +5,7 @@ is consulted live, not committed."""
 import unittest
 
 from preflop_study import RANKS
-from preflop_advisor import PreflopAdvisor
+from preflop_advisor import PreflopAdvisor, infer_live_spot
 
 HANDS = [r + r for r in RANKS] + [a + b + s for i, a in enumerate(RANKS) for b in RANKS[i + 1:] for s in ('s', 'o')]
 
@@ -97,6 +97,42 @@ class FirstInTests(unittest.TestCase):
     def test_abstains_when_no_first_in_node(self):
         r = PreflopAdvisor(pack_with_node()).advise_first_in(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=10)
         self.assertEqual(r['status'], 'ABSTAIN')  # pack only has open_raise at 25
+
+
+def pack_with_vsopen():
+    idx = HANDS.index('AA')
+    freq = {'call': [1.0 if k == idx else 0.0 for k in range(169)],
+            'fold': [0.0 if k == idx else 1.0 for k in range(169)]}
+    node = dict(id='v1', context=dict(mode='chip_ev', format='regular', stage='mid', players=9, stack=25),
+                spot='vs_open', hero='BB', vs=['BTN'], validated=True, evUnit='bb',
+                legalActions=['fold', 'call'], actions=['call', 'fold'], freq=freq,
+                ev={'call': [1.0] * 169, 'fold': [0.0] * 169}, outOfRange=[], source='test')
+    return dict(format='nvt-range-export', version=1, engineCommit='test', hands=HANDS, nodes=[node])
+
+
+class SpotInferenceTests(unittest.TestCase):
+    def _state(self, bets):
+        return dict(positions={'hero': 'BB', 'x': 'BTN', 'y': 'CO'}, bets=bets,
+                    seats={'hero': {'stack_bb': 25.0}})
+
+    def test_no_raiser_is_first_in(self):
+        self.assertEqual(infer_live_spot(self._state([{'seat': 'x', 'bet_bb': 1.0}]))['spot'], 'first_in')
+
+    def test_one_raiser_is_vs_open(self):
+        s = infer_live_spot(self._state([{'seat': 'x', 'bet_bb': 2.5}]))
+        self.assertEqual((s['spot'], s['opener']), ('vs_open', 'BTN'))
+
+    def test_two_raisers_abstain(self):
+        s = infer_live_spot(self._state([{'seat': 'x', 'bet_bb': 2.5}, {'seat': 'y', 'bet_bb': 7.0}]))
+        self.assertEqual(s['spot'], 'abstain')
+
+    def test_from_reading_routes_to_vs_open(self):
+        a = PreflopAdvisor(pack_with_vsopen())
+        state = dict(positions={'hero': 'BB', 'x': 'BTN'}, bets=[{'seat': 'x', 'bet_bb': 2.5}],
+                     seats={'hero': {'stack_bb': 25.0}})
+        r = a.advise_from_reading(state, ['As', 'Ac'])
+        self.assertEqual((r['status'], r['spot'], r['recommended']), ('ADVICE', 'vs_open', 'call'))
+        self.assertIn('OPENER_INFERRED_BTN', r['caveats'])
 
 
 if __name__ == '__main__':
