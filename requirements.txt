@@ -2,3 +2,6 @@ numpy==2.2.6
 opencv-python==4.11.0.86
 psutil==6.1.1
 pytesseract==0.3.13
+# PPPoker table discovery (table_discovery/); Win32 only, so the lab (Linux) skips pywin32.
+pywin32==312; platform_system == "Windows"
+Pillow==13.0.0
