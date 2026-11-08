@@ -14,9 +14,9 @@ import cv2
 import numpy as np
 from .seat_layout import SEAT_ANCHORS, CLOCKWISE
 
-# RangeLab 9-max order relative to the button (BTN), clockwise (action order):
-# SB, BB, UTG, UTG+1, UTG+2, LJ, HJ, CO, back to BTN.
-_RING9 = ['BTN', 'SB', 'BB', 'UTG', 'UTG+1', 'UTG+2', 'LJ', 'HJ', 'CO']
+# RangeLab position names; with fewer players the earliest (UTG) seats drop,
+# exactly as preflop_study.positions does, so the names match the range pack.
+_CORE = ('UTG', 'UTG+1', 'UTG+2', 'LJ', 'HJ', 'CO', 'BTN', 'SB', 'BB')
 
 
 def find_dealer_badge(crop):
@@ -56,14 +56,12 @@ def derive_positions(dealer_seat, occupied_seats):
     9-handed ring the canonical names are used; with fewer players BTN/SB/BB are
     named and the rest are labelled EP/MP by distance from the button."""
     occupied = [s for s in CLOCKWISE if s in set(occupied_seats)]
-    if dealer_seat not in occupied:
+    if dealer_seat not in occupied or not 2 <= len(occupied) <= 9:
         return {}
-    start = occupied.index(dealer_seat)
-    ordered = occupied[start:] + occupied[:start]  # BTN first, then clockwise
-    n = len(ordered)
-    if n == 9:
-        return {seat: _RING9[i] for i, seat in enumerate(ordered)}
-    names = ['BTN', 'SB', 'BB'][:n]
-    for i in range(3, n):
-        names.append('CO' if i == n - 1 else ('HJ' if i == n - 2 else 'EP' if i < n - 3 else 'MP'))
-    return {seat: names[i] for i, seat in enumerate(ordered)}
+    i, n = occupied.index(dealer_seat), len(occupied)
+    if n == 2:
+        order, labels = occupied[i:] + occupied[:i], ('SB', 'BB')   # heads-up: dealer is SB
+    else:
+        order = occupied[i + 1:] + occupied[:i + 1]                 # dealer is last (BTN)
+        labels = ('SB', 'BB') + _CORE[-n:-2]
+    return dict(zip(order, labels))
