@@ -1,0 +1,113 @@
+"""Exploratory live preflop advisor over the NVT range reference.
+
+Separate from preflop_study.py: that module is a strict, exact-match SIMULATION
+validator; this one turns the live table reading into a usable recommendation by
+consulting the validated range pack at the nearest stack bucket. It is labelled
+EXPLORATORY and never authorises execution.
+
+The NVT pack is a reference, optimised for short stacks: it covers discrete
+stacks 5-25bb, 9-max, chip EV + ICM + PKO. Deep stacks (>25bb) and post-flop are
+out of coverage and abstain here, to be developed into the bot's own engine.
+
+No capture, no clicks. Stack bucketing and the 9-max table are explicit
+approximations, reported in every answer.
+"""
+import json
+from pathlib import Path
+
+from preflop_study import hand_key, Blocked
+
+
+class PreflopAdvisor:
+    STACK_BUCKETS = (5, 8, 10, 12, 15, 20, 25)
+    DEEP_MARGIN = 2  # bb above the top bucket still rounded down; beyond is 'deep'
+
+    def __init__(self, pack):
+        if pack.get('format') != 'nvt-range-export' or pack.get('version') != 1:
+            raise Blocked('UNSUPPORTED_RANGE_FORMAT')
+        self.hands = pack['hands']
+        if len(self.hands) != 169:
+            raise Blocked('INVALID_HAND_INDEX')
+        self.nodes = [n for n in pack['nodes'] if n.get('validated') is True]
+        self.engine_commit = pack.get('engineCommit')
+        self._index = {}
+        for n in self.nodes:
+            self._index.setdefault(self._key_of(n), n)
+
+    @classmethod
+    def from_file(cls, path):
+        return cls(json.loads(Path(path).read_text(encoding='utf-8')))
+
+    @staticmethod
+    def _key_of(node):
+        c = node['context']
+        return (c['mode'], c['format'], c['stage'], c['players'], c['stack'],
+                node['spot'], node['hero'], tuple(node.get('vs') or ()),
+                bool(node.get('spread')))
+
+    def bucket_stack(self, stack_bb):
+        """Nearest covered stack bucket, or (None, reason) when out of coverage."""
+        if not isinstance(stack_bb, (int, float)) or stack_bb <= 0:
+            return None, 'STACK_UNKNOWN'
+        if stack_bb > self.STACK_BUCKETS[-1] + self.DEEP_MARGIN:
+            return None, 'DEEP_STACK_NOT_COVERED'
+        return min(self.STACK_BUCKETS, key=lambda s: abs(s - stack_bb)), 'OK'
+
+    def advise(self, *, hero_cards, hero_position, stack_bb, mode='chip_ev',
+               table_format='regular', stage='mid', players=9, spot='open_raise', vs=()):
+        """An exploratory recommendation for one preflop spot, or an abstention.
+
+        Returns status ADVICE | ABSTAIN | OUT_OF_RANGE with the action mix, EVs,
+        the recommended (most frequent) action, and the approximations made."""
+        bucket, why = self.bucket_stack(stack_bb)
+        if bucket is None:
+            return self._abstain(why, stack_bb=stack_bb)
+        try:
+            hand = hand_key(hero_cards)
+        except Blocked as exc:
+            return self._abstain(str(exc))
+        node = self._index.get((mode, table_format, stage, players, bucket, spot, hero_position, tuple(vs), False))
+        if node is None:
+            return self._abstain('NO_VALIDATED_NODE_FOR_CONTEXT',
+                                 context=dict(mode=mode, stage=stage, stack=bucket, spot=spot,
+                                              hero=hero_position, players=players))
+        i = self.hands.index(hand)
+        base = dict(spot=spot, hero_position=hero_position, hand=hand, node_id=node['id'],
+                    source=node['source'], validated=True, exploratory=True,
+                    execution_allowed=False, stack_bb=stack_bb, stack_bucket=bucket,
+                    bucketed=bucket != stack_bb, players_assumed=players,
+                    caveats=self._caveats(bucket, stack_bb, players, mode))
+        if i in (node.get('outOfRange') or []):
+            return dict(base, status='OUT_OF_RANGE')
+        mix, ev = [], {}
+        for act in node['actions']:
+            freq = node['freq'][act][i]
+            if freq > 0:
+                mix.append(dict(action=act, frequency=freq))
+            values = (node.get('ev') or {}).get(act)
+            ev[act] = values[i] if values is not None and len(values) == 169 else None
+        recommended = max(mix, key=lambda m: m['frequency'])['action'] if mix else None
+        return dict(base, status='ADVICE', mix=mix, ev=ev, ev_unit=node['evUnit'], recommended=recommended)
+
+    def advise_from_reading(self, table_state, hero_cards, **kwargs):
+        """Pull hero's position and stack from a read_table_state result and advise."""
+        positions = table_state.get('positions') or {}
+        hero = table_state.get('seats', {}).get('hero', {})
+        if 'hero' not in positions:
+            return self._abstain('HERO_POSITION_UNKNOWN')
+        return self.advise(hero_cards=hero_cards, hero_position=positions['hero'],
+                           stack_bb=hero.get('stack_bb'), **kwargs)
+
+    def _caveats(self, bucket, stack_bb, players, mode):
+        out = ['EXPLORATORY_NOT_FOR_EXECUTION', 'NVT_REFERENCE_SHORT_STACK_ONLY']
+        if bucket != stack_bb:
+            out.append('STACK_BUCKETED_%s_TO_%sBB' % (stack_bb, bucket))
+        if players != 9:
+            out.append('TABLE_IS_9MAX_REFERENCE')
+        if mode != 'chip_ev':
+            out.append('ICM_PKO_NEEDS_TOURNAMENT_INPUTS')
+        return out
+
+    @staticmethod
+    def _abstain(reason, **extra):
+        return dict(status='ABSTAIN', reason=reason, exploratory=True, execution_allowed=False, **extra)

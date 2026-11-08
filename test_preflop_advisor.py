@@ -1,0 +1,78 @@
+"""PreflopAdvisor: stack bucketing, context lookup, out-of-range, abstention.
+
+Uses a tiny synthetic pack so it runs without the reference file; the real pack
+is consulted live, not committed."""
+import unittest
+
+from preflop_study import RANKS
+from preflop_advisor import PreflopAdvisor
+
+HANDS = [r + r for r in RANKS] + [a + b + s for i, a in enumerate(RANKS) for b in RANKS[i + 1:] for s in ('s', 'o')]
+
+
+def pack_with_node(out_of_range=()):
+    idx_aa = HANDS.index('AA')
+    freq = {'raise': [1.0 if k == idx_aa else 0.0 for k in range(169)],
+            'fold': [0.0 if k == idx_aa else 1.0 for k in range(169)]}
+    ev = {'raise': [2.0 if k == idx_aa else 0.0 for k in range(169)], 'fold': [0.0] * 169}
+    node = dict(id='n1', context=dict(mode='chip_ev', format='regular', stage='mid', players=9, stack=25),
+                spot='open_raise', hero='BTN', vs=[], validated=True, evUnit='bb',
+                legalActions=['fold', 'raise'], actions=['raise', 'fold'], freq=freq, ev=ev,
+                outOfRange=list(out_of_range), source='test')
+    return dict(format='nvt-range-export', version=1, engineCommit='test', hands=HANDS, nodes=[node])
+
+
+class AdvisorTests(unittest.TestCase):
+    def setUp(self):
+        self.a = PreflopAdvisor(pack_with_node())
+
+    def test_bucket_stack(self):
+        self.assertEqual(self.a.bucket_stack(20.8)[0], 20)
+        self.assertEqual(self.a.bucket_stack(26)[0], 25)       # within deep margin
+        self.assertEqual(self.a.bucket_stack(65), (None, 'DEEP_STACK_NOT_COVERED'))
+        self.assertEqual(self.a.bucket_stack(0), (None, 'STACK_UNKNOWN'))
+
+    def test_advice_for_covered_hand(self):
+        r = self.a.advise(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=25)
+        self.assertEqual(r['status'], 'ADVICE')
+        self.assertEqual(r['recommended'], 'raise')
+        self.assertEqual(r['mix'], [{'action': 'raise', 'frequency': 1.0}])
+        self.assertFalse(r['execution_allowed'])
+        self.assertIn('EXPLORATORY_NOT_FOR_EXECUTION', r['caveats'])
+
+    def test_bucketing_is_flagged(self):
+        r = self.a.advise(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=24)
+        self.assertEqual(r['stack_bucket'], 25)
+        self.assertTrue(r['bucketed'])
+        self.assertIn('STACK_BUCKETED_24_TO_25BB', r['caveats'])
+
+    def test_deep_stack_abstains(self):
+        r = self.a.advise(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=80)
+        self.assertEqual((r['status'], r['reason']), ('ABSTAIN', 'DEEP_STACK_NOT_COVERED'))
+
+    def test_unknown_context_abstains(self):
+        r = self.a.advise(hero_cards=['As', 'Ac'], hero_position='UTG', stack_bb=25)  # no UTG node
+        self.assertEqual((r['status'], r['reason']), ('ABSTAIN', 'NO_VALIDATED_NODE_FOR_CONTEXT'))
+
+    def test_out_of_range_hand(self):
+        idx = HANDS.index('AA')
+        a = PreflopAdvisor(pack_with_node(out_of_range=(idx,)))
+        r = a.advise(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=25)
+        self.assertEqual(r['status'], 'OUT_OF_RANGE')
+
+    def test_invalid_cards_abstain(self):
+        r = self.a.advise(hero_cards=['As', 'As'], hero_position='BTN', stack_bb=25)
+        self.assertEqual(r['status'], 'ABSTAIN')
+
+    def test_advise_from_reading_pulls_position_and_stack(self):
+        table_state = dict(positions={'hero': 'BTN'}, seats={'hero': {'stack_bb': 25.0}})
+        r = self.a.advise_from_reading(table_state, ['As', 'Ac'])
+        self.assertEqual((r['status'], r['recommended']), ('ADVICE', 'raise'))
+
+    def test_advise_from_reading_without_position_abstains(self):
+        r = self.a.advise_from_reading(dict(positions={}, seats={}), ['As', 'Ac'])
+        self.assertEqual(r['reason'], 'HERO_POSITION_UNKNOWN')
+
+
+if __name__ == '__main__':
+    unittest.main()
