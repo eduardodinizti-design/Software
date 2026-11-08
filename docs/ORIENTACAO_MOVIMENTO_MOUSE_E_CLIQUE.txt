@@ -1,0 +1,296 @@
+ORIENTAÇÃO PARA MOVIMENTO NATURAL DO CURSOR E CLIQUE — VISUALPILOT
+Data: 08/11/2026
+Tipo de entrega: especificação de desenvolvimento; não é código executável.
+
+1. OBJETIVO
+
+Desenvolver um controlador de cursor com movimentos suaves, temporalmente
+coerentes e próximos das características medidas nos movimentos do próprio
+usuário. Preservar a precisão do alvo, a possibilidade de cancelamento e as
+validações de janela, mesa e estado antes de qualquer clique.
+
+"Aproximação máxima ao padrão humano" é um objetivo a medir, não uma qualidade
+que possa ser declarada apenas porque a trajetória parece natural.
+Sem dados reais de referência, descreva o resultado como "movimento suave".
+Uma trajetória natural não garante indetectabilidade nem comprova que a origem
+da entrada seja indistinguível da de uma pessoa.
+
+Este documento não implementa nem autoriza, por si só, execução automática de
+estratégia. Um controlador de cursor também não resolve a qualidade do motor
+estratégico ou a identificação correta do estado da mesa.
+
+2. PRINCÍPIOS
+
+- Precisão e estado atual prevalecem sobre a aparência do movimento.
+- Nunca clicar para terminar uma animação cujo alvo perdeu validade.
+- Nunca trocar de mesa ou botão silenciosamente durante uma trajetória.
+- Nunca preencher informação desconhecida com um valor presumido.
+- Nunca usar movimentos aleatórios como evidência de comportamento humano.
+- Nunca depender de um sleep fixo para concluir que uma ação foi aceita.
+- Nenhuma trajetória deve impedir cancelamento ou intervenção do usuário.
+- Não manter botão pressionado após erro, cancelamento ou encerramento.
+
+3. REFERÊNCIA DO PRÓPRIO USUÁRIO
+
+Antes de afirmar similaridade a um padrão humano, medir movimentos voluntários
+em uma aplicação de teste, com alvos conhecidos e sem ações de jogo.
+
+Registrar apenas a telemetria necessária ao experimento:
+
+- Timestamp monotônico de cada amostra e evento.
+- Posição física do cursor e monitor correspondente.
+- Posição inicial, região do alvo e distância percorrida.
+- Largura/altura útil do alvo.
+- Instantes de início do movimento, chegada, pressionamento e soltura.
+- Eventuais correções feitas pelo usuário.
+- DPI, configuração dos monitores e condições de entrada do teste.
+
+Reunir movimentos curtos e longos, em várias direções e tamanhos de alvo.
+Separar amostras de calibração das amostras de avaliação. Informar quantidade
+de amostras e limitações. Não ajustar o modelo e validá-lo exclusivamente com
+os mesmos movimentos.
+
+Não é necessário gravar continuamente imagens da tela. Dados de trajetória
+podem ser armazenados como coordenadas e eventos, com limites de tamanho.
+
+4. MODELO DE MOVIMENTO
+
+O movimento deve ter começo e fim estáveis, com aceleração e desaceleração.
+Evitar saltos de posição, mudanças abruptas de direção e velocidade constante
+imposta a todos os trajetos.
+
+Movimentos humanos podem ser quase retos ou apresentar curvatura. Não aplicar
+uma curva exagerada a todo deslocamento só para fazê-lo parecer "humano".
+
+Uma baseline possível é um perfil de mínimo jerk para o progresso temporal:
+
+  u = tempo_decorrido / duração_planejada, limitado a [0, 1]
+  s(u) = 10u³ - 15u⁴ + 6u⁵
+  posição(u) = início + s(u) × (destino - início)
+
+Essa baseline começa e termina com velocidade e aceleração nulas no modelo
+contínuo. Não representa toda a biomecânica humana nem garante suavidade após
+amostragem, quantização em pixels e atrasos do agendador.
+
+Se os dados de referência justificarem curvatura, comparar trajetórias curvas,
+como splines ou Bézier, contra a baseline. Escolher parâmetros pela avaliação
+dos movimentos medidos, sem adicionar desvios arbitrários.
+
+A trajetória deve permanecer no desktop virtual e respeitar sua topologia.
+Coordenadas negativas são válidas. Não presumir que o monitor principal começa
+sempre no único ponto utilizável ou que todos os monitores têm o mesmo DPI.
+
+5. DURAÇÃO E DISTÂNCIA
+
+Não definir uma duração universal para todos os movimentos.
+Relacionar duração à distância, ao tamanho do alvo e aos dados medidos.
+
+A lei de Fitts pode ser avaliada como modelo inicial:
+
+  T = a + b × log2(1 + D / W)
+
+T é a duração estimada do movimento; D é a distância; W é a largura efetiva
+do alvo na direção da aproximação. Ajustar a e b com dados do usuário.
+Não inventar coeficientes e apresentá-los como medidos.
+
+O tempo de movimento é diferente do tempo de percepção e decisão. Não somar
+esperas aleatórias para fazer uma trajetória parecer mais humana. A necessidade
+de uma espera deve ter uma causa identificável ou ser parte de um experimento
+explicitamente controlado.
+
+Usar relógio monotônico e calcular o progresso pelo tempo realmente decorrido.
+Não pressupor que cada chamada de sleep foi atendida no instante pedido.
+Não reproduzir em rajada eventos atrasados para compensar atraso de agendamento.
+Quando o prazo de validade expirar, cancelar a intenção em vez de acelerar para
+enviar um clique desatualizado.
+
+6. PONTO DE DESTINO
+
+Derivar o alvo do botão reconhecido no snapshot atual.
+Transformar a geometria local da mesa em coordenadas físicas de tela de forma
+explícita, considerando área cliente, origem e DPI.
+
+Definir uma região interna segura, com margem em relação às bordas.
+Enquanto não houver evidência que justifique outro modelo, o centro dessa
+região é uma baseline adequada para precisão.
+
+Se uma distribuição de pontos finais for estudada com dados reais, todos os
+pontos escolhidos devem permanecer na região segura e corresponder à mesma
+ação. Não deslocar o ponto para dentro de outro botão nem variar a ação.
+
+Não implementar tremor permanente, pequenos erros propositais ou overshoot
+como comportamento padrão. Uma correção de trajetória só se justifica por
+evidência e deve provocar nova validação do alvo quando necessário.
+
+7. API DE ENTRADA WINDOWS
+
+Avaliar SendInput como API documentada para envio de movimentos e eventos.
+O executor manual inspecionado usa SetCursorPos e mouse_event. A migração
+para SendInput é uma proposta deste documento, não uma alteração já entregue.
+
+A API de entrada não cria um padrão humano sozinha. O controlador define a
+trajetória; a API apenas envia eventos ao Windows.
+
+Se forem usadas coordenadas absolutas, tratar corretamente a normalização
+para o desktop virtual, suas dimensões, origem e múltiplos monitores. Conferir
+o efeito das configurações do Windows antes de prometer correspondência entre
+coordenada enviada e posição observada.
+
+Verificar quantos eventos foram aceitos pela API e registrar falhas. Isso
+confirma somente aceitação de entrada pelo sistema, não a execução da ação
+pretendida pela aplicação.
+
+Não substituir a captura estrita por HWND/PID para facilitar a interação.
+Mover o cursor e reconhecer a mesa são responsabilidades separadas.
+
+8. FLUXO PROPOSTO DO CONTROLADOR
+
+ESTADO 1 — AGUARDANDO INTENÇÃO
+Receber intenção identificada, ação permitida, fonte, mesa, mão, snapshot,
+janela/processo, geometria do alvo e prazo de validade. Quando se tratar de
+execução manual, preservar a escolha explícita do usuário.
+
+ESTADO 2 — VALIDAÇÃO INICIAL
+Conferir identidade da janela/processo, geometria, alvo e estado pertinente.
+Se houver campos desconhecidos ou contraditórios, não iniciar o clique.
+
+ESTADO 3 — MOVIMENTO
+Planejar e executar uma trajetória cancelável. Observar interrupção do usuário,
+mudança de foco e invalidação do alvo. Evitar disputa com o mouse do usuário:
+se houver intervenção, cancelar em vez de puxar o cursor de volta.
+
+ESTADO 4 — REVALIDAÇÃO NA CHEGADA
+Depois de posicionar o cursor e antes do mouse-down, recapturar e conferir:
+
+- HWND, PID, identidade do processo e geometria.
+- Identidade da mesa e da mão quando exigidas pelo fluxo.
+- Ação, botão, unidade, valor e estado pertinentes à intenção.
+- Visibilidade, foco e janela efetivamente sob o ponto de destino.
+- Atualidade da captura e validade da intenção original.
+
+Se o movimento provocar hover/animação, não ignorar a diferença visual. Criar
+um critério de reconhecimento verificável para essa condição ou cancelar.
+
+ESTADO 5 — CLIQUE ÚNICO
+Enviar um mouse-down e um mouse-up para a mesma intenção, com tratamento de
+erro e soltura garantida. O tempo de pressionamento deve ser documentado e
+validado no ambiente de teste, não escolhido para alegar invisibilidade.
+
+ESTADO 6 — VERIFICAÇÃO DO RESULTADO
+Observar a resposta da aplicação. Registrar separadamente: intenção recebida,
+movimento concluído, entrada enviada e efeito confirmado.
+
+ESTADO 7 — CONCLUÍDO, CANCELADO OU RESULTADO DESCONHECIDO
+Uma resposta desconhecida não equivale a sucesso e não autoriza repetição
+automática do clique. Reconciliar o estado antes de aceitar nova intenção.
+
+9. CUIDADO COM CAPTURA ANTIGA
+
+No executor manual inspecionado, existe uma validação de duração da captura
+final de 250 ms. Essa verificação não prova a idade do estado ao final de uma
+trajetória acrescentada depois da captura.
+
+Não fazer:
+  validar imagem → executar movimento demorado → clicar sem revalidar.
+
+Fazer:
+  validar intenção → mover → recapturar/revalidar → clicar se tudo continuar
+  válido e dentro dos prazos definidos.
+
+Recapturar não deve transformar uma intenção vencida em uma nova autorização
+para a ação que estiver disponível naquele momento. A ação original e suas
+pré-condições continuam sendo obrigatórias.
+
+10. MÚLTIPLAS MESAS
+
+O Windows dispõe de um cursor compartilhado. Serializar intenções de entrada;
+não executar trajetórias concorrentes para mesas diferentes.
+
+Uma fila não deve preservar ações vencidas. Cada intenção precisa de identidade
+e prazo próprios. Não aproveitar um movimento já iniciado para executar ação
+de outra mesa.
+
+Tratar uma mudança de mesa, mão ou janela como possível invalidação, mesmo
+quando o novo botão aparecer na mesma coordenada.
+
+11. BET/RAISE E OUTROS FLUXOS COM VÁRIAS ETAPAS
+
+Não tratar Bet/Raise como um único clique que garante aposta concluída.
+Abrir painel, preencher valor e confirmar são etapas distintas.
+
+O valor deve vir de uma intenção estratégica fundamentada, com unidade e
+limites verificados. Não inferir sizing a partir do rótulo do botão ou de uma
+aposta histórica do pacote de ranges.
+
+Após cada etapa, observar a interface e revalidar o próximo passo. Nunca enviar
+cliques ou teclas de confirmação às cegas com base apenas em tempos de espera.
+
+12. TESTES E CRITÉRIOS DE ACEITAÇÃO
+
+Começar em uma aplicação Windows de teste com botões inofensivos e alvos
+conhecidos. Distinguir teste matemático, simulação, teste Windows e cliente real.
+
+Testar, pelo menos:
+
+- Deslocamentos curtos/longos e direções diferentes.
+- Alvos de tamanhos variados, inclusive próximos às bordas.
+- Monitores com origens negativas e DPI diferentes.
+- Mudança de foco, janela movida, fechada, minimizada ou coberta.
+- Alvo alterado durante a trajetória.
+- Intenção vencida antes e depois da chegada.
+- Intervenção manual do usuário.
+- Falha parcial de envio de entrada.
+- Interrupção entre mouse-down e mouse-up.
+- Duas mesas solicitando entrada e ações duplicadas.
+- Clique enviado sem efeito observável: resultado deve ficar desconhecido.
+
+Critérios de segurança funcional:
+
+- Alvo invalidado não recebe clique.
+- Cancelamento não gera clique posterior.
+- Uma intenção não gera dois cliques.
+- Nenhum botão fica pressionado após interrupção.
+- A fila não executa intenções vencidas.
+- Logs distinguem entrada enviada de efeito confirmado.
+
+Medir naturalidade nas amostras de avaliação:
+
+- Duração em relação à distância/tamanho do alvo.
+- Comprimento e curvatura da trajetória.
+- Perfis de velocidade e aceleração.
+- Estabilidade de chegada e erro de posição final.
+- Tempo de chegada até o pressionamento e duração do pressionamento.
+- Distribuição de correções e comparação com as amostras do usuário.
+
+Medir também latência ponta a ponta, jitter do agendador, uso de CPU, taxa de
+acerto, cancelamentos corretos e ações incorretas. Uma melhora visual não deve
+encobrir piora em precisão ou atualidade do estado.
+
+Não prometer um percentual de similaridade sem definir métrica, conjunto de
+avaliação e método de comparação. Similaridade medida não é prova de origem
+humana da entrada.
+
+13. IMPLEMENTAÇÃO E ENTREGA AO PRÓXIMO AGENTE
+
+Separar o gerador puro de trajetórias, o adaptador de entrada Windows e o
+coordenador de intenções/revalidação. Isso permite testes independentes.
+
+Preservar captura, leitores e executor manual existentes enquanto a proposta
+é avaliada. Não alterar reconhecimento para facilitar testes de movimento.
+
+Implementar em blocos completos:
+
+1) Aplicação de teste e medição do movimento de referência.
+2) Baseline de trajetória com relógio injetável e cancelamento.
+3) Adaptador Windows e teste de coordenadas/eventos.
+4) Revalidação na chegada, exclusão mútua e prevenção de duplicidade.
+5) Avaliação independente, regressões e relato das limitações.
+
+Registrar a versão dos parâmetros, as condições de calibração e os resultados.
+Publicar o código e os comandos de reprodução. Não afirmar que o movimento foi
+validado no PPPoker real se o teste ocorreu apenas em simulação ou numa janela
+controlada.
+
+Este documento entrega orientação. Não implementa trajetória natural, SendInput,
+calibração de usuário ou um novo fluxo de clique. Essas capacidades precisam
+de desenvolvimento e validação próprios.
