@@ -41,7 +41,9 @@ def parse_amount(text):
     if m:
         return float('%s.%s' % (m.group(1), m.group(2))), 'high'
     m = _DIGITS_BB.search(t)
-    if m:
+    if m and len(m.group(1)) <= 4:
+        # No comma: restore the single decimal (X,X). A 5+ digit run is OCR noise
+        # (e.g. "15,3" misread as "15232"), so abstain rather than invent a value.
         d = m.group(1)
         return float('%s.%s' % (d[:-1], d[-1])), 'medium'
     return None, 'abstain'

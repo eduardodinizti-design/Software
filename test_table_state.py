@@ -24,6 +24,10 @@ class ParseAmountTests(unittest.TestCase):
         self.assertEqual(table_state.parse_amount(''), (None, 'abstain'))
         self.assertEqual(table_state.parse_amount('----'), (None, 'abstain'))
 
+    def test_five_digit_run_is_noise_and_abstains(self):
+        # "15,3" misread as "15232": abstain rather than invent 1523.2
+        self.assertEqual(table_state.parse_amount('AlfaCentau 15232BB'), (None, 'abstain'))
+
 
 class SeatLayoutTests(unittest.TestCase):
     def test_nine_unique_seats_hero_first(self):
