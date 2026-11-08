@@ -159,13 +159,23 @@ class SpotInferenceTests(unittest.TestCase):
         s = infer_live_spot(self._state([{'seat': 'x', 'bet_bb': 2.5}, {'seat': 'y', 'bet_bb': 7.0}]))
         self.assertEqual(s['spot'], 'abstain')
 
+    def test_hero_opened_facing_3bet_is_vs_3bet(self):
+        state = dict(positions={'hero': 'CO', 'x': 'BTN'},
+                     bets=[{'seat': 'hero', 'bet_bb': 2.2}, {'seat': 'x', 'bet_bb': 7.0}])
+        s = infer_live_spot(state)
+        self.assertEqual((s['spot'], s['opener']), ('vs_3bet', 'BTN'))
+
+    def test_hero_opened_no_reraise_abstains(self):
+        s = infer_live_spot(dict(positions={'hero': 'CO'}, bets=[{'seat': 'hero', 'bet_bb': 2.2}]))
+        self.assertEqual((s['spot'], s['reason']), ('abstain', 'HERO_OPENED_NO_RERAISE'))
+
     def test_from_reading_routes_to_vs_open(self):
         a = PreflopAdvisor(pack_with_vsopen())
         state = dict(positions={'hero': 'BB', 'x': 'BTN'}, bets=[{'seat': 'x', 'bet_bb': 2.5}],
                      seats={'hero': {'stack_bb': 25.0}})
         r = a.advise_from_reading(state, ['As', 'Ac'])
         self.assertEqual((r['status'], r['spot'], r['recommended']), ('ADVICE', 'vs_open', 'call'))
-        self.assertIn('OPENER_INFERRED_BTN', r['caveats'])
+        self.assertIn('AGGRESSOR_INFERRED_BTN', r['caveats'])
 
 
 if __name__ == '__main__':

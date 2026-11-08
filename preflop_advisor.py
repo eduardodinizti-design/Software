@@ -22,18 +22,28 @@ RAISE_FLOOR_BB = 1.5  # a bet above the BB (1.0) is a raise, not a blind post
 
 def infer_live_spot(table_state):
     """Guess the preflop spot from the bets on the table (approximate, by the
-    nearest-seat bet attribution). No non-hero raiser -> first_in (hero opens);
-    exactly one -> vs_open against that position; two or more -> not covered
-    (3bet/multiway). Returns {spot, opener, reason?}."""
+    nearest-seat bet attribution). If the hero has not raised: no non-hero raiser
+    -> first_in; exactly one -> vs_open; else abstain. If the hero already opened:
+    exactly one bet above the hero's -> vs_3bet against that position; else
+    abstain (4bet/multiway). `opener` holds the aggressor (opener or 3bettor)."""
     positions = table_state.get('positions') or {}
+    hero_bet = 0.0
     raisers = {}
     for bet in (table_state.get('bets') or []):
         seat, amount = bet.get('seat'), bet.get('bet_bb')
-        if seat == 'hero' or not isinstance(amount, (int, float)):
+        if not isinstance(amount, (int, float)):
+            continue
+        if seat == 'hero':
+            hero_bet = max(hero_bet, amount)
             continue
         if amount > RAISE_FLOOR_BB and seat in positions:
-            pos = positions[seat]
-            raisers[pos] = max(raisers.get(pos, 0.0), amount)
+            raisers[positions[seat]] = max(raisers.get(positions[seat], 0.0), amount)
+    if hero_bet > RAISE_FLOOR_BB:                       # hero has already opened
+        rereraisers = {p: a for p, a in raisers.items() if a > hero_bet + 0.4}
+        if len(rereraisers) == 1:
+            return dict(spot='vs_3bet', opener=next(iter(rereraisers)))
+        return dict(spot='abstain', opener=None,
+                    reason='HERO_OPENED_NO_RERAISE' if not rereraisers else 'MULTIWAY_OR_4BET_NOT_COVERED')
     if not raisers:
         return dict(spot='first_in', opener=None)
     if len(raisers) == 1:
@@ -158,10 +168,10 @@ class PreflopAdvisor:
             return self._abstain('HERO_POSITION_UNKNOWN')
         spot = infer_live_spot(table_state)
         base = dict(hero_cards=hero_cards, hero_position=positions['hero'], stack_bb=hero.get('stack_bb'))
-        if spot['spot'] == 'vs_open':
-            result = self.advise(spot='vs_open', vs=(spot['opener'],), **base, **kwargs)
+        if spot['spot'] in ('vs_open', 'vs_3bet'):
+            result = self.advise(spot=spot['spot'], vs=(spot['opener'],), **base, **kwargs)
             if isinstance(result, dict):
-                result.setdefault('caveats', []).append('OPENER_INFERRED_%s' % spot['opener'])
+                result.setdefault('caveats', []).append('AGGRESSOR_INFERRED_%s' % spot['opener'])
         elif spot['spot'] == 'first_in':
             result = self.advise_first_in(**base, **kwargs)
         else:

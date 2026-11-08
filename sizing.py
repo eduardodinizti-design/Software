@@ -11,6 +11,8 @@ OPEN_RAISE_BB = 2.2            # first-in open
 ISO_ADD_PER_LIMPER_BB = 1.0   # add this per limper when isolating
 THREEBET_IP_MULT = 3.0        # 3bet to ~3x the open, in position
 THREEBET_OOP_MULT = 4.0       # ~4x out of position
+FOURBET_IP_MULT = 2.2         # 4bet to ~2.2x the 3bet, in position
+FOURBET_OOP_MULT = 2.5        # ~2.5x out of position
 
 # Postflop action order (SB first, BTN last = in position).
 _POSTFLOP_ORDER = ('SB', 'BB', 'UTG', 'UTG+1', 'UTG+2', 'LJ', 'HJ', 'CO', 'BTN')
@@ -77,6 +79,11 @@ def recommend_size(action, *, hero_stack_bb=None, to_call_bb=None, limpers=0,
         mult = THREEBET_IP_MULT if ip else THREEBET_OOP_MULT
         return dict(action='three_bet', size_bb=capped(base * mult), heuristic=True,
                     basis='3bet %.0fx open (%s)' % (mult, 'IP' if ip else 'OOP'))
+    if action == 'four_bet':
+        base = opener_bb if isinstance(opener_bb, (int, float)) else OPEN_RAISE_BB
+        mult = FOURBET_IP_MULT if ip else FOURBET_OOP_MULT
+        return dict(action='four_bet', size_bb=capped(base * mult), heuristic=True,
+                    basis='4bet %.1fx 3bet (%s)' % (mult, 'IP' if ip else 'OOP'))
     return None
 
 
