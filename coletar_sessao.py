@@ -8,6 +8,8 @@ import time
 import uuid
 import cv2
 from table_reading.pipeline import analyze_tables
+from observation_metrics import current_rss_mb
+import stage_metrics
 
 
 def identity(meta):
@@ -23,7 +25,7 @@ def run_session(engine, hwnds, *, minutes=30, interval=2, budget_mb=16, samples=
     if not hwnds or len(hwnds)>6 or any(h<=0 for h in hwnds):raise ValueError('Selecione 1..6 HWNDs validos')
     folder=Path(output)/('sessao-'+datetime.now().strftime('%Y%m%d-%H%M%S')+'-'+uuid.uuid4().hex[:8])
     folder.mkdir(parents=True,exist_ok=False)
-    start=clock();deadline=start+minutes*60;counts=Counter();known={};used=0;seq=0;stop='DURATION_COMPLETE';durations=[]
+    start=clock();deadline=start+minutes*60;counts=Counter();known={};used=0;seq=0;stop='DURATION_COMPLETE';durations=[];stage_rows=[]
     limit=int(budget_mb*1024*1024);reserve=65536
     image_limit=limit//4 if samples else 0
     log_limit=limit-image_limit-reserve
@@ -37,7 +39,7 @@ def run_session(engine, hwnds, *, minutes=30, interval=2, budget_mb=16, samples=
                 cycle=clock()
                 for hwnd in hwnds:
                     if clock()>=deadline:break
-                    seq+=1;t=clock();frame=None;report=None
+                    seq+=1;t=clock();cpu0=time.process_time();frame=None;report=None
                     record=dict(sequence=seq,hwnd=hwnd,started_utc=datetime.now(timezone.utc).isoformat(),elapsed_s=round(t-start,3),actions_executed=False)
                     try:
                         frame,meta=engine.capture_frame(hwnd=hwnd);record['capture']=meta
@@ -67,6 +69,9 @@ def run_session(engine, hwnds, *, minutes=30, interval=2, budget_mb=16, samples=
                         record.update(status='ERROR',error=repr(exc));counts['errors']+=1
                     ms=(clock()-t)*1000;durations.append(ms)
                     record['duration_ms']=round(ms,2)
+                    record['cpu_ms']=round((time.process_time()-cpu0)*1000,2)
+                    record['rss_mb']=current_rss_mb()
+                    stage_rows.append(stage_metrics.row_from_record(record))
                     # Optional bounded native table samples; never encode the full surface.
                     if samples and frame is not None and report is not None and image_used<image_limit:
                         record['samples']=[]
@@ -108,6 +113,7 @@ def run_session(engine, hwnds, *, minutes=30, interval=2, budget_mb=16, samples=
                      image_budget_bytes=image_limit,log_budget_bytes=log_limit,
                      counts=dict(counts),capture_and_read_ms=dict(n=len(values),median=values[len(values)//2] if values else None,
                      p95=values[min(len(values)-1,int(len(values)*.95))] if values else None),
+                     stage_profile=stage_metrics.summarize(stage_rows),
                      accuracy_validated=False,actions_executed=False,
                      limitations=['Periodic samples, not video: events between captures can be missed.',
                      'Displayed buttons do not prove which action the user took.',

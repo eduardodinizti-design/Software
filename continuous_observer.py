@@ -2,7 +2,7 @@
 import math
 import time
 from table_reading.pipeline import analyze_tables
-from observation_metrics import ObservationMetrics
+from observation_metrics import ObservationMetrics, sample_resources
 from table_reading.presentation import describe_regions
 
 
@@ -20,7 +20,7 @@ def observe(engine, hwnd, *, interval=2.0, max_age=10.0, max_tables=6,
     try:
         while not max_cycles or cycle < max_cycles:
             cycle+=1
-            started=clock()
+            started=clock();cpu_started=time.process_time()
             # Clear before capture: previous output is historical, never current.
             emit(f'Ciclo {cycle}: capturando; leitura anterior invalidada.')
             frame=None;report=None
@@ -39,7 +39,7 @@ def observe(engine, hwnd, *, interval=2.0, max_age=10.0, max_tables=6,
                     identity=current
                     report=analyze(frame,metadata,max_tables=max_tables,**({'read_buttons':True} if read_buttons else {}),**({'read_community':True} if read_community else {}))
                     age=clock()-started
-                    metrics.add(metadata,report,age*1000)
+                    metrics.add(metadata,report,age*1000,sample_resources(cpu_started))
                     if cycle % 10 == 0:
                         emit("TEMPOS (ms; ultimos 120 ciclos analisados): "+str(metrics.summary()))
                     if cycle % 10 == 0:emit('DIAGNOSTICO: '+str(metrics.counts()))
@@ -64,4 +64,6 @@ def observe(engine, hwnd, *, interval=2.0, max_age=10.0, max_tables=6,
         emit('Observador encerrado. Nenhuma imagem salva.')
     emit("DIAGNOSTICO FINAL: "+str(metrics.counts()))
     emit("TEMPOS FINAIS (ms): "+str(metrics.summary()))
+    memory=metrics.memory_mb()
+    if memory:emit("MEMORIA (RSS MiB): "+str(memory))
     return 0

@@ -3,6 +3,7 @@ from contextlib import contextmanager
 from contextvars import ContextVar
 from functools import wraps
 from threading import RLock
+import time
 import numpy as np
 import pytesseract
 
@@ -16,7 +17,7 @@ def ocr_frame(enabled=True):
     if existing is not None:
         yield existing['stats']
         return
-    state = dict(enabled=enabled, cache={}, lock=RLock(), stats=dict(requests=0, calls=0, hits=0, bytes=0))
+    state = dict(enabled=enabled, cache={}, lock=RLock(), stats=dict(requests=0, calls=0, hits=0, bytes=0, wall_ms=0.0))
     token = _state.set(state)
     try:
         yield state['stats']
@@ -44,7 +45,12 @@ def image_to_string(image, **kwargs):
             stats['hits'] += 1
             return state['cache'][key]
         stats['calls'] += 1
-    result = pytesseract.image_to_string(image, **kwargs)
+    started = time.perf_counter()
+    try:
+        result = pytesseract.image_to_string(image, **kwargs)
+    finally:
+        elapsed = (time.perf_counter() - started) * 1000
+        with state['lock']:stats['wall_ms'] += elapsed
     # Errors never reach here, and mutable/non-string outputs are not retained.
     if key is not None and isinstance(result, str):
         size = len(key[2]) + len(result.encode('utf8'))
