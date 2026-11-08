@@ -12,6 +12,7 @@ the blue 9-max layout at the gabarito scale is validated.
 """
 import re
 import cv2
+import numpy as np
 from .ocr_runtime import image_to_string
 from .seat_layout import SEAT_ANCHORS, nameplate_box, avatar_box
 from .dealer_button import find_dealer_seat, derive_positions
@@ -26,7 +27,8 @@ OCCUPANCY_BLUE = 0.45
 _OCCLUSION_STD = 15.0  # a flat, dark nameplate box is likely covered by a panel (bet slider)
 
 _WITH_COMMA = re.compile(r'(\d{1,4})[.,](\d)\s*B')
-_DIGITS_BB = re.compile(r'(\d{2,5})\s*B[BR8]')
+# Trailing unit is "BB", often OCR'd as BR/RR/B8; accept two of [BR8].
+_DIGITS_BB = re.compile(r'(\d{2,5})\s*[BR8]{2}')
 
 
 def parse_amount(text):
@@ -114,6 +116,42 @@ def read_to_call(crop):
     return dict(to_call_bb=None, confidence='abstain', source='buttons', raw=None)
 
 
+def _detect_red_chips(crop):
+    """Bounding centres (cx, cy, w, h) of the red bet chips on the felt."""
+    b, g, r = crop[:, :, 0].astype(int), crop[:, :, 1].astype(int), crop[:, :, 2].astype(int)
+    red = ((r > 130) & (r > g + 50) & (r > b + 40)).astype(np.uint8) * 255
+    red = cv2.morphologyEx(red, cv2.MORPH_CLOSE, np.ones((5, 5), np.uint8))
+    count, _, stats, cent = cv2.connectedComponentsWithStats(red, 8)
+    chips = []
+    for i in range(1, count):
+        x, y, w, h, area = stats[i]
+        if 12 < w < 60 and 10 < h < 50 and area > 120:
+            chips.append((int(cent[i][0]), int(cent[i][1]), int(w), int(h)))
+    return chips
+
+
+def read_bets(crop):
+    """Bets on the felt, found by their red chip and the amount beside it,
+    attributed to the nearest seat (approximate). The pot chip is skipped by its
+    'Pot' label. Observation only; a seat with no chip simply has no bet, and the
+    one-decimal rule applies to a dropped comma as elsewhere."""
+    h, w = crop.shape[:2]
+    bets = []
+    for cx, cy, cw, ch in _detect_red_chips(crop):
+        region = crop[max(0, cy - 16):cy + 16, cx + cw // 2:min(w, cx + cw // 2 + 120)]
+        if region.size == 0:
+            continue
+        raw = _ocr(cv2.cvtColor(region, cv2.COLOR_BGR2GRAY), '--psm 7')
+        if 'ot' in raw.lower():   # the 'Pot: ...' chip, not a bet
+            continue
+        value, conf = parse_amount(raw)
+        if value is None:
+            continue
+        seat = min(SEAT_ANCHORS, key=lambda s: (SEAT_ANCHORS[s][0] * w - cx) ** 2 + (SEAT_ANCHORS[s][1] * h - cy) ** 2)
+        bets.append(dict(seat=seat, bet_bb=value, confidence=conf, source='chip', chip=[cx, cy], raw=raw))
+    return bets
+
+
 def read_table_state(crop):
     """Experimental table state: per-seat stacks, pot, dealer button and derived
     positions. Per-seat bets and to-call are placeholders (None) for the next
@@ -132,4 +170,4 @@ def read_table_state(crop):
     positions = derive_positions(dealer['seat'], occupied) if dealer['seat'] else {}
     return dict(experimental=True, scope='BLUE_LAYOUT_PASSIVE_READING', source='ocr',
                 seats=seats, pot=read_pot(crop), dealer=dealer, positions=positions,
-                to_call=read_to_call(crop), pending=dict(bets=None))
+                to_call=read_to_call(crop), bets=read_bets(crop))

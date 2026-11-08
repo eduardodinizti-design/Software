@@ -62,7 +62,7 @@ class ReadTests(unittest.TestCase):
         self.assertIn('seat', state['dealer'])
         self.assertEqual(state['positions'], {})  # no dealer badge -> no positions
         self.assertIn('to_call_bb', state['to_call'])
-        self.assertEqual(set(state['pending']), {'bets'})
+        self.assertEqual(state['bets'], [])  # blank crop: no chips, no bets
 
     def test_bad_crop_rejected(self):
         with self.assertRaises(ValueError):
