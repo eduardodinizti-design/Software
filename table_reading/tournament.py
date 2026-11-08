@@ -16,20 +16,32 @@ from .ocr_runtime import image_to_string
 FINAL_TABLE = 9
 _PAID = re.compile(r'pagos[:\s]*(\d+)', re.I)
 _POSITION = re.compile(r'posi\w*[:\s]*(\d+)\s*/\s*(\d+)', re.I)   # OCR reads "posigao: 40/55"
+_NAME = re.compile(r'^(.*?)\s*Blinds', re.I)
+_PKO = re.compile(r'\bP?KO\b|BOUNTY', re.I)
+
+
+def is_pko(name):
+    """Whether the tournament name marks a bounty (PKO/KO/Bounty) event.
+    Unvalidated against a real PKO table yet (no gabarito); calibrate when one
+    arrives."""
+    return bool(name) and bool(_PKO.search(name))
 
 
 def read_tournament(crop):
-    """{paid, players_left, hero_rank, raw, confidence}. None fields when unread."""
+    """{paid, players_left, hero_rank, name, is_pko, raw, confidence}."""
     h, w = crop.shape[:2]
     region = crop[int(0.49 * h):int(0.62 * h), int(0.25 * w):int(0.75 * w)]
     raw = ' '.join(image_to_string(cv2.cvtColor(region, cv2.COLOR_BGR2GRAY), config='--psm 6').split())
     paid = _PAID.search(raw)
     pos = _POSITION.search(raw)
+    name = _NAME.search(raw)
     paid_n = int(paid.group(1)) if paid else None
     left_n = int(pos.group(2)) if pos else None
     rank_n = int(pos.group(1)) if pos else None
+    name_s = name.group(1).strip() if name else None
     conf = 'high' if (paid_n and left_n) else ('medium' if (paid_n or left_n) else 'abstain')
-    return dict(paid=paid_n, players_left=left_n, hero_rank=rank_n, raw=raw, confidence=conf)
+    return dict(paid=paid_n, players_left=left_n, hero_rank=rank_n, name=name_s,
+                is_pko=is_pko(name_s), raw=raw, confidence=conf)
 
 
 def tournament_stage(players_left, paid):
@@ -53,9 +65,11 @@ def tournament_stage(players_left, paid):
 
 
 def tournament_context(tourney):
-    """(mode, stage) for the advisor. ICM stages map to mode 'icm'; far/unknown to
-    chip EV. PKO needs a bounty signal not read yet, so mode stays icm/chip_ev."""
+    """(mode, stage) for the advisor, from the phase and whether it is a PKO:
+    near the money -> icm / pko_icm at that stage; far or unknown -> chip_ev / pko
+    at 'mid'. PKO detection is by name and still unvalidated."""
     stage = tournament_stage(tourney.get('players_left'), tourney.get('paid'))
+    pko = bool(tourney.get('is_pko'))
     if stage in ('ft', 'bubble', 'pre_itm'):
-        return 'icm', stage
-    return 'chip_ev', 'mid'
+        return ('pko_icm' if pko else 'icm'), stage
+    return ('pko' if pko else 'chip_ev'), 'mid'

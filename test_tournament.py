@@ -4,7 +4,7 @@ from unittest.mock import patch
 import numpy as np
 
 from table_reading import tournament
-from table_reading.tournament import tournament_stage, tournament_context
+from table_reading.tournament import tournament_stage, tournament_context, is_pko
 
 
 class StageTests(unittest.TestCase):
@@ -20,6 +20,13 @@ class StageTests(unittest.TestCase):
         self.assertEqual(tournament_context(dict(players_left=22, paid=20)), ('icm', 'bubble'))
         self.assertEqual(tournament_context(dict(players_left=55, paid=20)), ('chip_ev', 'mid'))
         self.assertEqual(tournament_context(dict(players_left=None, paid=None)), ('chip_ev', 'mid'))
+
+    def test_pko_detection_and_context(self):
+        self.assertFalse(is_pko('MINI FREEZE'))
+        self.assertTrue(is_pko('SUPER KO'))
+        self.assertTrue(is_pko('OMAHA 5 PKO'))
+        self.assertEqual(tournament_context(dict(players_left=55, paid=20, is_pko=True)), ('pko', 'mid'))
+        self.assertEqual(tournament_context(dict(players_left=22, paid=20, is_pko=True)), ('pko_icm', 'bubble'))
 
 
 class ReadTests(unittest.TestCase):

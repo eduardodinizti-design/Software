@@ -77,7 +77,7 @@ class PreflopAdvisor:
         return min(self.STACK_BUCKETS, key=lambda s: abs(s - stack_bb)), 'OK'
 
     def advise(self, *, hero_cards, hero_position, stack_bb, mode='chip_ev',
-               table_format='regular', stage='mid', players=9, spot='open_raise', vs=(), spread=None):
+               table_format=None, stage='mid', players=9, spot='open_raise', vs=(), spread=None):
         """An exploratory recommendation for one preflop spot, or an abstention.
 
         Returns status ADVICE | ABSTAIN | OUT_OF_RANGE with the action mix, EVs,
@@ -91,7 +91,9 @@ class PreflopAdvisor:
             hand = hand_key(hero_cards)
         except Blocked as exc:
             return self._abstain(str(exc))
-        spread = spread if spread is not None else (None if mode == 'chip_ev' else 'iguais')
+        spread = spread if spread is not None else ('iguais' if mode in ('icm', 'pko_icm') else None)
+        if table_format is None:
+            table_format = 'pko' if mode in ('pko', 'pko_icm') else 'regular'
         node = self._index.get((mode, table_format, stage, players, bucket, spot, hero_position, tuple(vs), spread))
         if node is None:
             return self._abstain('NO_VALIDATED_NODE_FOR_CONTEXT',
@@ -152,6 +154,7 @@ class PreflopAdvisor:
             out.append('TABLE_IS_9MAX_REFERENCE')
         if mode != 'chip_ev':
             out.append('ICM_PKO_NEEDS_TOURNAMENT_INPUTS')
+        if mode in ('icm', 'pko_icm'):
             out.append('ICM_SPREAD_ASSUMED_EQUAL_STACKS')
         return out
 
