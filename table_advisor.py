@@ -16,6 +16,7 @@ from table_reading.ocr_runtime import ocr_frame
 from table_reading.table_state import read_table_state
 from table_reading.community_cards import read_board
 from table_reading.hand_tracking import read_hand_id
+from table_reading.tournament import read_tournament, tournament_context
 from preflop_advisor import PreflopAdvisor
 
 
@@ -29,31 +30,40 @@ def read_hero_cards(crop):
     return cards
 
 
-def advise_table(crop, advisor, *, mode='chip_ev', stage='mid'):
-    """Read the table and attach an exploratory recommendation. Pure read; the
+def advise_table(crop, advisor, *, mode=None, stage=None):
+    """Read the table and attach an exploratory recommendation. The tournament
+    phase chooses chip EV vs ICM unless mode/stage are forced. Pure read; the
     caller wraps it in an ocr_frame so one snapshot reuses OCR."""
     state = read_table_state(crop)
     hand = read_hand_id(crop)
     hero = read_hero_cards(crop)
     board = read_board(crop, hero_cards=hero or [None, None])
+    tourney = read_tournament(crop)
+    auto_mode, auto_stage = tournament_context(tourney)
+    use_mode, use_stage = mode or auto_mode, stage or auto_stage
     if board.get('cards'):
         advice = dict(status='ABSTAIN', reason='POSTFLOP_NOT_COVERED', exploratory=True, execution_allowed=False)
     elif hero is None:
         advice = dict(status='ABSTAIN', reason='HERO_CARDS_UNKNOWN', exploratory=True, execution_allowed=False)
     else:
-        advice = advisor.advise_from_reading(state, hero, mode=mode, stage=stage)
+        advice = advisor.advise_from_reading(state, hero, mode=use_mode, stage=use_stage)
         if isinstance(advice, dict):
             advice.setdefault('caveats', []).append('SPOT_INFERRED_FROM_BETS')
-    return dict(hand=hand, hero_cards=hero, board=board, table_state=state, advice=advice)
+    return dict(hand=hand, hero_cards=hero, board=board, table_state=state,
+                tournament=tourney, context=dict(mode=use_mode, stage=use_stage), advice=advice)
 
 
 def _summary(result):
     st = result['table_state']
     occ = [s for s, d in st['seats'].items() if d['occupied']]
+    tour = result['tournament']
     lines = ['=== LEITURA DA MESA (observacao, sem cliques) ===',
              'Mao: %s | Dealer: %s | Pote: %s BB | Pagar: %s BB' % (
                  result['hand'].get('hand_number'), st['dealer'].get('seat'),
                  st['pot'].get('pot_bb'), st['to_call'].get('to_call_bb')),
+             'Fase: pagos=%s restantes=%s -> %s/%s' % (
+                 tour.get('paid'), tour.get('players_left'),
+                 result['context']['mode'], result['context']['stage']),
              'Hero: %s' % (result['hero_cards'] or 'nao identificado'),
              'Assentos ocupados: %d' % len(occ)]
     for seat in occ:
@@ -76,8 +86,8 @@ def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--ranges', required=True, help='nvt-ranges-validados.json')
     p.add_argument('--imagem', required=True, help='Recorte de uma mesa (PNG)')
-    p.add_argument('--mode', default='chip_ev')
-    p.add_argument('--stage', default='mid')
+    p.add_argument('--mode', default=None, help='Forca o modo; padrao: detecta da fase do torneio')
+    p.add_argument('--stage', default=None, help='Forca o estagio; padrao: detecta da fase')
     p.add_argument('--json', action='store_true')
     args = p.parse_args(argv)
     advisor = PreflopAdvisor.from_file(args.ranges)

@@ -23,6 +23,7 @@ def _patch(hero, board_cards):
         patch('table_advisor.read_hand_id', return_value=dict(hand_number=10)),
         patch('table_advisor.read_board', return_value=dict(cards=board_cards)),
         patch('table_advisor.read_hero_cards', return_value=hero),
+        patch('table_advisor.read_tournament', return_value=dict(paid=20, players_left=55, confidence='high')),
     ]
 
 

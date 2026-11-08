@@ -66,7 +66,7 @@ class PreflopAdvisor:
         c = node['context']
         return (c['mode'], c['format'], c['stage'], c['players'], c['stack'],
                 node['spot'], node['hero'], tuple(node.get('vs') or ()),
-                bool(node.get('spread')))
+                node.get('spread'))
 
     def bucket_stack(self, stack_bb):
         """Nearest covered stack bucket, or (None, reason) when out of coverage."""
@@ -77,11 +77,13 @@ class PreflopAdvisor:
         return min(self.STACK_BUCKETS, key=lambda s: abs(s - stack_bb)), 'OK'
 
     def advise(self, *, hero_cards, hero_position, stack_bb, mode='chip_ev',
-               table_format='regular', stage='mid', players=9, spot='open_raise', vs=()):
+               table_format='regular', stage='mid', players=9, spot='open_raise', vs=(), spread=None):
         """An exploratory recommendation for one preflop spot, or an abstention.
 
         Returns status ADVICE | ABSTAIN | OUT_OF_RANGE with the action mix, EVs,
-        the recommended (most frequent) action, and the approximations made."""
+        the recommended (most frequent) action, and the approximations made. ICM/
+        PKO nodes carry a stack spread; absent one, equal stacks ('iguais') are
+        assumed and flagged."""
         bucket, why = self.bucket_stack(stack_bb)
         if bucket is None:
             return self._abstain(why, stack_bb=stack_bb)
@@ -89,7 +91,8 @@ class PreflopAdvisor:
             hand = hand_key(hero_cards)
         except Blocked as exc:
             return self._abstain(str(exc))
-        node = self._index.get((mode, table_format, stage, players, bucket, spot, hero_position, tuple(vs), False))
+        spread = spread if spread is not None else (None if mode == 'chip_ev' else 'iguais')
+        node = self._index.get((mode, table_format, stage, players, bucket, spot, hero_position, tuple(vs), spread))
         if node is None:
             return self._abstain('NO_VALIDATED_NODE_FOR_CONTEXT',
                                  context=dict(mode=mode, stage=stage, stack=bucket, spot=spot,
@@ -149,6 +152,7 @@ class PreflopAdvisor:
             out.append('TABLE_IS_9MAX_REFERENCE')
         if mode != 'chip_ev':
             out.append('ICM_PKO_NEEDS_TOURNAMENT_INPUTS')
+            out.append('ICM_SPREAD_ASSUMED_EQUAL_STACKS')
         return out
 
     @staticmethod
