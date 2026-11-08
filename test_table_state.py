@@ -59,7 +59,9 @@ class ReadTests(unittest.TestCase):
         self.assertTrue(state['experimental'])
         self.assertEqual(len(state['seats']), 9)
         self.assertIn('pot_bb', state['pot'])
-        self.assertEqual(set(state['pending']), {'dealer_seat', 'positions', 'bets', 'to_call_bb'})
+        self.assertIn('seat', state['dealer'])
+        self.assertEqual(state['positions'], {})  # blank crop: no dealer, no occupancy
+        self.assertEqual(set(state['pending']), {'bets', 'to_call_bb'})
 
     def test_bad_crop_rejected(self):
         with self.assertRaises(ValueError):

@@ -14,6 +14,7 @@ import re
 import cv2
 from .ocr_runtime import image_to_string
 from .seat_layout import SEAT_ANCHORS, nameplate_box
+from .dealer_button import find_dealer_seat, derive_positions
 
 _WITH_COMMA = re.compile(r'(\d{1,4})[.,](\d)\s*B')
 _DIGITS_BB = re.compile(r'(\d{2,5})\s*B[BR8]')
@@ -67,10 +68,17 @@ def read_pot(crop):
 
 
 def read_table_state(crop):
-    """Experimental table state. Stacks and pot are read; dealer, positions, bets
-    and to-call are placeholders (None) for the next increment, never inferred."""
+    """Experimental table state: per-seat stacks, pot, dealer button and derived
+    positions. Per-seat bets and to-call are placeholders (None) for the next
+    increment, never inferred from cards or buttons. Positions use the occupancy
+    implied by readable stacks, so an unreadable (occluded) seat can shift them;
+    that limitation rides on the stacks' own confidence."""
     if crop is None or crop.ndim != 3 or crop.shape[2] != 3:
         raise ValueError('Expected a BGR table crop')
+    seats = read_seat_stacks(crop)
+    dealer = find_dealer_seat(crop)
+    occupied = [s for s, d in seats.items() if d['occupied']]
+    positions = derive_positions(dealer['seat'], occupied) if dealer['seat'] else {}
     return dict(experimental=True, scope='BLUE_LAYOUT_PASSIVE_READING', source='ocr',
-                seats=read_seat_stacks(crop), pot=read_pot(crop),
-                pending=dict(dealer_seat=None, positions=None, bets=None, to_call_bb=None))
+                seats=seats, pot=read_pot(crop), dealer=dealer, positions=positions,
+                pending=dict(bets=None, to_call_bb=None))
