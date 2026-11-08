@@ -18,10 +18,11 @@ from .dealer_button import find_dealer_seat, derive_positions
 
 # A seat is occupied when its NAMEPLATE (the dark name/stack pill) is present. We
 # test it by blue fraction: the pill is never blue (occupied 0.09-0.30 on real
-# crops), while an empty seat shows blue felt (~1.00). The nameplate is used, not
-# the avatar, because a blue-themed avatar (e.g. an underwater photo) reads as
-# felt and caused a false 'empty'.
-OCCUPANCY_BLUE = 0.60
+# crops), while an empty seat shows blue felt or the green "Empty" button (0.61
+# measured on a real empty seat, ~1.00 for bare felt). The threshold sits in the
+# gap. The nameplate is used, not the avatar, because a blue-themed avatar (e.g.
+# an underwater photo) reads as felt and caused a false 'empty'.
+OCCUPANCY_BLUE = 0.45
 _OCCLUSION_STD = 15.0  # a flat, dark nameplate box is likely covered by a panel (bet slider)
 
 _WITH_COMMA = re.compile(r'(\d{1,4})[.,](\d)\s*B')
