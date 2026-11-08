@@ -27,6 +27,8 @@ OCCUPANCY_BLUE = 0.45
 _OCCLUSION_STD = 15.0  # a flat, dark nameplate box is likely covered by a panel (bet slider)
 
 _WITH_COMMA = re.compile(r'(\d{1,4})[.,](\d)\s*B')
+# Some skins (Evolution) render the decimal comma as a gap: "35,5" -> "35 5BB".
+_SPACE_DECIMAL = re.compile(r'(\d{1,4})\s+(\d)\s*[BR8]{2}')
 # Trailing unit is "BB", often OCR'd as BR/RR/B8; accept two of [BR8].
 _DIGITS_BB = re.compile(r'(\d{2,5})\s*[BR8]{2}')
 
@@ -40,6 +42,9 @@ def parse_amount(text):
     m = _WITH_COMMA.search(t)
     if m:
         return float('%s.%s' % (m.group(1), m.group(2))), 'high'
+    m = _SPACE_DECIMAL.search(t)
+    if m:
+        return float('%s.%s' % (m.group(1), m.group(2))), 'medium'
     m = _DIGITS_BB.search(t)
     if m and len(m.group(1)) <= 4:
         # No comma: restore the single decimal (X,X). A 5+ digit run is OCR noise

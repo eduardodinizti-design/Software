@@ -20,6 +20,10 @@ class ParseAmountTests(unittest.TestCase):
     def test_pot_with_dropped_comma(self):
         self.assertEqual(table_state.parse_amount('Pot: 257 BB'), (25.7, 'medium'))
 
+    def test_comma_rendered_as_space(self):
+        # Evolution skin: "35,5 BB" read as "35 5BR"
+        self.assertEqual(table_state.parse_amount('Just do it 35 5BR'), (35.5, 'medium'))
+
     def test_unreadable_abstains(self):
         self.assertEqual(table_state.parse_amount(''), (None, 'abstain'))
         self.assertEqual(table_state.parse_amount('----'), (None, 'abstain'))
