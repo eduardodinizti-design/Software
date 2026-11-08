@@ -4,7 +4,7 @@ from unittest.mock import patch
 import numpy as np
 
 from table_reading import tournament
-from table_reading.tournament import tournament_stage, tournament_context, is_pko
+from table_reading.tournament import tournament_stage, tournament_context, is_pko, is_mystery
 
 
 class StageTests(unittest.TestCase):
@@ -21,12 +21,22 @@ class StageTests(unittest.TestCase):
         self.assertEqual(tournament_context(dict(players_left=55, paid=20)), ('chip_ev', 'mid'))
         self.assertEqual(tournament_context(dict(players_left=None, paid=None)), ('chip_ev', 'mid'))
 
-    def test_pko_detection_and_context(self):
+    def test_bounty_detection(self):
         self.assertFalse(is_pko('MINI FREEZE'))
-        self.assertTrue(is_pko('SUPER KO'))
         self.assertTrue(is_pko('OMAHA 5 PKO'))
+        self.assertFalse(is_mystery('OMAHA 5 PKO'))
+        self.assertTrue(is_mystery('BOX MISTERY'))
+        self.assertTrue(is_mystery('MYSTERY BOUNTY'))
+        self.assertFalse(is_pko('BOX MISTERY'))   # mystery is not a regular PKO
+
+    def test_context_pko_vs_mystery_timing(self):
         self.assertEqual(tournament_context(dict(players_left=55, paid=20, is_pko=True)), ('pko', 'mid'))
         self.assertEqual(tournament_context(dict(players_left=22, paid=20, is_pko=True)), ('pko_icm', 'bubble'))
+        # mystery is vanilla until the money
+        self.assertEqual(tournament_context(dict(players_left=55, paid=20, is_mystery=True)), ('chip_ev', 'mid'))
+        self.assertEqual(tournament_context(dict(players_left=22, paid=20, is_mystery=True)), ('icm', 'bubble'))
+        # mystery in the money: bounty active
+        self.assertEqual(tournament_context(dict(players_left=8, paid=20, is_mystery=True)), ('pko_icm', 'ft'))
 
 
 class ReadTests(unittest.TestCase):

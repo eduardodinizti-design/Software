@@ -17,14 +17,21 @@ FINAL_TABLE = 9
 _PAID = re.compile(r'pagos[:\s]*(\d+)', re.I)
 _POSITION = re.compile(r'posi\w*[:\s]*(\d+)\s*/\s*(\d+)', re.I)   # OCR reads "posigao: 40/55"
 _NAME = re.compile(r'^(.*?)\s*Blinds', re.I)
-_PKO = re.compile(r'\bP?KO\b|BOUNTY', re.I)
+# Mystery KO: bounty only AFTER the money (plays vanilla until ITM). "MISTERY" is
+# the Portuguese spelling seen on the table.
+_MYSTERY = re.compile(r'MYSTER|MIST[EÉ]R|\bM[\s.]?KO\b', re.I)
+# Regular bounty (PKO): bounty from the start.
+_PKO = re.compile(r'\bP[\s.]?KO\b|BOUNTY', re.I)
+
+
+def is_mystery(name):
+    """Mystery KO: the bounty is unlocked only once in the money."""
+    return bool(name) and bool(_MYSTERY.search(name))
 
 
 def is_pko(name):
-    """Whether the tournament name marks a bounty (PKO/KO/Bounty) event.
-    Unvalidated against a real PKO table yet (no gabarito); calibrate when one
-    arrives."""
-    return bool(name) and bool(_PKO.search(name))
+    """Regular bounty from the start (PKO/Bounty), not a mystery KO."""
+    return bool(name) and bool(_PKO.search(name)) and not is_mystery(name)
 
 
 def read_tournament(crop):
@@ -41,7 +48,7 @@ def read_tournament(crop):
     name_s = name.group(1).strip() if name else None
     conf = 'high' if (paid_n and left_n) else ('medium' if (paid_n or left_n) else 'abstain')
     return dict(paid=paid_n, players_left=left_n, hero_rank=rank_n, name=name_s,
-                is_pko=is_pko(name_s), raw=raw, confidence=conf)
+                is_pko=is_pko(name_s), is_mystery=is_mystery(name_s), raw=raw, confidence=conf)
 
 
 def tournament_stage(players_left, paid):
@@ -65,11 +72,16 @@ def tournament_stage(players_left, paid):
 
 
 def tournament_context(tourney):
-    """(mode, stage) for the advisor, from the phase and whether it is a PKO:
-    near the money -> icm / pko_icm at that stage; far or unknown -> chip_ev / pko
-    at 'mid'. PKO detection is by name and still unvalidated."""
-    stage = tournament_stage(tourney.get('players_left'), tourney.get('paid'))
-    pko = bool(tourney.get('is_pko'))
+    """(mode, stage) for the advisor. A regular PKO carries the bounty from the
+    start; a Mystery KO plays vanilla until the money, so its bounty only counts
+    once in the money. Near the money -> icm/pko_icm at the stage; far -> chip_ev
+    or pko at 'mid'. Detection is by name and still unvalidated."""
+    paid, left = tourney.get('paid'), tourney.get('players_left')
+    stage = tournament_stage(left, paid)
+    in_money = isinstance(left, int) and isinstance(paid, int) and left <= paid
+    bounty = bool(tourney.get('is_pko')) or (bool(tourney.get('is_mystery')) and in_money)
     if stage in ('ft', 'bubble', 'pre_itm'):
-        return ('pko_icm' if pko else 'icm'), stage
-    return ('pko' if pko else 'chip_ev'), 'mid'
+        return ('pko_icm' if bounty else 'icm'), stage
+    if in_money and bounty:            # ITM with an active bounty but no exact ICM stage
+        return 'pko', 'mid'
+    return ('pko' if bounty else 'chip_ev'), 'mid'
