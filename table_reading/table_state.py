@@ -16,10 +16,13 @@ from .ocr_runtime import image_to_string
 from .seat_layout import SEAT_ANCHORS, nameplate_box, avatar_box
 from .dealer_button import find_dealer_seat, derive_positions
 
-# Avatar blue fraction below this means the seat is not empty blue felt. Calibrated
-# on real crops: occupied avatars 0.15-0.40, empty felt 0.81-1.00.
+# A seat is occupied when its NAMEPLATE (the dark name/stack pill) is present. We
+# test it by blue fraction: the pill is never blue (occupied 0.09-0.30 on real
+# crops), while an empty seat shows blue felt (~1.00). The nameplate is used, not
+# the avatar, because a blue-themed avatar (e.g. an underwater photo) reads as
+# felt and caused a false 'empty'.
 OCCUPANCY_BLUE = 0.60
-_OCCLUSION_STD = 15.0  # a flat, dark avatar box is likely covered by a panel (bet slider)
+_OCCLUSION_STD = 15.0  # a flat, dark nameplate box is likely covered by a panel (bet slider)
 
 _WITH_COMMA = re.compile(r'(\d{1,4})[.,](\d)\s*B')
 _DIGITS_BB = re.compile(r'(\d{2,5})\s*B[BR8]')
@@ -67,12 +70,13 @@ def _felt_blue_and_std(region):
 
 
 def read_occupancy(crop):
-    """Per-seat occupancy from the avatar box: occupied when it is not empty blue
-    felt. A flat, dark box (bet slider over the seat) is still 'occupied' but
-    flagged occluded_suspected, since we cannot confirm or read it there."""
+    """Per-seat occupancy from the nameplate box: occupied when the dark name/stack
+    pill is present (not empty blue felt). A flat, dark box (bet slider over the
+    seat) is still 'occupied' but flagged occluded_suspected, since we cannot
+    confirm or read it there."""
     out = {}
     for seat in SEAT_ANCHORS:
-        x0, y0, x1, y1 = avatar_box(crop.shape[1], crop.shape[0], seat)
+        x0, y0, x1, y1 = nameplate_box(crop.shape[1], crop.shape[0], seat)
         blue, std = _felt_blue_and_std(crop[y0:y1, x0:x1])
         occupied = blue < OCCUPANCY_BLUE
         out[seat] = dict(occupied=occupied, felt_blue=round(blue, 3), source='avatar',

@@ -76,7 +76,7 @@ class OccupancyTests(unittest.TestCase):
         # a non-blue textured avatar over every seat -> occupied
         photo = felt.copy()
         for seat in seat_layout.SEAT_ANCHORS:
-            x0, y0, x1, y1 = seat_layout.avatar_box(750, 1334, seat)
+            x0, y0, x1, y1 = seat_layout.nameplate_box(750, 1334, seat)
             photo[y0:y1, x0:x1] = np.random.randint(0, 255, (y1 - y0, x1 - x0, 3), np.uint8)
         occ2 = table_state.read_occupancy(photo)
         self.assertTrue(all(s['occupied'] for s in occ2.values()))
@@ -84,7 +84,7 @@ class OccupancyTests(unittest.TestCase):
     def test_stacks_and_occupancy_are_independent(self):
         crop = np.zeros((1334, 750, 3), np.uint8); crop[:] = (200, 90, 40)
         for seat in seat_layout.SEAT_ANCHORS:
-            x0, y0, x1, y1 = seat_layout.avatar_box(750, 1334, seat)
+            x0, y0, x1, y1 = seat_layout.nameplate_box(750, 1334, seat)
             crop[y0:y1, x0:x1] = np.random.randint(0, 255, (y1 - y0, x1 - x0, 3), np.uint8)
         with patch('table_reading.table_state.image_to_string', return_value=''):
             state = table_state.read_table_state(crop)
