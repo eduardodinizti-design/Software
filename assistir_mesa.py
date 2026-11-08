@@ -46,19 +46,27 @@ def main(argv=None):
     engine = WindowCaptureEngine()
     configure_ocr()
     print('CONSELHEIRO AO VIVO: somente leitura, sem cliques, sem execucao. Ctrl+C encerra.', flush=True)
+    last = {}   # per table: last printed signature, so an unchanged hand is not reprinted
     try:
         while True:
             started = time.monotonic()
             frame, meta = engine.capture_frame(hwnd=args.hwnd)
             if frame is None:
-                print('SEM LEITURA:', meta.get('status', 'CAPTURE_FAILED'), flush=True)
+                if last.get('_capture') != meta.get('status'):
+                    last['_capture'] = meta.get('status')
+                    print('SEM LEITURA:', meta.get('status', 'CAPTURE_FAILED'), flush=True)
             else:
-                tables = advise_frame(frame, meta, advisor, max_tables=args.max_tables)
-                if not tables:
-                    print('Nenhuma mesa completa localizada neste frame.', flush=True)
-                for row in tables:
-                    print('--- Mesa %d ---' % row['table_index'], flush=True)
-                    print(_summary(row['result']), flush=True)
+                last.pop('_capture', None)
+                for row in advise_frame(frame, meta, advisor, max_tables=args.max_tables):
+                    result = row['result']
+                    adv = result['advice']
+                    signature = ((result.get('hand') or {}).get('hand_number'),
+                                 tuple(result.get('hero_cards') or ()),
+                                 adv.get('status'), adv.get('recommended'), adv.get('reason'))
+                    if last.get(row['table_index']) != signature:   # only on a real change
+                        last[row['table_index']] = signature
+                        print('--- Mesa %d ---' % row['table_index'], flush=True)
+                        print(_summary(result), flush=True)
             time.sleep(max(0.1, args.intervalo - (time.monotonic() - started)))
     except KeyboardInterrupt:
         print('Encerrado. Nenhuma imagem salva, nenhum clique enviado.', flush=True)
