@@ -98,6 +98,22 @@ def read_pot(crop):
     return dict(pot_bb=value, confidence=conf, source='ocr', raw=raw)
 
 
+def read_to_call(crop):
+    """Hero's amount to call, taken from the action buttons the game shows: the
+    Call button's amount, or 0 when a Check is offered (nothing to call). None
+    when there is no button row (not the hero's turn / unknown). This reads the
+    displayed amount, not an inference from other seats' bets."""
+    from .action_buttons import read_action_buttons
+    buttons = read_action_buttons(crop).get('buttons', [])
+    for button in buttons:
+        if button.get('action') == 'CALL' and button.get('amount') is not None:
+            return dict(to_call_bb=float(button['amount']), confidence='high',
+                        source='call_button', raw=button.get('label'))
+    if any(b.get('action') == 'CHECK' for b in buttons):
+        return dict(to_call_bb=0.0, confidence='high', source='check_button', raw='Check')
+    return dict(to_call_bb=None, confidence='abstain', source='buttons', raw=None)
+
+
 def read_table_state(crop):
     """Experimental table state: per-seat stacks, pot, dealer button and derived
     positions. Per-seat bets and to-call are placeholders (None) for the next
@@ -116,4 +132,4 @@ def read_table_state(crop):
     positions = derive_positions(dealer['seat'], occupied) if dealer['seat'] else {}
     return dict(experimental=True, scope='BLUE_LAYOUT_PASSIVE_READING', source='ocr',
                 seats=seats, pot=read_pot(crop), dealer=dealer, positions=positions,
-                pending=dict(bets=None, to_call_bb=None))
+                to_call=read_to_call(crop), pending=dict(bets=None))

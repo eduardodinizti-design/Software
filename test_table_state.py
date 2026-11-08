@@ -61,11 +61,34 @@ class ReadTests(unittest.TestCase):
         self.assertIn('pot_bb', state['pot'])
         self.assertIn('seat', state['dealer'])
         self.assertEqual(state['positions'], {})  # no dealer badge -> no positions
-        self.assertEqual(set(state['pending']), {'bets', 'to_call_bb'})
+        self.assertIn('to_call_bb', state['to_call'])
+        self.assertEqual(set(state['pending']), {'bets'})
 
     def test_bad_crop_rejected(self):
         with self.assertRaises(ValueError):
             table_state.read_table_state(np.zeros((10, 10), np.uint8))
+
+
+class ToCallTests(unittest.TestCase):
+    def setUp(self):
+        self.crop = np.zeros((1334, 750, 3), np.uint8)
+
+    def test_call_amount_is_to_call(self):
+        with patch('table_reading.action_buttons.read_action_buttons',
+                   return_value={'buttons': [{'action': 'CALL', 'amount': '3.2', 'label': 'Call 3,2 BB'}]}):
+            self.assertEqual(table_state.read_to_call(self.crop)['to_call_bb'], 3.2)
+
+    def test_check_means_zero_to_call(self):
+        with patch('table_reading.action_buttons.read_action_buttons',
+                   return_value={'buttons': [{'action': 'CHECK', 'amount': None}]}):
+            tc = table_state.read_to_call(self.crop)
+            self.assertEqual(tc['to_call_bb'], 0.0)
+
+    def test_no_button_row_abstains(self):
+        with patch('table_reading.action_buttons.read_action_buttons', return_value={'buttons': []}):
+            tc = table_state.read_to_call(self.crop)
+            self.assertIsNone(tc['to_call_bb'])
+            self.assertEqual(tc['confidence'], 'abstain')
 
 
 class OccupancyTests(unittest.TestCase):
