@@ -29,10 +29,24 @@ CLOCKWISE = ['hero', 'bot_right', 'right_low', 'right_up', 'top_right',
 NAMEPLATE_W = 0.22  # fraction of crop width
 NAMEPLATE_H = 0.06  # fraction of crop height
 
+# The avatar sits just above the nameplate; this circular photo is what tells an
+# occupied seat from empty blue felt.
+AVATAR_DY = 0.075   # how far above the nameplate centre the avatar centre is
+AVATAR_W = 0.055    # half-width fraction
+AVATAR_H = 0.045    # half-height fraction
+
 
 def nameplate_box(width, height, seat):
     """Pixel box (x0, y0, x1, y1) of a seat's nameplate within a width x height crop."""
     fx, fy = SEAT_ANCHORS[seat]
     cx, cy = int(fx * width), int(fy * height)
     w2, h2 = int(NAMEPLATE_W * width / 2), int(NAMEPLATE_H * height / 2)
+    return max(0, cx - w2), max(0, cy - h2), min(width, cx + w2), min(height, cy + h2)
+
+
+def avatar_box(width, height, seat):
+    """Pixel box (x0, y0, x1, y1) of a seat's avatar within a width x height crop."""
+    fx, fy = SEAT_ANCHORS[seat]
+    cx, cy = int(fx * width), int((fy - AVATAR_DY) * height)
+    w2, h2 = int(AVATAR_W * width), int(AVATAR_H * height)
     return max(0, cx - w2), max(0, cy - h2), min(width, cx + w2), min(height, cy + h2)

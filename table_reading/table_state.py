@@ -13,8 +13,13 @@ the blue 9-max layout at the gabarito scale is validated.
 import re
 import cv2
 from .ocr_runtime import image_to_string
-from .seat_layout import SEAT_ANCHORS, nameplate_box
+from .seat_layout import SEAT_ANCHORS, nameplate_box, avatar_box
 from .dealer_button import find_dealer_seat, derive_positions
+
+# Avatar blue fraction below this means the seat is not empty blue felt. Calibrated
+# on real crops: occupied avatars 0.15-0.40, empty felt 0.81-1.00.
+OCCUPANCY_BLUE = 0.60
+_OCCLUSION_STD = 15.0  # a flat, dark avatar box is likely covered by a panel (bet slider)
 
 _WITH_COMMA = re.compile(r'(\d{1,4})[.,](\d)\s*B')
 _DIGITS_BB = re.compile(r'(\d{2,5})\s*B[BR8]')
@@ -41,17 +46,38 @@ def _ocr(gray, config):
 
 
 def read_seat_stacks(crop):
-    """Per-seat {stack_bb, confidence, source, raw, occupied}. occupied is a
-    best-effort flag: True when a stack was read, so an unreadable seat reads as
-    not occupied (a known false-negative risk, flagged by the confidence)."""
+    """Per-seat {stack_bb, confidence, source, raw}. Occupancy is separate
+    (read_occupancy): a seat can be occupied yet have an unreadable stack."""
     seats = {}
     for seat in SEAT_ANCHORS:
         x0, y0, x1, y1 = nameplate_box(crop.shape[1], crop.shape[0], seat)
         raw = _ocr(cv2.cvtColor(crop[y0:y1, x0:x1], cv2.COLOR_BGR2GRAY), '--psm 6')
         value, conf = parse_amount(raw)
-        seats[seat] = dict(stack_bb=value, confidence=conf, source='ocr', raw=raw,
-                           occupied=value is not None)
+        seats[seat] = dict(stack_bb=value, confidence=conf, source='ocr', raw=raw)
     return seats
+
+
+def _felt_blue_and_std(region):
+    if region.size == 0:
+        return 1.0, 0.0
+    b, g, r = region[:, :, 0].astype(int), region[:, :, 1].astype(int), region[:, :, 2].astype(int)
+    blue = float(((b > r + 20) & (b > g + 10) & (b > 60)).mean())
+    std = float(region.reshape(-1, 3).std(axis=0).mean())
+    return blue, std
+
+
+def read_occupancy(crop):
+    """Per-seat occupancy from the avatar box: occupied when it is not empty blue
+    felt. A flat, dark box (bet slider over the seat) is still 'occupied' but
+    flagged occluded_suspected, since we cannot confirm or read it there."""
+    out = {}
+    for seat in SEAT_ANCHORS:
+        x0, y0, x1, y1 = avatar_box(crop.shape[1], crop.shape[0], seat)
+        blue, std = _felt_blue_and_std(crop[y0:y1, x0:x1])
+        occupied = blue < OCCUPANCY_BLUE
+        out[seat] = dict(occupied=occupied, felt_blue=round(blue, 3), source='avatar',
+                         occluded_suspected=bool(occupied and blue < 0.1 and std < _OCCLUSION_STD))
+    return out
 
 
 # Pot label box as (fx0, fy0, fx1, fy1), from the gabarito.
@@ -75,9 +101,13 @@ def read_table_state(crop):
     that limitation rides on the stacks' own confidence."""
     if crop is None or crop.ndim != 3 or crop.shape[2] != 3:
         raise ValueError('Expected a BGR table crop')
-    seats = read_seat_stacks(crop)
+    stacks = read_seat_stacks(crop)
+    occupancy = read_occupancy(crop)
+    seats = {s: dict(stacks[s], occupied=occupancy[s]['occupied'], felt_blue=occupancy[s]['felt_blue'],
+                     occupancy_source='avatar', occluded_suspected=occupancy[s]['occluded_suspected'])
+             for s in SEAT_ANCHORS}
     dealer = find_dealer_seat(crop)
-    occupied = [s for s, d in seats.items() if d['occupied']]
+    occupied = [s for s in SEAT_ANCHORS if seats[s]['occupied']]
     positions = derive_positions(dealer['seat'], occupied) if dealer['seat'] else {}
     return dict(experimental=True, scope='BLUE_LAYOUT_PASSIVE_READING', source='ocr',
                 seats=seats, pot=read_pot(crop), dealer=dealer, positions=positions,

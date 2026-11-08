@@ -46,12 +46,12 @@ class ReadTests(unittest.TestCase):
         with patch('table_reading.table_state.image_to_string', return_value='Hero 63,1 BB'):
             seats = table_state.read_seat_stacks(self.crop)
         self.assertEqual(set(seats), set(seat_layout.SEAT_ANCHORS))
-        self.assertTrue(all(s['stack_bb'] == 63.1 and s['occupied'] for s in seats.values()))
+        self.assertTrue(all(s['stack_bb'] == 63.1 for s in seats.values()))
 
-    def test_unreadable_seat_is_not_occupied(self):
+    def test_unreadable_stack_abstains(self):
         with patch('table_reading.table_state.image_to_string', return_value=''):
             seats = table_state.read_seat_stacks(self.crop)
-        self.assertTrue(all(s['stack_bb'] is None and not s['occupied'] for s in seats.values()))
+        self.assertTrue(all(s['stack_bb'] is None for s in seats.values()))
 
     def test_table_state_structure_is_labelled(self):
         with patch('table_reading.table_state.image_to_string', return_value=''):
@@ -60,12 +60,35 @@ class ReadTests(unittest.TestCase):
         self.assertEqual(len(state['seats']), 9)
         self.assertIn('pot_bb', state['pot'])
         self.assertIn('seat', state['dealer'])
-        self.assertEqual(state['positions'], {})  # blank crop: no dealer, no occupancy
+        self.assertEqual(state['positions'], {})  # no dealer badge -> no positions
         self.assertEqual(set(state['pending']), {'bets', 'to_call_bb'})
 
     def test_bad_crop_rejected(self):
         with self.assertRaises(ValueError):
             table_state.read_table_state(np.zeros((10, 10), np.uint8))
+
+
+class OccupancyTests(unittest.TestCase):
+    def test_blue_felt_seat_is_empty_avatar_photo_is_occupied(self):
+        felt = np.zeros((1334, 750, 3), np.uint8); felt[:] = (200, 90, 40)   # blue felt (BGR)
+        occ = table_state.read_occupancy(felt)
+        self.assertTrue(all(not s['occupied'] for s in occ.values()))
+        # a non-blue textured avatar over every seat -> occupied
+        photo = felt.copy()
+        for seat in seat_layout.SEAT_ANCHORS:
+            x0, y0, x1, y1 = seat_layout.avatar_box(750, 1334, seat)
+            photo[y0:y1, x0:x1] = np.random.randint(0, 255, (y1 - y0, x1 - x0, 3), np.uint8)
+        occ2 = table_state.read_occupancy(photo)
+        self.assertTrue(all(s['occupied'] for s in occ2.values()))
+
+    def test_stacks_and_occupancy_are_independent(self):
+        crop = np.zeros((1334, 750, 3), np.uint8); crop[:] = (200, 90, 40)
+        for seat in seat_layout.SEAT_ANCHORS:
+            x0, y0, x1, y1 = seat_layout.avatar_box(750, 1334, seat)
+            crop[y0:y1, x0:x1] = np.random.randint(0, 255, (y1 - y0, x1 - x0, 3), np.uint8)
+        with patch('table_reading.table_state.image_to_string', return_value=''):
+            state = table_state.read_table_state(crop)
+        self.assertTrue(all(s['occupied'] and s['stack_bb'] is None for s in state['seats'].values()))
 
 
 if __name__ == '__main__':
