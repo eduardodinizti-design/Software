@@ -14,6 +14,7 @@ from table_reading.ocr_runtime import ocr_frame
 from table_reading.automatic_table_crops import detect_table_crops
 from preflop_advisor import PreflopAdvisor
 from table_advisor import advise_table, _summary
+from bot_control import BotControl, HotkeyListener, RUNNING, PAUSED, DISABLED
 
 
 def advise_frame(frame_bgr, meta, advisor, max_tables=6):
@@ -40,16 +41,39 @@ def main(argv=None):
     p.add_argument('--deep', default=None, help='Pacote deep 40/100bb opcional (reference, nao validado)')
     p.add_argument('--intervalo', type=float, default=2.0, help='Segundos entre leituras')
     p.add_argument('--max-tables', type=int, default=6)
+    p.add_argument('--no-hotkeys', dest='hotkeys', action='store_false',
+                   help='Desliga as hotkeys de pausa/takeover (Ctrl+Alt+P/R/D)')
     args = p.parse_args(argv)
     advisor = PreflopAdvisor.from_files(args.ranges, args.deep) if args.deep else PreflopAdvisor.from_file(args.ranges)
     from window_capture_engine import WindowCaptureEngine
     engine = WindowCaptureEngine()
     configure_ocr()
-    print('CONSELHEIRO AO VIVO: somente leitura, sem cliques, sem execucao. Ctrl+C encerra.', flush=True)
+    # Pause/takeover control. The observer only reads, but the same gate is what a
+    # future executor must consult before sending any input. Start armed (RUNNING).
+    control = BotControl(on_change=lambda s: print('\n>>> BOT %s%s <<<\n' % (
+        s, {'PAUSED': ' (voce no controle; Ctrl+Alt+R reativa)',
+            'DISABLED': ' (desabilitado; Ctrl+Alt+R reativa)'}.get(s, '')), flush=True))
+    control.resume()
+    listener = HotkeyListener(control) if args.hotkeys else None
+    if listener:
+        listener.start()
+    print('CONSELHEIRO AO VIVO: somente leitura, sem cliques, sem execucao. '
+          'Ctrl+Alt+P pausa, R reativa, D desabilita. Ctrl+C encerra.', flush=True)
     last = {}   # per table: last printed signature, so an unchanged hand is not reprinted
     try:
         while True:
             started = time.monotonic()
+            if control.state == DISABLED:
+                print('Bot desabilitado. Encerrando. Nenhum clique foi enviado.', flush=True)
+                break
+            if control.state == PAUSED:
+                # You have the tables: stay quiet (no advice). A future executor
+                # gates on control.execution_allowed() here and sends nothing.
+                if last.get('_control') != PAUSED:
+                    last['_control'] = PAUSED
+                time.sleep(max(0.1, args.intervalo - (time.monotonic() - started)))
+                continue
+            last.pop('_control', None)
             frame, meta = engine.capture_frame(hwnd=args.hwnd)
             if frame is None:
                 if last.get('_capture') != meta.get('status'):
@@ -70,6 +94,9 @@ def main(argv=None):
             time.sleep(max(0.1, args.intervalo - (time.monotonic() - started)))
     except KeyboardInterrupt:
         print('Encerrado. Nenhuma imagem salva, nenhum clique enviado.', flush=True)
+    finally:
+        if listener:
+            listener.stop()
     return 0
 
 
