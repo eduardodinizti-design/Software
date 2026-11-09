@@ -86,18 +86,21 @@ superior (≥150 BI); turbo-PKO só ≥200 BI.**
 
 ---
 
-## 4. REBUY / ADD-ON (regra obrigatória, pois o bot não cobre)
-O bot **não** tem lógica de rebuy nem pós-flop. Enquanto não houver uma regra
-codificada, jogar rebuy **só** com uma **decisão fixa pré-definida**, orçada
-dentro do buy-in efetivo:
+## 4. REBUY / ADD-ON (regra decidida pelo operador)
+O bot ainda não tem pós-flop; a decisão de rebuy é uma **regra fixa**, não um
+julgamento do bot. Decisão do Eduardo (08/11/2026) para a versão final:
 
-- **Buy-in efetivo = entrada inicial + rebuys planejados + add-on.** É esse
-  número que entra no teto (§2.2) e no mínimo-BI (§2.1), não a entrada inicial.
-- **Regra fixa sugerida (moderada):** no máximo **1 rebuy** ao bustar dentro do
-  período, **+ add-on sempre** que a estrutura torná-lo claramente +fichas/EV.
-  Buy-in efetivo ≈ 2–3× a entrada.
-- **Recomendação CEO:** **adiar** Rebuy/Add-on até codificarmos a regra, ou
-  jogar com alocação menor e essa regra fixa. É a modalidade de maior exposição.
+- **Rebuy liberado SOMENTE em PKO.** Freezeout/MKO: sem rebuy (são o default).
+- **Gatilho:** fazer rebuy **quando o stack cair a ≤ 40 BB** (re-entrada/rebuy
+  dentro do período), enquanto o torneio for PKO e estiver no período de rebuy.
+- **Buy-in efetivo = entrada inicial + rebuys orçados.** É esse número que entra
+  no teto por inscrição (§2.2) e no mínimo-BI do formato (§2.1), não a inicial.
+- **Limite:** o orçamento de rebuy de cada PKO conta no orçamento diário (§3.1);
+  ao estourar, sem novos rebuys no dia.
+- Add-on: avaliar por torneio (regra a definir quando houver estrutura concreta).
+
+Essa regra é **codificável** e vira um parâmetro de sessão (`rebuy: {pko_only:
+true, trigger_bb: 40}`) no contrato da §7, consumido pelo futuro operador.
 
 ---
 
@@ -151,9 +154,14 @@ daily:
   max_simultaneous_running: 4  # subir p/ 6 após validar leitura multi-mesa
   registration_cutoff_at: null # você define o relógio de corte
 rebuy:
-  enabled: false               # adiar até regra codificada (§4)
+  pko_only: true               # rebuy só em PKO (§4)
+  trigger_bb: 40               # faz rebuy quando o stack cai a <=40 BB
   effective_buyin_multiplier: 3
-supervised_confirmation_required: true
+session:
+  registration_cutoff_at: null # até que horas registrar (você define)
+  last_tournament: null        # até qual torneio da grade registrar
+  grid_preset: []              # grade pré-estabelecida antes do grind
+supervised_confirmation_required: true   # true no início; vira autônomo por fases (§8)
 ```
 
 Nenhum valor absoluto de moeda é preenchido aqui: campo financeiro em branco =
@@ -161,10 +169,32 @@ BLOQUEADO, conforme a spec de inscrição.
 
 ---
 
-## 8. PRÓXIMOS PASSOS
-1. Você valida/ajusta estes guardas (especialmente: PKO só ≥150 BI, 4 simultâneas,
-   adiar rebuy).
-2. Quando houver executor de inscrição (spec de inscrição), esta política vira o
-   filtro de elegibilidade dele.
-3. Evoluções: regra codificada de rebuy/add-on; seleção por EV/estrutura com dados
-   reais; late-reg com critério explícito de stack recebido.
+## 8. VISÃO FINAL — OPERADOR AUTÔNOMO (roadmap por fases)
+Objetivo (Eduardo): iniciar o bot → ele lê a **grade** (pré-estabelecida antes do
+grind nas primeiras operações reais) → **registra sozinho** conforme as regras
+(buy-in máx do dia, nº de torneios, rebuy PKO≤40bb, horário/torneio limite) →
+**abre as mesas registradas** e **opera** → com **PAUSA/TAKEOVER** a qualquer
+momento (você assume ao vivo; depois reativa ou desabilita o bot).
+
+Construção incremental, por risco crescente (cada fase valida antes da próxima):
+
+- **Fase 0 (feito):** leitura de mesa + conselho pré-flop (observação), ICM/PKO.
+- **Fase 1 — Grade + Config de sessão (risco ZERO, só leitura):** ler o lobby
+  (nome, buy-in, tipo, horário, status de inscrição); schema de config desta
+  política (§7). Localizar/avaliar os módulos históricos de lobby antes de reusar.
+- **Fase 2 — Controle PAUSA/TAKEOVER (segurança, antes de qualquer execução):**
+  hotkey que para o envio de input e devolve as telas a você; reativar/desabilitar.
+- **Fase 3 — Registrador SUPERVISIONADO:** fluxo da `ESTRATÉGIA DE INSCRIÇ.txt`
+  (reserva atômica custo+vaga, sem duplicidade, confirmação por inscrição),
+  cursor humano (spec de movimento). Abre as mesas registradas.
+- **Fase 4 — Execução de ações (MAIOR RISCO: conta/ToS):** detectar a vez, clicar
+  fold/call/raise pelo conselho, via cursor humano, envio único, revalidação na
+  chegada; rebuy PKO≤40bb. Pausa sempre disponível.
+- **Fase 5 — Autonomia:** registro autônomo com guardas (sem confirmação por
+  inscrição) + agendador (corte por horário/torneio).
+- **Futuro:** HUD por ID de vilão + base de mãos jogadas → estudo de linhas com
+  perda de EV. (Ver [[visualpilot-hud-vip]].)
+
+**Risco (uma vez, sem rodeios):** registro e execução autônomos num cliente real
+de poker contra o ToS têm risco de banimento de conta. Por isso a ordem acima é
+observação→supervisionado→autônomo, com PAUSA/TAKEOVER construído ANTES da execução.
