@@ -31,7 +31,8 @@ class AdvisorTests(unittest.TestCase):
         self.assertEqual(self.a.bucket_stack(26)[0], 25)
         self.assertEqual(self.a.bucket_stack(65)[0], 40)        # deep bucket now exists
         self.assertEqual(self.a.bucket_stack(90)[0], 100)
-        self.assertEqual(self.a.bucket_stack(150), (None, 'DEEP_STACK_NOT_COVERED'))
+        self.assertEqual(self.a.bucket_stack(150), (100, 'OK'))   # HRC caps at 100bb; deeper uses it
+        self.assertEqual(self.a.bucket_stack(200), (100, 'OK'))
         self.assertEqual(self.a.bucket_stack(0), (None, 'STACK_UNKNOWN'))
 
     def test_advice_for_covered_hand(self):
@@ -48,9 +49,23 @@ class AdvisorTests(unittest.TestCase):
         self.assertTrue(r['bucketed'])
         self.assertIn('STACK_BUCKETED_24_TO_25BB', r['caveats'])
 
-    def test_deep_stack_abstains(self):
-        r = self.a.advise(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=200)
-        self.assertEqual((r['status'], r['reason']), ('ABSTAIN', 'DEEP_STACK_NOT_COVERED'))
+    def test_above_solved_depth_uses_100bb_reference(self):
+        # HRC tops out at 100bb; a deeper stack (common early in tournaments) uses
+        # the 100bb range as a flagged reference instead of abstaining.
+        idx_aa = HANDS.index('AA')
+        node100 = dict(id='n100', context=dict(mode='chip_ev', format='regular', stage='mid', players=9, stack=100),
+                       spot='open_raise', hero='BTN', vs=[], validated=True, evUnit='bb',
+                       legalActions=['fold', 'raise'], actions=['raise', 'fold'],
+                       freq={'raise': [1.0 if k == idx_aa else 0.0 for k in range(169)],
+                             'fold': [0.0 if k == idx_aa else 1.0 for k in range(169)]},
+                       ev={'raise': [2.0] * 169, 'fold': [0.0] * 169}, outOfRange=[], source='test')
+        pack = pack_with_node()
+        pack['nodes'].append(node100)
+        a = PreflopAdvisor(pack)
+        r = a.advise(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=200)
+        self.assertEqual(r['status'], 'ADVICE')
+        self.assertEqual(r['stack_bucket'], 100)
+        self.assertIn('STACK_ABOVE_SOLVED_DEPTH_100BB_REFERENCE', r['caveats'])
 
     def test_unknown_context_abstains(self):
         r = self.a.advise(hero_cards=['As', 'Ac'], hero_position='UTG', stack_bb=25)  # no UTG node

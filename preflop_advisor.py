@@ -55,7 +55,6 @@ class PreflopAdvisor:
     # Short stacks (5-25) come from the validated NVT pack; 40/100 from the deep
     # reference pack (not HRC-validated, flagged in every answer).
     STACK_BUCKETS = (5, 8, 10, 12, 15, 20, 25, 40, 100)
-    DEEP_MARGIN = 4  # bb above the top bucket still rounded down; beyond is 'deep'
 
     def __init__(self, pack):
         if pack.get('format') != 'nvt-range-export' or pack.get('version') != 1:
@@ -96,11 +95,17 @@ class PreflopAdvisor:
                 node.get('spread'))
 
     def bucket_stack(self, stack_bb):
-        """Nearest covered stack bucket, or (None, reason) when out of coverage."""
+        """Nearest covered stack bucket, or (None, reason) when out of coverage.
+
+        The HRC solutions top out at 100bb, but real tournaments play deeper,
+        especially early. Preflop open/3bet ranges change little above 100bb, so
+        a stack at or beyond the top bucket uses the 100bb range as the best
+        available reference (the extrapolation is flagged in the caveats), rather
+        than abstaining and leaving a common deep table without advice."""
         if not isinstance(stack_bb, (int, float)) or stack_bb <= 0:
             return None, 'STACK_UNKNOWN'
-        if stack_bb > self.STACK_BUCKETS[-1] + self.DEEP_MARGIN:
-            return None, 'DEEP_STACK_NOT_COVERED'
+        if stack_bb >= self.STACK_BUCKETS[-1]:
+            return self.STACK_BUCKETS[-1], 'OK'
         return min(self.STACK_BUCKETS, key=lambda s: abs(s - stack_bb)), 'OK'
 
     def advise(self, *, hero_cards, hero_position, stack_bb, mode='chip_ev',
@@ -186,6 +191,9 @@ class PreflopAdvisor:
         out = ['EXPLORATORY_NOT_FOR_EXECUTION', 'NVT_REFERENCE_SHORT_STACK_ONLY']
         if bucket != stack_bb:
             out.append('STACK_BUCKETED_%s_TO_%sBB' % (stack_bb, bucket))
+        if isinstance(stack_bb, (int, float)) and stack_bb > self.STACK_BUCKETS[-1]:
+            # Beyond the deepest solved stack: the 100bb range is a reference, not a solution.
+            out.append('STACK_ABOVE_SOLVED_DEPTH_100BB_REFERENCE')
         if players != 9:
             out.append('TABLE_IS_9MAX_REFERENCE')
         if mode != 'chip_ev':
