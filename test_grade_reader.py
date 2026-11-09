@@ -69,21 +69,13 @@ class FieldParseTests(unittest.TestCase):
         s = gr.parse_status('{ something unreadable')
         self.assertEqual(s['state'], 'unknown')
 
-    def test_status_reg_open_garbled_live_ocr(self):
-        # raws REAIS capturados no canvas Karekas ao vivo (OCR degradado em escala
-        # maior): o estado reg_open deve sobreviver; o nº de min é best-effort.
-        for raw in ('i/o} Ronictra encerra eam 9 min',
-                    'Reaisira encerra em R29 min',
-                    '1/0] Reaintra encerra em 1NN min'):
-            self.assertEqual(gr.parse_status(raw)['state'], 'reg_open', raw)
-
-    def test_status_not_started_garbled_and_prize_is_unknown(self):
-        # início garbled com data/hora -> not_started; linha de PRÊMIO (sem min/
-        # relógio) -> unknown (fail-safe, nunca reg_open por engano).
-        self.assertEqual(gr.parse_status('ncdsin Aa infin: 11/00 10-nn')['state'],
-                         'not_started')
-        for prize in ('� =260,000', '(i) =213,070+6,930', '2211,137.5+11,137.5'):
-            self.assertEqual(gr.parse_status(prize)['state'], 'unknown', prize)
+    def test_status_strict_no_false_positive_on_stack_or_level(self):
+        # O cartão Karekas atual NÃO imprime status; a banda cai na linha de STACK
+        # (números) ou pega o 'N min' do NÍVEL. Nada disso pode virar reg_open —
+        # tem de ficar unknown (fail-safe; achado ao vivo 09/11).
+        for raw in ('{� =25,000', '1 ==2,592+2,592', '{@ =2500',
+                    '@ 54/78 12 min', 'fe&19 min'):
+            self.assertEqual(gr.parse_status(raw)['state'], 'unknown', raw)
 
 
 if __name__ == '__main__':

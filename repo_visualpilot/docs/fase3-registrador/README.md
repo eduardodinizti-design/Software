@@ -105,41 +105,61 @@ python plugar_lobby.py --image logs/.../sample-000001-mesa-1.png --is-crop \
   --target "DEEP FREEZEOUT" --authorized-cost 50 --now 20:00
 ```
 
-## Validação AO VIVO (09/11, canvas real, HWND do PPPoker)
+## Validação AO VIVO (09/11, canvas real, HWND do PPPoker) — MARCO
 
 Rodado na máquina do Eduardo com o PPPoker aberto no lobby Karekas (canvas Unity
-3840×1440, capturado em 5760×2160 por DPI 1.5×, quase todo preto como esperado):
+3840×1440, capturado em 5760×2160 por DPI 1.5×, quase todo preto como esperado).
+**O fluxo chegou a AGUARDANDO CONFIRMAÇÃO sobre um torneio REAL aberto** (DEEP
+FREEZEOUT, buy-in 50, 58/83, "Registro encerra em 61 min"), orç. 1000→950, sem
+clique. Quatro achados/correções guiados por evidência ao vivo:
 
-- **Captura + extração do painel do lobby do canvas inteiro:** OK. Corrigido o
-  `find_lobby_crop` — o lobby vem com status de MESA `UNCERTAIN` (não é mesa), o
-  sinal certo são os badges de buy-in, não o status do detector.
-- **Campos no núcleo** (nome/buy-in/modalidade/jogadores/nível) leem na escala
-  viva (painel de 1005px). Corrigido o `grade_reader`: as ROIs verticais eram
-  offsets em PIXEL fixos (calibrados no v228 de 750px); agora escalam pelo
-  **pitch real** entre cartões (pitch_ref=170). v228 fica idêntico (escala 1.0),
-  sem regressão; validado por `test_read_grade_scale_invariant` (v228 ×1.34).
-- **Status tolerante a OCR garbled:** `parse_status` reconhece `reg_open` mesmo
-  com "encerra"→"ancora"/"em"→"eam"/"R29"/"1NN", distingue `not_started`
-  (hora/data) e cai em `unknown` (fail-safe) no garble sem pista. Validado com
-  raws reais.
+1. **Extração do painel do lobby do canvas inteiro:** corrigido `find_lobby_crop`
+   — o lobby vem com status de MESA `UNCERTAIN` (não é mesa); o sinal certo são
+   os badges de buy-in, não o status do detector.
+2. **ROIs por escala:** as ROIs verticais de nome/info/status eram offsets em
+   PIXEL fixos (calibradas no v228 de 750px) e desalinhavam no painel de 1005px.
+   Agora escalam pelo **pitch real** entre cartões (pitch_ref=170); v228 fica
+   idêntico (escala 1.0, sem regressão; `test_read_grade_scale_invariant`).
+   Nome/buy-in/modalidade/jogadores/nível passam a ler na escala viva.
+3. **`parse_status` ESTRITO (fail-safe):** a 3ª linha do cartão **alterna** (~1 Hz)
+   entre o **stack inicial** e **"Registro encerra em N min"**. Uma versão
+   "tolerante" do parser chegou a FALSEAR `reg_open` lendo o "N min" do NÍVEL —
+   revertida. O parser só aceita `reg_open` no texto exato "Registro encerra em
+   N min"; stack/nível ⇒ `unknown` (bloqueado). Validado contra o falso-positivo.
+4. **Amostragem multi-frame:** como a linha de status alterna, uma captura só é
+   sorte. `read_lobby_multi` + `merge_cards` leem N frames e, por cartão, o
+   `reg_open` real vence `unknown` — nunca inventa (só entra se um frame leu).
+   CLI: `--frames` (padrão 5).
 
-Gabarito congelado salvo em `tests/fixtures/lobby_live/karekas-lobby-live-1.png`
-(não versionado) para calibração offline.
+**Asserção do operador:** quando um cliente NÃO imprime o status no cartão, o
+operador afirma a inscrição aberta com `--assert-open` (marcado
+`operator_asserted`, nunca lido). O leitor jamais inventa `reg_open`.
+
+Gabaritos congelados em `tests/fixtures/lobby_live/` (não versionados) para
+calibração offline.
+
+```bash
+# ao vivo (amostra 6 frames p/ pegar o countdown que alterna):
+python plugar_lobby.py --hwnd 0xHWND --club Karekas --currency BRL \
+  --max-entry 100 --budget 1000 --bankroll 200 \
+  --target "DEEP FREEZEOUT" --authorized-cost 50 --frames 6
+```
 
 ## Limitações (honestas)
 
-- **Não há validação no PPPoker real.** Tudo foi exercitado no lab (SQLite +
-  lógica pura). Os dados da demo são de exemplo, não leitura de tela.
+- **Leitura/seleção/fluxo: validados ao vivo** até AGUARDANDO CONFIRMAÇÃO. O que
+  NÃO foi validado no cliente real: a inscrição em si (o bot não clica) e a
+  conciliação do recibo. A lógica do ledger/estados é toda exercitada no lab.
 - O filtro de política (`evaluate_card`) usa o `SessionState` em memória como
   pré-filtro grosso; a **fonte de verdade** de orçamento/vaga no fluxo é o
   **ledger** (confirmados + pendentes). Mantenha-os em sincronia quando ligar ao
   lobby real.
-- **Leitura do lobby real: coberta e VALIDADA AO VIVO** (capture + extração do
-  painel + núcleo dos campos + status tolerante). Gap que fica: os cartões de
-  **PKO com prêmio garantido grande** (ex.: WARRIOR/HIGH/TNT PKO) têm uma linha
-  de PRÊMIO onde os cartões menores mostram o countdown, então o status deles lê
-  `unknown` → `REGISTRATION_NOT_OPEN` (fail-safe, não entra). Mapear a posição do
-  countdown nesse layout precisa do gabarito congelado — é a próxima calibração.
+- **Leitura do lobby real: coberta e VALIDADA AO VIVO** (capture + extração +
+  núcleo dos campos + status + seleção + fluxo até AWAITING sobre torneio real).
+  Modalidade `unknown` (nomes sem palavra-chave: SUNSET/WORLD/3 HANDED) bloqueia
+  por `MODALITY_UNKNOWN_NEEDS_CONFIRMATION` (correto; o operador confirma).
+  A conciliação ao vivo (observar o recibo após o clique do usuário) ainda não
+  foi exercitada de ponta a ponta — exige inscrever de fato.
 - **Detalhes degradados:** a 3A não abre a tela de detalhes (seria um clique),
   então a conferência lobby×detalhes do §C vem da mesma fonte (flag
   `details_source='lobby+operator'`). Um leitor de detalhes validado é trabalho

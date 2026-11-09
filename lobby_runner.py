@@ -56,6 +56,50 @@ def read_lobby(image_bgr, *, is_crop=False, reader=read_grade, **kw):
     return dict(ok=True, cards=reader(crop), box=box, n_badges=n)
 
 
+def merge_cards(frames_cards):
+    """Mescla N leituras do lobby. A 3ª linha do cartão Karekas ALTERNA entre o
+    stack inicial e "Registro encerra em N min" (~1 Hz), então uma captura só é
+    sorte. Em N frames, para cada cartão (chave nome+buy-in) mantemos o status
+    mais informativo (reg_open/not_started vence unknown). Fail-safe preservado:
+    nunca inventamos reg_open — ele só entra se ALGUM frame o leu de verdade.
+    """
+    merged, order = {}, []
+    for cards in frames_cards:
+        for c in cards:
+            key = ((c.get('name') or '').strip(), c.get('buyin'))
+            if key not in merged:
+                merged[key] = dict(c)
+                order.append(key)
+            else:
+                cur = merged[key]
+                cur_st = (cur.get('status') or {}).get('state')
+                new_st = (c.get('status') or {}).get('state')
+                if cur_st in (None, 'unknown') and new_st not in (None, 'unknown'):
+                    cur['status'] = c['status']
+    return [merged[k] for k in order]
+
+
+def read_lobby_multi(capture, *, frames=5, delay=0.5, sleep=None, **kw):
+    """Lê o lobby em N frames e mescla (ver merge_cards). `capture` é um callable
+    () -> frame_bgr (BGR) ou None. `sleep` injetável para teste."""
+    import time as _t
+    sleep = sleep or _t.sleep
+    reads, box, n = [], None, 0
+    for i in range(max(1, frames)):
+        frame = capture()
+        if frame is not None:
+            out = read_lobby(frame, **kw)
+            if out['ok']:
+                reads.append(out['cards'])
+                box, n = out['box'], max(n, out['n_badges'])
+        if i < frames - 1:
+            sleep(delay)
+    if not reads:
+        return dict(ok=False, reason='NO_LOBBY_CROP_FOUND', cards=[], box=None)
+    return dict(ok=True, cards=merge_cards(reads), box=box, n_badges=n,
+                frames=len(reads))
+
+
 def session_state_from_ledger(ledger):
     """SessionState coerente com o ledger: reservas pendentes → committed;
     confirmados → confirmed_spend. Nada contado duas vezes."""

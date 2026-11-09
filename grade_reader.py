@@ -22,9 +22,6 @@ from table_reading.tournament import is_mystery, is_pko
 _PLAYERS = re.compile(r'(\d+)\s*/\s*(\d+)')
 _LEVEL_MIN = re.compile(r'(\d+)\s*min', re.I)
 _CLOSES = re.compile(r'encerra\s*em\s*(\d+)\s*min', re.I)
-_CLOSES_FUZZY = re.compile(r'(\d+)\s*min', re.I)              # 'N min' mesmo garbled
-_CLOCK = re.compile(r'\d{1,2}\s*[:/]\s*\d{2}|\d{1,2}\s*/\s*\d{1,2}')  # hora/data (início)
-_ENC_CUE = re.compile(r'enc|anc|cerr|corr|\breg', re.I)      # vestígio de 'encerra'/'registro'
 _STARTS = re.compile(r'in[ií]cio[:\s]*(.+)$', re.I)
 _MONEY = re.compile(r'\d+(?:[.,]\d+)?')
 
@@ -99,27 +96,17 @@ def parse_status(raw):
     'reg_open' when a close countdown is shown, 'not_started' when only a start
     time is shown, else 'unknown'. Registration being open is never assumed.
 
-    Tolerante a OCR garbled do skin ao vivo (texto pequeno em escala maior):
-    - 'Registro encerra em N min' lê limpo no v228 (caminho exato).
-    - Ao vivo o OCR degrada ("encerra"→"ancora", "em"→"eam", "R29"/"1NN"): o
-      reg_open é reconhecido por um vestígio de "encerra/registro" + "min" SEM um
-      relógio/data. not_started mostra hora/data (início). Garble sem pista fica
-      'unknown' (fail-safe: o seletor exige reg_open e não presume inscrição).
+    ESTRITO de propósito: só reconhece 'reg_open' no "Registro encerra em N min"
+    exato. Clientes cujo cartão NÃO imprime o status de inscrição (ex.: o skin
+    Karekas atual, que mostra só jogadores/nível/stack) leem 'unknown' — e o
+    seletor bloqueia (fail-safe). NÃO inferir reg_open do "N min" do NÍVEL: isso
+    falseava inscrição aberta. Para esses clientes, o operador afirma o status
+    aberto no fluxo supervisionado (flag operator_asserted), nunca o leitor.
     """
     t = raw or ''
-    m = _CLOSES.search(t)                       # caminho limpo (sem regressão v228)
+    m = _CLOSES.search(t)
     if m:
         return dict(state='reg_open', closes_in_min=int(m.group(1)), starts_at=None)
-    has_min = re.search(r'\bmin\b', t, re.I) is not None
-    clock = _CLOCK.search(t)
-    if clock and not has_min:                   # hora/data e nenhum 'min' = início
-        s = _STARTS.search(t)
-        return dict(state='not_started', closes_in_min=None,
-                    starts_at=(s.group(1).strip() if s else clock.group(0).strip()))
-    if has_min and _ENC_CUE.search(t):          # contagem 'N min' com vestígio de 'encerra'
-        mm = _CLOSES_FUZZY.search(t)
-        return dict(state='reg_open',
-                    closes_in_min=(int(mm.group(1)) if mm else None), starts_at=None)
     m = _STARTS.search(t)
     if m:
         return dict(state='not_started', closes_in_min=None, starts_at=m.group(1).strip())

@@ -22,25 +22,27 @@ import sys
 import cv2
 
 from bot_control import BotControl
-from lobby_runner import details_from_card, read_lobby, select_lobby
+from lobby_runner import (details_from_card, read_lobby, read_lobby_multi,
+                          select_lobby)
 from registration_flow import RegistrationRound
 from registration_ledger import RegistrationLedger
 from session_config import SessionConfig
 from table_reading.pipeline import configure_ocr
 
 
-def _load_frame(args):
+def _read_lobby_for(args):
+    """Lê o lobby: imagem única (--image) ou N frames ao vivo (--hwnd), mesclando
+    a linha de status que alterna stack<->countdown."""
     if args.image:
         im = cv2.imread(args.image)
         if im is None:
             raise SystemExit('Nao consegui ler a imagem: %s' % args.image)
-        return im, dict(source='image', path=args.image)
+        return read_lobby(im, is_crop=args.is_crop), dict(source='image')
     from window_capture_engine import WindowCaptureEngine
     engine = WindowCaptureEngine()
-    frame, meta = engine.capture_frame(hwnd=args.hwnd)
-    if frame is None:
-        raise SystemExit('Captura falhou: %s' % meta.get('status'))
-    return frame, meta
+    lob = read_lobby_multi(lambda: engine.capture_frame(hwnd=args.hwnd)[0],
+                           frames=args.frames)
+    return lob, dict(source='hwnd (%d frames)' % lob.get('frames', 0))
 
 
 def main(argv=None):
@@ -62,14 +64,21 @@ def main(argv=None):
     p.add_argument('--target', default=None, help='Nome do torneio autorizado')
     p.add_argument('--authorized-cost', type=float, default=None,
                    help='Custo da oferta autorizada p/ o alvo (obrigatorio com --target)')
+    p.add_argument('--assert-open', action='store_true',
+                   help='Operador AFIRMA que o alvo esta com inscricao aberta. '
+                        'Necessario neste cliente, cujo cartao NAO mostra o status '
+                        'de inscricao. Marcado como asseveracao do operador, nao lido.')
     p.add_argument('--db', default=':memory:', help='SQLite do ledger (persiste)')
+    p.add_argument('--frames', type=int, default=5,
+                   help='Frames a amostrar ao vivo (a linha de status alterna '
+                        'stack<->countdown ~1Hz; varios frames pegam o countdown)')
     args = p.parse_args(argv)
 
     if args.target and args.authorized_cost is None:
         raise SystemExit('--target exige --authorized-cost (a oferta autorizada, §5)')
 
     configure_ocr()
-    frame, meta = _load_frame(args)
+    lob, meta = _read_lobby_for(args)
 
     config = SessionConfig(
         enabled=True, clubs_authorized=(args.club,),
@@ -79,7 +88,6 @@ def main(argv=None):
         registration_cutoff=args.cutoff)
     ledger = RegistrationLedger(args.db)
 
-    lob = read_lobby(frame, is_crop=args.is_crop)
     print('=' * 70)
     print('PLUG NO LOBBY — MODO OBSERVACAO (o bot NAO clica) | fonte:', meta.get('source', 'hwnd'))
     print('=' * 70)
@@ -108,6 +116,13 @@ def main(argv=None):
         print('\nAlvo %r nao encontrado no lobby lido.' % args.target)
         ledger.close()
         return 1
+
+    if args.assert_open and (card.get('status') or {}).get('state') != 'reg_open':
+        # Este cliente nao imprime o status de inscricao no cartao. O operador
+        # AFIRMA que o alvo esta aberto; marcamos como asseveracao, nao leitura.
+        card = dict(card, status=dict(state='reg_open', closes_in_min=None,
+                                      starts_at=None, operator_asserted=True))
+        print('\n*** REGISTRO ABERTO = ASSEVERACAO DO OPERADOR (nao lido do cartao) ***')
 
     control = BotControl()
     control.resume()   # observação só lê, mas o gate é o mesmo do executor futuro

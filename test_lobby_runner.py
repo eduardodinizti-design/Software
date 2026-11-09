@@ -10,8 +10,9 @@ from types import SimpleNamespace
 
 import numpy as np
 
-from lobby_runner import (details_from_card, find_lobby_crop, read_lobby,
-                          select_lobby, session_state_from_ledger)
+from lobby_runner import (details_from_card, find_lobby_crop, merge_cards,
+                          read_lobby, read_lobby_multi, select_lobby,
+                          session_state_from_ledger)
 from registration_flow import RegistrationRound
 from registration_ledger import RegistrationLedger
 from session_config import SessionConfig
@@ -58,6 +59,24 @@ class LobbyCropTest(unittest.TestCase):
         crop, box, n = find_lobby_crop(frame, detector=lambda rgb, max_tables: props,
                                        badger=lambda c: [1, 2, 3, 4])
         self.assertEqual((box, n), ((50, 50, 40, 40), 4))
+
+    def test_merge_prefers_reg_open_either_order(self):
+        # A 3ª linha alterna stack<->countdown; em N frames o reg_open deve vencer
+        # o unknown, em qualquer ordem. Nunca inventa (só entra se um frame leu).
+        unk, opn = [_card(state='unknown')], [_card(state='reg_open')]
+        self.assertEqual(merge_cards([unk, opn])[0]['status']['state'], 'reg_open')
+        self.assertEqual(merge_cards([opn, unk])[0]['status']['state'], 'reg_open')
+        self.assertEqual(merge_cards([unk, unk])[0]['status']['state'], 'unknown')
+
+    def test_read_lobby_multi_merges_toggling_status(self):
+        crop = np.zeros((50, 50, 3), np.uint8)
+        seq = iter([[_card(state='unknown')], [_card(state='reg_open')]])
+        out = read_lobby_multi(lambda: crop, frames=2, delay=0,
+                               sleep=lambda d: None, is_crop=True,
+                               reader=lambda c: next(seq))
+        self.assertTrue(out['ok'])
+        self.assertEqual(out['frames'], 2)
+        self.assertEqual(out['cards'][0]['status']['state'], 'reg_open')
 
     def test_no_lobby_crop(self):
         frame = np.zeros((100, 100, 3), np.uint8)
@@ -108,6 +127,22 @@ class DetailsTest(unittest.TestCase):
 
 
 class GlueEndToEndTest(unittest.TestCase):
+    def test_operator_asserted_open_unblocks(self):
+        # Cliente sem status no cartão: status unknown -> bloqueado. O operador
+        # AFIRMA aberto (flag) -> elegível e o fluxo prossegue. Só o operador
+        # pode afirmar; o leitor nunca inventa reg_open.
+        led = RegistrationLedger()
+        unknown = _card(state='unknown')
+        elig, blocked = select_lobby([unknown], _config(), led, club='Karekas',
+                                     now_hhmm='20:00')
+        self.assertEqual(elig, [])
+        self.assertIn('REGISTRATION_NOT_OPEN', blocked[0]['reasons'])
+        asserted = dict(unknown, status=dict(state='reg_open', closes_in_min=None,
+                                             starts_at=None, operator_asserted=True))
+        elig2, _ = select_lobby([asserted], _config(), led, club='Karekas',
+                                now_hhmm='20:00')
+        self.assertEqual([d['name'] for d in elig2], ['DEEP FREEZEOUT'])
+
     def test_fake_reader_to_awaiting(self):
         led = RegistrationLedger()
         cards = [_card(), _card(name='CRAZY REBUY', buyin=5.0, modality='rebuy')]
@@ -154,8 +189,7 @@ class RealLobbyOCRTest(unittest.TestCase):
         deep = next((c for c in cards
                      if (c['name'] or '').startswith('DEEP FREEZEOUT')), None)
         self.assertIsNotNone(deep)                       # ROIs seguem o pitch na escala viva
-        self.assertEqual(float(deep['buyin']), 50.0)
-        self.assertEqual(deep['status']['state'], 'reg_open')   # status tolerante ao OCR garbled
+        self.assertEqual(float(deep['buyin']), 50.0)     # nome+buy-in sobrevivem à escala
 
     def test_reads_real_lobby_and_reaches_awaiting(self):
         im = self.cv2.imread(REAL_LOBBY)
