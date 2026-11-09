@@ -71,16 +71,45 @@ O backend ctypes real constrói e lê `virtual_bounds` (ex.: -1920,0,4480,1440) 
 python -m unittest test_cursor
 ```
 
-## O que FALTA (honesto) — próximos blocos da 3B
+## Bloco 2 (09/11): medição, envio real e avaliação
 
-- **Medir o movimento REAL do Eduardo** num app de teste (alvos inofensivos, sem
-  PPPoker) e ajustar `a,b` com `fit_fitts` → só então `calibrated=True` e é
-  honesto falar em semelhança. Hoje é "movimento suave" com coeficientes default.
-- **Validar o envio real** (SendInput movendo/clicando) contra o app de teste —
-  latência, jitter, aceitação de eventos, correspondência coord enviada×observada.
-- **Métricas de avaliação independentes** (duração×distância, curvatura, perfis
-  de velocidade, estabilidade de chegada, erro final) sobre amostras gravadas.
-- Só depois disso, e com turno/estado validados, cogitar apontar para uma ação
-  real — o que é a fronteira da F4, com todas as travas (gate, revalidação,
-  clique único) já no lugar.
+- **`cursor_eval.py`** (puro): `movement_metrics` (duração, distância reta,
+  comprimento/curvatura do caminho, velocidade de pico, tempo-ao-pico, overshoot,
+  erro final, reversões/correções), `summarize_trials` (agrega + nota de que é
+  descritivo, NÃO prova de origem humana), `make_trials` (alvos variados,
+  determinístico por seed).
+- **`cursor_sendcheck.py`**: valida o ENVIO real — move para coords conhecidas
+  via SendInput, mede coord enviada×observada e RESTAURA a origem (sem clicar).
+- **`cursor_test_app.py`** (Tk, alvos inofensivos, NUNCA PPPoker):
+  - `--measure`: você move o mouse até cada alvo e clica; grava telemetria,
+    ajusta Fitts (`fit_fitts`) e salva `logs/cursor/measure-*.json`.
+  - `--auto` (experimental): o controlador move+clica via SendInput; mede
+    enviado×observado e se o clique surtiu efeito; `logs/cursor/auto-*.json`.
+    ESC aborta.
+
+### Envio real VALIDADO no Windows (move, sem clique)
+
+`cursor_sendcheck.py` no setup do Eduardo (desktop virtual -1920,0,4480,1440):
+alvos atingidos com **erro ~1,3 px** (arredondamento da normalização 0..65535),
+todos os eventos aceitos, cursor restaurado. A correspondência coord
+enviada×observada está dentro de 1–2 px — adequada para clicar no centro seguro
+de um botão de dezenas de px.
+
+### Como medir seu movimento (calibração)
+
+```bash
+python cursor_test_app.py --measure --trials 15
+# mova o mouse até cada quadrado e clique; ao fim salva logs/cursor/measure-*.json
 ```
+O relatório traz as amostras, o ajuste de Fitts (a, b, n, R²) e o resumo de
+métricas. Com ele, `TrajectoryGenerator.calibrate(a, b)` passa a `calibrated=True`.
+
+## O que FALTA (honesto)
+
+- **Rodar `--measure`** (precisa do mouse do Eduardo) para calibrar a,b de verdade
+  e então avaliar naturalidade nas amostras de avaliação. Hoje: movimento suave,
+  coeficientes default; o ENVIO (move) já é real e validado.
+- **Validar o CLIQUE real** ponta a ponta (`--auto`) — o move está provado; falta
+  confirmar o efeito do clique num alvo inofensivo.
+- Só depois disso, e com turno/estado validados, cogitar apontar para uma ação
+  real — fronteira da F4, com as travas (gate, revalidação, clique único) prontas.

@@ -13,6 +13,7 @@ from cursor_trajectory import (TrajectoryGenerator, TrajectoryPlan,
 from cursor_input_win import WindowsCursorInput, MOUSEEVENTF_LEFTDOWN, MOUSEEVENTF_LEFTUP
 from cursor_controller import CursorController, Intent, center_of
 from cursor_calibration import fit_fitts, MovementRecorder
+from cursor_eval import movement_metrics, summarize_trials, make_trials
 
 
 class StepClock:
@@ -330,6 +331,75 @@ class CalibrationTest(unittest.TestCase):
         self.assertTrue(rec.add_move(distance=200, width=50, duration=0.4))
         self.assertFalse(rec.add_move(distance=300, width=50, duration=0.5))
         self.assertEqual(rec.dropped, 1)
+
+
+class SendCheckTest(unittest.TestCase):
+    class _FakeMove:
+        def __init__(self, bounds=(-1920, 0, 4480, 1440), pos=(100, 100)):
+            self._bounds, self._pos, self.moves = bounds, pos, []
+
+        def virtual_bounds(self):
+            return self._bounds
+
+        def cursor_pos(self):
+            return self._pos
+
+        def move_to(self, x, y, bounds=None):
+            self.moves.append((x, y))
+            self._pos = (int(x), int(y))
+            return dict(requested=1, accepted=1, norm=(0, 0))
+
+    def test_move_measures_and_restores(self):
+        from cursor_sendcheck import send_check
+        fake = self._FakeMove(pos=(500, 500))
+        rep = send_check(adapter=fake, sleep=lambda s: None)
+        self.assertTrue(rep['all_accepted'])
+        self.assertLess(rep['max_error_px'], 1.5)       # backend perfeito -> ~0
+        self.assertEqual(rep['origin'], (500, 500))
+        self.assertEqual(fake.moves[-1], (500, 500))    # restaurou a origem
+
+
+class EvalTest(unittest.TestCase):
+    def _straight(self):
+        return [(i * 0.1, i * 10.0, 0.0) for i in range(11)]   # (0,0)->(100,0)
+
+    def test_straight_path_metrics(self):
+        m = movement_metrics(self._straight(), target=(100.0, 0.0), width=48)
+        self.assertAlmostEqual(m['straight_distance'], 100.0, places=6)
+        self.assertAlmostEqual(m['curvature_ratio'], 1.0, places=6)
+        self.assertAlmostEqual(m['peak_velocity'], 100.0, places=4)
+        self.assertEqual(m['reversals'], 0)
+        self.assertAlmostEqual(m['final_error'], 0.0, places=6)
+
+    def test_curved_path_has_curvature(self):
+        pts = [(0.0, 0, 0), (0.1, 50, 50), (0.2, 100, 0)]
+        m = movement_metrics(pts, target=(100.0, 0.0))
+        self.assertGreater(m['curvature_ratio'], 1.4)
+
+    def test_overshoot_and_reversal(self):
+        pts = [(0.0, 0, 0), (0.1, 120, 0), (0.2, 100, 0)]
+        m = movement_metrics(pts, target=(100.0, 0.0))
+        self.assertAlmostEqual(m['overshoot_frac'], 0.2, places=6)
+        self.assertEqual(m['reversals'], 1)
+
+    def test_too_few_points_abstains(self):
+        self.assertEqual(movement_metrics([(0.0, 1, 1)])['reason'], 'TOO_FEW_POINTS')
+
+    def test_summarize(self):
+        a = movement_metrics(self._straight(), target=(100.0, 0.0))
+        s = summarize_trials([a, dict(reason='TOO_FEW_POINTS')])
+        self.assertEqual(s['n'], 1)
+        self.assertIn('mean_duration', s)
+
+    def test_make_trials_deterministic_and_bounded(self):
+        t1 = make_trials((800, 600), n=10, seed=7)
+        t2 = make_trials((800, 600), n=10, seed=7)
+        self.assertEqual(t1, t2)                      # determinístico
+        for tr in t1:
+            x, y, w, h = tr['rect']
+            self.assertGreaterEqual(x, 0)
+            self.assertLessEqual(x + w, 800)
+            self.assertLessEqual(y + h, 600)
 
 
 if __name__ == '__main__':
