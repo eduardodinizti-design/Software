@@ -57,9 +57,20 @@ def parse_buyin(raw):
 
 
 def parse_players(raw):
-    """(registered, max) from 'X/Y', or (None, None)."""
+    """(registered, max) from 'X/Y', or (None, None).
+
+    The player icon can glue a stray digit onto the registered count ('71/105'
+    read as '271/105'). registered > max is impossible, so recover by dropping a
+    leading digit when that resolves it, else drop the registered value rather
+    than report an impossible count. The max is kept when it reads."""
     m = _PLAYERS.search(raw or '')
-    return (int(m.group(1)), int(m.group(2))) if m else (None, None)
+    if not m:
+        return (None, None)
+    registered, maximum = int(m.group(1)), int(m.group(2))
+    if registered > maximum:
+        stripped = m.group(1)[1:]
+        registered = int(stripped) if stripped and int(stripped) <= maximum else None
+    return (registered, maximum)
 
 
 def parse_level_minutes(raw):

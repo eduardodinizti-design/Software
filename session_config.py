@@ -7,6 +7,7 @@ is ELIGIBLE or BLOCKED and why. It never registers and never authorises spend:
 `execution_allowed` is always False here, and a missing financial field blocks
 the card rather than being treated as zero (per the registration spec).
 """
+import re
 from dataclasses import dataclass, field
 from typing import Optional
 
@@ -21,6 +22,10 @@ class SessionConfig:
     currency: Optional[str] = None
     max_entry_buyin: Optional[float] = None       # teto por inscrição (moeda do clube)
     daily_budget: Optional[float] = None          # orçamento diário de inscrição
+    bankroll_bi: Optional[float] = None           # banca atual em buy-ins (regra §2.1)
+    min_bi_by_format: dict = field(                # mínimo de BI por formato (variância)
+        default_factory=lambda: {'freezeout': 75, 'deep': 75, 'mko': 120, 'pko': 150})
+    turbo_multiplier: float = 1.5                  # turbo/hyper exige +50% de BI
     max_tournaments_day: Optional[int] = None
     max_simultaneous: int = 4
     registration_cutoff: Optional[str] = None     # 'HH:MM' local; não registrar depois
@@ -36,7 +41,17 @@ class SessionConfig:
 
     def financial_ready(self):
         return (self.currency is not None and self.max_entry_buyin is not None
-                and self.daily_budget is not None)
+                and self.daily_budget is not None and self.bankroll_bi is not None)
+
+    def format_min_bi(self, modality, name=''):
+        """Minimum bankroll (in buy-ins) to play this format, turbo-scaled by the
+        card name, or None when the format has no rule here."""
+        base = self.min_bi_by_format.get(modality)
+        if base is None:
+            return None
+        if re.search(r'HYPER|TURBO', name or '', re.I):
+            base = base * self.turbo_multiplier
+        return base
 
 
 @dataclass
@@ -91,6 +106,12 @@ def evaluate_card(card, config, state=None, *, club=None, now_hhmm=None):
         reasons.append('REBUY_ONLY_IN_PKO' if config.rebuy_pko_only else 'MODALITY_NOT_ALLOWED')
     elif modality not in config.allowed_modalities:
         reasons.append('MODALITY_NOT_ALLOWED')
+    else:
+        # Bankroll rule by format (policy §2.1): e.g. PKO needs >=150 buy-ins,
+        # turbo/hyper +50%. Only checked for an allowed format with a known bankroll.
+        min_bi = config.format_min_bi(modality, name)
+        if min_bi is not None and config.bankroll_bi is not None and config.bankroll_bi < min_bi:
+            reasons.append('INSUFFICIENT_BANKROLL_FOR_FORMAT')
 
     if buyin is None:
         reasons.append('BUYIN_UNKNOWN')

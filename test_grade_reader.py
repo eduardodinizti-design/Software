@@ -39,6 +39,12 @@ class FieldParseTests(unittest.TestCase):
         self.assertEqual(gr.parse_players('& 58/75 @12min'), (58, 75))
         self.assertEqual(gr.parse_players('14'), (None, None))
 
+    def test_players_icon_noise_recovered_or_dropped(self):
+        # Icon glues a '2' onto '71/105'; strip it back to 71.
+        self.assertEqual(gr.parse_players('271/105'), (71, 105))
+        # Impossible and unrecoverable -> drop registered, keep max.
+        self.assertEqual(gr.parse_players('999/80'), (None, 80))
+
     def test_level_minutes(self):
         self.assertEqual(gr.parse_level_minutes('96/263 10 min'), 10)
         self.assertIsNone(gr.parse_level_minutes('no time here'))

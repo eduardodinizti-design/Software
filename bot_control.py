@@ -53,12 +53,17 @@ class BotControl:
         return True
 
     def resume(self):
-        """Arm / reactivate: go RUNNING (from PAUSED or DISABLED). Starting the
-        bot is a resume. This is the only way out of DISABLED."""
-        return self._transition(RUNNING)
-
-    # Starting the bot is the same deliberate act as resuming.
-    arm = resume
+        """Step up one level of activity: DISABLED -> PAUSED, PAUSED -> RUNNING.
+        Reactivating a disabled bot only arms it (PAUSED); a second resume is
+        needed to actually run, so it never jumps straight from off to operating.
+        A no-op when already RUNNING."""
+        with self._lock:
+            cur = self._state
+        if cur == DISABLED:
+            return self._transition(PAUSED)
+        if cur == PAUSED:
+            return self._transition(RUNNING)
+        return False
 
     def pause(self):
         """Take over: go PAUSED. A no-op from DISABLED (disable is deliberate and

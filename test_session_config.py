@@ -10,7 +10,7 @@ def _card(name='MINI FREEZE', buyin=5, modality='freezeout', state='reg_open'):
 
 
 def _ready_cfg(**kw):
-    base = dict(currency='FICHA', max_entry_buyin=50, daily_budget=200,
+    base = dict(currency='FICHA', max_entry_buyin=50, daily_budget=200, bankroll_bi=200,
                 max_tournaments_day=10, max_simultaneous=4,
                 allowed_modalities=('freezeout', 'mko', 'pko'))
     base.update(kw)
@@ -44,12 +44,30 @@ class EvaluateTests(unittest.TestCase):
         self.assertIn('REBUY_ONLY_IN_PKO', d['reasons'])
 
     def test_pko_allowed_when_in_list(self):
-        d = evaluate_card(_card('HYPER PKO', buyin=50, modality='pko'), _ready_cfg(), club='Karekas')
+        # Non-turbo PKO at a 200-BI roll (>=150) is eligible.
+        d = evaluate_card(_card('PKO NIGHT', buyin=50, modality='pko'), _ready_cfg(), club='Karekas')
         self.assertEqual(d['decision'], 'ELIGIBLE')
 
     def test_buyin_above_cap(self):
         d = evaluate_card(_card(buyin=80), _ready_cfg(max_entry_buyin=50), club='Karekas')
         self.assertIn('BUYIN_ABOVE_CAP', d['reasons'])
+
+    def test_insufficient_bankroll_for_pko(self):
+        # PKO needs >=150 buy-ins; a 120-BI roll blocks it but still allows MKO (120).
+        cfg = _ready_cfg(bankroll_bi=120)
+        pko = evaluate_card(_card('HYPER PKO', 50, 'pko'), cfg, club='Karekas')
+        self.assertIn('INSUFFICIENT_BANKROLL_FOR_FORMAT', pko['reasons'])
+        mko = evaluate_card(_card('KOMBAT MISTERY', 50, 'mko'), cfg, club='Karekas')
+        self.assertNotIn('INSUFFICIENT_BANKROLL_FOR_FORMAT', mko['reasons'])
+
+    def test_turbo_raises_the_bankroll_requirement(self):
+        # Turbo PKO needs 150*1.5=225 BI; a 200-BI roll is enough for non-turbo PKO
+        # but not for the turbo one.
+        cfg = _ready_cfg(bankroll_bi=200)
+        turbo = evaluate_card(_card('TURBO PKO', 50, 'pko'), cfg, club='Karekas')
+        self.assertIn('INSUFFICIENT_BANKROLL_FOR_FORMAT', turbo['reasons'])
+        normal = evaluate_card(_card('PKO NIGHT', 50, 'pko'), cfg, club='Karekas')
+        self.assertNotIn('INSUFFICIENT_BANKROLL_FOR_FORMAT', normal['reasons'])
 
     def test_registration_not_open(self):
         d = evaluate_card(_card(state='not_started'), _ready_cfg(), club='Karekas')

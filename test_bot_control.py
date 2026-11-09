@@ -24,15 +24,18 @@ class ControlTests(unittest.TestCase):
         self.assertEqual(c.state, PAUSED)
         self.assertFalse(c.execution_allowed())
 
-    def test_disable_is_sticky_until_resume(self):
+    def test_disable_is_sticky_and_reactivation_is_two_steps(self):
         c = BotControl()
-        c.resume()
+        c.resume()                                # PAUSED -> RUNNING
         c.disable()
         self.assertEqual(c.state, DISABLED)
         self.assertFalse(c.pause())               # pause is a no-op from DISABLED
         self.assertEqual(c.state, DISABLED)
         self.assertFalse(c.execution_allowed())
-        c.resume()                                # only resume reactivates
+        c.resume()                                # DISABLED -> PAUSED (armed, not running)
+        self.assertEqual(c.state, PAUSED)
+        self.assertFalse(c.execution_allowed())   # never jumps straight to operating
+        c.resume()                                # PAUSED -> RUNNING
         self.assertEqual(c.state, RUNNING)
 
     def test_on_change_callback_fires_on_transition_only(self):
@@ -79,11 +82,13 @@ class HotkeyTests(unittest.TestCase):
         self._press('disable')
         self.listener.poll_once()
         self.assertEqual(self.control.state, DISABLED)
-        self.keys.down = set()
-        self.listener.poll_once()
-        self._press('resume')
-        self.listener.poll_once()
-        self.assertEqual(self.control.state, RUNNING)
+        # Reactivation is two resume presses (DISABLED -> PAUSED -> RUNNING).
+        for expected in (PAUSED, RUNNING):
+            self.keys.down = set()
+            self.listener.poll_once()
+            self._press('resume')
+            self.listener.poll_once()
+            self.assertEqual(self.control.state, expected)
 
     def test_partial_combo_does_not_fire(self):
         self.control.resume()
