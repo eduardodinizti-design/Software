@@ -49,6 +49,12 @@ class ReadTests(unittest.TestCase):
         self.assertEqual((r['paid'], r['players_left'], r['hero_rank']), (20, 55, 40))
         self.assertEqual(r['confidence'], 'high')
 
+    def test_reads_paid_through_noise_keeps_icm_engaged(self):
+        # On the bubble, paid dropping to None would fall back to chip_ev; tolerate
+        # OCR noise between "pagos" and the number so the ICM stage stays engaged.
+        r = self._read('CRAZY REBUY ... Lugares pagos:. 35 Minha posig&o: 7/36')
+        self.assertEqual((r['paid'], r['players_left']), (35, 36))
+
     def test_reads_remaining_through_cedilla_noise(self):
         # Evolution OCR mangles "posicao" to "posig&o"; the rank/left must still
         # read, and the blinds' own slash ("5,000/10K") must not be matched.
