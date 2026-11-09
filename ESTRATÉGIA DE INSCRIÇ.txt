@@ -1,0 +1,381 @@
+VISUALPILOT — ESTRATÉGIA DE INSCRIÇÃO PARA O TESTE INICIAL
+Versão: 0.1
+Natureza: especificação e roteiro de teste supervisionado.
+
+1. OBJETIVO E ESTADO ATUAL
+
+Demonstrar uma inscrição correta, identificável e sem duplicidade em um torneio
+previamente escolhido pelo usuário. A seleção estratégica de torneios e a
+execução da inscrição devem ser componentes separados.
+
+Este documento define uma proposta operacional conservadora para o piloto.
+Não implementa um registrador nem comprova funcionamento no PPPoker real.
+Não autoriza gastos, preenche limites financeiros ou habilita automação.
+
+Na main inspecionada, 9e90389, não foram encontrados módulos Python operacionais
+de lobby/registro. Há relatórios históricos de laboratório em:
+
+- repo_visualpilot/docs/lab-registration-flow/README.md
+- repo_visualpilot/docs/lab-registration/README.md
+- repo_visualpilot/docs/lab-registration-locator/README.md
+- repo_visualpilot/docs/lab-lobby-real/REAL_IMAGES.md
+- repo_visualpilot/docs/lab-purchases/README.md
+
+Esses relatórios descrevem simulações, OCR e persistência de etapas anteriores.
+Os módulos citados devem ser localizados e avaliados antes de reutilização;
+não podem ser considerados presentes apenas porque aparecem na documentação.
+
+O executor testar_windows.py reconhece escolhas de botões da mesa; não deve ser
+usado como um registrador de lobby sem o adaptador e as validações específicos.
+
+2. ESCOPO DO PRIMEIRO PILOTO
+
+- Cliente: PPPoker.
+- Um torneio previamente selecionado e autorizado pelo usuário.
+- Uma tentativa de inscrição por rodada de teste.
+- Fluxo supervisionado.
+- Sem seleção autônoma de um torneio substituto.
+- Sem late registration.
+- Sem reentrada, rebuy ou add-on.
+- Sem preenchimento automático de saldo, moeda ou orçamento ausentes.
+- Sem programação diária recorrente.
+
+A primeira rodada deve começar em simulação ou observação, sem enviar o clique
+de confirmação. A etapa com inscrição real depende de campos conferidos, limite
+de gasto definido e confirmação explícita do usuário para aquela inscrição.
+
+Enquanto o adaptador de registro não existir e não for validado, a interação real
+deve ser feita pelo usuário no cliente. O registro do resultado pode ser manual
+no checklist deste documento. Isso é um teste supervisionado, não prova de
+inscrição automática pelo bot.
+
+3. CONFIGURAÇÃO OBRIGATÓRIA
+
+Preencher antes de iniciar uma rodada real:
+
+Identificador da rodada: _______________________________________________
+Operador: _____________________________________________________________
+Modo: [ ] SIMULAÇÃO  [ ] OBSERVAÇÃO  [ ] REAL SUPERVISIONADO
+Cliente/versão: _______________________________________________________
+Conta e clube/sala, quando necessários à identificação: _______________
+Nome do torneio: ______________________________________________________
+Identificador real ou método de identificação verificável: ____________
+Data/hora de início e fuso: ____________________________________________
+Modalidade autorizada: ________________________________________________
+Moeda/unidade explicitamente confirmada: ______________________________
+Custo total permitido para este torneio: ______________________________
+Teto de custo por inscrição: __________________________________________
+Orçamento total da sessão: ____________________________________________
+Gasto confirmado anterior na sessão: __________________________________
+Reservas pendentes anteriores: ________________________________________
+Inscrições/torneios existentes e respectivos estados: _________________
+Horário limite para novas inscrições: _________________________________
+Responsável pela confirmação final: ___________________________________
+
+Campo financeiro ou de identidade obrigatório em branco significa BLOQUEADO.
+Ausência de informação não equivale a zero, moeda fictícia ou autorização.
+
+Exemplo de contrato de configuração para futura implementação — NÃO é um
+arquivo já consumido pelo código atual:
+
+  enabled: false
+  mode: observation
+  client: PPPoker
+  timezone: America/Sao_Paulo
+  allowed_tournaments: []
+  allowed_types: []
+  currency: null
+  max_entry_cost: null
+  session_budget: null
+  registration_cutoff_at: null
+  max_attempts_per_test: 1
+  max_simultaneous_commitments: 1
+  late_registration_enabled: false
+  reentry_enabled: false
+  rebuy_enabled: false
+  addon_enabled: false
+  supervised_confirmation_required: true
+
+O limite de um compromisso simultâneo é a proposta para este piloto. Inclui os
+compromissos já existentes; não é uma vaga adicional sobre mesas em andamento.
+Se não houver vaga, o teste de inscrição fica bloqueado. A meta futura de até
+seis mesas exige uma configuração e validação próprias; não altera esse limite
+automaticamente.
+
+Os valores históricos de 50 fichas por inscrição, quatro vagas e orçamento de
+200 pertencem ao laboratório. Não importar esses números como limites atuais.
+
+4. REGRA DE SELEÇÃO
+
+Um torneio só pode ser apresentado como elegível se todas as condições abaixo
+forem atendidas:
+
+1) Faz parte da lista expressamente escolhida pelo usuário para a rodada.
+2) Sua identidade pode ser conferida entre lobby e detalhes.
+3) Modalidade, moeda e custo total estão explícitos e sem divergência.
+4) A inscrição está aberta e a rodada está dentro do período autorizado.
+5) O torneio ainda não começou; late registration está desabilitado no piloto.
+6) Não há inscrição confirmada ou pendente para a mesma identidade.
+7) Há orçamento e vaga disponíveis após considerar reservas.
+8) Não foi consumida a tentativa única dessa rodada de teste.
+
+No piloto há um alvo. Se ele ficar inelegível, parar e explicar o motivo.
+Não trocar por outro evento por preço parecido, nome semelhante ou maior prêmio.
+
+Não usar garantia de premiação, número de jogadores ou buy-in baixo como prova
+de rentabilidade. Ranking por EV, field ou estrutura não está definido aqui.
+
+O nome sozinho pode não distinguir dois torneios. A implementação deve definir
+uma identidade verificável usando os dados realmente disponíveis no cliente.
+Não inventar um ID e apresentá-lo como lido da tela. Um token interno de pedido
+serve para auditoria, mas não substitui a identidade real do evento.
+
+5. CUSTO, MOEDA E ORÇAMENTO
+
+Usar o custo total cobrado, incluindo todas as parcelas aplicáveis, como entrada,
+taxa e bounty. Identificar a unidade antes de fazer comparações.
+
+Se a interface mostrar um total e sua decomposição, conferir a soma das parcelas
+contra o total; não somar o total às parcelas novamente.
+
+Exemplo apenas aritmético, sem autorização de gasto:
+  28,34 + 14,16 + 7,50 = 50,00, e não 100,00.
+
+Usar Decimal ou representação monetária exata. Não corrigir números ambíguos
+por suposição e não arredondar para encaixar uma oferta no limite.
+
+Orçamento disponível = orçamento da sessão
+                       - gastos confirmados
+                       - reservas pendentes.
+
+Exigir simultaneamente:
+- custo <= teto por inscrição;
+- custo corresponde à oferta autorizada;
+- custo <= orçamento disponível.
+
+Saldo mostrado no cliente não substitui orçamento autorizado.
+Prêmio ou ganho esperado não amplia o orçamento automaticamente.
+Encerrar um torneio não devolve ao orçamento seu custo já gasto.
+Crédito ou estorno só altera o orçamento quando comprovado e conciliado.
+
+6. VAGAS E CONCORRÊNCIA
+
+Contar como compromisso de vaga:
+- Torneio inscrito e ainda não iniciado.
+- Torneio ativo.
+- Reserva criada antes da confirmação.
+- Inscrição com resultado desconhecido.
+
+Uma inscrição futura também consome capacidade no piloto, evitando que vários
+eventos comecem juntos além do limite. Não estimar duração para liberar vagas
+antecipadamente.
+
+Reservar custo e vaga de forma atômica na futura implementação persistente.
+SQLite foi a opção histórica do laboratório; sua reutilização precisa ser
+verificada no código recuperado ou implementado.
+
+Dois ciclos ou processos não podem reservar a mesma oferta duas vezes nem
+ultrapassar o limite em uma corrida. Reiniciar o programa não apaga reservas.
+Não limpar banco de produção para repetir testes; usar rodadas isoladas no
+laboratório e preservar os registros anteriores.
+
+7. ESTADOS DO FLUXO
+
+OBSERVAÇÃO
+  → CANDIDATO
+  → DETALHES CONFERIDOS
+  → RESERVADO
+  → AGUARDANDO CONFIRMAÇÃO SUPERVISIONADA
+  → CONFIRMAÇÃO ENVIADA
+  → INSCRIÇÃO CONFIRMADA
+
+Saídas alternativas:
+- BLOQUEADO: algum requisito não foi atendido; não enviar confirmação.
+- REJEITADO: recusa explícita e resultado conhecido.
+- CANCELADO ANTES DO ENVIO: prova de que a confirmação não foi enviada.
+- RESULTADO DESCONHECIDO: não foi possível concluir o que ocorreu.
+
+Não tratar fechamento de modal, retorno ao lobby ou ausência de exceção como
+inscrição confirmada.
+
+8. ROTEIRO DA PRIMEIRA RODADA
+
+ETAPA A — PREPARAÇÃO
+- Preencher a configuração e revisar torneios/compromissos existentes.
+- Identificar a janela/processo correto, área cliente, DPI e geometria.
+- Abrir uma pasta de evidências exclusiva para a rodada.
+- Registrar modo e versão do código utilizado.
+
+ETAPA B — INSPEÇÃO DO LOBBY
+- Obter imagem atual e conferir o alvo autorizado.
+- Ler estado de inscrição e dados visíveis, preservando os desconhecidos.
+- Não confundir lobby, mesa de cash e cartão de torneio.
+- Não clicar em cartão cortado, sobreposto ou não identificado.
+
+ETAPA C — DETALHES
+- Abrir os detalhes pelo operador ou adaptador especificamente validado.
+- Conferir identidade, modalidade, início, moeda, custo total e stack inicial.
+- Conferir a situação de inscrição novamente.
+- Comparar com a observação anterior sem inventar continuidade entre imagens.
+- Custo ou identidade divergente bloqueia a rodada.
+
+ETAPA D — MODAL DE CONFIRMAÇÃO
+- Conferir os dados novamente.
+- Não ajustar buy-in: usar a oferta real de preço fixo apresentada pelo cliente.
+- Não inferir seletores Mais/Menos a partir de simuladores antigos.
+- Apresentar um resumo ao usuário: torneio, custo total, moeda, horário,
+  orçamento restante após a reserva e compromissos de vaga.
+
+ETAPA E — RESERVA E AUTORIZAÇÃO
+- Reservar custo e vaga e registrar a identidade da intenção.
+- Receber confirmação explícita do usuário para esta inscrição.
+- Se houver espera, mudança de tela ou alteração de oferta, revalidar antes
+  do envio. A autorização não se transfere para outro torneio ou outro custo.
+
+ETAPA F — ENVIO ÚNICO
+- No modo observação/simulação, não enviar confirmação real.
+- No teste real atual sem adaptador, o próprio usuário confirma no cliente.
+- Um futuro executor deve revalidar janela, alvo, foco, identidade e contexto
+  imediatamente antes de confirmar e enviar uma única ação.
+- Não repetir o clique por falta de resposta imediata.
+
+ETAPA G — CONCILIAÇÃO
+- Observar uma confirmação identificável no cliente: recibo, status de inscrito
+  ou outro indicador cuja semântica tenha sido verificada previamente.
+- Relacionar a confirmação ao mesmo torneio, conta e oferta/custo, conforme os
+  campos realmente disponíveis. Não depender de tokens que só existiam no
+  simulador de navegador.
+- Se a evidência não bastar, marcar RESULTADO DESCONHECIDO e interromper novas
+  inscrições até revisão.
+
+ETAPA H — ENCERRAMENTO
+- Registrar o resultado e as evidências.
+- Encerrar a rodada após a tentativa prevista.
+- Não iniciar reentrada, rebuy, add-on ou outro torneio como continuação.
+
+9. RECONCILIAÇÃO DE RESERVAS
+
+Inscrição confirmada:
+- Converter reserva em gasto confirmado sem contar o custo duas vezes.
+- Manter o compromisso de vaga até encerramento ou cancelamento comprovado.
+
+Falha comprovadamente anterior ao envio:
+- Liberar reserva de custo e vaga.
+- Registrar a razão e preservar a intenção cancelada.
+
+Recusa explícita:
+- Liberar reserva somente se estiver estabelecido que não houve inscrição nem
+  cobrança pendente. Em caso de dúvida, manter para reconciliação.
+
+Timeout, exceção depois do envio, cliente fechado ou confirmação ilegível:
+- Manter custo e vaga reservados.
+- Não reenviar automaticamente.
+- Conferir status real de inscrição e movimentação correspondente.
+- Registrar quem conciliou, quando e com qual evidência.
+
+Pausa depois do envio não desfaz uma inscrição realizada. A confirmação que
+chegar após a pausa deve ser conciliada; pausa impede novas intenções.
+
+10. CONDIÇÕES DE PARADA
+
+Interromper o envio de novas ações se ocorrer:
+
+- Identidade, moeda, custo ou estado de inscrição desconhecido.
+- Torneio já iniciado, encerrado ou fora da lista autorizada.
+- Orçamento ou vaga insuficiente.
+- Reserva/inscrição anterior não conciliada para o mesmo evento.
+- Janela, processo, DPI ou geometria alterados sem nova validação.
+- Botão movido, coberto, desabilitado ou pertencente a outro contexto.
+- Mudança de preço ou oferta entre telas.
+- Pausa, intervenção manual conflitante ou cancelamento pelo usuário.
+- Prazo da observação ou da autorização expirado.
+- Falta de confirmação após envio.
+
+Timeout não é prova de rejeição e não deve liberar orçamento automaticamente.
+
+11. CENÁRIOS DE TESTE ANTES DE UM EXECUTOR AUTÔNOMO
+
+Executar em ambiente controlado, sem gastos reais, e preservar resultados:
+
+1) Alvo correto, permitido, aberto e com custo conhecido.
+2) Evento fora da lista.
+3) Torneios de mesmo nome com identidades diferentes.
+4) Valor superior ao teto por inscrição.
+5) Orçamento restante insuficiente.
+6) Limite de vagas atingido, incluindo inscrições futuras e reservas.
+7) Custo composto: soma correta e divergência entre parcelas/total.
+8) Moeda desconhecida, preço ilegível ou OCR conflitante.
+9) Torneio iniciado, inscrição encerrada ou estado desconhecido.
+10) Custo/identidade alterados entre lobby, detalhes e modal.
+11) Dois pedidos concorrentes e repetição da mesma intenção.
+12) Pausa/intervenção antes da confirmação.
+13) Confirmação explícita do evento correto.
+14) Confirmação ausente ou pertencente a outro evento.
+15) Exceção depois do envio e reinício com reserva pendente.
+16) Falha comprovada antes do envio, com liberação correta.
+17) Confirmação válida recebida após pausa, sem novo envio.
+18) Pedido de reentrada/rebuy/add-on bloqueado no piloto.
+
+Não considerar um teste aprovado se nenhum caso foi efetivamente executado.
+Não converter evidência de um simulador em homologação do cliente Windows.
+
+12. EVIDÊNCIAS E RELATÓRIO
+
+Por rodada, registrar:
+
+- Identificador, modo, versão do código e configuração efetiva.
+- Torneio escolhido e razão de elegibilidade ou bloqueio.
+- Dados observados e origem de cada leitura.
+- Horários com fuso; usar relógio monotônico para medir idade e duração.
+- Estados da reserva, do envio e da inscrição.
+- Custo, moeda, orçamento e vagas antes/depois, sem duplicidade.
+- Ações enviadas e verificações realizadas.
+- Resultado observado e referência às evidências.
+
+Manter captura em memória e salvar somente evidências necessárias, de preferência
+por transição. Não gravar superfície inteira a cada ciclo. Limitar e reportar o
+armazenamento, inclusive omissões por cota. O coletor de mesa existente não deve
+ser apresentado como coletor especializado de lobby sem adaptação.
+
+CHECKLIST MANUAL DA RODADA
+
+[ ] Configuração preenchida e confirmada pelo usuário.
+[ ] Torneio identificado na lista autorizada.
+[ ] Modalidade, moeda e custo total conferidos.
+[ ] Inscrição aberta antes do início e dentro do período autorizado.
+[ ] Não há inscrição ou reserva duplicada.
+[ ] Há orçamento e vaga após contabilizar compromissos existentes.
+[ ] Detalhes e modal correspondem ao alvo e ao custo autorizados.
+[ ] Confirmação supervisionada registrada.
+[ ] No máximo uma tentativa enviada nesta rodada.
+[ ] Resultado conciliado ou reserva preservada como desconhecida.
+[ ] Rodada encerrada sem compras adicionais.
+
+Resultado: [ ] CONFIRMADO  [ ] BLOQUEADO  [ ] REJEITADO
+           [ ] CANCELADO ANTES DO ENVIO  [ ] DESCONHECIDO
+Quem realizou a ação no cliente: ______________________________________
+Referência das evidências: ____________________________________________
+Observações e pendências: _____________________________________________
+
+13. CRITÉRIO DE SUCESSO E EVOLUÇÃO
+
+Sucesso inicial significa: selecionar e conferir o alvo certo, respeitar limites,
+evitar duplicidade e demonstrar o resultado daquela tentativa. Bloquear um caso
+inválido também é comportamento correto e deve ser relatado como bloqueio.
+
+Não é critério de sucesso: ganhar o torneio, presumir uma rentabilidade ou apenas
+observar o desaparecimento do modal.
+
+Uma rodada supervisionada bem-sucedida não habilita registro autônomo geral.
+A evolução depende de cenários negativos, validação Windows, tratamento de
+incerteza e revisão explícita da configuração operacional.
+
+Expansões posteriores possíveis, fora deste piloto:
+- Mais compromissos simultâneos, até a capacidade efetivamente validada.
+- Lista com prioridades definidas pelo usuário.
+- Late registration com critérios explícitos de estrutura e stack recebido.
+- Reentrada, rebuy e add-on com limites e orçamento próprios.
+- Grade recorrente e política de encerramento de sessão.
+- Seleção estratégica fundamentada em dados disponíveis e premissas declaradas.
+
+Nenhuma dessas expansões fica habilitada pela criação deste documento.
