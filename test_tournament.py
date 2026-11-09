@@ -53,7 +53,7 @@ class ReadTests(unittest.TestCase):
         # In the money the table shows "Premio atual" instead of "Lugares pagos",
         # so paid stops reading. The final table is still knowable from the seats,
         # and the prize line flags in-the-money (so a Mystery KO's bounty counts).
-        r = self._read('KOMBAT MISTERY ... Premio atual: 27.85 Minha posicao: 3/8')
+        r = self._read('KOMBAT MISTERY Blinds: 20K/40K(5,000) Premio atual: 27.85 Minha posicao: 3/8')
         self.assertTrue(r['in_money'])
         self.assertIsNone(r['paid'])
         self.assertEqual(r['players_left'], 8)
