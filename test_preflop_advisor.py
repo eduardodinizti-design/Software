@@ -232,6 +232,16 @@ class SpotInferenceTests(unittest.TestCase):
         s = infer_live_spot(dict(positions={'hero': 'CO'}, bets=[{'seat': 'hero', 'bet_bb': 2.2}]))
         self.assertEqual((s['spot'], s['reason']), ('abstain', 'HERO_OPENED_NO_RERAISE'))
 
+    def test_short_table_and_limpers_are_flagged_not_abstained(self):
+        a = PreflopAdvisor(pack_with_node())   # BTN open_raise 25bb node
+        seats = {s: {'stack_bb': 25.0, 'occupied': True} for s in ('hero', 'a', 'b', 'c', 'd', 'e')}
+        state = dict(positions={'hero': 'BTN', 'a': 'CO', 'b': 'HJ', 'c': 'LJ', 'd': 'SB', 'e': 'BB'},
+                     seats=seats, bets=[{'seat': 'a', 'bet_bb': 1.0}])   # CO limped
+        r = a.advise_from_reading(state, ['As', 'Ac'])                # stack comes from seats['hero']
+        self.assertEqual(r['status'], 'ADVICE')                       # advises, not abstains
+        self.assertIn('TABLE_6HANDED_USING_9MAX_REF', r['caveats'])
+        self.assertIn('LIMPERS_PRESENT_OPEN_AS_ISO_APPROX', r['caveats'])
+
     def test_from_reading_routes_to_vs_open(self):
         a = PreflopAdvisor(pack_with_vsopen())
         state = dict(positions={'hero': 'BB', 'x': 'BTN'}, bets=[{'seat': 'x', 'bet_bb': 2.5}],

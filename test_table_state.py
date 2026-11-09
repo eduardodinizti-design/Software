@@ -90,8 +90,16 @@ class ToCallTests(unittest.TestCase):
 
     def test_call_amount_is_to_call(self):
         with patch('table_reading.action_buttons.read_action_buttons',
-                   return_value={'buttons': [{'action': 'CALL', 'amount': '3.2', 'label': 'Call 3,2 BB'}]}):
+                   return_value={'buttons': [{'action': 'CALL', 'amount': '3.2', 'unit': 'BB', 'label': 'Call 3,2 BB'}]}):
             self.assertEqual(table_state.read_to_call(self.crop)['to_call_bb'], 3.2)
+
+    def test_call_without_bb_unit_abstains(self):
+        # An amount with no confirmed BB unit could be chips; do not read it as BB.
+        with patch('table_reading.action_buttons.read_action_buttons',
+                   return_value={'buttons': [{'action': 'CALL', 'amount': '100', 'unit': None, 'label': 'Call 100'}]}):
+            r = table_state.read_to_call(self.crop)
+            self.assertIsNone(r['to_call_bb'])
+            self.assertEqual(r['confidence'], 'abstain')
 
     def test_check_means_zero_to_call(self):
         with patch('table_reading.action_buttons.read_action_buttons',

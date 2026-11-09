@@ -249,10 +249,20 @@ class PreflopAdvisor:
             result = self.advise_first_in(**base, **kwargs)
         else:
             return self._abstain(spot.get('reason', 'SPOT_NOT_COVERED'))
-        if isinstance(result, dict) and result.get('status') == 'ADVICE' and result.get('recommended'):
+        if isinstance(result, dict) and result.get('status') in ('ADVICE', 'OUT_OF_RANGE'):
             import sizing
-            result['sizing'] = sizing.size_from_reading(result['recommended'], table_state,
-                                                        positions['hero'], spot.get('opener'))
+            # The pack is 9-max only; a shorter table uses it as a reference. Flag it
+            # honestly instead of abstaining (we have no 6-max ranges, and short
+            # tables are most of ITM/short-handed play). Likewise a limper makes a
+            # first-in open an isolation approximation (no vs_limp range off the SB).
+            occupied = sum(1 for s in (table_state.get('seats') or {}).values() if s.get('occupied'))
+            if occupied and occupied != 9:
+                result.setdefault('caveats', []).append('TABLE_%dHANDED_USING_9MAX_REF' % occupied)
+            if spot['spot'] == 'first_in' and sizing.count_limpers(table_state) > 0:
+                result.setdefault('caveats', []).append('LIMPERS_PRESENT_OPEN_AS_ISO_APPROX')
+            if result.get('recommended'):
+                result['sizing'] = sizing.size_from_reading(result['recommended'], table_state,
+                                                            positions['hero'], spot.get('opener'))
         return result
 
     def _caveats(self, bucket, stack_bb, players, mode, spread=None):

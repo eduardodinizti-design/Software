@@ -120,6 +120,11 @@ def read_to_call(crop):
     buttons = read_action_buttons(crop).get('buttons', [])
     for button in buttons:
         if button.get('action') == 'CALL' and button.get('amount') is not None:
+            if button.get('unit') != 'BB':
+                # The amount has no confirmed BB unit: do not assume it is in big
+                # blinds (it could be chips). Unknown unit stays unknown.
+                return dict(to_call_bb=None, confidence='abstain',
+                            source='call_button_unit_unknown', raw=button.get('label'))
             return dict(to_call_bb=float(button['amount']), confidence='high',
                         source='call_button', raw=button.get('label'))
     if any(b.get('action') == 'CHECK' for b in buttons):

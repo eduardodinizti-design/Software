@@ -50,8 +50,18 @@ def advise_table(crop, advisor, *, mode=None, stage=None):
         return dict(hand=hand, hero_cards=hero, board=board, table_state=state, tournament=tourney,
                     context=dict(mode=use_mode, stage=use_stage), is_table=False,
                     advice=dict(status='SKIP', reason='NAO_PARECE_MESA_LOBBY', exploratory=True, execution_allowed=False))
+    # Postflop guard. A read board (cards) is clearly postflop. A board that was
+    # DETECTED but not fully read (incomplete, duplicate, or obstructed with the
+    # anchor found) is also postflop and must abstain, not be treated as preflop.
+    # Preflop itself has no board, which reads as 'anchor missing' -> advise.
+    board_status, board_reason = board.get('status'), board.get('reason')
+    board_present_unread = (board_status in ('BOARD_INCOMPLETE', 'BOARD_DUPLICATE_REJECTED')
+                            or (board_status == 'BOARD_PARTIAL_OR_OBSTRUCTED'
+                                and board_reason != 'FIRST_CARD_ANCHOR_MISSING'))
     if board.get('cards'):
         advice = dict(status='ABSTAIN', reason='POSTFLOP_NOT_COVERED', exploratory=True, execution_allowed=False)
+    elif board_present_unread:
+        advice = dict(status='ABSTAIN', reason='BOARD_PRESENT_BUT_UNREADABLE', exploratory=True, execution_allowed=False)
     elif hero is None:
         advice = dict(status='ABSTAIN', reason='HERO_CARDS_UNKNOWN', exploratory=True, execution_allowed=False)
     else:

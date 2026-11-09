@@ -51,6 +51,34 @@ class AdviseTableTests(unittest.TestCase):
         r = self._run(None, [])
         self.assertEqual(r['advice']['reason'], 'HERO_CARDS_UNKNOWN')
 
+    def _run_board(self, board):
+        patches = [
+            patch('table_advisor.read_table_state', return_value=dict(
+                positions={'hero': 'BTN'}, seats={'hero': {'stack_bb': 25.0, 'occupied': True}},
+                pot={'pot_bb': 2.5}, to_call={'to_call_bb': 1.0}, dealer={'seat': 'bot_left'})),
+            patch('table_advisor.read_hand_id', return_value=dict(hand_number=10)),
+            patch('table_advisor.read_board', return_value=board),
+            patch('table_advisor.read_hero_cards', return_value=['As', 'Ks']),
+            patch('table_advisor.read_tournament', return_value=dict(paid=20, players_left=55, confidence='high')),
+        ]
+        for p in patches:
+            p.start()
+        self.addCleanup(lambda: [p.stop() for p in patches])
+        return table_advisor.advise_table(self.crop, FakeAdvisor())
+
+    def test_board_detected_but_unreadable_abstains(self):
+        # A board that was detected but not fully read must not be treated as preflop.
+        for board in (dict(cards=[], status='BOARD_INCOMPLETE'),
+                      dict(cards=[], status='BOARD_DUPLICATE_REJECTED'),
+                      dict(cards=[], status='BOARD_PARTIAL_OR_OBSTRUCTED')):
+            r = self._run_board(board)
+            self.assertEqual(r['advice']['reason'], 'BOARD_PRESENT_BUT_UNREADABLE')
+
+    def test_anchor_missing_is_preflop_and_advises(self):
+        # No board = the first-card anchor is missing; that is preflop, advise.
+        r = self._run_board(dict(cards=[], status='BOARD_PARTIAL_OR_OBSTRUCTED', reason='FIRST_CARD_ANCHOR_MISSING'))
+        self.assertEqual(r['advice']['status'], 'ADVICE')
+
     def test_lobby_crop_is_skipped(self):
         patches = [
             patch('table_advisor.read_table_state', return_value=dict(
