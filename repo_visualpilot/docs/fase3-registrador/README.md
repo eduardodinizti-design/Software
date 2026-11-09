@@ -74,6 +74,37 @@ python -m unittest test_registration
 | 17 | Confirmação válida após pausa, sem reenvio | `test_17_*` |
 | 18 | Rebuy/add-on bloqueado no piloto | `test_18_rebuy_blocked_in_pilot` |
 
+## Plug no lobby real (09/11)
+
+Liga o fluxo 3A à leitura REAL do lobby, sem clique.
+
+- **`lobby_runner.py`** — ponte:
+  - `find_lobby_crop` / `read_lobby`: entre os crops que `detect_table_crops`
+    propõe, o **lobby é o que tem badges de buy-in** (a mesa tem zero). Lê os
+    cartões com `grade_reader.read_grade`.
+  - `session_state_from_ledger`: reconstrói o `SessionState` a partir das
+    reservas do **ledger** (fonte de verdade), para o pré-filtro `evaluate_card`
+    ver orçamento/vagas reais — resolve a nota de "duas fontes" da 3A.
+  - `select_lobby`: `(elegíveis, bloqueados)` via `select_from_grade`.
+  - `details_from_card`: detalhes derivados do cartão + moeda do operador,
+    marcados `details_source='lobby+operator'`. A moeda **nunca** é inventada.
+- **`plugar_lobby.py`** — CLI: captura (`--hwnd`) ou carrega (`--image`) o lobby,
+  lê, seleciona e, para `--target`, percorre o fluxo até AGUARDANDO CONFIRMAÇÃO.
+- **`test_lobby_runner.py`** — fakes + **teste end-to-end no lobby REAL** do
+  Karekas com OCR in-process (pula se faltar tesserocr/imagem).
+
+**Validado no lab com dado REAL** (crop `sessao-20261108-200315/sample-000001-mesa-1.png`,
+lobby Karekas, OCR in-process): 5 cartões lidos; seletor marca DEEP FREEZEOUT
+elegível e bloqueia BOX MISTERY/FREEZEOUT (reg. não aberta), CRAZY REBUY (rebuy)
+e o cartão parcial; o fluxo leva DEEP FREEZEOUT a AGUARDANDO CONFIRMAÇÃO (orç.
+500→450) e para antes de qualquer clique.
+
+```bash
+python plugar_lobby.py --image logs/.../sample-000001-mesa-1.png --is-crop \
+  --club Karekas --currency BRL --max-entry 100 --budget 500 --bankroll 200 \
+  --target "DEEP FREEZEOUT" --authorized-cost 50 --now 20:00
+```
+
 ## Limitações (honestas)
 
 - **Não há validação no PPPoker real.** Tudo foi exercitado no lab (SQLite +
@@ -82,7 +113,15 @@ python -m unittest test_registration
   pré-filtro grosso; a **fonte de verdade** de orçamento/vaga no fluxo é o
   **ledger** (confirmados + pendentes). Mantenha-os em sincronia quando ligar ao
   lobby real.
-- A ligação com o `grade_reader` (lobby real) e a conferência de detalhes no
-  cliente ficam para a operação; a demo não as cobre.
+- **Leitura do lobby real: coberta** (ver "Plug no lobby real"), validada em
+  crop de lobby. Falta a extração do painel do lobby a partir do **frame inteiro
+  do canvas ao vivo** (`--hwnd`): usa a heurística de badges, mas só foi provada
+  no fato de o crop conhecido ter 5 badges — precisa de uma rodada ao vivo na
+  máquina do Eduardo.
+- **Detalhes degradados:** a 3A não abre a tela de detalhes (seria um clique),
+  então a conferência lobby×detalhes do §C vem da mesma fonte (flag
+  `details_source='lobby+operator'`). Um leitor de detalhes validado é trabalho
+  futuro. O horário de início fica `None` quando o cartão não o mostra (a
+  identidade usa nome+buy-in, suficiente).
 - Este bloco **não** habilita registro autônomo. A próxima fronteira (Fase 3B /
   F4) é o controlador de cursor — e só ele, validado, autoriza o bot a clicar.
