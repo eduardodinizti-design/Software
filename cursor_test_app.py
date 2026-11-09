@@ -74,6 +74,8 @@ class MeasureApp:
             self.points.append((time.monotonic(), e.x_root, e.y_root))
 
     def on_click(self, e):
+        if self.i >= len(self.trials):
+            return                      # já terminou; ignora cliques tardios
         tr = self.trials[self.i]
         x, y, w, h = tr['rect']
         if not (x <= e.x <= x + w and y <= e.y <= y + h):
@@ -192,6 +194,8 @@ class AutoApp:
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument('--measure', action='store_true',
+                    help='Modo medicao do usuario (default se --auto ausente)')
     ap.add_argument('--auto', action='store_true', help='Bot move+clica (experimental)')
     ap.add_argument('--trials', type=int, default=12, help='Nº de alvos (measure)')
     ap.add_argument('--size', default='1100x740', help='Tamanho da janela')
