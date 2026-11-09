@@ -80,6 +80,10 @@ def _summary(result):
         lines.append('  %-9s pos=%-5s stack=%s BB%s' % (
             seat, st['positions'].get(seat, '-'), d['stack_bb'],
             ' [DEALER]' if st['dealer'].get('seat') == seat else ''))
+    bets = [b for b in (st.get('bets') or []) if isinstance(b.get('bet_bb'), (int, float))]
+    if bets:   # per-seat bets drive the spot inference; log them to diagnose it
+        lines.append('Bets: ' + ', '.join(
+            '%s=%sbb(%s)' % (b['seat'], b['bet_bb'], st['positions'].get(b['seat'], '-')) for b in bets))
     adv = result['advice']
     lines.append('=== RECOMENDACAO (exploratoria, nao-executar) ===')
     if adv.get('status') == 'ADVICE':
