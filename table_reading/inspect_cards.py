@@ -135,6 +135,41 @@ def _read_native_white_rank(table, left, bottom, clean_wide=False,vertical_offse
             'readings':readings,'clean_wide':clean_wide,'native_ink_box':[x1+bx,y1+by,bw,bh]}
 
 
+def read_bright_rank(crop):
+    """Lê um rank CLARO sobre um tile ESCURO de baixo contraste (ex.: o '8' cinza
+    em carta de espada no skin Karekas), que o OCR por OTSU/segmentação do
+    read_rank perde. Usa um threshold alto relativo ao brilho (isola o glifo) e
+    exige que >=2 thresholds concordem no MESMO dígito (discordância = abstém).
+
+    Só é chamado quando o leitor primário E o fallback nativo já abstiveram, então
+    não altera nada nos skins já validados (lá o primário resolve)."""
+    if crop is None or getattr(crop, 'size', 0) == 0:
+        return None
+    g = cv2.cvtColor(crop, cv2.COLOR_BGR2GRAY)
+    mx = int(g.max())
+    if mx < 80:                                   # sem nada claro o bastante
+        return None
+    up = cv2.resize(g, None, fx=5, fy=5, interpolation=cv2.INTER_CUBIC)
+    votes = {}
+    for frac in (0.84, 0.88, 0.92):
+        _, b = cv2.threshold(up, int(frac * mx), 255, cv2.THRESH_BINARY)
+        if not (0.03 <= (b > 0).mean() <= 0.30):  # fora da faixa de 1 glifo
+            continue
+        for psm in (10, 8):
+            try:
+                t = image_to_string(b, config='--psm %d -c tessedit_char_whitelist=AKQJT1098765432' % psm, timeout=3).strip()
+            except Exception:                     # noqa: BLE001
+                return None
+            if t in list('AKQJT98765432') + ['10']:
+                key = 'T' if t == '10' else t
+                votes[key] = votes.get(key, 0) + 1
+                break
+    if not votes:
+        return None
+    best = max(votes, key=votes.get)
+    return best if votes[best] >= 2 else None     # >=2 thresholds concordam
+
+
 def inspect(image, box):
     if image is None:
         raise ValueError('Imagem não pôde ser aberta')
@@ -158,6 +193,11 @@ def inspect(image, box):
             rank['native_fallback']=native
             if native['rank'] is not None:
                 rank['rank']=native['rank'];rank['status']='CANDIDATE_ONLY'
+        # Dígito claro em tile escuro (ex. Karekas): só quando ainda ilegível.
+        if rank.get('rank') is None and rank.get('status')=='OCR_UNREADABLE':
+            bright=read_bright_rank(table[1010+dy:1070+dy,left:left+42])
+            if bright is not None:
+                rank['rank']=bright;rank['status']='CANDIDATE_ONLY';rank['bright_fallback']=bright
         rank['suit_result'] = read_suit(table[1055+dy:1105+dy,left-2:left+43])
         if rank['suit_result']['status']=='SUIT_UNREADABLE':
             nh,nw=native_table.shape[:2]
