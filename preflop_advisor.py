@@ -23,6 +23,35 @@ RAISE_FLOOR_BB = 1.5  # a bet above the BB (1.0) is a raise, not a blind post
 _PREFLOP_ORDER = ('UTG', 'UTG+1', 'UTG+2', 'LJ', 'HJ', 'CO', 'BTN', 'SB', 'BB')
 
 
+# Catalog stack-distribution profiles by position (UTG..BB), from the engine's
+# nearestSpread. "iguais" = even; "curtos_ini"/"curtos_fim" = the short stacks sit
+# in the early / late positions. A real table is classified to the nearest one.
+_SPREADS = {
+    'iguais':     (25, 25, 25, 25, 25, 25, 25, 25, 25),
+    'curtos_fim': (35, 35, 30, 30, 25, 20, 15, 15, 20),
+    'curtos_ini': (15, 15, 20, 20, 25, 30, 35, 35, 30),
+}
+
+
+def infer_spread(position_stacks, min_seats=5):
+    """Nearest catalog ICM stack spread for the table (iguais/curtos_ini/
+    curtos_fim), replicating the engine's nearestSpread: compare each seat's
+    stack-to-mean ratio against each profile's, pick the least-squares nearest.
+    Returns None when too few stacks are known to classify (keep the default)."""
+    seats = [(_PREFLOP_ORDER.index(p), st) for p, st in (position_stacks or {}).items()
+             if p in _PREFLOP_ORDER and isinstance(st, (int, float)) and st > 0]
+    if len(seats) < min_seats:
+        return None
+    mean = sum(st for _, st in seats) / len(seats)
+    best, best_dist = 'iguais', float('inf')
+    for name, prof in _SPREADS.items():
+        m = sum(prof[i] for i, _ in seats) / len(seats)
+        dist = sum((st / mean - prof[i] / m) ** 2 for i, st in seats)
+        if dist < best_dist - 1e-9:
+            best_dist, best = dist, name
+    return best
+
+
 def _bet_levels(amounts):
     """Group raise amounts into distinct levels (callers matching a raise sit on
     the same level). Returns the sorted list of level representatives, low->high.
@@ -158,7 +187,7 @@ class PreflopAdvisor:
                                               hero=hero_position, players=players))
         i = self.hands.index(hand)
         validated = bool(node.get('validated'))
-        caveats = self._caveats(bucket, stack_bb, players, mode)
+        caveats = self._caveats(bucket, stack_bb, players, mode, spread)
         if not validated:
             caveats.append('UNVALIDATED_REFERENCE_RANGE')
         base = dict(spot=spot, hero_position=hero_position, hand=hand, node_id=node['id'],
@@ -198,6 +227,15 @@ class PreflopAdvisor:
             return self._abstain('HERO_POSITION_UNKNOWN')
         spot = infer_live_spot(table_state)
         base = dict(hero_cards=hero_cards, hero_position=positions['hero'], stack_bb=hero.get('stack_bb'))
+        # For ICM/PKO-ICM, classify the table's stack spread from the read stacks
+        # instead of always assuming equal stacks; keep the default when unset or
+        # too few stacks read (infer_spread returns None).
+        if kwargs.get('mode') in ('icm', 'pko_icm') and kwargs.get('spread') is None:
+            seats = table_state.get('seats', {})
+            spread = infer_spread({pos: seats.get(seat, {}).get('stack_bb')
+                                   for seat, pos in positions.items()})
+            if spread is not None:
+                kwargs['spread'] = spread
         if spot['spot'] in ('vs_open', 'vs_3bet'):
             result = self.advise(spot=spot['spot'], vs=(spot['opener'],), **base, **kwargs)
             if isinstance(result, dict):
@@ -217,7 +255,7 @@ class PreflopAdvisor:
                                                         positions['hero'], spot.get('opener'))
         return result
 
-    def _caveats(self, bucket, stack_bb, players, mode):
+    def _caveats(self, bucket, stack_bb, players, mode, spread=None):
         out = ['EXPLORATORY_NOT_FOR_EXECUTION', 'NVT_REFERENCE_SHORT_STACK_ONLY']
         if bucket != stack_bb:
             out.append('STACK_BUCKETED_%s_TO_%sBB' % (stack_bb, bucket))
@@ -229,7 +267,9 @@ class PreflopAdvisor:
         if mode != 'chip_ev':
             out.append('ICM_PKO_NEEDS_TOURNAMENT_INPUTS')
         if mode in ('icm', 'pko_icm'):
-            out.append('ICM_SPREAD_ASSUMED_EQUAL_STACKS')
+            # Report the stack spread actually used; 'iguais' may be the default
+            # (equal stacks assumed) or the nearest match to the real table.
+            out.append('ICM_SPREAD_%s' % (spread or 'iguais').upper())
         return out
 
     @staticmethod

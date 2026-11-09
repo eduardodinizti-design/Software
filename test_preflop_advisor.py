@@ -5,7 +5,7 @@ is consulted live, not committed."""
 import unittest
 
 from preflop_study import RANKS
-from preflop_advisor import PreflopAdvisor, infer_live_spot
+from preflop_advisor import PreflopAdvisor, infer_live_spot, infer_spread
 
 HANDS = [r + r for r in RANKS] + [a + b + s for i, a in enumerate(RANKS) for b in RANKS[i + 1:] for s in ('s', 'o')]
 
@@ -66,6 +66,37 @@ class AdvisorTests(unittest.TestCase):
         self.assertEqual(r['status'], 'ADVICE')
         self.assertEqual(r['stack_bucket'], 100)
         self.assertIn('STACK_ABOVE_SOLVED_DEPTH_100BB_REFERENCE', r['caveats'])
+
+    def test_infer_spread_classifies_the_table(self):
+        even = {p: 40 for p in ('UTG', 'UTG+1', 'UTG+2', 'LJ', 'HJ', 'CO', 'BTN', 'SB', 'BB')}
+        self.assertEqual(infer_spread(even), 'iguais')
+        early_short = {'UTG': 12, 'UTG+1': 13, 'UTG+2': 18, 'LJ': 20, 'HJ': 25, 'CO': 32, 'BTN': 38, 'SB': 40, 'BB': 30}
+        self.assertEqual(infer_spread(early_short), 'curtos_ini')
+        late_short = {'UTG': 38, 'UTG+1': 40, 'UTG+2': 32, 'LJ': 30, 'HJ': 25, 'CO': 18, 'BTN': 13, 'SB': 12, 'BB': 20}
+        self.assertEqual(infer_spread(late_short), 'curtos_fim')
+        self.assertIsNone(infer_spread({'UTG': 40, 'BTN': 20}))   # too few seats -> keep default
+
+    def test_from_reading_uses_inferred_spread_in_icm(self):
+        # The ICM caveat reports the spread classified from the table, not a blanket assumption.
+        node = dict(id='i1', context=dict(mode='icm', format='regular', stage='bubble', players=9, stack=25),
+                    spot='open_raise', hero='BTN', vs=[], validated=False, evUnit='bb', spread='curtos_fim',
+                    legalActions=['fold', 'raise'], actions=['raise', 'fold'],
+                    freq={'raise': [1.0 if HANDS[k] == 'AA' else 0.0 for k in range(169)],
+                          'fold': [0.0 if HANDS[k] == 'AA' else 1.0 for k in range(169)]},
+                    ev={'raise': [2.0] * 169, 'fold': [0.0] * 169}, outOfRange=[], source='test')
+        pack = pack_with_node()
+        pack['nodes'].append(node)
+        a = PreflopAdvisor(pack)
+        # Late-short (curtos_fim) profile; hero is BTN at 25bb so the open node matches.
+        by_pos = {'UTG': 58, 'UTG+1': 58, 'UTG+2': 50, 'LJ': 50, 'HJ': 42, 'CO': 33, 'BTN': 25, 'SB': 25, 'BB': 33}
+        seats = {p: {'stack_bb': st} for p, st in by_pos.items()}
+        seats['hero'] = {'stack_bb': 25}
+        positions = {p: p for p in by_pos}
+        positions['hero'] = 'BTN'
+        state = dict(positions=positions, seats=seats, bets=[])
+        r = a.advise_from_reading(state, ['As', 'Ac'], mode='icm', stage='bubble')
+        self.assertEqual(r['status'], 'ADVICE')
+        self.assertIn('ICM_SPREAD_CURTOS_FIM', r['caveats'])
 
     def test_unknown_context_abstains(self):
         r = self.a.advise(hero_cards=['As', 'Ac'], hero_position='UTG', stack_bb=25)  # no UTG node
