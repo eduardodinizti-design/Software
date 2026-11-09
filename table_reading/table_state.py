@@ -29,8 +29,12 @@ _OCCLUSION_STD = 15.0  # a flat, dark nameplate box is likely covered by a panel
 _WITH_COMMA = re.compile(r'(\d{1,4})[.,](\d)\s*B')
 # Some skins (Evolution) render the decimal comma as a gap: "35,5" -> "35 5BB".
 _SPACE_DECIMAL = re.compile(r'(\d{1,4})\s+(\d)\s*[BR8]{2}')
-# Trailing unit is "BB", often OCR'd as BR/RR/B8; accept two of [BR8].
-_DIGITS_BB = re.compile(r'(\d{2,5})\s*[BR8]{2}')
+# Trailing unit is "BB", often OCR'd as BR/RR/B8; accept two of [BR8]. The digit
+# run must not be glued to a letter: a bet chip or the stats grid overlapping a
+# nameplate yields garbage like "alecaixeta R20RB", where "20RB" would otherwise
+# be read as 2.0. Requiring a non-letter before the digits turns that dangerous
+# misread into a safe abstention, while real stacks ("...AABui 760BB") still read.
+_DIGITS_BB = re.compile(r'(?<![A-Za-z])(\d{2,5})\s*[BR8]{2}')
 
 
 def parse_amount(text):

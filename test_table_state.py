@@ -32,6 +32,13 @@ class ParseAmountTests(unittest.TestCase):
         # "15,3" misread as "15232": abstain rather than invent 1523.2
         self.assertEqual(table_state.parse_amount('AlfaCentau 15232BB'), (None, 'abstain'))
 
+    def test_letter_glued_digits_are_rejected_not_misread(self):
+        # A bet chip / stats grid overlapping a nameplate yields garbage where the
+        # digit run is glued to a letter ("alecaixeta R20RB"). Reading that as 2.0
+        # is a dangerous misread, so abstain; a space-separated stack still reads.
+        self.assertEqual(table_state.parse_amount('alecaixeta R20RB'), (None, 'abstain'))
+        self.assertEqual(table_state.parse_amount('alecaixeta 830 BB'), (83.0, 'medium'))
+
 
 class SeatLayoutTests(unittest.TestCase):
     def test_nine_unique_seats_hero_first(self):
