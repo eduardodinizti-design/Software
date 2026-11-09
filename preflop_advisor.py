@@ -18,6 +18,23 @@ from pathlib import Path
 from preflop_study import hand_key, Blocked
 
 RAISE_FLOOR_BB = 1.5  # a bet above the BB (1.0) is a raise, not a blind post
+# Preflop action order (earliest to latest); the opener is the earliest-position
+# player among those at the top bet level, callers having matched that bet later.
+_PREFLOP_ORDER = ('UTG', 'UTG+1', 'UTG+2', 'LJ', 'HJ', 'CO', 'BTN', 'SB', 'BB')
+
+
+def _bet_levels(amounts):
+    """Group raise amounts into distinct levels (callers matching a raise sit on
+    the same level). Returns the sorted list of level representatives, low->high.
+    A single level is a raised pot (with any number of callers); two or more
+    levels mean a reraise happened (3bet/4bet)."""
+    levels = []
+    for a in sorted(amounts):
+        if not levels or a > levels[-1] + max(0.5, 0.15 * levels[-1]):
+            levels.append(a)
+        else:
+            levels[-1] = max(levels[-1], a)
+    return levels
 
 
 def infer_live_spot(table_state):
@@ -46,9 +63,17 @@ def infer_live_spot(table_state):
                     reason='HERO_OPENED_NO_RERAISE' if not rereraisers else 'MULTIWAY_OR_4BET_NOT_COVERED')
     if not raisers:
         return dict(spot='first_in', opener=None)
-    if len(raisers) == 1:
-        return dict(spot='vs_open', opener=next(iter(raisers)))
-    return dict(spot='abstain', opener=None, reason='MULTIWAY_OR_3BET_NOT_COVERED')
+    # Group the raises into levels. Callers of a single open sit on one level with
+    # it, so a single level is a (possibly multiway) open the hero can face as
+    # vs_open; two or more levels mean a reraise the pack does not cover cold.
+    levels = _bet_levels(raisers.values())
+    if len(levels) >= 2:
+        return dict(spot='abstain', opener=None, reason='MULTIWAY_OR_3BET_NOT_COVERED')
+    top = levels[-1]
+    at_top = [p for p, a in raisers.items() if a > top - max(0.5, 0.15 * top)]
+    opener = min(at_top, key=lambda p: _PREFLOP_ORDER.index(p) if p in _PREFLOP_ORDER else 99)
+    callers = len(at_top) - 1
+    return dict(spot='vs_open', opener=opener, callers=callers)
 
 
 class PreflopAdvisor:
@@ -177,6 +202,11 @@ class PreflopAdvisor:
             result = self.advise(spot=spot['spot'], vs=(spot['opener'],), **base, **kwargs)
             if isinstance(result, dict):
                 result.setdefault('caveats', []).append('AGGRESSOR_INFERRED_%s' % spot['opener'])
+                if spot.get('callers'):
+                    # vs_open is heads-up vs the opener; with callers the pot is
+                    # multiway and the pack has no multiway node, so this is an
+                    # approximation (usually tighter in reality), flagged as such.
+                    result.setdefault('caveats', []).append('MULTIWAY_%d_CALLERS_APPROX_VS_OPEN' % spot['callers'])
         elif spot['spot'] == 'first_in':
             result = self.advise_first_in(**base, **kwargs)
         else:

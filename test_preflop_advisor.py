@@ -170,9 +170,26 @@ class SpotInferenceTests(unittest.TestCase):
         s = infer_live_spot(self._state([{'seat': 'x', 'bet_bb': 2.5}]))
         self.assertEqual((s['spot'], s['opener']), ('vs_open', 'BTN'))
 
-    def test_two_raisers_abstain(self):
+    def test_two_distinct_levels_abstain(self):
+        # An open (2.5) and a reraise (7.0): two levels -> a 3bet pot the hero
+        # faces cold, which the pack does not cover.
         s = infer_live_spot(self._state([{'seat': 'x', 'bet_bb': 2.5}, {'seat': 'y', 'bet_bb': 7.0}]))
-        self.assertEqual(s['spot'], 'abstain')
+        self.assertEqual((s['spot'], s['reason']), ('abstain', 'MULTIWAY_OR_3BET_NOT_COVERED'))
+
+    def test_open_with_caller_is_vs_open_against_the_opener(self):
+        # Open (BTN 2.5) plus a caller at the same level (CO 2.5): one raise level,
+        # so it is vs_open; the opener is the earliest-position seat at that level.
+        s = infer_live_spot(self._state([{'seat': 'x', 'bet_bb': 2.5}, {'seat': 'y', 'bet_bb': 2.6}]))
+        self.assertEqual((s['spot'], s['opener'], s['callers']), ('vs_open', 'CO', 1))
+
+    def test_multiway_caller_is_flagged_in_advice(self):
+        a = PreflopAdvisor(pack_with_vsopen())
+        state = dict(positions={'hero': 'BB', 'x': 'BTN', 'z': 'SB'},
+                     bets=[{'seat': 'x', 'bet_bb': 2.5}, {'seat': 'z', 'bet_bb': 2.5}],
+                     seats={'hero': {'stack_bb': 25.0}})
+        r = a.advise_from_reading(state, ['As', 'Ac'])
+        self.assertEqual((r['status'], r['spot']), ('ADVICE', 'vs_open'))
+        self.assertIn('MULTIWAY_1_CALLERS_APPROX_VS_OPEN', r['caveats'])
 
     def test_hero_opened_facing_3bet_is_vs_3bet(self):
         state = dict(positions={'hero': 'CO', 'x': 'BTN'},

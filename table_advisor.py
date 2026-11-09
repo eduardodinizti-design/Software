@@ -89,9 +89,13 @@ def _summary(result):
         if sz.get('size_bb') is not None:
             size_txt = ' -> %s BB (%s%s)' % (sz['size_bb'], sz.get('basis', ''),
                                              '; heuristica' if sz.get('heuristic') else '')
+        caveats = adv.get('caveats') or []
         deep = ''
-        if 'STACK_ABOVE_SOLVED_DEPTH_100BB_REFERENCE' in (adv.get('caveats') or []):
+        if 'STACK_ABOVE_SOLVED_DEPTH_100BB_REFERENCE' in caveats:
             deep = ' [ref 100bb p/ %sbb deep]' % adv.get('stack_bb')
+        mw = next((c for c in caveats if c.startswith('MULTIWAY_') and 'CALLERS' in c), None)
+        if mw:
+            deep += ' [multiway aprox: %s caller(s) via vs_open]' % mw.split('_')[1]
         lines.append('ACAO: %s%s | mix: %s | stack usado: %sbb%s | no: %s' % (
             adv['recommended'].upper(), size_txt, mix, adv['stack_bucket'], deep, adv['node_id']))
     else:
