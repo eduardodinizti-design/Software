@@ -49,6 +49,12 @@ class ReadTests(unittest.TestCase):
         self.assertEqual((r['paid'], r['players_left'], r['hero_rank']), (20, 55, 40))
         self.assertEqual(r['confidence'], 'high')
 
+    def test_reads_remaining_through_cedilla_noise(self):
+        # Evolution OCR mangles "posicao" to "posig&o"; the rank/left must still
+        # read, and the blinds' own slash ("5,000/10K") must not be matched.
+        r = self._read('CRAZY REBUY Blinds: 5,000/10K(1,500) Lugares pagos: 35 Minha posig&o: 23/60')
+        self.assertEqual((r['paid'], r['players_left'], r['hero_rank']), (35, 60, 23))
+
     def test_unread_abstains(self):
         r = self._read('MINI FREEZE Blinds: 600/1,200')
         self.assertIsNone(r['players_left'])

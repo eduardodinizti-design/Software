@@ -15,7 +15,11 @@ from .ocr_runtime import image_to_string
 
 FINAL_TABLE = 9
 _PAID = re.compile(r'pagos[:\s]*(\d+)', re.I)
-_POSITION = re.compile(r'posi\w*[:\s]*(\d+)\s*/\s*(\d+)', re.I)   # OCR reads "posigao: 40/55"
+# "Minha posicao: rank/left". OCR mangles the "cao" tail ("posig&o", "posigao"),
+# so skip anything between "posi" and the rank/left pair instead of requiring a
+# clean ":"; accept a '|' for the slash. The pair is anchored to "posi" so the
+# blinds ("5,000/10K", also a slash) are never matched.
+_POSITION = re.compile(r'posi.*?(\d+)\s*[/|]\s*(\d+)', re.I)
 _NAME = re.compile(r'^(.*?)\s*Blinds', re.I)
 # Mystery KO: bounty only AFTER the money (plays vanilla until ITM). "MISTERY" is
 # the Portuguese spelling seen on the table.
