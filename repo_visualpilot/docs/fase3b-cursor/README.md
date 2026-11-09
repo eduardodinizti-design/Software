@@ -104,12 +104,27 @@ python cursor_test_app.py --measure --trials 15
 O relatório traz as amostras, o ajuste de Fitts (a, b, n, R²) e o resumo de
 métricas. Com ele, `TrajectoryGenerator.calibrate(a, b)` passa a `calibrated=True`.
 
-## O que FALTA (honesto)
+### Clique real VALIDADO no Windows (`--auto`, app inofensivo)
 
-- **Rodar `--measure`** (precisa do mouse do Eduardo) para calibrar a,b de verdade
-  e então avaliar naturalidade nas amostras de avaliação. Hoje: movimento suave,
-  coeficientes default; o ENVIO (move) já é real e validado.
-- **Validar o CLIQUE real** ponta a ponta (`--auto`) — o move está provado; falta
-  confirmar o efeito do clique num alvo inofensivo.
-- Só depois disso, e com turno/estado validados, cogitar apontar para uma ação
-  real — fronteira da F4, com as travas (gate, revalidação, clique único) prontas.
+`logs/cursor/auto-*.json`: o controlador moveu via SendInput, revalidou na chegada
+e clicou em **6/6** botões → `state=DONE`, `confirmed=True` (o comando do botão
+disparou). A intenção VENCIDA (demo) → `CANCELLED/INTENT_EXPIRED`, **sem clique**.
+Fecha a validação de ponta a ponta: move + clique único + confirmação + recusa de
+intenção vencida, tudo real. Correções do caminho: o `cancel_check` passou a
+comparar o cursor com o ÚLTIMO ponto comandado (não o próximo — evita falso
+cancelamento num passo rápido); o app fecha pela MAIN thread (Tk não é thread-safe).
+
+## Status da 3B e o que fica
+
+- **Núcleo + envio + clique: COMPLETOS e validados ao vivo.** Trajetória suave,
+  SendInput (move ~1,3px; clique 6/6), revalidação na chegada, clique único,
+  cancelamento (intervenção/vencida), exclusão mútua, gate — tudo provado.
+- **Calibração de Fitts: inconclusiva** (1ª medição deu R²=0,03, b<0 — não
+  usável). Mantido o `calibrated=False` ("movimento suave"), que é o honesto.
+  Uma calibração real exigiria protocolo mais limpo + mais trials; é polimento
+  OPCIONAL, não bloqueia.
+- **Decisão do produto:** a via sustentável é a ASSISTIDA (a máquina decide, o
+  usuário clica — zero input injetado). Entrada injetada carrega a flag
+  `LLMHF_INJECTED` do Windows e é detectável por anti-bot independentemente do
+  realismo da trajetória; NÃO se persegue evasão de detecção. O controlador fica
+  como automação honesta, com todas as travas, para uso supervisionado.

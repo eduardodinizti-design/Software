@@ -178,18 +178,23 @@ class CursorController:
             start = center_of(target)          # sem leitura, parte do próprio alvo
         end = center_of(target)
         plan = self._traj.plan(start, end)
+        commanded = start                       # último ponto que o BOT comandou
         while not plan.done():
             now = self._clock()
             if self._expired(intent):
                 return ['INTENT_EXPIRED']
             if not self._armed():
                 return ['BOT_NOT_RUNNING']
-            pos = plan.position(now)
+            # Detecção de intervenção: o cursor REAL deve estar perto de onde o
+            # bot o deixou (commanded), NÃO do próximo ponto — senão o próprio
+            # passo do movimento dispararia falso cancelamento.
             if self._cancel_check is not None:
-                why = self._cancel_check(intent, now, pos)
+                why = self._cancel_check(intent, now, commanded)
                 if why:
                     return [why]               # intervenção/foco/alvo invalidado
+            pos = plan.position(now)
             self._input.move_to(pos[0], pos[1])
+            commanded = pos
             self._sleep(self._step_s)
         self._input.move_to(end[0], end[1])     # ponto final exato
         return None

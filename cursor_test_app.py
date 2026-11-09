@@ -122,7 +122,17 @@ class AutoApp:
         self.abort = False
         self.buttons = []
         self.results = []
+        self._finished = False
+        self._report_path = None
         self._input = WindowsCursorInput()
+        # Janela por cima: os cliques em coords absolutas devem cair nos NOSSOS
+        # botões, não em algo atrás. ESC aborta.
+        root.attributes('-topmost', True)
+        root.lift()
+        try:
+            root.focus_force()
+        except Exception:                      # noqa: BLE001
+            pass
         root.bind('<Escape>', lambda e: setattr(self, 'abort', True))
         frame = tk.Frame(root, bg='#101418')
         frame.pack(fill='both', expand=True)
@@ -136,6 +146,13 @@ class AutoApp:
             b.grid(row=k // 3, column=k % 3, padx=18, pady=18)
             self.buttons.append(b)
         root.after(1500, lambda: threading.Thread(target=self._run, daemon=True).start())
+        root.after(200, self._poll)   # fecha a janela na MAIN thread quando terminar
+
+    def _poll(self):
+        if self._finished:
+            self.root.destroy()
+            return
+        self.root.after(150, self._poll)
 
     def _clicked(self, i):
         self.last_clicked = (i, time.monotonic())
@@ -177,7 +194,8 @@ class AutoApp:
                                      reasons=out['reasons'], confirmed=False))
         path = _save(dict(mode='auto', aborted=self.abort, results=self.results), 'auto')
         print('Relatorio AUTO salvo em:', path)
-        self.root.after(0, self.root.destroy)
+        self._report_path = path
+        self._finished = True                  # a MAIN thread fecha (ver _poll)
 
     def _verify(self, intent, now):
         # Tk processa o clique no thread principal; aqui (bg) fazemos poll curto.
