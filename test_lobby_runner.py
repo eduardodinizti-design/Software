@@ -50,6 +50,15 @@ class LobbyCropTest(unittest.TestCase):
                                        badger=badger)
         self.assertEqual((box, n), ((50, 50, 40, 40), 3))
 
+    def test_picks_crop_regardless_of_table_status(self):
+        # O lobby não é mesa: vem UNCERTAIN, não COMPLETE_CANDIDATE. O sinal é o
+        # badge, não o status (regressão do achado ao vivo 09/11).
+        frame = np.zeros((100, 100, 3), np.uint8)
+        props = [SimpleNamespace(box=(50, 50, 40, 40), status='UNCERTAIN')]
+        crop, box, n = find_lobby_crop(frame, detector=lambda rgb, max_tables: props,
+                                       badger=lambda c: [1, 2, 3, 4])
+        self.assertEqual((box, n), ((50, 50, 40, 40), 4))
+
     def test_no_lobby_crop(self):
         frame = np.zeros((100, 100, 3), np.uint8)
         props = [SimpleNamespace(box=(0, 0, 40, 40), status='COMPLETE_CANDIDATE')]
@@ -132,6 +141,21 @@ class RealLobbyOCRTest(unittest.TestCase):
             cls.cv2 = cv2
         except Exception as e:  # noqa: BLE001
             raise unittest.SkipTest('OCR in-process indisponivel: %s' % e)
+
+    def test_read_grade_scale_invariant(self):
+        # O mesmo lobby v228 ampliado 1.34x (escala do painel ao vivo) deve ler
+        # os mesmos cartões: valida as ROIs relativas ao pitch (não-regressão em
+        # escala). Dado real, determinístico.
+        from grade_reader import read_grade
+        im = self.cv2.imread(REAL_LOBBY)
+        big = self.cv2.resize(im, None, fx=1.34, fy=1.34,
+                              interpolation=self.cv2.INTER_CUBIC)
+        cards = read_grade(big)
+        deep = next((c for c in cards
+                     if (c['name'] or '').startswith('DEEP FREEZEOUT')), None)
+        self.assertIsNotNone(deep)                       # ROIs seguem o pitch na escala viva
+        self.assertEqual(float(deep['buyin']), 50.0)
+        self.assertEqual(deep['status']['state'], 'reg_open')   # status tolerante ao OCR garbled
 
     def test_reads_real_lobby_and_reaches_awaiting(self):
         im = self.cv2.imread(REAL_LOBBY)

@@ -22,6 +22,9 @@ from table_reading.tournament import is_mystery, is_pko
 _PLAYERS = re.compile(r'(\d+)\s*/\s*(\d+)')
 _LEVEL_MIN = re.compile(r'(\d+)\s*min', re.I)
 _CLOSES = re.compile(r'encerra\s*em\s*(\d+)\s*min', re.I)
+_CLOSES_FUZZY = re.compile(r'(\d+)\s*min', re.I)              # 'N min' mesmo garbled
+_CLOCK = re.compile(r'\d{1,2}\s*[:/]\s*\d{2}|\d{1,2}\s*/\s*\d{1,2}')  # hora/data (início)
+_ENC_CUE = re.compile(r'enc|anc|cerr|corr|\breg', re.I)      # vestígio de 'encerra'/'registro'
 _STARTS = re.compile(r'in[ií]cio[:\s]*(.+)$', re.I)
 _MONEY = re.compile(r'\d+(?:[.,]\d+)?')
 
@@ -94,11 +97,29 @@ def parse_level_minutes(raw):
 def parse_status(raw):
     """(state, closes_in_min, starts_at) from the status line. state is
     'reg_open' when a close countdown is shown, 'not_started' when only a start
-    time is shown, else 'unknown'. Registration being open is never assumed."""
+    time is shown, else 'unknown'. Registration being open is never assumed.
+
+    Tolerante a OCR garbled do skin ao vivo (texto pequeno em escala maior):
+    - 'Registro encerra em N min' lê limpo no v228 (caminho exato).
+    - Ao vivo o OCR degrada ("encerra"→"ancora", "em"→"eam", "R29"/"1NN"): o
+      reg_open é reconhecido por um vestígio de "encerra/registro" + "min" SEM um
+      relógio/data. not_started mostra hora/data (início). Garble sem pista fica
+      'unknown' (fail-safe: o seletor exige reg_open e não presume inscrição).
+    """
     t = raw or ''
-    m = _CLOSES.search(t)
+    m = _CLOSES.search(t)                       # caminho limpo (sem regressão v228)
     if m:
         return dict(state='reg_open', closes_in_min=int(m.group(1)), starts_at=None)
+    has_min = re.search(r'\bmin\b', t, re.I) is not None
+    clock = _CLOCK.search(t)
+    if clock and not has_min:                   # hora/data e nenhum 'min' = início
+        s = _STARTS.search(t)
+        return dict(state='not_started', closes_in_min=None,
+                    starts_at=(s.group(1).strip() if s else clock.group(0).strip()))
+    if has_min and _ENC_CUE.search(t):          # contagem 'N min' com vestígio de 'encerra'
+        mm = _CLOSES_FUZZY.search(t)
+        return dict(state='reg_open',
+                    closes_in_min=(int(mm.group(1)) if mm else None), starts_at=None)
     m = _STARTS.search(t)
     if m:
         return dict(state='not_started', closes_in_min=None, starts_at=m.group(1).strip())
@@ -128,13 +149,29 @@ def read_grade(crop):
         raise ValueError('Expected a BGR lobby crop')
     h, w = crop.shape[:2]
     cards = []
-    for x, y, bw, bh in find_buyin_badges(crop):
+    badges = find_buyin_badges(crop)
+    # Os offsets verticais de nome/info/status foram calibrados no gabarito v228
+    # (750px, pitch de 170px entre cartões). Em outra escala (ex.: o painel de
+    # 1005px do canvas ao vivo) o cartão é maior, então escalamos os offsets pelo
+    # pitch REAL medido nos próprios badges. Em v228 (pitch=170) a escala é 1.0 e
+    # as ROIs ficam idênticas — sem regressão.
+    PITCH_REF = 170
+    ys = [b[1] for b in badges]
+    gaps = sorted(b - a for a, b in zip(ys, ys[1:]))
+    pitch = gaps[len(gaps) // 2] if gaps else PITCH_REF
+    scale = pitch / PITCH_REF
+
+    def band(cy, top_px, bot_px):
+        return slice(max(0, cy + int(round(top_px * scale))),
+                     cy + int(round(bot_px * scale)))
+
+    for x, y, bw, bh in badges:
         cy = y + bh // 2
         rx = x + bw + 15
         buyin_raw = _ocr(cv2.cvtColor(crop[y + bh // 5:y + bh // 2 + 2, x + 8:x + bw - 8], cv2.COLOR_BGR2GRAY))
-        name_raw = _ocr(cv2.cvtColor(crop[cy - 70:cy - 22, rx:w - 15], cv2.COLOR_BGR2GRAY))
-        info_raw = _ocr(cv2.cvtColor(crop[cy - 18:cy + 18, rx:w - 15], cv2.COLOR_BGR2GRAY))
-        stat_raw = _ocr(cv2.cvtColor(crop[cy + 20:cy + 60, rx:w - 15], cv2.COLOR_BGR2GRAY))
+        name_raw = _ocr(cv2.cvtColor(crop[band(cy, -70, -22), rx:w - 15], cv2.COLOR_BGR2GRAY))
+        info_raw = _ocr(cv2.cvtColor(crop[band(cy, -18, 18), rx:w - 15], cv2.COLOR_BGR2GRAY))
+        stat_raw = _ocr(cv2.cvtColor(crop[band(cy, 20, 60), rx:w - 15], cv2.COLOR_BGR2GRAY))
         name = name_raw.strip()
         buyin = parse_buyin(buyin_raw)
         registered, maximum = parse_players(info_raw)

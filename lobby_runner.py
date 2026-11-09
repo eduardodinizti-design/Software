@@ -24,13 +24,13 @@ def find_lobby_crop(frame_bgr, *, max_crops=6, detector=detect_table_crops,
                     badger=find_buyin_badges):
     """(crop_bgr, box, n_badges) do painel do lobby no frame, ou (None, None, 0).
 
-    O lobby é o crop COMPLETE_CANDIDATE com mais badges de buy-in (>=1).
+    O lobby é o crop com mais badges de buy-in (>=1), independente do status de
+    MESA do detector: o lobby não é uma mesa, então costuma vir UNCERTAIN (não
+    tem geometria de feltro). O sinal confiável são os badges, não o status.
     """
     rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
     best = None
     for p in detector(rgb, max_tables=max_crops):
-        if getattr(p, 'status', None) != 'COMPLETE_CANDIDATE':
-            continue
         x, y, w, h = map(int, p.box)
         crop = frame_bgr[y:y + h, x:x + w]
         n = len(badger(crop))
