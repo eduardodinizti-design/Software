@@ -128,9 +128,18 @@ def read_to_call(crop):
 
 
 def _detect_red_chips(crop):
-    """Bounding centres (cx, cy, w, h) of the red bet chips on the felt."""
+    """Bounding centres (cx, cy, w, h) of the red bet chips on the felt.
+
+    Only the felt band is searched: the top banner (flags, logo) and the bottom
+    action bar also carry red, and their numbers were being read as phantom bets
+    (e.g. a recurring 14.0bb from the US flag). Bets sit between the seats and the
+    pot, well inside this band, so none are lost. Mirrors dealer_button's mask."""
+    h, w = crop.shape[:2]
     b, g, r = crop[:, :, 0].astype(int), crop[:, :, 1].astype(int), crop[:, :, 2].astype(int)
     red = ((r > 130) & (r > g + 50) & (r > b + 40)).astype(np.uint8) * 255
+    felt = np.zeros_like(red)
+    felt[int(0.13 * h):int(0.86 * h), int(0.04 * w):int(0.96 * w)] = 255
+    red = cv2.bitwise_and(red, felt)
     red = cv2.morphologyEx(red, cv2.MORPH_CLOSE, np.ones((5, 5), np.uint8))
     count, _, stats, cent = cv2.connectedComponentsWithStats(red, 8)
     chips = []
