@@ -1,18 +1,36 @@
-"""Founded raise-sizing heuristics for the preflop advice.
+"""Raise-sizing for the preflop advice, matched to the solver's betting tree.
 
-Sizes are NOT taken from the button label or from the pack's historical bets
-(the handoff and the cursor spec both forbid that). They are standard MTT sizing
-rules in big blinds, read from the live table (limpers, the opener's size,
-position): a first proposal to calibrate with use. Every size states its basis
-and whether it is a heuristic; folds/checks/calls/limps/all-ins are exact.
+Sizes are NOT taken from the button label or the pack's historical bets (the
+handoff and the cursor spec forbid that). They mirror the sizes the HRC ranges
+were solved against: open 2bb (2.5bb at 100bb), 3bet to 2.5x the open in
+position / 2.9x from the SB / 3.4x from the BB, 4bet all-in. Isolating limpers
+is not in the solved tree, so that add stays a flagged heuristic. Folds, checks,
+calls, limps and all-ins are exact.
 """
-# Big-blind sizing constants (with antes); a first proposal, tune with data.
-OPEN_RAISE_BB = 2.2            # first-in open
-ISO_ADD_PER_LIMPER_BB = 1.0   # add this per limper when isolating
-THREEBET_IP_MULT = 3.0        # 3bet to ~3x the open, in position
-THREEBET_OOP_MULT = 4.0       # ~4x out of position
-FOURBET_IP_MULT = 2.2         # 4bet to ~2.2x the 3bet, in position
-FOURBET_OOP_MULT = 2.5        # ~2.5x out of position
+# Solver betting-tree sizes, in big blinds.
+OPEN_RAISE_BB = 2.0           # first-in open at <=40bb
+OPEN_RAISE_DEEP_BB = 2.5      # first-in open at 100bb
+OPEN_DEEP_THRESHOLD_BB = 40   # above this, use the deep open size
+ISO_ADD_PER_LIMPER_BB = 1.0   # heuristic add per limper (iso is not in the solved tree)
+THREEBET_IP_MULT = 2.5        # 3bet-to as a multiple of the open, in position
+THREEBET_SB_MULT = 2.9        # from the SB
+THREEBET_BB_MULT = 3.4        # from the BB
+
+
+def open_size_bb(hero_stack_bb):
+    """Solver open size: 2.0bb normally, 2.5bb at 100bb-deep."""
+    if isinstance(hero_stack_bb, (int, float)) and hero_stack_bb > OPEN_DEEP_THRESHOLD_BB:
+        return OPEN_RAISE_DEEP_BB
+    return OPEN_RAISE_BB
+
+
+def three_bet_mult(hero_position, ip):
+    """3bet-to multiple of the open: BB 3.4x, SB 2.9x, else 2.5x (in position)."""
+    if hero_position == 'BB':
+        return THREEBET_BB_MULT
+    if hero_position == 'SB':
+        return THREEBET_SB_MULT
+    return THREEBET_IP_MULT
 
 # Postflop action order (SB first, BTN last = in position).
 _POSTFLOP_ORDER = ('SB', 'BB', 'UTG', 'UTG+1', 'UTG+2', 'LJ', 'HJ', 'CO', 'BTN')
@@ -51,16 +69,17 @@ def in_position(hero_position, opener_position):
 
 
 def recommend_size(action, *, hero_stack_bb=None, to_call_bb=None, limpers=0,
-                   opener_bb=None, ip=True):
+                   opener_bb=None, ip=True, hero_position=None):
     """{action, size_bb, basis, heuristic} for one action, or None for fold.
 
-    Open/3bet are heuristic sizes; call/limp/all-in/check are exact amounts."""
+    Open/3bet/4bet sizes come from the solver betting tree; isolating limpers is a
+    flagged heuristic; call/limp/all-in/check are exact amounts."""
     cap = hero_stack_bb if isinstance(hero_stack_bb, (int, float)) else None
 
     def capped(size):
         return round(min(size, cap), 1) if cap is not None else round(size, 1)
 
-    if action in ('fold',):
+    if action == 'fold':
         return None
     if action == 'check':
         return dict(action='check', size_bb=0.0, basis='check', heuristic=False)
@@ -68,22 +87,23 @@ def recommend_size(action, *, hero_stack_bb=None, to_call_bb=None, limpers=0,
         return dict(action='call', size_bb=to_call_bb, basis='to_call', heuristic=False)
     if action == 'limp':
         return dict(action='limp', size_bb=capped(1.0), basis='bb', heuristic=False)
-    if action == 'all_in':
-        return dict(action='all_in', size_bb=cap, basis='stack', heuristic=False)
+    if action in ('all_in', 'open_shove', 'vs_open_shove', 'three_bet_shove', 'four_bet_shove'):
+        return dict(action=action, size_bb=cap, basis='all-in', heuristic=False)
     if action in ('raise', 'open_raise'):
-        size = OPEN_RAISE_BB + ISO_ADD_PER_LIMPER_BB * limpers
-        return dict(action='raise', size_bb=capped(size), heuristic=True,
-                    basis='open %.1fbb + %d limper(s)' % (OPEN_RAISE_BB, limpers))
+        open_bb = open_size_bb(hero_stack_bb)
+        size = open_bb + ISO_ADD_PER_LIMPER_BB * limpers
+        basis = 'open %.1fbb (solver)' % open_bb
+        if limpers:
+            basis += ' + %d limper(s) (heuristica)' % limpers
+        return dict(action='raise', size_bb=capped(size), heuristic=bool(limpers), basis=basis)
     if action == 'three_bet':
-        base = opener_bb if isinstance(opener_bb, (int, float)) else OPEN_RAISE_BB
-        mult = THREEBET_IP_MULT if ip else THREEBET_OOP_MULT
-        return dict(action='three_bet', size_bb=capped(base * mult), heuristic=True,
-                    basis='3bet %.0fx open (%s)' % (mult, 'IP' if ip else 'OOP'))
+        base = opener_bb if isinstance(opener_bb, (int, float)) else open_size_bb(hero_stack_bb)
+        mult = three_bet_mult(hero_position, ip)
+        pos = hero_position if hero_position in ('BB', 'SB') else ('IP' if ip else 'OOP')
+        return dict(action='three_bet', size_bb=capped(base * mult), heuristic=False,
+                    basis='3bet %.1fx open (%s, solver)' % (mult, pos))
     if action == 'four_bet':
-        base = opener_bb if isinstance(opener_bb, (int, float)) else OPEN_RAISE_BB
-        mult = FOURBET_IP_MULT if ip else FOURBET_OOP_MULT
-        return dict(action='four_bet', size_bb=capped(base * mult), heuristic=True,
-                    basis='4bet %.1fx 3bet (%s)' % (mult, 'IP' if ip else 'OOP'))
+        return dict(action='four_bet', size_bb=cap, basis='4bet all-in (solver)', heuristic=False)
     return None
 
 
@@ -93,5 +113,5 @@ def size_from_reading(action, table_state, hero_position, opener_position=None):
     return recommend_size(action, hero_stack_bb=hero.get('stack_bb'),
                           to_call_bb=(table_state.get('to_call') or {}).get('to_call_bb'),
                           limpers=count_limpers(table_state),
-                          opener_bb=opener_raise_bb(table_state),
+                          opener_bb=opener_raise_bb(table_state), hero_position=hero_position,
                           ip=in_position(hero_position, opener_position) if opener_position else True)
