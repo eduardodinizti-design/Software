@@ -34,6 +34,13 @@ class FieldParseTests(unittest.TestCase):
         self.assertEqual(gr.parse_buyin('Buyin:50'), 50)
         self.assertIsNone(gr.parse_buyin('Buy-in:'))
 
+    def test_buyin_keeps_cents_and_sums_composite(self):
+        # Cents must not be dropped (a cap check needs the real cost) and a
+        # composite buy-in (entry + fee + bounty) is summed, not truncated.
+        self.assertEqual(gr.parse_buyin('Buy-in: 50,50'), 50.5)
+        self.assertEqual(gr.parse_buyin('Buy-in: 0,50'), 0.5)
+        self.assertEqual(gr.parse_buyin('28.34 + 14.16 + 7.50'), 50.0)
+
     def test_players(self):
         self.assertEqual(gr.parse_players('96/263'), (96, 263))
         self.assertEqual(gr.parse_players('& 58/75 @12min'), (58, 75))

@@ -96,6 +96,30 @@ class EvaluateTests(unittest.TestCase):
         self.assertIn('DAILY_BUDGET_EXCEEDED', d['reasons'])
 
 
+class ValidationTests(unittest.TestCase):
+    def test_non_finite_buyin_is_blocked(self):
+        for bad in (float('nan'), float('inf'), -5):
+            d = evaluate_card(_card(buyin=bad), _ready_cfg(), club='Karekas')
+            self.assertIn('BUYIN_UNKNOWN', d['reasons'])
+
+    def test_cutoff_without_a_valid_clock_fails_safe(self):
+        cfg = _ready_cfg(registration_cutoff='22:00')
+        self.assertIn('REGISTRATION_TIME_UNKNOWN', evaluate_card(_card(), cfg, club='Karekas')['reasons'])
+        self.assertIn('REGISTRATION_TIME_UNKNOWN',
+                      evaluate_card(_card(), cfg, club='Karekas', now_hhmm='99:99')['reasons'])
+
+    def test_unknown_club_is_blocked(self):
+        self.assertIn('CLUB_NOT_AUTHORIZED', evaluate_card(_card(), _ready_cfg(), club=None)['reasons'])
+
+    def test_confirm_moves_reserve_without_double_counting(self):
+        st = SessionState(committed=[{'name': 'A', 'buyin': 5}])
+        self.assertEqual(st.committed_cost(), 5)
+        st.confirm('A')
+        self.assertEqual(st.confirmed_spend, 5)
+        self.assertFalse(st.is_committed('A'))
+        self.assertEqual(st.committed_cost(), 5)   # still 5, not 10
+
+
 class SelectTests(unittest.TestCase):
     def test_split_eligible_blocked(self):
         cards = [_card('MINI FREEZE', 5, 'freezeout'),

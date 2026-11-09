@@ -96,6 +96,41 @@ class HotkeyTests(unittest.TestCase):
         self.assertEqual(self.listener.poll_once(), [])
         self.assertEqual(self.control.state, RUNNING)
 
+    def test_start_stop_join_is_clean(self):
+        # Regression: the stop flag must not shadow Thread._stop (an internal
+        # method), or join() after stop() raises TypeError.
+        listener = HotkeyListener(BotControl(), key_down=lambda vk: False, poll=0.005)
+        listener.start()
+        listener.stop()
+        listener.join(timeout=2)
+        self.assertFalse(listener.is_alive())
+
+
+class ConcurrencyTests(unittest.TestCase):
+    def test_disable_is_not_undone_by_a_concurrent_resume(self):
+        # Hammer resume/disable from many threads; the state must always be one of
+        # the three valid values (no torn read-then-write), never a lost disable.
+        import threading
+        c = BotControl()
+        seen = []
+
+        def worker(fn):
+            for _ in range(2000):
+                fn()
+                seen.append(c.state)
+
+        threads = [threading.Thread(target=worker, args=(f,))
+                   for f in (c.resume, c.pause, c.disable) for _ in range(3)]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
+        self.assertTrue(set(seen) <= {RUNNING, PAUSED, DISABLED})
+        # A disable with no later resume leaves it disabled and blocking execution.
+        c.disable()
+        self.assertEqual(c.state, DISABLED)
+        self.assertFalse(c.execution_allowed())
+
 
 if __name__ == '__main__':
     unittest.main()

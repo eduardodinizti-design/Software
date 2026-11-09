@@ -1,0 +1,46 @@
+Revisei a main do Software até o commit 75bd85f. O RangeLab continua no 356340d.
+
+Houve avanço em leitura e integração, mas encontrei falhas que precisam ser corrigidas antes de conectar o conselheiro a cliques automáticos. Reproduzi os problemas abaixo em testes controlados, sem executar ações no PPPoker.
+1. Board ilegível pode gerar conselho pré-flop.
+   O conselheiro verifica apenas se a lista de cartas está preenchida. Um resultado BOARD_INCOMPLETE, com cartas não reconhecidas, acaba tratado como pré-flop. Reproduzi esse estado recebendo ADVICE: raise.
+   Correção: distinguir board comprovadamente vazio de board desconhecido, parcial ou obstruído. Nos últimos casos, abster-se.
+   Código envolvido
+2. Número de jogadores e tipo de pote podem ser classificados incorretamente.
+   Com seis participantes informados, a consulta utilizou um nó 9-max sem aviso dessa diferença, porque o fluxo mantém players=9 como padrão. Também reproduzi uma mesa com limper sendo classificada como first_in, consultando range de pote não aberto. Acrescentar tamanho de isolamento não corrige o range escolhido.
+   Correção: transmitir o número efetivo de participantes e reconhecer limps separadamente; contexto não coberto deve produzir abstinência.
+   Código envolvido
+3. O leitor de buy-in descarta centavos e parcelas.
+   Resultados reproduzidos:
+   Texto recebido	Valor interpretado
+   Buy-in: 50,50	50
+   Buy-in: 0,50	0
+   28.34 + 14.16 + 7.50	28
+   
+   
+   Com teto de 50, o primeiro caso passou como elegível, embora custasse 50,50.
+   Correção: parsing monetário estrito, com Decimal, soma das parcelas e bloqueio de formato ambíguo.
+   Código envolvido
+4. Os filtros de inscrição deixam passar dados inválidos ou ausentes.
+   Reproduzi buy-in NaN como ELIGIBLE. Com corte configurado para 22h, horário atual ausente ou inválido também não bloqueou. Clube não informado igualmente pula sua verificação. Além disso, a estrutura permite contar um custo confirmado duas vezes: uma em confirmed_spend e outra na lista de compromissos, que inclui inscritos.
+   Correção: validar valores finitos, horários, identidade e unidade; separar despesas confirmadas de reservas pendentes.
+   Hoje isso não efetua inscrições, pois execution_allowed permanece falso, mas compromete a classificação de elegibilidade.
+   Código envolvido
+5. Existe uma corrida no controle de desativação.
+   Reproduzi esta sequência entre threads: resume() começa, disable() coloca o estado em DISABLED, mas a reativação antiga termina depois e deixa o estado em RUNNING. A leitura do estado e sua alteração não estão na mesma operação protegida.
+   Correção: tornar cada transição atômica e impedir que uma operação antiga desfaça a desativação. É especialmente importante antes de usar esse controle como proteção para cliques.
+   Código envolvido
+6. O valor de Call é convertido para BB sem conferir a unidade.
+   Um botão interpretado como Call 100, com unidade desconhecida, virou to_call_bb=100 e confiança alta. Isso pode confundir fichas com big blinds.
+   Correção: exigir BB explícito ou converter com um valor de blind confirmado. Unidade desconhecida deve permanecer desconhecida.
+   Código envolvido
+7. O encerramento da thread de hotkeys tem um defeito.
+   HotkeyListener cria um atributo _stop que substitui um método interno de threading.Thread. Reproduzi stop() seguido de join() terminando em TypeError: 'Event' object is not callable.
+   Correção: renomear para _stop_event e testar o ciclo completo de inicialização e encerramento.
+   Código envolvido
+O que foi desenvolvido: leitores experimentais de stacks, pote, dealer, posições, apostas e torneio; conselheiro ao vivo com mais contextos pré-flop e sizing; descoberta de janelas; métricas de desempenho; OCR em processo; leitor do lobby; filtros de inscrição; e pausa/takeover.
+
+Há também uma lacuna de integração: HandTracker e HandReconciler existem, mas não estão conectados ao fluxo do conselheiro ao vivo. Portanto, ainda não consideraria comprovado o acompanhamento temporal completo de mesa e mão.
+
+Executei a suíte atual: 343 testes, com 342 aprovados e um ignorado por exigir Windows. Os problemas acima mostram casos que a suíte ainda não cobre. Não alterei o código.
+
+Minha prioridade de correção seria: board/contexto estratégico → valores e unidades → controle de desativação → integração temporal → execução supervisionada.

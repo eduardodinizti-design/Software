@@ -39,15 +39,20 @@ class BotControl:
         with self._lock:
             return self._state == RUNNING
 
-    def _transition(self, new_state):
+    def _apply(self, next_state):
+        """Compute and commit the next state atomically: `next_state(current)`
+        runs under the lock, so a concurrent transition can never read a stale
+        state and overwrite a newer one (e.g. a late resume undoing a disable).
+        The on_change callback fires after the lock is released."""
         with self._lock:
-            if new_state == self._state:
+            new = next_state(self._state)
+            if new == self._state:
                 return False
-            self._state = new_state
+            self._state = new
             cb = self._on_change
         if cb:
             try:
-                cb(new_state)
+                cb(new)
             except Exception:
                 pass
         return True
@@ -57,25 +62,16 @@ class BotControl:
         Reactivating a disabled bot only arms it (PAUSED); a second resume is
         needed to actually run, so it never jumps straight from off to operating.
         A no-op when already RUNNING."""
-        with self._lock:
-            cur = self._state
-        if cur == DISABLED:
-            return self._transition(PAUSED)
-        if cur == PAUSED:
-            return self._transition(RUNNING)
-        return False
+        return self._apply(lambda s: PAUSED if s == DISABLED else (RUNNING if s == PAUSED else s))
 
     def pause(self):
         """Take over: go PAUSED. A no-op from DISABLED (disable is deliberate and
         sticky — only resume() reactivates)."""
-        with self._lock:
-            if self._state == DISABLED:
-                return False
-        return self._transition(PAUSED)
+        return self._apply(lambda s: s if s == DISABLED else PAUSED)
 
     def disable(self):
         """Turn the bot off from any state. Only resume() brings it back."""
-        return self._transition(DISABLED)
+        return self._apply(lambda s: DISABLED)
 
 
 # Windows virtual-key codes.
@@ -107,7 +103,7 @@ class HotkeyListener(threading.Thread):
         self._bindings = dict(bindings or DEFAULT_BINDINGS)
         self._key_down = key_down or _win32_key_down
         self._poll = poll
-        self._stop = threading.Event()
+        self._stop_event = threading.Event()   # not _stop: Thread._stop is an internal method
         self._was_down = {name: False for name in self._bindings}
 
     def _combo_down(self, combo):
@@ -126,7 +122,7 @@ class HotkeyListener(threading.Thread):
         return fired
 
     def run(self):
-        while not self._stop.is_set():
+        while not self._stop_event.is_set():
             try:
                 self.poll_once()
             except Exception:
@@ -134,4 +130,4 @@ class HotkeyListener(threading.Thread):
             time.sleep(self._poll)
 
     def stop(self):
-        self._stop.set()
+        self._stop_event.set()

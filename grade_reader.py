@@ -12,6 +12,7 @@ this only reads the grid so the selector/policy can decide. The modality label
 is a best-effort guess from the name; an unknown one is flagged, never assumed.
 """
 import re
+from decimal import Decimal, InvalidOperation
 import cv2
 import numpy as np
 
@@ -22,7 +23,7 @@ _PLAYERS = re.compile(r'(\d+)\s*/\s*(\d+)')
 _LEVEL_MIN = re.compile(r'(\d+)\s*min', re.I)
 _CLOSES = re.compile(r'encerra\s*em\s*(\d+)\s*min', re.I)
 _STARTS = re.compile(r'in[ií]cio[:\s]*(.+)$', re.I)
-_BUYIN = re.compile(r'(\d+)')
+_MONEY = re.compile(r'\d+(?:[.,]\d+)?')
 
 
 def _ocr(gray, cfg='--psm 7'):
@@ -51,9 +52,20 @@ def classify_modality(name):
 
 
 def parse_buyin(raw):
-    """Buy-in value from the badge text ('Buy-in: 10'), or None."""
-    m = _BUYIN.search((raw or '').split(':')[-1])
-    return int(m.group(1)) if m else None
+    """Total buy-in from the badge/detail text, as a float WITH cents, or None.
+
+    Keeps the decimals ('50,50' -> 50.5, not 50) and sums a composite buy-in
+    (entry + fee + bounty, 'a + b + c' -> the total) so a cap check sees the real
+    cost. A single value is not summed with any stray number near it."""
+    text = (raw or '').split(':', 1)[-1]
+    tokens = _MONEY.findall(text) if '+' in text else _MONEY.findall(text)[:1]
+    if not tokens:
+        return None
+    try:
+        total = sum((Decimal(t.replace(',', '.')) for t in tokens), Decimal(0))
+    except InvalidOperation:
+        return None
+    return float(total)
 
 
 def parse_players(raw):
