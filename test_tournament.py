@@ -49,6 +49,23 @@ class ReadTests(unittest.TestCase):
         self.assertEqual((r['paid'], r['players_left'], r['hero_rank']), (20, 55, 40))
         self.assertEqual(r['confidence'], 'high')
 
+    def test_final_table_engages_without_paid_in_the_money(self):
+        # In the money the table shows "Premio atual" instead of "Lugares pagos",
+        # so paid stops reading. The final table is still knowable from the seats,
+        # and the prize line flags in-the-money (so a Mystery KO's bounty counts).
+        r = self._read('KOMBAT MISTERY ... Premio atual: 27.85 Minha posicao: 3/8')
+        self.assertTrue(r['in_money'])
+        self.assertIsNone(r['paid'])
+        self.assertEqual(r['players_left'], 8)
+        self.assertEqual(tournament.tournament_context(r), ('pko_icm', 'ft'))
+
+    def test_deep_itm_without_paid_stays_chip_ev(self):
+        # Deep in the money, far from the final table, no paid: chip EV (low ICM
+        # pressure), but the bounty still activates for a Mystery KO.
+        r = self._read('CRAZY REBUY ... Premio atual: 27.85 Minha posicao: 10/22')
+        self.assertTrue(r['in_money'])
+        self.assertEqual(tournament.tournament_context(r), ('chip_ev', 'mid'))
+
     def test_reads_paid_through_noise_keeps_icm_engaged(self):
         # On the bubble, paid dropping to None would fall back to chip_ev; tolerate
         # OCR noise between "pagos" and the number so the ICM stage stays engaged.

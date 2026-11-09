@@ -29,6 +29,9 @@ _NAME = re.compile(r'^(.*?)\s*Blinds', re.I)
 _MYSTERY = re.compile(r'MYSTER|MIST[EÉ]R|\bM[\s.]?KO\b', re.I)
 # Regular bounty (PKO): bounty from the start.
 _PKO = re.compile(r'\bP[\s.]?KO\b|BOUNTY', re.I)
+# Once in the money the table replaces "Lugares pagos" with "Premio atual"
+# (your current prize). Seeing it means we are ITM even though paid stops reading.
+_PRIZE = re.compile(r'pr.{0,2}mio\s*atual', re.I)   # "Premio/Prêmio/Pr?mio" (OCR mangles ê)
 
 
 def is_mystery(name):
@@ -42,7 +45,10 @@ def is_pko(name):
 
 
 def read_tournament(crop):
-    """{paid, players_left, hero_rank, name, is_pko, raw, confidence}."""
+    """{paid, players_left, hero_rank, name, is_pko, is_mystery, in_money, raw, confidence}.
+
+    `in_money` is set when the "Premio atual" line is present, which the table
+    shows (replacing "Lugares pagos") only once the hero is in the money."""
     h, w = crop.shape[:2]
     region = crop[int(0.49 * h):int(0.62 * h), int(0.25 * w):int(0.75 * w)]
     raw = ' '.join(image_to_string(cv2.cvtColor(region, cv2.COLOR_BGR2GRAY), config='--psm 6').split())
@@ -55,7 +61,8 @@ def read_tournament(crop):
     name_s = name.group(1).strip() if name else None
     conf = 'high' if (paid_n and left_n) else ('medium' if (paid_n or left_n) else 'abstain')
     return dict(paid=paid_n, players_left=left_n, hero_rank=rank_n, name=name_s,
-                is_pko=is_pko(name_s), is_mystery=is_mystery(name_s), raw=raw, confidence=conf)
+                is_pko=is_pko(name_s), is_mystery=is_mystery(name_s),
+                in_money=bool(_PRIZE.search(raw)), raw=raw, confidence=conf)
 
 
 def tournament_stage(players_left, paid):
@@ -63,11 +70,15 @@ def tournament_stage(players_left, paid):
 
     ft at the final table; bubble just before the money; pre_itm approaching it;
     'far' when deep before the money. In the money but before the final table has
-    no matching pack stage, so it returns None (the caller uses chip EV)."""
-    if not isinstance(players_left, int) or not isinstance(paid, int) or players_left <= 0 or paid <= 0:
+    no matching pack stage, so it returns None (the caller uses chip EV). The final
+    table is knowable from the seats alone, so it is detected even when paid stops
+    reading (which happens in the money, when the table hides 'Lugares pagos')."""
+    if not isinstance(players_left, int) or players_left <= 0:
         return None
     if players_left <= FINAL_TABLE:
-        return 'ft'
+        return 'ft'                   # detectable by seats alone, paid not needed
+    if not isinstance(paid, int) or paid <= 0:
+        return None                   # without paid, only the final table is knowable
     if players_left <= paid:          # in the money, before the final table: no pack stage
         return None
     band = max(1, round(0.15 * paid))
@@ -85,7 +96,9 @@ def tournament_context(tourney):
     or pko at 'mid'. Detection is by name and still unvalidated."""
     paid, left = tourney.get('paid'), tourney.get('players_left')
     stage = tournament_stage(left, paid)
-    in_money = isinstance(left, int) and isinstance(paid, int) and left <= paid
+    # In the money either by count (left <= paid) or by the "Premio atual" signal,
+    # which survives when paid stops reading ITM. A Mystery KO's bounty needs this.
+    in_money = (isinstance(left, int) and isinstance(paid, int) and left <= paid) or bool(tourney.get('in_money'))
     bounty = bool(tourney.get('is_pko')) or (bool(tourney.get('is_mystery')) and in_money)
     if stage in ('ft', 'bubble', 'pre_itm'):
         return ('pko_icm' if bounty else 'icm'), stage
