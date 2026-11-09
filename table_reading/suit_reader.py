@@ -70,7 +70,15 @@ def read_suit(crop):
     hsv=cv2.cvtColor(crop,cv2.COLOR_BGR2HSV)
     # Dark/coloured ink on a white card, or white ink on a coloured card.
     masks=[np.uint8((hsv[:,:,2]<150)|((hsv[:,:,1]>100)&(hsv[:,:,2]<245)))*255,
-           np.uint8((hsv[:,:,1]<65)&(hsv[:,:,2]>180))*255]
+           np.uint8((hsv[:,:,1]<65)&(hsv[:,:,2]>180))*255,
+           # Four-colour decks print a vividly saturated pip (red hearts, blue
+           # diamonds, green clubs) on a light card. The dark-ink mask above can
+           # merge that pip with a neighbouring shadow or gap into one blob and
+           # lose its shape; a saturation-only mask isolates the pip cleanly.
+           # Black spades keep low saturation, so they stay on the masks above.
+           # Shape validation, thresholds and conflict rejection are unchanged,
+           # so a disagreeing mask still abstains (SUIT_AMBIGUOUS) rather than guess.
+           np.uint8((hsv[:,:,1]>90)&(hsv[:,:,2]>60))*255]
     # Dimmed cards retain neutral glyphs on coloured/darker backgrounds.
     # Estimate the split only among neutral pixels; keep shape validation and
     # conflict rejection unchanged. This reads appearance, not active-hand state.
