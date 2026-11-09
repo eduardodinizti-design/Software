@@ -158,12 +158,21 @@ def read_bets(crop):
     h, w = crop.shape[:2]
     bets = []
     for cx, cy, cw, ch in _detect_red_chips(crop):
-        region = crop[max(0, cy - 16):cy + 16, cx + cw // 2:min(w, cx + cw // 2 + 120)]
+        # Filter the 'Pot: ...' chip with an unrestricted OCR of a wide region
+        # (so the 'Pot' word survives), then read the amount to the RIGHT of the
+        # chip, starting past the disc so its white suit symbol is not mistaken
+        # for a digit. A digit/comma/B whitelist keeps the Evolution bet font's
+        # noise from becoming a value (it read "1,5 BB" as "45 RR" -> 4.5); on a
+        # hard read it now abstains (None) rather than a confident wrong number.
+        label = _ocr(cv2.cvtColor(crop[max(0, cy - 16):cy + 16, max(0, cx - 10):min(w, cx + cw + 120)],
+                                  cv2.COLOR_BGR2GRAY), '--psm 7')
+        if 'ot' in label.lower():   # the 'Pot: ...' chip, not a bet
+            continue
+        region = crop[max(0, cy - 16):cy + 16, min(w, cx + cw):min(w, cx + cw + 110)]
         if region.size == 0:
             continue
-        raw = _ocr(cv2.cvtColor(region, cv2.COLOR_BGR2GRAY), '--psm 7')
-        if 'ot' in raw.lower():   # the 'Pot: ...' chip, not a bet
-            continue
+        raw = _ocr(cv2.cvtColor(region, cv2.COLOR_BGR2GRAY),
+                   '--psm 7 -c tessedit_char_whitelist=0123456789.,B ')
         value, conf = parse_amount(raw)
         if value is None:
             continue
