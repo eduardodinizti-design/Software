@@ -38,6 +38,28 @@ _ALL_IN = {'all_in', 'allin', 'open_shove', 'shove',
            '3bet_shove', '4bet_shove', 'three_bet_shove', 'four_bet_shove'}
 
 
+def _norm_amount(amount):
+    """Valor normalizado p/ comparação (float arredondado, ou str, ou None)."""
+    if isinstance(amount, (int, float)):
+        return round(float(amount), 2)
+    if amount is None:
+        return None
+    try:
+        return round(float(str(amount).replace(',', '.')), 2)
+    except (ValueError, TypeError):
+        return str(amount)
+
+
+def decision_identity(table_key, hand, action, amount, unit):
+    """Assinatura observável de UMA decisão: mesa + mão + ação + valor + unidade.
+
+    Usada igual pelo executor (como `source_key` da intenção) e pelo validator ao
+    vivo (como `identity` devolvido). Se QUALQUER parte mudar — inclusive o valor
+    do Call com o botão na mesma coordenada — a revalidação na chegada detecta
+    IDENTITY_CHANGED e cancela o clique."""
+    return (table_key, hand, action, _norm_amount(amount), unit)
+
+
 def map_advice_to_action(recommended):
     """(ação, caveats) do rótulo recomendado, ou (None, []) se não mapear."""
     if not recommended:
@@ -96,6 +118,7 @@ def plan_from_buttons(buttons_result, advice, *, origin=(0, 0),
     rect = (ox + x, oy + y, bw, bh)                      # no FRAME
     center = (ox + x + bw / 2.0, oy + y + bh / 2.0)
     plan = dict(action=btn.get('action'), button_label=btn.get('label'),
+                amount=btn.get('amount'), unit=btn.get('unit'),
                 recommended=rec, rect=rect, center=center, caveats=caveats)
     if window_rect is not None and frame_size is not None:
         plan['screen_rect'] = rect_frame_to_screen(rect, window_rect=window_rect,

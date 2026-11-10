@@ -13,7 +13,7 @@ Este módulo é o núcleo testável; a captura/revalidação ao vivo entram no C
 """
 import time
 
-from action_coordinator import plan_from_buttons
+from action_coordinator import plan_from_buttons, decision_identity
 from cursor_controller import CursorController, Intent
 
 SINGLE_CLICK_ACTIONS = ('FOLD', 'CALL', 'CHECK')
@@ -21,13 +21,14 @@ SINGLE_CLICK_ACTIONS = ('FOLD', 'CALL', 'CHECK')
 
 class ActionExecutor:
     def __init__(self, *, window_rect, bot_control=None, armed=False,
-                 arrival_tol=10.0, clock=time.monotonic):
+                 arrival_tol=10.0, clock=time.monotonic, call_margin=0.04):
         self.window_rect = window_rect
         self.bot_control = bot_control
         self.armed = bool(armed)
         self.arrival_tol = float(arrival_tol)
         self._clock = clock
-        self._done = set()               # hand_ids que já agiram
+        self.call_margin = float(call_margin)   # folga mínima de equity p/ auto-CALL de call-off
+        self._sent = set()               # ASSINATURAS de decisão já enviadas
 
     def plan(self, result, buttons_result, *, origin, frame_size):
         """Plano de ação com as travas de alçada: só clique único (Fold/Call/Check)."""
@@ -42,36 +43,71 @@ class ActionExecutor:
                         reason='ACAO_MULTI_ETAPA_NAO_ARMADA:%s' % action)
         return p
 
+    def _eligible(self, advice, action):
+        """Elegibilidade ESTRATÉGICA p/ auto-clique (só no armado): status ADVICE
+        sozinho não basta. FOLD/CHECK não arriscam fichas -> sempre elegíveis. CALL
+        de nó validado -> elegível. CALL de call-off SINTETIZADO (equity/ICM
+        aproximados) só se a folga sobre a equity exigida >= call_margin (não
+        auto-pagar all-in numa borda ruidosa de Monte Carlo)."""
+        if action in ('FOLD', 'CHECK'):
+            return True, None
+        if action == 'CALL':
+            spot = str((advice or {}).get('spot') or '')
+            if spot.startswith('call_off_'):
+                eq = (advice or {}).get('equity')
+                req = (advice or {}).get('required_equity_icm', (advice or {}).get('required_equity'))
+                if not isinstance(eq, (int, float)) or not isinstance(req, (int, float)):
+                    return False, 'CALLOFF_SEM_MARGEM'
+                if eq - req < self.call_margin:
+                    return False, 'CALLOFF_NA_FRONTEIRA'
+        return True, None
+
     def execute(self, result, buttons_result, *, origin, frame_size, input_adapter,
-                validator, verifier=None, hand_id=None):
+                validator, verifier=None, hand_id=None, table_key=None):
         """Decide e (se armado + gated) executa UM clique via o CursorController.
 
         Retorna {acted, state?, reasons?, reason?, plan?, dry_run}. `acted` = o
         clique foi disparado (DONE ou UNKNOWN); CANCELLED = não clicou.
+
+        Dedup por ASSINATURA de decisão (mesa+mão+ação+valor): uma decisão nova e
+        legítima na mesma mão é distinguível de uma repetição; a mesma assinatura
+        não é reenviada. Identidade desconhecida (hand_id None) BLOQUEIA o armado.
         """
         plan_res = self.plan(result, buttons_result, origin=origin, frame_size=frame_size)
         if not plan_res['ok']:
             return dict(acted=False, reason=plan_res['reason'], dry_run=not self.armed)
-        if hand_id is not None and hand_id in self._done:
-            return dict(acted=False, reason='JA_AGIU_NESTA_MAO:%s' % hand_id,
-                        dry_run=not self.armed)
+        plan = plan_res['plan']
+        action = plan['action']
+        value = (plan.get('amount'), plan.get('unit'))
+        sig = (table_key, hand_id, action, value)
+        if sig in self._sent:
+            return dict(acted=False, reason='JA_AGIU_NESTA_DECISAO', dry_run=not self.armed)
         if self.armed and self.bot_control is not None \
                 and not self.bot_control.execution_allowed():
             return dict(acted=False, reason='BOT_PAUSADO', dry_run=False)
+        # #5: identidade desconhecida bloqueia a execução real (dry-run só estuda).
+        if self.armed and hand_id is None:
+            return dict(acted=False, reason='IDENTIDADE_DESCONHECIDA_BLOQUEIA', dry_run=False)
+        # #6-exec: gate de elegibilidade estratégica no armado.
+        if self.armed:
+            ok_elig, why = self._eligible(result.get('advice') or {}, action)
+            if not ok_elig:
+                return dict(acted=False, reason='NAO_ELEGIVEL:%s' % why, dry_run=False)
 
-        plan = plan_res['plan']
-        intent = Intent(id='act-%s-%s' % (hand_id, plan['action']),
-                        action=plan['action'], source_key=str(hand_id),
-                        target_rect=plan['screen_rect'],
-                        deadline=self._clock() + 5.0,
-                        expected=dict(action=plan['action']))
+        identity = decision_identity(table_key, hand_id, action, value[0], value[1])
+        intent = Intent(id='act-%s-%s-%s' % (table_key, hand_id, action),
+                        action=action, source_key=identity,
+                        target_rect=plan['screen_rect'], deadline=self._clock() + 5.0,
+                        hand=hand_id,
+                        expected=dict(action=action, amount=value[0], unit=value[1],
+                                      table_key=table_key, hand=hand_id))
         ctrl = CursorController(
             input_adapter=input_adapter, validator=validator, verifier=verifier,
             bot_control=(self.bot_control if self.armed else None),
             clock=self._clock, arrival_tol=self.arrival_tol)
         out = ctrl.execute(intent)
         clicked = out['state'] != 'CANCELLED'      # chegou a clicar?
-        if clicked and hand_id is not None:
-            self._done.add(hand_id)
+        if clicked:
+            self._sent.add(sig)
         return dict(acted=clicked, state=out['state'], reasons=out['reasons'],
                     plan=plan, intent_id=intent.id, dry_run=not self.armed)

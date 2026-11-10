@@ -22,8 +22,9 @@ from table_reading.action_buttons import read_action_buttons
 from table_advisor import advise_table
 from preflop_advisor import PreflopAdvisor
 from action_executor import ActionExecutor
-from action_coordinator import DryRunInput, map_advice_to_action
+from action_coordinator import DryRunInput, map_advice_to_action, decision_identity
 from position_stabilizer import PositionStabilizer
+from screen_coords import rect_frame_to_screen
 from raise_panel import target_multiplier, map_multiplier_to_preset, read_raise_panel
 from raise_sequencer import RaiseSequencer
 from cursor_input_win import WindowsCursorInput
@@ -33,6 +34,12 @@ from table_discovery.pppoker import discover_pppoker
 
 DEFAULT_RANGES = r'C:\Meus Projetos\Aplicativos\nvt-ranges-validados.json'
 DEFAULT_DEEP = r'C:\Meus Projetos\Aplicativos\nvt-ranges-deep.json'
+
+
+def _table_key(x, y):
+    """Chave estável de mesa pela origem do crop (robusta a jitter de poucos px).
+    NÃO é índice do recorte (que pode reordenar)."""
+    return '%dx%d' % (x // 100, y // 100)
 
 
 def _first_button_row(frame, max_tables):
@@ -46,29 +53,70 @@ def _first_button_row(frame, max_tables):
     return None, None
 
 
+def _find_table_by_key(frame, max_tables, want_key):
+    """Acha o crop cuja chave bate com `want_key` (a MESMA mesa), ou None. Não usa
+    a 1ª linha de botões qualquer — não valida uma mesa com os botões de outra."""
+    rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    for prop in detect_table_crops(rgb, max_tables=max_tables):
+        x, y, bw, bh = map(int, prop.box)
+        if _table_key(x, y) == want_key:
+            return (x, y, bw, bh)
+    return None
+
+
 def make_validator(engine, hwnd, max_tables):
-    """Revalidação na chegada: a ação ainda está disponível (botão presente, vez
-    do hero)? ok=True sem target_rect (usa o alvo original, evita jitter)."""
+    """Revalidação ligada à INTENÇÃO: mesma janela (geometria FRESCA), MESMA mesa
+    (por chave), vez do hero, o botão da ação e o VALOR esperado. Devolve
+    `target_rect` (coord de tela com a geometria atual) e `identity` (assinatura da
+    decisão) — o CursorController cancela em TARGET_MOVED/IDENTITY_CHANGED, inclusive
+    quando o valor do Call muda com o botão na mesma coordenada."""
     def validator(intent, now):
+        exp = intent.expected or {}
+        want_key = exp.get('table_key')
+        wins = [w for w in discover_pppoker().get('windows', []) if w['hwnd'] == hwnd]
+        if not wins:
+            return dict(ok=False, reasons=['JANELA_SUMIU'])         # geometria velha não vale
+        w = wins[0]
+        win_rect = (w['x'], w['y'], w['w'], w['h'])
         frame, _ = engine.capture_frame(hwnd=hwnd)
         if frame is None:
             return dict(ok=False, reasons=['RECAPTURE_FAILED'])
-        _, br = _first_button_row(frame, max_tables)
-        if br and any(b.get('action') == intent.action for b in br['buttons']):
-            return dict(ok=True)
-        return dict(ok=False, reasons=['BOTAO_SUMIU_OU_NAO_E_VEZ'])
+        fh, fw = frame.shape[:2]
+        box = _find_table_by_key(frame, max_tables, want_key)
+        if box is None:
+            return dict(ok=False, reasons=['MESA_ALVO_NAO_ENCONTRADA'])
+        x, y, bw, bh = box
+        br = read_action_buttons(frame[y:y + bh, x:x + bw])
+        if br['status'] != 'EXPERIMENTAL_BUTTON_ROW':
+            return dict(ok=False, reasons=['NAO_E_VEZ_DO_HERO'])
+        btn = next((b for b in br['buttons'] if b.get('action') == intent.action), None)
+        if btn is None:
+            return dict(ok=False, reasons=['BOTAO_SUMIU'])
+        tx, ty, tw, th = btn['box']
+        rect = rect_frame_to_screen((x + tx, y + ty, tw, th), window_rect=win_rect,
+                                    frame_size=(fw, fh))
+        identity = decision_identity(want_key, exp.get('hand'), intent.action,
+                                     btn.get('amount'), btn.get('unit'))
+        return dict(ok=True, target_rect=rect, identity=identity)
     return validator
 
 
 def make_verifier(engine, hwnd, max_tables):
-    """Efeito: após o clique, a linha de botões deve sumir (ação registrada)."""
+    """Efeito na MESMA mesa: a linha de botões sumiu. OBS: ausência de botões é
+    indício, não prova (OCR/cobertura/troca de tela dão o mesmo) — sem evidência
+    positiva, confirmed=False (o controlador trata como UNKNOWN_RESULT, não repete)."""
     def verifier(intent, now):
         time.sleep(0.3)
+        exp = intent.expected or {}
         frame, _ = engine.capture_frame(hwnd=hwnd)
         if frame is None:
             return dict(confirmed=False)
-        origin, br = _first_button_row(frame, max_tables)
-        return dict(confirmed=(br is None))   # sem botões = sua vez acabou = agiu
+        box = _find_table_by_key(frame, max_tables, exp.get('table_key'))
+        if box is None:
+            return dict(confirmed=False)                 # não achei a mesa -> não confirmo
+        x, y, bw, bh = box
+        br = read_action_buttons(frame[y:y + bh, x:x + bw])
+        return dict(confirmed=(br['status'] != 'EXPERIMENTAL_BUTTON_ROW'))
     return verifier
 
 
@@ -134,9 +182,9 @@ def main(argv=None):
             for prop in crops:
                 x, y, bw, bh = map(int, prop.box)
                 crop = frame[y:y + bh, x:x + bw]
+                tkey = _table_key(x, y)
                 try:
-                    result = advise_table(crop, advisor, stabilizer=stabilizer,
-                                          table_key='%dx%d' % (x // 100, y // 100))
+                    result = advise_table(crop, advisor, stabilizer=stabilizer, table_key=tkey)
                 except Exception:                      # noqa: BLE001
                     continue
                 if not result.get('is_table'):
@@ -174,7 +222,7 @@ def main(argv=None):
                     continue
                 out = executor.execute(result, br, origin=(x, y), frame_size=(fw, fh),
                                        input_adapter=adapter, validator=validator,
-                                       verifier=verifier, hand_id=hid)
+                                       verifier=verifier, hand_id=hid, table_key=tkey)
                 if out.get('acted'):
                     pl = out['plan']
                     print('[%03d] >>> AGIU: %s em %s | estado=%s %s %s' % (

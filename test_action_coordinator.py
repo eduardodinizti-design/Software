@@ -3,7 +3,7 @@ import time
 import unittest
 
 from action_coordinator import (DryRunInput, describe_plan, map_advice_to_action,
-                                plan_from_buttons)
+                                plan_from_buttons, decision_identity)
 from cursor_controller import CursorController, Intent
 from cursor_trajectory import TrajectoryGenerator
 
@@ -12,6 +12,27 @@ def _buttons(status='EXPERIMENTAL_BUTTON_ROW', actions=('FOLD', 'CALL', 'RAISE')
     return dict(status=status, hero_turn_confirmed=False, actions_allowed=False,
                 buttons=[dict(box=[100 + i * 120, 1200, 100, 44], action=a,
                               label=a.title()) for i, a in enumerate(actions)])
+
+
+class DecisionIdentityTest(unittest.TestCase):
+    """#1: a identidade da decisão inclui o VALOR -> mudança de Call (mesmo pixel)
+    muda a identidade e o CursorController cancela na chegada."""
+
+    def test_value_change_changes_identity(self):
+        a = decision_identity('t1', 'h1', 'CALL', 1.0, 'bb')
+        b = decision_identity('t1', 'h1', 'CALL', 50.0, 'bb')
+        self.assertNotEqual(a, b)
+
+    def test_same_decision_stable_identity(self):
+        a = decision_identity('t1', 'h1', 'CALL', 50, 'bb')
+        b = decision_identity('t1', 'h1', 'CALL', 50.0, 'bb')      # int vs float
+        self.assertEqual(a, b)
+
+    def test_table_hand_action_in_identity(self):
+        base = decision_identity('t1', 'h1', 'CALL', 2, 'bb')
+        self.assertNotEqual(base, decision_identity('t2', 'h1', 'CALL', 2, 'bb'))
+        self.assertNotEqual(base, decision_identity('t1', 'h2', 'CALL', 2, 'bb'))
+        self.assertNotEqual(base, decision_identity('t1', 'h1', 'FOLD', 2, 'bb'))
 
 
 class CheckIsNotCallTest(unittest.TestCase):
