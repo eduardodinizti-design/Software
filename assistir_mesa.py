@@ -15,6 +15,7 @@ from table_reading.automatic_table_crops import detect_table_crops
 from preflop_advisor import PreflopAdvisor
 from table_advisor import advise_table, _summary
 from bot_control import BotControl, HotkeyListener, RUNNING, PAUSED, DISABLED
+from state_observer import StateObserver, render
 
 
 def advise_frame(frame_bgr, meta, advisor, max_tables=6):
@@ -60,6 +61,7 @@ def main(argv=None):
     print('CONSELHEIRO AO VIVO: somente leitura, sem cliques, sem execucao. '
           'Ctrl+Alt+P pausa, R reativa, D desabilita. Ctrl+C encerra.', flush=True)
     last = {}   # per table: last printed signature, so an unchanged hand is not reprinted
+    observer = StateObserver()   # estado temporal integrado (Camada A); sem cliques
     try:
         while True:
             started = time.monotonic()
@@ -82,15 +84,12 @@ def main(argv=None):
             else:
                 last.pop('_capture', None)
                 for row in advise_frame(frame, meta, advisor, max_tables=args.max_tables):
-                    result = row['result']
-                    adv = result['advice']
-                    signature = ((result.get('hand') or {}).get('hand_number'),
-                                 tuple(result.get('hero_cards') or ()),
-                                 adv.get('status'), adv.get('recommended'), adv.get('reason'))
-                    if last.get(row['table_index']) != signature:   # only on a real change
-                        last[row['table_index']] = signature
-                        print('--- Mesa %d ---' % row['table_index'], flush=True)
-                        print(_summary(result), flush=True)
+                    # Estado temporal integrado: amarra mesa/mão/campos e explica
+                    # o que mudou/ficou pendente. Imprime só quando o estado muda.
+                    key = '%s#%d' % (meta.get('source_key', args.hwnd), row['table_index'])
+                    view = observer.observe(row['result'], table_key=key)
+                    if view.get('changed'):
+                        print(render(view), flush=True)
             time.sleep(max(0.1, args.intervalo - (time.monotonic() - started)))
     except KeyboardInterrupt:
         print('Encerrado. Nenhuma imagem salva, nenhum clique enviado.', flush=True)
