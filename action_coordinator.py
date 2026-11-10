@@ -16,6 +16,7 @@ botão certo antes de armar o clique real.
 import time
 
 from table_reading.action_buttons import read_action_buttons
+from screen_coords import frame_to_screen, rect_frame_to_screen
 
 # Recomendação do advisor -> rótulo do botão de ação.
 _ACTION_MAP = {
@@ -43,9 +44,13 @@ def map_advice_to_action(recommended):
     return action, caveats
 
 
-def plan_from_buttons(buttons_result, advice, *, origin=(0, 0)):
-    """Plano de ação PURO a partir dos botões já lidos + o conselho. `origin` =
-    canto (x,y) do crop na tela, para dar o retângulo em coords de tela."""
+def plan_from_buttons(buttons_result, advice, *, origin=(0, 0),
+                      window_rect=None, frame_size=None):
+    """Plano de ação PURO a partir dos botões já lidos + o conselho.
+
+    `origin` = canto (x,y) do crop no FRAME. Com `window_rect` (lógico) +
+    `frame_size` (físico), também devolve `screen_rect`/`screen_center` na
+    coordenada do cursor (via screen_coords), prontos para o SendInput."""
     status = (advice or {}).get('status')
     rec = (advice or {}).get('recommended')
     if status != 'ADVICE' or not rec:
@@ -77,18 +82,24 @@ def plan_from_buttons(buttons_result, advice, *, origin=(0, 0)):
 
     ox, oy = origin
     x, y, bw, bh = btn['box']
-    rect = (ox + x, oy + y, bw, bh)
+    rect = (ox + x, oy + y, bw, bh)                      # no FRAME
     center = (ox + x + bw / 2.0, oy + y + bh / 2.0)
-    return dict(ok=True, plan=dict(
-        action=btn.get('action'), button_label=btn.get('label'),
-        recommended=rec, rect=rect, center=center, caveats=caveats),
-        reason='DRY_RUN_PLANO')
+    plan = dict(action=btn.get('action'), button_label=btn.get('label'),
+                recommended=rec, rect=rect, center=center, caveats=caveats)
+    if window_rect is not None and frame_size is not None:
+        plan['screen_rect'] = rect_frame_to_screen(rect, window_rect=window_rect,
+                                                    frame_size=frame_size)
+        plan['screen_center'] = frame_to_screen(center, window_rect=window_rect,
+                                                 frame_size=frame_size)
+    return dict(ok=True, plan=plan, reason='DRY_RUN_PLANO')
 
 
-def plan_action(crop, advice, *, origin=(0, 0), _reader=None):
+def plan_action(crop, advice, *, origin=(0, 0), window_rect=None, frame_size=None,
+                _reader=None):
     """Lê os botões do crop e planeja a ação (dry-run)."""
     reader = _reader or read_action_buttons
-    return plan_from_buttons(reader(crop), advice, origin=origin)
+    return plan_from_buttons(reader(crop), advice, origin=origin,
+                             window_rect=window_rect, frame_size=frame_size)
 
 
 def describe_plan(result):
@@ -97,9 +108,11 @@ def describe_plan(result):
         return 'INTENCAO: (nenhuma) - %s' % result.get('reason')
     p = result['plan']
     cav = (' [%s]' % ', '.join(p['caveats'])) if p['caveats'] else ''
-    return ('INTENCAO: %s (conselho=%s) -> clicaria em %s%s  [DRY-RUN, NAO enviado]'
-            % (p['action'], p['recommended'],
-               tuple(round(c) for c in p['center']), cav))
+    coord = p.get('screen_center') or p['center']      # tela se houver, senão frame
+    onde = 'tela' if p.get('screen_center') else 'frame'
+    return ('INTENCAO: %s (conselho=%s) -> clicaria em %s=%s%s  [DRY-RUN, NAO enviado]'
+            % (p['action'], p['recommended'], onde,
+               tuple(round(c) for c in coord), cav))
 
 
 class DryRunInput:
