@@ -10,19 +10,25 @@ from preflop_advisor import PreflopAdvisor, infer_live_spot, infer_spread
 HANDS = [r + r for r in RANKS] + [a + b + s for i, a in enumerate(RANKS) for b in RANKS[i + 1:] for s in ('s', 'o')]
 
 
-def pack_with_3bet_shove(shove_hands, hero='BTN', vs=('CO',), stack=15, extra_nodes=()):
-    """Pack com um nó `3bet_shove` (range do re-shove do vilão) e nada de vs_3bet,
-    p/ exercitar a síntese de call-off no stack curto."""
-    idx = {h for h in shove_hands}
-    allin = [1.0 if HANDS[k] in idx else 0.0 for k in range(169)]
+def shove_pack(spot, yes_hands, hero, vs, stack, yes_action):
+    """Pack com um nó de shove genérico (3bet_shove/open_shove => all_in;
+    vs_open_shove => call), com `yes_action` para as mãos em `yes_hands`."""
+    idx = set(yes_hands)
+    yes = [1.0 if HANDS[k] in idx else 0.0 for k in range(169)]
     fold = [0.0 if HANDS[k] in idx else 1.0 for k in range(169)]
-    node = dict(id='shove1', context=dict(mode='chip_ev', format='regular', stage='mid', players=9, stack=stack),
-                spot='3bet_shove', hero=hero, vs=list(vs), validated=True, evUnit='bb',
-                legalActions=['fold', 'all_in'], actions=['all_in', 'fold'],
-                freq={'all_in': allin, 'fold': fold}, ev={'all_in': [0.0] * 169, 'fold': [0.0] * 169},
+    node = dict(id=spot + '1', context=dict(mode='chip_ev', format='regular', stage='mid', players=9, stack=stack),
+                spot=spot, hero=hero, vs=list(vs), validated=True, evUnit='bb',
+                legalActions=['fold', yes_action], actions=[yes_action, 'fold'],
+                freq={yes_action: yes, 'fold': fold}, ev={yes_action: [0.0] * 169, 'fold': [0.0] * 169},
                 outOfRange=[], source='test')
-    return dict(format='nvt-range-export', version=1, engineCommit='test', hands=HANDS,
-                nodes=[node] + list(extra_nodes))
+    return dict(format='nvt-range-export', version=1, engineCommit='test', hands=HANDS, nodes=[node])
+
+
+def pack_with_3bet_shove(shove_hands, hero='BTN', vs=('CO',), stack=15, extra_nodes=()):
+    """Pack com `3bet_shove` (range do re-shove do vilão) e nada de vs_3bet."""
+    p = shove_pack('3bet_shove', shove_hands, hero, vs, stack, 'all_in')
+    p['nodes'] += list(extra_nodes)
+    return p
 
 
 def pack_with_node(out_of_range=()):
@@ -86,6 +92,52 @@ class CallOffTests(unittest.TestCase):
         self.assertEqual(r['spot'], 'call_off_vs_3bet_shove')
         self.assertIn(r['recommended'], ('call', 'fold'))
         self.assertIn('AGGRESSOR_INFERRED_BTN', r['caveats'])
+
+
+class VsOpenShoveTests(unittest.TestCase):
+    """Enfrentar um OPEN-SHOVE (jam de 1ª aposta): roteia p/ o nó validado
+    `vs_open_shove` (5-15bb); mais fundo que isso, fallback por equity."""
+
+    def _state(self, villain_remaining, villain_bet, hero_stack=10):
+        return dict(positions={'hero': 'BB', 's2': 'SB'},
+                    seats={'hero': dict(stack_bb=hero_stack, occupied=True),
+                           's2': dict(stack_bb=villain_remaining, occupied=True)},
+                    bets=[dict(seat='s2', bet_bb=villain_bet)],
+                    to_call=dict(to_call_bb=villain_bet - 1), pot=dict(pot_bb=villain_bet + 1.5))
+
+    def test_infer_classifies_open_shove(self):
+        spot = infer_live_spot(self._state(villain_remaining=0, villain_bet=10.0))
+        self.assertEqual(spot['spot'], 'vs_open_shove')
+        self.assertEqual(spot['opener'], 'SB')
+
+    def test_infer_keeps_normal_open_as_vs_open(self):
+        spot = infer_live_spot(self._state(villain_remaining=20, villain_bet=2.0))
+        self.assertEqual(spot['spot'], 'vs_open')
+
+    def test_infer_shove_by_size_when_stack_unreadable(self):
+        st = self._state(villain_remaining=None, villain_bet=9.0)
+        self.assertEqual(infer_live_spot(st)['spot'], 'vs_open_shove')
+
+    def test_uses_validated_node_when_covered(self):
+        a = PreflopAdvisor(shove_pack('vs_open_shove', ['AA', 'KK'], 'BB', ('SB',), 10, 'call'))
+        r = a.advise_from_reading(self._state(0, 10.0, hero_stack=10), ['As', 'Ac'])
+        self.assertEqual(r['status'], 'ADVICE')
+        self.assertEqual(r['spot'], 'vs_open_shove')      # nó validado, não call-off
+        self.assertEqual(r['recommended'], 'call')
+        self.assertTrue(r['validated'])
+
+    def test_validated_node_folds_trash(self):
+        a = PreflopAdvisor(shove_pack('vs_open_shove', ['AA', 'KK'], 'BB', ('SB',), 10, 'call'))
+        r = a.advise_from_reading(self._state(0, 10.0, hero_stack=10), ['7h', '2d'])
+        self.assertEqual(r['recommended'], 'fold')
+
+    def test_equity_fallback_when_no_validated_node(self):
+        # sem nó vs_open_shove, mas há open_shove (range do shover) -> call-off sintetizado
+        a = PreflopAdvisor(shove_pack('open_shove', list(HANDS), 'SB', (), 15, 'all_in'))
+        r = a.advise_from_reading(self._state(0, 15.0, hero_stack=15), ['As', 'Ac'])
+        self.assertEqual(r['status'], 'ADVICE')
+        self.assertEqual(r['spot'], 'call_off_vs_open_shove')
+        self.assertIn('CALLOFF_SYNTH_VS_OPEN_SHOVE', r['caveats'])
 
 
 class AdvisorTests(unittest.TestCase):
