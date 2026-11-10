@@ -66,6 +66,18 @@ class CallOffTests(unittest.TestCase):
         self.assertEqual(r['recommended'], 'call')
         self.assertGreaterEqual(r['equity'], r['required_equity'])
 
+    def test_equity_is_cached_but_potodds_recomputed(self):
+        a = PreflopAdvisor(pack_with_3bet_shove(list(HANDS), hero='BTN', vs=('CO',), stack=15))
+        r1 = a.advise_call_off(hero_cards=['Ah', '7d'], hero_position='CO',
+                               villain_position='BTN', stack_bb=15, to_call_bb=6, pot_bb=11)
+        self.assertEqual(len(a._equity_cache), 1)              # cacheou a equity bruta
+        # mesma mão/nó, pot odds DIFERENTES -> equity igual (cache), decisão recalculada
+        r2 = a.advise_call_off(hero_cards=['Ah', '7d'], hero_position='CO',
+                               villain_position='BTN', stack_bb=15, to_call_bb=10, pot_bb=11)
+        self.assertEqual(r1['equity'], r2['equity'])           # equity reusada
+        self.assertNotEqual(r1['required_equity'], r2['required_equity'])  # pot odds novas
+        self.assertEqual(len(a._equity_cache), 1)              # não recomputou
+
     def test_calloff_abstains_without_shove_range(self):
         a = PreflopAdvisor(pack_with_3bet_shove(['AA'], hero='BTN', vs=('CO',), stack=15))
         r = a.advise_call_off(hero_cards=['Ah', '7d'], hero_position='UTG',

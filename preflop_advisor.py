@@ -177,6 +177,7 @@ class PreflopAdvisor:
         for n in self.nodes:
             self._index.setdefault(self._key_of(n), n)
         self._shove_cache = {}
+        self._equity_cache = {}          # (node_id, cartas, iters, seed) -> equity bruta
 
     @classmethod
     def from_file(cls, path):
@@ -395,8 +396,20 @@ class PreflopAdvisor:
         req = required_equity(to_call_bb, pot_bb)
         if req is None:
             return self._abstain('CANNOT_COMPUTE_POT_ODDS', to_call_bb=to_call_bb, pot_bb=pot_bb)
-        combos = range_from_node(node, self.hands, actions=('all_in',))
-        eq = equity_vs_range(hero_cards, combos, iters=iters, seed=seed)
+        # Cache só da EQUITY bruta (determinística dado o seed), por nó+cartas+iters+
+        # seed. O node_id carrega a fonte/versão do range (novo pack = novo advisor =
+        # cache limpo). Pot odds, RP e elegibilidade são recalculados sempre, com os
+        # valores atuais — nunca se guarda um conselho antigo.
+        ekey = (node['id'], tuple(sorted(hero_cards)), iters, seed)
+        if ekey in self._equity_cache:
+            eq = self._equity_cache[ekey]
+        else:
+            combos = range_from_node(node, self.hands, actions=('all_in',))
+            eq = equity_vs_range(hero_cards, combos, iters=iters, seed=seed)
+            if eq is not None:
+                if len(self._equity_cache) >= 4096:
+                    self._equity_cache.clear()           # cap de memória simples
+                self._equity_cache[ekey] = eq
         if eq is None:
             return self._abstain('EQUITY_UNAVAILABLE')
         rp = _icm_risk_premium(mode, stage, to_call_bb, stack_bb)
