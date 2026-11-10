@@ -132,6 +132,29 @@ def infer_live_spot(table_state):
     return dict(spot='vs_open', opener=opener, callers=callers)
 
 
+# Risk premium (ICM) de referência por fase, com stacks iguais (paráfrase da skill
+# poker-icm-mtt): ~2,2% a 75% do field, 3,5% a 50%, 7,9% a 25%, ~13,5% na bolha;
+# pico também na mesa final. Aproximação por FASE — não é ICM resolvido.
+ICM_STAGE_RP = {'pre_itm': 0.09, 'bubble': 0.135, 'ft': 0.12}
+
+
+def _icm_risk_premium(mode, stage, to_call_bb, stack_bb):
+    """Equity extra (pontos) exigida além das pot odds no call-off, por ICM.
+
+    0 em chip EV. Em ICM, parte do RP de referência da fase e escala pela FRAÇÃO
+    do stack em risco (proxy de cobertura: arriscar pouco do stack = hero cobre o
+    shove curto = pressão ICM menor; all-in = RP cheio). PKO desconta (bounties
+    aliviam, às vezes RP negativo). Aproximação explícita, não um solver de ICM."""
+    if mode not in ('icm', 'pko_icm'):
+        return 0.0
+    base = ICM_STAGE_RP.get(stage, 0.05)
+    if mode == 'pko_icm':
+        base *= 0.6
+    if isinstance(to_call_bb, (int, float)) and isinstance(stack_bb, (int, float)) and stack_bb > 0:
+        base *= max(0.0, min(1.0, to_call_bb / stack_bb))
+    return round(base, 4)
+
+
 class PreflopAdvisor:
     # Short stacks (5-25) come from the validated NVT pack; 40/100 from the deep
     # reference pack (not HRC-validated, flagged in every answer).
@@ -280,7 +303,7 @@ class PreflopAdvisor:
                     villain_position=spot['opener'], stack_bb=hero.get('stack_bb'),
                     to_call_bb=(table_state.get('to_call') or {}).get('to_call_bb'),
                     pot_bb=(table_state.get('pot') or {}).get('pot_bb'),
-                    mode=kwargs.get('mode', 'chip_ev'),
+                    mode=kwargs.get('mode', 'chip_ev'), stage=kwargs.get('stage', 'mid'),
                     shove_spot=shove_spot, villain_vs=villain_vs)
                 if isinstance(co, dict):
                     co.setdefault('caveats', []).append('AGGRESSOR_INFERRED_%s' % spot['opener'])
@@ -338,14 +361,15 @@ class PreflopAdvisor:
         return node
 
     def advise_call_off(self, *, hero_cards, hero_position, villain_position, stack_bb,
-                        to_call_bb, pot_bb, mode='chip_ev', shove_spot='3bet_shove',
+                        to_call_bb, pot_bb, mode='chip_ev', stage='mid', shove_spot='3bet_shove',
                         villain_vs=None, iters=6000, seed=0):
         """Call-off SINTETIZADO por equity quando falta o nó validado da decisão.
 
         Pago se a equity da minha mão contra o range de shove (Nash) do vilão >=
-        pot odds. `shove_spot`='3bet_shove' (vilão re-shova meu open; range vs=meu
-        assento) ou 'open_shove' (vilão deu open-shove; range vs=()). Chip-EV; ICM
-        sinalizado. Decisão call/fold (clique único). Não autoriza execução (gate
+        pot odds + risk premium (ICM). `shove_spot`='3bet_shove' (vilão re-shova meu
+        open; range vs=meu assento) ou 'open_shove' (vilão deu open-shove; range
+        vs=()). O RP vem de `_icm_risk_premium` (0 em chip EV; aproximação por fase
+        em ICM). Decisão call/fold (clique único). Não autoriza execução (gate
         externo). Abstém quando falta o range do vilão ou os dados de pot odds."""
         bucket, why = self.bucket_stack(stack_bb)
         if bucket is None:
@@ -367,16 +391,19 @@ class PreflopAdvisor:
         eq = equity_vs_range(hero_cards, combos, iters=iters, seed=seed)
         if eq is None:
             return self._abstain('EQUITY_UNAVAILABLE')
-        action = 'call' if eq >= req else 'fold'
+        rp = _icm_risk_premium(mode, stage, to_call_bb, stack_bb)
+        req_icm = min(0.99, req + rp)
+        action = 'call' if eq >= req_icm else 'fold'
         caveats = ['EXPLORATORY_NOT_FOR_EXECUTION', 'CALLOFF_SYNTH_VS_%s' % shove_spot.upper(),
                    'VILLAIN_RANGE_NASH_%s_%sBB' % (shove_spot.upper(), node['context']['stack'])]
         if shove_spot == '3bet_shove':
             caveats.append('SHORT_STACK_3BET_TREATED_AS_SHOVE')
-        if mode in ('icm', 'pko_icm'):
-            caveats.append('CHIP_EV_CALLOFF_ICM_NOT_APPLIED')
+        if rp > 0:
+            caveats.append('ICM_RP_APPROX_BY_STAGE_%s_%dPCT' % (stage, round(rp * 100)))
         return dict(status='ADVICE', spot='call_off_vs_%s' % shove_spot, hero_position=hero_position,
                     hand=hand, recommended=action, mix=[dict(action=action, frequency=1.0)],
                     equity=round(eq, 4), required_equity=round(req, 4),
+                    risk_premium=rp, required_equity_icm=round(req_icm, 4),
                     villain_shove_node=node['id'], villain_position=villain_position,
                     stack_bb=stack_bb, stack_bucket=bucket, exploratory=True,
                     execution_allowed=False, validated=False, caveats=caveats)

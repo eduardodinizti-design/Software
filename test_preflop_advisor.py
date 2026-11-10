@@ -5,7 +5,8 @@ is consulted live, not committed."""
 import unittest
 
 from preflop_study import RANKS
-from preflop_advisor import PreflopAdvisor, infer_live_spot, infer_spread
+from preflop_advisor import (PreflopAdvisor, infer_live_spot, infer_spread,
+                             _icm_risk_premium)
 
 HANDS = [r + r for r in RANKS] + [a + b + s for i, a in enumerate(RANKS) for b in RANKS[i + 1:] for s in ('s', 'o')]
 
@@ -92,6 +93,45 @@ class CallOffTests(unittest.TestCase):
         self.assertEqual(r['spot'], 'call_off_vs_3bet_shove')
         self.assertIn(r['recommended'], ('call', 'fold'))
         self.assertIn('AGGRESSOR_INFERRED_BTN', r['caveats'])
+
+
+class IcmRiskPremiumTests(unittest.TestCase):
+    def test_chip_ev_has_no_rp(self):
+        self.assertEqual(_icm_risk_premium('chip_ev', 'mid', 10, 10), 0.0)
+
+    def test_bubble_all_in_is_full_rp(self):
+        self.assertAlmostEqual(_icm_risk_premium('icm', 'bubble', 10, 10), 0.135, places=3)
+
+    def test_covering_scales_rp_down(self):
+        # arrisca 20% do stack (cobre o shove curto) -> RP ~1/5 do da bolha
+        self.assertAlmostEqual(_icm_risk_premium('icm', 'bubble', 2, 10), 0.135 * 0.2, places=3)
+
+    def test_pko_discounts_rp(self):
+        self.assertAlmostEqual(_icm_risk_premium('pko_icm', 'bubble', 10, 10), 0.135 * 0.6, places=3)
+
+    def test_ft_and_pre_itm(self):
+        self.assertAlmostEqual(_icm_risk_premium('icm', 'ft', 10, 10), 0.12, places=3)
+        self.assertAlmostEqual(_icm_risk_premium('icm', 'pre_itm', 10, 10), 0.09, places=3)
+
+
+class CallOffIcmTests(unittest.TestCase):
+    """O risk premium de ICM aperta o call-off: mão que paga em chip EV folda na bolha."""
+
+    def _adv(self, mode, stage):
+        a = PreflopAdvisor(pack_with_3bet_shove(['AA', 'KK', 'QQ'], hero='BTN', vs=('CO',), stack=15))
+        return a.advise_call_off(hero_cards=['7h', '2d'], hero_position='CO',
+                                 villain_position='BTN', stack_bb=15, to_call_bb=15, pot_bb=135,
+                                 mode=mode, stage=stage)                      # pot odds = 0.10
+
+    def test_chip_ev_calls_icm_bubble_folds(self):
+        ce = self._adv('chip_ev', 'mid')
+        icm = self._adv('icm', 'bubble')
+        self.assertEqual(ce['recommended'], 'call')          # eq (~0.12) >= pot odds 0.10
+        self.assertEqual(ce['required_equity_icm'], ce['required_equity'])   # RP 0
+        self.assertEqual(icm['recommended'], 'fold')         # eq < 0.10 + 0.135
+        self.assertGreater(icm['required_equity_icm'], icm['required_equity'])
+        self.assertAlmostEqual(icm['risk_premium'], 0.135, places=3)
+        self.assertTrue(any(c.startswith('ICM_RP_APPROX_BY_STAGE') for c in icm['caveats']))
 
 
 class VsOpenShoveTests(unittest.TestCase):
