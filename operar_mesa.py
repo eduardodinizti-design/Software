@@ -36,6 +36,12 @@ DEFAULT_RANGES = r'C:\Meus Projetos\Aplicativos\nvt-ranges-validados.json'
 DEFAULT_DEEP = r'C:\Meus Projetos\Aplicativos\nvt-ranges-deep.json'
 
 
+def _discover_rect(hwnd):
+    """Geometria lógica ATUAL da janela (None se sumiu) — p/ continuidade entre etapas."""
+    ws = [w for w in discover_pppoker().get('windows', []) if w['hwnd'] == hwnd]
+    return (ws[0]['x'], ws[0]['y'], ws[0]['w'], ws[0]['h']) if ws else None
+
+
 def _table_key(x, y):
     """Chave estável de mesa pela origem do crop (robusta a jitter de poucos px).
     NÃO é índice do recorte (que pode reordenar)."""
@@ -212,8 +218,9 @@ def main(argv=None):
                         print('[%03d] RAISE mas BOT PAUSADO' % n, flush=True)
                     else:
                         seq = RaiseSequencer(capture=lambda: engine.capture_frame(hwnd=args.hwnd),
-                                             window_rect=win_rect, input_adapter=adapter,
-                                             target_mult=tmult, bot_control=control,
+                                             window_rect=lambda: _discover_rect(args.hwnd),
+                                             input_adapter=adapter, target_mult=tmult,
+                                             bot_control=control, table_key=tkey, hand=hid,
                                              max_tables=args.max_tables)
                         res = seq.run()
                         raise_done.add(hid)
