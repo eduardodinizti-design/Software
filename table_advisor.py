@@ -30,11 +30,24 @@ def read_hero_cards(crop):
     return cards
 
 
-def advise_table(crop, advisor, *, mode=None, stage=None):
+def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table_key='default'):
     """Read the table and attach an exploratory recommendation. The tournament
     phase chooses chip EV vs ICM unless mode/stage are forced. Pure read; the
-    caller wraps it in an ocr_frame so one snapshot reuses OCR."""
+    caller wraps it in an ocr_frame so one snapshot reuses OCR.
+
+    `stabilizer` (opcional, PositionStabilizer): suaviza as POSIÇÕES ao longo dos
+    frames — o leitor é stateless e os rótulos oscilam quando a ocupação/dealer
+    pisca; o estabilizador trava o dealer (debounce) e usa ocupação por maioria.
+    `table_key` identifica a mesa p/ o estado por-mesa do estabilizador."""
     state = read_table_state(crop)
+    if stabilizer is not None:
+        occ = [s for s, d in (state.get('seats') or {}).items() if d.get('occupied')]
+        sdealer, spos = stabilizer.update(table_key=table_key,
+                                          dealer_seat=state['dealer'].get('seat'),
+                                          occupied_seats=occ)
+        if spos:
+            state = dict(state, positions=spos,
+                         dealer=dict(state['dealer'], seat=sdealer, stabilized=True))
     hand = read_hand_id(crop)
     hero = read_hero_cards(crop)
     board = read_board(crop, hero_cards=hero or [None, None])

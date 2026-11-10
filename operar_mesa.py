@@ -23,6 +23,7 @@ from table_advisor import advise_table
 from preflop_advisor import PreflopAdvisor
 from action_executor import ActionExecutor
 from action_coordinator import DryRunInput, map_advice_to_action
+from position_stabilizer import PositionStabilizer
 from raise_panel import target_multiplier, map_multiplier_to_preset, read_raise_panel
 from raise_sequencer import RaiseSequencer
 from cursor_input_win import WindowsCursorInput
@@ -103,6 +104,7 @@ def main(argv=None):
     adapter = WindowsCursorInput() if args.arm else DryRunInput()
     executor = ActionExecutor(window_rect=win_rect, bot_control=control, armed=args.arm)
     raise_done = set()   # uma sequência de aumento por mão
+    stabilizer = PositionStabilizer()   # suaviza posições (anti-flicker HJ<->UTG+2)
     validator = make_validator(engine, args.hwnd, args.max_tables)
     verifier = make_verifier(engine, args.hwnd, args.max_tables)
 
@@ -127,16 +129,21 @@ def main(argv=None):
                 continue
             fh, fw = frame.shape[:2]
             rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            for prop in detect_table_crops(rgb, max_tables=args.max_tables):
+            crops = list(detect_table_crops(rgb, max_tables=args.max_tables))
+            hero_turn_seen = False
+            for prop in crops:
                 x, y, bw, bh = map(int, prop.box)
                 crop = frame[y:y + bh, x:x + bw]
                 try:
-                    result = advise_table(crop, advisor)
+                    result = advise_table(crop, advisor, stabilizer=stabilizer,
+                                          table_key='%dx%d' % (x // 100, y // 100))
                 except Exception:                      # noqa: BLE001
                     continue
                 if not result.get('is_table'):
                     continue
                 br = read_action_buttons(crop)
+                if br['status'] == 'EXPERIMENTAL_BUTTON_ROW':
+                    hero_turn_seen = True
                 hand = result.get('hand') or {}
                 hid = hand.get('hand_id') or hand.get('hand_number')
                 adv = result.get('advice') or {}
@@ -184,6 +191,10 @@ def main(argv=None):
                         n, result.get('hero_cards'), pos, adv.get('status'),
                         adv.get('recommended') or adv.get('reason') or '',
                         out.get('reason')), flush=True)
+            # heartbeat: a cada ~8 frames sem vez-do-hero, mostra que está vivo
+            if not hero_turn_seen and n % 8 == 0:
+                print('[%03d] . vivo | mesas=%d | sua vez: nao | estado=%s'
+                      % (n, len(crops), control.state), flush=True)
             time.sleep(max(0.1, args.intervalo - (time.monotonic() - t0)))
     except KeyboardInterrupt:
         print('Encerrado pelo usuario.', flush=True)

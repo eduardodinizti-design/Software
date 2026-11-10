@@ -16,6 +16,7 @@ import json
 from pathlib import Path
 
 from preflop_study import hand_key, Blocked
+from preflop_equity import range_from_node, equity_vs_range, required_equity
 
 RAISE_FLOOR_BB = 1.5  # a bet above the BB (1.0) is a raise, not a blind post
 # Preflop action order (earliest to latest); the opener is the earliest-position
@@ -121,6 +122,7 @@ class PreflopAdvisor:
         self._index = {}
         for n in self.nodes:
             self._index.setdefault(self._key_of(n), n)
+        self._shove_cache = {}
 
     @classmethod
     def from_file(cls, path):
@@ -238,6 +240,21 @@ class PreflopAdvisor:
                 kwargs['spread'] = spread
         if spot['spot'] in ('vs_open', 'vs_3bet'):
             result = self.advise(spot=spot['spot'], vs=(spot['opener'],), **base, **kwargs)
+            # Abri e enfrento um re-shove num stack curto sem nó `vs_3bet` (só existe
+            # em 25bb): sintetiza o call-off por equity vs o range Nash de 3bet_shove
+            # do vilão. Em 12-20bb um 3bet é efetivamente shove (teoria push/fold).
+            if (spot['spot'] == 'vs_3bet' and isinstance(result, dict)
+                    and result.get('status') == 'ABSTAIN'
+                    and result.get('reason') == 'NO_VALIDATED_NODE_FOR_CONTEXT'):
+                co = self.advise_call_off(
+                    hero_cards=hero_cards, hero_position=positions['hero'],
+                    villain_position=spot['opener'], stack_bb=hero.get('stack_bb'),
+                    to_call_bb=(table_state.get('to_call') or {}).get('to_call_bb'),
+                    pot_bb=(table_state.get('pot') or {}).get('pot_bb'),
+                    mode=kwargs.get('mode', 'chip_ev'))
+                if isinstance(co, dict):
+                    co.setdefault('caveats', []).append('AGGRESSOR_INFERRED_%s' % spot['opener'])
+                    return co
             if isinstance(result, dict):
                 result.setdefault('caveats', []).append('AGGRESSOR_INFERRED_%s' % spot['opener'])
                 if spot.get('callers'):
@@ -264,6 +281,67 @@ class PreflopAdvisor:
                 result['sizing'] = sizing.size_from_reading(result['recommended'], table_state,
                                                             positions['hero'], spot.get('opener'))
         return result
+
+    def _shove_range_node(self, shover, opener, bucket):
+        """Nó `3bet_shove` (range de re-shove do vilão) p/ shover vs opener no
+        bucket. Prefere chip_ev/regular/mid (o range de Nash push/fold). O call-off
+        é chip-EV, então o range de shove chip-EV é a referência. None se não há."""
+        ck = (shover, opener, bucket)
+        if ck in self._shove_cache:
+            return self._shove_cache[ck]
+        best = None
+        for n in self.nodes:
+            if n['spot'] != '3bet_shove' or n['hero'] != shover:
+                continue
+            if tuple(n.get('vs') or ()) != (opener,) or n['context']['stack'] != bucket:
+                continue
+            c = n['context']
+            score = (c['mode'] == 'chip_ev', c['format'] == 'regular', c['stage'] == 'mid')
+            if best is None or score > best[0]:
+                best = (score, n)
+        node = best[1] if best else None
+        self._shove_cache[ck] = node
+        return node
+
+    def advise_call_off(self, *, hero_cards, hero_position, villain_position, stack_bb,
+                        to_call_bb, pot_bb, mode='chip_ev', iters=6000, seed=0):
+        """Call-off do abridor contra um re-shove, SINTETIZADO quando o pack não
+        tem o nó `vs_3bet` no stack curto. Pago se a equity da minha mão contra o
+        range de `3bet_shove` (Nash) do vilão >= pot odds. Chip-EV; ICM sinalizado.
+
+        Decisão call/fold (clique único). Nunca autoriza execução por si (o gate é
+        externo). Abstém quando falta o range do vilão ou os dados de pot odds."""
+        bucket, why = self.bucket_stack(stack_bb)
+        if bucket is None:
+            return self._abstain(why, stack_bb=stack_bb)
+        try:
+            hand = hand_key(hero_cards)
+        except Blocked as exc:
+            return self._abstain(str(exc))
+        node = self._shove_range_node(villain_position, hero_position, bucket)
+        if node is None:
+            return self._abstain('NO_SHOVE_RANGE_FOR_CONTEXT',
+                                 context=dict(shover=villain_position, opener=hero_position,
+                                              stack=bucket))
+        req = required_equity(to_call_bb, pot_bb)
+        if req is None:
+            return self._abstain('CANNOT_COMPUTE_POT_ODDS', to_call_bb=to_call_bb, pot_bb=pot_bb)
+        combos = range_from_node(node, self.hands, actions=('all_in',))
+        eq = equity_vs_range(hero_cards, combos, iters=iters, seed=seed)
+        if eq is None:
+            return self._abstain('EQUITY_UNAVAILABLE')
+        action = 'call' if eq >= req else 'fold'
+        caveats = ['EXPLORATORY_NOT_FOR_EXECUTION', 'CALLOFF_SYNTH_VS_3BET_SHOVE',
+                   'VILLAIN_RANGE_NASH_3BET_SHOVE_%sBB' % node['context']['stack'],
+                   'SHORT_STACK_3BET_TREATED_AS_SHOVE']
+        if mode in ('icm', 'pko_icm'):
+            caveats.append('CHIP_EV_CALLOFF_ICM_NOT_APPLIED')
+        return dict(status='ADVICE', spot='call_off_vs_3bet_shove', hero_position=hero_position,
+                    hand=hand, recommended=action, mix=[dict(action=action, frequency=1.0)],
+                    equity=round(eq, 4), required_equity=round(req, 4),
+                    villain_shove_node=node['id'], villain_position=villain_position,
+                    stack_bb=stack_bb, stack_bucket=bucket, exploratory=True,
+                    execution_allowed=False, validated=False, caveats=caveats)
 
     def _caveats(self, bucket, stack_bb, players, mode, spread=None):
         out = ['EXPLORATORY_NOT_FOR_EXECUTION', 'NVT_REFERENCE_SHORT_STACK_ONLY']

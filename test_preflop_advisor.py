@@ -10,6 +10,21 @@ from preflop_advisor import PreflopAdvisor, infer_live_spot, infer_spread
 HANDS = [r + r for r in RANKS] + [a + b + s for i, a in enumerate(RANKS) for b in RANKS[i + 1:] for s in ('s', 'o')]
 
 
+def pack_with_3bet_shove(shove_hands, hero='BTN', vs=('CO',), stack=15, extra_nodes=()):
+    """Pack com um nó `3bet_shove` (range do re-shove do vilão) e nada de vs_3bet,
+    p/ exercitar a síntese de call-off no stack curto."""
+    idx = {h for h in shove_hands}
+    allin = [1.0 if HANDS[k] in idx else 0.0 for k in range(169)]
+    fold = [0.0 if HANDS[k] in idx else 1.0 for k in range(169)]
+    node = dict(id='shove1', context=dict(mode='chip_ev', format='regular', stage='mid', players=9, stack=stack),
+                spot='3bet_shove', hero=hero, vs=list(vs), validated=True, evUnit='bb',
+                legalActions=['fold', 'all_in'], actions=['all_in', 'fold'],
+                freq={'all_in': allin, 'fold': fold}, ev={'all_in': [0.0] * 169, 'fold': [0.0] * 169},
+                outOfRange=[], source='test')
+    return dict(format='nvt-range-export', version=1, engineCommit='test', hands=HANDS,
+                nodes=[node] + list(extra_nodes))
+
+
 def pack_with_node(out_of_range=()):
     idx_aa = HANDS.index('AA')
     freq = {'raise': [1.0 if k == idx_aa else 0.0 for k in range(169)],
@@ -20,6 +35,57 @@ def pack_with_node(out_of_range=()):
                 legalActions=['fold', 'raise'], actions=['raise', 'fold'], freq=freq, ev=ev,
                 outOfRange=list(out_of_range), source='test')
     return dict(format='nvt-range-export', version=1, engineCommit='test', hands=HANDS, nodes=[node])
+
+
+class CallOffTests(unittest.TestCase):
+    """Síntese do call-off do abridor vs re-shove quando falta o nó vs_3bet curto."""
+
+    def test_calloff_folds_vs_narrow_shove_bad_odds(self):
+        a = PreflopAdvisor(pack_with_3bet_shove(['AA'], hero='BTN', vs=('CO',), stack=15))
+        # A7o enfrenta re-shove do BTN que só shova AA; pot odds ruins -> fold
+        r = a.advise_call_off(hero_cards=['Ah', '7d'], hero_position='CO',
+                              villain_position='BTN', stack_bb=15, to_call_bb=12, pot_bb=18)
+        self.assertEqual(r['status'], 'ADVICE')
+        self.assertEqual(r['recommended'], 'fold')
+        self.assertLess(r['equity'], r['required_equity'])
+        self.assertIn('CALLOFF_SYNTH_VS_3BET_SHOVE', r['caveats'])
+        self.assertFalse(r['execution_allowed'])
+
+    def test_calloff_calls_vs_wide_shove_good_odds(self):
+        wide = list(HANDS)                                   # vilão shova qualquer duas
+        a = PreflopAdvisor(pack_with_3bet_shove(wide, hero='BTN', vs=('CO',), stack=15))
+        r = a.advise_call_off(hero_cards=['Ah', '7d'], hero_position='CO',
+                              villain_position='BTN', stack_bb=15, to_call_bb=2, pot_bb=20)
+        self.assertEqual(r['recommended'], 'call')
+        self.assertGreaterEqual(r['equity'], r['required_equity'])
+
+    def test_calloff_abstains_without_shove_range(self):
+        a = PreflopAdvisor(pack_with_3bet_shove(['AA'], hero='BTN', vs=('CO',), stack=15))
+        r = a.advise_call_off(hero_cards=['Ah', '7d'], hero_position='UTG',
+                              villain_position='LJ', stack_bb=15, to_call_bb=12, pot_bb=18)
+        self.assertEqual(r['status'], 'ABSTAIN')
+        self.assertEqual(r['reason'], 'NO_SHOVE_RANGE_FOR_CONTEXT')
+
+    def test_calloff_abstains_without_pot_odds(self):
+        a = PreflopAdvisor(pack_with_3bet_shove(['AA'], hero='BTN', vs=('CO',), stack=15))
+        r = a.advise_call_off(hero_cards=['Ah', '7d'], hero_position='CO',
+                              villain_position='BTN', stack_bb=15, to_call_bb=None, pot_bb=18)
+        self.assertEqual(r['reason'], 'CANNOT_COMPUTE_POT_ODDS')
+
+    def test_from_reading_synthesizes_calloff_instead_of_freezing(self):
+        # A7 abriu (CO, 2bb), BTN re-shova 15bb: sem nó vs_3bet -> antes abstinha
+        # (NO_VALIDATED_NODE); agora sintetiza um call-off e DECIDE.
+        a = PreflopAdvisor(pack_with_3bet_shove(list(HANDS), hero='BTN', vs=('CO',), stack=15))
+        state = dict(positions={'hero': 'CO', 's2': 'BTN'},
+                     seats={'hero': dict(stack_bb=15, occupied=True),
+                            's2': dict(stack_bb=0, occupied=True)},
+                     bets=[dict(seat='hero', bet_bb=2.0), dict(seat='s2', bet_bb=15.0)],
+                     to_call=dict(to_call_bb=13.0), pot=dict(pot_bb=18.0))
+        r = a.advise_from_reading(state, ['Ah', '7d'])
+        self.assertEqual(r['status'], 'ADVICE')
+        self.assertEqual(r['spot'], 'call_off_vs_3bet_shove')
+        self.assertIn(r['recommended'], ('call', 'fold'))
+        self.assertIn('AGGRESSOR_INFERRED_BTN', r['caveats'])
 
 
 class AdvisorTests(unittest.TestCase):
