@@ -14,6 +14,35 @@ def _buttons(status='EXPERIMENTAL_BUTTON_ROW', actions=('FOLD', 'CALL', 'RAISE')
                               label=a.title()) for i, a in enumerate(actions)])
 
 
+class CheckIsNotCallTest(unittest.TestCase):
+    """#2 do feedback: CHECK recomendado + CALL disponível NÃO pode virar clique CALL."""
+
+    def _adv(self, rec):
+        return dict(status='ADVICE', recommended=rec)
+
+    def test_check_advice_with_only_call_button_abstains(self):
+        br = dict(status='EXPERIMENTAL_BUTTON_ROW',
+                  buttons=[dict(action='CALL', label='Call 50', box=[0, 0, 10, 10])])
+        r = plan_from_buttons(br, self._adv('check'))
+        self.assertFalse(r['ok'])                          # nunca clica CALL por CHECK
+        self.assertEqual(r['reason'], 'SEM_BOTAO_PARA:CHECK')
+
+    def test_check_advice_uses_check_button(self):
+        br = dict(status='EXPERIMENTAL_BUTTON_ROW',
+                  buttons=[dict(action='CHECK', label='Check', box=[0, 0, 10, 10])])
+        r = plan_from_buttons(br, self._adv('check'))
+        self.assertTrue(r['ok'])
+        self.assertEqual(r['plan']['action'], 'CHECK')
+
+    def test_call_advice_falls_back_to_check_when_free(self):
+        # só há CHECK (UI prova to_call=0): pagar == checar de graça, seguro
+        br = dict(status='EXPERIMENTAL_BUTTON_ROW',
+                  buttons=[dict(action='CHECK', label='Check', box=[0, 0, 10, 10])])
+        r = plan_from_buttons(br, self._adv('call'))
+        self.assertTrue(r['ok'])
+        self.assertEqual(r['plan']['action'], 'CHECK')
+
+
 class MapTest(unittest.TestCase):
     def test_basic_map(self):
         self.assertEqual(map_advice_to_action('fold'), ('FOLD', []))
@@ -28,6 +57,19 @@ class MapTest(unittest.TestCase):
         a, cav = map_advice_to_action('all_in')
         self.assertEqual(a, 'RAISE')
         self.assertIn('ALL_IN', cav)
+
+    def test_vocabulary_synonyms_stay_multistep(self):
+        # #9: nomes alternativos mapeiam, mas seguem multi-etapa (nunca clique único)
+        for name in ('three_bet', 'four_bet'):
+            a, cav = map_advice_to_action(name)
+            self.assertEqual(a, 'RAISE')
+            self.assertIn('REQUIRES_SIZING_MULTISTEP', cav)
+            self.assertNotIn('ALL_IN', cav)
+        for name in ('three_bet_shove', 'four_bet_shove'):
+            a, cav = map_advice_to_action(name)
+            self.assertEqual(a, 'RAISE')
+            self.assertIn('REQUIRES_SIZING_MULTISTEP', cav)
+            self.assertIn('ALL_IN', cav)
         self.assertIn('REQUIRES_SIZING_MULTISTEP', cav)
 
     def test_unknown_unmapped(self):

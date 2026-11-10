@@ -22,12 +22,20 @@ from screen_coords import frame_to_screen, rect_frame_to_screen
 _ACTION_MAP = {
     'fold': 'FOLD', 'check': 'CHECK', 'call': 'CALL', 'limp': 'CALL',
     'bet': 'BET', 'raise': 'RAISE', 'open_raise': 'RAISE', '3bet': 'RAISE',
-    '4bet': 'RAISE', 'isolate': 'RAISE', 'iso': 'RAISE',
+    '4bet': 'RAISE', 'three_bet': 'RAISE', 'four_bet': 'RAISE',
+    'isolate': 'RAISE', 'iso': 'RAISE',
     'all_in': 'RAISE', 'allin': 'RAISE', 'open_shove': 'RAISE', 'shove': 'RAISE',
+    '3bet_shove': 'RAISE', '4bet_shove': 'RAISE',
+    'three_bet_shove': 'RAISE', 'four_bet_shove': 'RAISE',
 }
-_SIZING = {'bet', 'raise', 'open_raise', '3bet', '4bet', 'isolate', 'iso',
-           'all_in', 'allin', 'open_shove', 'shove'}
-_ALL_IN = {'all_in', 'allin', 'open_shove', 'shove'}
+# Qualquer agressão com valor é MULTI-ETAPA (nunca clique único), mesmo sob outro
+# nome; os *shove também são ALL_IN. Nomes das fontes estratégicas normalizados
+# aqui sem mudar a semântica (não vira clique único).
+_SIZING = {'bet', 'raise', 'open_raise', '3bet', '4bet', 'three_bet', 'four_bet',
+           'isolate', 'iso', 'all_in', 'allin', 'open_shove', 'shove',
+           '3bet_shove', '4bet_shove', 'three_bet_shove', 'four_bet_shove'}
+_ALL_IN = {'all_in', 'allin', 'open_shove', 'shove',
+           '3bet_shove', '4bet_shove', 'three_bet_shove', 'four_bet_shove'}
 
 
 def map_advice_to_action(recommended):
@@ -67,12 +75,15 @@ def plan_from_buttons(buttons_result, advice, *, origin=(0, 0),
     def find(a):
         return next((b for b in buttons if b.get('action') == a), None)
 
-    # Call<->Check e Raise->Bet como equivalentes quando o rótulo exato não existe.
+    # Equivalências SÓ nas direções seguras:
+    # - CALL -> CHECK: se o rótulo é CHECK (e não CALL), a UI prova que não há
+    #   aposta a pagar (to_call=0); checar é grátis e correto.
+    # - RAISE -> BET: ambas são agressão com sizing (multi-etapa, já sinalizado).
+    # NUNCA CHECK -> CALL: um botão CALL significa que HÁ aposta; clicar CALL quando
+    # se queria CHECK paga um valor desconhecido (bug reproduzido: CHECK + CALL 50BB).
     btn = find(action)
     if btn is None and action == 'CALL':
         btn = find('CHECK')
-    elif btn is None and action == 'CHECK':
-        btn = find('CALL')
     elif btn is None and action == 'RAISE':
         btn = find('BET')
     if btn is None:

@@ -79,6 +79,32 @@ class CallOffTests(unittest.TestCase):
                               villain_position='BTN', stack_bb=15, to_call_bb=None, pot_bb=18)
         self.assertEqual(r['reason'], 'CANNOT_COMPUTE_POT_ODDS')
 
+    def test_min_3bet_with_stack_behind_is_not_shove(self):
+        # #6 do feedback: hero abriu 2bb, vilão aumentou p/ 4bb E tem stack atrás
+        # -> NÃO é shove; infer marca allin=False e NÃO sintetiza call-off.
+        state = dict(positions={'hero': 'CO', 's2': 'BTN'},
+                     seats={'hero': dict(stack_bb=13, occupied=True),
+                            's2': dict(stack_bb=11, occupied=True)},
+                     bets=[dict(seat='hero', bet_bb=2.0), dict(seat='s2', bet_bb=4.0)])
+        spot = infer_live_spot(state)
+        self.assertEqual(spot['spot'], 'vs_3bet')
+        self.assertFalse(spot['allin'])
+        a = PreflopAdvisor(pack_with_3bet_shove(list(HANDS), hero='BTN', vs=('CO',), stack=15))
+        r = a.advise_from_reading(state, ['Ah', '7d'])
+        self.assertEqual(r['status'], 'ABSTAIN')           # abstém, não call-off falso
+        self.assertNotEqual(r.get('spot'), 'call_off_vs_3bet_shove')
+
+    def test_reshove_all_in_still_synthesizes_calloff(self):
+        state = dict(positions={'hero': 'CO', 's2': 'BTN'},
+                     seats={'hero': dict(stack_bb=15, occupied=True),
+                            's2': dict(stack_bb=0, occupied=True)},   # vilão all-in
+                     bets=[dict(seat='hero', bet_bb=2.0), dict(seat='s2', bet_bb=15.0)],
+                     to_call=dict(to_call_bb=13.0), pot=dict(pot_bb=18.0))
+        self.assertTrue(infer_live_spot(state)['allin'])
+        a = PreflopAdvisor(pack_with_3bet_shove(list(HANDS), hero='BTN', vs=('CO',), stack=15))
+        r = a.advise_from_reading(state, ['Ah', '7d'])
+        self.assertEqual(r['spot'], 'call_off_vs_3bet_shove')
+
     def test_from_reading_synthesizes_calloff_instead_of_freezing(self):
         # A7 abriu (CO, 2bb), BTN re-shova 15bb: sem nó vs_3bet -> antes abstinha
         # (NO_VALIDATED_NODE); agora sintetiza um call-off e DECIDE.

@@ -110,7 +110,12 @@ def infer_live_spot(table_state):
     if hero_bet > RAISE_FLOOR_BB:                       # hero has already opened
         rereraisers = {p: a for p, a in raisers.items() if a > hero_bet + 0.4}
         if len(rereraisers) == 1:
-            return dict(spot='vs_3bet', opener=next(iter(rereraisers)))
+            opener = next(iter(rereraisers))
+            # Marca se o re-raise é all-in PROVADO (stack do vilão ~0 ou tamanho de
+            # jam). Um min-3bet com stack atrás NÃO é shove -> allin=False, e o
+            # call-off por equity (que assume shove até o showdown) não é aplicado.
+            allin = _opener_is_shove(table_state, opener, rereraisers[opener])
+            return dict(spot='vs_3bet', opener=opener, allin=allin)
         return dict(spot='abstain', opener=None,
                     reason='HERO_OPENED_NO_RERAISE' if not rereraisers else 'MULTIWAY_OR_4BET_NOT_COVERED')
     if not raisers:
@@ -293,9 +298,12 @@ class PreflopAdvisor:
             # equity vs o range Nash do vilão. vs_3bet: abri e levei re-shove num
             # stack curto (só há nó em 25bb); em 12-20bb um 3bet é efetivamente
             # shove. vs_open_shove: enfrento open-shove mais fundo que 15bb (sem nó).
+            # O call-off (equity até o showdown) só vale para all-in COMPROVADO:
+            # vs_open_shove já é um jam por construção; vs_3bet só se `allin`.
             if (isinstance(result, dict) and result.get('status') == 'ABSTAIN'
                     and result.get('reason') == 'NO_VALIDATED_NODE_FOR_CONTEXT'
-                    and spot['spot'] in ('vs_3bet', 'vs_open_shove')):
+                    and (spot['spot'] == 'vs_open_shove'
+                         or (spot['spot'] == 'vs_3bet' and spot.get('allin')))):
                 shove_spot, villain_vs = (('3bet_shove', (positions['hero'],))
                                           if spot['spot'] == 'vs_3bet' else ('open_shove', ()))
                 co = self.advise_call_off(

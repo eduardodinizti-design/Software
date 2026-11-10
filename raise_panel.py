@@ -102,10 +102,19 @@ def target_multiplier(advice, table_state):
     return round(size_bb / to_beat, 2)
 
 
-def map_multiplier_to_preset(target_mult, presets):
-    """Preset com multiplicador mais próximo do alvo (entre os que leram). None
-    se nenhum preset legível. Empate -> o menor (mais conservador)."""
+def map_multiplier_to_preset(target_mult, presets, *, tol=None):
+    """Preset com multiplicador mais próximo do alvo (entre os que leram), SE
+    estiver dentro da tolerância; senão None (abster — não aproximar à força).
+
+    Evita transformar um sizing grande/all-in (ex.: alvo 25×) num preset de 4×:
+    sem tamanho compatível e conferível, não clica. Tolerância padrão =
+    max(0,5×, 20% do alvo). Empate -> o menor (mais conservador). None também
+    quando nenhum preset é legível ou o alvo é None."""
     usable = [p for p in presets if p.get('mult') is not None]
     if target_mult is None or not usable:
         return None
-    return min(usable, key=lambda p: (abs(p['mult'] - target_mult), p['mult']))
+    best = min(usable, key=lambda p: (abs(p['mult'] - target_mult), p['mult']))
+    limit = tol if tol is not None else max(0.5, 0.2 * target_mult)
+    if abs(best['mult'] - target_mult) > limit:
+        return None                                  # nenhum preset compatível -> abster
+    return best

@@ -45,6 +45,13 @@ class MultiplierTest(unittest.TestCase):
         self.assertIsNone(map_multiplier_to_preset(2.5, [dict(mult=None)]))
         self.assertIsNone(map_multiplier_to_preset(None, _presets(2.0)))
 
+    def test_large_target_has_no_compatible_preset(self):
+        # #4 do feedback: alvo 25x (all-in) NAO vira 4x; sem preset compativel -> None
+        ps = _presets(2.0, 2.5, 3.0, 4.0)
+        self.assertIsNone(map_multiplier_to_preset(25.0, ps))
+        self.assertIsNone(map_multiplier_to_preset(6.0, ps))     # 6x tambem fora
+        self.assertEqual(map_multiplier_to_preset(3.4, ps)['mult'], 3.0)  # 3bet ok
+
 
 @unittest.skipUnless(os.path.exists(GAB) and _ocr_ok(), 'OCR/gabarito ausente')
 class RealPanelTest(unittest.TestCase):
