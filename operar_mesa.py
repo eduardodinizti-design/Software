@@ -22,7 +22,9 @@ from table_reading.action_buttons import read_action_buttons
 from table_advisor import advise_table
 from preflop_advisor import PreflopAdvisor
 from action_executor import ActionExecutor
-from action_coordinator import DryRunInput
+from action_coordinator import DryRunInput, map_advice_to_action
+from raise_panel import target_multiplier, map_multiplier_to_preset, read_raise_panel
+from raise_sequencer import RaiseSequencer
 from cursor_input_win import WindowsCursorInput
 from bot_control import BotControl, HotkeyListener, DISABLED, PAUSED, RUNNING
 from window_capture_engine import WindowCaptureEngine
@@ -100,6 +102,7 @@ def main(argv=None):
         listener.start()
     adapter = WindowsCursorInput() if args.arm else DryRunInput()
     executor = ActionExecutor(window_rect=win_rect, bot_control=control, armed=args.arm)
+    raise_done = set()   # uma sequência de aumento por mão
     validator = make_validator(engine, args.hwnd, args.max_tables)
     verifier = make_verifier(engine, args.hwnd, args.max_tables)
 
@@ -136,19 +139,51 @@ def main(argv=None):
                 br = read_action_buttons(crop)
                 hand = result.get('hand') or {}
                 hid = hand.get('hand_id') or hand.get('hand_number')
+                adv = result.get('advice') or {}
+                _, caveats = map_advice_to_action(adv.get('recommended'))
+                is_raise = 'REQUIRES_SIZING_MULTISTEP' in caveats
+                # RAISE = fluxo multi-etapa (sequenciador). Só executa ARMADO (em
+                # dry-run os cliques não abrem o painel de verdade).
+                if (br['status'] == 'EXPERIMENTAL_BUTTON_ROW' and adv.get('status') == 'ADVICE'
+                        and is_raise and hid not in raise_done):
+                    tmult = target_multiplier(adv, result.get('table_state'))
+                    if tmult is None:
+                        print('[%03d] vez do hero: RAISE sem target de size -> abstem' % n, flush=True)
+                    elif not args.arm:
+                        pr = map_multiplier_to_preset(tmult, read_raise_panel(crop).get('presets') or [])
+                        print('[%03d] vez do hero: RAISE alvo %.2fx (preset %s) | DRY-RUN: sequencia so executa armada'
+                              % (n, tmult, (pr and pr['label']) or '?'), flush=True)
+                    elif not control.execution_allowed():
+                        print('[%03d] RAISE mas BOT PAUSADO' % n, flush=True)
+                    else:
+                        seq = RaiseSequencer(capture=lambda: engine.capture_frame(hwnd=args.hwnd),
+                                             window_rect=win_rect, input_adapter=adapter,
+                                             target_mult=tmult, bot_control=control,
+                                             max_tables=args.max_tables)
+                        res = seq.run()
+                        raise_done.add(hid)
+                        print('[%03d] >>> RAISE sequencia: %s' % (n, res.get('reason')
+                              or ('preset %sx confirmado=%s' % (res.get('preset'), res.get('confirmed')))), flush=True)
+                    continue
                 out = executor.execute(result, br, origin=(x, y), frame_size=(fw, fh),
                                        input_adapter=adapter, validator=validator,
                                        verifier=verifier, hand_id=hid)
                 if out.get('acted'):
                     pl = out['plan']
-                    print('[%03d] AGIU: %s em %s | estado=%s %s %s' % (
+                    print('[%03d] >>> AGIU: %s em %s | estado=%s %s %s' % (
                         n, pl['action'],
                         tuple(round(c) for c in pl.get('screen_center', pl['center'])),
                         out['state'], 'DRY-RUN' if out['dry_run'] else 'REAL',
                         out['reasons'] or ''), flush=True)
-                elif out.get('reason') not in (None,) and 'SEM_ACAO' not in str(out.get('reason')) \
-                        and 'NAO_E_VEZ' not in str(out.get('reason')):
-                    print('[%03d] -- %s' % (n, out.get('reason')), flush=True)
+                elif br['status'] == 'EXPERIMENTAL_BUTTON_ROW':
+                    # Vez do hero mas NÃO agiu (raise multi-etapa / abstenção / já agiu):
+                    # mostra a decisão para a demo.
+                    adv = result.get('advice') or {}
+                    pos = (result.get('table_state', {}).get('positions') or {}).get('hero')
+                    print('[%03d] vez do hero: %s %s | conselho=%s %s | executor: %s' % (
+                        n, result.get('hero_cards'), pos, adv.get('status'),
+                        adv.get('recommended') or adv.get('reason') or '',
+                        out.get('reason')), flush=True)
             time.sleep(max(0.1, args.intervalo - (time.monotonic() - t0)))
     except KeyboardInterrupt:
         print('Encerrado pelo usuario.', flush=True)

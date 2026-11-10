@@ -83,6 +83,25 @@ def read_raise_panel(crop, *, _ocr=None):
     return result
 
 
+def target_multiplier(advice, table_state):
+    """Multiplicador-alvo do aumento (× a aposta a bater), ou None p/ abster.
+
+    O preset multiplica a APOSTA A BATER: sem open = BB (1,0); com open = a maior
+    aposta na mesa. target = size_bb / aposta-a-bater. O sizing.py dá `size_bb`
+    absoluto. Aproximação segura: a aposta a bater = maior `bet_bb` lido (ou 1,0).
+    """
+    sz = (advice or {}).get('sizing') or {}
+    size_bb = sz.get('size_bb')
+    if not isinstance(size_bb, (int, float)) or size_bb <= 0:
+        return None
+    bets = [b.get('bet_bb') for b in ((table_state or {}).get('bets') or [])
+            if isinstance(b.get('bet_bb'), (int, float)) and b.get('bet_bb') > 0]
+    to_beat = max(bets) if bets else 1.0
+    if to_beat <= 0:
+        return None
+    return round(size_bb / to_beat, 2)
+
+
 def map_multiplier_to_preset(target_mult, presets):
     """Preset com multiplicador mais próximo do alvo (entre os que leram). None
     se nenhum preset legível. Empate -> o menor (mais conservador)."""
