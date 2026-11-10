@@ -60,6 +60,16 @@ class TrackerTests(unittest.TestCase):
         self.assertEqual(e['event'], 'suspect_id')
         self.assertEqual(e['hand_number'], 101)  # kept the real hand
 
+    def test_implausible_jump_is_suspect_not_poisoning(self):
+        # Achado ao vivo 09/11: um trecho do timestamp lido como nº da mao (ex.
+        # 9133624) NAO pode virar nova mao e travar o rastreamento em suspect.
+        t = HandTracker()
+        t.observe('A', 596)
+        e = t.observe('A', 9133624)
+        self.assertEqual(e['event'], 'suspect_id')
+        self.assertEqual(e['hand_number'], 596)                 # manteve a mao real
+        self.assertEqual(t.observe('A', 597)['event'], 'new_hand')  # segue normal
+
     def test_first_frame_without_id_is_new_table(self):
         self.assertEqual(HandTracker().observe('A', None)['event'], 'new_table')
 

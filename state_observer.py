@@ -15,9 +15,26 @@ troca de `table_ref` na mesma tela é sinalizada (possível troca de mesa/tornei
 não clica.
 """
 from table_reading.hand_tracking import HandTracker
-from table_reading.hand_reconcile import HandReconciler, street_from_board
+from table_reading.hand_reconcile import HandReconciler, street_from_board, STREETS
 
 _ABSTAIN = ('abstain', None)
+
+
+def _board_cards(board):
+    """Cartas confirmadas do board, tratando o formato dict (de advise_table) ou
+    lista. Vazio quando não confirmado — nunca conta chaves do dict como cartas."""
+    if isinstance(board, dict):
+        return board.get('cards') or []
+    return list(board) if board else []
+
+
+def _board_street(board):
+    """Street HONESTA: o dict do leitor traz sua própria `street` (None quando não
+    confirma) — não inventar 'river' a partir de len(dict). Lista → pela contagem."""
+    if isinstance(board, dict):
+        s = board.get('street')
+        return s if s in STREETS else None
+    return street_from_board(len(board or []))
 
 
 def _confirmed(value, confidence):
@@ -95,9 +112,9 @@ class StateObserver:
         hero = result.get('hero_cards')
         f.append(_field('hero_cards', hero if hero and all(hero) else None,
                         'high' if hero and all(hero) else 'abstain', 'cards'))
-        board = result.get('board')
-        f.append(_field('board', board or None,
-                        'high' if board else 'abstain', 'cards'))
+        cards = _board_cards(result.get('board'))
+        f.append(_field('board', cards or None,
+                        'high' if cards else 'abstain', 'cards'))
         for key, sub in (('pot', 'pot_bb'), ('to_call', 'to_call_bb')):
             d = state.get(key) or {}
             f.append(_field(key, d.get(sub), d.get('confidence'), d.get('source')))
@@ -119,7 +136,6 @@ class StateObserver:
 
     # ---- snapshot para a reconciliação (só campos legíveis) -------------
     def _snapshot(self, result, state):
-        board = result.get('board') or []
         seats = state.get('seats') or {}
         # Apenas stacks LEGÍVEIS entram; assento ocluído fica de fora (não chuta).
         stacks = {n: s.get('stack_bb') for n, s in seats.items()
@@ -127,7 +143,7 @@ class StateObserver:
         vals = [b.get('bet_bb') for b in (state.get('bets') or [])
                 if isinstance(b.get('bet_bb'), (int, float))]
         return dict(pot_bb=(state.get('pot') or {}).get('pot_bb'),
-                    street=street_from_board(len(board)),
+                    street=_board_street(result.get('board')),   # None quando não confirma
                     stacks=stacks,
                     bets_bb=(round(sum(vals), 2) if vals else None))
 

@@ -22,7 +22,9 @@ from .ocr_runtime import image_to_string
 
 # Full id, and a fallback for the hand number (7-ish digits) before the final seat digit.
 _HAND_ID = re.compile(r'(\d{6,})-(\d{4,})-(\d{3,8})-(\d+)')
-_HAND_NUM = re.compile(r'(\d{5,8})-(\d)(?!\d)')
+# O nº da mão é o penúltimo segmento (antes do assento). Ancorar no par
+# nº-assento e pegar o da DIREITA evita capturar um trecho do timestamp/tableref.
+_HAND_NUM = re.compile(r'(\d{3,7})-(\d{1,2})(?!\d)')
 
 
 def read_hand_id(crop):
@@ -44,9 +46,9 @@ def read_hand_id(crop):
         if full:
             return dict(hand_id=full.group(0), table_ref='%s-%s' % (full.group(1), full.group(2)),
                         hand_number=int(full.group(3)), confidence='high', raw=raw)
-        partial = _HAND_NUM.search(compact)
-        if partial and partial_hit is None:
-            partial_hit = (int(partial.group(1)), raw)
+        matches = _HAND_NUM.findall(compact)
+        if matches and partial_hit is None:
+            partial_hit = (int(matches[-1][0]), raw)   # o par mais à direita = nº-assento
     if partial_hit:
         return dict(hand_id=None, table_ref=None, hand_number=partial_hit[0],
                     confidence='medium', raw=partial_hit[1])
@@ -56,8 +58,9 @@ def read_hand_id(crop):
 class HandTracker:
     """Links frames to tables and hands over time. One instance per observer."""
 
-    def __init__(self, max_history=50):
+    def __init__(self, max_history=50, max_jump=100000):
         self._max_history = max_history
+        self._max_jump = max_jump   # salto p/ frente implausível = misread (nº ~+1/mão)
         self.tables = {}
 
     def _state(self, table_id):
@@ -82,6 +85,11 @@ class HandTracker:
 
         if state['hand_number'] is not None and hand_number < state['hand_number']:
             return self._event('suspect_id', table_id, state, reported=hand_number)  # ids only grow
+        if (state['hand_number'] is not None
+                and hand_number > state['hand_number'] + self._max_jump):
+            # Salto absurdo p/ frente (ex.: trecho do timestamp lido como nº da mão)
+            # = misread; NÃO adotar como nova mão, senão envenena o rastreamento.
+            return self._event('suspect_id', table_id, state, reported=hand_number)
 
         if state['hand_number'] is None or hand_number != state['hand_number']:
             previous = dict(hand_number=state['hand_number'], frames=state['frames'])

@@ -156,6 +156,26 @@ class CamadaBReconcileTest(unittest.TestCase):
         self.assertEqual(v['reconcile']['street'], 'preflop')   # reconciler novo
         self.assertEqual(v['reconcile']['total_events'], 0)
 
+    def test_board_dict_not_confirmed_is_not_river(self):
+        # Achado ao vivo 09/11: advise_table devolve board como DICT; len(dict)=5
+        # virava 'river' falso. Nao confirmado -> street None, board nao confirmado.
+        obs = StateObserver()
+        board = {'status': 'BOARD_NOT_CONFIRMED', 'street': None, 'cards': [],
+                 'candidates': []}
+        v = obs.observe(_result(board=board), table_key='t')
+        self.assertIsNone(v['reconcile']['street'])
+        bf = next(f for f in v['fields'] if f['name'] == 'board')
+        self.assertFalse(bf['confirmed'])
+
+    def test_board_dict_confirmed_sets_street(self):
+        obs = StateObserver()
+        board = {'status': 'BOARD_CONFIRMED', 'street': 'flop',
+                 'cards': ['Ah', 'Kd', '2c']}
+        v = obs.observe(_result(board=board), table_key='t')
+        self.assertEqual(v['reconcile']['street'], 'flop')
+        bf = next(f for f in v['fields'] if f['name'] == 'board')
+        self.assertTrue(bf['confirmed'])
+
     def test_suspect_id_not_reconciled(self):
         obs = StateObserver()
         obs.observe(_result(hand_number=5, pot=5.0), table_key='t')
