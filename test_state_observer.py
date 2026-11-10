@@ -178,10 +178,11 @@ class CamadaBReconcileTest(unittest.TestCase):
 
     def test_board_dict_confirmed_sets_street(self):
         obs = StateObserver()
-        board = {'status': 'BOARD_CONFIRMED', 'street': 'flop',
-                 'cards': ['Ah', 'Kd', '2c']}
+        # O reader real usa MAIÚSCULA (FLOP/TURN/RIVER); o observador normaliza.
+        board = {'status': 'EXPERIMENTAL_BOARD', 'street': 'RIVER',
+                 'cards': ['7d', 'Jh', '9d', 'As', 'Jd']}
         v = obs.observe(_result(board=board), table_key='t')
-        self.assertEqual(v['reconcile']['street'], 'flop')
+        self.assertEqual(v['reconcile']['street'], 'river')
         bf = next(f for f in v['fields'] if f['name'] == 'board')
         self.assertTrue(bf['confirmed'])
 

@@ -21,7 +21,8 @@ def read_board(table, *, _rank=read_rank, _suit=read_suit, hero_cards=()):
     # Red/green/cyan solid card faces, or dark neutral spade faces.
     colored=(sat>110)&(val>90)&((hue<12)|((hue>35)&(hue<109))|(hue>170))
     neutral=(sat<45)&(val>35)&(val<150)
-    mask=np.uint8(colored|neutral)*255
+    white=(sat<60)&(val>=150)   # faces BRANCAS de carta (ex. board do skin Karekas)
+    mask=np.uint8(colored|neutral|white)*255
     contours,_=cv2.findContours(mask,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
     boxes=[]
     fragments=[]

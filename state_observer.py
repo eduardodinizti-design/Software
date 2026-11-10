@@ -38,6 +38,7 @@ def _board_street(board):
     """
     if isinstance(board, dict):
         s = board.get('street')
+        s = s.lower() if isinstance(s, str) else s   # reader usa FLOP/TURN/RIVER
         if s in STREETS:
             return s
         return 'preflop' if not board.get('candidates') else None
