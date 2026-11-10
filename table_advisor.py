@@ -40,15 +40,20 @@ def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table
     pisca; o estabilizador trava o dealer (debounce) e usa ocupação por maioria.
     `table_key` identifica a mesa p/ o estado por-mesa do estabilizador."""
     state = read_table_state(crop)
+    hand = read_hand_id(crop)
     if stabilizer is not None:
         occ = [s for s, d in (state.get('seats') or {}).items() if d.get('occupied')]
-        sdealer, spos = stabilizer.update(table_key=table_key,
+        hkey = (hand or {}).get('hand_id') or (hand or {}).get('hand_number')
+        sdealer, spos = stabilizer.update(table_key=table_key, hand_key=hkey,
                                           dealer_seat=state['dealer'].get('seat'),
                                           occupied_seats=occ)
-        if spos:
-            state = dict(state, positions=spos,
-                         dealer=dict(state['dealer'], seat=sdealer, stabilized=True))
-    hand = read_hand_id(crop)
+        # As posições do estabilizador são AUTORITATIVAS: {} (pendente/sem dealer)
+        # força abstenção em vez de cair na leitura crua que oscila. Mantém o dealer
+        # original quando o estável é None (não enfraquece o is_table).
+        new_dealer = dict(state['dealer'], stabilized=True)
+        if sdealer is not None:
+            new_dealer['seat'] = sdealer
+        state = dict(state, positions=spos, dealer=new_dealer)
     hero = read_hero_cards(crop)
     board = read_board(crop, hero_cards=hero or [None, None])
     tourney = read_tournament(crop)

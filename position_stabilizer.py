@@ -29,6 +29,7 @@ class _TableState:
         self.occ = deque(maxlen=window)      # conjuntos de ocupados recentes
         self.pending = None                  # candidato a novo dealer
         self.pending_n = 0
+        self.hand = None                     # identidade da mão do epoch atual
 
 
 class PositionStabilizer:
@@ -43,41 +44,65 @@ class PositionStabilizer:
             st = self._tables[key] = _TableState(self.window)
         return st
 
-    def update(self, *, table_key, dealer_seat, occupied_seats):
+    def update(self, *, table_key, dealer_seat, occupied_seats, hand_key=None):
         """Processa um frame e devolve (dealer_estavel, posicoes_estaveis).
 
-        dealer_seat: assento do dealer lido (ou None se o botão não foi achado).
-        occupied_seats: iterável de assentos ocupados lidos neste frame. Devolve
-        posicoes {} enquanto não houver dealer travado (igual ao leitor cru).
+        `hand_key` (identidade da mão, quando legível) é o sinal AUTORITATIVO de
+        troca: dentro de uma mesma mão as posições são fixas (blips de dealer são
+        ignorados, segurando o travado); uma MÃO NOVA invalida tudo na hora e adota
+        o observado — nunca herda a posição da mão anterior. Sem `hand_key`, um
+        conflito de dealer não confirmado fica PENDENTE e NÃO emite a posição antiga
+        (devolve {}, o consumidor abstém) até estabilizar (debounce) ou reverter.
+        Devolve {} enquanto não houver dealer travado.
         """
         st = self._table(table_key)
         occ = frozenset(occupied_seats)
+
+        prev_hand = st.hand
+        is_new_hand = (hand_key is not None and prev_hand is not None and hand_key != prev_hand)
+        same_hand = (hand_key is not None and prev_hand is not None and hand_key == prev_hand)
+        if hand_key is not None:
+            st.hand = hand_key
+        if is_new_hand:                                 # mão nova confirmada: invalida já
+            st.locked_dealer = dealer_seat
+            st.occ.clear()
+            st.pending, st.pending_n = None, 0
+
         st.occ.append(occ)
 
-        # 1) trava do dealer com debounce (o botão andar = mão nova, mas só vale
-        #    quando persiste; um frame solto com o botão deslocado é ignorado).
+        pending_conflict = False
         if st.locked_dealer is None:
             if dealer_seat is not None:
                 st.locked_dealer = dealer_seat
                 st.pending, st.pending_n = None, 0
         elif dealer_seat is not None and dealer_seat != st.locked_dealer:
-            if dealer_seat == st.pending:
-                st.pending_n += 1
-            else:
-                st.pending, st.pending_n = dealer_seat, 1
-            if st.pending_n >= self.debounce:
-                st.locked_dealer = dealer_seat          # epoch novo (mão nova)
-                st.occ.clear()
-                st.occ.append(occ)
+            # Conflito de dealer. Dentro da MESMA mão (confirmada) é misread -> ignora
+            # e segura o travado. Senão, debounce; enquanto não confirma, fica pendente.
+            if same_hand:
                 st.pending, st.pending_n = None, 0
+            else:
+                if dealer_seat == st.pending:
+                    st.pending_n += 1
+                else:
+                    st.pending, st.pending_n = dealer_seat, 1
+                if st.pending_n >= self.debounce:
+                    st.locked_dealer = dealer_seat      # epoch novo
+                    st.occ.clear()
+                    st.occ.append(occ)
+                    st.pending, st.pending_n = None, 0
+                else:
+                    pending_conflict = True
         else:
             st.pending, st.pending_n = None, 0          # bateu com o travado (ou None)
 
         if st.locked_dealer is None:
             return None, {}
+        # Conflito não resolvido e sem confirmação de mão: não emitir a posição antiga.
+        if pending_conflict:
+            return st.locked_dealer, {}
 
-        # 2) ocupação por maioria na janela (um assento conta se aparece ocupado
-        #    em pelo menos metade dos frames recentes); o dealer sempre entra.
+        # Ocupação por maioria na janela (assento conta se ocupado em >= metade dos
+        # frames recentes); o dealer sempre entra.
         counts = Counter()
         for o in st.occ:
             counts.update(o)
