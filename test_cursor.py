@@ -95,12 +95,13 @@ class TrajectoryTest(unittest.TestCase):
 # ---------- adaptador de entrada --------------------------------------------
 class FakeBackend:
     def __init__(self, bounds=(-1280, 0, 3840, 1440), pos=(100, 100),
-                 accept=None, raise_on=None):
+                 accept=None, raise_on=None, up_accept=None):
         self._bounds = bounds
         self._pos = pos
         self.sent = []          # lista de (flags_list, abs_xy)
         self._accept = accept   # dict flag->count, ou None => len
         self._raise_on = raise_on
+        self._up_accept = up_accept   # força o nº aceito do mouse-up (p/ teste)
 
     def virtual_bounds(self):
         return self._bounds
@@ -112,6 +113,8 @@ class FakeBackend:
         if self._raise_on is not None and self._raise_on in flags_list:
             raise RuntimeError('falha de envio simulada')
         self.sent.append((tuple(flags_list), abs_xy))
+        if self._up_accept is not None and MOUSEEVENTF_LEFTUP in flags_list:
+            return self._up_accept
         return len(flags_list)
 
 
@@ -139,6 +142,16 @@ class InputAdapterTest(unittest.TestCase):
         self.assertIn(MOUSEEVENTF_LEFTDOWN, flags_seq)
         self.assertEqual(flags_seq[-1], MOUSEEVENTF_LEFTUP)   # up por último
         self.assertTrue(r['released'])
+
+    def test_release_unconfirmed_when_up_rejected(self):
+        # Caso reproduzido: mouse-up RECUSADO pela API (up_accepted=0) -> a soltura
+        # NÃO deve ser dada como confirmada (botão poderia ficar preso).
+        be = FakeBackend(up_accept=0)
+        inp = WindowsCursorInput(_backend=be, sleep=lambda s: None)
+        r = inp.click_once(0, 0)
+        self.assertEqual(r['up_accepted'], 0)
+        self.assertFalse(r['released'])          # não confirma soltura
+        self.assertIn(MOUSEEVENTF_LEFTUP, [f[0][0] for f in be.sent])  # mas tentou soltar
 
     def test_click_release_guaranteed_on_error(self):
         # Se o hold (sleep) lançar, o up ainda é enviado (finally).
@@ -285,6 +298,42 @@ class ControllerTest(unittest.TestCase):
         out = c.execute(_intent())
         self.assertEqual(out['state'], 'UNKNOWN_RESULT')
         self.assertIn('RELEASE_UNCONFIRMED', out['reasons'])
+
+    def test_concurrent_same_intent_clicks_once(self):
+        # Caso reproduzido: duas THREADS executando a MESMA intenção. O check de
+        # consumo pré-lock não basta (ambas passam antes de qualquer consumo); o
+        # check autoritativo DENTRO do lock garante um único clique.
+        import threading
+        import time as _t
+        inp = FakeInput()
+        c = CursorController(input_adapter=inp, validator=_ok,
+                             verifier=lambda i, n: dict(confirmed=True),
+                             clock=_t.monotonic, sleep=lambda s: None,
+                             trajectory=TrajectoryGenerator(clock=_t.monotonic),
+                             step_s=0.0)
+        it = _intent(iid='race')
+        out = []
+        threads = [threading.Thread(target=lambda: out.append(c.execute(it)['state']))
+                   for _ in range(2)]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
+        self.assertEqual(inp.clicks, 1)            # clique ÚNICO sob corrida
+        self.assertEqual(sorted(out), ['CANCELLED', 'DONE'])
+
+    def test_identity_change_on_arrival_no_click(self):
+        # Caso reproduzido: a mesa/janela troca durante a trajetória; o botão
+        # aparece na MESMA coordenada, mas a identidade mudou -> não clica.
+        inp = FakeInput()
+        seq = [dict(ok=True, target_rect=(100, 100, 80, 40), identity='tbl#1'),
+               dict(ok=True, target_rect=(100, 100, 80, 40), identity='tbl#2')]
+        it = iter(seq)
+        c = _ctrl(inp, lambda i, n: next(it))
+        out = c.execute(_intent())                 # source_key='tbl#1'
+        self.assertEqual(out['state'], 'CANCELLED')
+        self.assertIn('IDENTITY_CHANGED_ON_ARRIVAL', out['reasons'])
+        self.assertEqual(inp.clicks, 0)
 
     def test_serialization_busy_lock_no_click(self):
         inp = FakeInput()

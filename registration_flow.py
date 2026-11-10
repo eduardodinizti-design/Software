@@ -224,9 +224,13 @@ class RegistrationRound:
             identity=self.identity, cost=cost, currency=self.currency,
             name=d.get('name'), club=d.get('club'), modality=d.get('modality'),
             start_time=d.get('start_time'), round_id=self.round_id,
-            operator=self.operator)
+            operator=self.operator,
+            max_active=getattr(self.config, 'max_simultaneous', 1))
         if not res['ok']:
-            return self._block([res['reason']])
+            # Limite atômico do ledger (corrida) usa o mesmo motivo do pré-check.
+            reason = ('MAX_SIMULTANEOUS_REACHED' if res['reason'] == 'CAPACITY_FULL'
+                      else res['reason'])
+            return self._block([reason])
         self.token = res['token']
         self.flow_state = 'RESERVED'
         self.reserve_snapshot = self._offer_snapshot(d, cost)

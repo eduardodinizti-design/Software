@@ -145,12 +145,15 @@ class RegistrationLedger:
     # ---- escrita ---------------------------------------------------------
     def reserve(self, *, identity, cost, currency, name=None, club=None,
                 modality=None, start_time=None, round_id=None, operator=None,
-                token=None):
+                token=None, max_active=None):
         """Reserva custo+vaga atomicamente. Retorna um dict com `ok`.
 
         ok=False + reason='ALREADY_RESERVED' quando já existe compromisso ativo
-        para a identidade (dedup). Levanta LedgerError se identidade/custo/moeda
-        faltarem (ausência nunca vira zero).
+        para a identidade (dedup). `max_active` (opcional) impõe o LIMITE DE VAGAS
+        DENTRO da transação (BEGIN IMMEDIATE serializa escritores), então duas
+        corridas não ultrapassam o limite — ok=False + reason='CAPACITY_FULL'
+        quando já há max_active compromissos ativos. Levanta LedgerError se
+        identidade/custo/moeda faltarem (ausência nunca vira zero).
         """
         if not identity:
             raise LedgerError('IDENTITY_NOT_VERIFIABLE')
@@ -171,6 +174,14 @@ class RegistrationLedger:
                 self.db.execute('ROLLBACK')
                 return dict(ok=False, reason='ALREADY_RESERVED',
                             token=row[0], state=row[1])
+            if max_active is not None:
+                # Limite de vagas ATÔMICO: conta ativos na MESMA transação.
+                active = self.db.execute(
+                    'SELECT COUNT(*) FROM reservations WHERE state IN (%s)'
+                    % _ACTIVE_SQL, ACTIVE_STATES).fetchone()[0]
+                if active >= max_active:
+                    self.db.execute('ROLLBACK')
+                    return dict(ok=False, reason='CAPACITY_FULL', active=active)
             now_w, now_m = self._wall(), self._clock()
             self.db.execute(
                 'INSERT INTO reservations(token,identity,name,club,modality,cost,'

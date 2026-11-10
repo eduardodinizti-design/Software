@@ -124,6 +124,10 @@ class CursorController:
                 return term('CANCELLED', ['INTENT_EXPIRED'])
             if not self._armed():
                 return term('CANCELLED', ['BOT_NOT_RUNNING'])
+            # Anti-duplo AUTORITATIVO sob o lock: o check pré-lock é só fast-path;
+            # duas threads poderiam passar por ele antes de qualquer consumo.
+            if intent.id in self._consumed:
+                return term('CANCELLED', ['INTENT_ALREADY_CONSUMED'])
 
             # VALIDATING (inicial)
             v = self._validate_fn(intent, self._clock())
@@ -143,6 +147,9 @@ class CursorController:
                 reasons = ['ARRIVAL_REVALIDATION_FAILED', *r.get('reasons', [])]
             elif r.get('target_rect') and r['target_rect'] != target:
                 reasons = ['TARGET_MOVED_ON_ARRIVAL']
+            elif r.get('identity') is not None and r['identity'] != intent.source_key:
+                # Mesa/mão/janela trocou — mesmo se o botão estiver na mesma coord.
+                reasons = ['IDENTITY_CHANGED_ON_ARRIVAL']
             if self._expired(intent):
                 reasons.append('INTENT_EXPIRED')
             if not self._armed():

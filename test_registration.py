@@ -114,6 +114,24 @@ class LedgerTest(unittest.TestCase):
         finally:
             os.remove(path)
 
+    def test_capacity_limit_atomic_across_connections(self):  # reserva concorrente
+        # Caso reproduzido: o limite de vagas precisa ser ATÔMICO. Duas conexões
+        # (processos) ao mesmo .db não podem ultrapassar max_active numa corrida.
+        fd, path = tempfile.mkstemp(suffix='.db')
+        os.close(fd)
+        try:
+            l1, l2 = RegistrationLedger(path), RegistrationLedger(path)
+            r1 = l1.reserve(identity='A', cost=10, currency='BRL', token='t1', max_active=2)
+            r2 = l2.reserve(identity='B', cost=10, currency='BRL', token='t2', max_active=2)
+            r3 = l1.reserve(identity='C', cost=10, currency='BRL', token='t3', max_active=2)
+            self.assertTrue(r1['ok'] and r2['ok'])
+            self.assertFalse(r3['ok'])                 # a 3ª estoura o limite
+            self.assertEqual(r3['reason'], 'CAPACITY_FULL')
+            self.assertEqual(l1.active_count(), 2)     # limite respeitado
+            l1.close(); l2.close()
+        finally:
+            os.remove(path)
+
     def test_persists_across_restart(self):  # cenário 15
         fd, path = tempfile.mkstemp(suffix='.db')
         os.close(fd)

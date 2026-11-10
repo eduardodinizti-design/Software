@@ -139,6 +139,8 @@ class WindowsCursorInput:
                 self._sleep(hold)
         finally:
             if down_sent:
+                # Soltura só é CONFIRMADA se o sistema aceitou o mouse-up; aceitar
+                # ≠ garantir, mas up_accepted=0 significa botão possivelmente preso.
                 report['up_accepted'] = self.backend.send([MOUSEEVENTF_LEFTUP])
-                report['released'] = True
+                report['released'] = report['up_accepted'] >= 1
         return report
