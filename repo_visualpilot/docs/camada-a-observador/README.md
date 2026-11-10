@@ -56,9 +56,22 @@ MESA karekas#1 ref=261108184808-14146017 | MAO #1802 [new_hand] frame 1
 mão, ID regredido = suspeito, troca de `table_ref`, campos confirmados, ausência
 não inventada (to_call/stacks pendentes), abstenção, multi-mesa independente.
 
-## O que fica para a Camada B
+## Camada B — reconciliação de ações ao longo da mão (ENTREGUE)
 
-Reconciliação de **ações entre frames** (stacks/pote/apostas ao longo da mão):
-a amostragem periódica PERDE ações intermediárias → marcar PENDENTE, nunca
-inventar. A espinha (identidade de mesa/mão + proveniência + saída integrada) é
-o que a Camada A entrega.
+Liga o `HandReconciler` ao observador: um reconciliador por MÃO (mão nova =
+reconciliador novo; frame com ID regredido não entra). Por transição de frame da
+MESMA mão, reporta só o que os números PROVAM, nunca a sequência exata:
+
+- `street_advanced` (board cresceu: preflop→flop→turn→river) — em `changed`.
+- `seat_committed` (stack caiu N bb; magnitude confiável, ação exata desconhecida)
+  — em `changed`.
+- `pot_increased` / `pot_regressed` (queda do pote = possível fronteira de mão
+  perdida → PENDENTE).
+- `reconciliation` reconciled|**gap**: se o que saiu dos stacks casa com o
+  crescimento de pote+apostas. **gap** = ações entre frames que a amostragem
+  perdeu → **PENDENTE, nunca inventado**.
+
+Snapshot usa só campos LEGÍVEIS (stack ocluído fica de fora; não chuta). A
+`StateView` ganha `reconcile` (street + eventos do passo + total). 6 testes
+(street, commit reconciliado, gap sinalizado, pote regredido, reset por mão nova,
+frame suspeito ignorado).

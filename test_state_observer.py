@@ -6,7 +6,7 @@ from state_observer import StateObserver, render
 
 def _result(hand_number=1771, table_ref='T1', hero=('8s', '3c'), pot=4.5,
             to_call=None, dealer='left_up', hero_pos='BB', seats=None,
-            advice=None, is_table=True):
+            advice=None, is_table=True, board=None, bets=None):
     hid = ('261108-14146017-%07d-11' % hand_number) if hand_number else None
     state = dict(
         pot=dict(pot_bb=pot, confidence='medium', source='ocr'),
@@ -16,12 +16,13 @@ def _result(hand_number=1771, table_ref='T1', hero=('8s', '3c'), pot=4.5,
         dealer=dict(seat=dealer, confidence='high', source='template'),
         positions=({'hero': hero_pos} if hero_pos else {}),
         seats=(seats if seats is not None else {'hero': dict(occupied=True, stack_bb=35.5)}),
+        bets=(bets or []),
     )
     return dict(is_table=is_table,
                 hand=dict(hand_number=hand_number, hand_id=hid, table_ref=table_ref),
-                hero_cards=list(hero) if hero else None, board=[], table_state=state,
-                context=dict(mode='chip_ev', stage='mid'), tournament={},
-                advice=(advice or dict(status='ADVICE', recommended='RAISE', reason='')))
+                hero_cards=list(hero) if hero else None, board=(board or []),
+                table_state=state, context=dict(mode='chip_ev', stage='mid'),
+                tournament={}, advice=(advice or dict(status='ADVICE', recommended='RAISE', reason='')))
 
 
 class StateObserverTest(unittest.TestCase):
@@ -109,6 +110,58 @@ class StateObserverTest(unittest.TestCase):
         va = obs.observe(_result(hand_number=11, table_ref='A'), table_key='a')
         self.assertEqual(va['hand']['event'], 'new_hand')   # 'a' independente de 'b'
         self.assertEqual(va['hand']['number'], 11)
+
+
+class CamadaBReconcileTest(unittest.TestCase):
+    """Reconciliação de ações ao longo da mão (deltas provados; gap sinalizado)."""
+
+    def test_street_advanced(self):
+        obs = StateObserver()
+        obs.observe(_result(hand_number=5, board=[], pot=1.5), table_key='t')
+        v = obs.observe(_result(hand_number=5, board=['Ah', 'Kd', '2c'], pot=3.0),
+                        table_key='t')
+        self.assertEqual(v['reconcile']['street'], 'flop')
+        self.assertTrue(any('STREET: preflop->flop' in c for c in v['changed']))
+
+    def test_seat_committed_reconciles(self):
+        obs = StateObserver()
+        obs.observe(_result(hand_number=5, seats={'hero': dict(occupied=True, stack_bb=40)}, pot=1.0),
+                    table_key='t')
+        v = obs.observe(_result(hand_number=5, seats={'hero': dict(occupied=True, stack_bb=35)}, pot=6.0),
+                        table_key='t')
+        self.assertTrue(any('hero comprometeu 5' in c for c in v['changed']))
+        # committed 5 == pot delta 5 -> reconciliado, sem gap
+        self.assertFalse(any('RECONCILIACAO_GAP' in p for p in v['pending']))
+
+    def test_gap_flagged_not_invented(self):
+        obs = StateObserver()
+        obs.observe(_result(hand_number=5, seats={'hero': dict(occupied=True, stack_bb=40)}, pot=1.0),
+                    table_key='t')
+        v = obs.observe(_result(hand_number=5, seats={'hero': dict(occupied=True, stack_bb=30)}, pot=3.0),
+                        table_key='t')
+        # saiu 10 do stack, pote so subiu 2 -> gap (ações entre frames)
+        self.assertTrue(any('RECONCILIACAO_GAP' in p for p in v['pending']))
+
+    def test_pot_regressed_flags_missed_boundary(self):
+        obs = StateObserver()
+        obs.observe(_result(hand_number=5, pot=10.0), table_key='t')
+        v = obs.observe(_result(hand_number=5, pot=2.0), table_key='t')
+        self.assertTrue(any('POTE_REGREDIU' in p for p in v['pending']))
+
+    def test_reconciler_resets_on_new_hand(self):
+        obs = StateObserver()
+        obs.observe(_result(hand_number=5, board=['Ah', 'Kd', '2c']), table_key='t')
+        v = obs.observe(_result(hand_number=6, board=[]), table_key='t')
+        self.assertEqual(v['hand']['event'], 'new_hand')
+        self.assertEqual(v['reconcile']['street'], 'preflop')   # reconciler novo
+        self.assertEqual(v['reconcile']['total_events'], 0)
+
+    def test_suspect_id_not_reconciled(self):
+        obs = StateObserver()
+        obs.observe(_result(hand_number=5, pot=5.0), table_key='t')
+        v = obs.observe(_result(hand_number=4, pot=99.0), table_key='t')  # id regride
+        self.assertEqual(v['hand']['event'], 'suspect_id')
+        self.assertEqual(v['reconcile']['step'], [])             # frame suspeito ignorado
 
 
 if __name__ == '__main__':

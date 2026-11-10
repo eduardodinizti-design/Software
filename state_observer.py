@@ -15,6 +15,7 @@ troca de `table_ref` na mesma tela é sinalizada (possível troca de mesa/tornei
 não clica.
 """
 from table_reading.hand_tracking import HandTracker
+from table_reading.hand_reconcile import HandReconciler, street_from_board
 
 _ABSTAIN = ('abstain', None)
 
@@ -35,6 +36,7 @@ class StateObserver:
         self.tracker = HandTracker()
         self._prev = {}          # table_key -> visão anterior
         self._last_ref = {}      # table_key -> ultimo table_ref visto
+        self._recon = {}         # table_key -> HandReconciler da mão atual (Camada B)
 
     def observe(self, result, *, table_key):
         """`result` = saída de advise_table. `table_key` = identidade ESTÁVEL da
@@ -53,8 +55,20 @@ class StateObserver:
             observation=result)
         cur = self.tracker.current(table_key) or {}
 
+        # Camada B: reconciliação de ações ao longo da MÃO. Mão nova = reconciler
+        # novo; frame suspeito (id regredido) não entra. Nunca reconstrói a
+        # sequência exata — só o que os números provam, e marca GAP quando não
+        # fecham (ações entre frames que a amostragem perdeu).
+        ev = event['event']
+        if ev in ('new_table', 'new_hand') or table_key not in self._recon:
+            self._recon[table_key] = HandReconciler()
+        recon = self._recon[table_key]
+        step = recon.add(self._snapshot(result, state)) if ev != 'suspect_id' else []
+        reconcile = dict(street=recon.street(), step=step,
+                         total_events=len(recon.events))
+
         fields = self._fields(result, state)
-        pending = self._pending(event, result, state, fields, table_key, ref)
+        pending = self._pending(event, result, state, fields, table_key, ref, step)
         view = dict(
             is_table=True,
             table=dict(key=table_key, ref=ref,
@@ -65,6 +79,7 @@ class StateObserver:
             fields=fields,
             context=dict(context=result.get('context'),
                          tournament=result.get('tournament')),
+            reconcile=reconcile,
             advice=result.get('advice', {}),
             pending=pending,
         )
@@ -102,8 +117,22 @@ class StateObserver:
                       pending_seats=none_stacks))
         return f
 
+    # ---- snapshot para a reconciliação (só campos legíveis) -------------
+    def _snapshot(self, result, state):
+        board = result.get('board') or []
+        seats = state.get('seats') or {}
+        # Apenas stacks LEGÍVEIS entram; assento ocluído fica de fora (não chuta).
+        stacks = {n: s.get('stack_bb') for n, s in seats.items()
+                  if s.get('occupied') and s.get('stack_bb') is not None}
+        vals = [b.get('bet_bb') for b in (state.get('bets') or [])
+                if isinstance(b.get('bet_bb'), (int, float))]
+        return dict(pot_bb=(state.get('pot') or {}).get('pot_bb'),
+                    street=street_from_board(len(board)),
+                    stacks=stacks,
+                    bets_bb=(round(sum(vals), 2) if vals else None))
+
     # ---- por que pendente (ausência NUNCA inventada) --------------------
-    def _pending(self, event, result, state, fields, table_key, ref):
+    def _pending(self, event, result, state, fields, table_key, ref, step=()):
         pending = []
         ev = event['event']
         if ev == 'pending_id':
@@ -122,6 +151,15 @@ class StateObserver:
                 pending.append('%s_PENDENTE' % fld['name'].upper())
             if fld['name'] == 'stacks' and fld.get('pending_seats'):
                 pending.append('STACKS_PENDENTES: %s' % ','.join(fld['pending_seats']))
+        # Reconciliação (Camada B): gap = ações entre frames não explicadas pelos
+        # números; pote regredido = possível fronteira de mão perdida.
+        for e in step:
+            if e.get('event') == 'reconciliation' and e.get('status') == 'gap':
+                pending.append('RECONCILIACAO_GAP: acoes entre frames nao explicadas '
+                               '(saiu %s vs esperado %s)' % (e['committed'], e['expected']))
+            elif e.get('event') == 'pot_regressed':
+                pending.append('POTE_REGREDIU %s: possivel fronteira de mao perdida'
+                               % e['delta'])
         return pending
 
     # ---- o que mudou vs o frame anterior --------------------------------
@@ -141,6 +179,12 @@ class StateObserver:
         na = (view.get('advice') or {}).get('recommended')
         if pa != na:
             changed.append('CONSELHO: %r -> %r' % (pa, na))
+        # Eventos da reconciliação (provados pelos números): street e commits.
+        for e in (view.get('reconcile') or {}).get('step', ()):
+            if e.get('event') == 'street_advanced':
+                changed.append('STREET: %s->%s' % (e['from'], e['to']))
+            elif e.get('event') == 'seat_committed':
+                changed.append('%s comprometeu %sbb' % (e['seat'], e['amount']))
         return changed
 
 
@@ -152,6 +196,9 @@ def render(view):
     lines = ['MESA %s%s | MAO #%s [%s] frame %s' % (
         t.get('key'), (' ref=%s' % t['ref']) if t.get('ref') else ' (ref pendente)',
         h.get('number'), h.get('event'), h.get('frame'))]
+    rec = view.get('reconcile') or {}
+    if rec.get('street'):
+        lines[-1] += ' | street %s' % rec['street']
     conf = [f for f in view['fields'] if f['confirmed']]
     lines.append('  confirmados: ' + (', '.join(
         '%s=%s' % (f['name'], f['value']) for f in conf) or '(nenhum)'))
