@@ -29,11 +29,18 @@ def _board_cards(board):
 
 
 def _board_street(board):
-    """Street HONESTA: o dict do leitor traz sua própria `street` (None quando não
-    confirma) — não inventar 'river' a partir de len(dict). Lista → pela contagem."""
+    """Street HONESTA (nunca inventa 'river' de len(dict)):
+    - dict com `street` confirmada → usa.
+    - não confirmada + centro VAZIO (sem candidatos de carta) → 'preflop' (não há
+      board = pré-flop; ex.: all-in pré-flop). Mesma evidência que o advisor usa.
+    - não confirmada + candidatos presentes (board ilegível) → None (pendente).
+    - lista → pela contagem de cartas.
+    """
     if isinstance(board, dict):
         s = board.get('street')
-        return s if s in STREETS else None
+        if s in STREETS:
+            return s
+        return 'preflop' if not board.get('candidates') else None
     return street_from_board(len(board or []))
 
 
@@ -159,6 +166,13 @@ class StateObserver:
         if ref is not None and last_ref is not None and ref != last_ref:
             pending.append('TABLE_REF_MUDOU: possivel troca de mesa/torneio (%s->%s)'
                            % (last_ref, ref))
+        # Board com candidatos de carta mas não confirmado = ilegível (pendente);
+        # centro vazio é pré-flop (não pendente).
+        board = result.get('board')
+        if (isinstance(board, dict) and board.get('street') not in STREETS
+                and board.get('candidates') and not board.get('cards')):
+            pending.append('BOARD_ILEGIVEL: %d candidato(s) de carta nao confirmados'
+                           % len(board['candidates']))
         adv = result.get('advice') or {}
         if adv.get('status') in ('ABSTAIN', 'SKIP'):
             pending.append('CONSELHO_%s: %s' % (adv.get('status'), adv.get('reason')))

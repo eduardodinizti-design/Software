@@ -156,16 +156,25 @@ class CamadaBReconcileTest(unittest.TestCase):
         self.assertEqual(v['reconcile']['street'], 'preflop')   # reconciler novo
         self.assertEqual(v['reconcile']['total_events'], 0)
 
-    def test_board_dict_not_confirmed_is_not_river(self):
-        # Achado ao vivo 09/11: advise_table devolve board como DICT; len(dict)=5
-        # virava 'river' falso. Nao confirmado -> street None, board nao confirmado.
+    def test_board_dict_empty_center_is_preflop(self):
+        # Achado ao vivo 09/11: all-in pré-flop (centro vazio, sem candidatos) ->
+        # street 'preflop', NUNCA 'river' (que era o bug de len(dict)=5).
         obs = StateObserver()
         board = {'status': 'BOARD_NOT_CONFIRMED', 'street': None, 'cards': [],
                  'candidates': []}
         v = obs.observe(_result(board=board), table_key='t')
-        self.assertIsNone(v['reconcile']['street'])
+        self.assertEqual(v['reconcile']['street'], 'preflop')
         bf = next(f for f in v['fields'] if f['name'] == 'board')
         self.assertFalse(bf['confirmed'])
+
+    def test_board_dict_candidates_unreadable_is_pending(self):
+        # Board com candidatos mas não confirmado = ilegível -> street pendente.
+        obs = StateObserver()
+        board = {'status': 'BOARD_NOT_CONFIRMED', 'street': None, 'cards': [],
+                 'candidates': [[151, 505, 84, 124]]}
+        v = obs.observe(_result(board=board), table_key='t')
+        self.assertIsNone(v['reconcile']['street'])
+        self.assertTrue(any('BOARD_ILEGIVEL' in p for p in v['pending']))
 
     def test_board_dict_confirmed_sets_street(self):
         obs = StateObserver()
