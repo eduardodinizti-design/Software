@@ -20,9 +20,11 @@ from table_reading.automatic_table_crops import detect_table_crops
 from table_advisor import advise_table
 from preflop_advisor import PreflopAdvisor
 from state_observer import StateObserver, render
+from action_coordinator import plan_action, describe_plan
 from window_capture_engine import WindowCaptureEngine
 
 DEFAULT_RANGES = r'C:\Meus Projetos\Aplicativos\nvt-ranges-validados.json'
+DEFAULT_DEEP = r'C:\Meus Projetos\Aplicativos\nvt-ranges-deep.json'
 
 
 def main(argv=None):
@@ -30,15 +32,20 @@ def main(argv=None):
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument('--hwnd', type=lambda s: int(s, 0), required=True)
     p.add_argument('--ranges', default=DEFAULT_RANGES)
+    p.add_argument('--deep', default=None, help='Pacote deep 40/100bb (reference)')
     p.add_argument('--frames', type=int, default=30)
     p.add_argument('--intervalo', type=float, default=2.0)
     p.add_argument('--max-tables', type=int, default=6)
     p.add_argument('--out', default=None)
     p.add_argument('--save-crops', action='store_true')
+    p.add_argument('--dry-run-actions', action='store_true',
+                   help='Mostra a ACAO pretendida (botao+coord) por frame, SEM enviar')
     args = p.parse_args(argv)
 
     configure_ocr()
-    advisor = PreflopAdvisor.from_file(args.ranges)
+    deep = args.deep or (DEFAULT_DEEP if os.path.exists(DEFAULT_DEEP) else None)
+    advisor = (PreflopAdvisor.from_files(args.ranges, deep) if deep
+               else PreflopAdvisor.from_file(args.ranges))
     engine = WindowCaptureEngine()
     obs = StateObserver()
     outdir = args.out or os.path.join('logs', 'estado',
@@ -71,6 +78,9 @@ def main(argv=None):
                 idx += 1
                 view = obs.observe(result, table_key=key)
                 print('[%02d] %s' % (i, render(view)), flush=True)
+                if args.dry_run_actions:
+                    plan = plan_action(crop, result.get('advice') or {}, origin=(x, y))
+                    print('       ' + describe_plan(plan), flush=True)
                 log.write(json.dumps(dict(
                     frame=i, key=key, hand=view['hand'], reconcile=view['reconcile'],
                     advice=view.get('advice'), changed=view['changed'],
