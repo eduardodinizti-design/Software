@@ -118,7 +118,7 @@ def describe_plan(result):
 class DryRunInput:
     """Adaptador do cursor em DRY-RUN: registra move/click, NUNCA envia input."""
 
-    def __init__(self, bounds=(0, 0, 100000, 100000), pos=(0, 0)):
+    def __init__(self, bounds=(-100000, -100000, 200000, 200000), pos=(0, 0)):
         self._bounds = bounds
         self.pos = pos
         self.moves = []
