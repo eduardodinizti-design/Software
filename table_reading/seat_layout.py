@@ -22,9 +22,13 @@ SEAT_ANCHORS = {
     'bot_left':  (0.11, 0.765),
 }
 
-# Clockwise table order starting at the hero (the next seat is to the hero's left).
-CLOCKWISE = ['hero', 'bot_right', 'right_low', 'right_up', 'top_right',
-             'top_left', 'left_up', 'left_low', 'bot_left']
+# Ordem HORÁRIA (ordem de ação do poker) começando no hero. O assento seguinte é
+# o SB quando o hero é o BTN. Direção corrigida 09/11 contra ground truth REAL de
+# duas mesas Karekas (fichas de blind + botão "Call 0,5 BB"): o SB é o assento
+# horário IMEDIATAMENTE após o BTN. A ordem anterior estava invertida (dava o CO
+# no lugar do SB) e nunca fora conferida contra a postagem real de blinds.
+CLOCKWISE = ['hero', 'bot_left', 'left_low', 'left_up', 'top_left',
+             'top_right', 'right_up', 'right_low', 'bot_right']
 
 NAMEPLATE_W = 0.22  # fraction of crop width
 NAMEPLATE_H = 0.06  # fraction of crop height

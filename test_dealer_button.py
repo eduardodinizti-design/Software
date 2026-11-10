@@ -34,9 +34,9 @@ class PositionTests(unittest.TestCase):
         occupied = list(seat_layout.CLOCKWISE)
         pos = dealer_button.derive_positions('hero', occupied)
         self.assertEqual(pos['hero'], 'BTN')
-        self.assertEqual(pos['bot_right'], 'SB')   # next clockwise
-        self.assertEqual(pos['right_low'], 'BB')
-        self.assertEqual(pos['bot_left'], 'CO')     # last before the button
+        self.assertEqual(pos['bot_left'], 'SB')    # horário IMEDIATO após o BTN
+        self.assertEqual(pos['left_low'], 'BB')
+        self.assertEqual(pos['bot_right'], 'CO')   # último antes do botão
         self.assertEqual(len(pos), 9)
 
     def test_detected_button_is_added_to_occupancy(self):
@@ -51,7 +51,7 @@ class PositionTests(unittest.TestCase):
 
     def test_short_ring_names_blinds(self):
         pos = dealer_button.derive_positions('hero', ['hero', 'bot_right', 'right_low'])
-        self.assertEqual(pos, {'hero': 'BTN', 'bot_right': 'SB', 'right_low': 'BB'})
+        self.assertEqual(pos, {'hero': 'BTN', 'right_low': 'SB', 'bot_right': 'BB'})
 
 
 if __name__ == '__main__':
