@@ -28,7 +28,7 @@ import threading
 import time
 from dataclasses import dataclass, field
 
-from cursor_trajectory import TrajectoryGenerator, safe_point
+from cursor_trajectory import TrajectoryGenerator, safe_point, within_virtual_desktop
 
 STATES = ('AWAITING_INTENT', 'VALIDATING', 'MOVING', 'REVALIDATING',
           'CLICKING', 'VERIFYING', 'DONE', 'CANCELLED', 'UNKNOWN_RESULT')
@@ -75,7 +75,7 @@ class CursorController:
     def __init__(self, *, trajectory=None, input_adapter, validator,
                  verifier=None, bot_control=None, cancel_check=None,
                  clock=time.monotonic, sleep=time.sleep, step_s=0.012,
-                 lock=None, lock_timeout=2.0):
+                 lock=None, lock_timeout=2.0, arrival_tol=8.0):
         self._traj = trajectory or TrajectoryGenerator(clock=clock)
         self._input = input_adapter
         self._validate_fn = validator          # recaptura+confere (inicial e na chegada)
@@ -87,7 +87,27 @@ class CursorController:
         self._step_s = float(step_s)
         self._lock = lock or _CURSOR_LOCK
         self._lock_timeout = float(lock_timeout)
+        self._arrival_tol = float(arrival_tol)
         self._consumed = set()
+
+    def _invalid_target(self, target):
+        """Motivo se o alvo é inválido (geometria ruim ou fora da tela), senão
+        None. Rejeita antes de mover (§2)."""
+        try:
+            x, y, w, h = target
+        except Exception:                      # noqa: BLE001
+            return 'TARGET_GEOMETRY_INVALID'
+        if not (w > 0 and h > 0):
+            return 'TARGET_GEOMETRY_INVALID'
+        try:
+            bounds = self._input.virtual_bounds()
+        except Exception:                      # noqa: BLE001
+            bounds = None                      # sem bounds, confere só a geometria
+        if bounds is not None:
+            cx, cy = center_of(target)
+            if not within_virtual_desktop((cx, cy), bounds):
+                return 'TARGET_OFF_SCREEN'
+        return None
 
     # ---- gates ----------------------------------------------------------
     def _armed(self):
@@ -134,6 +154,9 @@ class CursorController:
             if not v.get('ok'):
                 return term('CANCELLED', ['INITIAL_VALIDATION_FAILED', *v.get('reasons', [])])
             target = v.get('target_rect') or intent.target_rect
+            bad = self._invalid_target(target)       # §2: rejeita alvo inválido/fora da tela
+            if bad:
+                return term('CANCELLED', [bad])
 
             # MOVING (cancelável)
             cancel = self._move(intent, target)
@@ -157,11 +180,27 @@ class CursorController:
             if reasons:
                 return term('CANCELLED', reasons)
 
+            # Confere a posição REAL do cursor antes do mouse-down (não clicar se
+            # não chegou de fato ao alvo). §2
+            cx, cy = center_of(target)
+            try:
+                ax, ay = self._input.cursor_pos()
+            except Exception:                      # noqa: BLE001
+                return term('CANCELLED', ['CURSOR_POS_UNAVAILABLE'])
+            if abs(ax - cx) > self._arrival_tol or abs(ay - cy) > self._arrival_tol:
+                return term('CANCELLED', ['CURSOR_NOT_AT_TARGET'])
+
             # CLICKING (único) — consome a intenção ANTES de clicar (anti-duplo)
             self._consumed.add(intent.id)
-            cx, cy = center_of(target)
             click = self._input.click_once(cx, cy)
             log.append(dict(state='CLICKING', click=click))
+            # Confere SEPARADAMENTE movimento, mouse-down e mouse-up (§1): se o
+            # Windows rejeitar um evento, não declarar sucesso.
+            moved = click.get('moved') or {}
+            if moved.get('accepted', 1) < 1:
+                return term('UNKNOWN_RESULT', ['MOVE_NOT_ACCEPTED'])
+            if click.get('down_accepted', 1) < 1:
+                return term('UNKNOWN_RESULT', ['DOWN_NOT_ACCEPTED'])
             if not click.get('released'):
                 return term('UNKNOWN_RESULT', ['RELEASE_UNCONFIRMED'])
 
@@ -182,7 +221,8 @@ class CursorController:
         try:
             start = self._input.cursor_pos()
         except Exception:                      # noqa: BLE001
-            start = center_of(target)          # sem leitura, parte do próprio alvo
+            # §1: falha ao ler a posição do cursor CANCELA; não assumir alternativa.
+            return ['CURSOR_POS_UNAVAILABLE']
         end = center_of(target)
         plan = self._traj.plan(start, end)
         commanded = start                       # último ponto que o BOT comandou

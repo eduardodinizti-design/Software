@@ -169,22 +169,35 @@ class InputAdapterTest(unittest.TestCase):
 
 # ---------- coordenador ------------------------------------------------------
 class FakeInput:
-    def __init__(self, pos=(0, 0), released=True):
+    def __init__(self, pos=(0, 0), released=True, down_accept=1, move_accept=1,
+                 track_pos=True, raise_cursor_pos=False):
         self.pos = pos
         self.moves = []
         self.clicks = 0
         self.released = released
+        self.down_accept = down_accept
+        self.move_accept = move_accept
+        self.track_pos = track_pos          # cursor acompanha o move (chega ao alvo)
+        self.raise_cursor_pos = raise_cursor_pos
 
     def cursor_pos(self):
+        if self.raise_cursor_pos:
+            raise RuntimeError('sem leitura do cursor')
         return self.pos
 
     def move_to(self, x, y, bounds=None):
         self.moves.append((x, y))
-        return dict(requested=1, accepted=1)
+        if self.track_pos:
+            self.pos = (x, y)
+        return dict(requested=1, accepted=self.move_accept)
 
-    def click_once(self, x, y, bounds=None, hold_s=None):
+    def click_once(self, x, y=None, bounds=None, hold_s=None):
         self.clicks += 1
-        return dict(released=self.released, down_accepted=1, up_accepted=1)
+        if x is not None and y is not None and self.track_pos:
+            self.pos = (x, y)
+        return dict(released=self.released, down_accepted=self.down_accept,
+                    up_accepted=1 if self.released else 0,
+                    moved=dict(requested=1, accepted=self.move_accept))
 
 
 class Control:
@@ -334,6 +347,50 @@ class ControllerTest(unittest.TestCase):
         self.assertEqual(out['state'], 'CANCELLED')
         self.assertIn('IDENTITY_CHANGED_ON_ARRIVAL', out['reasons'])
         self.assertEqual(inp.clicks, 0)
+
+    def test_cursor_pos_unavailable_cancels_without_assuming(self):
+        # §1d: falha ao ler a posição do cursor -> CANCELA (não assume o alvo).
+        inp = FakeInput(raise_cursor_pos=True)
+        c = _ctrl(inp, _ok, verifier=lambda i, n: dict(confirmed=True))
+        out = c.execute(_intent())
+        self.assertEqual(out['state'], 'CANCELLED')
+        self.assertIn('CURSOR_POS_UNAVAILABLE', out['reasons'])
+        self.assertEqual(inp.clicks, 0)
+
+    def test_invalid_target_geometry_no_click(self):
+        # §2c: alvo com geometria inválida -> sem clique.
+        inp = FakeInput()
+        c = _ctrl(inp, lambda i, n: dict(ok=True, target_rect=(100, 100, 0, 40)))
+        out = c.execute(Intent(id='g', action='click', source_key='t',
+                               target_rect=(100, 100, 0, 40), deadline=1e12))
+        self.assertEqual(out['state'], 'CANCELLED')
+        self.assertIn('TARGET_GEOMETRY_INVALID', out['reasons'])
+        self.assertEqual(inp.clicks, 0)
+
+    def test_cursor_not_at_target_no_click(self):
+        # §2e: se o cursor NÃO chegou ao alvo, não pressiona.
+        inp = FakeInput(pos=(0, 0), track_pos=False)   # move não leva o cursor
+        c = _ctrl(inp, _ok)
+        out = c.execute(_intent())
+        self.assertEqual(out['state'], 'CANCELLED')
+        self.assertIn('CURSOR_NOT_AT_TARGET', out['reasons'])
+        self.assertEqual(inp.clicks, 0)
+
+    def test_down_not_accepted_is_unknown(self):
+        # §1b: mouse-down RECUSADO -> não declarar sucesso (desconhecido).
+        inp = FakeInput(down_accept=0)
+        c = _ctrl(inp, _ok, verifier=lambda i, n: dict(confirmed=True))
+        out = c.execute(_intent())
+        self.assertEqual(out['state'], 'UNKNOWN_RESULT')
+        self.assertIn('DOWN_NOT_ACCEPTED', out['reasons'])
+
+    def test_move_not_accepted_is_unknown(self):
+        # §1b: movimento do clique RECUSADO -> desconhecido.
+        inp = FakeInput(move_accept=0)
+        c = _ctrl(inp, _ok, verifier=lambda i, n: dict(confirmed=True))
+        out = c.execute(_intent())
+        self.assertEqual(out['state'], 'UNKNOWN_RESULT')
+        self.assertIn('MOVE_NOT_ACCEPTED', out['reasons'])
 
     def test_serialization_busy_lock_no_click(self):
         inp = FakeInput()
