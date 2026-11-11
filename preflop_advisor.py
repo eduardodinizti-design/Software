@@ -137,6 +137,18 @@ def infer_live_spot(table_state):
     return dict(spot='vs_open', opener=opener, callers=callers)
 
 
+def _sb_limped(table_state):
+    """O SB completou o limp (~1bb, não um raise)? O nó `vs_limp` do pack modela a
+    batalha de blinds (BB vs limp do SB), então a rota só vale nesse caso."""
+    positions = table_state.get('positions') or {}
+    sb_seat = next((s for s, p in positions.items() if p == 'SB'), None)
+    if sb_seat is None:
+        return False
+    sb_bet = next((b.get('bet_bb') for b in (table_state.get('bets') or [])
+                   if b.get('seat') == sb_seat), None)
+    return isinstance(sb_bet, (int, float)) and 0.9 <= sb_bet <= 1.1
+
+
 # Risk premium (ICM) de referência por fase, com stacks iguais (paráfrase da skill
 # poker-icm-mtt): ~2,2% a 75% do field, 3,5% a 50%, 7,9% a 25%, ~13,5% na bolha;
 # pico também na mesa final. Aproximação por FASE — não é ICM resolvido.
@@ -226,7 +238,7 @@ class PreflopAdvisor:
         Reusa o nó spot='open_raise' (ação 'raise') via `range_from_node`. É o range
         do AGRESSOR pré-flop num pote de UM raise só — NÃO estreitado pela ação
         pós-flop (quem usa sinaliza isso nos caveats). Serve de range do vilão para a
-        equity pós-flop exata. Devolve (combos, node) ou (None, motivo)."""
+        equity pós-flop (estimada por Monte Carlo). Devolve (combos, node) ou (None, motivo)."""
         bucket, why = self.bucket_stack(stack_bb)
         if bucket is None:
             return None, why
@@ -364,16 +376,18 @@ class PreflopAdvisor:
                     result.setdefault('caveats', []).append('MULTIWAY_%d_CALLERS_APPROX_VS_OPEN' % spot['callers'])
         elif spot['spot'] == 'first_in':
             import sizing
-            limpers = sizing.count_limpers(table_state)
-            # BB enfrentando limpers tem nó próprio (vs_limp: check / iso-raise / jam).
-            # Fora do BB, ou sem nó (stack != 25bb), cai no first_in (iso aproximado).
-            if base['hero_position'] == 'BB' and limpers > 0:
+            # O nó vs_limp do pack é BB vs limp do SB (batalha de blinds). Só roteia
+            # nesse caso HU: hero no BB, SB completou (~1bb) e NENHUM limper fora do
+            # blind. Limps de outras posições não têm nó validado -> first_in (iso
+            # aproximado), e não o nó SB×BB errado.
+            if (base['hero_position'] == 'BB' and _sb_limped(table_state)
+                    and sizing.count_limpers(table_state) == 0):
                 result = self.advise(spot='vs_limp', vs=(), **base, **kwargs)
                 if (isinstance(result, dict) and result.get('status') == 'ABSTAIN'
                         and result.get('reason') == 'NO_VALIDATED_NODE_FOR_CONTEXT'):
                     result = self.advise_first_in(**base, **kwargs)
                 elif isinstance(result, dict):
-                    result.setdefault('caveats', []).append('VS_LIMP_%d_LIMPER(S)' % limpers)
+                    result.setdefault('caveats', []).append('VS_LIMP_SB_BLIND_BATTLE')
             else:
                 result = self.advise_first_in(**base, **kwargs)
         else:

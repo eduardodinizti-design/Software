@@ -342,30 +342,43 @@ def pack_vs_limp(raise_hands, stack=25):
 
 
 class VsLimpTests(unittest.TestCase):
-    def _state(self, hero_stack=25.0):
-        return dict(positions={'hero': 'BB', 'x': 'CO'},
+    def _sb_limp(self, hero_stack=25.0):
+        # Batalha de blinds: SB completou (~1bb), hero no BB.
+        return dict(positions={'hero': 'BB', 'sb': 'SB'},
                     seats={'hero': {'stack_bb': hero_stack, 'occupied': True},
+                           'sb': {'stack_bb': 25.0, 'occupied': True}},
+                    bets=[{'seat': 'sb', 'bet_bb': 1.0}], pot={'pot_bb': 2.0},
+                    to_call={'to_call_bb': 0.0}, dealer={'seat': None})
+
+    def _co_limp(self):
+        # Limp de posição não-blind (CO): o nó SB×BB NÃO se aplica.
+        return dict(positions={'hero': 'BB', 'x': 'CO'},
+                    seats={'hero': {'stack_bb': 25.0, 'occupied': True},
                            'x': {'stack_bb': 25.0, 'occupied': True}},
                     bets=[{'seat': 'x', 'bet_bb': 1.0}], pot={'pot_bb': 3.5},
                     to_call={'to_call_bb': 0.0}, dealer={'seat': None})
 
-    def test_bb_vs_limp_routes_to_vs_limp_node(self):
+    def test_bb_vs_sb_limp_routes_to_vs_limp_node(self):
         a = PreflopAdvisor(pack_vs_limp(['AKs']))
-        r = a.advise_from_reading(self._state(), ['As', 'Ks'], mode='chip_ev', stage='mid')
-        self.assertEqual(r['status'], 'ADVICE')
-        self.assertEqual(r['node_id'], 'vl')
-        self.assertEqual(r['recommended'], 'raise')
-        self.assertTrue(any(c.startswith('VS_LIMP_') for c in r['caveats']))
+        r = a.advise_from_reading(self._sb_limp(), ['As', 'Ks'], mode='chip_ev', stage='mid')
+        self.assertEqual((r['status'], r['node_id'], r['recommended']), ('ADVICE', 'vl', 'raise'))
+        self.assertIn('VS_LIMP_SB_BLIND_BATTLE', r['caveats'])
 
-    def test_weak_hand_checks_the_limp(self):
+    def test_weak_hand_checks_the_sb_limp(self):
         a = PreflopAdvisor(pack_vs_limp(['AKs']))
-        r = a.advise_from_reading(self._state(), ['7h', '2d'], mode='chip_ev', stage='mid')
+        r = a.advise_from_reading(self._sb_limp(), ['7h', '2d'], mode='chip_ev', stage='mid')
         self.assertEqual(r['recommended'], 'check')
 
+    def test_non_sb_limper_does_not_use_sb_node(self):
+        # #1: limp de CO não deve usar o nó SB×BB -> cai no first_in (aqui, abstém)
+        a = PreflopAdvisor(pack_vs_limp(['AKs']))
+        r = a.advise_from_reading(self._co_limp(), ['As', 'Ks'], mode='chip_ev', stage='mid')
+        self.assertEqual(r['status'], 'ABSTAIN')
+        self.assertEqual(r['reason'], 'NO_VALIDATED_NODE_FOR_CONTEXT')
+
     def test_falls_back_to_first_in_when_no_vs_limp_node(self):
-        # vs_limp só existe a 25bb; a 10bb cai no first_in (sem nó de open BB aqui -> abstém)
         a = PreflopAdvisor(pack_vs_limp(['AKs'], stack=25))
-        r = a.advise_from_reading(self._state(hero_stack=10.0), ['As', 'Ks'],
+        r = a.advise_from_reading(self._sb_limp(hero_stack=10.0), ['As', 'Ks'],
                                   mode='chip_ev', stage='mid')
         self.assertEqual(r['status'], 'ABSTAIN')
         self.assertEqual(r['reason'], 'NO_VALIDATED_NODE_FOR_CONTEXT')

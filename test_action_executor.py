@@ -141,6 +141,25 @@ class IdentityAndEligibilityTest(unittest.TestCase):
         out = self._run(_result('fold'), inp, armed=True, hand='h1')
         self.assertTrue(out['acted'])
 
+    def test_call_validated_is_eligible_armed(self):
+        inp = DryRunInput()
+        out = self._run(_result('call', validated=True), inp, armed=True, hand='h1')
+        self.assertTrue(out['acted'])
+        self.assertEqual(len(inp.clicks), 1)
+
+    def test_call_unvalidated_not_eligible_armed(self):
+        # updates.txt: Call com validated=False NAO pode auto-clicar.
+        inp = DryRunInput()
+        out = self._run(_result('call'), inp, armed=True, hand='h1')
+        self.assertFalse(out['acted'])
+        self.assertIn('NAO_ELEGIVEL:NAO_VALIDADO', out['reason'])
+        self.assertEqual(len(inp.clicks), 0)
+
+    def test_call_unvalidated_ok_in_dry_run(self):
+        inp = DryRunInput()
+        out = self._run(_result('call'), inp, armed=False, hand='h1')
+        self.assertTrue(out['acted'])                    # dry-run só estuda, não gated
+
     def test_legit_second_decision_same_hand_allowed(self):
         ex = ActionExecutor(window_rect=WIN, armed=False)
         a = ex.execute(_result('fold'), _buttons(), origin=ORIGIN, frame_size=FRAME,

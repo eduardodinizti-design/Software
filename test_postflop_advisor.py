@@ -201,6 +201,42 @@ class PotTypeGatingTests(unittest.TestCase):
         self.assertEqual(r['status'], 'ADVICE')
 
 
+class ReviewFixesTests(unittest.TestCase):
+    """Contraexemplos da revisão (updates.txt #5, #6, #7) — não podem regredir."""
+
+    def test_5_board_two_pair_does_not_raise(self):
+        r = advise_postflop(state(15, 5), ['Ah', 'Kd'], ['2h', '2d', '3s', '3c', '5h'])
+        self.assertEqual(r['made'], 'board_two_pair')
+        self.assertNotEqual(r['recommended'], 'raise')
+        self.assertEqual(r['recommended'], 'fold')
+
+    def test_6_no_semibluff_on_river(self):
+        r = advise_postflop(state(8, 0), ['Kh', 'Qd'], ['2h', '3d', '4s', '5c', '9h'])
+        self.assertEqual(r['recommended'], 'check')
+        self.assertEqual(r['outs'], 0)
+
+    def test_6_made_pair_with_draw_not_folded_as_draw(self):
+        # Top pair de ases + flush draw (4 copas) contra aposta pequena -> paga como
+        # mão feita, nao folda como se fosse so draw.
+        r = advise_postflop(state(10, 3), ['Ah', 'Qh'], ['Ad', '7h', '2h'])
+        self.assertEqual(r['made'], 'top_pair')
+        self.assertEqual(r['recommended'], 'call')
+
+    def test_7_strong_category_folds_when_equity_zero(self):
+        r = advise_postflop(state(10, 4), ['Qh', 'Qd'], ['Ks', 'Qc', '2d', '7h', 'Ac'],
+                            villain_range=['KK'])
+        self.assertEqual(r['made'], 'set')
+        self.assertEqual(r['equity'], 0.0)
+        self.assertEqual(r['recommended'], 'fold')
+        self.assertIn('STRONG_CATEGORY_BUT_DOMINATED_BY_RANGE', r['caveats'])
+
+    def test_7_strong_still_raises_with_high_equity(self):
+        r = advise_postflop(state(10, 4), ['3c', '3h'], ['As', '9h', '3d'],
+                            villain_range=['AK', 'AQ', 'KQ', 'JT'])
+        self.assertEqual(r['made'], 'set')
+        self.assertEqual(r['recommended'], 'raise')
+
+
 class ContractTests(unittest.TestCase):
     def test_never_allows_execution(self):
         for st, hero, board in [

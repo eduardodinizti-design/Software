@@ -105,8 +105,12 @@ def _draws(hero_cards, board_cards):
     """Gavetas de draw do hero e contagem de outs (cartas), com contribuição do hero.
 
     Só conta flush/sequência em que o hero PARTICIPA (não draw que é só do board). O
-    combo (FD + straight) é limitado a 15 outs, descontando a interseção exata.
+    combo (FD + straight) é limitado a 15 outs, descontando a interseção exata. No
+    RIVER (board com 5 cartas) NÃO há draw: não vem mais carta -> tudo zero.
     """
+    if len(board_cards) >= 5:
+        return dict(flush_draw=False, backdoor_flush=False, flush_outs=0,
+                    straight_outs=0, oesd=False, gutshot=False, combo=False, outs=0)
     present = hero_cards + board_cards
     suits = Counter(s for _, s in present)
     hero_suits = Counter(s for _, s in hero_cards)
@@ -145,37 +149,44 @@ def _draws(hero_cards, board_cards):
 
 
 def _relative_label(hero_cards, board_cards, category):
-    """Rótulo da força relativa ao board a partir do score do eval7 e dos ranks.
+    """Rótulo da força relativa ao board, SEMPRE exigindo contribuição do hero.
 
-    Sequência ou melhor -> nome da categoria. Com par/dois pares/trinca, distingue
-    set x trinca, overpair x underpair e top/second/third pair. 'board_pair_only'
-    quando o par vem só do board (o hero não melhorou). 'overcards'/'air' sem par.
+    Quando a categoria vem SÓ do board (dois pares/trinca/sequência/flush no próprio
+    board, ou o hero não supera o que o board já faz), o rótulo é fraco
+    ('board_two_pair', 'board_trips', 'plays_board', 'board_pair_only') — o hero não
+    tem a mão forte, só valor de showdown. Caso contrário distingue set/trinca,
+    overpair/underpair, top/second/third pair e nomeia straight+ de fato do hero.
     """
     c = category[0]
-    if c >= 4:
-        return CATEGORY_NAMES[c]
     board_desc = sorted({r for r, _ in board_cards}, reverse=True)
     board_counts = Counter(r for r, _ in board_cards)
     hero_ranks = sorted((r for r, _ in hero_cards), reverse=True)
+    hero_set = set(hero_ranks)
     pocket_pair = hero_ranks[0] == hero_ranks[1]
     top = board_desc[0] if board_desc else 0
+    board_best = eval7(board_cards)
+    hero_improves = category > board_best       # o hero supera o que o board já faz?
+
+    if c >= 4:
+        # sequência / flush / full house / quadra / straight flush: se o hero não
+        # supera o board (todo mundo "joga o board"), é só valor de showdown.
+        return CATEGORY_NAMES[c] if hero_improves else 'plays_board'
     if c == 3:
+        trip_rank = next((r for r, ct in board_counts.items() if ct >= 3), None)
+        if trip_rank is not None:
+            return 'board_trips'                # trinca no próprio board
         return 'set' if pocket_pair else 'trips'
     if c == 2:
+        board_pairs = [r for r, ct in board_counts.items() if ct >= 2]
+        if len(board_pairs) >= 2:
+            return 'board_two_pair'             # dois pares no próprio board (hero só kicker)
         return 'two_pair'
     if c == 1:
         if pocket_pair:
-            if hero_ranks[0] > top:
-                return 'overpair'
-            if board_desc and hero_ranks[0] in board_desc:
-                return 'set'  # defensivo (não deveria chegar aqui)
-            return 'underpair'
-        # par com UMA carta do hero: achar o rank pareado que o hero tocou
-        hero_set = set(hero_ranks)
+            return 'overpair' if hero_ranks[0] > top else 'underpair'
         matched = [r for r in board_desc if r in hero_set and board_counts[r] >= 1]
         if not matched:
-            # o par é só do board; o hero joga o par do board (fraco)
-            return 'board_pair_only'
+            return 'board_pair_only'            # par só do board; hero não pareou
         m = max(matched)
         if m == board_desc[0]:
             return 'top_pair'

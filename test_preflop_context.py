@@ -84,14 +84,47 @@ class TrackerTests(unittest.TestCase):
                        has_board=False)
         self.assertIsNone(ctx['aggressor'])
 
-    def test_multiway_not_single_raised(self):
+    def test_multiway_detected_as_not_heads_up(self):
         t = PreflopAggressorTracker()
         state = mk({'hero': 'BB', 'v': 'BTN', 'c': 'CO'},
                    [{'seat': 'v', 'bet_bb': 2.5}, {'seat': 'c', 'bet_bb': 2.5}],
                    {'hero', 'v', 'c'}, {'v': 25, 'c': 25, 'hero': 25})
         ctx = t.update(table_key='t', hand_key=1, table_state=state, has_board=False)
-        self.assertFalse(ctx['single_raised'])
-        self.assertFalse(ctx['heads_up'])
+        self.assertFalse(ctx['heads_up'])          # dois vilaos na mao -> multiway
+
+    def test_heads_up_at_full_table_after_folds(self):
+        # #3: mesa de 9 ocupada, mas so o BTN abriu (resto foldou) -> HU na mao
+        t = PreflopAggressorTracker()
+        pos = {'hero': 'BB', 'v': 'BTN', 'a': 'UTG', 'b': 'UTG+1', 'c': 'CO', 'd': 'HJ'}
+        state = mk(pos, [{'seat': 'v', 'bet_bb': 2.5}], set(pos), {k: 25 for k in pos})
+        ctx = t.update(table_key='t', hand_key=1, table_state=state, has_board=False)
+        self.assertTrue(ctx['heads_up'])
+        self.assertEqual(ctx['aggressor'], 'BTN')
+
+    def test_frozen_stack_not_overwritten_postflop(self):
+        # #4: stack pre-flop de 25 nao e substituido pela leitura pos-flop de 18
+        t = PreflopAggressorTracker()
+        t.update(table_key='t', hand_key=1, table_state=HU_VS_OPEN, has_board=False)
+        post = mk({'hero': 'BB', 'v': 'BTN'}, [], {'hero', 'v'}, {'v': 18.0, 'hero': 18.0})
+        ctx = t.update(table_key='t', hand_key=1, table_state=post, has_board=True)
+        self.assertEqual(ctx['villain_stack'], 25.0)
+
+    def test_unreadable_id_suspends_context(self):
+        # #2/#4: hand_key ilegivel (None) nao apaga o contexto da mao em curso
+        t = PreflopAggressorTracker()
+        t.update(table_key='t', hand_key=1, table_state=HU_VS_OPEN, has_board=False)
+        ctx = t.update(table_key='t', hand_key=None,
+                       table_state=mk({'hero': 'BB'}, [], {'hero'}), has_board=True)
+        self.assertEqual(ctx['aggressor'], 'BTN')
+
+    def test_new_hand_first_frame_postflop_has_no_stale_context(self):
+        # #2: 1o frame legivel da nova mao ja no flop -> contexto da mao anterior some
+        t = PreflopAggressorTracker()
+        t.update(table_key='t', hand_key=1, table_state=HU_VS_OPEN, has_board=False)
+        ctx = t.update(table_key='t', hand_key=2,
+                       table_state=mk({'hero': 'BB', 'v': 'BTN'}, [], {'hero', 'v'}),
+                       has_board=True)
+        self.assertIsNone(ctx['aggressor'])
 
     def test_three_bet_not_single_raised(self):
         t = PreflopAggressorTracker()

@@ -122,6 +122,32 @@ class HandStrengthTests(unittest.TestCase):
         r = hand_strength(['7s', '4d'], ['Ah', 'Kc', '9s'])
         self.assertEqual(r['made'], 'air')
 
+    def test_board_two_pair_is_not_hero_value(self):
+        # #5: dois pares no board; hero so tem kicker -> NAO e two_pair forte do hero
+        r = hand_strength(['Ah', 'Kd'], ['2h', '2d', '3s', '3c', '5h'])
+        self.assertEqual(r['category_name'], 'two_pair')
+        self.assertEqual(r['made'], 'board_two_pair')
+
+    def test_board_trips_is_not_hero_set(self):
+        r = hand_strength(['Ah', 'Kd'], ['9h', '9d', '9s', '3c'])
+        self.assertEqual(r['made'], 'board_trips')
+
+    def test_plays_the_board_straight(self):
+        r = hand_strength(['2c', '7d'], ['4h', '5d', '6s', '7h', '8c'])
+        self.assertEqual(r['category_name'], 'straight')
+        self.assertEqual(r['made'], 'plays_board')
+
+    def test_hero_extends_straight_is_real(self):
+        r = hand_strength(['9c', '2d'], ['4h', '5d', '6s', '7h', '8c'])
+        self.assertEqual(r['made'], 'straight')          # hero 9 estende: 5-9 bate 4-8
+
+    def test_no_draws_on_river(self):
+        # #6: 4 na sequencia no board, mas e river -> sem outs
+        r = hand_strength(['Kh', 'Qd'], ['2h', '3d', '4s', '5c', '9h'])
+        self.assertEqual(r['outs'], 0)
+        self.assertFalse(r['draws']['oesd'])
+        self.assertFalse(r['draws']['flush_draw'])
+
     def test_duplicate_card_returns_none(self):
         self.assertIsNone(hand_strength(['As', 'Kd'], ['As', '9h', '3d']))
 

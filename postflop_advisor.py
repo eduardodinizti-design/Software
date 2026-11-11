@@ -29,6 +29,10 @@ _MARGINAL = ('second_pair', 'third_pair', 'low_pair', 'underpair')
 # pré-flop erra demais lá, então continua abstendo mesmo com range.
 _CALL_HAIRCUT = 0.05
 _BIG_BET_POT_ODDS = 0.40
+# Equity mínima (vs range) para AUMENTAR por valor com uma mão de categoria forte.
+# Abaixo disso (mas acima das pot odds) paga; se nem as pot odds bater, folda — a
+# categoria não manda sozinha quando a equity contra o range diz o contrário.
+_VALUE_RAISE_MIN_EQUITY = 0.60
 
 
 def _normalize_range(villain_range):
@@ -118,7 +122,8 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
 
     `villain_range` (opcional): range do vilão — lista de (combo, peso) ou de strings
     de mão. Quando dado, enfrentando aposta, a decisão de CALL passa a ser por EQUITY
-    EXATA (Monte Carlo no board, semente fixa) vs esse range, em vez da regra do 2-e-4
+    ESTIMADA por Monte Carlo no board (semente fixa -> determinística, mas é
+    estimativa, não valor fechado) vs esse range, em vez da regra do 2-e-4
     / tiers. É o range PRÉ-FLOP (não estreitado pós-flop) -> deságio + caveats; aposta
     grande segue abstendo. Sem range, cai no comportamento da Fase 1.
     """
@@ -163,8 +168,8 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
     if mode != 'chip_ev':
         caveats.append('ICM_PKO_NOT_APPLIED_POSTFLOP')
 
-    # Equity exata do hero vs o range do vilão (se dado), Monte Carlo no board com
-    # semente fixa -> determinístico. É a Fase 2: torna o CALL quantitativo.
+    # Equity ESTIMADA do hero vs o range do vilão (se dado), Monte Carlo no board com
+    # semente fixa -> determinística (mas estimativa). É a Fase 2: CALL quantitativo.
     vr = _normalize_range(villain_range)
     equity = equity_vs_range(hero, vr, board=list(board), iters=iters, seed=seed) if vr else None
     if equity is not None:
@@ -187,41 +192,36 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
     # ---- Enfrentando uma aposta -------------------------------------------------
     if to_call > 0:
         pot_odds = required_equity(to_call, pot)
+        if pot_odds is None:
+            return _abstain('CANNOT_COMPUTE_POT_ODDS', pot_bb=pot, to_call_bb=to_call)
         mdf = round(pot / (pot + to_call), 4) if (pot + to_call) else None
-        info.update(pot_odds=round(pot_odds, 4) if pot_odds is not None else None, mdf=mdf)
+        info.update(pot_odds=round(pot_odds, 4), mdf=mdf)
         cap = hero_stack if isinstance(hero_stack, (int, float)) else None
-        # Valor forte: aumenta por valor, exceto quando o board já completa
-        # sequência/flush e a nossa mão não é esse flush/sequência (então só paga).
         board_beats_us = (bclass['straight_on_board']
                           or (bclass['flush_possible'] and made not in
                               ('flush', 'full_house', 'quads', 'straight_flush')))
-        if strong and not board_beats_us:
-            raise_to = round(min(to_call * 3, cap), 1) if cap else round(to_call * 3, 1)
-            info.update(recommended='raise',
-                        sizing=dict(size_bb=raise_to, basis='raise ~3x aposta (heuristica)',
-                                    heuristic=True),
-                        caveats=caveats)
-            return info
+        # Mão de categoria forte: a equity (quando há range) manda. Não aumenta —
+        # nem paga — contra um range que nos domina, mesmo com categoria boa (#7).
         if strong:
-            caveats.append('BOARD_MAY_BEAT_ONE_PAIR_CALL_ONLY')
+            if equity is not None and equity < pot_odds + _CALL_HAIRCUT:
+                info.update(recommended='fold',
+                            caveats=caveats + ['STRONG_CATEGORY_BUT_DOMINATED_BY_RANGE'])
+                return info
+            can_value_raise = (not board_beats_us
+                               and (equity is None or equity >= _VALUE_RAISE_MIN_EQUITY))
+            if can_value_raise:
+                raise_to = round(min(to_call * 3, cap), 1) if cap else round(to_call * 3, 1)
+                info.update(recommended='raise',
+                            sizing=dict(size_bb=raise_to, basis='raise ~3x aposta (heuristica)',
+                                        heuristic=True), caveats=caveats)
+                return info
+            if board_beats_us:
+                caveats.append('BOARD_MAY_BEAT_ONE_PAIR_CALL_ONLY')
             info.update(recommended='call', caveats=caveats)
             return info
-        if pot_odds is None:
-            return _abstain('CANNOT_COMPUTE_POT_ODDS', pot_bb=pot, to_call_bb=to_call)
-        if has_strong_draw or has_weak_draw:
-            if equity is not None:
-                # Equity EXATA do draw até o river vs o range (melhor que 2-e-4).
-                info.update(recommended=('call' if equity >= pot_odds + _CALL_HAIRCUT else 'fold'),
-                            caveats=caveats)
-                return info
-            deq = _draw_equity(outs, street)
-            caveats += ['DRAW_EQUITY_RULE_OF_2_AND_4', 'IMPLIED_ODDS_NOT_MODELED']
-            info.update(draw_equity=round(deq, 4), recommended=('call' if deq >= pot_odds else 'fold'),
-                        caveats=caveats)
-            return info
+        # Mãos FEITAS fracas/médias decidem como bluffcatcher ANTES de qualquer draw
+        # (uma mão feita com draw não deve ser foldada como se fosse só draw) (#6).
         if made == 'top_pair':
-            # Aposta grande/overbet = range polarizado; o range PRÉ-FLOP erraria
-            # demais aqui -> ABSTÉM mesmo com equity (não adivinha), salvo leitura.
             if pot_odds > _BIG_BET_POT_ODDS:
                 return _abstain('BLUFFCATCH_VS_BIG_BET_NEEDS_READS', pot_bb=pot,
                                 to_call_bb=to_call, pot_odds=round(pot_odds, 4), made=made,
@@ -243,7 +243,21 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
             caveats.append('MARGINAL_BLUFFCATCH_FOLD_DEFAULT_EXPLOITABLE')
             info.update(recommended='fold', caveats=caveats)
             return info
-        # ar / joga o par do board: folda contra aposta.
+        # Mão NÃO-feita com draw: só vale fora do river (no river não vem carta) (#6).
+        if street != 'RIVER' and (has_strong_draw or has_weak_draw):
+            if equity is not None:
+                info.update(recommended=('call' if equity >= pot_odds + _CALL_HAIRCUT else 'fold'),
+                            caveats=caveats)
+                return info
+            deq = _draw_equity(outs, street)
+            caveats += ['DRAW_EQUITY_RULE_OF_2_AND_4', 'IMPLIED_ODDS_NOT_MODELED']
+            info.update(draw_equity=round(deq, 4), recommended=('call' if deq >= pot_odds else 'fold'),
+                        caveats=caveats)
+            return info
+        # Ar / joga o board: folda, salvo equity (vs range) acima das pot odds.
+        if equity is not None and equity >= pot_odds + _CALL_HAIRCUT:
+            info.update(recommended='call', caveats=caveats + ['WEAK_BUT_EQUITY_OK'])
+            return info
         info.update(recommended='fold', caveats=caveats)
         return info
 

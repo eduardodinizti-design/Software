@@ -12,7 +12,7 @@ o agressor fica desconhecido e o pós-flop cai na Fase 1. Puro: não captura; re
 caso HU, pote de um raise só, com o vilão como agressor — senão devolve (None, motivo)
 e o conselho pós-flop segue sem equity (Fase 1).
 """
-from preflop_advisor import infer_live_spot, _PREFLOP_ORDER  # noqa: F401 (order p/ clareza)
+from preflop_advisor import infer_live_spot, RAISE_FLOOR_BB
 
 
 class PreflopAggressorTracker:
@@ -25,71 +25,70 @@ class PreflopAggressorTracker:
     def _fresh(hand_key):
         return dict(hand_key=hand_key, aggressor=None, raises=0, hero_aggressor=False,
                     villain_stack=None, villain_position=None, hero_position=None,
-                    max_occupied=0, frozen=False)
+                    villain_in_hand=0, frozen=False)
 
     def update(self, *, table_key, hand_key, table_state, has_board):
-        """Processa um frame. Pré-flop (sem board): atualiza o agressor pela ação
-        lida. Pós-flop (com board): congela. Devolve o contexto atual (ver `context`)."""
+        """Processa um frame. Só muta no PRÉ-FLOP (sem board); ao ver o board,
+        CONGELA — o contexto resolvido não muda mais (stack/posição pós-flop não o
+        substituem, #4). ID ilegível (hand_key None) SUSPENDE, não apaga (#2/#4).
+        Devolve o contexto atual (ver `context`)."""
+        if hand_key is None:
+            return self.context(table_key)
         st = self._by_table.get(table_key)
         if st is None or st['hand_key'] != hand_key:
             st = self._fresh(hand_key)
             self._by_table[table_key] = st
+        if has_board or st['frozen']:
+            st['frozen'] = True
+            return self.context(table_key)
 
         seats = table_state.get('seats') or {}
         positions = table_state.get('positions') or {}
-        occ = sum(1 for s in seats.values() if s.get('occupied'))
-        st['max_occupied'] = max(st['max_occupied'], occ)
-        # Posições do hero e do único vilão (quando HU) — para escolher o range de
-        # open (vilão abriu) vs o de flat (hero abriu, vilão pagou) no pós-flop.
+        bets = {b.get('seat'): b.get('bet_bb') for b in (table_state.get('bets') or [])}
         if positions.get('hero'):
             st['hero_position'] = positions['hero']
-        non_hero = [(s, p) for s, p in positions.items()
-                    if s != 'hero' and (seats.get(s) or {}).get('occupied') and p]
-        if len(non_hero) == 1:
-            vseat, vpos = non_hero[0]
+        # Participantes vilões NA MÃO (não ocupação da mesa, #3): não-hero com aposta
+        # acima da BB (abertura ou call da abertura). Define o HU e identifica o vilão
+        # e seu stack mesmo numa mesa cheia após folds (não dá p/ usar "único sentado").
+        vparts = [(s, p) for s, p in positions.items()
+                  if s != 'hero' and p and isinstance(bets.get(s), (int, float))
+                  and bets[s] > RAISE_FLOOR_BB]
+        st['villain_in_hand'] = max(st['villain_in_hand'], len(vparts))
+        if len(vparts) == 1:
+            vseat, vpos = vparts[0]
             st['villain_position'] = vpos
             vstk = (seats.get(vseat) or {}).get('stack_bb')
-            if isinstance(vstk, (int, float)):
-                st['villain_stack'] = vstk
-
-        if has_board:
-            st['frozen'] = True
-            return self.context(table_key)
-        if st['frozen']:
-            return self.context(table_key)
+            if isinstance(vstk, (int, float)) and vstk > (st['villain_stack'] or 0):
+                st['villain_stack'] = vstk          # maior leitura pré-flop ~ stack inicial
 
         spot = infer_live_spot(table_state)
         s = spot.get('spot')
         if s in ('vs_open', 'vs_open_shove'):
-            # O vilão abriu; o hero enfrenta. Pote de um raise só (nível único).
             st['aggressor'] = spot['opener']
             st['hero_aggressor'] = False
             st['raises'] = max(st['raises'], 1)
-            if spot.get('callers'):
-                st['raises'] = max(st['raises'], 2)   # multiway: desqualifica o HU
         elif s == 'vs_3bet':
             st['raises'] = max(st['raises'], 2)         # reraise: não é um raise só
-        elif s == 'first_in':
-            pass                                        # ninguém abriu ainda
+        elif s == 'abstain' and spot.get('reason') == 'HERO_OPENED_NO_RERAISE':
+            st['aggressor'] = 'hero'
+            st['hero_aggressor'] = True
+            st['raises'] = max(st['raises'], 1)
         elif s == 'abstain':
-            if spot.get('reason') == 'HERO_OPENED_NO_RERAISE':
-                st['aggressor'] = 'hero'
-                st['hero_aggressor'] = True
-                st['raises'] = max(st['raises'], 1)
-            else:
-                st['raises'] = max(st['raises'], 2)     # multiway/4bet: desqualifica
+            st['raises'] = max(st['raises'], 2)         # 4bet/multiway: desqualifica
+        # first_in: ninguém abriu ainda
         return self.context(table_key)
 
     def context(self, table_key):
         """Snapshot: aggressor (posição ou 'hero'/None), raises, hero_aggressor,
-        villain_stack, heads_up (2 ocupados no pico), single_raised (um nível)."""
+        villain_stack/position, hero_position, heads_up (UM vilão NA MÃO),
+        single_raised (um nível de raise)."""
         st = self._by_table.get(table_key)
         if st is None:
             return None
         return dict(aggressor=st['aggressor'], raises=st['raises'],
                     hero_aggressor=st['hero_aggressor'], villain_stack=st['villain_stack'],
                     villain_position=st['villain_position'], hero_position=st['hero_position'],
-                    heads_up=st['max_occupied'] == 2, single_raised=st['raises'] == 1,
+                    heads_up=st['villain_in_hand'] == 1, single_raised=st['raises'] == 1,
                     hand_key=st['hand_key'])
 
 

@@ -44,22 +44,28 @@ class ActionExecutor:
         return p
 
     def _eligible(self, advice, action):
-        """Elegibilidade ESTRATÉGICA p/ auto-clique (só no armado): status ADVICE
-        sozinho não basta. FOLD/CHECK não arriscam fichas -> sempre elegíveis. CALL
-        de nó validado -> elegível. CALL de call-off SINTETIZADO (equity/ICM
-        aproximados) só se a folga sobre a equity exigida >= call_margin (não
-        auto-pagar all-in numa borda ruidosa de Monte Carlo)."""
+        """AUTORIZAÇÃO estratégica única p/ auto-clique (só no armado): status ADVICE
+        sozinho NÃO basta. FOLD/CHECK não arriscam fichas -> sempre elegíveis. Ações
+        que comprometem fichas (CALL) exigem: ou nó VALIDADO, ou um call-off
+        sintetizado com folga de equity suficiente. Conselho de referência/não
+        validado NÃO auto-clica (só estuda em dry-run)."""
         if action in ('FOLD', 'CHECK'):
             return True, None
-        if action == 'CALL':
-            spot = str((advice or {}).get('spot') or '')
-            if spot.startswith('call_off_'):
-                eq = (advice or {}).get('equity')
-                req = (advice or {}).get('required_equity_icm', (advice or {}).get('required_equity'))
-                if not isinstance(eq, (int, float)) or not isinstance(req, (int, float)):
-                    return False, 'CALLOFF_SEM_MARGEM'
-                if eq - req < self.call_margin:
-                    return False, 'CALLOFF_NA_FRONTEIRA'
+        advice = advice or {}
+        spot = str(advice.get('spot') or '')
+        if spot.startswith('call_off_'):
+            # Call-off é validated=False por construção (equity/ICM aproximados):
+            # elegível só com folga sobre a equity exigida (borda ruidosa de MC).
+            eq = advice.get('equity')
+            req = advice.get('required_equity_icm', advice.get('required_equity'))
+            if not isinstance(eq, (int, float)) or not isinstance(req, (int, float)):
+                return False, 'CALLOFF_SEM_MARGEM'
+            if eq - req < self.call_margin:
+                return False, 'CALLOFF_NA_FRONTEIRA'
+            return True, None
+        # Demais CALL/agressões: exige nó validado (não auto-clica referência/deep).
+        if not advice.get('validated'):
+            return False, 'NAO_VALIDADO'
         return True, None
 
     def execute(self, result, buttons_result, *, origin, frame_size, input_adapter,

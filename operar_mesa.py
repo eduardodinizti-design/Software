@@ -19,6 +19,7 @@ import cv2
 from table_reading.pipeline import configure_ocr
 from table_reading.automatic_table_crops import detect_table_crops
 from table_reading.action_buttons import read_action_buttons
+from table_reading.hand_tracking import read_hand_id
 from table_advisor import advise_table
 from postflop_advisor import advise_postflop
 from preflop_advisor import PreflopAdvisor, infer_spread
@@ -103,16 +104,28 @@ def make_validator(engine, hwnd, max_tables):
         tx, ty, tw, th = btn['box']
         rect = rect_frame_to_screen((x + tx, y + ty, tw, th), window_rect=win_rect,
                                     frame_size=(fw, fh))
-        identity = decision_identity(want_key, exp.get('hand'), intent.action,
+        # RELÊ a mão na chegada (não ecoa a esperada): se a mão mudou, a identidade
+        # diverge do source_key e o controlador cancela (IDENTITY_CHANGED) — não clica
+        # numa mão nova. Mão ilegível vira identidade != esperada -> também cancela.
+        cur = read_hand_id(frame[y:y + bh, x:x + bw])
+        cur_hand = cur.get('hand_id') or cur.get('hand_number')
+        identity = decision_identity(want_key, cur_hand, intent.action,
                                      btn.get('amount'), btn.get('unit'))
         return dict(ok=True, target_rect=rect, identity=identity)
     return validator
 
 
+# Leituras que PROVAM positivamente que a linha de ação sumiu numa mesa legível
+# (não é a vez do hero). Erros de leitura (INVALID_CROP/CROP_TOO_SMALL) e a linha
+# ainda presente NÃO contam — ausência por OCR/cobertura != ação executada.
+_ROW_GONE_STATUSES = ('NO_BUTTON_ROW', 'PRESELECTION_ROW')
+
+
 def make_verifier(engine, hwnd, max_tables):
-    """Efeito na MESMA mesa: a linha de botões sumiu. OBS: ausência de botões é
-    indício, não prova (OCR/cobertura/troca de tela dão o mesmo) — sem evidência
-    positiva, confirmed=False (o controlador trata como UNKNOWN_RESULT, não repete)."""
+    """Efeito na MESMA mesa: a linha de ação sumiu, com evidência POSITIVA. Ausência
+    de botões por OCR/cobertura/troca de tela NÃO confirma (confirmed=False) — só um
+    read limpo sem linha de ação (NO_BUTTON_ROW/PRESELECTION_ROW) confirma. O
+    controlador trata não-confirmado como UNKNOWN_RESULT e não repete."""
     def verifier(intent, now):
         time.sleep(0.3)
         exp = intent.expected or {}
@@ -124,7 +137,7 @@ def make_verifier(engine, hwnd, max_tables):
             return dict(confirmed=False)                 # não achei a mesa -> não confirmo
         x, y, bw, bh = box
         br = read_action_buttons(frame[y:y + bh, x:x + bw])
-        return dict(confirmed=(br['status'] != 'EXPERIMENTAL_BUTTON_ROW'))
+        return dict(confirmed=br.get('status') in _ROW_GONE_STATUSES)
     return verifier
 
 
@@ -207,6 +220,11 @@ def main(argv=None):
                 has_board = bool(rboard.get('cards'))
                 rhand = result.get('hand') or {}
                 hkey = rhand.get('hand_id') or rhand.get('hand_number')
+                # ATUALIZA o rastreador ANTES de consultar o contexto: numa nova mão
+                # cujo 1o frame legível já é o flop, o update reinicia a identidade e
+                # o contexto não vaza agressor/range da mão anterior (#2).
+                aggr_tracker.update(table_key=tkey, hand_key=hkey,
+                                    table_state=tstate, has_board=has_board)
                 if has_board and result.get('hero_cards') and \
                         (result.get('advice') or {}).get('phase') == 'postflop':
                     ctx = aggr_tracker.context(tkey)
@@ -236,8 +254,6 @@ def main(argv=None):
                         street=rboard.get('street'), mode=cmode, stage=cstage,
                         aggressor=(ctx or {}).get('aggressor'),
                         villain_range=(combos or None), pot_type=ptype)
-                aggr_tracker.update(table_key=tkey, hand_key=hkey,
-                                    table_state=tstate, has_board=has_board)
                 br = read_action_buttons(crop)
                 if br['status'] == 'EXPERIMENTAL_BUTTON_ROW':
                     hero_turn_seen = True
