@@ -376,12 +376,15 @@ class VsLimpTests(unittest.TestCase):
         self.assertEqual(r['status'], 'ABSTAIN')
         self.assertEqual(r['reason'], 'NO_VALIDATED_NODE_FOR_CONTEXT')
 
-    def test_falls_back_to_first_in_when_no_vs_limp_node(self):
+    def test_vs_limp_borrows_nearest_stack(self):
+        # vs_limp só existe a 25bb; a 10bb a camada heurística empresta o de 25bb
+        # (conselho flagged, não auto-executável) em vez de abster.
         a = PreflopAdvisor(pack_vs_limp(['AKs'], stack=25))
         r = a.advise_from_reading(self._sb_limp(hero_stack=10.0), ['As', 'Ks'],
                                   mode='chip_ev', stage='mid')
-        self.assertEqual(r['status'], 'ABSTAIN')
-        self.assertEqual(r['reason'], 'NO_VALIDATED_NODE_FOR_CONTEXT')
+        self.assertEqual(r['status'], 'ADVICE')
+        self.assertFalse(r['validated'])
+        self.assertTrue(any('STACK_BORROWED' in c for c in r['caveats']))
 
 
 class FirstInTests(unittest.TestCase):
@@ -393,9 +396,13 @@ class FirstInTests(unittest.TestCase):
         r = PreflopAdvisor(pack_with_shove()).advise_first_in(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=10)
         self.assertEqual((r['status'], r['recommended']), ('ADVICE', 'all_in'))
 
-    def test_abstains_when_no_first_in_node(self):
+    def test_borrows_nearest_stack_when_bucket_missing(self):
+        # Camada heurística: sem nó de open em 10bb, pega emprestado o de 25bb —
+        # vira conselho (flagged), mas validated=False (não auto-executável).
         r = PreflopAdvisor(pack_with_node()).advise_first_in(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=10)
-        self.assertEqual(r['status'], 'ABSTAIN')  # pack only has open_raise at 25
+        self.assertEqual(r['status'], 'ADVICE')
+        self.assertFalse(r['validated'])
+        self.assertTrue(any('STACK_BORROWED' in c for c in r['caveats']))
 
 
 def pack_with_reference():

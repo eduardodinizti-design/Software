@@ -29,6 +29,13 @@ SHOVE_SIZE_FALLBACK_BB = 5.0  # sem stack lido, 1ª aposta >= isso é tratada co
 # player among those at the top bet level, callers having matched that bet later.
 _PREFLOP_ORDER = ('UTG', 'UTG+1', 'UTG+2', 'LJ', 'HJ', 'CO', 'BTN', 'SB', 'BB')
 
+# Camada heurística: spots cuja range muda devagar com o stack e SEM troca de regime
+# (min-raise x shove) podem pegar emprestada a range validada do stack mais próximo.
+# vs_3bet / vs_open_shove ficam de FORA (território de call-off por equity, que é mais
+# preciso que emprestar). open_shove entra para o push/fold curto.
+BORROWABLE_SPOTS = frozenset({'open_raise', 'open_shove', 'vs_open', 'vs_limp'})
+PUSHFOLD_MAX_BB = 12   # <= isso, first-in tenta SHOVE antes de open-raise
+
 
 # Catalog stack-distribution profiles by position (UTG..BB), from the engine's
 # nearestSpread. "iguais" = even; "curtos_ini"/"curtos_fim" = the short stacks sit
@@ -269,6 +276,18 @@ class PreflopAdvisor:
         combos = range_from_node(node, self.hands, actions=('call',))
         return (combos or None), node
 
+    def _nearest_stack_node(self, mode, table_format, stage, players, spot, hero, vs, spread, bucket):
+        """Nó do MESMO contexto no stack coberto mais próximo (p/ a camada heurística
+        de fallback). Em empate de distância, prefere o stack MAIOR — ranges mais
+        fundas (raise puro) são mais seguras de emprestar para baixo do que ranges de
+        jam (push/fold) para cima. Devolve (node, stack_de_origem) ou (None, None)."""
+        for s in sorted((x for x in self.STACK_BUCKETS if x != bucket),
+                        key=lambda x: (abs(x - bucket), -x)):
+            node = self._index.get((mode, table_format, stage, players, s, spot, hero, vs, spread))
+            if node is not None:
+                return node, s
+        return None, None
+
     def advise(self, *, hero_cards, hero_position, stack_bb, mode='chip_ev',
                table_format=None, stage='mid', players=9, spot='open_raise', vs=(), spread=None):
         """An exploratory recommendation for one preflop spot, or an abstention.
@@ -288,18 +307,29 @@ class PreflopAdvisor:
         if table_format is None:
             table_format = 'pko' if mode in ('pko', 'pko_icm') else 'regular'
         node = self._index.get((mode, table_format, stage, players, bucket, spot, hero_position, tuple(vs), spread))
+        borrowed_from = None
+        if node is None and spot in BORROWABLE_SPOTS:
+            # Camada heurística: sem nó no bucket exato, PEGA EMPRESTADA a range
+            # validada do stack mais próximo (flagged). Vira conselho em vez de
+            # abstenção — mas NÃO é auto-executável (validated=False abaixo).
+            node, borrowed_from = self._nearest_stack_node(
+                mode, table_format, stage, players, spot, hero_position, tuple(vs), spread, bucket)
         if node is None:
             return self._abstain('NO_VALIDATED_NODE_FOR_CONTEXT',
                                  context=dict(mode=mode, stage=stage, stack=bucket, spot=spot,
                                               hero=hero_position, players=players))
         i = self.hands.index(hand)
-        validated = bool(node.get('validated'))
+        raw_validated = bool(node.get('validated'))
+        validated = raw_validated and borrowed_from is None   # stack emprestado não auto-executa
         caveats = self._caveats(bucket, stack_bb, players, mode, spread)
-        if not validated:
+        if not raw_validated:
             caveats.append('UNVALIDATED_REFERENCE_RANGE')
+        if borrowed_from is not None:
+            caveats.append('STACK_BORROWED_%dBB_TO_%dBB_HEURISTIC' % (borrowed_from, bucket))
         base = dict(spot=spot, hero_position=hero_position, hand=hand, node_id=node['id'],
                     source=node['source'], validated=validated, exploratory=True,
                     execution_allowed=False, stack_bb=stack_bb, stack_bucket=bucket,
+                    stack_borrowed_from=borrowed_from,
                     bucketed=bucket != stack_bb, players_assumed=players, caveats=caveats)
         if i in (node.get('outOfRange') or []):
             return dict(base, status='OUT_OF_RANGE')
@@ -314,14 +344,22 @@ class PreflopAdvisor:
         return dict(base, status='ADVICE', mix=mix, ev=ev, ev_unit=node['evUnit'], recommended=recommended)
 
     def advise_first_in(self, **kwargs):
-        """First-in (unopened) decision: open_raise where the pack has it, else
-        open_shove (short stacks). Covers 5-25bb; 20bb has no first-in node here."""
+        """First-in (unopened): respeita o REGIME por stack. Curto (<=PUSHFOLD_MAX_BB)
+        tenta SHOVE antes do open-raise; mais fundo, open-raise antes do shove. Cada
+        tentativa pode pegar o stack emprestado (camada heurística) — a ordem evita
+        recomendar min-raise onde o certo é jam."""
         kwargs.pop('spot', None)
         kwargs.pop('vs', None)
-        primary = self.advise(spot='open_raise', vs=(), **kwargs)
-        if not (primary['status'] == 'ABSTAIN' and primary.get('reason') == 'NO_VALIDATED_NODE_FOR_CONTEXT'):
-            return primary
-        return self.advise(spot='open_shove', vs=(), **kwargs)
+        stack = kwargs.get('stack_bb')
+        short = isinstance(stack, (int, float)) and stack <= PUSHFOLD_MAX_BB
+        order = ('open_shove', 'open_raise') if short else ('open_raise', 'open_shove')
+        result = None
+        for spot in order:
+            result = self.advise(spot=spot, vs=(), **kwargs)
+            if not (result['status'] == 'ABSTAIN'
+                    and result.get('reason') == 'NO_VALIDATED_NODE_FOR_CONTEXT'):
+                return result
+        return result
 
     def advise_from_reading(self, table_state, hero_cards, **kwargs):
         """Pull hero's position/stack from a read_table_state result, infer the

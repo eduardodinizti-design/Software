@@ -34,7 +34,7 @@ def read_hero_cards(crop):
 
 
 def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table_key='default',
-                 villain_range=None):
+                 villain_range=None, hero_override=None):
     """Read the table and attach an exploratory recommendation. The tournament
     phase chooses chip EV vs ICM unless mode/stage are forced. Pure read; the
     caller wraps it in an ocr_frame so one snapshot reuses OCR.
@@ -59,6 +59,11 @@ def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table
             new_dealer['seat'] = sdealer
         state = dict(state, positions=spos, dealer=new_dealer)
     hero = read_hero_cards(crop)
+    # As cartas do hero são imutáveis na mão: se este frame não leu mas o chamador
+    # tem uma leitura confiável da MESMA mão (hero_override), reusa — evita abster
+    # (HERO_CARDS_UNKNOWN) por falha pontual de leitura/animação num frame.
+    if hero is None and hero_override and len(hero_override) == 2:
+        hero = list(hero_override)
     board = read_board(crop, hero_cards=hero or [None, None])
     tourney = read_tournament(crop)
     auto_mode, auto_stage = tournament_context(tourney)

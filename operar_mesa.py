@@ -144,7 +144,8 @@ def make_verifier(engine, hwnd, max_tables):
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument('--hwnd', type=lambda s: int(s, 0), required=True)
+    p.add_argument('--hwnd', type=lambda s: int(s, 0), nargs='+', required=True,
+                   help='Um ou mais HWND de janelas de mesa (2 mesas = 2 HWND).')
     p.add_argument('--ranges', default=DEFAULT_RANGES)
     p.add_argument('--deep', default=None)
     p.add_argument('--frames', type=int, default=0, help='0 = até Ctrl+C/Disable')
@@ -159,24 +160,31 @@ def main(argv=None):
     deep = args.deep or (DEFAULT_DEEP if os.path.exists(DEFAULT_DEEP) else None)
     advisor = (PreflopAdvisor.from_files(args.ranges, deep) if deep
                else PreflopAdvisor.from_file(args.ranges))
-    wins = [w for w in discover_pppoker()['windows'] if w['hwnd'] == args.hwnd]
-    if not wins:
-        print('Janela nao encontrada.'); return 1
-    w = wins[0]
-    win_rect = (w['x'], w['y'], w['w'], w['h'])
-
     engine = WindowCaptureEngine()
     control = BotControl(on_change=lambda s: print('\n>>> BOT %s <<<\n' % s, flush=True))
     listener = HotkeyListener(control) if args.hotkeys else None
     if listener:
         listener.start()
     adapter = WindowsCursorInput() if args.arm else DryRunInput()
-    executor = ActionExecutor(window_rect=win_rect, bot_control=control, armed=args.arm)
-    raise_done = set()   # uma sequência de aumento por mão
+    # Uma entrada por janela (HWND): geometria + executor + validator/verifier próprios.
+    wins_all = discover_pppoker().get('windows', [])
+    per = {}
+    for hwnd in args.hwnd:
+        w = next((x for x in wins_all if x['hwnd'] == hwnd), None)
+        if w is None:
+            print('Janela %#x nao encontrada; ignorada.' % hwnd, flush=True)
+            continue
+        wr = (w['x'], w['y'], w['w'], w['h'])
+        per[hwnd] = dict(executor=ActionExecutor(window_rect=wr, bot_control=control, armed=args.arm),
+                         validator=make_validator(engine, hwnd, args.max_tables),
+                         verifier=make_verifier(engine, hwnd, args.max_tables))
+    if not per:
+        print('Nenhuma janela valida.'); return 1
+    targets = list(per)
+    raise_done = set()   # (mesa_global, mao): uma sequência de aumento por mão/mesa
+    hero_cache = {}      # (mesa_global, mao) -> cartas do hero (imutáveis na mão)
     stabilizer = PositionStabilizer()   # suaviza posições (anti-flicker HJ<->UTG+2)
-    aggr_tracker = PreflopAggressorTracker()   # lembra o agressor pré-flop (p/ equity pós-flop)
-    validator = make_validator(engine, args.hwnd, args.max_tables)
-    verifier = make_verifier(engine, args.hwnd, args.max_tables)
+    aggr_tracker = PreflopAggressorTracker()   # agressor pré-flop por mesa (p/ equity pós-flop)
 
     print('OPERAR MESA | modo=%s | %s' % (
         'ARMADO (cursor REAL)' if args.arm else 'DRY-RUN (sem clique)',
@@ -184,6 +192,8 @@ def main(argv=None):
         else 'sem hotkeys'), flush=True)
     print('Travas: so Fold/Call/Check; 1 acao por mao; revalida na chegada; verifica efeito.',
           flush=True)
+    print('Janelas monitoradas: %d (round-robin, 1 por ciclo). Com 2 mesas use --intervalo menor.'
+          % len(per), flush=True)
 
     n = 0
     try:
@@ -193,7 +203,10 @@ def main(argv=None):
             if control.state == DISABLED:
                 print('Desabilitado. Encerrando. Nenhum clique a mais.', flush=True)
                 break
-            frame, meta = engine.capture_frame(hwnd=args.hwnd)
+            hwnd = targets[(n - 1) % len(targets)]     # round-robin: 1 janela por ciclo
+            ph = per[hwnd]
+            executor, validator, verifier = ph['executor'], ph['validator'], ph['verifier']
+            frame, meta = engine.capture_frame(hwnd=hwnd)
             if frame is None:
                 time.sleep(max(0.1, args.intervalo - (time.monotonic() - t0)))
                 continue
@@ -204,13 +217,24 @@ def main(argv=None):
             for prop in crops:
                 x, y, bw, bh = map(int, prop.box)
                 crop = frame[y:y + bh, x:x + bw]
-                tkey = _table_key(x, y)
+                tkey_local = _table_key(x, y)
+                tkey = '%x:%s' % (hwnd, tkey_local)    # chave GLOBAL (isola entre janelas)
+                # Memória de cartas do hero por mão (imutáveis): fallback quando um
+                # frame não lê, evitando HERO_CARDS_UNKNOWN por falha pontual.
+                hk = read_hand_id(crop)
+                hkey = hk.get('hand_id') or hk.get('hand_number')
+                override = hero_cache.get((tkey, hkey)) if hkey else None
                 try:
-                    result = advise_table(crop, advisor, stabilizer=stabilizer, table_key=tkey)
+                    result = advise_table(crop, advisor, stabilizer=stabilizer,
+                                          table_key=tkey, hero_override=override)
                 except Exception:                      # noqa: BLE001
                     continue
                 if not result.get('is_table'):
                     continue
+                if hkey and result.get('hero_cards'):
+                    if len(hero_cache) >= 512:
+                        hero_cache.clear()
+                    hero_cache[(tkey, hkey)] = result['hero_cards']   # leitura confiável -> memoriza
                 # Rastreia o agressor pré-flop e, no pós-flop HU (pote de um raise só),
                 # recalcula o conselho com EQUITY vs o range de open do vilão. O contexto
                 # usado vem dos frames ANTERIORES (o agressor é fixado no pré-flop); depois
@@ -218,8 +242,6 @@ def main(argv=None):
                 tstate = result.get('table_state') or {}
                 rboard = result.get('board') or {}
                 has_board = bool(rboard.get('cards'))
-                rhand = result.get('hand') or {}
-                hkey = rhand.get('hand_id') or rhand.get('hand_number')
                 # ATUALIZA o rastreador ANTES de consultar o contexto: numa nova mão
                 # cujo 1o frame legível já é o flop, o update reinicia a identidade e
                 # o contexto não vaza agressor/range da mão anterior (#2).
@@ -257,8 +279,7 @@ def main(argv=None):
                 br = read_action_buttons(crop)
                 if br['status'] == 'EXPERIMENTAL_BUTTON_ROW':
                     hero_turn_seen = True
-                hand = result.get('hand') or {}
-                hid = hand.get('hand_id') or hand.get('hand_number')
+                hid = hkey
                 adv = result.get('advice') or {}
                 if adv.get('phase') == 'postflop':
                     # Pós-flop é SÓ conselho exploratório. O operador armado joga
@@ -281,7 +302,7 @@ def main(argv=None):
                 # RAISE = fluxo multi-etapa (sequenciador). Só executa ARMADO (em
                 # dry-run os cliques não abrem o painel de verdade).
                 if (br['status'] == 'EXPERIMENTAL_BUTTON_ROW' and adv.get('status') == 'ADVICE'
-                        and is_raise and hid not in raise_done):
+                        and is_raise and (tkey, hid) not in raise_done):
                     tmult = target_multiplier(adv, result.get('table_state'))
                     if tmult is None:
                         print('[%03d] vez do hero: RAISE sem target de size -> abstem' % n, flush=True)
@@ -296,19 +317,19 @@ def main(argv=None):
                         # (referência/deep) não dispara a sequência armada (só estuda).
                         print('[%03d] RAISE de no NAO VALIDADO -> nao executa (so estuda)' % n, flush=True)
                     else:
-                        seq = RaiseSequencer(capture=lambda: engine.capture_frame(hwnd=args.hwnd),
-                                             window_rect=lambda: _discover_rect(args.hwnd),
+                        seq = RaiseSequencer(capture=lambda h=hwnd: engine.capture_frame(hwnd=h),
+                                             window_rect=lambda h=hwnd: _discover_rect(h),
                                              input_adapter=adapter, target_mult=tmult,
-                                             bot_control=control, table_key=tkey, hand=hid,
+                                             bot_control=control, table_key=tkey_local, hand=hid,
                                              max_tables=args.max_tables)
                         res = seq.run()
-                        raise_done.add(hid)
+                        raise_done.add((tkey, hid))
                         print('[%03d] >>> RAISE sequencia: %s' % (n, res.get('reason')
                               or ('preset %sx confirmado=%s' % (res.get('preset'), res.get('confirmed')))), flush=True)
                     continue
                 out = executor.execute(result, br, origin=(x, y), frame_size=(fw, fh),
                                        input_adapter=adapter, validator=validator,
-                                       verifier=verifier, hand_id=hid, table_key=tkey)
+                                       verifier=verifier, hand_id=hid, table_key=tkey_local)
                 if out.get('acted'):
                     pl = out['plan']
                     print('[%03d] >>> AGIU: %s em %s | estado=%s %s %s' % (

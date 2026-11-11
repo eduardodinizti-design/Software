@@ -57,6 +57,17 @@ class AdviseTableTests(unittest.TestCase):
         r = self._run(None, [])
         self.assertEqual(r['advice']['reason'], 'HERO_CARDS_UNKNOWN')
 
+    def test_hero_override_used_when_read_fails(self):
+        # Leitura do hero falha neste frame, mas o cache da mão fornece as cartas:
+        # usa o override em vez de abster por HERO_CARDS_UNKNOWN.
+        patches = _patch(None, [])
+        for p in patches:
+            p.start()
+        self.addCleanup(lambda: [p.stop() for p in patches])
+        r = table_advisor.advise_table(self.crop, FakeAdvisor(), hero_override=['As', 'Ks'])
+        self.assertEqual(r['hero_cards'], ['As', 'Ks'])
+        self.assertEqual(r['advice']['status'], 'ADVICE')
+
     def _run_board(self, board):
         patches = [
             patch('table_advisor.read_table_state', return_value=dict(
