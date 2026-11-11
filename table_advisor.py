@@ -2,9 +2,11 @@
 
 Ties together the readers (hero cards, table state, hand id, board) and the
 PreflopAdvisor so that, for one frame, the bot prints what it sees and what it
-would do. Observation only: no capture, no clicks, execution never allowed. The
-advice is preflop open-raise only for now (the spot is an explicit assumption)
-and abstains post-flop or out of coverage.
+would do. Observation only: no capture, no clicks, execution never allowed.
+Preflop advice comes from the PreflopAdvisor (spot inferred from the bets); from
+the flop on, the postflop_advisor attaches a founded-heuristic read (phase
+'postflop'). Both are exploratory and never executable (the armed operator plays
+preflop only and skips anything marked postflop).
 """
 import argparse
 import json
@@ -18,6 +20,7 @@ from table_reading.community_cards import read_board
 from table_reading.hand_tracking import read_hand_id
 from table_reading.tournament import read_tournament, tournament_context
 from preflop_advisor import PreflopAdvisor
+from postflop_advisor import advise_postflop
 
 
 def read_hero_cards(crop):
@@ -30,7 +33,8 @@ def read_hero_cards(crop):
     return cards
 
 
-def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table_key='default'):
+def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table_key='default',
+                 villain_range=None):
     """Read the table and attach an exploratory recommendation. The tournament
     phase chooses chip EV vs ICM unless mode/stage are forced. Pure read; the
     caller wraps it in an ocr_frame so one snapshot reuses OCR.
@@ -77,7 +81,12 @@ def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table
                             or (board_status == 'BOARD_PARTIAL_OR_OBSTRUCTED'
                                 and board_reason != 'FIRST_CARD_ANCHOR_MISSING'))
     if board.get('cards'):
-        advice = dict(status='ABSTAIN', reason='POSTFLOP_NOT_COVERED', exploratory=True, execution_allowed=False)
+        if hero is None:
+            advice = dict(status='ABSTAIN', reason='HERO_CARDS_UNKNOWN', phase='postflop',
+                          exploratory=True, execution_allowed=False)
+        else:
+            advice = advise_postflop(state, hero, board['cards'], street=board.get('street'),
+                                     mode=use_mode, stage=use_stage, villain_range=villain_range)
     elif board_present_unread:
         advice = dict(status='ABSTAIN', reason='BOARD_PRESENT_BUT_UNREADABLE', exploratory=True, execution_allowed=False)
     elif hero is None:
@@ -114,7 +123,21 @@ def _summary(result):
             '%s=%sbb(%s)' % (b['seat'], b['bet_bb'], st['positions'].get(b['seat'], '-')) for b in bets))
     adv = result['advice']
     lines.append('=== RECOMENDACAO (exploratoria, nao-executar) ===')
-    if adv.get('status') == 'ADVICE':
+    if adv.get('phase') == 'postflop' and adv.get('status') == 'ADVICE':
+        sz = adv.get('sizing') or {}
+        size_txt = ' %.1fbb (%s)' % (sz['size_bb'], sz.get('basis', '')) if sz.get('size_bb') else ''
+        extra = []
+        if adv.get('pot_odds') is not None:
+            extra.append('pot odds %.0f%%' % (adv['pot_odds'] * 100))
+        if adv.get('draw_equity') is not None:
+            extra.append('eq draw ~%.0f%%' % (adv['draw_equity'] * 100))
+        if adv.get('spr') is not None:
+            extra.append('SPR %.1f' % adv['spr'])
+        lines.append('POSFLOP %s: %s%s | mao: %s (%s) | outs: %s%s' % (
+            adv.get('street'), str(adv['recommended']).upper(), size_txt,
+            adv.get('made'), adv.get('category'), adv.get('outs'),
+            (' | ' + ', '.join(extra)) if extra else ''))
+    elif adv.get('status') == 'ADVICE':
         mix = ', '.join('%s %d%%' % (m['action'], round(m['frequency'] * 100)) for m in adv['mix'])
         sz = adv.get('sizing') or {}
         size_txt = ''

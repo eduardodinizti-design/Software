@@ -329,6 +329,48 @@ def pack_with_shove():
     return dict(format='nvt-range-export', version=1, engineCommit='test', hands=HANDS, nodes=[node])
 
 
+def pack_vs_limp(raise_hands, stack=25):
+    z = [0.0] * 169
+    idx = set(raise_hands)
+    raise_v = [1.0 if HANDS[k] in idx else 0.0 for k in range(169)]
+    check_v = [0.0 if HANDS[k] in idx else 1.0 for k in range(169)]
+    node = dict(id='vl', context=dict(mode='chip_ev', format='regular', stage='mid', players=9, stack=stack),
+                spot='vs_limp', hero='BB', vs=[], validated=True, evUnit='bb',
+                legalActions=['check', 'raise', 'all_in'], actions=['all_in', 'raise', 'check'],
+                freq={'all_in': z, 'raise': raise_v, 'check': check_v}, ev={}, outOfRange=[], source='t')
+    return dict(format='nvt-range-export', version=1, engineCommit='t', hands=HANDS, nodes=[node])
+
+
+class VsLimpTests(unittest.TestCase):
+    def _state(self, hero_stack=25.0):
+        return dict(positions={'hero': 'BB', 'x': 'CO'},
+                    seats={'hero': {'stack_bb': hero_stack, 'occupied': True},
+                           'x': {'stack_bb': 25.0, 'occupied': True}},
+                    bets=[{'seat': 'x', 'bet_bb': 1.0}], pot={'pot_bb': 3.5},
+                    to_call={'to_call_bb': 0.0}, dealer={'seat': None})
+
+    def test_bb_vs_limp_routes_to_vs_limp_node(self):
+        a = PreflopAdvisor(pack_vs_limp(['AKs']))
+        r = a.advise_from_reading(self._state(), ['As', 'Ks'], mode='chip_ev', stage='mid')
+        self.assertEqual(r['status'], 'ADVICE')
+        self.assertEqual(r['node_id'], 'vl')
+        self.assertEqual(r['recommended'], 'raise')
+        self.assertTrue(any(c.startswith('VS_LIMP_') for c in r['caveats']))
+
+    def test_weak_hand_checks_the_limp(self):
+        a = PreflopAdvisor(pack_vs_limp(['AKs']))
+        r = a.advise_from_reading(self._state(), ['7h', '2d'], mode='chip_ev', stage='mid')
+        self.assertEqual(r['recommended'], 'check')
+
+    def test_falls_back_to_first_in_when_no_vs_limp_node(self):
+        # vs_limp só existe a 25bb; a 10bb cai no first_in (sem nó de open BB aqui -> abstém)
+        a = PreflopAdvisor(pack_vs_limp(['AKs'], stack=25))
+        r = a.advise_from_reading(self._state(hero_stack=10.0), ['As', 'Ks'],
+                                  mode='chip_ev', stage='mid')
+        self.assertEqual(r['status'], 'ABSTAIN')
+        self.assertEqual(r['reason'], 'NO_VALIDATED_NODE_FOR_CONTEXT')
+
+
 class FirstInTests(unittest.TestCase):
     def test_prefers_open_raise_when_present(self):
         r = PreflopAdvisor(pack_with_node()).advise_first_in(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=25)

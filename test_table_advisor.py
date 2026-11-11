@@ -43,9 +43,15 @@ class AdviseTableTests(unittest.TestCase):
         self.assertIn('SPOT_INFERRED_FROM_BETS', r['advice']['caveats'])
         self.assertFalse(r['advice']['execution_allowed'])
 
-    def test_postflop_abstains(self):
+    def test_postflop_gets_heuristic_advice(self):
+        # Antes abstinha (POSTFLOP_NOT_COVERED); agora o postflop_advisor dá um
+        # conselho exploratório. Top pair contra aposta pequena = bluffcatch (call).
         r = self._run(['As', 'Ks'], ['Kh', 'Qd', '2c'])
-        self.assertEqual(r['advice']['reason'], 'POSTFLOP_NOT_COVERED')
+        self.assertEqual(r['advice']['phase'], 'postflop')
+        self.assertEqual(r['advice']['status'], 'ADVICE')
+        self.assertEqual(r['advice']['made'], 'top_pair')
+        self.assertEqual(r['advice']['recommended'], 'call')
+        self.assertFalse(r['advice']['execution_allowed'])
 
     def test_no_hero_cards_abstains(self):
         r = self._run(None, [])

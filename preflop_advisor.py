@@ -219,6 +219,44 @@ class PreflopAdvisor:
             return self.STACK_BUCKETS[-1], 'OK'
         return min(self.STACK_BUCKETS, key=lambda s: abs(s - stack_bb)), 'OK'
 
+    def open_range_combos(self, position, stack_bb, *, mode='chip_ev', stage='mid',
+                          players=9, spread=None, table_format=None):
+        """Range de OPEN (combos ponderados) de `position` no pack validado.
+
+        Reusa o nó spot='open_raise' (ação 'raise') via `range_from_node`. É o range
+        do AGRESSOR pré-flop num pote de UM raise só — NÃO estreitado pela ação
+        pós-flop (quem usa sinaliza isso nos caveats). Serve de range do vilão para a
+        equity pós-flop exata. Devolve (combos, node) ou (None, motivo)."""
+        bucket, why = self.bucket_stack(stack_bb)
+        if bucket is None:
+            return None, why
+        if table_format is None:
+            table_format = 'pko' if mode in ('pko', 'pko_icm') else 'regular'
+        node = self._index.get((mode, table_format, stage, players, bucket,
+                                'open_raise', position, (), spread))
+        if node is None:
+            return None, 'NO_OPEN_NODE_FOR_CONTEXT'
+        combos = range_from_node(node, self.hands, actions=('raise',))
+        return (combos or None), node
+
+    def call_range_combos(self, caller_position, opener_position, stack_bb, *,
+                          mode='chip_ev', stage='mid', players=9, spread=None, table_format=None):
+        """Range de FLAT (combos ponderados) de `caller_position` ao enfrentar o open
+        de `opener_position`, no pack validado (nó spot='vs_open', ação 'call'). É o
+        range do vilão num pote de um raise só quando o HERO abriu e o vilão pagou —
+        complementa `open_range_combos`. Devolve (combos, node) ou (None, motivo)."""
+        bucket, why = self.bucket_stack(stack_bb)
+        if bucket is None:
+            return None, why
+        if table_format is None:
+            table_format = 'pko' if mode in ('pko', 'pko_icm') else 'regular'
+        node = self._index.get((mode, table_format, stage, players, bucket,
+                                'vs_open', caller_position, (opener_position,), spread))
+        if node is None:
+            return None, 'NO_VS_OPEN_NODE_FOR_CONTEXT'
+        combos = range_from_node(node, self.hands, actions=('call',))
+        return (combos or None), node
+
     def advise(self, *, hero_cards, hero_position, stack_bb, mode='chip_ev',
                table_format=None, stage='mid', players=9, spot='open_raise', vs=(), spread=None):
         """An exploratory recommendation for one preflop spot, or an abstention.
@@ -325,7 +363,19 @@ class PreflopAdvisor:
                     # approximation (usually tighter in reality), flagged as such.
                     result.setdefault('caveats', []).append('MULTIWAY_%d_CALLERS_APPROX_VS_OPEN' % spot['callers'])
         elif spot['spot'] == 'first_in':
-            result = self.advise_first_in(**base, **kwargs)
+            import sizing
+            limpers = sizing.count_limpers(table_state)
+            # BB enfrentando limpers tem nó próprio (vs_limp: check / iso-raise / jam).
+            # Fora do BB, ou sem nó (stack != 25bb), cai no first_in (iso aproximado).
+            if base['hero_position'] == 'BB' and limpers > 0:
+                result = self.advise(spot='vs_limp', vs=(), **base, **kwargs)
+                if (isinstance(result, dict) and result.get('status') == 'ABSTAIN'
+                        and result.get('reason') == 'NO_VALIDATED_NODE_FOR_CONTEXT'):
+                    result = self.advise_first_in(**base, **kwargs)
+                elif isinstance(result, dict):
+                    result.setdefault('caveats', []).append('VS_LIMP_%d_LIMPER(S)' % limpers)
+            else:
+                result = self.advise_first_in(**base, **kwargs)
         else:
             return self._abstain(spot.get('reason', 'SPOT_NOT_COVERED'))
         if isinstance(result, dict) and result.get('status') in ('ADVICE', 'OUT_OF_RANGE'):

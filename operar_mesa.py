@@ -20,7 +20,9 @@ from table_reading.pipeline import configure_ocr
 from table_reading.automatic_table_crops import detect_table_crops
 from table_reading.action_buttons import read_action_buttons
 from table_advisor import advise_table
-from preflop_advisor import PreflopAdvisor
+from postflop_advisor import advise_postflop
+from preflop_advisor import PreflopAdvisor, infer_spread
+from preflop_context import PreflopAggressorTracker, villain_postflop_range
 from action_executor import ActionExecutor
 from action_coordinator import DryRunInput, map_advice_to_action, decision_identity
 from position_stabilizer import PositionStabilizer
@@ -159,6 +161,7 @@ def main(argv=None):
     executor = ActionExecutor(window_rect=win_rect, bot_control=control, armed=args.arm)
     raise_done = set()   # uma sequência de aumento por mão
     stabilizer = PositionStabilizer()   # suaviza posições (anti-flicker HJ<->UTG+2)
+    aggr_tracker = PreflopAggressorTracker()   # lembra o agressor pré-flop (p/ equity pós-flop)
     validator = make_validator(engine, args.hwnd, args.max_tables)
     verifier = make_verifier(engine, args.hwnd, args.max_tables)
 
@@ -195,12 +198,68 @@ def main(argv=None):
                     continue
                 if not result.get('is_table'):
                     continue
+                # Rastreia o agressor pré-flop e, no pós-flop HU (pote de um raise só),
+                # recalcula o conselho com EQUITY vs o range de open do vilão. O contexto
+                # usado vem dos frames ANTERIORES (o agressor é fixado no pré-flop); depois
+                # atualiza o rastreador com este frame.
+                tstate = result.get('table_state') or {}
+                rboard = result.get('board') or {}
+                has_board = bool(rboard.get('cards'))
+                rhand = result.get('hand') or {}
+                hkey = rhand.get('hand_id') or rhand.get('hand_number')
+                if has_board and result.get('hero_cards') and \
+                        (result.get('advice') or {}).get('phase') == 'postflop':
+                    ctx = aggr_tracker.context(tkey)
+                    cmode = (result.get('context') or {}).get('mode', 'chip_ev')
+                    cstage = (result.get('context') or {}).get('stage', 'mid')
+                    seats = tstate.get('seats') or {}
+                    spread = (infer_spread({p: (seats.get(s) or {}).get('stack_bb')
+                                            for s, p in (tstate.get('positions') or {}).items()})
+                              if cmode in ('icm', 'pko_icm') else None)
+                    # Tipo de pote (gating honesto): 3bet/multiway -> abstém rotulado;
+                    # um raise só -> equity (se houver range) ou Fase 1; desconhecido -> Fase 1.
+                    if ctx is None:
+                        ptype = 'unknown'
+                    elif not ctx['heads_up']:
+                        ptype = 'multiway'
+                    elif ctx['raises'] >= 2:
+                        ptype = 'three_bet'
+                    elif ctx['raises'] == 1:
+                        ptype = 'single_raised'
+                    else:
+                        ptype = 'unknown'
+                    combos, meta = villain_postflop_range(
+                        advisor, ctx, mode=cmode, stage=cstage, spread=spread,
+                        hero_stack_bb=(seats.get('hero') or {}).get('stack_bb'))
+                    result['advice'] = advise_postflop(
+                        tstate, result['hero_cards'], rboard['cards'],
+                        street=rboard.get('street'), mode=cmode, stage=cstage,
+                        aggressor=(ctx or {}).get('aggressor'),
+                        villain_range=(combos or None), pot_type=ptype)
+                aggr_tracker.update(table_key=tkey, hand_key=hkey,
+                                    table_state=tstate, has_board=has_board)
                 br = read_action_buttons(crop)
                 if br['status'] == 'EXPERIMENTAL_BUTTON_ROW':
                     hero_turn_seen = True
                 hand = result.get('hand') or {}
                 hid = hand.get('hand_id') or hand.get('hand_number')
                 adv = result.get('advice') or {}
+                if adv.get('phase') == 'postflop':
+                    # Pós-flop é SÓ conselho exploratório. O operador armado joga
+                    # pré-flop apenas e NUNCA executa pós-flop (sem clique, sem
+                    # sequência de aumento) até ser validado à parte.
+                    if br['status'] == 'EXPERIMENTAL_BUTTON_ROW' and adv.get('status') == 'ADVICE':
+                        eqtxt = ''
+                        if adv.get('equity') is not None:
+                            eqtxt = ' | eq=%.0f%% vs pot_odds=%.0f%%' % (
+                                adv['equity'] * 100, (adv.get('pot_odds') or 0) * 100)
+                        print('[%03d] vez do hero PÓS-FLOP (%s): %s %s%s | sem execucao (exploratorio)'
+                              % (n, adv.get('street'), str(adv.get('recommended')).upper(),
+                                 adv.get('made') or '', eqtxt), flush=True)
+                    elif br['status'] == 'EXPERIMENTAL_BUTTON_ROW':
+                        print('[%03d] vez do hero PÓS-FLOP (%s): ABSTEM %s | mao=%s | sem execucao'
+                              % (n, adv.get('street'), adv.get('reason'), adv.get('made')), flush=True)
+                    continue
                 _, caveats = map_advice_to_action(adv.get('recommended'))
                 is_raise = 'REQUIRES_SIZING_MULTISTEP' in caveats
                 # RAISE = fluxo multi-etapa (sequenciador). Só executa ARMADO (em
