@@ -200,6 +200,13 @@ class PotTypeGatingTests(unittest.TestCase):
         r = advise_postflop(state(10, 4), ['3c', '3h'], ['As', '9h', '3d'])
         self.assertEqual(r['status'], 'ADVICE')
 
+    def test_uncovered_pot_skips_equity(self):
+        # Otimização: 3bet/multiway abstêm ANTES do Monte Carlo -> equity não é calculada
+        r = advise_postflop(state(10, 4), ['3c', '3h'], ['As', '9h', '3d'],
+                            villain_range=['AK', 'KQ'], pot_type='three_bet')
+        self.assertEqual(r['status'], 'ABSTAIN')
+        self.assertIsNone(r.get('equity'))
+
 
 class ReviewFixesTests(unittest.TestCase):
     """Contraexemplos da revisão (updates.txt #5, #6, #7) — não podem regredir."""

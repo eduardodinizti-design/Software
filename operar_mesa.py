@@ -291,6 +291,10 @@ def main(argv=None):
                               % (n, tmult, (pr and pr['label']) or '?'), flush=True)
                     elif not control.execution_allowed():
                         print('[%03d] RAISE mas BOT PAUSADO' % n, flush=True)
+                    elif not adv.get('validated'):
+                        # Autorização única também no RAISE: nó não validado
+                        # (referência/deep) não dispara a sequência armada (só estuda).
+                        print('[%03d] RAISE de no NAO VALIDADO -> nao executa (so estuda)' % n, flush=True)
                     else:
                         seq = RaiseSequencer(capture=lambda: engine.capture_frame(hwnd=args.hwnd),
                                              window_rect=lambda: _discover_rect(args.hwnd),

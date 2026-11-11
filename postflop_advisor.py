@@ -168,6 +168,18 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
     if mode != 'chip_ev':
         caveats.append('ICM_PKO_NOT_APPLIED_POSTFLOP')
 
+    info = dict(status='ADVICE', phase='postflop', street=street, made=made,
+                category=strength['category_name'], board_texture=bclass['texture'],
+                structure=bclass['structure'], outs=outs, spr=spr, equity=None,
+                pot_bb=pot, to_call_bb=to_call, exploratory=True, execution_allowed=False)
+
+    # Tipos de pote fora da cobertura: ABSTÉM com rótulo ANTES de qualquer Monte
+    # Carlo (abstenção conhecida não paga o custo da equity, a cada frame/mesa).
+    if pot_type == 'three_bet':
+        return _uncovered_pot('POSTFLOP_THREE_BET_POT_NOT_COVERED', info, caveats, pot, to_call)
+    if pot_type == 'multiway':
+        return _uncovered_pot('POSTFLOP_MULTIWAY_NOT_COVERED', info, caveats, pot, to_call)
+
     # Equity ESTIMADA do hero vs o range do vilão (se dado), Monte Carlo no board com
     # semente fixa -> determinística (mas estimativa). É a Fase 2: CALL quantitativo.
     vr = _normalize_range(villain_range)
@@ -175,19 +187,7 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
     if equity is not None:
         caveats += ['EQUITY_VS_VILLAIN_PREFLOP_RANGE', 'RANGE_NOT_NARROWED_POSTFLOP',
                     'CALL_HAIRCUT_%dPCT' % round(_CALL_HAIRCUT * 100)]
-
-    info = dict(status='ADVICE', phase='postflop', street=street, made=made,
-                category=strength['category_name'], board_texture=bclass['texture'],
-                structure=bclass['structure'], outs=outs, spr=spr,
-                equity=round(equity, 4) if equity is not None else None,
-                pot_bb=pot, to_call_bb=to_call, exploratory=True, execution_allowed=False)
-
-    # Tipos de pote fora da cobertura: ABSTÉM com rótulo em vez do heurístico de
-    # pote de um raise só (dinâmica diferente; sem nó validado p/ esses spots).
-    if pot_type == 'three_bet':
-        return _uncovered_pot('POSTFLOP_THREE_BET_POT_NOT_COVERED', info, caveats, pot, to_call)
-    if pot_type == 'multiway':
-        return _uncovered_pot('POSTFLOP_MULTIWAY_NOT_COVERED', info, caveats, pot, to_call)
+        info['equity'] = round(equity, 4)
 
     # ---- Enfrentando uma aposta -------------------------------------------------
     if to_call > 0:
