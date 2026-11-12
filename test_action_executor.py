@@ -19,7 +19,9 @@ def _buttons(actions=('FOLD', 'CALL', 'RAISE'), amounts=None):
 
 
 def _result(rec, **advice):
-    return dict(advice=dict(status='ADVICE', recommended=rec, **advice))
+    # hero_cards presentes: o contrato B04 exige observação confirmada p/ COMMIT.
+    return dict(advice=dict(status='ADVICE', recommended=rec, **advice),
+                hero_cards=['As', 'Ac'])
 
 
 def _calloff(rec, eq, req):
