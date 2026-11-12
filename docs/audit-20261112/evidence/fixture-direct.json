@@ -1,0 +1,191 @@
+{
+  "board": {
+    "status": "EXPERIMENTAL_BOARD",
+    "street": "RIVER",
+    "cards": [
+      "7d",
+      "Jh",
+      "9d",
+      "As",
+      "Jd"
+    ],
+    "candidates": [
+      [
+        151,
+        505,
+        84,
+        124
+      ],
+      [
+        242,
+        505,
+        85,
+        125
+      ],
+      [
+        332,
+        505,
+        86,
+        125
+      ],
+      [
+        423,
+        505,
+        85,
+        125
+      ],
+      [
+        515,
+        505,
+        84,
+        124
+      ]
+    ],
+    "actions_allowed": false,
+    "readings": [
+      {
+        "card": "7d",
+        "rank": {
+          "rank": "7",
+          "status": "CANDIDATE_ONLY",
+          "alternatives": [
+            "7"
+          ],
+          "suit": null
+        },
+        "suit": {
+          "suit": "d",
+          "status": "CANDIDATE_ONLY",
+          "shape_iou": 0.839,
+          "margin": 0.117,
+          "evidence": "template_margin"
+        }
+      },
+      {
+        "card": "Jh",
+        "rank": {
+          "rank": "J",
+          "status": "CANDIDATE_ONLY",
+          "alternatives": [
+            "J"
+          ],
+          "suit": null
+        },
+        "suit": {
+          "suit": "h",
+          "status": "CANDIDATE_ONLY",
+          "shape_iou": 0.917,
+          "margin": 0.346,
+          "evidence": "template_margin"
+        }
+      },
+      {
+        "card": "9d",
+        "rank": {
+          "rank": "9",
+          "status": "CANDIDATE_ONLY",
+          "alternatives": [
+            "9"
+          ],
+          "suit": null
+        },
+        "suit": {
+          "suit": "d",
+          "status": "CANDIDATE_ONLY",
+          "shape_iou": 0.865,
+          "margin": 0.169,
+          "evidence": "template_margin"
+        }
+      },
+      {
+        "card": "As",
+        "rank": {
+          "rank": "A",
+          "status": "CANDIDATE_ONLY",
+          "alternatives": [
+            "A"
+          ],
+          "suit": null
+        },
+        "suit": {
+          "suit": "s",
+          "status": "CANDIDATE_ONLY",
+          "shape_iou": 0.784,
+          "margin": 0.007,
+          "evidence": "template_and_pointed_contour"
+        }
+      },
+      {
+        "card": "Jd",
+        "rank": {
+          "rank": "J",
+          "status": "CANDIDATE_ONLY",
+          "alternatives": [
+            "J"
+          ],
+          "suit": null
+        },
+        "suit": {
+          "suit": "d",
+          "status": "CANDIDATE_ONLY",
+          "shape_iou": 0.881,
+          "margin": 0.195,
+          "evidence": "template_margin"
+        }
+      }
+    ]
+  },
+  "raise": {
+    "status": "EXPERIMENTAL_RAISE_PANEL",
+    "presets": [
+      {
+        "box": [
+          18,
+          1242,
+          122,
+          70
+        ],
+        "label": "2x",
+        "mult": 2.0
+      },
+      {
+        "box": [
+          152,
+          1242,
+          122,
+          70
+        ],
+        "label": "2.5%x",
+        "mult": null
+      },
+      {
+        "box": [
+          286,
+          1242,
+          123,
+          70
+        ],
+        "label": "3x",
+        "mult": 3.0
+      },
+      {
+        "box": [
+          421,
+          1242,
+          122,
+          70
+        ],
+        "label": "4x",
+        "mult": 4.0
+      }
+    ],
+    "confirm": {
+      "box": [
+        555,
+        1242,
+        180,
+        70
+      ]
+    }
+  }
+}

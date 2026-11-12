@@ -1,0 +1,95 @@
+{
+  "sequential_callers": {
+    "aggressor": "BTN",
+    "raises": 1,
+    "hero_aggressor": false,
+    "villain_stack": 25,
+    "villain_position": "BTN",
+    "hero_position": "BB",
+    "heads_up": true,
+    "single_raised": true,
+    "hand_key": 1
+  },
+  "unreadable_new_hand_board": {
+    "aggressor": "BTN",
+    "raises": 1,
+    "hero_aggressor": false,
+    "villain_stack": 25.0,
+    "villain_position": "BTN",
+    "hero_position": "BB",
+    "heads_up": true,
+    "single_raised": true,
+    "hand_key": 1
+  },
+  "table_key_reassignment": {
+    "first": [
+      [
+        [
+          0,
+          0,
+          50,
+          50
+        ],
+        "w#1"
+      ],
+      [
+        [
+          100,
+          0,
+          50,
+          50
+        ],
+        "w#2"
+      ]
+    ],
+    "second": [
+      [
+        [
+          100,
+          0,
+          50,
+          50
+        ],
+        "w#1"
+      ]
+    ]
+  },
+  "registration_wrong_target": {
+    "round_id": "R1",
+    "flow_state": "DETAILS_CHECKED",
+    "execution_allowed": false,
+    "token": null,
+    "identity": "c914a08e9adb4e01",
+    "identity_basis": [
+      "name",
+      "club",
+      "modality",
+      "buyin",
+      "start_time"
+    ],
+    "committed_confirmed": "0.00",
+    "committed_pending": "0.00",
+    "active_commitments": 0,
+    "available_budget": "500.00",
+    "cost": "50.00",
+    "currency": "BRL"
+  },
+  "registration_wrong_target_reserve": "AWAITING_CONFIRMATION",
+  "cache_after_failed_refresh": {
+    "v": {
+      "stats": {
+        "vpip": 25
+      },
+      "confidence": "high"
+    }
+  },
+  "raise_unknown_hand": {
+    "hand": null,
+    "clicks": 3,
+    "ok": true,
+    "confirmed": true
+  },
+  "raise_invalid_crop_verifier": {
+    "confirmed": true
+  }
+}

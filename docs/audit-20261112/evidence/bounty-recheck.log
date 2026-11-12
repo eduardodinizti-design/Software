@@ -1,0 +1,28 @@
+test_read_seat_bounties_voting_never_confident_wrong (test_bounty.RealPkoFixtureTests.test_read_seat_bounties_voting_never_confident_wrong) ... ok
+test_read_seat_bounties_with_profile (test_bounty.RealPkoFixtureTests.test_read_seat_bounties_with_profile) ... FAIL
+test_reads_135_from_real_pills (test_bounty.RealPkoFixtureTests.test_reads_135_from_real_pills) ... FAIL
+
+======================================================================
+FAIL: test_read_seat_bounties_with_profile (test_bounty.RealPkoFixtureTests.test_read_seat_bounties_with_profile)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/work/visualpilot-audit-20261112/test_bounty.py", line 125, in test_read_seat_bounties_with_profile
+    self.assertEqual({s: v['value'] for s, v in b.items()},
+AssertionError: {'topC': 135.0, 'TL': 35.0, 'RL': 135.0} != {'topC': 135.0, 'TL': 135.0, 'RL': 135.0}
+- {'RL': 135.0, 'TL': 35.0, 'topC': 135.0}
++ {'RL': 135.0, 'TL': 135.0, 'topC': 135.0}
+?                     +
+
+
+======================================================================
+FAIL: test_reads_135_from_real_pills (test_bounty.RealPkoFixtureTests.test_reads_135_from_real_pills)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/work/visualpilot-audit-20261112/test_bounty.py", line 109, in test_reads_135_from_real_pills
+    self.assertEqual(r['value'], 135.0)
+AssertionError: 35.0 != 135.0
+
+----------------------------------------------------------------------
+Ran 3 tests in 5.973s
+
+FAILED (failures=2)

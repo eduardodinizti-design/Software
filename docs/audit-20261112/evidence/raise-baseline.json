@@ -1,0 +1,13 @@
+[
+  {
+    "unknown_hand": null,
+    "clicks": 3,
+    "ok": true,
+    "confirmed": true
+  },
+  {
+    "invalid_crop_verifier": {
+      "confirmed": true
+    }
+  }
+]

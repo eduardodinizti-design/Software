@@ -1,0 +1,35 @@
+{
+  "sequential_callers": {
+    "aggressor": "BTN",
+    "raises": 1,
+    "hero_aggressor": false,
+    "villain_stack": null,
+    "villain_position": null,
+    "hero_position": "BB",
+    "heads_up": false,
+    "single_raised": true,
+    "hand_key": 1
+  },
+  "unreadable_new_hand_board": {
+    "aggressor": null,
+    "raises": 0,
+    "hero_aggressor": false,
+    "villain_stack": null,
+    "villain_position": "BTN",
+    "hero_position": "BB",
+    "heads_up": true,
+    "single_raised": false,
+    "hand_key": null
+  },
+  "registration_wrong_target": "DETAILS_CHECKED",
+  "registration_wrong_target_reserve": "AWAITING_CONFIRMATION",
+  "raise_unknown_hand": {
+    "hand": null,
+    "clicks": 3,
+    "ok": true,
+    "confirmed": true
+  },
+  "raise_invalid_crop_verifier": {
+    "confirmed": true
+  }
+}

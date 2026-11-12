@@ -1,0 +1,72 @@
+[
+  {
+    "path": "public/assets/aistudio/_3A75F7DE-7229-4137-BD19-4AF5AE363948__d560bf0f.png",
+    "sha256": "d560bf0fd1828a797fbeae678793e8412403267cb53817260bcab7464356da28",
+    "bytes": 3418398
+  },
+  {
+    "path": "public/assets/aistudio/_4528A8B5-F81C-4078-A8DB-C7ADBD91C311__85ee615d.png",
+    "sha256": "85ee615d31918032b5782e88ed0e9370ec1c1f28b451457ed2f7dcba66e49c09",
+    "bytes": 3794667
+  },
+  {
+    "path": "public/assets/aistudio/_58CB106F-09EA-4853-B7D9-98FD582FAD0E__581ae999.png",
+    "sha256": "581ae999225a9e7e442a7ffffab745f429b7f8b37e1104052329014afe9afbee",
+    "bytes": 3395684
+  },
+  {
+    "path": "public/assets/aistudio/_76D7A22C-BC3A-435D-BB63-A4AC9AE0A1A0__78803c80.png",
+    "sha256": "78803c8043173a4558841d5932316cf56dc3beb58f08084ecb7088a8ee930a04",
+    "bytes": 2763037
+  },
+  {
+    "path": "public/assets/aistudio/_7C62D925-1CC9-4B7C-A92D-0E3379E07494__3d8f87c2.png",
+    "sha256": "3d8f87c2389a8ccaddb75a66e7a61d6b5a4af1250abee0d041c07c270cad8064",
+    "bytes": 3692333
+  },
+  {
+    "path": "public/assets/aistudio/_BF8957B2-BF19-43B0-AADF-8D95779FC005__f3c8ecd9.png",
+    "sha256": "f3c8ecd99f5145cba406db22564ccc5f8aaf36a82dd73c2b576684b5073f4f6e",
+    "bytes": 3535723
+  },
+  {
+    "path": "public/assets/aistudio/_E59537C2-2CA7-4FB2-9B22-728875057AAB__5c7b5161.png",
+    "sha256": "5c7b5161179073429b030a9bc8ea42e4c1ac6e70a87a4d2ffd7a069f494d022d",
+    "bytes": 4415067
+  },
+  {
+    "path": "tests/fixtures/board_live/karekas-board-river-7d-jh-9d-as-jd.png",
+    "sha256": "e4aea105b91ef5afce97cc1143b497a84236fe8767573adac0ccb500955727d7",
+    "bytes": 1371709
+  },
+  {
+    "path": "tests/fixtures/bounty_live/machine-pko-bounty-135.png",
+    "sha256": "6f7c6a81768993452af4fe18889d869f43aecee87cfdb1ec41a885b1fdaf2416",
+    "bytes": 1162716
+  },
+  {
+    "path": "tests/fixtures/hud_live/minifreeze-9max-huds.png",
+    "sha256": "e39e76eb057ed78a72d1f1a2c29a5f5cdffd7596ba6bb0cd2936473209647dbe",
+    "bytes": 1237325
+  },
+  {
+    "path": "tests/fixtures/lobby_live/karekas-lobby-live-1.png",
+    "sha256": "ce414aac371df5439120e417456ac15a5ae3d4c573184168db3e154637a0f05e",
+    "bytes": 1052533
+  },
+  {
+    "path": "tests/fixtures/lobby_live/karekas-lobby-live-2.png",
+    "sha256": "011d820c43f10af6b1a4b6dd66f99eff56f9f5a1d1e0e57b3adc8bb9850bb052",
+    "bytes": 1037705
+  },
+  {
+    "path": "tests/fixtures/raise_panel/karekas-raise-panel-2x-2.5x-3x-4x.png",
+    "sha256": "f74c93047e829d679b0814d5c19a1ab5124bea871a52b603c1c163416daa13ca",
+    "bytes": 1351785
+  },
+  {
+    "path": "tests/fixtures/seat_live/pppoker-8max-rebuy-topcenter-dekkii-488.png",
+    "sha256": "d64f1435a88b8bbc61f02e2c1ff32c45d2a1b095b7bbfb4a580b939089890d4a",
+    "bytes": 1443739
+  }
+]
