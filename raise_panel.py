@@ -151,9 +151,11 @@ def target_multiplier(advice, table_state):
         return None
     bets = [b.get('bet_bb') for b in ((table_state or {}).get('bets') or [])
             if isinstance(b.get('bet_bb'), (int, float)) and b.get('bet_bb') > 0]
-    to_beat = max(bets) if bets else 1.0
-    if to_beat <= 0:
-        return None
+    # A "aposta a bater" é o maior RAISE (acima do BB). Num pote NÃO-ABERTO (só
+    # blinds) NÃO há raise -> o BB vale 1.0 POR DEFINIÇÃO. Ignorar os blinds evita
+    # que um blind MISLIDO (ex.: BB=0,6) infle o open: 2bb/0,6=3,3->3x em vez de 2x.
+    raises = [b for b in bets if b > 1.5]
+    to_beat = max(raises) if raises else 1.0
     return round(size_bb / to_beat, 2)
 
 
