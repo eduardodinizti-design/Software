@@ -80,11 +80,12 @@ class _Control:
         return self.running
 
 
-def _seq(world, inp, target=2.5, bot_control=None):
+def _seq(world, inp, target=2.5, bot_control=None, hand='H1', read_hand=None):
     return RaiseSequencer(capture=_capture_of(world), window_rect=WIN, input_adapter=inp,
                           target_mult=target, bot_control=bot_control, max_tables=6,
                           sleep=lambda s: None, read_actions=_ra_of(world),
-                          read_panel=_rp_of(world), detect=_detect)
+                          read_panel=_rp_of(world), detect=_detect, hand=hand,
+                          read_hand=read_hand or (lambda crop: {'hand_id': 'H1'}))
 
 
 class RaiseSequencerTest(unittest.TestCase):
@@ -149,9 +150,48 @@ class RaiseSequencerTest(unittest.TestCase):
             return rects.pop(0) if len(rects) > 1 else rects[0]
         seq = RaiseSequencer(capture=_capture_of(world), window_rect=geom, input_adapter=inp,
                              target_mult=2.5, max_tables=6, sleep=lambda s: None,
-                             read_actions=_ra_of(world), read_panel=_rp_of(world), detect=_detect)
+                             read_actions=_ra_of(world), read_panel=_rp_of(world), detect=_detect,
+                             hand='H1', read_hand=lambda c: {'hand_id': 'H1'})
         out = seq.run()
         self.assertFalse(out['ok'])                        # não conclui com geometria instável
+
+    def test_unknown_hand_aborts_no_click(self):
+        # A2: identidade da mão desconhecida (hand=None) -> não age, zero cliques.
+        world = World()
+        inp = WInput(world)
+        out = _seq(world, inp, hand=None).run()
+        self.assertFalse(out['ok'])
+        self.assertEqual(out['reason'], 'MAO_DESCONHECIDA')
+        self.assertEqual(len(inp.clicks), 0)
+
+    def test_hand_mismatch_aborts_no_click(self):
+        # A2: a mão relida na mesa diverge da mão da decisão -> cancela antes de clicar.
+        world = World()
+        inp = WInput(world)
+        out = _seq(world, inp, hand='H1', read_hand=lambda c: {'hand_id': 'H2'}).run()
+        self.assertFalse(out['ok'])
+        self.assertEqual(out['reason'], 'ABRIR_CANCELADO')
+        self.assertEqual(len(inp.clicks), 0)
+
+    def test_read_failure_in_verify_is_not_confirmed(self):
+        # A2: INVALID_CROP na verificação final NÃO é "aposta entrou" (antes confirmava).
+        world = World()
+        inp = WInput(world)
+
+        def ra(crop):
+            ph = world.phase()
+            if ph == 'BUTTONS' and world.hero_turn:
+                return dict(status='EXPERIMENTAL_BUTTON_ROW',
+                            buttons=[dict(box=[500, 1240, 100, 44], action='RAISE', label='Raise')])
+            if ph == 'DONE':
+                return dict(status='INVALID_CROP', buttons=[])   # falha de leitura, não "sumiu"
+            return dict(status='NO_BUTTON_ROW', buttons=[])
+        seq = RaiseSequencer(capture=_capture_of(world), window_rect=WIN, input_adapter=inp,
+                             target_mult=2.5, max_tables=6, sleep=lambda s: None,
+                             read_actions=ra, read_panel=_rp_of(world), detect=_detect,
+                             hand='H1', read_hand=lambda c: {'hand_id': 'H1'})
+        out = seq.run()
+        self.assertFalse(out.get('confirmed'))              # leitura falha != aposta confirmada
 
 
 if __name__ == '__main__':

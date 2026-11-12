@@ -23,9 +23,17 @@ import cv2
 
 from table_reading.automatic_table_crops import detect_table_crops
 from table_reading.action_buttons import read_action_buttons
+from table_reading.hand_tracking import read_hand_id
 from raise_panel import read_raise_panel, map_multiplier_to_preset
 from screen_coords import rect_frame_to_screen
 from cursor_controller import CursorController, Intent
+
+# Leituras que PROVAM positivamente que a linha de ação sumiu numa mesa legível (a
+# aposta entrou / não é mais a vez do hero). Erros de leitura (INVALID_CROP/
+# CROP_TOO_SMALL) e a linha ainda presente NÃO contam — ausência por OCR/cobertura
+# não é prova de que o clique de confirmar teve efeito (auditoria A2). Mesma regra
+# do verifier de operar_mesa.py.
+_ROW_GONE_STATUSES = ('NO_BUTTON_ROW', 'PRESELECTION_ROW')
 
 
 def _table_key(x, y):
@@ -37,7 +45,7 @@ class RaiseSequencer:
                  bot_control=None, table_key=None, hand=None, max_tables=6,
                  sleep=time.sleep, clock=time.monotonic, step_deadline=5.0,
                  read_actions=read_action_buttons, read_panel=read_raise_panel,
-                 detect=detect_table_crops):
+                 detect=detect_table_crops, read_hand=read_hand_id):
         self.capture = capture
         self._geom = window_rect if callable(window_rect) else (lambda: window_rect)
         self.input = input_adapter
@@ -52,6 +60,7 @@ class RaiseSequencer:
         self._ra = read_actions
         self._rp = read_panel
         self._detect = detect
+        self._read_hand = read_hand
         self.log = []
         self._crop_box = None
         self._win0 = None
@@ -121,10 +130,12 @@ class RaiseSequencer:
         c = panel.get('confirm')
         return c['box'] if c else None
 
-    def _validator(self, target_fn, identity):
+    def _validator(self, target_fn, what):
         """Revalida NA CHEGADA (e no início): geometria estável, mesa ligada, alvo
-        presente FRESCO. Devolve target_rect (tela atual) + identity -> o controlador
-        cancela em TARGET_MOVED/IDENTITY_CHANGED."""
+        presente FRESCO. RELÊ a mão na mesa ligada e monta a identidade com a mão
+        ATUAL (não ecoa a esperada): se a mão trocou ou ficou ilegível, a identidade
+        diverge do source_key e o CursorController cancela (IDENTITY_CHANGED) — não
+        clica numa mão nova nem sobre leitura incerta (auditoria A2)."""
         def v(intent, now):
             if not self._geom_ok():
                 return dict(ok=False, reasons=['GEOMETRIA_MUDOU'])
@@ -135,22 +146,27 @@ class RaiseSequencer:
             box = target_fn(crop)
             if box is None:
                 return dict(ok=False, reasons=['ALVO_AUSENTE'])
+            cur = (self._read_hand(crop) if self._read_hand else {}) or {}
+            cur_hand = cur.get('hand_id') or cur.get('hand_number')
             bx, by, bw, bh = box
             cx0, cy0, _, _ = self._crop_box
             rect = rect_frame_to_screen((cx0 + bx, cy0 + by, bw, bh),
                                         window_rect=self._win(),
                                         frame_size=(frame.shape[1], frame.shape[0]))
-            return dict(ok=True, target_rect=rect, identity=identity)
+            return dict(ok=True, target_rect=rect,
+                        identity=(self.table_key, cur_hand, what))
         return v
 
     def _verify_bet(self, intent, now):
-        """Indício do efeito na MESMA mesa: a linha de botões sumiu. Ausência não é
-        prova (#8) -> sem isso, confirmed=False e o controlador devolve UNKNOWN."""
+        """Indício POSITIVO do efeito na MESMA mesa: a linha de botões sumiu num read
+        LIMPO (NO_BUTTON_ROW/PRESELECTION_ROW). Erro de leitura (INVALID_CROP) ou linha
+        ainda presente NÃO confirmam (#8/A2) -> confirmed=False e o controlador devolve
+        UNKNOWN; não se declara aposta entrada sobre leitura falha."""
         frame, _ = self.capture()
         crop = self._crop(frame)
         if crop is None:
             return dict(confirmed=False)
-        return dict(confirmed=(self._ra(crop)['status'] != 'EXPERIMENTAL_BUTTON_ROW'))
+        return dict(confirmed=(self._ra(crop)['status'] in _ROW_GONE_STATUSES))
 
     def _step(self, what, target_fn, verifier=None):
         identity = (self.table_key, self.hand, what)
@@ -159,7 +175,7 @@ class RaiseSequencer:
                         target_rect=(0, 0, 1, 1), deadline=self._clock() + self.step_deadline,
                         hand=self.hand, expected=dict(step=what, table_key=self.table_key))
         ctrl = CursorController(input_adapter=self.input,
-                                validator=self._validator(target_fn, identity),
+                                validator=self._validator(target_fn, what),
                                 verifier=verifier, bot_control=self.bot,
                                 clock=self._clock, sleep=self._sleep)
         out = ctrl.execute(intent)
@@ -168,6 +184,8 @@ class RaiseSequencer:
 
     # ---- fluxo ----------------------------------------------------------
     def run(self):
+        if self.hand is None:
+            return self._fail('MAO_DESCONHECIDA')   # identidade desconhecida: não age (A2)
         frame, _ = self.capture()
         if frame is None:
             return self._fail('SEM_CAPTURA')

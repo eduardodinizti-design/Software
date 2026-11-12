@@ -214,6 +214,24 @@ class FlowScenariosTest(unittest.TestCase):
         self.assertEqual(out['flow_state'], 'BLOCKED')
         self.assertIn('NOT_THE_AUTHORIZED_TARGET', out['reasons'])
 
+    def test_1a_details_other_tournament_blocks(self):  # A1 auditoria
+        # Lobby é o alvo (MINI FREEZE/Karekas), mas a tela de detalhes mostra OUTRO
+        # torneio/clube com o mesmo custo: tem de bloquear, não chegar à autorização.
+        r = new_round(target='MINI FREEZE')
+        r.observe(card(name='MINI FREEZE'), club='Karekas')
+        out = r.check_details(details(name='OTHER EVENT', club='Veneza'))
+        self.assertEqual(out['flow_state'], 'BLOCKED')
+        self.assertIn('DETAILS_NOT_THE_AUTHORIZED_TARGET', out['reasons'])
+
+    def test_1b_club_divergence_lobby_vs_details_blocks(self):  # A1 auditoria
+        # Mesmo nome do alvo, mas o clube dos detalhes diverge do observado no lobby
+        # (ambos autorizados pela política): a inconsistência lobby×detalhes bloqueia.
+        r = new_round(target='MINI FREEZE')
+        r.observe(card(name='MINI FREEZE'), club='Karekas')
+        out = r.check_details(details(name='MINI FREEZE', club='Veneza'))
+        self.assertEqual(out['flow_state'], 'BLOCKED')
+        self.assertIn('CLUB_DIVERGENCE_LOBBY_VS_DETAILS', out['reasons'])
+
     def test_3_same_name_different_identity(self):
         i1, _ = make_identity(name='DAILY', buyin=50, start_time='20:00')
         i2, _ = make_identity(name='DAILY', buyin=50, start_time='22:00')

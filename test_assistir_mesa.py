@@ -29,6 +29,22 @@ class AdviseFrameTests(unittest.TestCase):
         self.assertEqual(out[0]['box'], [0, 0, 100, 100])
         self.assertEqual(adv.call_count, 2)
 
+    def test_table_key_is_positional_not_ordinal(self):
+        # #A6: a chave por mesa vem da POSICAO, nao da ordem de deteccao. Quando a 1a
+        # mesa some, a 2a mantem sua propria chave (nao herda a #1 da que sumiu, e com ela
+        # o contexto/cache). A != B tambem.
+        frame = np.zeros((300, 300, 3), np.uint8)
+        a = _Prop((0, 0, 100, 100), 'COMPLETE_CANDIDATE')
+        b = _Prop((0, 200, 100, 90), 'COMPLETE_CANDIDATE')
+        with patch('assistir_mesa.detect_table_crops', return_value=[a, b]), \
+             patch('assistir_mesa.advise_table', return_value={'is_table': True}):
+            both = assistir_mesa.advise_frame(frame, {}, advisor=object())
+        with patch('assistir_mesa.detect_table_crops', return_value=[b]), \
+             patch('assistir_mesa.advise_table', return_value={'is_table': True}):
+            only_b = assistir_mesa.advise_frame(frame, {}, advisor=object())
+        self.assertNotEqual(both[0]['table_key'], both[1]['table_key'])
+        self.assertEqual(both[1]['table_key'], only_b[0]['table_key'])
+
     def test_no_complete_tables_returns_empty(self):
         with patch('assistir_mesa.detect_table_crops', return_value=[_Prop((0, 0, 10, 10), 'UNCERTAIN')]), \
              patch('assistir_mesa.advise_table') as adv:

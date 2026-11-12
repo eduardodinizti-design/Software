@@ -127,6 +127,23 @@ class RegistrationRound:
         reasons = []
         card = self.observed['card']
 
+        # Identidade deve ser a do ALVO autorizado e bater com o lobby observado (§4).
+        # make_identity() só deriva a identidade DOS DETALHES; sozinha ela não confere
+        # que a tela de detalhes é o mesmo torneio que o usuário autorizou. Sem esta
+        # comparação, uma oferta de OUTRO torneio/clube com o mesmo custo passava a
+        # conferência e chegava à autorização (auditoria A1). A autorização é para
+        # ESTE alvo e não se transfere para outro evento.
+        dname = (details.get('name') or '').strip()
+        if not self.target_name or dname != self.target_name:
+            reasons.append('DETAILS_NOT_THE_AUTHORIZED_TARGET')
+        cname = (card.get('name') or '').strip()
+        if cname and dname and cname != dname:
+            reasons.append('NAME_DIVERGENCE_LOBBY_VS_DETAILS')
+        lclub = (self.observed.get('club') or '').strip() or None
+        dclub = (details.get('club') or '').strip() or None
+        if lclub and dclub and lclub != dclub:
+            reasons.append('CLUB_DIVERGENCE_LOBBY_VS_DETAILS')
+
         # Identidade verificável (§4): nome + buy-in/horário; nome só não basta.
         ident, basis = make_identity(
             name=details.get('name'), club=details.get('club'),

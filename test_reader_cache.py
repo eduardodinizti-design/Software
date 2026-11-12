@@ -52,17 +52,59 @@ class HudCacheTests(unittest.TestCase):
         r = c.huds(None, 't', ['hero', 'a'])
         self.assertNotIn('hero', r)
 
-
-class BountyCacheTests(unittest.TestCase):
-    def test_keeps_good_value_on_abstention(self):
-        seq = [{'a': 135}, {'a': None}]
+    def test_failed_refresh_marks_value_stale(self):
+        # #A7: leitura boa, depois refresh que FALHA ({}) -> o valor e mantido p/
+        # continuidade, mas marcado velho (_age>0) para o exploit NAO trata-lo como fresco.
+        seq = [{'a': {'stats': {}, 'confidence': 'high'}}, {}]
 
         def fn(crop, seats):
             return seq.pop(0) if seq else {}
 
-        c = ReaderCache(bounty_every=1, bounty_fn=fn)      # relê todo frame
+        c = ReaderCache(hud_every=1, hud_fn=fn)              # tenta reler todo frame
+        r1 = c.huds(None, 't', ['a'])
+        self.assertEqual(r1['a']['_age'], 0)                 # recem-lido
+        r2 = c.huds(None, 't', ['a'])                        # refresh falhou
+        self.assertEqual(r2['a']['confidence'], 'high')      # valor preservado
+        self.assertGreaterEqual(r2['a']['_age'], 1)          # porem marcado velho
+
+    def test_reuse_between_refreshes_is_not_stale(self):
+        # #A7: reuso do cache ENTRE refreshes (cadencia nao disparou) nao envelhece: o
+        # valor segue confirmado da ultima leitura boa, so nao foi relido neste frame.
+        def fn(crop, seats):
+            return {s: {'confidence': 'high'} for s in seats}
+
+        c = ReaderCache(hud_every=100, hud_fn=fn)
+        c.huds(None, 't', ['a'])                             # n=0 -> le
+        r = c.huds(None, 't', ['a'])                         # n=1 -> reuso confiavel
+        self.assertEqual(r['a']['_age'], 0)
+
+
+class BountyCacheTests(unittest.TestCase):
+    def test_failed_refresh_withholds_bounty_then_recovers(self):
+        # #A7: bounty muda por KO sem mudar ocupacao. Um refresh que FALHA (None) nao
+        # zera o cache (continuidade), mas o valor velho NAO e servido ao overlay de
+        # call-off ate reconfirmar. Reconfirmando, volta a ser servido.
+        seq = [{'a': 135}, {'a': None}, {'a': 135}]
+
+        def fn(crop, seats):
+            return seq.pop(0) if seq else {}
+
+        c = ReaderCache(bounty_every=1, bounty_fn=fn)      # tenta reler todo frame
+        self.assertEqual(c.bounties(None, 't', ['a']), {'a': 135})   # lido
+        self.assertEqual(c.bounties(None, 't', ['a']), {})           # refresh falhou -> retido
+        self.assertEqual(c.bounties(None, 't', ['a']), {'a': 135})   # reconfirmou -> volta
+
+    def test_reuse_between_refreshes_still_served(self):
+        # #A7: reuso ENTRE refreshes (cadencia nao disparou) segue servido: o valor foi
+        # confirmado na ultima leitura boa, so nao foi relido neste frame.
+        seq = [{'a': 135}]
+
+        def fn(crop, seats):
+            return seq.pop(0) if seq else {}
+
+        c = ReaderCache(bounty_every=100, bounty_fn=fn)    # le 1x, reusa
         self.assertEqual(c.bounties(None, 't', ['a']), {'a': 135})
-        self.assertEqual(c.bounties(None, 't', ['a']), {'a': 135})  # None não zera o cache
+        self.assertEqual(c.bounties(None, 't', ['a']), {'a': 135})   # reuso confiavel
 
 
 if __name__ == '__main__':

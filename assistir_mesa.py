@@ -28,14 +28,20 @@ def advise_frame(frame_bgr, meta, advisor, max_tables=6, tracker=None, bounty_bb
 
     `tracker` (opcional, PreflopAggressorTracker) dá CONTEXTO entre frames: o conselho
     pós-flop passa a usar pot_type/iniciativa/range do vilão em vez do frame isolado. A
-    chave por mesa (`table_key`) é estável por posição de detecção dentro da captura."""
+    chave por mesa (`table_key`) vem da POSIÇÃO do crop na captura (origem quantizada),
+    não da ordem de detecção, para não transferir contexto entre mesas (#A6)."""
     proposals = detect_table_crops(cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB),
                                    blockers=meta.get('blockers', ()), max_tables=max_tables)
     out = []
     for proposal in [p for p in proposals if p.status == 'COMPLETE_CANDIDATE']:
         x, y, w, h = map(int, proposal.box)
         crop = frame_bgr[y:y + h, x:x + w]
-        tkey = '%s#%d' % (meta.get('source_key') or 'cap', len(out) + 1)
+        # Identidade da mesa por POSIÇÃO (origem quantizada em 100px), não pela ordem de
+        # detecção (#A6): se uma mesa some/é rejeitada, as outras NÃO herdam a chave
+        # #índice dela (e com ela o contexto do tracker e o cache de HUD/bounty). Mesmo
+        # esquema do operar_mesa (HWND+origem). Limitação conhecida: rearranjo/troca de
+        # mesa dentro da mesma célula de 100px ainda não é distinguível sem id real.
+        tkey = '%s#%dx%d' % (meta.get('source_key') or 'cap', x // 100, y // 100)
         with ocr_frame():
             result = advise_table(crop, advisor, table_key=tkey, tracker=tracker,
                                   bounty_bb=bounty_bb, mode=mode, stage=stage, enable_hud=enable_hud,

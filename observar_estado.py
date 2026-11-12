@@ -79,9 +79,10 @@ def main(argv=None):
             for prop in detect_table_crops(rgb, max_tables=args.max_tables):
                 x, y, w, h = map(int, prop.box)
                 crop = frame[y:y + h, x:x + w]
-                # Chave estável por mesa aceita; crops rejeitados (não-mesa) retornam
-                # cedo no advise_table e NÃO tocam o tracker, então reusar o idx é seguro.
-                key = '%s#%d' % (meta.get('source_key', args.hwnd), idx)
+                # Identidade da mesa por POSIÇÃO (origem quantizada em 100px), não pela
+                # ordem de detecção (#A6): se uma mesa some, as outras não herdam a chave
+                # #índice dela (e o contexto/cache junto). Igual ao operar_mesa.
+                key = '%s#%dx%d' % (meta.get('source_key', args.hwnd), x // 100, y // 100)
                 try:
                     result = advise_table(crop, advisor, table_key=key, tracker=aggr_tracker,
                                           bounty_bb=args.bounty_bb, mode=args.mode, stage=args.stage,

@@ -38,8 +38,8 @@ def _pot_type_from_context(ctx):
     """Tipo de pote a partir do contexto do rastreador, p/ o gating honesto do
     pós-flop: sem contexto/sem raise -> 'unknown'; não-HU -> 'multiway'; >=2 níveis de
     raise -> 'three_bet'; 1 nível -> 'single_raised' (pote de um raise só)."""
-    if ctx is None:
-        return 'unknown'
+    if ctx is None or ctx.get('pending'):
+        return 'unknown'                     # sem contexto ou ID pendente (#A5): não arrisca
     if not ctx['heads_up']:
         return 'multiway'
     if ctx['raises'] >= 2:
@@ -55,6 +55,8 @@ def _postflop_in_context(advisor, tracker, state, hero, board, *, mode, stage, t
     um raise só) e rechama advise_postflop. Espelha o que o operador armado já fazia,
     agora disponível a qualquer observador contínuo que passe um `tracker`."""
     ctx = tracker.context(table_key)
+    if ctx and ctx.get('pending'):
+        ctx = None                           # ID ilegível: não aplica range/iniciativa antigos (#A5)
     seats = state.get('seats') or {}
     spread = (infer_spread({p: (seats.get(s) or {}).get('stack_bb')
                             for s, p in (state.get('positions') or {}).items()})
@@ -73,9 +75,12 @@ def _postflop_in_context(advisor, tracker, state, hero, board, *, mode, stage, t
         if vseat is None and len(hud) == 1:
             vseat = next(iter(hud))
         ventry = hud.get(vseat) if vseat else None
-        # Só exploita com leitura CONFIÁVEL (8/8 high); 'partial' pode ter campo mal-lido
-        # ou linha trocada num skin/escala não calibrado -> não alimenta o exploit.
-        vstats = ventry['stats'] if (ventry and ventry.get('confidence') == 'high') else None
+        # Só exploita com leitura CONFIÁVEL (8/8 high) E RECÉM-RECONFIRMADA (_age 0, #A7):
+        # 'partial' pode ter campo mal-lido/linha trocada num skin não calibrado, e um
+        # refresh que falhou (valor velho mantido p/ continuidade) não deve alimentar o
+        # exploit como se fosse fresco.
+        vstats = (ventry['stats'] if (ventry and ventry.get('confidence') == 'high'
+                                      and not ventry.get('_age')) else None)
     advice = advise_postflop(state, hero, board['cards'], street=board.get('street'),
                              mode=mode, stage=stage, aggressor=(ctx or {}).get('aggressor'),
                              villain_range=(combos or None), pot_type=ptype, narrow_range=True,

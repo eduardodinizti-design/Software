@@ -25,19 +25,24 @@ class PreflopAggressorTracker:
     def _fresh(hand_key):
         return dict(hand_key=hand_key, aggressor=None, raises=0, hero_aggressor=False,
                     villain_stack=None, villain_position=None, hero_position=None,
-                    villain_in_hand=0, frozen=False)
+                    villain_seats=set(), villain_in_hand=0, frozen=False, pending=False)
 
     def update(self, *, table_key, hand_key, table_state, has_board):
         """Processa um frame. Só muta no PRÉ-FLOP (sem board); ao ver o board,
         CONGELA — o contexto resolvido não muda mais (stack/posição pós-flop não o
-        substituem, #4). ID ilegível (hand_key None) SUSPENDE, não apaga (#2/#4).
-        Devolve o contexto atual (ver `context`)."""
+        substituem, #4). ID ilegível (hand_key None) SUSPENDE a memória e marca o
+        contexto como PENDENTE — não apaga, mas também não serve como confirmado até a
+        identidade voltar (#2/#4/#A5). Devolve o contexto atual (ver `context`)."""
         if hand_key is None:
+            st = self._by_table.get(table_key)
+            if st is not None:
+                st['pending'] = True
             return self.context(table_key)
         st = self._by_table.get(table_key)
         if st is None or st['hand_key'] != hand_key:
             st = self._fresh(hand_key)
             self._by_table[table_key] = st
+        st['pending'] = False               # ID legível: contexto desta mão é confirmado
         if has_board or st['frozen']:
             st['frozen'] = True
             return self.context(table_key)
@@ -53,7 +58,13 @@ class PreflopAggressorTracker:
         vparts = [(s, p) for s, p in positions.items()
                   if s != 'hero' and p and isinstance(bets.get(s), (int, float))
                   and bets[s] > RAISE_FLOOR_BB]
-        st['villain_in_hand'] = max(st['villain_in_hand'], len(vparts))
+        # UNIÃO dos ASSENTOS vilões vistos apostando ao longo da mão, não o máximo por
+        # frame (#A4): dois assentos observados em frames diferentes (um deles
+        # momentaneamente ilegível) são multiway, não heads-up. Ausência de aposta num
+        # frame é ilegibilidade/cobertura, não fold.
+        for _s, _p in vparts:
+            st['villain_seats'].add(_s)
+        st['villain_in_hand'] = len(st['villain_seats'])
         if len(vparts) == 1:
             vseat, vpos = vparts[0]
             st['villain_position'] = vpos
@@ -89,7 +100,7 @@ class PreflopAggressorTracker:
                     hero_aggressor=st['hero_aggressor'], villain_stack=st['villain_stack'],
                     villain_position=st['villain_position'], hero_position=st['hero_position'],
                     heads_up=st['villain_in_hand'] == 1, single_raised=st['raises'] == 1,
-                    hand_key=st['hand_key'])
+                    pending=st['pending'], hand_key=st['hand_key'])
 
 
 def villain_open_range(advisor, ctx, *, mode='chip_ev', stage='mid', players=9,
@@ -101,6 +112,8 @@ def villain_open_range(advisor, ctx, *, mode='chip_ev', stage='mid', players=9,
     e o pós-flop fica na Fase 1. Devolve (combos, meta) ou (None, motivo)."""
     if ctx is None:
         return None, 'NO_CONTEXT'
+    if ctx.get('pending'):
+        return None, 'CONTEXT_PENDING'          # ID ilegível: não aplica range antigo (#A5)
     if not ctx['heads_up']:
         return None, 'NOT_HEADS_UP'
     if not ctx['single_raised']:
@@ -146,6 +159,8 @@ def villain_postflop_range(advisor, ctx, *, mode='chip_ev', stage='mid', players
     posições/nó no pack, devolve motivo e o pós-flop fica na Fase 1."""
     if ctx is None:
         return None, 'NO_CONTEXT'
+    if ctx.get('pending'):
+        return None, 'CONTEXT_PENDING'          # ID ilegível: não aplica range antigo (#A5)
     if not ctx['heads_up']:
         return None, 'NOT_HEADS_UP'
     if not ctx['single_raised']:
