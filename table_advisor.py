@@ -88,7 +88,7 @@ def _postflop_in_context(advisor, tracker, state, hero, board, *, mode, stage, t
 
 def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table_key='default',
                  villain_range=None, hero_override=None, tracker=None, bounty_bb=None,
-                 enable_hud=False):
+                 enable_hud=False, read_cache=None):
     """Read the table and attach an exploratory recommendation. The tournament
     phase chooses chip EV vs ICM unless mode/stage are forced. Pure read; the
     caller wraps it in an ocr_frame so one snapshot reuses OCR.
@@ -135,16 +135,22 @@ def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table
     # bounty do vilão). Só com o overlay armado (bounty_bb) e torneio PKO, p/ não pagar o
     # custo de OCR fora disso. Best-effort: assentos ilegíveis simplesmente não entram.
     if bounty_bb and use_mode in ('pko', 'pko_icm'):
-        from table_reading.bounty import read_seat_bounties
         occ = [s for s, d in (state.get('seats') or {}).items() if d.get('occupied')]
-        bread = read_seat_bounties(crop, seats=occ)
-        state = dict(state, bounties={s: v['value'] for s, v in bread.items() if v['value'] is not None})
+        if read_cache is not None:          # cache: relê só a cada N frames (latência)
+            state = dict(state, bounties=read_cache.bounties(crop, table_key, occ))
+        else:
+            from table_reading.bounty import read_seat_bounties
+            bread = read_seat_bounties(crop, seats=occ)
+            state = dict(state, bounties={s: v['value'] for s, v in bread.items() if v['value'] is not None})
     # HUD VIP (opcional): lê os 8 stats por vilão e anexa a state['hud'] (p/ o exploit
-    # no pós-flop). Custo de template matching por assento -> só quando enable_hud.
+    # no pós-flop). Custo ALTO (~1s/8 assentos) -> com read_cache, relê só a cada N frames.
     if enable_hud:
-        from table_reading.hud_reader import read_seat_huds
         occ = [s for s, d in (state.get('seats') or {}).items() if d.get('occupied')]
-        state = dict(state, hud=read_seat_huds(crop, occ))
+        if read_cache is not None:
+            state = dict(state, hud=read_cache.huds(crop, table_key, occ))
+        else:
+            from table_reading.hud_reader import read_seat_huds
+            state = dict(state, hud=read_seat_huds(crop, occ))
     # Postflop guard. A read board (cards) is clearly postflop. A board that was
     # DETECTED but not fully read (incomplete, duplicate, or obstructed with the
     # anchor found) is also postflop and must abstain, not be treated as preflop.

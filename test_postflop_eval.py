@@ -212,6 +212,23 @@ class DirtyOutsTests(unittest.TestCase):
         self.assertEqual(d['tainted_outs'], 0.0)
 
 
+class NutFlushDrawTests(unittest.TestCase):
+    def test_ace_high_is_nut(self):
+        d = hand_strength(['As', 'Ks'], ['9s', '7s', '2d'])['draws']
+        self.assertTrue(d['flush_draw'])
+        self.assertTrue(d['nut_flush_draw'])
+
+    def test_king_high_not_nut_ace_live(self):
+        d = hand_strength(['Ks', 'Qs'], ['9s', '7s', '2d'])['draws']
+        self.assertTrue(d['flush_draw'])
+        self.assertFalse(d['nut_flush_draw'])          # Ás ainda pode estar com o vilão
+
+    def test_board_ace_makes_king_high_nut(self):
+        d = hand_strength(['Ks', 'Qs'], ['As', '7s', '2d'])['draws']
+        self.assertTrue(d['flush_draw'])
+        self.assertTrue(d['nut_flush_draw'])           # Á no board joga p/ todos -> K é nut
+
+
 class ContinuationMultiplierTests(unittest.TestCase):
     """Pesos-base por tier/rua (fatores de textura NEUTROS), travados na função pura."""
     NODRAW = dict(combo=False, flush_draw=False, oesd=False, gutshot=False, backdoor_flush=False)

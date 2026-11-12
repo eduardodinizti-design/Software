@@ -143,6 +143,18 @@ def _dirty_outs(out_cards, flush_out_cards, board_cards, flush_suit):
     return total, sorted(dirty)
 
 
+def _nut_flush_draw(hero_cards, board_cards, flush_suit):
+    """Hero está no draw do FLUSH NUT? True se NÃO há carta do naipe mais alta que a do
+    hero fora do que já é visível (ninguém pode ter um flush maior). Trata o Á no board
+    (flush compartilhado -> a carta de hole mais alta do naipe decide)."""
+    if flush_suit is None:
+        return False
+    visible = {r for (r, s) in (hero_cards + board_cards) if s == flush_suit}
+    hero_max = max((r for (r, s) in hero_cards if s == flush_suit), default=0)
+    higher_available = [r for r in range(hero_max + 1, 15) if r not in visible]
+    return hero_max > 0 and not higher_available
+
+
 def _draws(hero_cards, board_cards):
     """Gavetas de draw do hero e contagem de outs (cartas), com contribuição do hero.
 
@@ -158,7 +170,7 @@ def _draws(hero_cards, board_cards):
     if len(board_cards) >= 5:
         return dict(flush_draw=False, backdoor_flush=False, flush_outs=0,
                     straight_outs=0, oesd=False, gutshot=False, combo=False,
-                    outs=0, clean_outs=0, tainted_outs=0.0)
+                    outs=0, clean_outs=0, tainted_outs=0.0, nut_flush_draw=False)
     present = hero_cards + board_cards
     suits = Counter(s for _, s in present)
     hero_suits = Counter(s for _, s in hero_cards)
@@ -190,7 +202,8 @@ def _draws(hero_cards, board_cards):
                 flush_outs=len(flush_out_cards), straight_outs=straight_cnt,
                 oesd=oesd, gutshot=gutshot,
                 combo=bool(flush_draw and straight_cnt >= 4),
-                outs=outs, clean_outs=clean_outs, tainted_outs=round(tainted, 1))
+                outs=outs, clean_outs=clean_outs, tainted_outs=round(tainted, 1),
+                nut_flush_draw=_nut_flush_draw(hero_cards, board_cards, flush_suit))
 
 
 def _relative_label(hero_cards, board_cards, category):

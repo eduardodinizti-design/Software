@@ -40,6 +40,17 @@ class ImpliedOddsTests(unittest.TestCase):
         self.assertEqual(r['recommended'], 'fold')
         self.assertEqual(r['implied_bb'], 0.0)
 
+    def test_reverse_implied_nonnut_flush_folds_borderline(self):
+        # Mesmo board/pote: nut flush draw (As Ks) paga; não-nut (Ks Qs, Ás na roda) tem
+        # implied menor (reverse implied) e folda o borderline.
+        board = ['9s', '7s', '2d']
+        nut = advise_postflop(state(10, 6), ['As', 'Ks'], board)
+        non = advise_postflop(state(10, 6), ['Ks', 'Qs'], board)
+        self.assertEqual(nut['recommended'], 'call')
+        self.assertEqual(non['recommended'], 'fold')
+        self.assertLess(non['implied_bb'], nut['implied_bb'])
+        self.assertIn('REVERSE_IMPLIED_NONNUT_FLUSH', non['caveats'])
+
 
 class NarrowRangeTests(unittest.TestCase):
     """C: estreitar o range do vilão para o range de continuação no board (equity
@@ -90,6 +101,21 @@ class ExploitHudTests(unittest.TestCase):
         r = advise_postflop(state(10, 8), ['As', 'Kc'], ['Ad', '9h', '3d'], villain_stats=self.FISH)
         self.assertEqual(r['recommended'], 'fold')
         self.assertIn('EXPLOIT_HUD_FISH', r['caveats'])
+
+    FOLDCBET = {'vpip': 22, 'pfr': 18, 'cbet': 55, 'foldcbet': 65, 'threebet': 5, 'fold3bet': 55, 'steal': 30, 'cr': 5}
+
+    def test_cbet_bluff_air_vs_folds_to_cbet(self):
+        # Passaram a vez com AR: sem HUD dá check; vs vilão que foge de c-bet, blefa.
+        board = ['Ah', 'Kc', '9s']
+        self.assertEqual(advise_postflop(state(10, 0), ['7s', '4d'], board)['recommended'], 'check')
+        r = advise_postflop(state(10, 0), ['7s', '4d'], board, villain_stats=self.FOLDCBET)
+        self.assertEqual(r['recommended'], 'bet')
+        self.assertIn('EXPLOIT_CBET_BLUFF_VS_FOLDCBET', r['caveats'])
+
+    def test_no_cbet_bluff_with_showdown_value(self):
+        # Mão média (segundo par) vs folds_to_cbet NÃO vira blefe (tem showdown value).
+        r = advise_postflop(state(10, 0), ['9s', '8d'], ['Ah', '9h', '3d'], villain_stats=self.FOLDCBET)
+        self.assertEqual(r['recommended'], 'check')
 
 
 class AbstentionTests(unittest.TestCase):

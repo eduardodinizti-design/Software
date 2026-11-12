@@ -14,13 +14,14 @@ from table_reading.ocr_runtime import ocr_frame
 from table_reading.automatic_table_crops import detect_table_crops
 from preflop_advisor import PreflopAdvisor
 from preflop_context import PreflopAggressorTracker
+from reader_cache import ReaderCache
 from table_advisor import advise_table, _summary
 from bot_control import BotControl, HotkeyListener, RUNNING, PAUSED, DISABLED
 from state_observer import StateObserver, render
 
 
 def advise_frame(frame_bgr, meta, advisor, max_tables=6, tracker=None, bounty_bb=None,
-                 mode=None, stage=None, enable_hud=False):
+                 mode=None, stage=None, enable_hud=False, read_cache=None):
     """Detect the tables in one captured frame and advise each. Returns a list of
     {table_index, table_key, box, result}. Pure read; the full table identity still
     comes from the capture metadata upstream.
@@ -37,7 +38,8 @@ def advise_frame(frame_bgr, meta, advisor, max_tables=6, tracker=None, bounty_bb
         tkey = '%s#%d' % (meta.get('source_key') or 'cap', len(out) + 1)
         with ocr_frame():
             result = advise_table(crop, advisor, table_key=tkey, tracker=tracker,
-                                  bounty_bb=bounty_bb, mode=mode, stage=stage, enable_hud=enable_hud)
+                                  bounty_bb=bounty_bb, mode=mode, stage=stage, enable_hud=enable_hud,
+                                  read_cache=read_cache)
         if result.get('is_table'):   # skip lobby/non-table false positives
             out.append(dict(table_index=len(out) + 1, table_key=tkey, box=[x, y, w, h], result=result))
     return out
@@ -78,6 +80,7 @@ def main(argv=None):
     last = {}   # per table: last printed signature, so an unchanged hand is not reprinted
     observer = StateObserver()   # estado temporal integrado (Camada A); sem cliques
     aggr_tracker = PreflopAggressorTracker()   # agressor pré-flop p/ pós-flop em contexto
+    read_cache = ReaderCache()                 # cache de HUD/bounty (latência)
     try:
         while True:
             started = time.monotonic()
@@ -101,7 +104,8 @@ def main(argv=None):
                 last.pop('_capture', None)
                 for row in advise_frame(frame, meta, advisor, max_tables=args.max_tables,
                                         tracker=aggr_tracker, bounty_bb=args.bounty_bb,
-                                        mode=args.mode, stage=args.stage, enable_hud=args.hud):
+                                        mode=args.mode, stage=args.stage, enable_hud=args.hud,
+                                        read_cache=read_cache):
                     # Estado temporal integrado: amarra mesa/mão/campos e explica
                     # o que mudou/ficou pendente. Imprime só quando o estado muda.
                     # Mesma chave usada no tracker (consistência entre contexto e estado).

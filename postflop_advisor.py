@@ -102,15 +102,19 @@ def _draw_equity(outs, street):
 # implied (completar p/ a 2ª melhor mão) NÃO é modelado -> caveat.
 IMPLIED_POT_FRACTION = {'FLOP': 0.5, 'TURN': 0.25}   # 2 ruas restantes vs 1
 OBVIOUS_DRAW_IMPLIED = 0.5                            # desconto p/ flush draw (óbvio)
+REVERSE_IMPLIED_NONNUT = 0.5                          # flush NÃO-nut: às vezes perde ao acertar
 
 
 def _implied_bb(street, pot, hero_stack, to_call, draws):
-    """Ganho futuro estimado (BB) quando o draw completa; 0 no river/sem stack atrás."""
+    """Ganho futuro estimado (BB) quando o draw completa; 0 no river/sem stack atrás.
+    Flush não-nut leva REVERSE IMPLIED (perde pro flush maior às vezes)."""
     if street not in IMPLIED_POT_FRACTION or not isinstance(pot, (int, float)) or pot <= 0:
         return 0.0
     frac = IMPLIED_POT_FRACTION[street]
     if draws.get('flush_draw') and not draws.get('combo'):
         frac *= OBVIOUS_DRAW_IMPLIED                  # flush é óbvio -> implied menor
+        if not draws.get('nut_flush_draw'):
+            frac *= REVERSE_IMPLIED_NONNUT            # reverse implied do flush não-nut
     raw = frac * pot
     if isinstance(hero_stack, (int, float)) and isinstance(to_call, (int, float)):
         raw = min(raw, max(0.0, hero_stack - to_call))   # teto = stack efetivo atrás
@@ -378,7 +382,11 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
             implied = _implied_bb(street, pot, hero_stack, to_call, draws)
             po_imp = required_equity(to_call, pot + implied) if implied > 0 else pot_odds
             if implied > 0:
-                caveats += ['IMPLIED_ODDS_APPROX_%gBB' % implied, 'REVERSE_IMPLIED_NOT_MODELED']
+                caveats.append('IMPLIED_ODDS_APPROX_%gBB' % implied)
+                if draws['flush_draw'] and not draws['combo'] and not draws.get('nut_flush_draw'):
+                    caveats.append('REVERSE_IMPLIED_NONNUT_FLUSH')      # modelado (implied menor)
+                elif not draws['flush_draw']:
+                    caveats.append('REVERSE_IMPLIED_STRAIGHT_NOT_MODELED')
             else:
                 caveats.append('IMPLIED_ODDS_NONE_NO_STACK_BEHIND')
             if equity is not None:
@@ -421,6 +429,14 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
     if made == 'top_pair' and not (bclass['flush_possible'] or bclass['straightish'] >= 3):
         info.update(recommended='bet', sizing=_size(pot, 0.33, cap, 'valor fino top pair, board seco'),
                     caveats=caveats)
+        return info
+    # EXPLOIT (HUD): passaram a vez com AR (sem showdown value) -> normalmente check;
+    # mas vs vilão que FOGE de c-bet (tag folds_to_cbet), blefa com size pequeno (a fold
+    # equity é alta). Só o ar — mão média tem showdown value e segue de check.
+    if (profile and 'folds_to_cbet' in profile.get('tags', [])
+            and made in ('air', 'overcards')):
+        info.update(recommended='bet', sizing=_size(pot, 0.4, cap, 'c-bet blefe vs folds_to_cbet'),
+                    caveats=caveats + ['EXPLOIT_CBET_BLUFF_VS_FOLDCBET'])
         return info
     # Mãos médias/marginais/ar com valor de showdown ou sem: check.
     caveats.append('CHECK_SHOWDOWN_OR_GIVEUP')

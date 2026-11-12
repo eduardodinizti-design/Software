@@ -23,6 +23,7 @@ from table_reading.hand_tracking import read_hand_id
 from table_advisor import advise_table
 from preflop_advisor import PreflopAdvisor
 from preflop_context import PreflopAggressorTracker
+from reader_cache import ReaderCache
 from action_executor import ActionExecutor
 from action_coordinator import DryRunInput, map_advice_to_action, decision_identity
 from position_stabilizer import PositionStabilizer
@@ -192,6 +193,7 @@ def main(argv=None):
     hero_cache = {}      # (mesa_global, mao) -> cartas do hero (imutáveis na mão)
     stabilizer = PositionStabilizer()   # suaviza posições (anti-flicker HJ<->UTG+2)
     aggr_tracker = PreflopAggressorTracker()   # agressor pré-flop por mesa (p/ equity pós-flop)
+    read_cache = ReaderCache()                 # cache de HUD/bounty (latência: relê a cada N frames)
 
     print('OPERAR MESA | modo=%s | %s' % (
         'ARMADO (cursor REAL)' if args.arm else 'DRY-RUN (sem clique)',
@@ -235,7 +237,8 @@ def main(argv=None):
                     result = advise_table(crop, advisor, stabilizer=stabilizer,
                                           table_key=tkey, hero_override=override,
                                           tracker=aggr_tracker, bounty_bb=args.bounty_bb,
-                                          mode=args.mode, stage=args.stage, enable_hud=args.hud)
+                                          mode=args.mode, stage=args.stage, enable_hud=args.hud,
+                                          read_cache=read_cache)
                 except Exception:                      # noqa: BLE001
                     continue
                 if not result.get('is_table'):

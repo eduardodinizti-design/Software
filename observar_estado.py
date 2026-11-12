@@ -20,6 +20,7 @@ from table_reading.automatic_table_crops import detect_table_crops
 from table_advisor import advise_table
 from preflop_advisor import PreflopAdvisor
 from preflop_context import PreflopAggressorTracker
+from reader_cache import ReaderCache
 from state_observer import StateObserver, render
 from action_coordinator import plan_action, describe_plan
 from window_capture_engine import WindowCaptureEngine
@@ -57,6 +58,7 @@ def main(argv=None):
     engine = WindowCaptureEngine()
     obs = StateObserver()
     aggr_tracker = PreflopAggressorTracker()   # agressor pré-flop p/ pós-flop em contexto
+    read_cache = ReaderCache()                 # cache de HUD/bounty (latência)
     outdir = args.out or os.path.join('logs', 'estado',
                                       'sessao-' + time.strftime('%Y%m%d-%H%M%S'))
     os.makedirs(outdir, exist_ok=True)
@@ -83,7 +85,7 @@ def main(argv=None):
                 try:
                     result = advise_table(crop, advisor, table_key=key, tracker=aggr_tracker,
                                           bounty_bb=args.bounty_bb, mode=args.mode, stage=args.stage,
-                                          enable_hud=args.hud)
+                                          enable_hud=args.hud, read_cache=read_cache)
                 except Exception:                      # noqa: BLE001
                     continue
                 if not result.get('is_table'):
