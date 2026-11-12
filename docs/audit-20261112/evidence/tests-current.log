@@ -1,0 +1,882 @@
+test_conflicting_text_is_not_guessed (test_action_buttons.ButtonTests.test_conflicting_text_is_not_guessed) ... ok
+test_empty_does_not_call_ocr (test_action_buttons.ButtonTests.test_empty_does_not_call_ocr) ... ok
+test_error_cannot_reuse_previous_label (test_action_buttons.ButtonTests.test_error_cannot_reuse_previous_label) ... ok
+test_preselection_context_applies_to_entire_row (test_action_buttons.ButtonTests.test_preselection_context_applies_to_entire_row) ... ok
+test_preselection_not_action (test_action_buttons.ButtonTests.test_preselection_not_action) ... ok
+test_resize (test_action_buttons.ButtonTests.test_resize) ... ok
+test_three_labels_and_amount (test_action_buttons.ButtonTests.test_three_labels_and_amount) ... ok
+test_call_advice_falls_back_to_check_when_free (test_action_coordinator.CheckIsNotCallTest.test_call_advice_falls_back_to_check_when_free) ... ok
+test_check_advice_uses_check_button (test_action_coordinator.CheckIsNotCallTest.test_check_advice_uses_check_button) ... ok
+test_check_advice_with_only_call_button_abstains (test_action_coordinator.CheckIsNotCallTest.test_check_advice_with_only_call_button_abstains) ... ok
+test_same_decision_stable_identity (test_action_coordinator.DecisionIdentityTest.test_same_decision_stable_identity) ... ok
+test_table_hand_action_in_identity (test_action_coordinator.DecisionIdentityTest.test_table_hand_action_in_identity) ... ok
+test_value_change_changes_identity (test_action_coordinator.DecisionIdentityTest.test_value_change_changes_identity) ... ok
+test_dry_run_records_click_sends_nothing (test_action_coordinator.DryRunExecuteTest.test_dry_run_records_click_sends_nothing) ... ok
+test_all_in_flagged (test_action_coordinator.MapTest.test_all_in_flagged) ... ok
+test_basic_map (test_action_coordinator.MapTest.test_basic_map) ... ok
+test_raise_needs_sizing (test_action_coordinator.MapTest.test_raise_needs_sizing) ... ok
+test_unknown_unmapped (test_action_coordinator.MapTest.test_unknown_unmapped) ... ok
+test_vocabulary_synonyms_stay_multistep (test_action_coordinator.MapTest.test_vocabulary_synonyms_stay_multistep) ... ok
+test_abstains_when_advice_not_action (test_action_coordinator.PlanTest.test_abstains_when_advice_not_action) ... ok
+test_abstains_when_not_hero_turn (test_action_coordinator.PlanTest.test_abstains_when_not_hero_turn) ... ok
+test_call_falls_back_to_check (test_action_coordinator.PlanTest.test_call_falls_back_to_check) ... ok
+test_describe (test_action_coordinator.PlanTest.test_describe) ... ok
+test_no_button_for_action (test_action_coordinator.PlanTest.test_no_button_for_action) ... ok
+test_plan_raise_screen_coords (test_action_coordinator.PlanTest.test_plan_raise_screen_coords) ... ok
+test_abstains_when_advice_abstain (test_action_executor.ExecuteTest.test_abstains_when_advice_abstain) ... ok
+test_armed_but_paused_does_not_click (test_action_executor.ExecuteTest.test_armed_but_paused_does_not_click) ... ok
+test_armed_running_clicks (test_action_executor.ExecuteTest.test_armed_running_clicks) ... ok
+test_dry_run_clicks_and_dedups_same_decision (test_action_executor.ExecuteTest.test_dry_run_clicks_and_dedups_same_decision) ... ok
+test_refuses_raise_no_click (test_action_executor.ExecuteTest.test_refuses_raise_no_click) ... ok
+test_call_unvalidated_not_eligible_armed (test_action_executor.IdentityAndEligibilityTest.test_call_unvalidated_not_eligible_armed) ... ok
+test_call_unvalidated_ok_in_dry_run (test_action_executor.IdentityAndEligibilityTest.test_call_unvalidated_ok_in_dry_run) ... ok
+test_call_validated_is_eligible_armed (test_action_executor.IdentityAndEligibilityTest.test_call_validated_is_eligible_armed) ... ok
+test_call_value_change_is_new_decision (test_action_executor.IdentityAndEligibilityTest.test_call_value_change_is_new_decision) ... ok
+test_calloff_near_boundary_not_eligible_armed (test_action_executor.IdentityAndEligibilityTest.test_calloff_near_boundary_not_eligible_armed) ... ok
+test_calloff_with_margin_is_eligible_armed (test_action_executor.IdentityAndEligibilityTest.test_calloff_with_margin_is_eligible_armed) ... ok
+test_fold_always_eligible_armed (test_action_executor.IdentityAndEligibilityTest.test_fold_always_eligible_armed) ... ok
+test_legit_second_decision_same_hand_allowed (test_action_executor.IdentityAndEligibilityTest.test_legit_second_decision_same_hand_allowed) ... ok
+test_unknown_identity_blocks_armed (test_action_executor.IdentityAndEligibilityTest.test_unknown_identity_blocks_armed) ... ok
+test_unknown_identity_ok_in_dry_run (test_action_executor.IdentityAndEligibilityTest.test_unknown_identity_ok_in_dry_run) ... ok
+test_allows_fold_with_screen_rect (test_action_executor.PlanGateTest.test_allows_fold_with_screen_rect) ... ok
+test_refuses_raise_multistep (test_action_executor.PlanGateTest.test_refuses_raise_multistep) ... ok
+test_no_complete_tables_returns_empty (test_assistir_mesa.AdviseFrameTests.test_no_complete_tables_returns_empty) ... ok
+test_only_complete_tables_are_advised (test_assistir_mesa.AdviseFrameTests.test_only_complete_tables_are_advised) ... ok
+test_reads_full_river_board (test_board_karekas.BoardKarekasTest.test_reads_full_river_board) ... skipped 'OCR/gabarito board ausente'
+test_disable_is_not_undone_by_a_concurrent_resume (test_bot_control.ConcurrencyTests.test_disable_is_not_undone_by_a_concurrent_resume) ... ok
+test_default_is_paused_and_blocks_execution (test_bot_control.ControlTests.test_default_is_paused_and_blocks_execution) ... ok
+test_disable_is_sticky_and_reactivation_is_two_steps (test_bot_control.ControlTests.test_disable_is_sticky_and_reactivation_is_two_steps) ... ok
+test_on_change_callback_fires_on_transition_only (test_bot_control.ControlTests.test_on_change_callback_fires_on_transition_only) ... ok
+test_pause_blocks_execution (test_bot_control.ControlTests.test_pause_blocks_execution) ... ok
+test_resume_arms_and_allows_execution (test_bot_control.ControlTests.test_resume_arms_and_allows_execution) ... ok
+test_partial_combo_does_not_fire (test_bot_control.HotkeyTests.test_partial_combo_does_not_fire) ... ok
+test_pause_combo_fires_once_per_press (test_bot_control.HotkeyTests.test_pause_combo_fires_once_per_press) ... ok
+test_resume_and_disable_combos (test_bot_control.HotkeyTests.test_resume_and_disable_combos) ... ok
+test_start_stop_join_is_clean (test_bot_control.HotkeyTests.test_start_stop_join_is_clean) ... ok
+test_bb_unit (test_bounty.ParseBountyTests.test_bb_unit) ... ok
+test_coin_icon_noise_ignored (test_bounty.ParseBountyTests.test_coin_icon_noise_ignored) ... ok
+test_currency_unit (test_bounty.ParseBountyTests.test_currency_unit) ... ok
+test_empty_and_no_digits_abstain (test_bounty.ParseBountyTests.test_empty_and_no_digits_abstain) ... ok
+test_k_suffix (test_bounty.ParseBountyTests.test_k_suffix) ... ok
+test_unknown_unit_is_not_assumed_bb (test_bounty.ParseBountyTests.test_unknown_unit_is_not_assumed_bb) ... ok
+test_calibrated_roi_on_blank_abstains (test_bounty.ReadBountyAbstainTests.test_calibrated_roi_on_blank_abstains) ... ok
+test_currency_reading_is_not_bb (test_bounty.ReadBountyAbstainTests.test_currency_reading_is_not_bb) ... ok
+test_no_calibrated_roi_abstains (test_bounty.ReadBountyAbstainTests.test_no_calibrated_roi_abstains) ... ok
+test_read_seat_bounties_voting_never_confident_wrong (test_bounty.RealPkoFixtureTests.test_read_seat_bounties_voting_never_confident_wrong) ... ok
+test_read_seat_bounties_with_profile (test_bounty.RealPkoFixtureTests.test_read_seat_bounties_with_profile) ... FAIL
+test_reads_135_from_real_pills (test_bounty.RealPkoFixtureTests.test_reads_135_from_real_pills) ... FAIL
+test_decimal_comma_and_dot (test_bounty.ToFloatTests.test_decimal_comma_and_dot) ... ok
+test_invalid (test_bounty.ToFloatTests.test_invalid) ... ok
+test_thousands_vs_decimal (test_bounty.ToFloatTests.test_thousands_vs_decimal) ... ok
+test_bright_rank_abstains_on_blank (test_bright_rank.BrightRankTest.test_bright_rank_abstains_on_blank) ... skipped 'OCR/gabarito Karekas ausente'
+test_bright_rank_reads_low_contrast_8 (test_bright_rank.BrightRankTest.test_bright_rank_reads_low_contrast_8) ... skipped 'OCR/gabarito Karekas ausente'
+test_hero_cards_2h_4d (test_bright_rank.BrightRankTest.test_hero_cards_2h_4d) ... skipped 'OCR/gabarito Karekas ausente'
+test_hero_cards_8s_3c (test_bright_rank.BrightRankTest.test_hero_cards_8s_3c) ... skipped 'OCR/gabarito Karekas ausente'
+test_ambiguous_templates_abstain (test_button_templates.ButtonTemplateTests.test_ambiguous_templates_abstain) ... ok
+test_disabled_mode_bypasses_templates (test_button_templates.ButtonTemplateTests.test_disabled_mode_bypasses_templates) ... ok
+test_extreme_aspect_abstains_before_resize (test_button_templates.ButtonTemplateTests.test_extreme_aspect_abstains_before_resize) ... ok
+test_hash_mismatch_disables_bank (test_button_templates.ButtonTemplateTests.test_hash_mismatch_disables_bank) ... ok
+test_injected_ocr_always_bypasses_templates (test_button_templates.ButtonTemplateTests.test_injected_ocr_always_bypasses_templates) ... ok
+test_missing_competitor_disables_entire_bank (test_button_templates.ButtonTemplateTests.test_missing_competitor_disables_entire_bank) ... ok
+test_packaged_static_labels (test_button_templates.ButtonTemplateTests.test_packaged_static_labels) ... ok
+test_template_evidence_does_not_fabricate_ocr (test_button_templates.ButtonTemplateTests.test_template_evidence_does_not_fabricate_ocr) ... ok
+test_unknown_blank_and_partial_do_not_match (test_button_templates.ButtonTemplateTests.test_unknown_blank_and_partial_do_not_match) ... ok
+test_whole_text_includes_added_amount (test_button_templates.ButtonTemplateTests.test_whole_text_includes_added_amount) ... ok
+test_arbitrary_executable_is_rejected (test_capture_regressions.OriginalRegressionTests.test_arbitrary_executable_is_rejected) ... ok
+test_linux_cannot_report_success (test_capture_regressions.OriginalRegressionTests.test_linux_cannot_report_success) ... ok
+test_process_access_denied_is_rejected (test_capture_regressions.OriginalRegressionTests.test_process_access_denied_is_rejected) ... ok
+test_diagnostics_copy_and_failure_replaces_success (test_capture_review.ReviewTests.test_diagnostics_copy_and_failure_replaces_success) ... ok
+test_metrics_bounded_and_percentiles (test_capture_review.ReviewTests.test_metrics_bounded_and_percentiles) ... ok
+test_missing_timing_not_reported_as_zero (test_capture_review.ReviewTests.test_missing_timing_not_reported_as_zero) ... ok
+test_capture_client_pixels_and_resize (test_capture_windows_native.NativeGDISmoke.test_capture_client_pixels_and_resize) ... skipped 'Native Windows required'
+test_bad_input_does_not_claim_street (test_community_cards.BoardTests.test_bad_input_does_not_claim_street) ... ok
+test_development_empty_screens (test_community_cards.BoardTests.test_development_empty_screens) ... ok
+test_duplicate_and_hero_conflict (test_community_cards.BoardTests.test_duplicate_and_hero_conflict) ... ok
+test_existing_suit_is_not_overridden (test_community_cards.BoardTests.test_existing_suit_is_not_overridden) ... ok
+test_gap_in_row_rejected (test_community_cards.BoardTests.test_gap_in_row_rejected) ... ok
+test_missing_first_cards_cannot_change_street (test_community_cards.BoardTests.test_missing_first_cards_cannot_change_street) ... ok
+test_move_and_resize_relative_table (test_community_cards.BoardTests.test_move_and_resize_relative_table) ... ok
+test_native_suit_retry_only_after_unreadable (test_community_cards.BoardTests.test_native_suit_retry_only_after_unreadable) ... ok
+test_no_cards_does_not_claim_preflop (test_community_cards.BoardTests.test_no_cards_does_not_claim_preflop) ... ok
+test_ocr_exception_discards_whole_board_then_recovers (test_community_cards.BoardTests.test_ocr_exception_discards_whole_board_then_recovers) ... ok
+test_partial_fourth_card_cannot_be_reported_as_flop (test_community_cards.BoardTests.test_partial_fourth_card_cannot_be_reported_as_flop) ... ok
+test_partial_rows_rejected (test_community_cards.BoardTests.test_partial_rows_rejected) ... ok
+test_sequence_never_reuses_previous_board (test_community_cards.BoardTests.test_sequence_never_reuses_previous_board) ... ok
+test_streets (test_community_cards.BoardTests.test_streets) ... ok
+test_unknown_rank_not_a_partial_valid_board (test_community_cards.BoardTests.test_unknown_rank_not_a_partial_valid_board) ... ok
+test_exception_is_propagated (test_concurrent_reads.ConcurrentTests.test_exception_is_propagated) ... ok
+test_frame_cache_propagates_but_does_not_survive_snapshot (test_concurrent_reads.ConcurrentTests.test_frame_cache_propagates_but_does_not_survive_snapshot) ... ok
+test_injected_reader_stays_serial (test_concurrent_reads.ConcurrentTests.test_injected_reader_stays_serial) ... ok
+test_shared_cache_memory_limit (test_concurrent_reads.ConcurrentTests.test_shared_cache_memory_limit) ... ok
+test_two_workers_overlap_and_preserve_order (test_concurrent_reads.ConcurrentTests.test_two_workers_overlap_and_preserve_order) ... ok
+test_exception_then_recovery (test_continuous_observer.ObserverTests.test_exception_then_recovery) ... ok
+test_expired_result_not_displayed (test_continuous_observer.ObserverTests.test_expired_result_not_displayed) ... ok
+test_failure_does_not_repeat_cards_and_recovery_uses_new_box (test_continuous_observer.ObserverTests.test_failure_does_not_repeat_cards_and_recovery_uses_new_box) ... ok
+test_interrupt_clean_exit (test_continuous_observer.ObserverTests.test_interrupt_clean_exit) ... ok
+test_invalid_interval (test_continuous_observer.ObserverTests.test_invalid_interval) ... ok
+test_source_change_stops_before_reading (test_continuous_observer.ObserverTests.test_source_change_stops_before_reading) ... ok
+test_missing_corner_still_rejected (test_corner_sampling.CornerSamplingTests.test_missing_corner_still_rejected) ... ok
+test_native_mask_recovers_sampling_loss_without_controls (test_corner_sampling.CornerSamplingTests.test_native_mask_recovers_sampling_loss_without_controls) ... ok
+test_uniform_blue_is_not_table (test_corner_sampling.CornerSamplingTests.test_uniform_blue_is_not_table) ... ok
+test_fit_recovers_coefficients (test_cursor.CalibrationTest.test_fit_recovers_coefficients) ... ok
+test_insufficient_samples_not_measured (test_cursor.CalibrationTest.test_insufficient_samples_not_measured) ... ok
+test_no_variance_not_measured (test_cursor.CalibrationTest.test_no_variance_not_measured) ... ok
+test_recorder_bounded (test_cursor.CalibrationTest.test_recorder_bounded) ... ok
+test_arrival_revalidation_fail_no_click (test_cursor.ControllerTest.test_arrival_revalidation_fail_no_click) ... ok
+test_cancel_on_user_intervention_no_click (test_cursor.ControllerTest.test_cancel_on_user_intervention_no_click) ... ok
+test_concurrent_same_intent_clicks_once (test_cursor.ControllerTest.test_concurrent_same_intent_clicks_once) ... ok
+test_cursor_not_at_target_no_click (test_cursor.ControllerTest.test_cursor_not_at_target_no_click) ... ok
+test_cursor_pos_unavailable_cancels_without_assuming (test_cursor.ControllerTest.test_cursor_pos_unavailable_cancels_without_assuming) ... ok
+test_down_not_accepted_is_unknown (test_cursor.ControllerTest.test_down_not_accepted_is_unknown) ... ok
+test_effect_unconfirmed_is_unknown (test_cursor.ControllerTest.test_effect_unconfirmed_is_unknown) ... ok
+test_expired_intent_no_click (test_cursor.ControllerTest.test_expired_intent_no_click) ... ok
+test_happy_path_single_click_done (test_cursor.ControllerTest.test_happy_path_single_click_done) ... ok
+test_identity_change_on_arrival_no_click (test_cursor.ControllerTest.test_identity_change_on_arrival_no_click) ... ok
+test_intent_not_clicked_twice (test_cursor.ControllerTest.test_intent_not_clicked_twice) ... ok
+test_invalid_target_geometry_no_click (test_cursor.ControllerTest.test_invalid_target_geometry_no_click) ... ok
+test_move_not_accepted_is_unknown (test_cursor.ControllerTest.test_move_not_accepted_is_unknown) ... ok
+test_no_verifier_unknown_after_click (test_cursor.ControllerTest.test_no_verifier_unknown_after_click) ... ok
+test_not_armed_refuses (test_cursor.ControllerTest.test_not_armed_refuses) ... ok
+test_release_unconfirmed_is_unknown (test_cursor.ControllerTest.test_release_unconfirmed_is_unknown) ... ok
+test_serialization_busy_lock_no_click (test_cursor.ControllerTest.test_serialization_busy_lock_no_click) ... ok
+test_target_moved_on_arrival_no_click (test_cursor.ControllerTest.test_target_moved_on_arrival_no_click) ... ok
+test_curved_path_has_curvature (test_cursor.EvalTest.test_curved_path_has_curvature) ... ok
+test_make_trials_deterministic_and_bounded (test_cursor.EvalTest.test_make_trials_deterministic_and_bounded) ... ok
+test_overshoot_and_reversal (test_cursor.EvalTest.test_overshoot_and_reversal) ... ok
+test_straight_path_metrics (test_cursor.EvalTest.test_straight_path_metrics) ... ok
+test_summarize (test_cursor.EvalTest.test_summarize) ... ok
+test_too_few_points_abstains (test_cursor.EvalTest.test_too_few_points_abstains) ... ok
+test_click_once_down_then_up_released (test_cursor.InputAdapterTest.test_click_once_down_then_up_released) ... ok
+test_click_release_guaranteed_on_error (test_cursor.InputAdapterTest.test_click_release_guaranteed_on_error) ... ok
+test_move_reports_accepted (test_cursor.InputAdapterTest.test_move_reports_accepted) ... ok
+test_normalize_abs_virtual_desktop (test_cursor.InputAdapterTest.test_normalize_abs_virtual_desktop) ... ok
+test_release_unconfirmed_when_up_rejected (test_cursor.InputAdapterTest.test_release_unconfirmed_when_up_rejected) ... ok
+test_move_measures_and_restores (test_cursor.SendCheckTest.test_move_measures_and_restores) ... ok
+test_fitts_duration_formula_and_floor (test_cursor.TrajectoryTest.test_fitts_duration_formula_and_floor) ... ok
+test_generator_calibration_flag (test_cursor.TrajectoryTest.test_generator_calibration_flag) ... ok
+test_min_jerk_endpoints_and_mid (test_cursor.TrajectoryTest.test_min_jerk_endpoints_and_mid) ... ok
+test_min_jerk_zero_velocity_at_ends (test_cursor.TrajectoryTest.test_min_jerk_zero_velocity_at_ends) ... ok
+test_monotonic_progress (test_cursor.TrajectoryTest.test_monotonic_progress) ... ok
+test_plan_positions_and_done (test_cursor.TrajectoryTest.test_plan_positions_and_done) ... ok
+test_safe_point_center (test_cursor.TrajectoryTest.test_safe_point_center) ... ok
+test_sample_includes_endpoints (test_cursor.TrajectoryTest.test_sample_includes_endpoints) ... ok
+test_virtual_desktop_negative_coords (test_cursor.TrajectoryTest.test_virtual_desktop_negative_coords) ... ok
+test_badge_maps_to_nearest_seat (test_dealer_button.BadgeTests.test_badge_maps_to_nearest_seat) ... ok
+test_no_badge_abstains (test_dealer_button.BadgeTests.test_no_badge_abstains) ... ok
+test_8max_ring_with_top_center (test_dealer_button.PositionTests.test_8max_ring_with_top_center) ... ok
+test_detected_button_is_added_to_occupancy (test_dealer_button.PositionTests.test_detected_button_is_added_to_occupancy) ... ok
+test_full_ring_naming_from_button (test_dealer_button.PositionTests.test_full_ring_naming_from_button) ... ok
+test_no_dealer_returns_empty (test_dealer_button.PositionTests.test_no_dealer_returns_empty) ... ok
+test_short_ring_names_blinds (test_dealer_button.PositionTests.test_short_ring_names_blinds) ... ok
+test_ambiguous_groups_are_not_cherry_picked (test_detector_batch.DetectorBatchTests.test_ambiguous_groups_are_not_cherry_picked) ... ok
+test_misaligned_bars_do_not_match (test_detector_batch.DetectorBatchTests.test_misaligned_bars_do_not_match) ... ok
+test_occluding_badge_is_not_menu (test_detector_batch.DetectorBatchTests.test_occluding_badge_is_not_menu) ... ok
+test_title_line_is_excluded_without_changing_three_bars (test_detector_batch.DetectorBatchTests.test_title_line_is_excluded_without_changing_three_bars) ... ok
+test_two_bars_do_not_synthesize_third (test_detector_batch.DetectorBatchTests.test_two_bars_do_not_synthesize_third) ... ok
+test_explicit_occlusion_remains_rejected (test_detector_proposals.DetectorProposalTests.test_explicit_occlusion_remains_rejected) ... ok
+test_frame_touching_table_is_still_partial (test_detector_proposals.DetectorProposalTests.test_frame_touching_table_is_still_partial) ... ok
+test_full_frame_rejection_does_not_suppress_real_table (test_detector_proposals.DetectorProposalTests.test_full_frame_rejection_does_not_suppress_real_table) ... ok
+test_nested_blue_regions_without_anchors_never_become_tables (test_detector_proposals.DetectorProposalTests.test_nested_blue_regions_without_anchors_never_become_tables) ... ok
+test_oversized_does_not_delete (test_diagnostic_storage.StorageTests.test_oversized_does_not_delete) ... ok
+test_path_escape_rejected (test_diagnostic_storage.StorageTests.test_path_escape_rejected) ... ok
+test_shared_rotation_and_protection (test_diagnostic_storage.StorageTests.test_shared_rotation_and_protection) ... ok
+test_unknown_files_not_deleted (test_diagnostic_storage.StorageTests.test_unknown_files_not_deleted) ... ok
+test_nine_max_top_seats_empty_on_8max (test_eightmax_layout.TopCenterSeatTests.test_nine_max_top_seats_empty_on_8max) ... ok
+test_pko_reads_top_center_stack (test_eightmax_layout.TopCenterSeatTests.test_pko_reads_top_center_stack) ... ok
+test_rebuy_reads_top_center_stack (test_eightmax_layout.TopCenterSeatTests.test_rebuy_reads_top_center_stack) ... ok
+test_blank_and_suffix_rejected (test_exact_call_template.ExactCallTests.test_blank_and_suffix_rejected) ... ok
+test_exact_full_amount (test_exact_call_template.ExactCallTests.test_exact_full_amount) ... ok
+test_injected_reader_bypasses_exact_shortcut (test_exact_call_template.ExactCallTests.test_injected_reader_bypasses_exact_shortcut) ... ok
+test_missing_or_corrupt_asset_falls_back (test_exact_call_template.ExactCallTests.test_missing_or_corrupt_asset_falls_back) ... ok
+test_mixed_preselection_keeps_amount_but_disables_action (test_exact_call_template.ExactCallTests.test_mixed_preselection_keeps_amount_but_disables_action) ... ok
+test_resize_rejected (test_exact_call_template.ExactCallTests.test_resize_rejected) ... ok
+test_single_pixel_change_rejected (test_exact_call_template.ExactCallTests.test_single_pixel_change_rejected) ... ok
+test_buyin (test_grade_reader.FieldParseTests.test_buyin) ... ok
+test_buyin_keeps_cents_and_sums_composite (test_grade_reader.FieldParseTests.test_buyin_keeps_cents_and_sums_composite) ... ok
+test_level_minutes (test_grade_reader.FieldParseTests.test_level_minutes) ... ok
+test_players (test_grade_reader.FieldParseTests.test_players) ... ok
+test_players_icon_noise_recovered_or_dropped (test_grade_reader.FieldParseTests.test_players_icon_noise_recovered_or_dropped) ... ok
+test_status_not_started (test_grade_reader.FieldParseTests.test_status_not_started) ... ok
+test_status_reg_open (test_grade_reader.FieldParseTests.test_status_reg_open) ... ok
+test_status_strict_no_false_positive_on_stack_or_level (test_grade_reader.FieldParseTests.test_status_strict_no_false_positive_on_stack_or_level) ... ok
+test_status_unknown (test_grade_reader.FieldParseTests.test_status_unknown) ... ok
+test_keywords_and_bounty (test_grade_reader.ModalityTests.test_keywords_and_bounty) ... ok
+test_mystery_beats_rebuy_keyword_order (test_grade_reader.ModalityTests.test_mystery_beats_rebuy_keyword_order) ... ok
+test_unknown_is_flagged_not_guessed (test_grade_reader.ModalityTests.test_unknown_is_flagged_not_guessed) ... ok
+test_missing_fields_are_tolerated (test_hand_reconcile.ReconcileTests.test_missing_fields_are_tolerated) ... ok
+test_pot_regressed_flags_missed_boundary (test_hand_reconcile.ReconcileTests.test_pot_regressed_flags_missed_boundary) ... ok
+test_street_advance_and_commit_reconcile (test_hand_reconcile.ReconcileTests.test_street_advance_and_commit_reconcile) ... ok
+test_street_helper_returns_latest (test_hand_reconcile.ReconcileTests.test_street_helper_returns_latest) ... ok
+test_unexplained_change_is_a_gap (test_hand_reconcile.ReconcileTests.test_unexplained_change_is_a_gap) ... ok
+test_board_count_to_street (test_hand_reconcile.StreetTests.test_board_count_to_street) ... ok
+test_full_id (test_hand_tracking.HandIdTests.test_full_id) ... ok
+test_partial_recovers_hand_number (test_hand_tracking.HandIdTests.test_partial_recovers_hand_number) ... ok
+test_unreadable_abstains (test_hand_tracking.HandIdTests.test_unreadable_abstains) ... ok
+test_first_frame_without_id_is_new_table (test_hand_tracking.TrackerTests.test_first_frame_without_id_is_new_table) ... ok
+test_implausible_jump_is_suspect_not_poisoning (test_hand_tracking.TrackerTests.test_implausible_jump_is_suspect_not_poisoning) ... ok
+test_new_table_then_same_then_new_hand (test_hand_tracking.TrackerTests.test_new_table_then_same_then_new_hand) ... ok
+test_regressing_id_is_suspect_not_a_new_hand (test_hand_tracking.TrackerTests.test_regressing_id_is_suspect_not_a_new_hand) ... ok
+test_tables_are_independent (test_hand_tracking.TrackerTests.test_tables_are_independent) ... ok
+test_unreadable_id_keeps_current_hand (test_hand_tracking.TrackerTests.test_unreadable_id_keeps_current_hand) ... ok
+test_caveats_flag_sample (test_hud_exploit.ClassifyTests.test_caveats_flag_sample) ... ok
+test_fish_loose_passive_folds_more (test_hud_exploit.ClassifyTests.test_fish_loose_passive_folds_more) ... ok
+test_lag_aggressive_calls_wider (test_hud_exploit.ClassifyTests.test_lag_aggressive_calls_wider) ... ok
+test_nit_folds_more (test_hud_exploit.ClassifyTests.test_nit_folds_more) ... ok
+test_reg_neutral (test_hud_exploit.ClassifyTests.test_reg_neutral) ... ok
+test_shove_calloff_delta_by_profile (test_hud_exploit.ClassifyTests.test_shove_calloff_delta_by_profile) ... ok
+test_unknown_empty (test_hud_exploit.ClassifyTests.test_unknown_empty) ... ok
+test_blank_crop_abstains (test_hud_reader.HudReaderTests.test_blank_crop_abstains) ... ok
+test_hero_and_unknown_seat_have_no_hud (test_hud_reader.HudReaderTests.test_hero_and_unknown_seat_have_no_hud) ... ok
+test_reads_all_villain_huds_exactly (test_hud_reader.HudReaderTests.test_reads_all_villain_huds_exactly) ... ok
+test_stat_names_mapped (test_hud_reader.HudReaderTests.test_stat_names_mapped) ... ok
+test_failures_and_rejections_bounded (test_lab_metrics.LabTests.test_failures_and_rejections_bounded) ... ok
+test_geometry_change_rejected_then_next_capture_recovers (test_lab_metrics.LabTests.test_geometry_change_rejected_then_next_capture_recovers) ... ok
+test_idle_zeros_do_not_dilute_ocr (test_lab_metrics.LabTests.test_idle_zeros_do_not_dilute_ocr) ... ok
+test_long_failure_run_has_no_reader_calls (test_lab_metrics.LabTests.test_long_failure_run_has_no_reader_calls) ... ok
+test_ocr_counts_are_bounded_and_not_reported_as_milliseconds (test_lab_metrics.OCRWorkTests.test_ocr_counts_are_bounded_and_not_reported_as_milliseconds) ... ok
+test_currency_never_invented (test_lobby_runner.DetailsTest.test_currency_never_invented) ... ok
+test_flag_present (test_lobby_runner.DetailsTest.test_flag_present) ... ok
+test_fake_reader_to_awaiting (test_lobby_runner.GlueEndToEndTest.test_fake_reader_to_awaiting) ... ok
+test_operator_asserted_open_unblocks (test_lobby_runner.GlueEndToEndTest.test_operator_asserted_open_unblocks) ... ok
+test_select_uses_ledger_budget (test_lobby_runner.LedgerStateTest.test_select_uses_ledger_budget) ... ok
+test_session_state_mirrors_ledger (test_lobby_runner.LedgerStateTest.test_session_state_mirrors_ledger) ... ok
+test_merge_prefers_reg_open_either_order (test_lobby_runner.LobbyCropTest.test_merge_prefers_reg_open_either_order) ... ok
+test_no_lobby_crop (test_lobby_runner.LobbyCropTest.test_no_lobby_crop) ... ok
+test_picks_crop_regardless_of_table_status (test_lobby_runner.LobbyCropTest.test_picks_crop_regardless_of_table_status) ... ok
+test_picks_crop_with_badges (test_lobby_runner.LobbyCropTest.test_picks_crop_with_badges) ... ok
+test_read_lobby_is_crop_uses_reader (test_lobby_runner.LobbyCropTest.test_read_lobby_is_crop_uses_reader) ... ok
+test_read_lobby_multi_merges_toggling_status (test_lobby_runner.LobbyCropTest.test_read_lobby_multi_merges_toggling_status) ... ok
+test_read_grade_scale_invariant (test_lobby_runner.RealLobbyOCRTest.test_read_grade_scale_invariant) ... skipped 'crop de lobby real ausente'
+test_reads_real_lobby_and_reaches_awaiting (test_lobby_runner.RealLobbyOCRTest.test_reads_real_lobby_and_reaches_awaiting) ... skipped 'crop de lobby real ausente'
+test_amount_and_cards_change (test_manual_windows.ManualTests.test_amount_and_cards_change) ... ok
+test_changed_pixel (test_manual_windows.ManualTests.test_changed_pixel) ... ok
+test_failed_capture (test_manual_windows.ManualTests.test_failed_capture) ... ok
+test_identity_and_geometry (test_manual_windows.ManualTests.test_identity_and_geometry) ... ok
+test_preselect_and_unknown (test_manual_windows.ManualTests.test_preselect_and_unknown) ... ok
+test_same_pixels (test_manual_windows.ManualTests.test_same_pixels) ... ok
+test_psm_and_whitelist (test_ocr_inprocess.ConfigParseTests.test_psm_and_whitelist) ... ok
+test_psm_only_and_defaults (test_ocr_inprocess.ConfigParseTests.test_psm_only_and_defaults) ... ok
+test_cache_still_dedups_with_inprocess (test_ocr_inprocess.DispatchTests.test_cache_still_dedups_with_inprocess) ... ok
+test_disabled_uses_pytesseract (test_ocr_inprocess.DispatchTests.test_disabled_uses_pytesseract) ... ok
+test_enabled_uses_inprocess_and_skips_subprocess (test_ocr_inprocess.DispatchTests.test_enabled_uses_inprocess_and_skips_subprocess) ... ok
+test_inprocess_failure_falls_back_to_subprocess (test_ocr_inprocess.DispatchTests.test_inprocess_failure_falls_back_to_subprocess) ... ok
+test_backend_path_change_invalidates (test_ocr_runtime.OCRFrameTests.test_backend_path_change_invalidates) ... ok
+test_empty_string_is_valid_cached_output (test_ocr_runtime.OCRFrameTests.test_empty_string_is_valid_cached_output) ... ok
+test_enabled_nested_context_reuses_same_frame (test_ocr_runtime.OCRFrameTests.test_enabled_nested_context_reuses_same_frame) ... ok
+test_entry_limit_is_bounded_and_uncached_values_still_work (test_ocr_runtime.OCRFrameTests.test_entry_limit_is_bounded_and_uncached_values_still_work) ... ok
+test_exception_not_cached_and_frame_cleanup (test_ocr_runtime.OCRFrameTests.test_exception_not_cached_and_frame_cleanup) ... ok
+test_exception_retry_within_frame (test_ocr_runtime.OCRFrameTests.test_exception_retry_within_frame) ... ok
+test_frames_never_share_results (test_ocr_runtime.OCRFrameTests.test_frames_never_share_results) ... ok
+test_identical_copy_reuses_result (test_ocr_runtime.OCRFrameTests.test_identical_copy_reuses_result) ... ok
+test_no_frame_is_passthrough (test_ocr_runtime.OCRFrameTests.test_no_frame_is_passthrough) ... ok
+test_noncontiguous_view_matches_identical_pixels (test_ocr_runtime.OCRFrameTests.test_noncontiguous_view_matches_identical_pixels) ... ok
+test_outer_disabled_cannot_be_enabled_by_nested_frame (test_ocr_runtime.OCRFrameTests.test_outer_disabled_cannot_be_enabled_by_nested_frame) ... ok
+test_payload_limit_includes_output_and_preserves_results (test_ocr_runtime.OCRFrameTests.test_payload_limit_includes_output_and_preserves_results) ... ok
+test_pixel_mutation_invalidates (test_ocr_runtime.OCRFrameTests.test_pixel_mutation_invalidates) ... ok
+test_shape_dtype_and_configuration_are_part_of_identity (test_ocr_runtime.OCRFrameTests.test_shape_dtype_and_configuration_are_part_of_identity) ... ok
+test_statistics_count_requests_and_real_calls (test_ocr_runtime.OCRFrameTests.test_statistics_count_requests_and_real_calls) ... ok
+test_threads_have_independent_frames (test_ocr_runtime.OCRFrameTests.test_threads_have_independent_frames) ... ok
+test_unsupported_objects_options_and_mutable_output_bypass (test_ocr_runtime.OCRFrameTests.test_unsupported_objects_options_and_mutable_output_bypass) ... ok
+test_button_gone_blocks (test_operar_mesa.ValidatorRereadsHand.test_button_gone_blocks) ... ok
+test_identity_uses_reread_hand_not_expected (test_operar_mesa.ValidatorRereadsHand.test_identity_uses_reread_hand_not_expected) ... ok
+test_clean_no_row_confirms (test_operar_mesa.VerifierPositiveEvidence.test_clean_no_row_confirms) ... ok
+test_read_error_does_not_confirm (test_operar_mesa.VerifierPositiveEvidence.test_read_error_does_not_confirm) ... ok
+test_still_hero_turn_not_confirmed (test_operar_mesa.VerifierPositiveEvidence.test_still_hero_turn_not_confirmed) ... ok
+test_new_hand_does_not_inherit_previous_position (test_position_stabilizer.PositionStabilizerTest.test_new_hand_does_not_inherit_previous_position) ... ok
+test_new_hand_switches_immediately_no_debounce (test_position_stabilizer.PositionStabilizerTest.test_new_hand_switches_immediately_no_debounce) ... ok
+test_no_dealer_yet_returns_empty (test_position_stabilizer.PositionStabilizerTest.test_no_dealer_yet_returns_empty) ... ok
+test_persistent_dealer_move_starts_new_epoch (test_position_stabilizer.PositionStabilizerTest.test_persistent_dealer_move_starts_new_epoch) ... ok
+test_recovers_locked_dealer_when_badge_missing (test_position_stabilizer.PositionStabilizerTest.test_recovers_locked_dealer_when_badge_missing) ... ok
+test_same_hand_dealer_blip_is_held (test_position_stabilizer.PositionStabilizerTest.test_same_hand_dealer_blip_is_held) ... ok
+test_single_frame_occupancy_blip_is_ignored (test_position_stabilizer.PositionStabilizerTest.test_single_frame_occupancy_blip_is_ignored) ... ok
+test_steady_state_matches_raw (test_position_stabilizer.PositionStabilizerTest.test_steady_state_matches_raw) ... ok
+test_tables_are_independent (test_position_stabilizer.PositionStabilizerTest.test_tables_are_independent) ... ok
+test_unknown_hand_dealer_conflict_is_pending (test_position_stabilizer.PositionStabilizerTest.test_unknown_hand_dealer_conflict_is_pending) ... ok
+test_card_conflict (test_postflop_advisor.AbstentionTests.test_card_conflict) ... ok
+test_no_board (test_postflop_advisor.AbstentionTests.test_no_board) ... ok
+test_pot_unknown (test_postflop_advisor.AbstentionTests.test_pot_unknown) ... ok
+test_to_call_unknown (test_postflop_advisor.AbstentionTests.test_to_call_unknown) ... ok
+test_air_checks (test_postflop_advisor.CheckedToTests.test_air_checks) ... ok
+test_marginal_checks (test_postflop_advisor.CheckedToTests.test_marginal_checks) ... ok
+test_strong_draw_semibluffs (test_postflop_advisor.CheckedToTests.test_strong_draw_semibluffs) ... ok
+test_strong_value_bets (test_postflop_advisor.CheckedToTests.test_strong_value_bets) ... ok
+test_top_pair_dry_bets_thin (test_postflop_advisor.CheckedToTests.test_top_pair_dry_bets_thin) ... ok
+test_icm_mode_flagged (test_postflop_advisor.ContractTests.test_icm_mode_flagged) ... ok
+test_never_allows_execution (test_postflop_advisor.ContractTests.test_never_allows_execution) ... ok
+test_phase_marker_on_advice_and_abstain (test_postflop_advisor.ContractTests.test_phase_marker_on_advice_and_abstain) ... ok
+test_spr_computed (test_postflop_advisor.ContractTests.test_spr_computed) ... ok
+test_street_inferred (test_postflop_advisor.ContractTests.test_street_inferred) ... ok
+test_big_bet_abstains_without_hud (test_postflop_advisor.ExploitHudTests.test_big_bet_abstains_without_hud) ... ok
+test_big_bet_calls_vs_aggressive (test_postflop_advisor.ExploitHudTests.test_big_bet_calls_vs_aggressive) ... ok
+test_big_bet_folds_vs_passive (test_postflop_advisor.ExploitHudTests.test_big_bet_folds_vs_passive) ... ok
+test_cbet_bluff_air_vs_folds_to_cbet (test_postflop_advisor.ExploitHudTests.test_cbet_bluff_air_vs_folds_to_cbet) ... ok
+test_no_cbet_bluff_with_showdown_value (test_postflop_advisor.ExploitHudTests.test_no_cbet_bluff_with_showdown_value) ... ok
+test_air_folds (test_postflop_advisor.FacingBetTests.test_air_folds) ... ok
+test_dirty_outs_flip_draw_call_to_fold (test_postflop_advisor.FacingBetTests.test_dirty_outs_flip_draw_call_to_fold) ... ok
+test_flush_draw_bad_odds_folds (test_postflop_advisor.FacingBetTests.test_flush_draw_bad_odds_folds) ... ok
+test_flush_draw_good_odds_calls (test_postflop_advisor.FacingBetTests.test_flush_draw_good_odds_calls) ... ok
+test_marginal_pair_folds (test_postflop_advisor.FacingBetTests.test_marginal_pair_folds) ... ok
+test_mdf_and_pot_odds_reported (test_postflop_advisor.FacingBetTests.test_mdf_and_pot_odds_reported) ... ok
+test_strong_but_board_makes_flush_calls_only (test_postflop_advisor.FacingBetTests.test_strong_but_board_makes_flush_calls_only) ... ok
+test_strong_dry_board_raises (test_postflop_advisor.FacingBetTests.test_strong_dry_board_raises) ... ok
+test_top_pair_big_bet_abstains (test_postflop_advisor.FacingBetTests.test_top_pair_big_bet_abstains) ... ok
+test_top_pair_small_bet_calls (test_postflop_advisor.FacingBetTests.test_top_pair_small_bet_calls) ... ok
+test_deep_stack_implied_turns_fold_into_call (test_postflop_advisor.ImpliedOddsTests.test_deep_stack_implied_turns_fold_into_call) ... ok
+test_helper_street_and_stack_cap (test_postflop_advisor.ImpliedOddsTests.test_helper_street_and_stack_cap) ... ok
+test_obvious_flush_draw_gets_less_implied (test_postflop_advisor.ImpliedOddsTests.test_obvious_flush_draw_gets_less_implied) ... ok
+test_reverse_implied_nonnut_flush_folds_borderline (test_postflop_advisor.ImpliedOddsTests.test_reverse_implied_nonnut_flush_folds_borderline) ... ok
+test_short_stack_no_implied_folds (test_postflop_advisor.ImpliedOddsTests.test_short_stack_no_implied_folds) ... ok
+test_narrow_only_applies_when_facing_a_bet (test_postflop_advisor.NarrowRangeTests.test_narrow_only_applies_when_facing_a_bet) ... ok
+test_narrowing_strengthens_range_and_flips_to_fold (test_postflop_advisor.NarrowRangeTests.test_narrowing_strengthens_range_and_flips_to_fold) ... ok
+test_big_bet_still_abstains_with_range (test_postflop_advisor.Phase2EquityTests.test_big_bet_still_abstains_with_range) ... ok
+test_draw_equity_exact_overrides_rule (test_postflop_advisor.Phase2EquityTests.test_draw_equity_exact_overrides_rule) ... ok
+test_equity_is_deterministic (test_postflop_advisor.Phase2EquityTests.test_equity_is_deterministic) ... ok
+test_marginal_calls_vs_air_range (test_postflop_advisor.Phase2EquityTests.test_marginal_calls_vs_air_range) ... ok
+test_marginal_folds_vs_value_range (test_postflop_advisor.Phase2EquityTests.test_marginal_folds_vs_value_range) ... ok
+test_no_range_keeps_phase1_behavior (test_postflop_advisor.Phase2EquityTests.test_no_range_keeps_phase1_behavior) ... ok
+test_range_accepts_hand_strings_and_combos (test_postflop_advisor.Phase2EquityTests.test_range_accepts_hand_strings_and_combos) ... ok
+test_top_pair_calls_vs_wide_value (test_postflop_advisor.Phase2EquityTests.test_top_pair_calls_vs_wide_value) ... ok
+test_top_pair_folds_vs_sets (test_postflop_advisor.Phase2EquityTests.test_top_pair_folds_vs_sets) ... ok
+test_default_none_unchanged (test_postflop_advisor.PotTypeGatingTests.test_default_none_unchanged) ... ok
+test_multiway_abstains_labeled (test_postflop_advisor.PotTypeGatingTests.test_multiway_abstains_labeled) ... ok
+test_multiway_skips_equity (test_postflop_advisor.PotTypeGatingTests.test_multiway_skips_equity) ... ok
+test_single_raised_still_advises (test_postflop_advisor.PotTypeGatingTests.test_single_raised_still_advises) ... ok
+test_three_bet_heuristic_is_tier_based_no_equity (test_postflop_advisor.PotTypeGatingTests.test_three_bet_heuristic_is_tier_based_no_equity) ... ok
+test_three_bet_pot_gives_heuristic (test_postflop_advisor.PotTypeGatingTests.test_three_bet_pot_gives_heuristic) ... ok
+test_unknown_pot_type_falls_to_phase1 (test_postflop_advisor.PotTypeGatingTests.test_unknown_pot_type_falls_to_phase1) ... ok
+test_5_board_two_pair_does_not_raise (test_postflop_advisor.ReviewFixesTests.test_5_board_two_pair_does_not_raise) ... ok
+test_6_made_pair_with_draw_not_folded_as_draw (test_postflop_advisor.ReviewFixesTests.test_6_made_pair_with_draw_not_folded_as_draw) ... ok
+test_6_no_semibluff_on_river (test_postflop_advisor.ReviewFixesTests.test_6_no_semibluff_on_river) ... ok
+test_7_strong_category_folds_when_equity_zero (test_postflop_advisor.ReviewFixesTests.test_7_strong_category_folds_when_equity_zero) ... ok
+test_7_strong_still_raises_with_high_equity (test_postflop_advisor.ReviewFixesTests.test_7_strong_still_raises_with_high_equity) ... ok
+test_draw_uses_direct_odds_no_implied (test_postflop_advisor.ThreeBetPotTests.test_draw_uses_direct_odds_no_implied) ... ok
+test_marginal_folds_vs_3bet_range (test_postflop_advisor.ThreeBetPotTests.test_marginal_folds_vs_3bet_range) ... ok
+test_top_pair_commits_at_low_spr (test_postflop_advisor.ThreeBetPotTests.test_top_pair_commits_at_low_spr) ... ok
+test_top_pair_deep_3bet_folds (test_postflop_advisor.ThreeBetPotTests.test_top_pair_deep_3bet_folds) ... ok
+test_connected_straightish (test_postflop_eval.BoardTests.test_connected_straightish) ... ok
+test_invalid_size (test_postflop_eval.BoardTests.test_invalid_size) ... ok
+test_monotone_flush_possible (test_postflop_eval.BoardTests.test_monotone_flush_possible) ... ok
+test_paired_low (test_postflop_eval.BoardTests.test_paired_low) ... ok
+test_rainbow_structure (test_postflop_eval.BoardTests.test_rainbow_structure) ... ok
+test_straight_on_board (test_postflop_eval.BoardTests.test_straight_on_board) ... ok
+test_two_tone (test_postflop_eval.BoardTests.test_two_tone) ... ok
+test_wheel_uses_ace_low (test_postflop_eval.BoardTests.test_wheel_uses_ace_low) ... ok
+test_air_bluff_falls_by_street (test_postflop_eval.ContinuationMultiplierTests.test_air_bluff_falls_by_street) ... ok
+test_medium_tier_half (test_postflop_eval.ContinuationMultiplierTests.test_medium_tier_half) ... ok
+test_strong_draw_full_weak_draw_small (test_postflop_eval.ContinuationMultiplierTests.test_strong_draw_full_weak_draw_small) ... ok
+test_value_tier_full (test_postflop_eval.ContinuationMultiplierTests.test_value_tier_full) ... ok
+test_clean_combo_draw_barely_discounted (test_postflop_eval.DirtyOutsTests.test_clean_combo_draw_barely_discounted) ... ok
+test_clean_straight_rainbow_unchanged (test_postflop_eval.DirtyOutsTests.test_clean_straight_rainbow_unchanged) ... ok
+test_flush_out_that_pairs_board_discounted (test_postflop_eval.DirtyOutsTests.test_flush_out_that_pairs_board_discounted) ... ok
+test_paired_board_halves_flush_draw (test_postflop_eval.DirtyOutsTests.test_paired_board_halves_flush_draw) ... ok
+test_river_has_no_clean_outs (test_postflop_eval.DirtyOutsTests.test_river_has_no_clean_outs) ... ok
+test_straight_into_a_flush_discounted (test_postflop_eval.DirtyOutsTests.test_straight_into_a_flush_discounted) ... ok
+test_air (test_postflop_eval.HandStrengthTests.test_air) ... ok
+test_board_pair_only (test_postflop_eval.HandStrengthTests.test_board_pair_only) ... ok
+test_board_trips_is_not_hero_set (test_postflop_eval.HandStrengthTests.test_board_trips_is_not_hero_set) ... ok
+test_board_two_pair_is_not_hero_value (test_postflop_eval.HandStrengthTests.test_board_two_pair_is_not_hero_value) ... ok
+test_combo_draw_capped (test_postflop_eval.HandStrengthTests.test_combo_draw_capped) ... ok
+test_duplicate_card_returns_none (test_postflop_eval.HandStrengthTests.test_duplicate_card_returns_none) ... ok
+test_flush_draw_nine_outs (test_postflop_eval.HandStrengthTests.test_flush_draw_nine_outs) ... ok
+test_gutshot_four_outs (test_postflop_eval.HandStrengthTests.test_gutshot_four_outs) ... ok
+test_hero_extends_straight_is_real (test_postflop_eval.HandStrengthTests.test_hero_extends_straight_is_real) ... ok
+test_made_flush (test_postflop_eval.HandStrengthTests.test_made_flush) ... ok
+test_made_straight_no_draw_outs (test_postflop_eval.HandStrengthTests.test_made_straight_no_draw_outs) ... ok
+test_no_draws_on_river (test_postflop_eval.HandStrengthTests.test_no_draws_on_river) ... ok
+test_oesd_eight_outs (test_postflop_eval.HandStrengthTests.test_oesd_eight_outs) ... ok
+test_overcards (test_postflop_eval.HandStrengthTests.test_overcards) ... ok
+test_overpair (test_postflop_eval.HandStrengthTests.test_overpair) ... ok
+test_plays_the_board_straight (test_postflop_eval.HandStrengthTests.test_plays_the_board_straight) ... ok
+test_set_from_pocket (test_postflop_eval.HandStrengthTests.test_set_from_pocket) ... ok
+test_top_pair (test_postflop_eval.HandStrengthTests.test_top_pair) ... ok
+test_trips_from_one_card (test_postflop_eval.HandStrengthTests.test_trips_from_one_card) ... ok
+test_turn_and_river_sizes (test_postflop_eval.HandStrengthTests.test_turn_and_river_sizes) ... ok
+test_two_pair (test_postflop_eval.HandStrengthTests.test_two_pair) ... ok
+test_underpair (test_postflop_eval.HandStrengthTests.test_underpair) ... ok
+test_board_blocked_combo_dropped (test_postflop_eval.NarrowContinuationTests.test_board_blocked_combo_dropped) ... ok
+test_dry_board_value_medium_air (test_postflop_eval.NarrowContinuationTests.test_dry_board_value_medium_air) ... ok
+test_dry_widens_bluffs_wet_narrows (test_postflop_eval.NarrowContinuationTests.test_dry_widens_bluffs_wet_narrows) ... ok
+test_strong_draw_keeps_full_weight (test_postflop_eval.NarrowContinuationTests.test_strong_draw_keeps_full_weight) ... ok
+test_ace_high_is_nut (test_postflop_eval.NutFlushDrawTests.test_ace_high_is_nut) ... ok
+test_board_ace_makes_king_high_nut (test_postflop_eval.NutFlushDrawTests.test_board_ace_makes_king_high_nut) ... ok
+test_king_high_not_nut_ace_live (test_postflop_eval.NutFlushDrawTests.test_king_high_not_nut_ace_live) ... ok
+test_hwnds_helper_caps_and_lists (test_pppoker_discovery.DiscoveryTests.test_hwnds_helper_caps_and_lists) ... ok
+test_minimized_and_tiny_windows_excluded (test_pppoker_discovery.DiscoveryTests.test_minimized_and_tiny_windows_excluded) ... ok
+test_non_pppoker_processes_ignored (test_pppoker_discovery.DiscoveryTests.test_non_pppoker_processes_ignored) ... ok
+test_rect_and_identity_fields_present (test_pppoker_discovery.DiscoveryTests.test_rect_and_identity_fields_present) ... ok
+test_returns_visible_pppoker_windows (test_pppoker_discovery.DiscoveryTests.test_returns_visible_pppoker_windows) ... ok
+test_above_solved_depth_uses_100bb_reference (test_preflop_advisor.AdvisorTests.test_above_solved_depth_uses_100bb_reference) ... ok
+test_advice_for_covered_hand (test_preflop_advisor.AdvisorTests.test_advice_for_covered_hand) ... ok
+test_advise_from_reading_pulls_position_and_stack (test_preflop_advisor.AdvisorTests.test_advise_from_reading_pulls_position_and_stack) ... ok
+test_advise_from_reading_without_position_abstains (test_preflop_advisor.AdvisorTests.test_advise_from_reading_without_position_abstains) ... ok
+test_bucket_stack (test_preflop_advisor.AdvisorTests.test_bucket_stack) ... ok
+test_bucketing_is_flagged (test_preflop_advisor.AdvisorTests.test_bucketing_is_flagged) ... ok
+test_from_reading_uses_inferred_spread_in_icm (test_preflop_advisor.AdvisorTests.test_from_reading_uses_inferred_spread_in_icm) ... ok
+test_infer_spread_classifies_the_table (test_preflop_advisor.AdvisorTests.test_infer_spread_classifies_the_table) ... ok
+test_invalid_cards_abstain (test_preflop_advisor.AdvisorTests.test_invalid_cards_abstain) ... ok
+test_out_of_range_hand (test_preflop_advisor.AdvisorTests.test_out_of_range_hand) ... ok
+test_unknown_context_abstains (test_preflop_advisor.AdvisorTests.test_unknown_context_abstains) ... ok
+test_chip_ev_calls_icm_bubble_folds (test_preflop_advisor.CallOffIcmTests.test_chip_ev_calls_icm_bubble_folds) ... ok
+test_bounty_ignored_outside_pko (test_preflop_advisor.CallOffTests.test_bounty_ignored_outside_pko) ... ok
+test_bounty_ignored_when_hero_does_not_cover (test_preflop_advisor.CallOffTests.test_bounty_ignored_when_hero_does_not_cover) ... ok
+test_bounty_overlay_widens_calloff_when_covering (test_preflop_advisor.CallOffTests.test_bounty_overlay_widens_calloff_when_covering) ... ok
+test_calloff_abstains_without_pot_odds (test_preflop_advisor.CallOffTests.test_calloff_abstains_without_pot_odds) ... ok
+test_calloff_abstains_without_shove_range (test_preflop_advisor.CallOffTests.test_calloff_abstains_without_shove_range) ... ok
+test_calloff_calls_vs_wide_shove_good_odds (test_preflop_advisor.CallOffTests.test_calloff_calls_vs_wide_shove_good_odds) ... ok
+test_calloff_exploit_by_villain_stats (test_preflop_advisor.CallOffTests.test_calloff_exploit_by_villain_stats) ... ok
+test_calloff_folds_vs_narrow_shove_bad_odds (test_preflop_advisor.CallOffTests.test_calloff_folds_vs_narrow_shove_bad_odds) ... ok
+test_equity_is_cached_but_potodds_recomputed (test_preflop_advisor.CallOffTests.test_equity_is_cached_but_potodds_recomputed) ... ok
+test_from_reading_applies_hud_exploit_to_calloff (test_preflop_advisor.CallOffTests.test_from_reading_applies_hud_exploit_to_calloff) ... ok
+test_from_reading_scales_bounty_by_villain (test_preflop_advisor.CallOffTests.test_from_reading_scales_bounty_by_villain) ... ok
+test_from_reading_synthesizes_calloff_instead_of_freezing (test_preflop_advisor.CallOffTests.test_from_reading_synthesizes_calloff_instead_of_freezing) ... ok
+test_min_3bet_with_stack_behind_is_not_shove (test_preflop_advisor.CallOffTests.test_min_3bet_with_stack_behind_is_not_shove) ... ok
+test_partial_hud_read_not_used_for_exploit (test_preflop_advisor.CallOffTests.test_partial_hud_read_not_used_for_exploit) ... ok
+test_reshove_all_in_still_synthesizes_calloff (test_preflop_advisor.CallOffTests.test_reshove_all_in_still_synthesizes_calloff) ... ok
+test_borrows_nearest_stack_when_bucket_missing (test_preflop_advisor.FirstInTests.test_borrows_nearest_stack_when_bucket_missing) ... ok
+test_falls_back_to_open_shove (test_preflop_advisor.FirstInTests.test_falls_back_to_open_shove) ... ok
+test_prefers_open_raise_when_present (test_preflop_advisor.FirstInTests.test_prefers_open_raise_when_present) ... ok
+test_bubble_all_in_is_full_rp (test_preflop_advisor.IcmRiskPremiumTests.test_bubble_all_in_is_full_rp) ... ok
+test_chip_ev_has_no_rp (test_preflop_advisor.IcmRiskPremiumTests.test_chip_ev_has_no_rp) ... ok
+test_covering_scales_rp_down (test_preflop_advisor.IcmRiskPremiumTests.test_covering_scales_rp_down) ... ok
+test_ft_and_pre_itm (test_preflop_advisor.IcmRiskPremiumTests.test_ft_and_pre_itm) ... ok
+test_pko_discounts_rp (test_preflop_advisor.IcmRiskPremiumTests.test_pko_discounts_rp) ... ok
+test_from_files_merges_validated_and_reference (test_preflop_advisor.ReferenceTests.test_from_files_merges_validated_and_reference) ... /workspace/work/visualpilot-audit-20261112/test_preflop_advisor.py:551: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpju0po2v3/a.json' mode='w' encoding='UTF-8'>
+  json.dump(pack_with_node(), open(p1, 'w'))        # validated BTN 25
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/workspace/work/visualpilot-audit-20261112/test_preflop_advisor.py:552: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpju0po2v3/b.json' mode='w' encoding='UTF-8'>
+  json.dump(pack_with_reference(), open(p2, 'w'))   # reference BTN 100
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_unvalidated_deep_node_is_flagged (test_preflop_advisor.ReferenceTests.test_unvalidated_deep_node_is_flagged) ... ok
+test_base_villain_no_scale (test_preflop_advisor.ScaleBountyTests.test_base_villain_no_scale) ... ok
+test_no_base_bb_passthrough (test_preflop_advisor.ScaleBountyTests.test_no_base_bb_passthrough) ... ok
+test_no_bounties_flat_base (test_preflop_advisor.ScaleBountyTests.test_no_bounties_flat_base) ... ok
+test_villain_accumulated_scales_up (test_preflop_advisor.ScaleBountyTests.test_villain_accumulated_scales_up) ... ok
+test_villain_unread_flat_base (test_preflop_advisor.ScaleBountyTests.test_villain_unread_flat_base) ... ok
+test_from_reading_routes_to_vs_open (test_preflop_advisor.SpotInferenceTests.test_from_reading_routes_to_vs_open) ... ok
+test_hero_opened_facing_3bet_is_vs_3bet (test_preflop_advisor.SpotInferenceTests.test_hero_opened_facing_3bet_is_vs_3bet) ... ok
+test_hero_opened_no_reraise_abstains (test_preflop_advisor.SpotInferenceTests.test_hero_opened_no_reraise_abstains) ... ok
+test_multiway_caller_is_flagged_in_advice (test_preflop_advisor.SpotInferenceTests.test_multiway_caller_is_flagged_in_advice) ... ok
+test_no_raiser_is_first_in (test_preflop_advisor.SpotInferenceTests.test_no_raiser_is_first_in) ... ok
+test_one_raiser_is_vs_open (test_preflop_advisor.SpotInferenceTests.test_one_raiser_is_vs_open) ... ok
+test_open_with_caller_is_vs_open_against_the_opener (test_preflop_advisor.SpotInferenceTests.test_open_with_caller_is_vs_open_against_the_opener) ... ok
+test_short_table_and_limpers_are_flagged_not_abstained (test_preflop_advisor.SpotInferenceTests.test_short_table_and_limpers_are_flagged_not_abstained) ... ok
+test_two_distinct_levels_abstain (test_preflop_advisor.SpotInferenceTests.test_two_distinct_levels_abstain) ... ok
+test_bb_vs_sb_limp_routes_to_vs_limp_node (test_preflop_advisor.VsLimpTests.test_bb_vs_sb_limp_routes_to_vs_limp_node) ... ok
+test_non_sb_limper_does_not_use_sb_node (test_preflop_advisor.VsLimpTests.test_non_sb_limper_does_not_use_sb_node) ... ok
+test_vs_limp_borrows_nearest_stack (test_preflop_advisor.VsLimpTests.test_vs_limp_borrows_nearest_stack) ... ok
+test_weak_hand_checks_the_sb_limp (test_preflop_advisor.VsLimpTests.test_weak_hand_checks_the_sb_limp) ... ok
+test_equity_fallback_when_no_validated_node (test_preflop_advisor.VsOpenShoveTests.test_equity_fallback_when_no_validated_node) ... ok
+test_infer_classifies_open_shove (test_preflop_advisor.VsOpenShoveTests.test_infer_classifies_open_shove) ... ok
+test_infer_keeps_normal_open_as_vs_open (test_preflop_advisor.VsOpenShoveTests.test_infer_keeps_normal_open_as_vs_open) ... ok
+test_infer_shove_by_size_when_stack_unreadable (test_preflop_advisor.VsOpenShoveTests.test_infer_shove_by_size_when_stack_unreadable) ... ok
+test_uses_validated_node_when_covered (test_preflop_advisor.VsOpenShoveTests.test_uses_validated_node_when_covered) ... ok
+test_validated_node_folds_trash (test_preflop_advisor.VsOpenShoveTests.test_validated_node_folds_trash) ... ok
+test_call_range_needs_both_positions (test_preflop_context.DispatcherTests.test_call_range_needs_both_positions) ... ok
+test_hero_opened_uses_call_range (test_preflop_context.DispatcherTests.test_hero_opened_uses_call_range) ... ok
+test_not_single_raised_blocks (test_preflop_context.DispatcherTests.test_not_single_raised_blocks) ... ok
+test_villain_opened_uses_open_range (test_preflop_context.DispatcherTests.test_villain_opened_uses_open_range) ... ok
+test_board_freezes_aggressor (test_preflop_context.TrackerTests.test_board_freezes_aggressor) ... ok
+test_frozen_stack_not_overwritten_postflop (test_preflop_context.TrackerTests.test_frozen_stack_not_overwritten_postflop) ... ok
+test_heads_up_at_full_table_after_folds (test_preflop_context.TrackerTests.test_heads_up_at_full_table_after_folds) ... ok
+test_hero_opened_marks_hero_aggressor (test_preflop_context.TrackerTests.test_hero_opened_marks_hero_aggressor) ... ok
+test_hu_single_raise_villain_opened (test_preflop_context.TrackerTests.test_hu_single_raise_villain_opened) ... ok
+test_multiway_detected_as_not_heads_up (test_preflop_context.TrackerTests.test_multiway_detected_as_not_heads_up) ... ok
+test_new_hand_first_frame_postflop_has_no_stale_context (test_preflop_context.TrackerTests.test_new_hand_first_frame_postflop_has_no_stale_context) ... ok
+test_new_hand_resets (test_preflop_context.TrackerTests.test_new_hand_resets) ... ok
+test_records_hero_and_villain_positions (test_preflop_context.TrackerTests.test_records_hero_and_villain_positions) ... ok
+test_three_bet_not_single_raised (test_preflop_context.TrackerTests.test_three_bet_not_single_raised) ... ok
+test_unreadable_id_suspends_context (test_preflop_context.TrackerTests.test_unreadable_id_suspends_context) ... ok
+test_aggressor_unknown (test_preflop_context.VillainRangeTests.test_aggressor_unknown) ... ok
+test_builds_open_range_hu (test_preflop_context.VillainRangeTests.test_builds_open_range_hu) ... ok
+test_hero_was_aggressor_blocks (test_preflop_context.VillainRangeTests.test_hero_was_aggressor_blocks) ... ok
+test_no_open_node_reason (test_preflop_context.VillainRangeTests.test_no_open_node_reason) ... ok
+test_not_heads_up (test_preflop_context.VillainRangeTests.test_not_heads_up) ... ok
+test_stack_proxy_when_villain_stack_unknown (test_preflop_context.VillainRangeTests.test_stack_proxy_when_villain_stack_unknown) ... ok
+test_aa_vs_kk (test_preflop_equity.EquityTest.test_aa_vs_kk) ... ok
+test_aa_vs_suited_connector (test_preflop_equity.EquityTest.test_aa_vs_suited_connector) ... ok
+test_aks_vs_qq_is_near_coinflip (test_preflop_equity.EquityTest.test_aks_vs_qq_is_near_coinflip) ... ok
+test_all_combos_blocked_returns_none (test_preflop_equity.EquityTest.test_all_combos_blocked_returns_none) ... ok
+test_blockers_removed_from_range (test_preflop_equity.EquityTest.test_blockers_removed_from_range) ... ok
+test_empty_range_returns_none (test_preflop_equity.EquityTest.test_empty_range_returns_none) ... ok
+test_pair_vs_two_overcards (test_preflop_equity.EquityTest.test_pair_vs_two_overcards) ... ok
+test_best_five_of_seven (test_preflop_equity.EvaluatorTest.test_best_five_of_seven) ... ok
+test_full_house_over_flush (test_preflop_equity.EvaluatorTest.test_full_house_over_flush) ... ok
+test_straight_flush_beats_quads (test_preflop_equity.EvaluatorTest.test_straight_flush_beats_quads) ... ok
+test_two_pair_kicker (test_preflop_equity.EvaluatorTest.test_two_pair_kicker) ... ok
+test_wheel_straight (test_preflop_equity.EvaluatorTest.test_wheel_straight) ... ok
+test_basic (test_preflop_equity.PotOddsTest.test_basic) ... ok
+test_half_pot_shove (test_preflop_equity.PotOddsTest.test_half_pot_shove) ... ok
+test_invalid (test_preflop_equity.PotOddsTest.test_invalid) ... ok
+test_card_order_and_suits (test_preflop_study.PreflopStudyTests.test_card_order_and_suits) ... ok
+test_cli_simulation_and_abstention_exit_codes (test_preflop_study.PreflopStudyTests.test_cli_simulation_and_abstention_exit_codes) ... ok
+test_empty_seats_and_rotated_dealer (test_preflop_study.PreflopStudyTests.test_empty_seats_and_rotated_dealer) ... ok
+test_exact_state_and_source_mix_without_execution (test_preflop_study.PreflopStudyTests.test_exact_state_and_source_mix_without_execution) ... ok
+test_history_gap_out_of_turn_and_missing_start (test_preflop_study.PreflopStudyTests.test_history_gap_out_of_turn_and_missing_start) ... ok
+test_invalid_frequency_does_not_recommend (test_preflop_study.PreflopStudyTests.test_invalid_frequency_does_not_recommend) ... ok
+test_limp_is_not_unopened (test_preflop_study.PreflopStudyTests.test_limp_is_not_unopened) ... ok
+test_live_evidence_is_not_promoted (test_preflop_study.PreflopStudyTests.test_live_evidence_is_not_promoted) ... ok
+test_missing_or_unconfirmed_data_never_consults (test_preflop_study.PreflopStudyTests.test_missing_or_unconfirmed_data_never_consults) ... ok
+test_nan_negative_and_boolean_amounts_abstain (test_preflop_study.PreflopStudyTests.test_nan_negative_and_boolean_amounts_abstain) ... ok
+test_no_borrowing_another_players_stack (test_preflop_study.PreflopStudyTests.test_no_borrowing_another_players_stack) ... ok
+test_no_context_or_stack_approximation (test_preflop_study.PreflopStudyTests.test_no_context_or_stack_approximation) ... ok
+test_pot_call_and_stack_reconciliation (test_preflop_study.PreflopStudyTests.test_pot_call_and_stack_reconciliation) ... ok
+test_raise_reopens_action_in_order_and_reconciles (test_preflop_study.PreflopStudyTests.test_raise_reopens_action_in_order_and_reconciles) ... ok
+test_six_tables_isolate_missing_state_and_new_snapshots (test_preflop_study.PreflopStudyTests.test_six_tables_isolate_missing_state_and_new_snapshots) ... ok
+test_sixmax_cannot_use_ninemax_node (test_preflop_study.PreflopStudyTests.test_sixmax_cannot_use_ninemax_node) ... ok
+test_unvalidated_duplicate_and_nonreaching_source (test_preflop_study.PreflopStudyTests.test_unvalidated_duplicate_and_nonreaching_source) ... ok
+test_wrong_supplied_turn_does_not_make_hero_turn (test_preflop_study.PreflopStudyTests.test_wrong_supplied_turn_does_not_make_hero_turn) ... ok
+test_zero_unplayed_ev_becomes_unknown (test_preflop_study.PreflopStudyTests.test_zero_unplayed_ev_becomes_unknown) ... ok
+test_large_target_has_no_compatible_preset (test_raise_panel.MultiplierTest.test_large_target_has_no_compatible_preset) ... ok
+test_map_nearest (test_raise_panel.MultiplierTest.test_map_nearest) ... ok
+test_map_none_when_no_readable (test_raise_panel.MultiplierTest.test_map_none_when_no_readable) ... ok
+test_map_tie_prefers_smaller (test_raise_panel.MultiplierTest.test_map_tie_prefers_smaller) ... ok
+test_parse (test_raise_panel.MultiplierTest.test_parse) ... ok
+test_reads_four_presets_and_confirm (test_raise_panel.RealPanelTest.test_reads_four_presets_and_confirm) ... skipped 'OCR/gabarito ausente'
+test_geometry_change_between_steps_aborts (test_raise_sequencer.RaiseSequencerTest.test_geometry_change_between_steps_aborts) ... ok
+test_happy_path_three_clicks (test_raise_sequencer.RaiseSequencerTest.test_happy_path_three_clicks) ... ok
+test_large_target_abstains_no_preset (test_raise_sequencer.RaiseSequencerTest.test_large_target_abstains_no_preset) ... ok
+test_maps_3bet_multiplier_to_nearest_preset (test_raise_sequencer.RaiseSequencerTest.test_maps_3bet_multiplier_to_nearest_preset) ... ok
+test_not_hero_turn_aborts_no_click (test_raise_sequencer.RaiseSequencerTest.test_not_hero_turn_aborts_no_click) ... ok
+test_panel_not_open_is_unknown_after_one_click (test_raise_sequencer.RaiseSequencerTest.test_panel_not_open_is_unknown_after_one_click) ... ok
+test_paused_does_not_click (test_raise_sequencer.RaiseSequencerTest.test_paused_does_not_click) ... ok
+test_blank_ace_can_use_four_smaller_undistorted_votes (test_rank_confirmation.AceAspectTests.test_blank_ace_can_use_four_smaller_undistorted_votes) ... ok
+test_blank_ace_retry_conflict_abstains (test_rank_confirmation.AceAspectTests.test_blank_ace_retry_conflict_abstains) ... ok
+test_blank_ace_retry_partial_abstains (test_rank_confirmation.AceAspectTests.test_blank_ace_retry_partial_abstains) ... ok
+test_blank_and_conflict_does_not_enable_smaller_retry (test_rank_confirmation.AceAspectTests.test_blank_and_conflict_does_not_enable_smaller_retry) ... ok
+test_confirmed_ace_remains_accepted (test_rank_confirmation.AceAspectTests.test_confirmed_ace_remains_accepted) ... ok
+test_distorted_ace_requires_undistorted_agreement (test_rank_confirmation.AceAspectTests.test_distorted_ace_requires_undistorted_agreement) ... ok
+test_one_blank_does_not_enable_smaller_retry (test_rank_confirmation.AceAspectTests.test_one_blank_does_not_enable_smaller_retry) ... ok
+test_blank_variants_require_four_fresh_confirmations (test_rank_confirmation.RankConfirmationTests.test_blank_variants_require_four_fresh_confirmations) ... ok
+test_conflicting_seven_nine_cannot_be_overridden (test_rank_confirmation.RankConfirmationTests.test_conflicting_seven_nine_cannot_be_overridden) ... ok
+test_full_agreement_has_no_extra_ocr (test_rank_confirmation.RankConfirmationTests.test_full_agreement_has_no_extra_ocr) ... ok
+test_retry_blank_abstains (test_rank_confirmation.RankConfirmationTests.test_retry_blank_abstains) ... ok
+test_retry_conflict_abstains (test_rank_confirmation.RankConfirmationTests.test_retry_conflict_abstains) ... ok
+test_retry_error_abstains (test_rank_confirmation.RankConfirmationTests.test_retry_error_abstains) ... ok
+test_ambiguous_families_cannot_shortcut_ocr (test_rank_templates.RankTemplateContracts.test_ambiguous_families_cannot_shortcut_ocr) ... ok
+test_atlas_keeps_frozen_source_split (test_rank_templates.RankTemplateContracts.test_atlas_keeps_frozen_source_split) ... ok
+test_blank_crop_delegates (test_rank_templates.RankTemplateContracts.test_blank_crop_delegates) ... ok
+test_competing_identical_glyph_rejected (test_rank_templates.RankTemplateContracts.test_competing_identical_glyph_rejected) ... ok
+test_component_count_rejects_non_ten_pair (test_rank_templates.RankTemplateContracts.test_component_count_rejects_non_ten_pair) ... ok
+test_exact_asset_self_match_contract_only (test_rank_templates.RankTemplateContracts.test_exact_asset_self_match_contract_only) ... ok
+test_fastpath_avoids_ocr_only_when_candidate_exists (test_rank_templates.RankTemplateContracts.test_fastpath_avoids_ocr_only_when_candidate_exists) ... ok
+test_margin_compares_distinct_ranks_not_variant_count (test_rank_templates.RankTemplateContracts.test_margin_compares_distinct_ranks_not_variant_count) ... ok
+test_missing_or_corrupt_atlas_delegates (test_rank_templates.RankTemplateContracts.test_missing_or_corrupt_atlas_delegates) ... ok
+test_toggle_disabled_never_invokes_template_reader (test_rank_templates.RankTemplateContracts.test_toggle_disabled_never_invokes_template_reader) ... ok
+test_two_thresholds_must_agree (test_rank_templates.RankTemplateContracts.test_two_thresholds_must_agree) ... ok
+test_vectorized_scores_exactly_match_scalar_reference (test_rank_templates.RankTemplateContracts.test_vectorized_scores_exactly_match_scalar_reference) ... ok
+test_vectorized_tie_keeps_first_template_geometry (test_rank_templates.RankTemplateContracts.test_vectorized_tie_keeps_first_template_geometry) ... ok
+test_keeps_good_value_on_abstention (test_reader_cache.BountyCacheTests.test_keeps_good_value_on_abstention) ... ok
+test_hero_skipped (test_reader_cache.HudCacheTests.test_hero_skipped) ... ok
+test_occupancy_change_invalidates_seat (test_reader_cache.HudCacheTests.test_occupancy_change_invalidates_seat) ... ok
+test_reads_once_then_caches (test_reader_cache.HudCacheTests.test_reads_once_then_caches) ... ok
+test_refreshes_every_n (test_reader_cache.HudCacheTests.test_refreshes_every_n) ... ok
+test_missing_reason_and_empty_report (test_region_presentation.RegionPresentationTests.test_missing_reason_and_empty_report) ... ok
+test_rejected_region_not_a_table_or_card_reading (test_region_presentation.RegionPresentationTests.test_rejected_region_not_a_table_or_card_reading) ... ok
+test_unknown_reason_is_preserved (test_region_presentation.RegionPresentationTests.test_unknown_reason_is_preserved) ... ok
+test_available_budget_in_summary (test_registration.FlowHappyPathTest.test_available_budget_in_summary) ... ok
+test_full_confirm_real_mode (test_registration.FlowHappyPathTest.test_full_confirm_real_mode) ... ok
+test_observation_mode_never_sends (test_registration.FlowHappyPathTest.test_observation_mode_never_sends) ... ok
+test_10_cost_divergence_lobby_vs_details (test_registration.FlowScenariosTest.test_10_cost_divergence_lobby_vs_details) ... ok
+test_10b_offer_changed_before_send (test_registration.FlowScenariosTest.test_10b_offer_changed_before_send) ... ok
+test_11_duplicate_intent_in_flow (test_registration.FlowScenariosTest.test_11_duplicate_intent_in_flow) ... ok
+test_12_pause_before_confirmation (test_registration.FlowScenariosTest.test_12_pause_before_confirmation) ... ok
+test_12b_reserve_blocked_when_not_running (test_registration.FlowScenariosTest.test_12b_reserve_blocked_when_not_running) ... ok
+test_14_receipt_for_other_event_is_unknown (test_registration.FlowScenariosTest.test_14_receipt_for_other_event_is_unknown) ... ok
+test_14b_absent_confirmation_is_unknown (test_registration.FlowScenariosTest.test_14b_absent_confirmation_is_unknown) ... ok
+test_16_proven_failure_before_send_releases (test_registration.FlowScenariosTest.test_16_proven_failure_before_send_releases) ... ok
+test_17_valid_confirmation_after_pause_no_resend (test_registration.FlowScenariosTest.test_17_valid_confirmation_after_pause_no_resend) ... ok
+test_18_rebuy_blocked_in_pilot (test_registration.FlowScenariosTest.test_18_rebuy_blocked_in_pilot) ... ok
+test_2_event_not_in_list (test_registration.FlowScenariosTest.test_2_event_not_in_list) ... ok
+test_3_same_name_different_identity (test_registration.FlowScenariosTest.test_3_same_name_different_identity) ... ok
+test_4_above_entry_cap (test_registration.FlowScenariosTest.test_4_above_entry_cap) ... ok
+test_5_insufficient_remaining_budget (test_registration.FlowScenariosTest.test_5_insufficient_remaining_budget) ... ok
+test_6_seat_limit_reached (test_registration.FlowScenariosTest.test_6_seat_limit_reached) ... ok
+test_7_composite_cost_mismatch_blocks (test_registration.FlowScenariosTest.test_7_composite_cost_mismatch_blocks) ... ok
+test_7b_composite_cost_ok (test_registration.FlowScenariosTest.test_7b_composite_cost_ok) ... ok
+test_8_currency_unknown (test_registration.FlowScenariosTest.test_8_currency_unknown) ... ok
+test_8b_price_illegible (test_registration.FlowScenariosTest.test_8b_price_illegible) ... ok
+test_9_registration_not_open (test_registration.FlowScenariosTest.test_9_registration_not_open) ... ok
+test_single_attempt_per_round (test_registration.FlowScenariosTest.test_single_attempt_per_round) ... ok
+test_atomic_dedup_across_connections (test_registration.LedgerTest.test_atomic_dedup_across_connections) ... ok
+test_budget_confirmed_plus_pending (test_registration.LedgerTest.test_budget_confirmed_plus_pending) ... ok
+test_capacity_limit_atomic_across_connections (test_registration.LedgerTest.test_capacity_limit_atomic_across_connections) ... ok
+test_dedup_same_identity (test_registration.LedgerTest.test_dedup_same_identity) ... ok
+test_no_release_after_send (test_registration.LedgerTest.test_no_release_after_send) ... ok
+test_persists_across_restart (test_registration.LedgerTest.test_persists_across_restart) ... ok
+test_release_frees_slot_and_budget (test_registration.LedgerTest.test_release_frees_slot_and_budget) ... ok
+test_reserve_blocks_without_identity_cost_currency (test_registration.LedgerTest.test_reserve_blocks_without_identity_cost_currency) ... ok
+test_decimal_exact_cents (test_registration.MoneyTest.test_decimal_exact_cents) ... ok
+test_identity_needs_more_than_name (test_registration.MoneyTest.test_identity_needs_more_than_name) ... ok
+test_none_never_zero (test_registration.MoneyTest.test_none_never_zero) ... ok
+test_sum_parcels_ok_and_mismatch (test_registration.MoneyTest.test_sum_parcels_ok_and_mismatch) ... ok
+test_cached_geometry_reads_current_frame_pixels (test_roi_geometry.RoiGeometryTests.test_cached_geometry_reads_current_frame_pixels) ... ok
+test_empty_board_crop_fails_cleanly (test_roi_geometry.RoiGeometryTests.test_empty_board_crop_fails_cleanly) ... ok
+test_geometry_is_immutable (test_roi_geometry.RoiGeometryTests.test_geometry_is_immutable) ... ok
+test_invalid_dimensions_and_unknown_profiles_rejected (test_roi_geometry.RoiGeometryTests.test_invalid_dimensions_and_unknown_profiles_rejected) ... ok
+test_matches_existing_board_band_across_resolutions (test_roi_geometry.RoiGeometryTests.test_matches_existing_board_band_across_resolutions) ... ok
+test_resize_uses_new_bounds_and_cache_is_bounded (test_roi_geometry.RoiGeometryTests.test_resize_uses_new_bounds_and_cache_is_bounded) ... ok
+test_translation_changes_only_diagnostics_not_cached_local_geometry (test_roi_geometry.RoiGeometryTests.test_translation_changes_only_diagnostics_not_cached_local_geometry) ... ok
+test_corners (test_screen_coords.TransformTest.test_corners) ... ok
+test_dpi_scale_is_1_5 (test_screen_coords.TransformTest.test_dpi_scale_is_1_5) ... ok
+test_negative_origin_ok (test_screen_coords.TransformTest.test_negative_origin_ok) ... ok
+test_raise_button_maps_to_cursor_coord (test_screen_coords.TransformTest.test_raise_button_maps_to_cursor_coord) ... ok
+test_rect_transform_scales_size (test_screen_coords.TransformTest.test_rect_transform_scales_size) ... ok
+test_budget (test_session_collection.SessionTests.test_budget) ... Pasta: /tmp/tmp1jj3bbk7/sessao-20261112-134924-5fcf1181
+COLETA V2: texto; imagens DESLIGADAS.
+Sem cliques. Limite por sessao: 1 MiB. Ctrl+C encerra.
+Cota de texto atingida: leitura continua; registros adicionais nao serao salvos.
+1: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+2: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+3: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+4: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+Encerrado: DURATION_COMPLETE | Resultado: /tmp/tmp1jj3bbk7/sessao-20261112-134924-5fcf1181
+ok
+test_default_never_encodes_images (test_session_collection.SessionTests.test_default_never_encodes_images) ... Pasta: /tmp/tmpgrojruv7/sessao-20261112-134924-107f930f
+COLETA V2: texto; imagens DESLIGADAS.
+Sem cliques. Limite por sessao: 16 MiB. Ctrl+C encerra.
+1: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+2: HWND 2 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+3: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+4: HWND 2 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+Encerrado: DURATION_COMPLETE | Resultado: /tmp/tmpgrojruv7/sessao-20261112-134924-107f930f
+ok
+test_duration_and_all_captures (test_session_collection.SessionTests.test_duration_and_all_captures) ... Pasta: /tmp/tmpeevspyjn/sessao-20261112-134924-f3daed83
+COLETA V2: texto; imagens DESLIGADAS.
+Sem cliques. Limite por sessao: 16 MiB. Ctrl+C encerra.
+1: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+2: HWND 2 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+3: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+4: HWND 2 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+Encerrado: DURATION_COMPLETE | Resultado: /tmp/tmpeevspyjn/sessao-20261112-134924-f3daed83
+ok
+test_identity_change_stops (test_session_collection.SessionTests.test_identity_change_stops) ... Pasta: /tmp/tmpx0i0678k/sessao-20261112-134924-d18f8208
+COLETA V2: texto; imagens DESLIGADAS.
+Sem cliques. Limite por sessao: 16 MiB. Ctrl+C encerra.
+1: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+2: HWND 2 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+3: HWND 1 | SOURCE_CHANGED | 15000 ms | 0.0 MiB
+Encerrado: SOURCE_CHANGED | Resultado: /tmp/tmpx0i0678k/sessao-20261112-134924-d18f8208
+ok
+test_optional_samples_are_native_crops (test_session_collection.SessionTests.test_optional_samples_are_native_crops) ... Pasta: /tmp/tmp8v02n7zj/sessao-20261112-134924-30dddf33
+COLETA V2: texto e recortes aceitos/rejeitados; nova condicao ou 60s, com cota.
+Sem cliques. Limite por sessao: 16 MiB. Ctrl+C encerra.
+1: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+2: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+3: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+4: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Encerrado: DURATION_COMPLETE | Resultado: /tmp/tmp8v02n7zj/sessao-20261112-134924-30dddf33
+ok
+test_rejection_transition_saved_without_waiting_one_minute (test_session_collection.SessionTests.test_rejection_transition_saved_without_waiting_one_minute) ... Pasta: /tmp/tmppm07kofn/sessao-20261112-134924-663fce81
+COLETA V2: texto e recortes aceitos/rejeitados; nova condicao ou 60s, com cota.
+Sem cliques. Limite por sessao: 16 MiB. Ctrl+C encerra.
+1: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+2: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+3: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+4: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Encerrado: DURATION_COMPLETE | Resultado: /tmp/tmppm07kofn/sessao-20261112-134924-663fce81
+ok
+test_buyin_above_cap (test_session_config.EvaluateTests.test_buyin_above_cap) ... ok
+test_club_not_authorized (test_session_config.EvaluateTests.test_club_not_authorized) ... ok
+test_daily_budget_exceeded (test_session_config.EvaluateTests.test_daily_budget_exceeded) ... ok
+test_duplicate_and_limits (test_session_config.EvaluateTests.test_duplicate_and_limits) ... ok
+test_eligible_happy_path (test_session_config.EvaluateTests.test_eligible_happy_path) ... ok
+test_insufficient_bankroll_for_pko (test_session_config.EvaluateTests.test_insufficient_bankroll_for_pko) ... ok
+test_max_simultaneous (test_session_config.EvaluateTests.test_max_simultaneous) ... ok
+test_missing_financial_config_blocks (test_session_config.EvaluateTests.test_missing_financial_config_blocks) ... ok
+test_past_cutoff (test_session_config.EvaluateTests.test_past_cutoff) ... ok
+test_pko_allowed_when_in_list (test_session_config.EvaluateTests.test_pko_allowed_when_in_list) ... ok
+test_preset_grade_filters (test_session_config.EvaluateTests.test_preset_grade_filters) ... ok
+test_rebuy_only_in_pko (test_session_config.EvaluateTests.test_rebuy_only_in_pko) ... ok
+test_registration_not_open (test_session_config.EvaluateTests.test_registration_not_open) ... ok
+test_turbo_raises_the_bankroll_requirement (test_session_config.EvaluateTests.test_turbo_raises_the_bankroll_requirement) ... ok
+test_unknown_modality_needs_confirmation (test_session_config.EvaluateTests.test_unknown_modality_needs_confirmation) ... ok
+test_split_eligible_blocked (test_session_config.SelectTests.test_split_eligible_blocked) ... ok
+test_confirm_moves_reserve_without_double_counting (test_session_config.ValidationTests.test_confirm_moves_reserve_without_double_counting) ... ok
+test_cutoff_without_a_valid_clock_fails_safe (test_session_config.ValidationTests.test_cutoff_without_a_valid_clock_fails_safe) ... ok
+test_non_finite_buyin_is_blocked (test_session_config.ValidationTests.test_non_finite_buyin_is_blocked) ... ok
+test_unknown_club_is_blocked (test_session_config.ValidationTests.test_unknown_club_is_blocked) ... ok
+test_count_limpers_excludes_blinds_and_hero (test_sizing.ReadingTests.test_count_limpers_excludes_blinds_and_hero) ... ok
+test_opener_raise_detected (test_sizing.ReadingTests.test_opener_raise_detected) ... ok
+test_size_from_reading_open (test_sizing.ReadingTests.test_size_from_reading_open) ... ok
+test_exact_actions (test_sizing.RecommendSizeTests.test_exact_actions) ... ok
+test_four_bet_is_all_in (test_sizing.RecommendSizeTests.test_four_bet_is_all_in) ... ok
+test_in_position (test_sizing.RecommendSizeTests.test_in_position) ... ok
+test_open_solver_sizes_and_iso (test_sizing.RecommendSizeTests.test_open_solver_sizes_and_iso) ... ok
+test_size_capped_by_stack (test_sizing.RecommendSizeTests.test_size_capped_by_stack) ... ok
+test_three_bet_by_position (test_sizing.RecommendSizeTests.test_three_bet_by_position) ... ok
+test_cpu_and_memory_budget (test_stage_instrumentation.MetricsTests.test_cpu_and_memory_budget) ... ok
+test_ocr_wall_dropped_when_no_reader_ran (test_stage_instrumentation.MetricsTests.test_ocr_wall_dropped_when_no_reader_ran) ... ok
+test_ocr_wall_is_surfaced_as_a_stage (test_stage_instrumentation.MetricsTests.test_ocr_wall_is_surfaced_as_a_stage) ... ok
+test_resources_optional_and_bad_values_ignored (test_stage_instrumentation.MetricsTests.test_resources_optional_and_bad_values_ignored) ... ok
+test_wall_ms_counts_only_real_calls (test_stage_instrumentation.OCRWallTests.test_wall_ms_counts_only_real_calls) ... ok
+test_wall_ms_present_even_without_calls (test_stage_instrumentation.OCRWallTests.test_wall_ms_present_even_without_calls) ... ok
+test_session_summary_has_stage_profile_and_records_carry_cpu (test_stage_instrumentation.SessionProfileTests.test_session_summary_has_stage_profile_and_records_carry_cpu) ... Pasta: /tmp/tmpgz8aw42s/sessao-20261112-134924-f762b17e
+COLETA V2: texto; imagens DESLIGADAS.
+Sem cliques. Limite por sessao: 16 MiB. Ctrl+C encerra.
+1: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+2: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+3: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+4: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+Encerrado: DURATION_COMPLETE | Resultado: /tmp/tmpgz8aw42s/sessao-20261112-134924-f762b17e
+ok
+test_failed_record_yields_only_available_stages (test_stage_instrumentation.StageMetricsTests.test_failed_record_yields_only_available_stages) ... ok
+test_row_applies_idle_zero_rule (test_stage_instrumentation.StageMetricsTests.test_row_applies_idle_zero_rule) ... ok
+test_summarize_orders_and_computes_memory (test_stage_instrumentation.StageMetricsTests.test_summarize_orders_and_computes_memory) ... ok
+test_board_dict_candidates_unreadable_is_pending (test_state_observer.CamadaBReconcileTest.test_board_dict_candidates_unreadable_is_pending) ... ok
+test_board_dict_confirmed_sets_street (test_state_observer.CamadaBReconcileTest.test_board_dict_confirmed_sets_street) ... ok
+test_board_dict_empty_center_is_preflop (test_state_observer.CamadaBReconcileTest.test_board_dict_empty_center_is_preflop) ... ok
+test_gap_flagged_not_invented (test_state_observer.CamadaBReconcileTest.test_gap_flagged_not_invented) ... ok
+test_pot_regressed_flags_missed_boundary (test_state_observer.CamadaBReconcileTest.test_pot_regressed_flags_missed_boundary) ... ok
+test_reconciler_resets_on_new_hand (test_state_observer.CamadaBReconcileTest.test_reconciler_resets_on_new_hand) ... ok
+test_seat_committed_reconciles (test_state_observer.CamadaBReconcileTest.test_seat_committed_reconciles) ... ok
+test_street_advanced (test_state_observer.CamadaBReconcileTest.test_street_advanced) ... ok
+test_suspect_id_not_reconciled (test_state_observer.CamadaBReconcileTest.test_suspect_id_not_reconciled) ... ok
+test_absence_not_invented_tocall_and_stacks (test_state_observer.StateObserverTest.test_absence_not_invented_tocall_and_stacks) ... ok
+test_advice_abstain_is_pending (test_state_observer.StateObserverTest.test_advice_abstain_is_pending) ... ok
+test_confirmed_fields_present (test_state_observer.StateObserverTest.test_confirmed_fields_present) ... ok
+test_illegible_id_holds_hand_pending (test_state_observer.StateObserverTest.test_illegible_id_holds_hand_pending) ... ok
+test_multi_table_independent (test_state_observer.StateObserverTest.test_multi_table_independent) ... ok
+test_new_hand_on_increment (test_state_observer.StateObserverTest.test_new_hand_on_increment) ... ok
+test_new_table_then_same_hand (test_state_observer.StateObserverTest.test_new_table_then_same_hand) ... ok
+test_not_a_table (test_state_observer.StateObserverTest.test_not_a_table) ... ok
+test_regressed_id_is_suspect (test_state_observer.StateObserverTest.test_regressed_id_is_suspect) ... ok
+test_render_is_string (test_state_observer.StateObserverTest.test_render_is_string) ... ok
+test_table_ref_change_flagged (test_state_observer.StateObserverTest.test_table_ref_change_flagged) ... ok
+test_anchor_missing_is_preflop_and_advises (test_table_advisor.AdviseTableTests.test_anchor_missing_is_preflop_and_advises) ... ok
+test_board_detected_but_unreadable_abstains (test_table_advisor.AdviseTableTests.test_board_detected_but_unreadable_abstains) ... ok
+test_bounty_bb_threaded_to_advisor (test_table_advisor.AdviseTableTests.test_bounty_bb_threaded_to_advisor) ... ok
+test_enable_hud_attaches_villain_stats (test_table_advisor.AdviseTableTests.test_enable_hud_attaches_villain_stats) ... ok
+test_hero_override_used_when_read_fails (test_table_advisor.AdviseTableTests.test_hero_override_used_when_read_fails) ... ok
+test_lobby_crop_is_skipped (test_table_advisor.AdviseTableTests.test_lobby_crop_is_skipped) ... ok
+test_mode_override_forces_tournament_mode (test_table_advisor.AdviseTableTests.test_mode_override_forces_tournament_mode) ... ok
+test_no_hero_cards_abstains (test_table_advisor.AdviseTableTests.test_no_hero_cards_abstains) ... ok
+test_postflop_gets_heuristic_advice (test_table_advisor.AdviseTableTests.test_postflop_gets_heuristic_advice) ... ok
+test_preflop_with_hero_gets_advice (test_table_advisor.AdviseTableTests.test_preflop_with_hero_gets_advice) ... ok
+test_tracker_makes_postflop_context_aware (test_table_advisor.AdviseTableTests.test_tracker_makes_postflop_context_aware) ... ok
+test_black_frame_has_no_tables (test_table_reading.PipelineContracts.test_black_frame_has_no_tables) ... ok
+test_board_is_opt_in_and_uses_accepted_native_crop (test_table_reading.PipelineContracts.test_board_is_opt_in_and_uses_accepted_native_crop) ... ok
+test_buttons_receive_only_accepted_crop_when_enabled (test_table_reading.PipelineContracts.test_buttons_receive_only_accepted_crop_when_enabled) ... ok
+test_duplicate_card_is_not_accepted (test_table_reading.PipelineContracts.test_duplicate_card_is_not_accepted) ... ok
+test_export_pixels_and_budget (test_table_reading.PipelineContracts.test_export_pixels_and_budget) ... ok
+test_latest_skips_failed_reports (test_table_reading.PipelineContracts.test_latest_skips_failed_reports) ... ok
+test_metadata_mismatch_blocks_reading (test_table_reading.PipelineContracts.test_metadata_mismatch_blocks_reading) ... ok
+test_missing_ocr_preserves_detected_crop (test_table_reading.PipelineContracts.test_missing_ocr_preserves_detected_crop) ... ok
+test_partial_is_not_read (test_table_reading.PipelineContracts.test_partial_is_not_read) ... ok
+test_real_pixels_are_cropped_and_routed (test_table_reading.PipelineContracts.test_real_pixels_are_cropped_and_routed) ... ok
+test_scaled_moved_table_preserves_native_crop (test_table_reading.PipelineContracts.test_scaled_moved_table_preserves_native_crop) ... ok
+test_separate_processes_and_snapshots_never_reuse_identity (test_table_reading.PipelineContracts.test_separate_processes_and_snapshots_never_reuse_identity) ... ok
+test_six_limit_and_seven_refusal (test_table_reading.PipelineContracts.test_six_limit_and_seven_refusal) ... ok
+test_blue_felt_seat_is_empty_avatar_photo_is_occupied (test_table_state.OccupancyTests.test_blue_felt_seat_is_empty_avatar_photo_is_occupied) ... ok
+test_stacks_and_occupancy_are_independent (test_table_state.OccupancyTests.test_stacks_and_occupancy_are_independent) ... ok
+test_comma_is_high_confidence (test_table_state.ParseAmountTests.test_comma_is_high_confidence) ... ok
+test_comma_rendered_as_space (test_table_state.ParseAmountTests.test_comma_rendered_as_space) ... ok
+test_dropped_comma_restored_as_one_decimal_medium (test_table_state.ParseAmountTests.test_dropped_comma_restored_as_one_decimal_medium) ... ok
+test_five_digit_run_is_noise_and_abstains (test_table_state.ParseAmountTests.test_five_digit_run_is_noise_and_abstains) ... ok
+test_letter_glued_digits_are_rejected_not_misread (test_table_state.ParseAmountTests.test_letter_glued_digits_are_rejected_not_misread) ... ok
+test_pot_with_dropped_comma (test_table_state.ParseAmountTests.test_pot_with_dropped_comma) ... ok
+test_unreadable_abstains (test_table_state.ParseAmountTests.test_unreadable_abstains) ... ok
+test_bad_crop_rejected (test_table_state.ReadTests.test_bad_crop_rejected) ... ok
+test_read_seat_stacks_covers_all_seats (test_table_state.ReadTests.test_read_seat_stacks_covers_all_seats) ... ok
+test_table_state_structure_is_labelled (test_table_state.ReadTests.test_table_state_structure_is_labelled) ... ok
+test_unreadable_stack_abstains (test_table_state.ReadTests.test_unreadable_stack_abstains) ... ok
+test_nameplate_box_within_bounds_and_centered (test_table_state.SeatLayoutTests.test_nameplate_box_within_bounds_and_centered) ... ok
+test_ten_unique_seats_hero_first (test_table_state.SeatLayoutTests.test_ten_unique_seats_hero_first) ... ok
+test_call_amount_is_to_call (test_table_state.ToCallTests.test_call_amount_is_to_call) ... ok
+test_call_without_bb_unit_abstains (test_table_state.ToCallTests.test_call_without_bb_unit_abstains) ... ok
+test_check_means_zero_to_call (test_table_state.ToCallTests.test_check_means_zero_to_call) ... ok
+test_no_button_row_abstains (test_table_state.ToCallTests.test_no_button_row_abstains) ... ok
+test_cli_requires_explicit_mode_and_paired_metadata (test_template_sample_collection.SampleCollectionTests.test_cli_requires_explicit_mode_and_paired_metadata) ... usage: python -m unittest [-h] (--hwnd HWND | --image IMAGE)
+                          [--logs-root LOGS_ROOT] [--metadata METADATA]
+                          [--max-tables {1,2,3,4,5,6}]
+python -m unittest: error: one of the arguments --hwnd --image is required
+usage: python -m unittest [-h] (--hwnd HWND | --image IMAGE)
+                          [--logs-root LOGS_ROOT] [--metadata METADATA]
+                          [--max-tables {1,2,3,4,5,6}]
+python -m unittest: error: --image exige --metadata; --hwnd nao aceita --metadata
+usage: python -m unittest [-h] (--hwnd HWND | --image IMAGE)
+                          [--logs-root LOGS_ROOT] [--metadata METADATA]
+                          [--max-tables {1,2,3,4,5,6}]
+python -m unittest: error: --image exige --metadata; --hwnd nao aceita --metadata
+ok
+test_incoming_budget_failure_never_creates_logs (test_template_sample_collection.SampleCollectionTests.test_incoming_budget_failure_never_creates_logs) ... ok
+test_live_failure_or_other_hwnd_never_saves (test_template_sample_collection.SampleCollectionTests.test_live_failure_or_other_hwnd_never_saves) ... ok
+test_max_table_limit_and_missing_table_never_write (test_template_sample_collection.SampleCollectionTests.test_max_table_limit_and_missing_table_never_write) ... ok
+test_mock_strict_live_capture_passes_requested_hwnd (test_template_sample_collection.SampleCollectionTests.test_mock_strict_live_capture_passes_requested_hwnd) ... ok
+test_real_fixture_only_native_regions_and_unlabeled_manifest (test_template_sample_collection.SampleCollectionTests.test_real_fixture_only_native_regions_and_unlabeled_manifest) ... ok
+test_wrong_metadata_never_creates_logs (test_template_sample_collection.SampleCollectionTests.test_wrong_metadata_never_creates_logs) ... ok
+test_deep_itm_without_paid_stays_chip_ev (test_tournament.ReadTests.test_deep_itm_without_paid_stays_chip_ev) ... ok
+test_final_table_engages_without_paid_in_the_money (test_tournament.ReadTests.test_final_table_engages_without_paid_in_the_money) ... ok
+test_reads_paid_and_remaining (test_tournament.ReadTests.test_reads_paid_and_remaining) ... ok
+test_reads_paid_through_noise_keeps_icm_engaged (test_tournament.ReadTests.test_reads_paid_through_noise_keeps_icm_engaged) ... ok
+test_reads_remaining_through_cedilla_noise (test_tournament.ReadTests.test_reads_remaining_through_cedilla_noise) ... ok
+test_unread_abstains (test_tournament.ReadTests.test_unread_abstains) ... ok
+test_bounty_detection (test_tournament.StageTests.test_bounty_detection) ... ok
+test_context_maps_mode (test_tournament.StageTests.test_context_maps_mode) ... ok
+test_context_pko_vs_mystery_timing (test_tournament.StageTests.test_context_pko_vs_mystery_timing) ... ok
+test_stages_from_remaining_and_paid (test_tournament.StageTests.test_stages_from_remaining_and_paid) ... ok
+test_diagnostic_forwards_selected_hwnd (test_window_capture_audit.IntegrationContracts.test_diagnostic_forwards_selected_hwnd) ... ok
+test_diagnostic_saves_linux_failure_without_image (test_window_capture_audit.IntegrationContracts.test_diagnostic_saves_linux_failure_without_image) ... ok
+test_observer_routes_to_engine (test_window_capture_audit.IntegrationContracts.test_observer_routes_to_engine) ... ok
+test_standalone_routes_to_engine (test_window_capture_audit.IntegrationContracts.test_standalone_routes_to_engine) ... ok
+test_ambiguous_and_explicit_selection (test_window_capture_engine.CaptureContracts.test_ambiguous_and_explicit_selection) ... ok
+test_blank_frame_not_success (test_window_capture_engine.CaptureContracts.test_blank_frame_not_success) ... ok
+test_client_dimensions_negative_origin_and_title_not_required (test_window_capture_engine.CaptureContracts.test_client_dimensions_negative_origin_and_title_not_required) ... ok
+test_dpi_failure_prevents_capture (test_window_capture_engine.CaptureContracts.test_dpi_failure_prevents_capture) ... ok
+test_explicit_invalid_does_not_select_other (test_window_capture_engine.CaptureContracts.test_explicit_invalid_does_not_select_other) ... ok
+test_identity_and_geometry_changes (test_window_capture_engine.CaptureContracts.test_identity_and_geometry_changes) ... ok
+test_large_unity_surface_not_rejected (test_window_capture_engine.CaptureContracts.test_large_unity_surface_not_rejected) ... ok
+test_minimized (test_window_capture_engine.CaptureContracts.test_minimized) ... ok
+test_query_failure (test_window_capture_engine.CaptureContracts.test_query_failure) ... ok
+test_unauthorized_process (test_window_capture_engine.CaptureContracts.test_unauthorized_process) ... ok
+test_bitblt_exception_restores_bitmap_and_frees_all (test_window_capture_engine.GDIContracts.test_bitblt_exception_restores_bitmap_and_frees_all) ... ok
+test_cleanup_failure_blocks_return (test_window_capture_engine.GDIContracts.test_cleanup_failure_blocks_return) ... ok
+test_native_process_query_exception_does_not_default_name (test_window_capture_engine.GDIContracts.test_native_process_query_exception_does_not_default_name) ... ok
+test_partial_acquisition_failure (test_window_capture_engine.GDIContracts.test_partial_acquisition_failure) ... ok
+test_success_uses_client_dc_and_releases_only_owned_dc (test_window_capture_engine.GDIContracts.test_success_uses_client_dc_and_releases_only_owned_dc) ... ok
+
+======================================================================
+FAIL: test_read_seat_bounties_with_profile (test_bounty.RealPkoFixtureTests.test_read_seat_bounties_with_profile)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/work/visualpilot-audit-20261112/test_bounty.py", line 125, in test_read_seat_bounties_with_profile
+    self.assertEqual({s: v['value'] for s, v in b.items()},
+AssertionError: {'topC': 135.0, 'TL': 35.0, 'RL': 135.0} != {'topC': 135.0, 'TL': 135.0, 'RL': 135.0}
+- {'RL': 135.0, 'TL': 35.0, 'topC': 135.0}
++ {'RL': 135.0, 'TL': 135.0, 'topC': 135.0}
+?                     +
+
+
+======================================================================
+FAIL: test_reads_135_from_real_pills (test_bounty.RealPkoFixtureTests.test_reads_135_from_real_pills)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/work/visualpilot-audit-20261112/test_bounty.py", line 109, in test_reads_135_from_real_pills
+    self.assertEqual(r['value'], 135.0)
+AssertionError: 35.0 != 135.0
+
+----------------------------------------------------------------------
+Ran 762 tests in 34.956s
+
+FAILED (failures=2, skipped=9)
+FALHA: Captura estrita falhou: {'status': 'WINDOW_INVALID_HWND'}
+FALHA: Returned HWND differs from requested HWND
+Amostras UNLABELED: /tmp/tmplycwh8jg/logs/leitura/leitura-8bd72576231e4ffa88942a52c575ffa1 | 1 mesa(s). Sem OCR ou importacao para treino.

@@ -1,0 +1,7 @@
+eight_full_source PASS [['2s', '8h', '5h']]
+flop_full_source PASS [['Jc', '5d', '3c']]
+spectator_derived PASS [['Jc', '5d', '3c']]
+empty_board_derived PASS []
+partial_board_derived PASS []
+recovered_full_source PASS [['Jc', '5d', '3c']]
+blank_frame PASS []
