@@ -4,7 +4,7 @@ Uses a tiny synthetic pack so it runs without the reference file; the real pack
 is consulted live, not committed."""
 import unittest
 
-from preflop_study import RANKS
+from preflop_study import RANKS, Blocked
 from preflop_advisor import (PreflopAdvisor, infer_live_spot, infer_spread,
                              _icm_risk_premium, scale_bounty_bb)
 
@@ -345,9 +345,9 @@ class AdvisorTests(unittest.TestCase):
         self.assertEqual(self.a.bucket_stack(20.8)[0], 20)
         self.assertEqual(self.a.bucket_stack(26)[0], 25)
         self.assertEqual(self.a.bucket_stack(65)[0], 40)        # deep bucket now exists
-        self.assertEqual(self.a.bucket_stack(90)[0], 100)
-        self.assertEqual(self.a.bucket_stack(150), (100, 'OK'))   # HRC caps at 100bb; deeper uses it
-        self.assertEqual(self.a.bucket_stack(200), (100, 'OK'))
+        self.assertEqual(self.a.bucket_stack(90)[0], 40)
+        self.assertEqual(self.a.bucket_stack(150), (40, 'OK'))   # top solved bucket is 40bb; deeper uses it
+        self.assertEqual(self.a.bucket_stack(200), (40, 'OK'))
         self.assertEqual(self.a.bucket_stack(0), (None, 'STACK_UNKNOWN'))
 
     def test_advice_for_covered_hand(self):
@@ -364,23 +364,24 @@ class AdvisorTests(unittest.TestCase):
         self.assertTrue(r['bucketed'])
         self.assertIn('STACK_BUCKETED_24_TO_25BB', r['caveats'])
 
-    def test_above_solved_depth_uses_100bb_reference(self):
-        # HRC tops out at 100bb; a deeper stack (common early in tournaments) uses
-        # the 100bb range as a flagged reference instead of abstaining.
+    def test_above_solved_depth_uses_top_bucket_reference(self):
+        # The solved pack tops out at the deepest bucket (40bb); a deeper stack
+        # (common early in tournaments) uses that top range as a flagged reference
+        # instead of abstaining.
         idx_aa = HANDS.index('AA')
-        node100 = dict(id='n100', context=dict(mode='chip_ev', format='regular', stage='mid', players=9, stack=100),
-                       spot='open_raise', hero='BTN', vs=[], validated=True, evUnit='bb',
-                       legalActions=['fold', 'raise'], actions=['raise', 'fold'],
-                       freq={'raise': [1.0 if k == idx_aa else 0.0 for k in range(169)],
-                             'fold': [0.0 if k == idx_aa else 1.0 for k in range(169)]},
-                       ev={'raise': [2.0] * 169, 'fold': [0.0] * 169}, outOfRange=[], source='test')
+        node40 = dict(id='n40', context=dict(mode='chip_ev', format='regular', stage='mid', players=9, stack=40),
+                      spot='open_raise', hero='BTN', vs=[], validated=True, evUnit='bb',
+                      legalActions=['fold', 'raise'], actions=['raise', 'fold'],
+                      freq={'raise': [1.0 if k == idx_aa else 0.0 for k in range(169)],
+                            'fold': [0.0 if k == idx_aa else 1.0 for k in range(169)]},
+                      ev={'raise': [2.0] * 169, 'fold': [0.0] * 169}, outOfRange=[], source='test')
         pack = pack_with_node()
-        pack['nodes'].append(node100)
+        pack['nodes'].append(node40)
         a = PreflopAdvisor(pack)
         r = a.advise(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=200)
         self.assertEqual(r['status'], 'ADVICE')
-        self.assertEqual(r['stack_bucket'], 100)
-        self.assertIn('STACK_ABOVE_SOLVED_DEPTH_100BB_REFERENCE', r['caveats'])
+        self.assertEqual(r['stack_bucket'], 40)
+        self.assertIn('STACK_ABOVE_SOLVED_DEPTH_40BB_REFERENCE', r['caveats'])
 
     def test_infer_spread_classifies_the_table(self):
         even = {p: 40 for p in ('UTG', 'UTG+1', 'UTG+2', 'LJ', 'HJ', 'CO', 'BTN', 'SB', 'BB')}
@@ -528,7 +529,7 @@ def pack_with_reference():
     idx = HANDS.index('AA')
     freq = {'raise': [1.0 if k == idx else 0.0 for k in range(169)],
             'fold': [0.0 if k == idx else 1.0 for k in range(169)]}
-    node = dict(id='d1', context=dict(mode='chip_ev', format='regular', stage='mid', players=9, stack=100),
+    node = dict(id='d1', context=dict(mode='chip_ev', format='regular', stage='mid', players=9, stack=40),
                 spot='open_raise', hero='BTN', vs=[], validated=False, evUnit='bb',
                 legalActions=['fold', 'raise'], actions=['raise', 'fold'], freq=freq, ev=None,
                 outOfRange=[], source='reference')
@@ -626,6 +627,92 @@ class SpotInferenceTests(unittest.TestCase):
         r = a.advise_from_reading(state, ['As', 'Ac'])
         self.assertEqual((r['status'], r['spot'], r['recommended']), ('ADVICE', 'vs_open', 'call'))
         self.assertIn('AGGRESSOR_INFERRED_BTN', r['caveats'])
+
+
+class SourceAndCollisionTests(unittest.TestCase):
+    """B01/B02: manifesto por sha256 + colisão de lookup sem sombra silenciosa."""
+
+    def _open_node(self, node_id, *, validated, raise_hand, stack=25, source='test'):
+        idx = HANDS.index(raise_hand)
+        freq = {'raise': [1.0 if k == idx else 0.0 for k in range(169)],
+                'fold': [0.0 if k == idx else 1.0 for k in range(169)]}
+        return dict(id=node_id, context=dict(mode='chip_ev', format='regular', stage='mid',
+                    players=9, stack=stack), spot='open_raise', hero='BTN', vs=[],
+                    validated=validated, evUnit='bb', legalActions=['fold', 'raise'],
+                    actions=['raise', 'fold'], freq=freq, ev=None, outOfRange=[], source=source)
+
+    def _pack(self, nodes):
+        return dict(format='nvt-range-export', version=1, engineCommit='test', hands=HANDS, nodes=nodes)
+
+    def test_validated_wins_over_reference_regardless_of_order(self):
+        # Nó de REFERÊNCIA (stale) ANTES do validado, MESMA chave: o validado tem de
+        # vencer -> um update validado nunca é sombreado por uma range de referência.
+        ref = self._open_node('stale', validated=False, raise_hand='22', source='reference')
+        good = self._open_node('good', validated=True, raise_hand='AA')
+        a = PreflopAdvisor(self._pack([ref, good]))   # strict; só 1 validado -> não é fatal
+        r = a.advise(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=25)
+        self.assertEqual(r['node_id'], 'good')
+        self.assertTrue(r['validated'])
+        self.assertEqual(len(a.collisions), 1)
+        self.assertEqual(a.collisions[0]['chosen'], 'good')
+        self.assertIn('stale', a.collisions[0]['dropped'])
+        self.assertEqual(a.collisions[0]['resolved_by'], 'validated_over_reference')
+
+    def test_two_validated_same_key_is_fatal_in_strict(self):
+        n1 = self._open_node('v1', validated=True, raise_hand='AA')
+        n2 = self._open_node('v2', validated=True, raise_hand='KK')
+        with self.assertRaises(Blocked) as cm:
+            PreflopAdvisor(self._pack([n1, n2]))
+        self.assertIn('AMBIGUOUS_RANGE_NODE', str(cm.exception))
+
+    def test_two_validated_same_key_recorded_when_not_strict(self):
+        n1 = self._open_node('v1', validated=True, raise_hand='AA')
+        n2 = self._open_node('v2', validated=True, raise_hand='KK')
+        a = PreflopAdvisor(self._pack([n1, n2]), strict=False)
+        self.assertEqual(a.collisions[0]['chosen'], 'v1')
+        self.assertIn('v2', a.collisions[0]['dropped'])
+        self.assertEqual(a.advise(hero_cards=['As', 'Ac'], hero_position='BTN',
+                                  stack_bb=25)['node_id'], 'v1')
+
+    def test_manifest_reports_sha256_and_counts(self):
+        import json
+        import os
+        import tempfile
+        d = tempfile.mkdtemp()
+        p = os.path.join(d, 'pack.json')
+        with open(p, 'w', encoding='utf-8') as fh:
+            json.dump(pack_with_node(), fh)
+        a = PreflopAdvisor.from_file(p)
+        m = a.manifest()
+        self.assertEqual(len(m['sources']), 1)
+        self.assertEqual(len(m['sources'][0]['sha256']), 64)
+        self.assertEqual(m['sources'][0]['nodes'], 1)
+        self.assertEqual(m['validated_nodes'], 1)
+        self.assertEqual(m['collisions'], [])
+
+    def test_clean_single_pack_has_no_collision(self):
+        self.assertEqual(PreflopAdvisor(pack_with_node()).collisions, [])
+
+    def test_from_files_validated_wins_even_when_reference_loaded_first(self):
+        # Merge tolerante (strict=False): mesmo com o pack de REFERÊNCIA passado
+        # PRIMEIRO, o nó validado vence (resolução independente da ordem) e a colisão
+        # é registrada — nunca um downgrade silencioso validado->referência.
+        import json
+        import os
+        import tempfile
+        d = tempfile.mkdtemp()
+        ref = self._pack([self._open_node('stale', validated=False, raise_hand='22',
+                                           source='reference')])
+        good = self._pack([self._open_node('good', validated=True, raise_hand='AA')])
+        pr, pg = os.path.join(d, 'ref.json'), os.path.join(d, 'good.json')
+        with open(pr, 'w', encoding='utf-8') as fh:
+            json.dump(ref, fh)
+        with open(pg, 'w', encoding='utf-8') as fh:
+            json.dump(good, fh)
+        a = PreflopAdvisor.from_files(pr, pg)            # referência PRIMEIRO
+        r = a.advise(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=25)
+        self.assertEqual((r['node_id'], r['validated']), ('good', True))
+        self.assertEqual(a.collisions[0]['resolved_by'], 'validated_over_reference')
 
 
 if __name__ == '__main__':

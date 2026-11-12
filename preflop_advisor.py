@@ -12,6 +12,7 @@ out of coverage and abstain here, to be developed into the bot's own engine.
 No capture, no clicks. Stack bucketing and the 9-max table are explicit
 approximations, reported in every answer.
 """
+import hashlib
 import json
 from pathlib import Path
 
@@ -205,7 +206,7 @@ class PreflopAdvisor:
     # reference pack (not HRC-validated, flagged in every answer).
     STACK_BUCKETS = (5, 8, 10, 12, 15, 20, 25, 30, 40)
 
-    def __init__(self, pack):
+    def __init__(self, pack, *, sources=None, strict=True):
         if pack.get('format') != 'nvt-range-export' or pack.get('version') != 1:
             raise Blocked('UNSUPPORTED_RANGE_FORMAT')
         self.hands = pack['hands']
@@ -213,30 +214,95 @@ class PreflopAdvisor:
             raise Blocked('INVALID_HAND_INDEX')
         self.nodes = list(pack['nodes'])   # includes unvalidated reference (deep) nodes
         self.engine_commit = pack.get('engineCommit')
+        self.sources = list(sources or [])  # B01: origem(ns) por sha256 (ver manifest())
+        self.strict = strict
+        # B02 — índice de lookup SEM sombra silenciosa. Nós que compartilham a mesma
+        # chave são uma COLISÃO: um nó velho JAMAIS pode esconder calado um nó
+        # atualizado. Precedência explícita: um nó VALIDADO sempre vence um de
+        # referência não-validado (qualquer que seja a ordem de carga) -> um update
+        # validado nunca é sombreado por uma range de referência. Dois nós do MESMO
+        # nível de validação com uma chave só é ambiguidade real: em strict é FATAL
+        # no load (conserta-se a fonte/manifesto, B01), no laboratório e não com ficha;
+        # fora do strict, mantém o primeiro e REGISTRA o descarte em self.collisions.
         self._index = {}
+        self.collisions = []
+        grouped = {}
         for n in self.nodes:
-            self._index.setdefault(self._key_of(n), n)
+            grouped.setdefault(self._key_of(n), []).append(n)
+        for key, group in grouped.items():
+            if len(group) == 1:
+                self._index[key] = group[0]
+                continue
+            validated = [n for n in group if n.get('validated') is True]
+            pool = validated or group
+            if len(pool) > 1 and strict:
+                raise Blocked('AMBIGUOUS_RANGE_NODE:%s' %
+                              ','.join(sorted(str(n.get('id')) for n in pool)))
+            chosen = pool[0]
+            self._index[key] = chosen
+            self.collisions.append(dict(
+                key=key, count=len(group), chosen=chosen.get('id'),
+                dropped=[n.get('id') for n in group if n is not chosen],
+                resolved_by=('validated_over_reference'
+                             if validated and len(validated) < len(group) else 'first_kept')))
         self._shove_cache = {}
         self._equity_cache = {}          # (node_id, cartas, iters, seed) -> equity bruta
 
-    @classmethod
-    def from_file(cls, path):
-        return cls(json.loads(Path(path).read_text(encoding='utf-8')))
+    @staticmethod
+    def _source_entry(path, raw, pack):
+        """Entrada do manifesto de fontes (B01): path + sha256 dos BYTES exatos do
+        pack + contagem de nós/validados + proveniência do motor. É a ponte
+        auditável da decisão ao vivo de volta à fonte exata."""
+        nodes = pack.get('nodes') or []
+        return dict(path=str(path), sha256=hashlib.sha256(raw).hexdigest(),
+                    nodes=len(nodes),
+                    validated=sum(1 for n in nodes if n.get('validated') is True),
+                    engine_commit=pack.get('engineCommit'),
+                    generated_at=pack.get('generatedAt'))
+
+    def manifest(self):
+        """Manifesto de proveniência (B01): quais pack(s), por sha256, alimentam o
+        lookup; cobertura de nós; e colisões de chave resolvidas no load. Liga uma
+        decisão ao vivo às fontes exatas (bytes)."""
+        return dict(sources=list(self.sources), engine_commit=self.engine_commit,
+                    total_nodes=len(self.nodes),
+                    validated_nodes=sum(1 for n in self.nodes if n.get('validated') is True),
+                    index_keys=len(self._index), collisions=list(self.collisions),
+                    strict=self.strict)
 
     @classmethod
-    def from_files(cls, *paths):
+    def from_file(cls, path, *, strict=True):
+        raw = Path(path).read_bytes()
+        pack = json.loads(raw.decode('utf-8'))
+        return cls(pack, sources=[cls._source_entry(path, raw, pack)], strict=strict)
+
+    @classmethod
+    def from_files(cls, *paths, strict=False):
         """Merge several packs (e.g. the validated short pack plus the deep
-        reference pack). They must share format/version and the 169-hand index."""
+        reference pack). They must share format/version and the 169-hand index.
+        Cada fonte entra no manifesto por sha256 (B01); colisões de chave entre os
+        packs são resolvidas sem sombra silenciosa (B02, ver __init__).
+
+        strict=False por padrão (ao contrário de __init__/from_file): um merge é,
+        por natureza, onde fontes distintas se sobrepõem — ex.: o pack `deep`
+        reexporta nós de bucket curto que também estão no pack validado. Em vez de
+        QUEBRAR o operador no startup, o merge resolve de forma determinística pela
+        ORDEM do manifesto (a 1ª fonte passada é a autoritária: passe o pack
+        validado PRIMEIRO) e REGISTRA cada colisão em self.collisions / manifest()
+        para auditoria. Passe strict=True para exigir fontes sem sobreposição."""
         merged = None
+        sources = []
         for path in paths:
-            pack = json.loads(Path(path).read_text(encoding='utf-8'))
+            raw = Path(path).read_bytes()
+            pack = json.loads(raw.decode('utf-8'))
+            sources.append(cls._source_entry(path, raw, pack))
             if merged is None:
                 merged = dict(pack)
             elif pack.get('hands') != merged['hands']:
                 raise Blocked('HAND_INDEX_MISMATCH_BETWEEN_PACKS')
             else:
                 merged = dict(merged, nodes=merged['nodes'] + pack['nodes'])
-        return cls(merged)
+        return cls(merged, sources=sources, strict=strict)
 
     @staticmethod
     def _key_of(node):
@@ -382,6 +448,23 @@ class PreflopAdvisor:
                 return result
         return result
 
+    def _iso_worthy(self, hand, bucket, *, mode='chip_ev', stage='mid', players=9):
+        """Mão vale um ISO sobre limper? O range de 'open' do SB é de BLIND BATTLE
+        (~91%, certo só quando folda pro SB). Com limper NÃO é blind battle: iso tem
+        que ser VALOR/apertado. Cap conservador: só iso se a mão abriria de uma posição
+        TIGHT (UTG). Folda o lixo (85o/T5o) e mantém valor (ATs/99/KQ...). HEURÍSTICA
+        afinável (trocar a posição/range de referência do iso). Sem referência -> não
+        bloqueia."""
+        tf = 'pko' if mode in ('pko', 'pko_icm') else 'regular'
+        node = self._index.get((mode, tf, stage, players, bucket, 'open_raise', 'UTG', (), None))
+        if node is None or hand not in self.hands:
+            return True
+        i = self.hands.index(hand)
+        if i in (node.get('outOfRange') or []):
+            return False
+        freq = node['freq'].get('raise') or []
+        return i < len(freq) and freq[i] > 0
+
     def advise_from_reading(self, table_state, hero_cards, **kwargs):
         """Pull hero's position/stack from a read_table_state result, infer the
         spot from the bets (first_in or vs_open), advise, and attach a founded
@@ -478,6 +561,17 @@ class PreflopAdvisor:
                 result.setdefault('caveats', []).append('TABLE_%dHANDED_USING_9MAX_REF' % occupied)
             if spot['spot'] == 'first_in' and sizing.count_limpers(table_state) > 0:
                 result.setdefault('caveats', []).append('LIMPERS_PRESENT_OPEN_AS_ISO_APPROX')
+                # CAP DO ISO: com limper, NÃO abrir a range larga de blind-battle (SB
+                # 91%). Só iso VALOR (mão que abriria de UTG); senão FOLD. Mata o
+                # iso de lixo (ex.: 85o SB com BTN limpando).
+                if (result.get('recommended') == 'raise'
+                        and not self._iso_worthy(result.get('hand'), result.get('stack_bucket'),
+                                                 mode=kwargs.get('mode', 'chip_ev'),
+                                                 stage=kwargs.get('stage', 'mid'),
+                                                 players=kwargs.get('players', 9))):
+                    result['recommended'] = 'fold'
+                    result['status'] = 'ADVICE'
+                    result.setdefault('caveats', []).append('ISO_CAP_FOLD_FORA_DO_RANGE_TIGHT')
             if result.get('recommended'):
                 result['sizing'] = sizing.size_from_reading(result['recommended'], table_state,
                                                             positions['hero'], spot.get('opener'))
@@ -603,8 +697,9 @@ class PreflopAdvisor:
         if bucket != stack_bb:
             out.append('STACK_BUCKETED_%s_TO_%sBB' % (stack_bb, bucket))
         if isinstance(stack_bb, (int, float)) and stack_bb > self.STACK_BUCKETS[-1]:
-            # Beyond the deepest solved stack: the 100bb range is a reference, not a solution.
-            out.append('STACK_ABOVE_SOLVED_DEPTH_100BB_REFERENCE')
+            # Beyond the deepest solved stack: the top-bucket range is a reference,
+            # not a solution. Report the ACTUAL top bucket so the flag never lies.
+            out.append('STACK_ABOVE_SOLVED_DEPTH_%sBB_REFERENCE' % self.STACK_BUCKETS[-1])
         if players != 9:
             out.append('TABLE_IS_9MAX_REFERENCE')
         if mode != 'chip_ev':

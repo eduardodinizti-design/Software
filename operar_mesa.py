@@ -195,6 +195,14 @@ def main(argv=None):
     deep = args.deep or (DEFAULT_DEEP if os.path.exists(DEFAULT_DEEP) else None)
     advisor = (PreflopAdvisor.from_files(args.ranges, deep) if deep
                else PreflopAdvisor.from_file(args.ranges))
+    # B01/B02: proveniência auditável no startup — quais pack(s) por sha256 alimentam
+    # o cérebro, cobertura de nós e colisões de chave resolvidas SEM sombra silenciosa.
+    _mani = advisor.manifest()
+    print('[CEREBRO] fontes: ' + ', '.join(
+        '%s(%s.. %dn/%dval)' % (os.path.basename(s['path']), s['sha256'][:8], s['nodes'], s['validated'])
+        for s in _mani['sources']) +
+        ' | chaves=%d nos=%d colisoes=%d (0 sombra silenciosa)' % (
+            _mani['index_keys'], _mani['total_nodes'], len(_mani['collisions'])), flush=True)
     engine = WindowCaptureEngine()
     overlay = StatusOverlay().start() if args.overlay else None
 
