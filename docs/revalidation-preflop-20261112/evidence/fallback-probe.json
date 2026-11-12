@@ -1,0 +1,21 @@
+{
+  "method": "Exact AST block from operar_mesa.main; executor replaced by passive recorder",
+  "input": {
+    "hero_cards": [
+      "As",
+      "Qd"
+    ],
+    "advice": {
+      "status": "ABSTAIN",
+      "reason": "MULTIWAY_OR_3BET_NOT_COVERED"
+    }
+  },
+  "call_amount": 100,
+  "generated_advice": {
+    "status": "ADVICE",
+    "recommended": "call",
+    "validated": true,
+    "phase": "preflop",
+    "fallback": true
+  }
+}
