@@ -6,6 +6,8 @@ Objetivo: transformar conhecimento de referência em decisões rastreáveis para
 
 Este documento é um plano proposto, com backlog e critérios de conclusão. Não implementa as mudanças nem habilita ações. O código operacional e os ambientes anteriores permanecem preservados.
 
+Diretriz adicional do usuário: priorizar funcionamento na máquina local, leitura antes da vez, preparação de decisões, fila para mesas simultâneas e menus discretos de sizing. O detalhamento, as condições para pré-seleção e os critérios de capacidade estão no adendo de antecipação e presets (https://github.com/eduardodinizti-design/Software/blob/plan/brain-evolution-20261112/docs/brain-plan-20261112/ANTECIPACAO_E_PRESETS.md). A meta 12/16 mesas permanece futura e não homologada.
+
 1. Diagnóstico que orienta o investimento
 
 A revalidação anterior está em PR #3 (https://github.com/eduardodinizti-design/Software/pull/3). Com entradas estruturadas corretas, dois limps foram encaminhados ao mesmo nó/mix de first-in; open com dois calls recebeu o mesmo nó/mix de enfrentar um opener. A contagem de 169/169 refere-se às classes testadas no BTN 25bb com o pacote versionado identificado, não ao arquivo atualizado no Windows nem à prova de que todas as ações coincidentes seriam ruins. A lacuna é aplicar um contexto como se fosse outro.
