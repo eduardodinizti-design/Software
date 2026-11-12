@@ -89,12 +89,27 @@ def read_occupancy(crop):
     seat) is still 'occupied' but flagged occluded_suspected, since we cannot
     confirm or read it there."""
     out = {}
+    H, W = crop.shape[0], crop.shape[1]
     for seat in SEAT_ANCHORS:
-        x0, y0, x1, y1 = nameplate_box(crop.shape[1], crop.shape[0], seat)
+        x0, y0, x1, y1 = nameplate_box(W, H, seat)
         blue, std = _felt_blue_and_std(crop[y0:y1, x0:x1])
         occupied = blue < OCCUPANCY_BLUE
-        out[seat] = dict(occupied=occupied, felt_blue=round(blue, 3), source='avatar',
-                         occluded_suspected=bool(occupied and blue < 0.1 and std < _OCCLUSION_STD))
+        source = 'nameplate'
+        if not occupied:
+            # FALLBACK pelo AVATAR (foto do jogador). O box do nameplate nos assentos
+            # do TOPO mistura nameplate + chip de aposta + feltro (ex.: top_center/SB
+            # dava blue~0.51, borderline → marcava VAZIO e desalinhava TODAS as
+            # posições). O avatar é limpo: foto clara → blue baixo (0.03–0.56);
+            # assento vazio (feltro ou botão 'Empty') → blue alto (~0.72–0.99). Um
+            # corte CONSERVADOR em 0.5 só confirma foto nítida, sem risco de FP no
+            # 'Empty' (~0.72). Resolve a Camada 2 (ocupação → posições corretas).
+            ax0, ay0, ax1, ay1 = avatar_box(W, H, seat)
+            av_blue, _ = _felt_blue_and_std(crop[ay0:ay1, ax0:ax1])
+            if av_blue < 0.5:
+                occupied, source = True, 'avatar'
+        out[seat] = dict(occupied=occupied, felt_blue=round(blue, 3), source=source,
+                         occluded_suspected=bool(occupied and source == 'nameplate'
+                                                 and blue < 0.1 and std < _OCCLUSION_STD))
     return out
 
 
@@ -161,8 +176,17 @@ def read_bets(crop):
     'Pot' label. Observation only; a seat with no chip simply has no bet, and the
     one-decimal rule applies to a dropped comma as elsewhere."""
     h, w = crop.shape[:2]
-    bets = []
+    # Rejeita chips sobre o AVATAR de um assento OCUPADO: elementos vermelhos/laranjas
+    # das FOTOS (timer, roupa, logo) viram falso-positivo de 'chip'. Uma aposta real
+    # fica no FELTRO (entre o assento e o pote), nunca sobre a foto. Usa a ocupação
+    # confiável (fallback por avatar) pra saber quais fotos estão presentes.
+    occ = read_occupancy(crop)
+    avatars = [avatar_box(w, h, s) for s, v in occ.items() if v.get('occupied')]
+    occupied_seats = [s for s, v in occ.items() if v.get('occupied')] or list(SEAT_ANCHORS)
+    best = {}   # seat -> (dist2, bet_dict): UMA aposta por assento (chip mais perto dele)
     for cx, cy, cw, ch in _detect_red_chips(crop):
+        if any(ax0 <= cx <= ax1 and ay0 <= cy <= ay1 for (ax0, ay0, ax1, ay1) in avatars):
+            continue   # chip sobre avatar ocupado = falso-positivo, não é aposta
         # Filter the 'Pot: ...' chip with an unrestricted OCR of a wide region
         # (so the 'Pot' word survives), then read the amount to the RIGHT of the
         # chip, starting past the disc so its white suit symbol is not mistaken
@@ -173,17 +197,68 @@ def read_bets(crop):
                                   cv2.COLOR_BGR2GRAY), '--psm 7')
         if 'ot' in label.lower():   # the 'Pot: ...' chip, not a bet
             continue
-        region = crop[max(0, cy - 16):cy + 16, min(w, cx + cw):min(w, cx + cw + 110)]
+        # Valor à DIREITA do chip. `cx` é o CENTRO do chip (centroide), então a região
+        # começa na borda direita (cx + cw//2), NÃO em cx+cw (que pulava meio chip e
+        # cortava os 1os dígitos). Altura ±0.02h (a ±16px fixa CORTAVA o texto na
+        # vertical e perdia/erravas apostas — ex.: o raise de 4bb do vilão). Upscale
+        # 4x + OTSU deixam o OCR confiável (validado: 0,5 / 0,9 / 1,0 / 4,0 -> 4/4).
+        rx0 = min(w, cx + cw // 2 + 2)
+        rx1 = min(w, cx + cw // 2 + int(0.16 * w))
+        ry0, ry1 = max(0, cy - int(0.02 * h)), min(h, cy + int(0.02 * h))
+        region = crop[ry0:ry1, rx0:rx1]
         if region.size == 0:
             continue
-        raw = _ocr(cv2.cvtColor(region, cv2.COLOR_BGR2GRAY),
-                   '--psm 7 -c tessedit_char_whitelist=0123456789.,B ')
+        g = cv2.cvtColor(region, cv2.COLOR_BGR2GRAY)
+        up = cv2.resize(g, None, fx=4, fy=4, interpolation=cv2.INTER_CUBIC)
+        _, th = cv2.threshold(up, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        raw = _ocr(th, '--psm 7 -c tessedit_char_whitelist=0123456789.,B ')
         value, conf = parse_amount(raw)
         if value is None:
             continue
-        seat = min(SEAT_ANCHORS, key=lambda s: (SEAT_ANCHORS[s][0] * w - cx) ** 2 + (SEAT_ANCHORS[s][1] * h - cy) ** 2)
-        bets.append(dict(seat=seat, bet_bb=value, confidence=conf, source='chip', chip=[cx, cy], raw=raw))
-    return bets
+        # Atribui ao assento OCUPADO mais próximo (não a um vazio) e mantém UMA aposta
+        # por assento: a do chip mais PERTO do jogador (o chip real fica junto dele;
+        # um chip central/morto fica longe e perde p/ o verdadeiro → sem phantom).
+        seat = min(occupied_seats, key=lambda s: (SEAT_ANCHORS[s][0] * w - cx) ** 2 + (SEAT_ANCHORS[s][1] * h - cy) ** 2)
+        d2 = (SEAT_ANCHORS[seat][0] * w - cx) ** 2 + (SEAT_ANCHORS[seat][1] * h - cy) ** 2
+        if seat not in best or d2 < best[seat][0]:
+            best[seat] = (d2, dict(seat=seat, bet_bb=value, confidence=conf, source='chip', chip=[cx, cy], raw=raw))
+    return [b for _, b in best.values()]
+
+
+_BREAK_CLOCK = re.compile(r'(\d{1,2})\s*[:.\-]\s*(\d{2})')
+
+
+def read_break_state(crop):
+    """Detecta o INTERVALO do torneio: overlay central 'Pausa' + contador MM:SS.
+    Retorna {in_break, countdown, seconds}. Durante o intervalo não há botões de
+    ação e o operador espera; este detector deixa o estado EXPLÍCITO (faixa mostra
+    'EM INTERVALO mm:ss') e serve ao runner da rotina (saber que o jogo está pausado).
+
+    Calibrado no skin Karekas (REENTRY): 'Pausa' ~y0.43–0.49, contador ~y0.49–0.57,
+    centralizado. O contador usa upscale+OTSU + whitelist de dígitos/':'."""
+    out = dict(in_break=False, countdown=None, seconds=None)
+    if not isinstance(crop, np.ndarray) or crop.ndim != 3 or crop.shape[2] != 3:
+        return out
+    h, w = crop.shape[:2]
+    lbl = crop[int(0.43 * h):int(0.49 * h), int(0.30 * w):int(0.70 * w)]
+    if lbl.size == 0:
+        return out
+    label = _ocr(cv2.cvtColor(lbl, cv2.COLOR_BGR2GRAY), '--psm 7').lower()
+    if 'pausa' not in label and 'break' not in label and 'interval' not in label:
+        return out
+    out['in_break'] = True
+    band = crop[int(0.49 * h):int(0.57 * h), int(0.28 * w):int(0.72 * w)]
+    if band.size:
+        g = cv2.cvtColor(band, cv2.COLOR_BGR2GRAY)
+        up = cv2.resize(g, None, fx=3, fy=3, interpolation=cv2.INTER_CUBIC)
+        _, th = cv2.threshold(up, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        raw = _ocr(th, '--psm 7 -c tessedit_char_whitelist=0123456789:.-')
+        m = _BREAK_CLOCK.search(raw)
+        if m:
+            mm, ss = int(m.group(1)), int(m.group(2))
+            out['countdown'] = '%02d:%02d' % (mm, ss)
+            out['seconds'] = mm * 60 + ss
+    return out
 
 
 def read_table_state(crop):

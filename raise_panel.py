@@ -83,6 +83,61 @@ def read_raise_panel(crop, *, _ocr=None):
     return result
 
 
+def read_raise_slider(crop):
+    """Localiza a BARRA de aposta (slider) do painel p/ ajustar o tamanho — em
+    especial ALL-IN (arrastar o handle ao topo do trilho). Observação/leitura; não
+    arrasta. Retorna {status, handle:{box,center}, allin_to:(x,y)} em coords do
+    CROP; status SLIDER_FOUND quando acha o handle, senão NO_SLIDER.
+
+    O handle é o retângulo CLARO na coluna direita, na metade inferior do painel
+    (no mínimo, perto do fundo). O topo do trilho (= all-in) fica ~na altura da
+    caixa de valor. Calibrado no gabarito Karekas (handle cx≈0.86, cy≈0.88; topo
+    cy≈0.46); usamos frações p/ tolerar escala. O arrasto real valida ao vivo."""
+    result = dict(status='NO_SLIDER', handle=None, allin_to=None)
+    if not isinstance(crop, np.ndarray) or crop.ndim != 3 or crop.shape[2] != 3:
+        return result
+    h, w = crop.shape[:2]
+    b = crop[:, :, 0].astype(int)
+    g = crop[:, :, 1].astype(int)
+    gray = cv2.cvtColor(crop, cv2.COLOR_BGR2GRAY)
+    light = np.uint8((gray > 150) & (b > 120) & (np.abs(b - g) < 45)) * 255
+    light = cv2.morphologyEx(light, cv2.MORPH_CLOSE, np.ones((5, 5), np.uint8))
+    n, _, st, _ = cv2.connectedComponentsWithStats(light, 8)
+    best = None
+    for i in range(1, n):
+        x, y, bw, bh, a = (int(v) for v in st[i, :5])
+        cx, cy = (x + bw / 2) / w, (y + bh / 2) / h
+        # O HANDLE fica na coluna BEM à direita (cx≈0.86), metade inferior. Os botões
+        # +/- também são claros mas ficam mais à ESQUERDA (cx≈0.64) — por isso exigimos
+        # cx>0.78 e, entre candidatos, pegamos o MAIS À DIREITA (o handle do trilho).
+        if cx > 0.78 and 0.55 < cy < 0.95 and bw > 0.07 * w and a > 0.0006 * w * h:
+            if best is None or cx > (best[0] + best[2] / 2) / w:
+                best = (x, y, bw, bh, a)
+    if best is None:
+        return result
+    x, y, bw, bh, _ = best
+    hx, hy = x + bw // 2, y + bh // 2
+    # topo do trilho (all-in): mesma coluna, altura da caixa de valor (~0.46h). Miramos
+    # um pouco ACIMA p/ garantir o máximo (o slider satura no topo).
+    allin_to = (hx, int(0.44 * h))
+    return dict(status='SLIDER_FOUND', handle=dict(box=[x, y, bw, bh], center=[hx, hy]),
+                allin_to=list(allin_to))
+
+
+def is_shove_target(target_mult, presets, *, max_preset_slack=1.15):
+    """True quando o alvo é um SHOVE/all-in: não há preset compatível E o alvo é
+    MAIOR que o maior preset legível (×slack). Distingue 'shove' (usa a barra) de
+    'alvo intermediário sem preset' (abstém)."""
+    if target_mult is None:
+        return False
+    if map_multiplier_to_preset(target_mult, presets) is not None:
+        return False
+    usable = [p['mult'] for p in presets if p.get('mult') is not None]
+    if not usable:
+        return False
+    return target_mult > max(usable) * max_preset_slack
+
+
 def target_multiplier(advice, table_state):
     """Multiplicador-alvo do aumento (× a aposta a bater), ou None p/ abster.
 

@@ -42,6 +42,10 @@ class WInput(DryRunInput):
         self.world.clicks += 1
         return r
 
+    def drag(self, x0, y0, x1, y1, **kw):
+        self.world.clicks += 1          # arrasto da barra conta como ação (avança o mundo)
+        return dict(released=True, down_accepted=1, up_accepted=1)
+
 
 def _capture_of(world):
     def cap():
@@ -80,12 +84,24 @@ class _Control:
         return self.running
 
 
-def _seq(world, inp, target=2.5, bot_control=None, hand='H1', read_hand=None):
+def _slider_of(found=True):
+    def rs(crop):
+        if found:
+            return dict(status='SLIDER_FOUND',
+                        handle=dict(box=[598, 1139, 94, 52], center=[645, 1165]),
+                        allin_to=[645, 600])
+        return dict(status='NO_SLIDER', handle=None, allin_to=None)
+    return rs
+
+
+def _seq(world, inp, target=2.5, bot_control=None, hand='H1', read_hand=None,
+         read_slider=None):
     return RaiseSequencer(capture=_capture_of(world), window_rect=WIN, input_adapter=inp,
                           target_mult=target, bot_control=bot_control, max_tables=6,
                           sleep=lambda s: None, read_actions=_ra_of(world),
                           read_panel=_rp_of(world), detect=_detect, hand=hand,
-                          read_hand=read_hand or (lambda crop: {'hand_id': 'H1'}))
+                          read_hand=read_hand or (lambda crop: {'hand_id': 'H1'}),
+                          read_slider=read_slider or _slider_of(found=False))
 
 
 class RaiseSequencerTest(unittest.TestCase):
@@ -107,13 +123,29 @@ class RaiseSequencerTest(unittest.TestCase):
         out = _seq(world, WInput(world), target=3.4).run()  # 3bet ~3.4x -> 3x
         self.assertEqual(out['preset'], 3.0)
 
-    def test_large_target_abstains_no_preset(self):
-        # alvo 25x (all-in) sem preset compatível -> abstém APÓS abrir (1 clique)
+    def test_large_target_allin_via_slider(self):
+        # alvo 25x (shove): NÃO vira 4x; abre o painel e ALL-IN pela BARRA -> confirma.
+        # Cliques: ABRIR + (drag da barra) + CONFIRMAR = 3 ações.
         world = World()
         inp = WInput(world)
-        out = _seq(world, inp, target=25.0).run()
+        out = _seq(world, inp, target=25.0, read_slider=_slider_of(found=True)).run()
+        self.assertTrue(out['ok'])
+        self.assertEqual(out['preset'], 'ALL_IN')
+        self.assertTrue(out['confirmed'])
+        whats = [e[0] for e in out['log'] if isinstance(e[0], str)]
+        self.assertIn('ABRIR', whats)
+        self.assertIn('ALLIN_SLIDER', whats)
+        self.assertIn('CONFIRMAR', whats)
+
+    def test_large_target_shove_without_slider_is_unknown(self):
+        # shove mas a BARRA não foi localizada -> resultado DESCONHECIDO (não some em
+        # silêncio deixando o painel aberto); 1 clique (só o abrir), sem drag.
+        world = World()
+        inp = WInput(world)
+        out = _seq(world, inp, target=25.0, read_slider=_slider_of(found=False)).run()
         self.assertFalse(out['ok'])
-        self.assertIn('SEM_PRESET_PARA_ALVO', out['reason'])
+        self.assertTrue(out['unknown'])
+        self.assertEqual(out['reason'], 'ALLIN_SLIDER_CANCELADO')
         self.assertEqual(len(inp.clicks), 1)
 
     def test_paused_does_not_click(self):

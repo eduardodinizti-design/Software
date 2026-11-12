@@ -203,7 +203,7 @@ def scale_bounty_bb(base_bb, bounties, villain_position, positions):
 class PreflopAdvisor:
     # Short stacks (5-25) come from the validated NVT pack; 40/100 from the deep
     # reference pack (not HRC-validated, flagged in every answer).
-    STACK_BUCKETS = (5, 8, 10, 12, 15, 20, 25, 40, 100)
+    STACK_BUCKETS = (5, 8, 10, 12, 15, 20, 25, 30, 40)
 
     def __init__(self, pack):
         if pack.get('format') != 'nvt-range-export' or pack.get('version') != 1:

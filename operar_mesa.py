@@ -34,6 +34,8 @@ from cursor_input_win import WindowsCursorInput
 from bot_control import BotControl, HotkeyListener, DISABLED, PAUSED, RUNNING
 from window_capture_engine import WindowCaptureEngine
 from table_discovery.pppoker import discover_pppoker
+from status_overlay import StatusOverlay
+from grade_reader import find_buyin_badges
 
 DEFAULT_RANGES = r'C:\Meus Projetos\Aplicativos\nvt-ranges-validados.json'
 DEFAULT_DEEP = r'C:\Meus Projetos\Aplicativos\nvt-ranges-deep.json'
@@ -49,6 +51,26 @@ def _table_key(x, y):
     """Chave estável de mesa pela origem do crop (robusta a jitter de poucos px).
     NÃO é índice do recorte (que pode reordenar)."""
     return '%dx%d' % (x // 100, y // 100)
+
+
+_RANKS = '23456789TJQKA'
+
+
+def _is_premium(cards):
+    """Mão PREMIUM pré-flop (NUNCA foldar no fallback): par TT+ ou AK/AQ. Foldar um
+    monstro (KK/AA) por falta de nó é o pior erro possível — este guarda evita isso."""
+    if not cards or len(cards) != 2:
+        return False
+    try:
+        a, b = (_RANKS.index(cards[0][0]), _RANKS.index(cards[1][0]))
+    except (ValueError, IndexError):
+        return False
+    hi, lo = max(a, b), min(a, b)
+    if a == b and a >= _RANKS.index('T'):          # par TT, JJ, QQ, KK, AA
+        return True
+    if hi == _RANKS.index('A') and lo >= _RANKS.index('Q'):   # AK, AQ
+        return True
+    return False
 
 
 def _first_button_row(frame, max_tables):
@@ -160,6 +182,11 @@ def main(argv=None):
     p.add_argument('--hud', action='store_true',
                    help='Le o HUD VIP (8 stats por vilao) p/ exploit no pos-flop')
     p.add_argument('--arm', action='store_true', help='Usa o cursor REAL (ainda gated)')
+    p.add_argument('--overlay', action='store_true',
+                   help='Faixa de status SEMPRE-NO-TOPO (feedback visível: ARMADO/PAUSADO + ações)')
+    p.add_argument('--auto-arm', action='store_true',
+                   help='Comeca JA ARMADO (RUNNING), sem precisar do Ctrl+Alt+R. '
+                        'Ctrl+Alt+P ainda pausa e Ctrl+Alt+D desabilita a qualquer momento.')
     p.add_argument('--no-hotkeys', dest='hotkeys', action='store_false')
     args = p.parse_args(argv)
 
@@ -169,10 +196,22 @@ def main(argv=None):
     advisor = (PreflopAdvisor.from_files(args.ranges, deep) if deep
                else PreflopAdvisor.from_file(args.ranges))
     engine = WindowCaptureEngine()
-    control = BotControl(on_change=lambda s: print('\n>>> BOT %s <<<\n' % s, flush=True))
+    overlay = StatusOverlay().start() if args.overlay else None
+
+    def _on_change(s):
+        print('\n>>> BOT %s <<<\n' % s, flush=True)
+        if overlay:
+            overlay.set_state(s)
+    control = BotControl(on_change=_on_change)
+    if overlay:
+        overlay.set_state(control.state)
+        overlay.note('DRY-RUN (sem clique)' if not args.arm else 'ARMADO: Ctrl+Alt+R para liberar o clique')
     listener = HotkeyListener(control) if args.hotkeys else None
     if listener:
         listener.start()
+    if args.auto_arm and args.arm:
+        control.resume()   # PAUSED -> RUNNING: comeca ARMADO (sem depender do Ctrl+Alt+R)
+        print('>>> AUTO-ARM: iniciando ARMADO (RUNNING). Ctrl+Alt+P pausa; Ctrl+Alt+D desabilita.', flush=True)
     adapter = WindowsCursorInput() if args.arm else DryRunInput()
     # Uma entrada por janela (HWND): geometria + executor + validator/verifier próprios.
     wins_all = discover_pppoker().get('windows', [])
@@ -222,10 +261,29 @@ def main(argv=None):
             fh, fw = frame.shape[:2]
             rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             crops = list(detect_table_crops(rgb, max_tables=args.max_tables))
+            # FILTRA O LOBBY (falso-positivo de "mesa"): o painel do lobby tem BADGES de
+            # buy-in (cartões de torneio) e o detector o conta como mesa (mesas=2 quando
+            # só há 1). Mesa de jogo não tem badge. Remove o lobby p/ contagem/log corretos.
+            _real = []
+            for p in crops:
+                _x, _y, _bw, _bh = map(int, p.box)
+                if len(find_buyin_badges(frame[_y:_y + _bh, _x:_x + _bw])) == 0:
+                    _real.append(p)
+                else:
+                    print('[%03d] LOBBY ignorado (crop x=%d, tem badges de buy-in)' % (n, _x), flush=True)
+            crops = _real
             hero_turn_seen = False
             for prop in crops:
                 x, y, bw, bh = map(int, prop.box)
                 crop = frame[y:y + bh, x:x + bw]
+                # FAST-PATH (agilidade): read_action_buttons custa ~1ms; advise_table
+                # ~330ms. Como o operador só AGE na vez do hero, pulamos a leitura
+                # pesada quando NÃO é a vez — ciclo ocioso cai de ~900ms p/ ~250ms.
+                # (Trade-off: sem advise_table fora da vez, não se rastreia o agressor
+                #  pré-flop entre frames; a decisão na vez relê as apostas do frame atual.)
+                if read_action_buttons(crop)['status'] != 'EXPERIMENTAL_BUTTON_ROW':
+                    continue
+                hero_turn_seen = True
                 tkey_local = _table_key(x, y)
                 tkey = '%x:%s' % (hwnd, tkey_local)    # chave GLOBAL (isola entre janelas)
                 # Memória de cartas do hero por mão (imutáveis): fallback quando um
@@ -239,7 +297,11 @@ def main(argv=None):
                                           tracker=aggr_tracker, bounty_bb=args.bounty_bb,
                                           mode=args.mode, stage=args.stage, enable_hud=args.hud,
                                           read_cache=read_cache)
-                except Exception:                      # noqa: BLE001
+                except Exception as e:                 # noqa: BLE001
+                    # NUNCA silencioso (regra do Eduardo: logar TUDO): registra o erro
+                    # da leitura/cérebro e PULA p/ a próxima mão/mesa — o fluxo não quebra.
+                    print('[%03d] ERRO advise_table mesa(%d,%d): %s -> pula p/ proxima'
+                          % (n, x, y, str(e)[:90]), flush=True)
                     continue
                 if not result.get('is_table'):
                     continue
@@ -271,6 +333,37 @@ def main(argv=None):
                         print('[%03d] vez do hero PÓS-FLOP (%s): ABSTEM %s | mao=%s | sem execucao'
                               % (n, adv.get('street'), adv.get('reason'), adv.get('made')), flush=True)
                     continue
+                # LOG DO CÉREBRO (toda vez do hero, pré-flop): grava POR QUE a decisão
+                # saiu — hero, posição, to_call, apostas, spot, nó, validated, equity/req.
+                # Sem isto não dá pra auditar erros graves (ex.: cold-call de Q6o) no fim
+                # da sessão. É a base pra achar/consertar o erro com FATO.
+                if br['status'] == 'EXPERIMENTAL_BUTTON_ROW':
+                    _ts = result.get('table_state') or {}
+                    _p = _ts.get('positions') or {}
+                    _bets = [(_p.get(b.get('seat')), b.get('bet_bb')) for b in (_ts.get('bets') or [])]
+                    print('[%03d] CEREBRO m%s hero=%s pos=%s to_call=%s bets=%s | spot=%s node=%s val=%s eq=%s req=%s -> %s %s' % (
+                        n, tkey_local, result.get('hero_cards'), _p.get('hero'),
+                        _ts.get('to_call_bb'), _bets, adv.get('spot'), adv.get('node_id'),
+                        adv.get('validated'), adv.get('equity'),
+                        adv.get('required_equity_icm') or adv.get('required_equity'),
+                        adv.get('status'), adv.get('recommended') or adv.get('reason') or ''), flush=True)
+                # GUARDA DEEP NÃO-VALIDADA (erro grave): a base HRC é validada só p/
+                # short (bucket <=25). Em bucket 40/100 (deep) o cérebro usa RANGES DE
+                # REFERÊNCIA NÃO-validados (val=False), largos → cold-call de lixo (Q6o).
+                # Regra: nó deep não-validado NUNCA compromete fichas — só joga o SEGURO
+                # (CHECK grátis senão FOLD). Folds de lixo deep seguem iguais.
+                if br['status'] == 'EXPERIMENTAL_BUTTON_ROW':
+                    _nid = (adv.get('node_id') or '').split('|')
+                    _bkt = int(_nid[2]) if len(_nid) > 2 and _nid[2].isdigit() else None
+                    if (adv.get('validated') is False and _bkt is not None and _bkt > 25
+                            and adv.get('recommended') not in ('fold', 'check', None)):
+                        _hc = any(b.get('action') == 'CHECK' for b in br.get('buttons', []))
+                        _safe = 'check' if _hc else 'fold'
+                        print('[%03d] GUARDA DEEP(bucket %s nao-validado): %s -> SEGURO %s'
+                              % (n, _bkt, adv.get('recommended'), _safe), flush=True)
+                        adv = dict(adv, recommended=_safe, status='ADVICE',
+                                   validated=True, phase='preflop', deep_guard=True)
+                        result = dict(result, advice=adv)
                 _, caveats = map_advice_to_action(adv.get('recommended'))
                 is_raise = 'REQUIRES_SIZING_MULTISTEP' in caveats
                 # RAISE = fluxo multi-etapa (sequenciador). Só executa ARMADO (em
@@ -304,6 +397,39 @@ def main(argv=None):
                 out = executor.execute(result, br, origin=(x, y), frame_size=(fw, fh),
                                        input_adapter=adapter, validator=validator,
                                        verifier=verifier, hand_id=hid, table_key=tkey_local)
+                # FALLBACK ANTI-FREEZE (crítico): se o advisor ABSTEVE (sem nó validado
+                # p/ a rota), o operador NUNCA pode congelar na vez do hero — ele morreria
+                # no relógio e perderia a mão. Joga o SEGURO: CHECK se há (grátis), senão
+                # FOLD. Garante que o hero SEMPRE age. Só pré-flop (pós-flop e raise saem
+                # antes), só armado, e só quando a razão foi abstenção (não 'já agiu'/pausa).
+                # NUNCA FOLDAR ÀS CEGAS: o fallback só age se as CARTAS do hero foram
+                # LIDAS. Sem leitura (hero_cards None), ABSTÉM e tenta de novo no próximo
+                # frame (a leitura quase sempre volta; o hero_cache reaproveita a mão).
+                # Foldar sem ver as cartas largava PREMIUM (ex.: KK) — erro gravíssimo.
+                if (not out.get('acted')
+                        and str(out.get('reason', '')).startswith('SEM_ACAO_RECOMENDADA')
+                        and br['status'] == 'EXPERIMENTAL_BUTTON_ROW'
+                        and result.get('hero_cards')):
+                    has_check = any(b.get('action') == 'CHECK' for b in br.get('buttons', []))
+                    fb = 'check' if has_check else 'fold'
+                    # BLINDAGEM DE PREMIUM: NUNCA foldar um monstro (KK/AA/AK...) por falta
+                    # de nó. Se o fallback foldaria e a mão é premium, PAGA (call) em vez
+                    # de largar — ex.: 3bet KK, tomou 4bet shove, sem nó -> CALL, não fold.
+                    if fb == 'fold' and _is_premium(result.get('hero_cards')):
+                        fb = 'call'
+                        print('[%03d] BLINDAGEM PREMIUM: %s sem no -> CALL (NUNCA folda monstro)'
+                              % (n, result.get('hero_cards')), flush=True)
+                    fb_result = dict(result, advice=dict(status='ADVICE', recommended=fb,
+                                                         validated=True, phase='preflop',
+                                                         fallback=True))
+                    out = executor.execute(fb_result, br, origin=(x, y), frame_size=(fw, fh),
+                                           input_adapter=adapter, validator=validator,
+                                           verifier=verifier, hand_id=hid, table_key=tkey_local)
+                    if out.get('acted'):
+                        print('[%03d] >>> FALLBACK anti-freeze: %s (sem no validado -> nunca congela)'
+                              % (n, fb.upper()), flush=True)
+                        if overlay:
+                            overlay.set_table('mesa %s' % tkey_local, '>>> FALLBACK %s' % fb.upper())
                 if out.get('acted'):
                     pl = out['plan']
                     print('[%03d] >>> AGIU: %s em %s | estado=%s %s %s' % (
@@ -311,6 +437,10 @@ def main(argv=None):
                         tuple(round(c) for c in pl.get('screen_center', pl['center'])),
                         out['state'], 'DRY-RUN' if out['dry_run'] else 'REAL',
                         out['reasons'] or ''), flush=True)
+                    if overlay:
+                        overlay.set_table('mesa %s' % tkey_local, '>>> %s %s (%s)' % (
+                            pl['action'], result.get('hero_cards') or '',
+                            'DRY' if out['dry_run'] else 'REAL'))
                 elif br['status'] == 'EXPERIMENTAL_BUTTON_ROW':
                     # Vez do hero mas NÃO agiu (raise multi-etapa / abstenção / já agiu):
                     # mostra a decisão para a demo.
@@ -320,6 +450,10 @@ def main(argv=None):
                         n, result.get('hero_cards'), pos, adv.get('status'),
                         adv.get('recommended') or adv.get('reason') or '',
                         out.get('reason')), flush=True)
+                    if overlay:
+                        overlay.set_table('mesa %s' % tkey_local, '%s %s -> %s %s' % (
+                            result.get('hero_cards') or '?', pos or '',
+                            adv.get('status'), adv.get('recommended') or adv.get('reason') or ''))
             # heartbeat: a cada ~8 frames sem vez-do-hero, mostra que está vivo
             if not hero_turn_seen and n % 8 == 0:
                 print('[%03d] . vivo | mesas=%d | sua vez: nao | estado=%s'
@@ -330,6 +464,8 @@ def main(argv=None):
     finally:
         if listener:
             listener.stop()
+        if overlay:
+            overlay.stop()
     return 0
 
 
