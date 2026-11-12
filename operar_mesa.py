@@ -369,8 +369,11 @@ def main(argv=None):
                         _safe = 'check' if _hc else 'fold'
                         print('[%03d] GUARDA DEEP(bucket %s nao-validado): %s -> SEGURO %s'
                               % (n, _bkt, adv.get('recommended'), _safe), flush=True)
+                        # B04: NÃO fabrica validated=True. O seguro (check/fold) é piso
+                        # de não-commit -> o contrato autoriza por SAFETY_NONCOMMIT, sem
+                        # mentir que o cérebro validou. Mantém validated=False + flag.
                         adv = dict(adv, recommended=_safe, status='ADVICE',
-                                   validated=True, phase='preflop', deep_guard=True)
+                                   validated=False, phase='preflop', deep_guard=True)
                         result = dict(result, advice=adv)
                 _, caveats = map_advice_to_action(adv.get('recommended'))
                 is_raise = 'REQUIRES_SIZING_MULTISTEP' in caveats
@@ -423,26 +426,38 @@ def main(argv=None):
                     # BLINDAGEM DE PREMIUM: NUNCA foldar um monstro (KK/AA/AK...) por falta
                     # de nó. Se o fallback foldaria e a mão é premium, PAGA (call) em vez
                     # de largar — ex.: 3bet KK, tomou 4bet shove, sem nó -> CALL, não fold.
+                    premium_commit = False
                     if fb == 'fold' and _is_premium(result.get('hero_cards')):
                         fb = 'call'
+                        premium_commit = True
                         print('[%03d] BLINDAGEM PREMIUM: %s sem no -> CALL (NUNCA folda monstro)'
                               % (n, result.get('hero_cards')), flush=True)
-                    fb_result = dict(result, advice=dict(status='ADVICE', recommended=fb,
-                                                         validated=True, phase='preflop',
-                                                         fallback=True))
+                    # B04: o fallback NÃO fabrica validated=True. check/fold = piso de
+                    # não-commit (contrato autoriza por SAFETY_NONCOMMIT). O CALL premium
+                    # é autoridade SEPARADA e NÃO-validada (safety_premium, Opção A do
+                    # usuário): paga o monstro, mas sem mentir validade -> marca lacuna
+                    # de cobertura p/ resolver no P1.
+                    fb_adv = dict(status='ADVICE', recommended=fb, validated=False,
+                                  phase='preflop', fallback=True)
+                    if premium_commit:
+                        fb_adv['safety_premium'] = True
+                    fb_result = dict(result, advice=fb_adv)
                     out = executor.execute(fb_result, br, origin=(x, y), frame_size=(fw, fh),
                                            input_adapter=adapter, validator=validator,
                                            verifier=verifier, hand_id=hid, table_key=tkey_local)
                     if out.get('acted'):
-                        print('[%03d] >>> FALLBACK anti-freeze: %s (sem no validado -> nunca congela)'
-                              % (n, fb.upper()), flush=True)
+                        print('[%03d] >>> FALLBACK anti-freeze: %s | autoridade=%s%s'
+                              % (n, fb.upper(), out.get('authority'),
+                                 ' (LACUNA DE COBERTURA premium -> P1)' if premium_commit else ''),
+                              flush=True)
                         if overlay:
                             overlay.set_table('mesa %s' % tkey_local, '>>> FALLBACK %s' % fb.upper())
                 if out.get('acted'):
                     pl = out['plan']
-                    print('[%03d] >>> AGIU: %s em %s | estado=%s %s %s' % (
+                    print('[%03d] >>> AGIU: %s em %s | autoridade=%s estado=%s %s %s' % (
                         n, pl['action'],
                         tuple(round(c) for c in pl.get('screen_center', pl['center'])),
+                        out.get('authority'),
                         out['state'], 'DRY-RUN' if out['dry_run'] else 'REAL',
                         out['reasons'] or ''), flush=True)
                     if overlay:

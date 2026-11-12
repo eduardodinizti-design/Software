@@ -15,6 +15,7 @@ import time
 
 from action_coordinator import plan_from_buttons, decision_identity
 from cursor_controller import CursorController, Intent
+from decision_contract import evaluate as evaluate_contract
 
 SINGLE_CLICK_ACTIONS = ('FOLD', 'CALL', 'CHECK')
 
@@ -43,30 +44,34 @@ class ActionExecutor:
                         reason='ACAO_MULTI_ETAPA_NAO_ARMADA:%s' % action)
         return p
 
-    def _eligible(self, advice, action):
-        """AUTORIZAÇÃO estratégica única p/ auto-clique (só no armado): status ADVICE
-        sozinho NÃO basta. FOLD/CHECK não arriscam fichas -> sempre elegíveis. Ações
-        que comprometem fichas (CALL) exigem: ou nó VALIDADO, ou um call-off
-        sintetizado com folga de equity suficiente. Conselho de referência/não
-        validado NÃO auto-clica (só estuda em dry-run)."""
-        if action in ('FOLD', 'CHECK'):
+    def _contract(self, advice, action, hero_cards):
+        """Contrato de validade B04 da ação (decision_contract): autorização de
+        execução decomposta em requisitos explícitos e separados."""
+        return evaluate_contract(advice or {}, action=action, hero_cards=hero_cards,
+                                 action_available=True, call_margin=self.call_margin)
+
+    @staticmethod
+    def _authorize(contract):
+        """Mapeia o contrato p/ (ok, motivo_legado). Preserva as razões históricas
+        (CALLOFF_NA_FRONTEIRA/CALLOFF_SEM_MARGEM/NAO_VALIDADO) p/ não quebrar logs/
+        testes a jusante."""
+        if contract['execution_allowed']:
             return True, None
-        advice = advice or {}
-        spot = str(advice.get('spot') or '')
-        if spot.startswith('call_off_'):
-            # Call-off é validated=False por construção (equity/ICM aproximados):
-            # elegível só com folga sobre a equity exigida (borda ruidosa de MC).
-            eq = advice.get('equity')
-            req = advice.get('required_equity_icm', advice.get('required_equity'))
-            if not isinstance(eq, (int, float)) or not isinstance(req, (int, float)):
-                return False, 'CALLOFF_SEM_MARGEM'
-            if eq - req < self.call_margin:
-                return False, 'CALLOFF_NA_FRONTEIRA'
-            return True, None
-        # Demais CALL/agressões: exige nó validado (não auto-clica referência/deep).
-        if not advice.get('validated'):
+        b = contract['blockers']
+        for key in ('CALLOFF_NA_FRONTEIRA', 'CALLOFF_SEM_MARGEM'):
+            if key in b:
+                return False, key
+        if 'SEM_AUTORIDADE_VALIDADA' in b:
             return False, 'NAO_VALIDADO'
-        return True, None
+        return False, (b[0] if b else 'NAO_ELEGIVEL')
+
+    def _eligible(self, advice, action, *, hero_cards=None):
+        """AUTORIZAÇÃO estratégica única p/ auto-clique (só no armado), delegada ao
+        contrato de validade B04. FOLD/CHECK = piso de segurança (não arriscam
+        ficha). Commit (CALL) exige uma AUTORIDADE (nó validado, call-off com
+        margem, ou premium-safety explícito) E observação/legalidade/sizing — rótulo
+        ou margem não substituem os demais requisitos. Referência/deep não valida."""
+        return self._authorize(self._contract(advice, action, hero_cards))
 
     def execute(self, result, buttons_result, *, origin, frame_size, input_adapter,
                 validator, verifier=None, hand_id=None, table_key=None):
@@ -94,11 +99,14 @@ class ActionExecutor:
         # #5: identidade desconhecida bloqueia a execução real (dry-run só estuda).
         if self.armed and hand_id is None:
             return dict(acted=False, reason='IDENTIDADE_DESCONHECIDA_BLOQUEIA', dry_run=False)
-        # #6-exec: gate de elegibilidade estratégica no armado.
+        # #6-exec: gate de elegibilidade estratégica no armado, via contrato B04.
+        advice = result.get('advice') or {}
+        contract = self._contract(advice, action, result.get('hero_cards'))
         if self.armed:
-            ok_elig, why = self._eligible(result.get('advice') or {}, action)
+            ok_elig, why = self._authorize(contract)
             if not ok_elig:
-                return dict(acted=False, reason='NAO_ELEGIVEL:%s' % why, dry_run=False)
+                return dict(acted=False, reason='NAO_ELEGIVEL:%s' % why,
+                            authority=contract['authority'], contract=contract, dry_run=False)
 
         identity = decision_identity(table_key, hand_id, action, value[0], value[1])
         intent = Intent(id='act-%s-%s-%s' % (table_key, hand_id, action),
@@ -116,4 +124,5 @@ class ActionExecutor:
         if clicked:
             self._sent.add(sig)
         return dict(acted=clicked, state=out['state'], reasons=out['reasons'],
-                    plan=plan, intent_id=intent.id, dry_run=not self.armed)
+                    plan=plan, intent_id=intent.id, authority=contract['authority'],
+                    contract=contract, dry_run=not self.armed)
