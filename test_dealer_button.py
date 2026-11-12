@@ -31,13 +31,31 @@ class BadgeTests(unittest.TestCase):
 
 class PositionTests(unittest.TestCase):
     def test_full_ring_naming_from_button(self):
-        occupied = list(seat_layout.CLOCKWISE)
+        # Mesa 9-max cheia (topo = top_left/top_right, sem top_center).
+        occupied = [s for s in seat_layout.CLOCKWISE if s != 'top_center']
         pos = dealer_button.derive_positions('hero', occupied)
         self.assertEqual(pos['hero'], 'BTN')
         self.assertEqual(pos['bot_left'], 'SB')    # horário IMEDIATO após o BTN
         self.assertEqual(pos['left_low'], 'BB')
         self.assertEqual(pos['bot_right'], 'CO')   # último antes do botão
         self.assertEqual(len(pos), 9)
+
+    def test_8max_ring_with_top_center(self):
+        # Mesa 8-max PPPoker (topo = top_center; top_left/top_right vazios). O
+        # top_center entra na ordem horária entre left_up e right_up.
+        occupied = [s for s in seat_layout.CLOCKWISE if s not in ('top_left', 'top_right')]
+        self.assertEqual(len(occupied), 8)
+        self.assertIn('top_center', occupied)
+        pos = dealer_button.derive_positions('hero', occupied)
+        self.assertEqual(pos['hero'], 'BTN')
+        self.assertEqual(pos['bot_left'], 'SB')
+        self.assertEqual(pos['left_low'], 'BB')
+        self.assertEqual(pos['bot_right'], 'CO')   # último antes do botão
+        # left_up -> top_center -> right_up na ordem de ação
+        order = [p for p in ('left_up', 'top_center', 'right_up')]
+        idx = [list(seat_layout.CLOCKWISE).index(s) for s in order]
+        self.assertEqual(idx, sorted(idx))
+        self.assertEqual(len(pos), 8)
 
     def test_detected_button_is_added_to_occupancy(self):
         # The button is always on a seated player, so a dealer the occupancy

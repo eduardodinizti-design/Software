@@ -13,25 +13,33 @@ from table_reading.pipeline import configure_ocr
 from table_reading.ocr_runtime import ocr_frame
 from table_reading.automatic_table_crops import detect_table_crops
 from preflop_advisor import PreflopAdvisor
+from preflop_context import PreflopAggressorTracker
 from table_advisor import advise_table, _summary
 from bot_control import BotControl, HotkeyListener, RUNNING, PAUSED, DISABLED
 from state_observer import StateObserver, render
 
 
-def advise_frame(frame_bgr, meta, advisor, max_tables=6):
+def advise_frame(frame_bgr, meta, advisor, max_tables=6, tracker=None, bounty_bb=None,
+                 mode=None, stage=None, enable_hud=False):
     """Detect the tables in one captured frame and advise each. Returns a list of
-    {table_index, box, result}. Pure read; the full table identity still comes
-    from the capture metadata upstream."""
+    {table_index, table_key, box, result}. Pure read; the full table identity still
+    comes from the capture metadata upstream.
+
+    `tracker` (opcional, PreflopAggressorTracker) dá CONTEXTO entre frames: o conselho
+    pós-flop passa a usar pot_type/iniciativa/range do vilão em vez do frame isolado. A
+    chave por mesa (`table_key`) é estável por posição de detecção dentro da captura."""
     proposals = detect_table_crops(cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB),
                                    blockers=meta.get('blockers', ()), max_tables=max_tables)
     out = []
     for proposal in [p for p in proposals if p.status == 'COMPLETE_CANDIDATE']:
         x, y, w, h = map(int, proposal.box)
         crop = frame_bgr[y:y + h, x:x + w]
+        tkey = '%s#%d' % (meta.get('source_key') or 'cap', len(out) + 1)
         with ocr_frame():
-            result = advise_table(crop, advisor)
+            result = advise_table(crop, advisor, table_key=tkey, tracker=tracker,
+                                  bounty_bb=bounty_bb, mode=mode, stage=stage, enable_hud=enable_hud)
         if result.get('is_table'):   # skip lobby/non-table false positives
-            out.append(dict(table_index=len(out) + 1, box=[x, y, w, h], result=result))
+            out.append(dict(table_index=len(out) + 1, table_key=tkey, box=[x, y, w, h], result=result))
     return out
 
 
@@ -42,6 +50,13 @@ def main(argv=None):
     p.add_argument('--deep', default=None, help='Pacote deep 40/100bb opcional (reference, nao validado)')
     p.add_argument('--intervalo', type=float, default=2.0, help='Segundos entre leituras')
     p.add_argument('--max-tables', type=int, default=6)
+    p.add_argument('--bounty-bb', type=float, default=None,
+                   help='PKO: valor do bounty em BB p/ o overlay de call-off')
+    p.add_argument('--mode', choices=('chip_ev', 'icm', 'pko', 'pko_icm'), default=None,
+                   help='Forca o modo do torneio (sobrepoe a deteccao por nome)')
+    p.add_argument('--stage', choices=('pre_itm', 'bubble', 'ft', 'mid'), default=None,
+                   help='Forca a fase do torneio')
+    p.add_argument('--hud', action='store_true', help='Le o HUD VIP p/ exploit no pos-flop')
     p.add_argument('--no-hotkeys', dest='hotkeys', action='store_false',
                    help='Desliga as hotkeys de pausa/takeover (Ctrl+Alt+P/R/D)')
     args = p.parse_args(argv)
@@ -62,6 +77,7 @@ def main(argv=None):
           'Ctrl+Alt+P pausa, R reativa, D desabilita. Ctrl+C encerra.', flush=True)
     last = {}   # per table: last printed signature, so an unchanged hand is not reprinted
     observer = StateObserver()   # estado temporal integrado (Camada A); sem cliques
+    aggr_tracker = PreflopAggressorTracker()   # agressor pré-flop p/ pós-flop em contexto
     try:
         while True:
             started = time.monotonic()
@@ -83,11 +99,13 @@ def main(argv=None):
                     print('SEM LEITURA:', meta.get('status', 'CAPTURE_FAILED'), flush=True)
             else:
                 last.pop('_capture', None)
-                for row in advise_frame(frame, meta, advisor, max_tables=args.max_tables):
+                for row in advise_frame(frame, meta, advisor, max_tables=args.max_tables,
+                                        tracker=aggr_tracker, bounty_bb=args.bounty_bb,
+                                        mode=args.mode, stage=args.stage, enable_hud=args.hud):
                     # Estado temporal integrado: amarra mesa/mão/campos e explica
                     # o que mudou/ficou pendente. Imprime só quando o estado muda.
-                    key = '%s#%d' % (meta.get('source_key', args.hwnd), row['table_index'])
-                    view = observer.observe(row['result'], table_key=key)
+                    # Mesma chave usada no tracker (consistência entre contexto e estado).
+                    view = observer.observe(row['result'], table_key=row['table_key'])
                     if view.get('changed'):
                         print(render(view), flush=True)
             time.sleep(max(0.1, args.intervalo - (time.monotonic() - started)))

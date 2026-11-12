@@ -17,6 +17,7 @@ from pathlib import Path
 
 from preflop_study import hand_key, Blocked
 from preflop_equity import range_from_node, equity_vs_range, required_equity
+from hud_exploit import classify_villain, shove_calloff_delta, exploit_caveats
 
 RAISE_FLOOR_BB = 1.5  # a bet above the BB (1.0) is a raise, not a blind post
 # Detecção de open-shove (all-in de primeira aposta): separa o open/iso normal
@@ -177,6 +178,26 @@ def _icm_risk_premium(mode, stage, to_call_bb, stack_bb):
     if isinstance(to_call_bb, (int, float)) and isinstance(stack_bb, (int, float)) and stack_bb > 0:
         base *= max(0.0, min(1.0, to_call_bb / stack_bb))
     return round(base, 4)
+
+
+def scale_bounty_bb(base_bb, bounties, villain_position, positions):
+    """Escala o `base_bb` (BB-equity do bounty INICIAL, entrada --bounty-bb) pelo bounty
+    do VILÃO lido na mesa: base_bb × (bounty_vilão / bounty_base). `bounty_base` = menor
+    bounty lido (o inicial; quem ainda não eliminou ninguém carrega a base). Alvo que
+    ACUMULOU KOs (bounty > base) vale mais -> caça mais larga. Sem base_bb ou sem leitura
+    do vilão -> base_bb sem escala (flag). Devolve (bounty_bb_efetivo, caveat|None)."""
+    if not base_bb:
+        return base_bb, None
+    vals = {s: v for s, v in (bounties or {}).items() if isinstance(v, (int, float)) and v > 0}
+    if not vals:
+        return base_bb, 'BOUNTY_READ_NONE_FLAT_BASE'
+    vseat = next((s for s, p in (positions or {}).items() if p == villain_position), None)
+    vb = vals.get(vseat)
+    base = min(vals.values())
+    if not vb or base <= 0:
+        return base_bb, 'BOUNTY_VILLAIN_UNREAD_FLAT_BASE'
+    mult = vb / base
+    return round(base_bb * mult, 2), 'BOUNTY_SCALED_x%.2f_VILLAIN_%g_BASE_%g' % (mult, vb, base)
 
 
 class PreflopAdvisor:
@@ -370,6 +391,9 @@ class PreflopAdvisor:
         hero = table_state.get('seats', {}).get('hero', {})
         if 'hero' not in positions:
             return self._abstain('HERO_POSITION_UNKNOWN')
+        # `bounty_bb` (PKO) só serve ao call-off; tira do kwargs p/ não vazar nos nós
+        # de range (self.advise não o aceita).
+        bounty_bb = kwargs.pop('bounty_bb', None)
         spot = infer_live_spot(table_state)
         base = dict(hero_cards=hero_cards, hero_position=positions['hero'], stack_bb=hero.get('stack_bb'))
         # For ICM/PKO-ICM, classify the table's stack spread from the read stacks
@@ -395,14 +419,27 @@ class PreflopAdvisor:
                          or (spot['spot'] == 'vs_3bet' and spot.get('allin')))):
                 shove_spot, villain_vs = (('3bet_shove', (positions['hero'],))
                                           if spot['spot'] == 'vs_3bet' else ('open_shove', ()))
+                # PKO: escala o bounty base pelo bounty do vilão (alvo acumulado = caça
+                # mais larga). bounties vêm da leitura por assento anexada em advise_table.
+                bb_eff, bcav = scale_bounty_bb(bounty_bb, table_state.get('bounties'),
+                                               spot['opener'], positions)
+                # Exploit do HUD: stats do SHOVER (de state['hud'], via advise_table).
+                hud = table_state.get('hud') or {}
+                vseat = next((s for s, p in positions.items() if p == spot['opener']), None)
+                _vh = hud.get(vseat) if (hud and vseat) else None
+                # Só exploita com leitura CONFIÁVEL (confidence 'high').
+                vstats = _vh['stats'] if (_vh and _vh.get('confidence') == 'high') else None
                 co = self.advise_call_off(
                     hero_cards=hero_cards, hero_position=positions['hero'],
                     villain_position=spot['opener'], stack_bb=hero.get('stack_bb'),
                     to_call_bb=(table_state.get('to_call') or {}).get('to_call_bb'),
                     pot_bb=(table_state.get('pot') or {}).get('pot_bb'),
                     mode=kwargs.get('mode', 'chip_ev'), stage=kwargs.get('stage', 'mid'),
-                    shove_spot=shove_spot, villain_vs=villain_vs)
+                    shove_spot=shove_spot, villain_vs=villain_vs, bounty_bb=bb_eff,
+                    villain_stats=vstats)
                 if isinstance(co, dict):
+                    if bcav:
+                        co.setdefault('caveats', []).append(bcav)
                     co.setdefault('caveats', []).append('AGGRESSOR_INFERRED_%s' % spot['opener'])
                     return co
             if isinstance(result, dict):
@@ -473,15 +510,23 @@ class PreflopAdvisor:
 
     def advise_call_off(self, *, hero_cards, hero_position, villain_position, stack_bb,
                         to_call_bb, pot_bb, mode='chip_ev', stage='mid', shove_spot='3bet_shove',
-                        villain_vs=None, iters=6000, seed=0):
+                        villain_vs=None, bounty_bb=None, villain_stats=None, iters=6000, seed=0):
         """Call-off SINTETIZADO por equity quando falta o nó validado da decisão.
 
         Pago se a equity da minha mão contra o range de shove (Nash) do vilão >=
-        pot odds + risk premium (ICM). `shove_spot`='3bet_shove' (vilão re-shova meu
-        open; range vs=meu assento) ou 'open_shove' (vilão deu open-shove; range
-        vs=()). O RP vem de `_icm_risk_premium` (0 em chip EV; aproximação por fase
-        em ICM). Decisão call/fold (clique único). Não autoriza execução (gate
-        externo). Abstém quando falta o range do vilão ou os dados de pot odds."""
+        pot odds + risk premium (ICM) - overlay de bounty (PKO). `shove_spot`=
+        '3bet_shove' (vilão re-shova meu open; range vs=meu assento) ou 'open_shove'
+        (vilão deu open-shove; range vs=()). O RP vem de `_icm_risk_premium` (0 em chip
+        EV; aproximação por fase em ICM).
+
+        `bounty_bb` (opcional, PKO): valor do bounty em BB que o hero LEVA se ELIMINAR o
+        vilão. Só é aplicado em modo pko/pko_icm E quando o hero COBRE o shove (stack >=
+        a quantia a pagar, então vencer elimina). Conta como POTE EXTRA -> exige menos
+        equity -> caça de bounty com range mais largo; quanto menor o shove, maior o
+        peso do bounty (o "proporcional ao stack"). O valor NÃO é lido da mesa (entrada).
+
+        Decisão call/fold (clique único). Não autoriza execução (gate externo). Abstém
+        quando falta o range do vilão ou os dados de pot odds."""
         bucket, why = self.bucket_stack(stack_bb)
         if bucket is None:
             return self._abstain(why, stack_bb=stack_bb)
@@ -498,6 +543,16 @@ class PreflopAdvisor:
         req = required_equity(to_call_bb, pot_bb)
         if req is None:
             return self._abstain('CANNOT_COMPUTE_POT_ODDS', to_call_bb=to_call_bb, pot_bb=pot_bb)
+        # Overlay de bounty (PKO): se o hero COBRE o shove (stack >= a quantia a pagar),
+        # vencer ELIMINA o vilão e leva o bounty -> conta como POTE EXTRA -> exige menos
+        # equity. `req` fica a pot odds crua (relatada); `req_eff` é a exigência efetiva.
+        bounty = 0.0
+        req_eff = req
+        if (mode in ('pko', 'pko_icm') and isinstance(bounty_bb, (int, float)) and bounty_bb > 0
+                and isinstance(stack_bb, (int, float)) and isinstance(to_call_bb, (int, float))
+                and stack_bb >= to_call_bb):
+            bounty = float(bounty_bb)
+            req_eff = required_equity(to_call_bb, pot_bb + bounty)
         # Cache só da EQUITY bruta (determinística dado o seed), por nó+cartas+iters+
         # seed. O node_id carrega a fonte/versão do range (novo pack = novo advisor =
         # cache limpo). Pot odds, RP e elegibilidade são recalculados sempre, com os
@@ -515,7 +570,11 @@ class PreflopAdvisor:
         if eq is None:
             return self._abstain('EQUITY_UNAVAILABLE')
         rp = _icm_risk_premium(mode, stage, to_call_bb, stack_bb)
-        req_icm = min(0.99, req + rp)
+        # Exploit do HUD: o shover loose-agressivo shova mais largo que o Nash -> paga
+        # mais largo (delta −); passivo/nit shova valor -> folda mais (+). Bounded.
+        profile = classify_villain(villain_stats) if villain_stats else None
+        ex_delta = shove_calloff_delta(profile) if profile else 0.0
+        req_icm = min(0.99, max(0.02, req_eff + rp + ex_delta))
         action = 'call' if eq >= req_icm else 'fold'
         caveats = ['EXPLORATORY_NOT_FOR_EXECUTION', 'CALLOFF_SYNTH_VS_%s' % shove_spot.upper(),
                    'VILLAIN_RANGE_NASH_%s_%sBB' % (shove_spot.upper(), node['context']['stack'])]
@@ -523,9 +582,17 @@ class PreflopAdvisor:
             caveats.append('SHORT_STACK_3BET_TREATED_AS_SHOVE')
         if rp > 0:
             caveats.append('ICM_RP_APPROX_BY_STAGE_%s_%dPCT' % (stage, round(rp * 100)))
+        if bounty > 0:
+            caveats += ['PKO_BOUNTY_OVERLAY_%gBB' % bounty, 'BOUNTY_VALUE_IS_INPUT_NOT_READ',
+                        'HERO_COVERS_SHOVE_CAN_ELIMINATE']
+        if profile and profile['category'] != 'unknown':
+            caveats += exploit_caveats(profile)
+            if ex_delta:
+                caveats.append('SHOVE_CALLOFF_DELTA_%+.2f' % ex_delta)
         return dict(status='ADVICE', spot='call_off_vs_%s' % shove_spot, hero_position=hero_position,
                     hand=hand, recommended=action, mix=[dict(action=action, frequency=1.0)],
                     equity=round(eq, 4), required_equity=round(req, 4),
+                    required_equity_effective=round(req_eff, 4), bounty_bb=round(bounty, 2),
                     risk_premium=rp, required_equity_icm=round(req_icm, 4),
                     villain_shove_node=node['id'], villain_position=villain_position,
                     stack_bb=stack_bb, stack_bucket=bucket, exploratory=True,

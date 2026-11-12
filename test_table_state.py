@@ -41,8 +41,10 @@ class ParseAmountTests(unittest.TestCase):
 
 
 class SeatLayoutTests(unittest.TestCase):
-    def test_nine_unique_seats_hero_first(self):
-        self.assertEqual(len(seat_layout.SEAT_ANCHORS), 9)
+    def test_ten_unique_seats_hero_first(self):
+        # 10 âncoras = 8 fixas + os dois topos possíveis (top_center 8-max XOR
+        # top_left/top_right 9-max); nunca todas ocupadas juntas numa mesa real.
+        self.assertEqual(len(seat_layout.SEAT_ANCHORS), 10)
         self.assertEqual(set(seat_layout.CLOCKWISE), set(seat_layout.SEAT_ANCHORS))
         self.assertEqual(seat_layout.CLOCKWISE[0], 'hero')
 
@@ -72,7 +74,7 @@ class ReadTests(unittest.TestCase):
         with patch('table_reading.table_state.image_to_string', return_value=''):
             state = table_state.read_table_state(self.crop)
         self.assertTrue(state['experimental'])
-        self.assertEqual(len(state['seats']), 9)
+        self.assertEqual(len(state['seats']), 10)
         self.assertIn('pot_bb', state['pot'])
         self.assertIn('seat', state['dealer'])
         self.assertEqual(state['positions'], {})  # no dealer badge -> no positions

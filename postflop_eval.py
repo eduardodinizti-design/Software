@@ -85,32 +85,80 @@ def classify_board(board):
     )
 
 
-def _straight_out_cards(hero_cards, board_cards):
-    """Nº de CARTAS que completam uma sequência (0 se já é sequência). OESD=8, gutshot=4."""
+# Regra dos outs descontados ("outs sujos"): um out que pode fazer o VILÃO a melhor
+# mão não é um out limpo. Convenção de estudo (conservadora): cada out suspeito vale
+# meio out; um out com duas ameaças sobrepostas é limitado a totalmente morto (1).
+DIRTY_OUT_WEIGHT = 0.5
+
+
+def _straight_out_cardset(hero_cards, board_cards):
+    """Conjunto de CARTAS (rank, naipe) que completam uma sequência (vazio se já é
+    sequência). OESD => 8 cartas, gutshot => 4."""
     present = hero_cards + board_cards
     ranks = {r for r, _ in present}
     if _has_straight(ranks):
-        return 0
+        return set()
     seen = set(present)
-    cnt = 0
+    cards = set()
     for r in range(2, 15):
         if r in ranks:
             continue
         if _has_straight(ranks | {r}):
-            cnt += sum(1 for s in SUITS if (r, s) not in seen)
-    return cnt
+            cards |= {(r, s) for s in SUITS if (r, s) not in seen}
+    return cards
+
+
+def _dirty_outs(out_cards, flush_out_cards, board_cards, flush_suit):
+    """Outs 'sujos' entre as cartas de out (peso somado, meio-out por ameaça, teto 1
+    por carta). Gatilhos, cada um porque a carta pode dar a MELHOR mão ao vilão:
+
+    - board já PAREADO: ao fechar flush/sequência, o vilão ainda pode ter full house
+      (qualquer par/ trinca no board) — toda carta de out vira meio-out;
+    - out de FLUSH cujo rank já aparece no board: fechar o flush PAREIA o board,
+      abrindo full house para o vilão;
+    - out de SEQUÊNCIA que coloca a 3ª carta de um naipe no board (sequência "dentro
+      de um flush"): o vilão pode ter o flush. Não vale para o próprio naipe de flush
+      do hero (aí ELE fecha o flush, não é sujo).
+
+    Devolve (peso_total_float, lista_ordenada_das_cartas_sujas)."""
+    board_ranks = {r for r, _ in board_cards}
+    board_paired = max(Counter(r for r, _ in board_cards).values(), default=0) >= 2
+    board_suits = Counter(s for _, s in board_cards)
+    total = 0.0
+    dirty = []
+    for card in out_cards:
+        r, s = card
+        w = 0.0
+        if board_paired:
+            w += DIRTY_OUT_WEIGHT
+        if card in flush_out_cards and r in board_ranks:      # flush que pareia o board
+            w += DIRTY_OUT_WEIGHT
+        if card not in flush_out_cards and s != flush_suit \
+                and board_suits.get(s, 0) + 1 >= 3:           # sequência dentro de um flush
+            w += DIRTY_OUT_WEIGHT
+        w = min(w, 1.0)
+        if w > 0:
+            total += w
+            dirty.append(card)
+    return total, sorted(dirty)
 
 
 def _draws(hero_cards, board_cards):
     """Gavetas de draw do hero e contagem de outs (cartas), com contribuição do hero.
 
     Só conta flush/sequência em que o hero PARTICIPA (não draw que é só do board). O
-    combo (FD + straight) é limitado a 15 outs, descontando a interseção exata. No
-    RIVER (board com 5 cartas) NÃO há draw: não vem mais carta -> tudo zero.
-    """
+    combo (FD + straight) é limitado a 15 outs; a interseção (carta que fecha os dois)
+    é naturalmente deduplicada pela união de conjuntos. No RIVER (board com 5 cartas)
+    NÃO há draw: não vem mais carta -> tudo zero.
+
+    Além do `outs` CRU (estrutural), devolve `clean_outs` = outs menos os outs sujos
+    (regra do meio-out; ver `_dirty_outs`) e `tainted_outs` (quanto foi descontado).
+    O `outs` cru é preservado para os rótulos de draw; quem estima equity de draw sem
+    range do vilão deve usar `clean_outs`."""
     if len(board_cards) >= 5:
         return dict(flush_draw=False, backdoor_flush=False, flush_outs=0,
-                    straight_outs=0, oesd=False, gutshot=False, combo=False, outs=0)
+                    straight_outs=0, oesd=False, gutshot=False, combo=False,
+                    outs=0, clean_outs=0, tainted_outs=0.0)
     present = hero_cards + board_cards
     suits = Counter(s for _, s in present)
     hero_suits = Counter(s for _, s in hero_cards)
@@ -124,28 +172,25 @@ def _draws(hero_cards, board_cards):
             backdoor_flush = True
     made_flush = any(ct >= 5 for ct in suits.values())
     seen = set(present)
-    flush_out_cards = 0
+    flush_out_cards = set()
     if flush_draw and not made_flush:
-        flush_out_cards = sum(1 for r in range(2, 15) if (r, flush_suit) not in seen)
-    straight_out_cards = _straight_out_cards(hero_cards, board_cards)
-    # Interseção: cartas do naipe do flush que TAMBÉM completam a sequência não devem
-    # ser contadas duas vezes no total do combo.
-    overlap = 0
-    if flush_draw and straight_out_cards:
-        ranks = {r for r, _ in present}
-        for r in range(2, 15):
-            if r in ranks or (r, flush_suit) in seen:
-                continue
-            if _has_straight(ranks | {r}):
-                overlap += 1  # a carta (r, flush_suit) conta em ambos
-    oesd = straight_out_cards >= 8
-    gutshot = straight_out_cards == 4
-    total = flush_out_cards + straight_out_cards - overlap
+        flush_out_cards = {(r, flush_suit) for r in range(2, 15) if (r, flush_suit) not in seen}
+    straight_out_cards = _straight_out_cardset(hero_cards, board_cards)
+    # A união deduplica a interseção (carta do naipe do flush que também fecha a
+    # sequência conta uma vez só no total do combo).
+    out_cards = flush_out_cards | straight_out_cards
+    straight_cnt = len(straight_out_cards)
+    oesd = straight_cnt >= 8
+    gutshot = straight_cnt == 4
+    outs = min(len(out_cards), 15)
+    tainted, _dirty = _dirty_outs(out_cards, flush_out_cards, board_cards, flush_suit)
+    tainted = min(tainted, outs)
+    clean_outs = round(outs - tainted, 1)
     return dict(flush_draw=flush_draw, backdoor_flush=backdoor_flush,
-                flush_outs=flush_out_cards, straight_outs=straight_out_cards,
+                flush_outs=len(flush_out_cards), straight_outs=straight_cnt,
                 oesd=oesd, gutshot=gutshot,
-                combo=bool(flush_draw and straight_out_cards >= 4),
-                outs=min(total, 15))
+                combo=bool(flush_draw and straight_cnt >= 4),
+                outs=outs, clean_outs=clean_outs, tainted_outs=round(tainted, 1))
 
 
 def _relative_label(hero_cards, board_cards, category):
@@ -217,3 +262,85 @@ def hand_strength(hero, board):
     draws = _draws(hc, bc)
     return dict(category=score[0], category_name=CATEGORY_NAMES[score[0]], score=score,
                 made=_relative_label(hc, bc, score), draws=draws, outs=draws['outs'])
+
+
+# Range de CONTINUAÇÃO: quais mãos do vilão seguem apostando no board. Pesos de
+# estudo CONSERVADORES (não é saída de solver): valor sempre segue; mão média segue
+# pela metade; draw forte blefa/segue; draw fraco pouco; ar entra só como blefe, numa
+# fração que CAI do flop ao river (o range polariza). Ajustáveis num lugar só.
+_CONT_VALUE = ('set', 'trips', 'two_pair', 'overpair', 'top_pair',
+               'straight', 'flush', 'full_house', 'quads', 'straight_flush')
+_CONT_MEDIUM = ('second_pair', 'third_pair', 'low_pair', 'underpair')
+CONTINUATION_WEIGHTS = dict(value=1.0, medium=0.5, weak_draw=0.4,
+                            bluff_FLOP=0.25, bluff_TURN=0.15, bluff_RIVER=0.10)
+
+
+# Afinamento por TEXTURA (direção da skill poker-fundamentos-posflop): a textura muda
+# QUEM aposta no board, então escala o AR (blefe) e as MÃOS MÉDIAS do range de aposta.
+# - SECO (rainbow desconexo): o agressor aposta largo com range MESCLADO -> mais ar e
+#   value fino na range de aposta -> hero defende mais largo.
+# - MOLHADO (two-tone+/conectado/flush possível): a range POLARIZA e dá mais check ->
+#   menos ar PURO apostando (os draws já entram cheios) e média faz pote-controle.
+# - PAREADO (e seco): c-bet largo e pequeno, mas valor é mais raro.
+# Fatores conservadores e ajustáveis (não são solver); valor e draw forte seguem 1.0.
+_TEXTURE_FACTORS = dict(dry=dict(bluff=1.30, medium=1.15),
+                        paired=dict(bluff=1.15, medium=0.90),
+                        wet=dict(bluff=0.60, medium=0.70),
+                        neutral=dict(bluff=1.0, medium=1.0))
+
+
+def _texture_key(board_class):
+    """Classe de textura p/ os fatores: molhado (draw-heavy) domina; depois pareado;
+    senão seco."""
+    if (board_class['flush_possible'] or board_class['flush_count'] >= 2
+            or board_class['straightish'] >= 3):
+        return 'wet'
+    if board_class['paired']:
+        return 'paired'
+    return 'dry'
+
+
+def _continuation_multiplier(made, draws, street, factors=None):
+    """Fração do peso do combo que segue no range de APOSTA do vilão (ver pesos acima).
+    É o máximo entre o tier da mão feita e o do draw (uma mão feita COM draw segue cheia).
+    `factors` (opcional) escala o AR e a MÉDIA por textura; ausente = neutro (1.0)."""
+    factors = factors or _TEXTURE_FACTORS['neutral']
+    strong_draw = bool(draws['combo'] or draws['flush_draw'] or draws['oesd'])
+    weak_draw = bool(draws['gutshot'] or draws['backdoor_flush'])
+    if made in _CONT_VALUE:
+        cat = CONTINUATION_WEIGHTS['value']
+    elif made in _CONT_MEDIUM:
+        cat = min(1.0, CONTINUATION_WEIGHTS['medium'] * factors['medium'])
+    else:
+        cat = min(1.0, CONTINUATION_WEIGHTS.get('bluff_%s' % street, 0.20) * factors['bluff'])
+    draw = (CONTINUATION_WEIGHTS['value'] if strong_draw
+            else CONTINUATION_WEIGHTS['weak_draw'] if weak_draw else 0.0)
+    return max(cat, draw)
+
+
+def narrow_to_continuation(range_combos, board, *, street=None):
+    """Estreita o range PRÉ-FLOP do vilão para o range de CONTINUAÇÃO no board
+    (conceito de equity robusta vs não-robusta): reponderação por tier — valor segue
+    cheio, mão média pela metade, draws fortes seguem, draws fracos pouco, ar entra só
+    como blefe por rua. Os pesos de ar/média são afinados pela TEXTURA (ver
+    `_TEXTURE_FACTORS`). Descarta combos BLOQUEADOS pelo board (card removal). Recebe e
+    devolve a forma normalizada [(frozenset, peso)]. Devolve lista (talvez vazia)."""
+    street = street or {3: 'FLOP', 4: 'TURN', 5: 'RIVER'}.get(len(board))
+    try:
+        factors = _TEXTURE_FACTORS[_texture_key(classify_board(board))]
+    except (ValueError, KeyError, TypeError):
+        factors = _TEXTURE_FACTORS['neutral']
+    out = []
+    for combo, w in range_combos or ():
+        if w <= 0:
+            continue
+        try:
+            s = hand_strength(list(combo), board)
+        except (ValueError, KeyError, TypeError):
+            continue
+        if s is None:                      # combo bloqueado pelo board -> impossível
+            continue
+        m = _continuation_multiplier(s['made'], s['draws'], street, factors)
+        if m > 0:
+            out.append((combo, w * m))
+    return out

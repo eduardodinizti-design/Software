@@ -11,8 +11,9 @@ validada à parte (igual ao pré-flop, que só clicou depois de aconselhar).
 `advise_postflop(table_state, hero, board, ...)` devolve o mesmo formato de
 contrato do pré-flop: status ADVICE/ABSTAIN, `recommended`, métricas e `caveats`.
 """
-from postflop_eval import classify_board, hand_strength
+from postflop_eval import classify_board, hand_strength, narrow_to_continuation
 from preflop_equity import required_equity, equity_vs_range, hand_to_combos
+from hud_exploit import classify_villain, exploit_caveats
 
 BASE_CAVEATS = ('EXPLORATORY_NOT_FOR_EXECUTION', 'POSTFLOP_HEURISTIC_NO_SOLVER',
                 'SINGLE_FRAME_NO_VILLAIN_MODEL')
@@ -33,6 +34,9 @@ _BIG_BET_POT_ODDS = 0.40
 # Abaixo disso (mas acima das pot odds) paga; se nem as pot odds bater, folda — a
 # categoria não manda sozinha quando a equity contra o range diz o contrário.
 _VALUE_RAISE_MIN_EQUITY = 0.60
+# 3bet pot HU: abaixo deste SPR, mãos feitas fortes (até top pair) COMETEM (pote já
+# grande, pouco atrás). Acima, top pair enfrenta um range polarizado e vira bluffcatch.
+SPR_COMMIT_3BET = 4.0
 
 
 def _normalize_range(villain_range):
@@ -91,6 +95,28 @@ def _draw_equity(outs, street):
     return min(pct / 100.0, 0.90)
 
 
+# Implied odds (skill poker-fundamentos-posflop): fichas a ganhar nas PRÓXIMAS ruas
+# quando o draw completa. Estimativa conservadora = fração do pote por nº de ruas que
+# faltam, LIMITADA pelo que há atrás (não se ganha mais do que o stack efetivo). Draw
+# ÓBVIO (flush, 3º naipe visível) realiza menos que escondido (sequência). Reverse
+# implied (completar p/ a 2ª melhor mão) NÃO é modelado -> caveat.
+IMPLIED_POT_FRACTION = {'FLOP': 0.5, 'TURN': 0.25}   # 2 ruas restantes vs 1
+OBVIOUS_DRAW_IMPLIED = 0.5                            # desconto p/ flush draw (óbvio)
+
+
+def _implied_bb(street, pot, hero_stack, to_call, draws):
+    """Ganho futuro estimado (BB) quando o draw completa; 0 no river/sem stack atrás."""
+    if street not in IMPLIED_POT_FRACTION or not isinstance(pot, (int, float)) or pot <= 0:
+        return 0.0
+    frac = IMPLIED_POT_FRACTION[street]
+    if draws.get('flush_draw') and not draws.get('combo'):
+        frac *= OBVIOUS_DRAW_IMPLIED                  # flush é óbvio -> implied menor
+    raw = frac * pot
+    if isinstance(hero_stack, (int, float)) and isinstance(to_call, (int, float)):
+        raw = min(raw, max(0.0, hero_stack - to_call))   # teto = stack efetivo atrás
+    return round(raw, 2)
+
+
 def _bet_fraction(bclass, made, draws):
     """Fração do pote para apostar, por vantagem de range/nuts (poucos sizes/rua).
 
@@ -112,9 +138,83 @@ def _size(pot_bb, fraction, cap_bb, basis):
     return dict(size_bb=size, fraction=round(fraction, 2), basis=basis, heuristic=True)
 
 
+def _advise_three_bet_pot(info, strength, bclass, caveats, *, pot, to_call,
+                          hero_stack, spr, street):
+    """Heurística pós-flop para 3bet pot HEADS-UP (antes abstinha). Três ajustes vs o
+    pote de um raise só, fundamentados: (1) SPR BAIXO -> mãos fortes (até top pair)
+    COMETEM; (2) range do vilão mais FORTE/POLARIZADO -> marginais foldam; (3) implied
+    BAIXO -> draws só por odds diretas. Tier + SPR, sem range de 3bet (não temos um;
+    usar o range de open seria errado)."""
+    made, draws, outs = strength['made'], strength['draws'], strength['outs']
+    strong = made in _STRONG
+    monster = made in ('set', 'trips', 'two_pair', 'straight', 'flush',
+                       'full_house', 'quads', 'straight_flush')
+    has_strong_draw = bool(draws['combo'] or draws['flush_draw'] or draws['oesd'])
+    caveats = caveats + ['POSTFLOP_THREE_BET_POT_HEURISTIC', 'LOW_SPR_3BET',
+                         'VILLAIN_RANGE_STRONGER_POLARIZED']
+    cap = hero_stack if isinstance(hero_stack, (int, float)) else None
+    board_beats_us = (bclass['straight_on_board']
+                      or (bclass['flush_possible'] and made not in
+                          ('flush', 'full_house', 'quads', 'straight_flush')))
+    low_spr = spr is None or spr <= SPR_COMMIT_3BET
+    if to_call > 0:
+        pot_odds = required_equity(to_call, pot)
+        if pot_odds is None:
+            return _abstain('CANNOT_COMPUTE_POT_ODDS', pot_bb=pot, to_call_bb=to_call)
+        info.update(pot_odds=round(pot_odds, 4))
+        if strong:
+            if monster and not board_beats_us:
+                raise_to = round(min(to_call * 3, cap), 1) if cap else round(to_call * 3, 1)
+                info.update(recommended='raise',
+                            sizing=dict(size_bb=raise_to, basis='3bet pot: comete (SPR baixo)',
+                                        heuristic=True), caveats=caveats)
+                return info
+            if board_beats_us:
+                caveats.append('BOARD_MAY_BEAT_ONE_PAIR_CALL_ONLY')
+            info.update(recommended='call', caveats=caveats)       # overpair/forte comete
+            return info
+        if made == 'top_pair':
+            if low_spr:
+                info.update(recommended='call', caveats=caveats + ['TOP_PAIR_COMMITS_LOW_SPR'])
+                return info
+            info.update(recommended='fold',
+                        caveats=caveats + ['TOP_PAIR_DEEP_3BET_POLARIZED_FOLD'])
+            return info
+        if made in _MARGINAL:
+            info.update(recommended='fold', caveats=caveats + ['MARGINAL_FOLD_VS_3BET_RANGE'])
+            return info
+        if street != 'RIVER' and has_strong_draw:
+            clean = draws.get('clean_outs', outs)
+            deq = _draw_equity(clean, street)                      # SEM implied (SPR baixo)
+            info.update(draw_equity=round(deq, 4), clean_outs=clean,
+                        recommended=('call' if deq >= pot_odds else 'fold'),
+                        caveats=caveats + ['DRAW_DIRECT_ODDS_NO_IMPLIED_3BET'])
+            return info
+        info.update(recommended='fold', caveats=caveats)
+        return info
+    # Passaram a vez (to_call == 0): comete/semi-blefe no SPR baixo.
+    if strong:
+        info.update(recommended='bet',
+                    sizing=_size(pot, 0.66, cap, '3bet pot: valor/comete (size maior)'),
+                    caveats=caveats)
+        return info
+    if has_strong_draw:
+        info.update(recommended='bet',
+                    sizing=_size(pot, 0.5, cap, '3bet pot: semi-blefe (SPR baixo)'),
+                    caveats=caveats + ['SEMI_BLUFF_LOW_SPR'])
+        return info
+    if made == 'top_pair':
+        info.update(recommended='bet',
+                    sizing=_size(pot, 0.5, cap, '3bet pot: valor top pair'), caveats=caveats)
+        return info
+    info.update(recommended='check', sizing=dict(size_bb=0.0, basis='check', heuristic=False),
+                caveats=caveats + ['CHECK_SHOWDOWN_OR_GIVEUP'])
+    return info
+
+
 def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
                     stage='mid', aggressor=None, villain_range=None, pot_type=None,
-                    iters=4000, seed=0):
+                    narrow_range=False, villain_stats=None, iters=4000, seed=0):
     """Conselho pós-flop para uma leitura. `hero`: 2 strings; `board`: 3-5 strings.
 
     `aggressor` (opcional): quem teve a iniciativa no pré-flop ('hero'/posição), para
@@ -175,18 +275,38 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
 
     # Tipos de pote fora da cobertura: ABSTÉM com rótulo ANTES de qualquer Monte
     # Carlo (abstenção conhecida não paga o custo da equity, a cada frame/mesa).
-    if pot_type == 'three_bet':
-        return _uncovered_pot('POSTFLOP_THREE_BET_POT_NOT_COVERED', info, caveats, pot, to_call)
+    if pot_type == 'three_bet':      # HU 3bet pot (multiway é pego como 'multiway')
+        return _advise_three_bet_pot(info, strength, bclass, caveats, pot=pot, to_call=to_call,
+                                     hero_stack=hero_stack, spr=spr, street=street)
     if pot_type == 'multiway':
         return _uncovered_pot('POSTFLOP_MULTIWAY_NOT_COVERED', info, caveats, pot, to_call)
 
     # Equity ESTIMADA do hero vs o range do vilão (se dado), Monte Carlo no board com
     # semente fixa -> determinística (mas estimativa). É a Fase 2: CALL quantitativo.
     vr = _normalize_range(villain_range)
+    # Enfrentando aposta, com `narrow_range`, ESTREITA o range pré-flop do vilão para o
+    # range de continuação no board (equity robusta vs não-robusta) ANTES do Monte
+    # Carlo — mais preciso que o deságio fixo, que vira dispensável quando estreitamos.
+    narrowed = False
+    if vr and narrow_range and isinstance(to_call, (int, float)) and to_call > 0:
+        vr_cont = narrow_to_continuation(vr, list(board), street=street)
+        if vr_cont:
+            vr, narrowed = vr_cont, True
     equity = equity_vs_range(hero, vr, board=list(board), iters=iters, seed=seed) if vr else None
+    haircut = 0.0 if narrowed else _CALL_HAIRCUT
+    # Exploit do HUD (opcional): classifica o vilão e nudgeia o limiar de bluffcatch
+    # (foldar mais vs passivo/value-heavy; pagar mais largo vs quem blefa). Bounded e
+    # sempre flagado (amostra desconhecida). Só mexe nas mãos FEITAS enfrentando aposta.
+    profile = classify_villain(villain_stats) if villain_stats else None
+    ex_delta = profile['bluffcatch_delta'] if profile else 0.0
+    if profile and profile['category'] != 'unknown':
+        caveats = caveats + exploit_caveats(profile)
     if equity is not None:
-        caveats += ['EQUITY_VS_VILLAIN_PREFLOP_RANGE', 'RANGE_NOT_NARROWED_POSTFLOP',
-                    'CALL_HAIRCUT_%dPCT' % round(_CALL_HAIRCUT * 100)]
+        if narrowed:
+            caveats += ['EQUITY_VS_VILLAIN_CONTINUATION_RANGE', 'RANGE_NARROWED_TO_BOARD']
+        else:
+            caveats += ['EQUITY_VS_VILLAIN_PREFLOP_RANGE', 'RANGE_NOT_NARROWED_POSTFLOP',
+                        'CALL_HAIRCUT_%dPCT' % round(_CALL_HAIRCUT * 100)]
         info['equity'] = round(equity, 4)
 
     # ---- Enfrentando uma aposta -------------------------------------------------
@@ -203,7 +323,7 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
         # Mão de categoria forte: a equity (quando há range) manda. Não aumenta —
         # nem paga — contra um range que nos domina, mesmo com categoria boa (#7).
         if strong:
-            if equity is not None and equity < pot_odds + _CALL_HAIRCUT:
+            if equity is not None and equity < pot_odds + haircut + ex_delta:
                 info.update(recommended='fold',
                             caveats=caveats + ['STRONG_CATEGORY_BUT_DOMINATED_BY_RANGE'])
                 return info
@@ -223,12 +343,21 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
         # (uma mão feita com draw não deve ser foldada como se fosse só draw) (#6).
         if made == 'top_pair':
             if pot_odds > _BIG_BET_POT_ODDS:
+                # Aposta grande = bluffcatch que precisa de LEITURA. Com HUD, DECIDE:
+                # vilão que blefa (lag/cbet-heavy/3bet-happy) -> paga; passivo/nit (aposta
+                # grande = valor) -> folda. Sem HUD, segue abstendo (honesto).
+                if profile and profile['category'] != 'unknown':
+                    dec = 'call' if profile['aggressive'] else 'fold'
+                    info.update(recommended=dec,
+                                caveats=caveats + ['BLUFFCATCH_BIG_BET_EXPLOIT_%s'
+                                                   % ('AGGRO' if profile['aggressive'] else 'PASSIVE')])
+                    return info
                 return _abstain('BLUFFCATCH_VS_BIG_BET_NEEDS_READS', pot_bb=pot,
                                 to_call_bb=to_call, pot_odds=round(pot_odds, 4), made=made,
                                 equity=round(equity, 4) if equity is not None else None)
             if equity is not None:
                 caveats.append('BLUFFCATCH_EQUITY_DRIVEN')
-                info.update(recommended=('call' if equity >= pot_odds + _CALL_HAIRCUT else 'fold'),
+                info.update(recommended=('call' if equity >= pot_odds + haircut + ex_delta else 'fold'),
                             caveats=caveats)
                 return info
             caveats += ['BLUFFCATCH_DEFEND_TO_MDF', 'EXPLOIT_DEPENDS_ON_VILLAIN']
@@ -237,7 +366,7 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
         if marginal:
             if equity is not None:
                 caveats.append('MARGINAL_EQUITY_DRIVEN')
-                info.update(recommended=('call' if equity >= pot_odds + _CALL_HAIRCUT else 'fold'),
+                info.update(recommended=('call' if equity >= pot_odds + haircut + ex_delta else 'fold'),
                             caveats=caveats)
                 return info
             caveats.append('MARGINAL_BLUFFCATCH_FOLD_DEFAULT_EXPLOITABLE')
@@ -245,17 +374,31 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
             return info
         # Mão NÃO-feita com draw: só vale fora do river (no river não vem carta) (#6).
         if street != 'RIVER' and (has_strong_draw or has_weak_draw):
+            # Implied odds: o ganho futuro quando o draw completa baixa a equity exigida.
+            implied = _implied_bb(street, pot, hero_stack, to_call, draws)
+            po_imp = required_equity(to_call, pot + implied) if implied > 0 else pot_odds
+            if implied > 0:
+                caveats += ['IMPLIED_ODDS_APPROX_%gBB' % implied, 'REVERSE_IMPLIED_NOT_MODELED']
+            else:
+                caveats.append('IMPLIED_ODDS_NONE_NO_STACK_BEHIND')
             if equity is not None:
-                info.update(recommended=('call' if equity >= pot_odds + _CALL_HAIRCUT else 'fold'),
+                info.update(implied_bb=implied, pot_odds_implied=round(po_imp, 4),
+                            recommended=('call' if equity >= po_imp + haircut else 'fold'),
                             caveats=caveats)
                 return info
-            deq = _draw_equity(outs, street)
-            caveats += ['DRAW_EQUITY_RULE_OF_2_AND_4', 'IMPLIED_ODDS_NOT_MODELED']
-            info.update(draw_equity=round(deq, 4), recommended=('call' if deq >= pot_odds else 'fold'),
-                        caveats=caveats)
+            clean = draws.get('clean_outs', outs)
+            deq = _draw_equity(clean, street)
+            caveats.append('DRAW_EQUITY_RULE_OF_2_AND_4')
+            if clean < outs:
+                # Outs sujos descontados (board pareado / flush que pareia / sequência
+                # dentro de um flush): a equity de draw usa os outs LIMPOS, não os crus.
+                caveats.append('DIRTY_OUTS_DISCOUNTED_%g_OF_%d' % (round(outs - clean, 1), outs))
+            info.update(draw_equity=round(deq, 4), clean_outs=clean, implied_bb=implied,
+                        pot_odds_implied=round(po_imp, 4),
+                        recommended=('call' if deq >= po_imp else 'fold'), caveats=caveats)
             return info
         # Ar / joga o board: folda, salvo equity (vs range) acima das pot odds.
-        if equity is not None and equity >= pot_odds + _CALL_HAIRCUT:
+        if equity is not None and equity >= pot_odds + haircut + ex_delta:
             info.update(recommended='call', caveats=caveats + ['WEAK_BUT_EQUITY_OK'])
             return info
         info.update(recommended='fold', caveats=caveats)

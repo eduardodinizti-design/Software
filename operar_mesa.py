@@ -21,9 +21,8 @@ from table_reading.automatic_table_crops import detect_table_crops
 from table_reading.action_buttons import read_action_buttons
 from table_reading.hand_tracking import read_hand_id
 from table_advisor import advise_table
-from postflop_advisor import advise_postflop
-from preflop_advisor import PreflopAdvisor, infer_spread
-from preflop_context import PreflopAggressorTracker, villain_postflop_range
+from preflop_advisor import PreflopAdvisor
+from preflop_context import PreflopAggressorTracker
 from action_executor import ActionExecutor
 from action_coordinator import DryRunInput, map_advice_to_action, decision_identity
 from position_stabilizer import PositionStabilizer
@@ -151,6 +150,14 @@ def main(argv=None):
     p.add_argument('--frames', type=int, default=0, help='0 = até Ctrl+C/Disable')
     p.add_argument('--intervalo', type=float, default=1.0)
     p.add_argument('--max-tables', type=int, default=6)
+    p.add_argument('--bounty-bb', type=float, default=None,
+                   help='PKO: valor do bounty em BB p/ o overlay de call-off (so engata em torneio PKO e cobrindo o shove)')
+    p.add_argument('--mode', choices=('chip_ev', 'icm', 'pko', 'pko_icm'), default=None,
+                   help='Forca o modo do torneio (sobrepoe a deteccao por nome; ex. PKO quando o skin nao mostra no nome)')
+    p.add_argument('--stage', choices=('pre_itm', 'bubble', 'ft', 'mid'), default=None,
+                   help='Forca a fase do torneio (sobrepoe a deteccao)')
+    p.add_argument('--hud', action='store_true',
+                   help='Le o HUD VIP (8 stats por vilao) p/ exploit no pos-flop')
     p.add_argument('--arm', action='store_true', help='Usa o cursor REAL (ainda gated)')
     p.add_argument('--no-hotkeys', dest='hotkeys', action='store_false')
     args = p.parse_args(argv)
@@ -226,7 +233,9 @@ def main(argv=None):
                 override = hero_cache.get((tkey, hkey)) if hkey else None
                 try:
                     result = advise_table(crop, advisor, stabilizer=stabilizer,
-                                          table_key=tkey, hero_override=override)
+                                          table_key=tkey, hero_override=override,
+                                          tracker=aggr_tracker, bounty_bb=args.bounty_bb,
+                                          mode=args.mode, stage=args.stage, enable_hud=args.hud)
                 except Exception:                      # noqa: BLE001
                     continue
                 if not result.get('is_table'):
@@ -235,47 +244,9 @@ def main(argv=None):
                     if len(hero_cache) >= 512:
                         hero_cache.clear()
                     hero_cache[(tkey, hkey)] = result['hero_cards']   # leitura confiável -> memoriza
-                # Rastreia o agressor pré-flop e, no pós-flop HU (pote de um raise só),
-                # recalcula o conselho com EQUITY vs o range de open do vilão. O contexto
-                # usado vem dos frames ANTERIORES (o agressor é fixado no pré-flop); depois
-                # atualiza o rastreador com este frame.
-                tstate = result.get('table_state') or {}
-                rboard = result.get('board') or {}
-                has_board = bool(rboard.get('cards'))
-                # ATUALIZA o rastreador ANTES de consultar o contexto: numa nova mão
-                # cujo 1o frame legível já é o flop, o update reinicia a identidade e
-                # o contexto não vaza agressor/range da mão anterior (#2).
-                aggr_tracker.update(table_key=tkey, hand_key=hkey,
-                                    table_state=tstate, has_board=has_board)
-                if has_board and result.get('hero_cards') and \
-                        (result.get('advice') or {}).get('phase') == 'postflop':
-                    ctx = aggr_tracker.context(tkey)
-                    cmode = (result.get('context') or {}).get('mode', 'chip_ev')
-                    cstage = (result.get('context') or {}).get('stage', 'mid')
-                    seats = tstate.get('seats') or {}
-                    spread = (infer_spread({p: (seats.get(s) or {}).get('stack_bb')
-                                            for s, p in (tstate.get('positions') or {}).items()})
-                              if cmode in ('icm', 'pko_icm') else None)
-                    # Tipo de pote (gating honesto): 3bet/multiway -> abstém rotulado;
-                    # um raise só -> equity (se houver range) ou Fase 1; desconhecido -> Fase 1.
-                    if ctx is None:
-                        ptype = 'unknown'
-                    elif not ctx['heads_up']:
-                        ptype = 'multiway'
-                    elif ctx['raises'] >= 2:
-                        ptype = 'three_bet'
-                    elif ctx['raises'] == 1:
-                        ptype = 'single_raised'
-                    else:
-                        ptype = 'unknown'
-                    combos, meta = villain_postflop_range(
-                        advisor, ctx, mode=cmode, stage=cstage, spread=spread,
-                        hero_stack_bb=(seats.get('hero') or {}).get('stack_bb'))
-                    result['advice'] = advise_postflop(
-                        tstate, result['hero_cards'], rboard['cards'],
-                        street=rboard.get('street'), mode=cmode, stage=cstage,
-                        aggressor=(ctx or {}).get('aggressor'),
-                        villain_range=(combos or None), pot_type=ptype)
+                # O rastreador do agressor pré-flop e o recálculo do pós-flop em contexto
+                # (pot_type/iniciativa/range do vilão) agora ficam DENTRO de advise_table
+                # (tracker=aggr_tracker), compartilhados com os observadores contínuos.
                 br = read_action_buttons(crop)
                 if br['status'] == 'EXPERIMENTAL_BUTTON_ROW':
                     hero_turn_seen = True

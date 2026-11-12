@@ -6,7 +6,7 @@ import unittest
 
 from preflop_study import RANKS
 from preflop_advisor import (PreflopAdvisor, infer_live_spot, infer_spread,
-                             _icm_risk_premium)
+                             _icm_risk_premium, scale_bounty_bb)
 
 HANDS = [r + r for r in RANKS] + [a + b + s for i, a in enumerate(RANKS) for b in RANKS[i + 1:] for s in ('s', 'o')]
 
@@ -44,6 +44,32 @@ def pack_with_node(out_of_range=()):
     return dict(format='nvt-range-export', version=1, engineCommit='test', hands=HANDS, nodes=[node])
 
 
+class ScaleBountyTests(unittest.TestCase):
+    """Escala do bounty_bb pelo bounty do vilão (caça mais larga no alvo acumulado)."""
+
+    def test_villain_accumulated_scales_up(self):
+        bb, cav = scale_bounty_bb(8.0, {'bot_right': 270, 'hero': 135, 'left_up': 135},
+                                  'CO', {'bot_right': 'CO', 'hero': 'BTN', 'left_up': 'HJ'})
+        self.assertEqual(bb, 16.0)                 # 270/135 = 2x -> 16bb
+        self.assertIn('x2.00', cav)
+
+    def test_base_villain_no_scale(self):
+        bb, cav = scale_bounty_bb(8.0, {'bot_right': 135, 'hero': 135},
+                                  'CO', {'bot_right': 'CO', 'hero': 'BTN'})
+        self.assertEqual(bb, 8.0)                  # 135/135 = 1x
+
+    def test_no_bounties_flat_base(self):
+        bb, cav = scale_bounty_bb(8.0, {}, 'CO', {'bot_right': 'CO'})
+        self.assertEqual((bb, cav), (8.0, 'BOUNTY_READ_NONE_FLAT_BASE'))
+
+    def test_villain_unread_flat_base(self):
+        bb, cav = scale_bounty_bb(8.0, {'hero': 135}, 'CO', {'hero': 'BTN'})
+        self.assertEqual((bb, cav), (8.0, 'BOUNTY_VILLAIN_UNREAD_FLAT_BASE'))
+
+    def test_no_base_bb_passthrough(self):
+        self.assertEqual(scale_bounty_bb(None, {'hero': 135}, 'CO', {}), (None, None))
+
+
 class CallOffTests(unittest.TestCase):
     """Síntese do call-off do abridor vs re-shove quando falta o nó vs_3bet curto."""
 
@@ -77,6 +103,84 @@ class CallOffTests(unittest.TestCase):
         self.assertEqual(r1['equity'], r2['equity'])           # equity reusada
         self.assertNotEqual(r1['required_equity'], r2['required_equity'])  # pot odds novas
         self.assertEqual(len(a._equity_cache), 1)              # não recomputou
+
+    def test_bounty_overlay_widens_calloff_when_covering(self):
+        # PKO: 85o enfrenta shove largo que o hero COBRE (15bb vs 7 a pagar). Sem bounty,
+        # pot odds > equity -> fold; com o bounty como POTE EXTRA a exigência cai e vira
+        # call (caça do bounty). A equity não muda, só a exigência.
+        a = PreflopAdvisor(pack_with_3bet_shove(list(HANDS), hero='BTN', vs=('CO',), stack=15))
+        base = dict(hero_cards=['8d', '5c'], hero_position='CO', villain_position='BTN',
+                    stack_bb=15, to_call_bb=7, pot_bb=8)
+        no = a.advise_call_off(mode='pko', **base)
+        self.assertEqual(no['recommended'], 'fold')
+        self.assertEqual(no['bounty_bb'], 0)
+        yes = a.advise_call_off(mode='pko', bounty_bb=10, **base)
+        self.assertEqual(yes['recommended'], 'call')
+        self.assertLess(yes['required_equity_effective'], yes['required_equity'])
+        self.assertEqual(yes['bounty_bb'], 10)
+        self.assertEqual(yes['equity'], no['equity'])
+        self.assertTrue(any(c.startswith('PKO_BOUNTY_OVERLAY') for c in yes['caveats']))
+
+    def test_bounty_ignored_when_hero_does_not_cover(self):
+        # Hero NÃO cobre o shove (stack < a quantia a pagar) -> não elimina -> sem bounty.
+        a = PreflopAdvisor(pack_with_3bet_shove(list(HANDS), hero='BTN', vs=('CO',), stack=15))
+        r = a.advise_call_off(mode='pko', bounty_bb=10, hero_cards=['8d', '5c'],
+                              hero_position='CO', villain_position='BTN',
+                              stack_bb=5, to_call_bb=7, pot_bb=8)
+        self.assertEqual(r['bounty_bb'], 0)
+        self.assertEqual(r['required_equity_effective'], r['required_equity'])
+
+    def test_bounty_ignored_outside_pko(self):
+        # Fora de PKO (chip EV/ICM puro) não há bounty a ganhar -> overlay não se aplica.
+        a = PreflopAdvisor(pack_with_3bet_shove(list(HANDS), hero='BTN', vs=('CO',), stack=15))
+        r = a.advise_call_off(mode='chip_ev', bounty_bb=10, hero_cards=['8d', '5c'],
+                              hero_position='CO', villain_position='BTN',
+                              stack_bb=15, to_call_bb=7, pot_bb=8)
+        self.assertEqual(r['bounty_bb'], 0)
+
+    FISH = {'vpip': 45, 'pfr': 12, 'cbet': 40, 'foldcbet': 30, 'threebet': 2, 'fold3bet': 70, 'steal': 20, 'cr': 5}
+    LAG = {'vpip': 30, 'pfr': 26, 'cbet': 70, 'foldcbet': 40, 'threebet': 11, 'fold3bet': 40, 'steal': 45, 'cr': 8}
+
+    def test_calloff_exploit_by_villain_stats(self):
+        # 9d7c borderline (eq≈req): sem HUD paga; vs FISH (shova valor) folda; vs LAG
+        # (shova largo) paga mais largo.
+        a = PreflopAdvisor(pack_with_3bet_shove(list(HANDS), hero='BTN', vs=('CO',), stack=15))
+        base = dict(hero_cards=['9d', '7c'], hero_position='CO', villain_position='BTN',
+                    stack_bb=15, to_call_bb=7, pot_bb=8)
+        self.assertEqual(a.advise_call_off(**base)['recommended'], 'call')
+        self.assertEqual(a.advise_call_off(**base, villain_stats=self.FISH)['recommended'], 'fold')
+        r = a.advise_call_off(**base, villain_stats=self.LAG)
+        self.assertEqual(r['recommended'], 'call')
+        self.assertIn('EXPLOIT_HUD_LAG', r['caveats'])
+
+    def test_from_reading_applies_hud_exploit_to_calloff(self):
+        # state['hud'] (anexado por advise_table) chega ao call-off: vilão BTN é FISH ->
+        # folda o borderline que pagaria sem HUD.
+        a = PreflopAdvisor(pack_with_3bet_shove(list(HANDS), hero='BTN', vs=('CO',), stack=15))
+        state = dict(positions={'hero': 'CO', 's2': 'BTN'},
+                     seats={'hero': dict(stack_bb=15, occupied=True),
+                            's2': dict(stack_bb=0, occupied=True)},
+                     bets=[dict(seat='hero', bet_bb=2.0), dict(seat='s2', bet_bb=15.0)],
+                     to_call=dict(to_call_bb=7.0), pot=dict(pot_bb=8.0),
+                     hud={'s2': {'stats': self.FISH, 'confidence': 'high'}})
+        r = a.advise_from_reading(state, ['9d', '7c'], mode='chip_ev')
+        self.assertEqual(r['spot'], 'call_off_vs_3bet_shove')
+        self.assertEqual(r['recommended'], 'fold')
+        self.assertIn('EXPLOIT_HUD_FISH', r['caveats'])
+
+    def test_partial_hud_read_not_used_for_exploit(self):
+        # Leitura 'partial' (skin/escala não calibrado) NÃO alimenta o exploit -> decide
+        # sem HUD (paga o borderline), nunca com stats possivelmente errados.
+        a = PreflopAdvisor(pack_with_3bet_shove(list(HANDS), hero='BTN', vs=('CO',), stack=15))
+        state = dict(positions={'hero': 'CO', 's2': 'BTN'},
+                     seats={'hero': dict(stack_bb=15, occupied=True),
+                            's2': dict(stack_bb=0, occupied=True)},
+                     bets=[dict(seat='hero', bet_bb=2.0), dict(seat='s2', bet_bb=15.0)],
+                     to_call=dict(to_call_bb=7.0), pot=dict(pot_bb=8.0),
+                     hud={'s2': {'stats': self.FISH, 'confidence': 'partial'}})
+        r = a.advise_from_reading(state, ['9d', '7c'], mode='chip_ev')
+        self.assertEqual(r['recommended'], 'call')              # sem exploit (partial ignorado)
+        self.assertNotIn('EXPLOIT_HUD_FISH', r['caveats'])
 
     def test_calloff_abstains_without_shove_range(self):
         a = PreflopAdvisor(pack_with_3bet_shove(['AA'], hero='BTN', vs=('CO',), stack=15))
@@ -116,6 +220,21 @@ class CallOffTests(unittest.TestCase):
         a = PreflopAdvisor(pack_with_3bet_shove(list(HANDS), hero='BTN', vs=('CO',), stack=15))
         r = a.advise_from_reading(state, ['Ah', '7d'])
         self.assertEqual(r['spot'], 'call_off_vs_3bet_shove')
+
+    def test_from_reading_scales_bounty_by_villain(self):
+        # PKO: vilão BTN com bounty acumulado (270) vs base 135 -> 2x; o call-off recebe
+        # bounty escalado (8 -> 16bb) e caça mais largo.
+        a = PreflopAdvisor(pack_with_3bet_shove(list(HANDS), hero='BTN', vs=('CO',), stack=15))
+        state = dict(positions={'hero': 'CO', 's2': 'BTN'},
+                     seats={'hero': dict(stack_bb=15, occupied=True),
+                            's2': dict(stack_bb=0, occupied=True)},
+                     bets=[dict(seat='hero', bet_bb=2.0), dict(seat='s2', bet_bb=15.0)],
+                     to_call=dict(to_call_bb=13.0), pot=dict(pot_bb=18.0),
+                     bounties={'s2': 270, 'hero': 135})
+        r = a.advise_from_reading(state, ['Ah', '7d'], mode='pko', bounty_bb=8.0)
+        self.assertEqual(r['spot'], 'call_off_vs_3bet_shove')
+        self.assertEqual(r['bounty_bb'], 16.0)                 # 8 * (270/135)
+        self.assertTrue(any('BOUNTY_SCALED_x2.00' in c for c in r['caveats']))
 
     def test_from_reading_synthesizes_calloff_instead_of_freezing(self):
         # A7 abriu (CO, 2bb), BTN re-shova 15bb: sem nó vs_3bet -> antes abstinha

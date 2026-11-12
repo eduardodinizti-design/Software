@@ -19,8 +19,9 @@ from table_reading.table_state import read_table_state
 from table_reading.community_cards import read_board
 from table_reading.hand_tracking import read_hand_id
 from table_reading.tournament import read_tournament, tournament_context
-from preflop_advisor import PreflopAdvisor
+from preflop_advisor import PreflopAdvisor, infer_spread
 from postflop_advisor import advise_postflop
+from preflop_context import villain_postflop_range
 
 
 def read_hero_cards(crop):
@@ -33,8 +34,61 @@ def read_hero_cards(crop):
     return cards
 
 
+def _pot_type_from_context(ctx):
+    """Tipo de pote a partir do contexto do rastreador, p/ o gating honesto do
+    pós-flop: sem contexto/sem raise -> 'unknown'; não-HU -> 'multiway'; >=2 níveis de
+    raise -> 'three_bet'; 1 nível -> 'single_raised' (pote de um raise só)."""
+    if ctx is None:
+        return 'unknown'
+    if not ctx['heads_up']:
+        return 'multiway'
+    if ctx['raises'] >= 2:
+        return 'three_bet'
+    if ctx['raises'] == 1:
+        return 'single_raised'
+    return 'unknown'
+
+
+def _postflop_in_context(advisor, tracker, state, hero, board, *, mode, stage, table_key):
+    """Recalcula o conselho pós-flop usando o CONTEXTO rastreado entre frames: deriva
+    pot_type (gating), aggressor (iniciativa) e o range do vilão (equity no HU, pote de
+    um raise só) e rechama advise_postflop. Espelha o que o operador armado já fazia,
+    agora disponível a qualquer observador contínuo que passe um `tracker`."""
+    ctx = tracker.context(table_key)
+    seats = state.get('seats') or {}
+    spread = (infer_spread({p: (seats.get(s) or {}).get('stack_bb')
+                            for s, p in (state.get('positions') or {}).items()})
+              if mode in ('icm', 'pko_icm') else None)
+    ptype = _pot_type_from_context(ctx)
+    combos, meta = villain_postflop_range(advisor, ctx, mode=mode, stage=stage, spread=spread,
+                                          hero_stack_bb=(seats.get('hero') or {}).get('stack_bb'))
+    # Exploit do HUD: stats do VILÃO (lidos por advise_table em state['hud']). HU = o
+    # agressor rastreado, ou o único vilão com HUD lido.
+    vstats = None
+    hud = state.get('hud') or {}
+    if hud:
+        positions = state.get('positions') or {}
+        aggr = (ctx or {}).get('aggressor')
+        vseat = next((s for s, p in positions.items() if p == aggr), None) if aggr and aggr != 'hero' else None
+        if vseat is None and len(hud) == 1:
+            vseat = next(iter(hud))
+        ventry = hud.get(vseat) if vseat else None
+        # Só exploita com leitura CONFIÁVEL (8/8 high); 'partial' pode ter campo mal-lido
+        # ou linha trocada num skin/escala não calibrado -> não alimenta o exploit.
+        vstats = ventry['stats'] if (ventry and ventry.get('confidence') == 'high') else None
+    advice = advise_postflop(state, hero, board['cards'], street=board.get('street'),
+                             mode=mode, stage=stage, aggressor=(ctx or {}).get('aggressor'),
+                             villain_range=(combos or None), pot_type=ptype, narrow_range=True,
+                             villain_stats=vstats)
+    if isinstance(advice, dict):
+        # Observabilidade: qual range foi usado (ou o motivo de ter ficado na Fase 1).
+        advice['villain_range_source'] = meta if combos else {'reason': meta}
+    return advice
+
+
 def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table_key='default',
-                 villain_range=None, hero_override=None):
+                 villain_range=None, hero_override=None, tracker=None, bounty_bb=None,
+                 enable_hud=False):
     """Read the table and attach an exploratory recommendation. The tournament
     phase chooses chip EV vs ICM unless mode/stage are forced. Pure read; the
     caller wraps it in an ocr_frame so one snapshot reuses OCR.
@@ -77,6 +131,20 @@ def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table
         return dict(hand=hand, hero_cards=hero, board=board, table_state=state, tournament=tourney,
                     context=dict(mode=use_mode, stage=use_stage), is_table=False,
                     advice=dict(status='SKIP', reason='NAO_PARECE_MESA_LOBBY', exploratory=True, execution_allowed=False))
+    # PKO: lê o bounty por assento e anexa ao estado (p/ o call-off escalar a caça pelo
+    # bounty do vilão). Só com o overlay armado (bounty_bb) e torneio PKO, p/ não pagar o
+    # custo de OCR fora disso. Best-effort: assentos ilegíveis simplesmente não entram.
+    if bounty_bb and use_mode in ('pko', 'pko_icm'):
+        from table_reading.bounty import read_seat_bounties
+        occ = [s for s, d in (state.get('seats') or {}).items() if d.get('occupied')]
+        bread = read_seat_bounties(crop, seats=occ)
+        state = dict(state, bounties={s: v['value'] for s, v in bread.items() if v['value'] is not None})
+    # HUD VIP (opcional): lê os 8 stats por vilão e anexa a state['hud'] (p/ o exploit
+    # no pós-flop). Custo de template matching por assento -> só quando enable_hud.
+    if enable_hud:
+        from table_reading.hud_reader import read_seat_huds
+        occ = [s for s, d in (state.get('seats') or {}).items() if d.get('occupied')]
+        state = dict(state, hud=read_seat_huds(crop, occ))
     # Postflop guard. A read board (cards) is clearly postflop. A board that was
     # DETECTED but not fully read (incomplete, duplicate, or obstructed with the
     # anchor found) is also postflop and must abstain, not be treated as preflop.
@@ -97,9 +165,22 @@ def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table
     elif hero is None:
         advice = dict(status='ABSTAIN', reason='HERO_CARDS_UNKNOWN', exploratory=True, execution_allowed=False)
     else:
-        advice = advisor.advise_from_reading(state, hero, mode=use_mode, stage=use_stage)
+        # `bounty_bb` (PKO, opcional): só o call-off o usa, e só engata se o torneio
+        # ler como PKO (use_mode pko/pko_icm) e o hero cobrir o shove.
+        advice = advisor.advise_from_reading(state, hero, mode=use_mode, stage=use_stage,
+                                             bounty_bb=bounty_bb)
         if isinstance(advice, dict):
             advice.setdefault('caveats', []).append('SPOT_INFERRED_FROM_BETS')
+    # Contexto ENTRE frames (opcional): atualiza o rastreador do agressor pré-flop e,
+    # no pós-flop, recalcula o conselho com pot_type/iniciativa/range do vilão. Só é
+    # útil a observadores CONTÍNUOS (um frame único não tem histórico pré-flop).
+    if tracker is not None:
+        hkey = (hand or {}).get('hand_id') or (hand or {}).get('hand_number')
+        has_board = bool(board.get('cards'))
+        tracker.update(table_key=table_key, hand_key=hkey, table_state=state, has_board=has_board)
+        if has_board and hero is not None and isinstance(advice, dict) and advice.get('phase') == 'postflop':
+            advice = _postflop_in_context(advisor, tracker, state, hero, board,
+                                          mode=use_mode, stage=use_stage, table_key=table_key)
     return dict(hand=hand, hero_cards=hero, board=board, table_state=state, is_table=True,
                 tournament=tourney, context=dict(mode=use_mode, stage=use_stage), advice=advice)
 

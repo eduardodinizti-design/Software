@@ -1,13 +1,95 @@
 """Testes do conselho pós-flop (heurística fundamentada, exploratória)."""
 import unittest
 
-from postflop_advisor import advise_postflop
+from postflop_advisor import advise_postflop, _implied_bb
 
 
 def state(pot, to_call, stack=40.0):
     return dict(pot=dict(pot_bb=pot), to_call=dict(to_call_bb=to_call),
                 seats=dict(hero=dict(stack_bb=stack, occupied=True)),
                 positions=dict(hero='BTN'))
+
+
+class ImpliedOddsTests(unittest.TestCase):
+    """Implied odds nos draws: o ganho futuro quando o draw completa baixa a equity
+    exigida; limitado pelo stack atrás; draw óbvio (flush) rende menos; river = 0."""
+    OESD = dict(oesd=True, flush_draw=False, combo=False, gutshot=False, backdoor_flush=False)
+    FD = dict(oesd=False, flush_draw=True, combo=False, gutshot=False, backdoor_flush=False)
+
+    def test_helper_street_and_stack_cap(self):
+        self.assertEqual(_implied_bb('FLOP', 10, 40, 5, self.OESD), 5.0)   # 0.5*10, teto 35
+        self.assertEqual(_implied_bb('TURN', 10, 40, 5, self.OESD), 2.5)   # 0.25*10
+        self.assertEqual(_implied_bb('FLOP', 10, 7, 5, self.OESD), 2.0)    # teto = 7-5 atrás
+        self.assertEqual(_implied_bb('RIVER', 10, 40, 5, self.OESD), 0.0)  # river sem implied
+
+    def test_obvious_flush_draw_gets_less_implied(self):
+        self.assertLess(_implied_bb('FLOP', 10, 40, 5, self.FD),          # flush (óbvio)
+                        _implied_bb('FLOP', 10, 40, 5, self.OESD))        # sequência (escondida)
+
+    def test_deep_stack_implied_turns_fold_into_call(self):
+        # OESD (8 outs limpos) em pot odds que SEM implied foldaria; deep -> implied paga.
+        r = advise_postflop(state(10, 5, 40), ['9h', '8c'], ['7h', '6c', '2d'])
+        self.assertEqual(r['recommended'], 'call')
+        self.assertEqual(r['implied_bb'], 5.0)
+        self.assertLess(r['draw_equity'], r['pot_odds'])        # sem implied seria fold
+        self.assertLess(r['pot_odds_implied'], r['pot_odds'])
+
+    def test_short_stack_no_implied_folds(self):
+        # Mesmo draw/pote, mas sem fichas atrás (stack=to_call) -> implied 0 -> fold.
+        r = advise_postflop(state(10, 5, 5), ['9h', '8c'], ['7h', '6c', '2d'])
+        self.assertEqual(r['recommended'], 'fold')
+        self.assertEqual(r['implied_bb'], 0.0)
+
+
+class NarrowRangeTests(unittest.TestCase):
+    """C: estreitar o range do vilão para o range de continuação no board (equity
+    robusta vs não-robusta) é mais preciso que o deságio fixo sobre o range pré-flop."""
+    RNG = ['AK', 'AQ', 'AJ', 'AT', 'A9', 'KQ', 'KJ', 'QJ', 'JT', 'T9', 'TT', '99', '88']
+
+    def test_narrowing_strengthens_range_and_flips_to_fold(self):
+        # 22 (terceiro par) em J-9-5 two-tone (MOLHADO/polarizado). Contra o range
+        # PRÉ-FLOP (muito ar) a equity basta p/ pagar; contra o range de CONTINUAÇÃO
+        # (valor + draws, pouco ar num board molhado) despenca e vira fold — o leak que
+        # o deságio fixo deixava.
+        s = state(10, 3.7)
+        hero, board = ['2s', '2d'], ['Js', '9s', '5h']
+        wide = advise_postflop(s, hero, board, villain_range=self.RNG, narrow_range=False, seed=1)
+        narr = advise_postflop(s, hero, board, villain_range=self.RNG, narrow_range=True, seed=1)
+        self.assertEqual(wide['recommended'], 'call')
+        self.assertIn('RANGE_NOT_NARROWED_POSTFLOP', wide['caveats'])
+        self.assertEqual(narr['recommended'], 'fold')
+        self.assertIn('RANGE_NARROWED_TO_BOARD', narr['caveats'])
+        self.assertLess(narr['equity'], wide['equity'])
+
+    def test_narrow_only_applies_when_facing_a_bet(self):
+        # Passaram a vez (to_call==0): a decisão é por tiers, sem equity de call, então
+        # o estreitamento não se aplica (o range de aposta do vilão nem existe aqui).
+        s = state(10, 0)
+        r = advise_postflop(s, ['6s', '6d'], ['As', '7h', '2c'],
+                            villain_range=self.RNG, narrow_range=True)
+        self.assertNotIn('RANGE_NARROWED_TO_BOARD', r.get('caveats', []))
+
+
+class ExploitHudTests(unittest.TestCase):
+    """Exploit do HUD: a leitura do vilão decide o bluffcatch de aposta grande e
+    nudgeia o limiar das mãos feitas."""
+    FISH = {'vpip': 45, 'pfr': 12, 'cbet': 40, 'foldcbet': 30, 'threebet': 2, 'fold3bet': 70, 'steal': 20, 'cr': 5}
+    LAG = {'vpip': 30, 'pfr': 26, 'cbet': 70, 'foldcbet': 40, 'threebet': 11, 'fold3bet': 40, 'steal': 45, 'cr': 8}
+
+    def test_big_bet_abstains_without_hud(self):
+        r = advise_postflop(state(10, 8), ['As', 'Kc'], ['Ad', '9h', '3d'])   # top pair, pot_odds 0.44
+        self.assertEqual(r['reason'], 'BLUFFCATCH_VS_BIG_BET_NEEDS_READS')
+
+    def test_big_bet_calls_vs_aggressive(self):
+        r = advise_postflop(state(10, 8), ['As', 'Kc'], ['Ad', '9h', '3d'], villain_stats=self.LAG)
+        self.assertEqual(r['recommended'], 'call')
+        self.assertIn('EXPLOIT_HUD_LAG', r['caveats'])
+        self.assertTrue(any('BLUFFCATCH_BIG_BET_EXPLOIT_AGGRO' in c for c in r['caveats']))
+
+    def test_big_bet_folds_vs_passive(self):
+        r = advise_postflop(state(10, 8), ['As', 'Kc'], ['Ad', '9h', '3d'], villain_stats=self.FISH)
+        self.assertEqual(r['recommended'], 'fold')
+        self.assertIn('EXPLOIT_HUD_FISH', r['caveats'])
 
 
 class AbstentionTests(unittest.TestCase):
@@ -53,6 +135,20 @@ class FacingBetTests(unittest.TestCase):
         r = advise_postflop(state(2, 6), ['As', 'Ks'], ['Qs', '7s', '2d'])
         self.assertEqual(r['recommended'], 'fold')
         self.assertLess(r['draw_equity'], r['pot_odds'])
+
+    def test_dirty_outs_flip_draw_call_to_fold(self):
+        # Mesmo OESD (8 outs crus), mesma pot odds (3 p/ pagar num pote de 7 = 30%):
+        # board rainbow LIMPO (clean=8 -> 32%) paga; board com 2 do mesmo naipe suja
+        # 2 outs (Th,5h -> clean=7 -> 28%) e deve FOLDAR. Sem range do vilao.
+        # stack=3 (=to_call) -> sem fichas atrás -> implied odds 0, isolando o efeito
+        # dos outs sujos (senão o implied tornaria o draw pagável mesmo sujo).
+        clean = advise_postflop(state(7, 3, 3), ['9h', '8c'], ['7h', '6c', '2d'])
+        self.assertEqual(clean['recommended'], 'call')
+        self.assertEqual(clean['clean_outs'], 8)
+        dirty = advise_postflop(state(7, 3, 3), ['9h', '8c'], ['7h', '6h', '2d'])
+        self.assertEqual(dirty['recommended'], 'fold')
+        self.assertEqual(dirty['clean_outs'], 7.0)
+        self.assertTrue(any(c.startswith('DIRTY_OUTS_DISCOUNTED') for c in dirty['caveats']))
 
     def test_top_pair_small_bet_calls(self):
         r = advise_postflop(state(10, 3), ['As', 'Qc'], ['Ah', '9h', '3d'])
@@ -171,15 +267,15 @@ class Phase2EquityTests(unittest.TestCase):
 
 
 class PotTypeGatingTests(unittest.TestCase):
-    """3bet pot e multiway pós-flop: abstenção explícita rotulada, não o heurístico."""
+    """3bet pot HU dá HEURÍSTICA (SPR baixo/range mais forte); multiway abstém."""
 
-    def test_three_bet_pot_abstains_labeled(self):
+    def test_three_bet_pot_gives_heuristic(self):
+        # Set em 3bet pot (SPR baixo): comete -> raise, com o rótulo de heurística 3bet.
         r = advise_postflop(state(10, 4), ['3c', '3h'], ['As', '9h', '3d'], pot_type='three_bet')
-        self.assertEqual(r['status'], 'ABSTAIN')
-        self.assertEqual(r['reason'], 'POSTFLOP_THREE_BET_POT_NOT_COVERED')
-        self.assertIsNone(r['recommended'])
-        self.assertEqual(r['made'], 'set')          # mantém a leitura
-        self.assertIn('POSTFLOP_POT_TYPE_UNCOVERED', r['caveats'])
+        self.assertEqual(r['status'], 'ADVICE')
+        self.assertEqual(r['made'], 'set')
+        self.assertEqual(r['recommended'], 'raise')
+        self.assertIn('POSTFLOP_THREE_BET_POT_HEURISTIC', r['caveats'])
         self.assertFalse(r['execution_allowed'])
 
     def test_multiway_abstains_labeled(self):
@@ -200,12 +296,52 @@ class PotTypeGatingTests(unittest.TestCase):
         r = advise_postflop(state(10, 4), ['3c', '3h'], ['As', '9h', '3d'])
         self.assertEqual(r['status'], 'ADVICE')
 
-    def test_uncovered_pot_skips_equity(self):
-        # Otimização: 3bet/multiway abstêm ANTES do Monte Carlo -> equity não é calculada
+    def test_three_bet_heuristic_is_tier_based_no_equity(self):
+        # A heurística de 3bet é por TIER+SPR (não há range de 3bet) -> não roda Monte
+        # Carlo mesmo com um range dado; equity fica None.
         r = advise_postflop(state(10, 4), ['3c', '3h'], ['As', '9h', '3d'],
                             villain_range=['AK', 'KQ'], pot_type='three_bet')
+        self.assertEqual(r['status'], 'ADVICE')
+        self.assertIsNone(r.get('equity'))
+
+    def test_multiway_skips_equity(self):
+        r = advise_postflop(state(10, 4), ['3c', '3h'], ['As', '9h', '3d'],
+                            villain_range=['AK', 'KQ'], pot_type='multiway')
         self.assertEqual(r['status'], 'ABSTAIN')
         self.assertIsNone(r.get('equity'))
+
+
+class ThreeBetPotTests(unittest.TestCase):
+    """Heurística do 3bet pot HU: SPR baixo comete, range mais forte folda marginais,
+    draw sem implied (odds diretas)."""
+
+    def test_top_pair_commits_at_low_spr(self):
+        r = advise_postflop(state(10, 4, 20), ['As', 'Kc'], ['Ad', '9h', '3d'],
+                            pot_type='three_bet')           # spr 2.0
+        self.assertEqual(r['made'], 'top_pair')
+        self.assertEqual(r['recommended'], 'call')
+        self.assertIn('TOP_PAIR_COMMITS_LOW_SPR', r['caveats'])
+
+    def test_top_pair_deep_3bet_folds(self):
+        r = advise_postflop(state(10, 4, 100), ['As', 'Kc'], ['Ad', '9h', '3d'],
+                            pot_type='three_bet')           # spr 10 -> polarizado
+        self.assertEqual(r['recommended'], 'fold')
+        self.assertIn('TOP_PAIR_DEEP_3BET_POLARIZED_FOLD', r['caveats'])
+
+    def test_marginal_folds_vs_3bet_range(self):
+        r = advise_postflop(state(10, 4, 40), ['9s', '8d'], ['As', '9h', '3d'],
+                            pot_type='three_bet')           # segundo par
+        self.assertEqual(r['recommended'], 'fold')
+        self.assertIn('MARGINAL_FOLD_VS_3BET_RANGE', r['caveats'])
+
+    def test_draw_uses_direct_odds_no_implied(self):
+        # OESD deep: no pote de um raise só o implied pagaria; no 3bet pot é só odds
+        # diretas -> aqui 0.32 < pot_odds 0.333 -> fold.
+        r = advise_postflop(state(10, 5, 100), ['9h', '8c'], ['7h', '6c', '2d'],
+                            pot_type='three_bet')
+        self.assertEqual(r['recommended'], 'fold')
+        self.assertIn('DRAW_DIRECT_ODDS_NO_IMPLIED_3BET', r['caveats'])
+        self.assertIsNone(r.get('implied_bb'))              # 3bet nao modela implied
 
 
 class ReviewFixesTests(unittest.TestCase):

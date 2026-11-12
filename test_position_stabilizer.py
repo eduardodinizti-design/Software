@@ -6,7 +6,7 @@ from position_stabilizer import PositionStabilizer
 from table_reading.dealer_button import derive_positions
 from table_reading.seat_layout import CLOCKWISE
 
-FULL = list(CLOCKWISE)                      # 9-handed cheio
+FULL = [s for s in CLOCKWISE if s != 'top_center']   # 9-max cheio (topo = top_left/top_right)
 DEALER = 'hero'
 
 

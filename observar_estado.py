@@ -19,6 +19,7 @@ from table_reading.pipeline import configure_ocr
 from table_reading.automatic_table_crops import detect_table_crops
 from table_advisor import advise_table
 from preflop_advisor import PreflopAdvisor
+from preflop_context import PreflopAggressorTracker
 from state_observer import StateObserver, render
 from action_coordinator import plan_action, describe_plan
 from window_capture_engine import WindowCaptureEngine
@@ -36,6 +37,13 @@ def main(argv=None):
     p.add_argument('--frames', type=int, default=30)
     p.add_argument('--intervalo', type=float, default=2.0)
     p.add_argument('--max-tables', type=int, default=6)
+    p.add_argument('--bounty-bb', type=float, default=None,
+                   help='PKO: valor do bounty em BB p/ o overlay de call-off')
+    p.add_argument('--mode', choices=('chip_ev', 'icm', 'pko', 'pko_icm'), default=None,
+                   help='Forca o modo do torneio (sobrepoe a deteccao por nome)')
+    p.add_argument('--stage', choices=('pre_itm', 'bubble', 'ft', 'mid'), default=None,
+                   help='Forca a fase do torneio')
+    p.add_argument('--hud', action='store_true', help='Le o HUD VIP p/ exploit no pos-flop')
     p.add_argument('--out', default=None)
     p.add_argument('--save-crops', action='store_true')
     p.add_argument('--dry-run-actions', action='store_true',
@@ -48,6 +56,7 @@ def main(argv=None):
                else PreflopAdvisor.from_file(args.ranges))
     engine = WindowCaptureEngine()
     obs = StateObserver()
+    aggr_tracker = PreflopAggressorTracker()   # agressor pré-flop p/ pós-flop em contexto
     outdir = args.out or os.path.join('logs', 'estado',
                                       'sessao-' + time.strftime('%Y%m%d-%H%M%S'))
     os.makedirs(outdir, exist_ok=True)
@@ -68,13 +77,17 @@ def main(argv=None):
             for prop in detect_table_crops(rgb, max_tables=args.max_tables):
                 x, y, w, h = map(int, prop.box)
                 crop = frame[y:y + h, x:x + w]
+                # Chave estável por mesa aceita; crops rejeitados (não-mesa) retornam
+                # cedo no advise_table e NÃO tocam o tracker, então reusar o idx é seguro.
+                key = '%s#%d' % (meta.get('source_key', args.hwnd), idx)
                 try:
-                    result = advise_table(crop, advisor)
+                    result = advise_table(crop, advisor, table_key=key, tracker=aggr_tracker,
+                                          bounty_bb=args.bounty_bb, mode=args.mode, stage=args.stage,
+                                          enable_hud=args.hud)
                 except Exception:                      # noqa: BLE001
                     continue
                 if not result.get('is_table'):
                     continue
-                key = '%s#%d' % (meta.get('source_key', args.hwnd), idx)
                 idx += 1
                 view = obs.observe(result, table_key=key)
                 print('[%02d] %s' % (i, render(view)), flush=True)
