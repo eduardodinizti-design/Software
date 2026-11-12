@@ -430,6 +430,47 @@ class PreflopAdvisor:
         recommended = max(mix, key=lambda m: m['frequency'])['action'] if mix else None
         return dict(base, status='ADVICE', mix=mix, ev=ev, ev_unit=node['evUnit'], recommended=recommended)
 
+    def explain(self, *, hero_cards, hero_position, stack_bb, mode='chip_ev',
+                table_format=None, stage='mid', players=9, spot='open_raise', vs=(), spread=None):
+        """B03 — consulta EXPLICÁVEL. Roda advise() e devolve uma explicação
+        estruturada que LIGA a recomendação à FONTE (sha256 do(s) pack(s) + nó) e
+        mostra EXATAMENTE as aproximações feitas (bucket de stack, stack emprestado,
+        mesa 9-max de referência, profundidade acima do solve). Diagnóstico offline;
+        não captura nem clica. Critério B04/B05: cada recomendação tem fonte, hash e
+        nó; toda aproximação mostra a diferença."""
+        if table_format is None:
+            table_format = 'pko' if mode in ('pko', 'pko_icm') else 'regular'
+        try:
+            hand = hand_key(hero_cards)
+        except Blocked:
+            hand = None
+        adv = self.advise(hero_cards=hero_cards, hero_position=hero_position, stack_bb=stack_bb,
+                          mode=mode, table_format=table_format, stage=stage, players=players,
+                          spot=spot, vs=tuple(vs), spread=spread)
+        node = next((n for n in self.nodes if n.get('id') == adv.get('node_id')), None)
+        requested = dict(mode=mode, table_format=table_format, stage=stage, players=players,
+                         stack_bb=stack_bb, spot=spot, hero=hero_position, vs=list(vs),
+                         spread=spread, hand=hand)
+        source = dict(node_id=adv.get('node_id'), source=adv.get('source'),
+                      validated=adv.get('validated'),
+                      pack_sha256=[s.get('sha256') for s in self.sources] or None,
+                      node_context=(node or {}).get('context'))
+        # DIFERENÇAS exatas entre o contexto pedido e o nó de fonte usado.
+        diffs = {}
+        if adv.get('stack_bucket') is not None and adv.get('stack_bucket') != stack_bb:
+            diffs['stack_bucketed'] = dict(from_bb=stack_bb, to_bucket=adv.get('stack_bucket'))
+        if adv.get('stack_borrowed_from') is not None:
+            diffs['stack_borrowed_from_bb'] = adv.get('stack_borrowed_from')
+        if players != 9:
+            diffs['players_requested_vs_9max_ref'] = players
+        if isinstance(stack_bb, (int, float)) and stack_bb > self.STACK_BUCKETS[-1]:
+            diffs['above_solved_depth_top_bucket'] = self.STACK_BUCKETS[-1]
+        return dict(requested=requested, source=source, differences=diffs,
+                    answer=dict(status=adv.get('status'), recommended=adv.get('recommended'),
+                                mix=adv.get('mix'), ev=adv.get('ev'), reason=adv.get('reason'),
+                                caveats=adv.get('caveats')),
+                    exploratory=True, execution_allowed=adv.get('execution_allowed'))
+
     def advise_first_in(self, **kwargs):
         """First-in (unopened): respeita o REGIME por stack. Curto (<=PUSHFOLD_MAX_BB)
         tenta SHOVE antes do open-raise; mais fundo, open-raise antes do shove. Cada
