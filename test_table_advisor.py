@@ -161,7 +161,10 @@ class AdviseTableTests(unittest.TestCase):
                 noctx = table_advisor.advise_table(self.crop, FakeAdvisor(), table_key='t2')
         self.assertEqual(noctx['advice']['status'], 'ADVICE')          # frame isolado: aconselha
         self.assertEqual(withctx['advice']['phase'], 'postflop')
-        self.assertEqual(withctx['advice']['reason'], 'POSTFLOP_MULTIWAY_NOT_COVERED')
+        # Multiway agora JOGA com penalidade (não abstém): rótulo + nº de oponentes.
+        self.assertEqual(withctx['advice']['opponents'], 2)
+        self.assertTrue(any('MULTIWAY' in c and 'PENALTY' in c
+                            for c in withctx['advice']['caveats']))
         self.assertEqual(withctx['advice']['villain_range_source'], {'reason': 'NOT_HEADS_UP'})
 
     def test_enable_hud_attaches_villain_stats(self):
