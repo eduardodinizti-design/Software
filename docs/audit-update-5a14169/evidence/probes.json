@@ -1,0 +1,514 @@
+{
+  "non_allin_size_as_shove": {
+    "planned_raise_bb": 6,
+    "hero_stack_bb": 60,
+    "target_mult": 6,
+    "nearest_preset": null,
+    "classified_as_shove": true,
+    "scope": "Pure sizing predicate; no drag or input was sent"
+  },
+  "multiway_contract": {
+    "hand": "AQs",
+    "scenario": {
+      "scenario": "open_with_callers",
+      "hero_position": "BTN",
+      "aggressor": "UTG",
+      "limpers": [],
+      "n_limpers": 0,
+      "callers": [
+        "HJ",
+        "CO"
+      ],
+      "n_callers": 2,
+      "raise_levels": [
+        2.5
+      ],
+      "stacks": {
+        "BTN": 25,
+        "UTG": 25,
+        "HJ": 25,
+        "CO": 25,
+        "SB": 25,
+        "BB": 25,
+        "UTG+1": 25,
+        "UTG+2": 25,
+        "LJ": 25
+      },
+      "hero_options": [
+        "fold",
+        "overcall",
+        "squeeze",
+        "reshove"
+      ],
+      "phase": "mid",
+      "supported": true,
+      "reason": null
+    },
+    "inferred": {
+      "spot": "vs_open",
+      "opener": "UTG",
+      "callers": 2
+    },
+    "advice": {
+      "spot": "vs_open",
+      "hero_position": "BTN",
+      "hand": "AQs",
+      "node_id": "chip_ev|mid|25|vs_open|BTN|UTG|-",
+      "source": {
+        "id": "solver",
+        "label": "HRC (chip EV, todos com 25bb)",
+        "version": "hrc_chip_25-2026-10-26"
+      },
+      "validated": true,
+      "exploratory": true,
+      "execution_allowed": false,
+      "stack_bb": 25,
+      "stack_bucket": 25,
+      "stack_borrowed_from": null,
+      "bucketed": false,
+      "players_assumed": 9,
+      "caveats": [
+        "EXPLORATORY_NOT_FOR_EXECUTION",
+        "NVT_REFERENCE_SHORT_STACK_ONLY",
+        "AGGRESSOR_INFERRED_UTG",
+        "MULTIWAY_2_CALLERS_APPROX_VS_OPEN"
+      ],
+      "status": "ADVICE",
+      "mix": [
+        {
+          "action": "three_bet",
+          "frequency": 0.109
+        },
+        {
+          "action": "call",
+          "frequency": 0.891
+        }
+      ],
+      "ev": {
+        "all_in": 1.6545,
+        "three_bet": 1.9003,
+        "call": 1.9104,
+        "fold": 0
+      },
+      "ev_unit": "bb",
+      "recommended": "call",
+      "sizing": {
+        "action": "call",
+        "size_bb": 2.5,
+        "basis": "to_call",
+        "heuristic": false
+      }
+    },
+    "contract": {
+      "source_validated": true,
+      "context_match": true,
+      "observation_confirmed": true,
+      "action_legal": true,
+      "sizing_supported": true,
+      "authority": "VALIDATED",
+      "execution_allowed": true,
+      "blockers": []
+    }
+  },
+  "iso_mix_mismatch": {
+    "hand": "K6s",
+    "advice": {
+      "spot": "open_raise",
+      "hero_position": "BTN",
+      "hand": "K6s",
+      "node_id": "chip_ev|mid|25|open_raise|BTN||-",
+      "source": {
+        "id": "solver",
+        "label": "HRC (chip EV, todos com 25bb)",
+        "version": "hrc_chip_25-2026-10-26"
+      },
+      "validated": true,
+      "exploratory": true,
+      "execution_allowed": false,
+      "stack_bb": 25,
+      "stack_bucket": 25,
+      "stack_borrowed_from": null,
+      "bucketed": false,
+      "players_assumed": 9,
+      "caveats": [
+        "EXPLORATORY_NOT_FOR_EXECUTION",
+        "NVT_REFERENCE_SHORT_STACK_ONLY",
+        "LIMPERS_PRESENT_OPEN_AS_ISO_APPROX",
+        "ISO_CAP_FOLD_FORA_DO_RANGE_TIGHT"
+      ],
+      "status": "ADVICE",
+      "mix": [
+        {
+          "action": "raise",
+          "frequency": 1
+        }
+      ],
+      "ev": {
+        "raise": 0.2028,
+        "fold": 0
+      },
+      "ev_unit": "bb",
+      "recommended": "fold",
+      "sizing": null
+    }
+  },
+  "missing_bets": {
+    "scenario": "unopened",
+    "hero_position": "BTN",
+    "aggressor": null,
+    "limpers": [],
+    "n_limpers": 0,
+    "callers": [],
+    "n_callers": 0,
+    "raise_levels": [],
+    "stacks": {
+      "BTN": 25,
+      "UTG": 25,
+      "HJ": 25,
+      "CO": 25,
+      "SB": 25,
+      "BB": 25,
+      "UTG+1": 25,
+      "UTG+2": 25,
+      "LJ": 25
+    },
+    "hero_options": [
+      "fold",
+      "open_raise",
+      "open_shove"
+    ],
+    "phase": "mid",
+    "supported": true,
+    "reason": null
+  },
+  "empty_observation": {
+    "scenario": "unopened",
+    "hero_position": null,
+    "aggressor": null,
+    "limpers": [],
+    "n_limpers": 0,
+    "callers": [],
+    "n_callers": 0,
+    "raise_levels": [],
+    "stacks": {},
+    "hero_options": [
+      "fold",
+      "open_raise",
+      "open_shove"
+    ],
+    "phase": "mid",
+    "supported": true,
+    "reason": null
+  },
+  "observer_lost_callers": {
+    "before": {
+      "scenario": "open_with_callers",
+      "hero_position": "BTN",
+      "aggressor": "UTG",
+      "limpers": [],
+      "n_limpers": 0,
+      "callers": [
+        "HJ",
+        "CO"
+      ],
+      "n_callers": 2,
+      "raise_levels": [
+        2.5
+      ],
+      "stacks": {
+        "BTN": 25,
+        "UTG": 25,
+        "HJ": 25,
+        "CO": 25,
+        "SB": 25,
+        "BB": 25,
+        "UTG+1": 25,
+        "UTG+2": 25,
+        "LJ": 25
+      },
+      "hero_options": [
+        "fold",
+        "overcall",
+        "squeeze",
+        "reshove"
+      ],
+      "phase": "mid",
+      "supported": true,
+      "reason": null
+    },
+    "after": {
+      "scenario": "open",
+      "hero_position": "BTN",
+      "aggressor": "UTG",
+      "limpers": [],
+      "n_limpers": 0,
+      "callers": [],
+      "n_callers": 0,
+      "raise_levels": [
+        2.5
+      ],
+      "stacks": {
+        "BTN": 25,
+        "UTG": 25,
+        "HJ": 25,
+        "CO": 25,
+        "SB": 25,
+        "BB": 25,
+        "UTG+1": 25,
+        "UTG+2": 25,
+        "LJ": 25
+      },
+      "hero_options": [
+        "fold",
+        "call",
+        "threebet",
+        "reshove"
+      ],
+      "phase": "mid",
+      "supported": true,
+      "reason": null
+    }
+  },
+  "replay": {
+    "out_of_turn": {
+      "status": "OK",
+      "label": "open",
+      "pending": false,
+      "n_raises": 1,
+      "aggressor": "BTN",
+      "limpers": [],
+      "folded": [],
+      "active": [
+        "UTG",
+        "CO",
+        "BTN",
+        "SB",
+        "BB"
+      ],
+      "pot": 4.0,
+      "reopened": true,
+      "contributions": {
+        "UTG": 0.0,
+        "CO": 0.0,
+        "BTN": 2.5,
+        "SB": 0.5,
+        "BB": 1.0
+      },
+      "chip_conservation": true
+    },
+    "underpaid_call": {
+      "status": "OK",
+      "label": "limped",
+      "pending": false,
+      "n_raises": 0,
+      "aggressor": null,
+      "limpers": [
+        "UTG"
+      ],
+      "folded": [],
+      "active": [
+        "UTG",
+        "CO",
+        "BTN",
+        "SB",
+        "BB"
+      ],
+      "pot": 1.6,
+      "reopened": false,
+      "contributions": {
+        "UTG": 0.1,
+        "CO": 0.0,
+        "BTN": 0.0,
+        "SB": 0.5,
+        "BB": 1.0
+      },
+      "chip_conservation": true
+    },
+    "invalid_minraise": {
+      "status": "OK",
+      "label": "open",
+      "pending": false,
+      "n_raises": 1,
+      "aggressor": "UTG",
+      "limpers": [],
+      "folded": [],
+      "active": [
+        "UTG",
+        "CO",
+        "BTN",
+        "SB",
+        "BB"
+      ],
+      "pot": 2.7,
+      "reopened": false,
+      "contributions": {
+        "UTG": 1.2,
+        "CO": 0.0,
+        "BTN": 0.0,
+        "SB": 0.5,
+        "BB": 1.0
+      },
+      "chip_conservation": true
+    },
+    "non_allin_labeled_allin": {
+      "status": "OK",
+      "label": "open",
+      "pending": false,
+      "n_raises": 1,
+      "aggressor": "UTG",
+      "limpers": [],
+      "folded": [],
+      "active": [
+        "UTG",
+        "CO",
+        "BTN",
+        "SB",
+        "BB"
+      ],
+      "pot": 6.5,
+      "reopened": true,
+      "contributions": {
+        "UTG": 5.0,
+        "CO": 0.0,
+        "BTN": 0.0,
+        "SB": 0.5,
+        "BB": 1.0
+      },
+      "chip_conservation": true
+    },
+    "ante": {
+      "status": "OK",
+      "label": "unopened",
+      "pending": false,
+      "n_raises": 0,
+      "aggressor": null,
+      "limpers": [],
+      "folded": [],
+      "active": [
+        "UTG",
+        "CO",
+        "BTN",
+        "SB",
+        "BB"
+      ],
+      "pot": 1.5,
+      "reopened": false,
+      "contributions": {
+        "UTG": 0.0,
+        "CO": 0.0,
+        "BTN": 0.0,
+        "SB": 0.5,
+        "BB": 1.0
+      },
+      "chip_conservation": false
+    }
+  },
+  "close_while_paused_capture_failure": {
+    "control": "PAUSED",
+    "fake_clicks": 1,
+    "closed": true
+  },
+  "synthetic_banner_without_text": {
+    "status": "TOURNAMENT_END",
+    "ranking": null,
+    "sair_box": [
+      225,
+      510,
+      150,
+      40
+    ],
+    "ficar_box": [
+      25,
+      510,
+      150,
+      40
+    ],
+    "close_box": null,
+    "buttons": [
+      [
+        25,
+        510,
+        150,
+        40
+      ],
+      [
+        225,
+        510,
+        150,
+        40
+      ]
+    ]
+  },
+  "itm_without_payouts": {
+    "ts": "2026-11-13T00:27:11.828813+00:00",
+    "event": "tournament_end",
+    "tournament": null,
+    "series": null,
+    "buyin": null,
+    "mode": null,
+    "result": "busted",
+    "ranking": "40/272",
+    "placed": 40,
+    "field": 272,
+    "itm": true,
+    "action": "closed_via_sair",
+    "closed": null,
+    "table_key": null
+  },
+  "default_merge_conflict": {
+    "strict": false,
+    "collision": [
+      {
+        "key": [
+          "chip_ev",
+          "regular",
+          "mid",
+          9,
+          25,
+          "open_raise",
+          "BTN",
+          [],
+          null
+        ],
+        "count": 2,
+        "chosen": "n1",
+        "dropped": [
+          "n1"
+        ],
+        "resolved_by": "first_kept"
+      }
+    ],
+    "answer": {
+      "spot": "open_raise",
+      "hero_position": "BTN",
+      "hand": "AA",
+      "node_id": "n1",
+      "source": "test",
+      "validated": true,
+      "exploratory": true,
+      "execution_allowed": false,
+      "stack_bb": 25,
+      "stack_bucket": 25,
+      "stack_borrowed_from": null,
+      "bucketed": false,
+      "players_assumed": 9,
+      "caveats": [
+        "EXPLORATORY_NOT_FOR_EXECUTION",
+        "NVT_REFERENCE_SHORT_STACK_ONLY"
+      ],
+      "status": "ADVICE",
+      "mix": [
+        {
+          "action": "raise",
+          "frequency": 1.0
+        }
+      ],
+      "ev": {
+        "raise": 2.0,
+        "fold": 0.0
+      },
+      "ev_unit": "bb",
+      "recommended": "raise"
+    }
+  }
+}
