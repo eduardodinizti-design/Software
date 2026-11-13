@@ -39,6 +39,7 @@ from grade_reader import find_buyin_badges
 from table_reading.tournament_end import detect_tournament_end
 from tournament_metrics import record_tournament_end
 from latency_metrics import LatencyMetrics
+from shadow_mode import ShadowMonitor
 
 DEFAULT_RANGES = r'C:\Meus Projetos\Aplicativos\nvt-ranges-validados.json'
 DEFAULT_DEEP = r'C:\Meus Projetos\Aplicativos\nvt-ranges-deep.json'
@@ -289,6 +290,29 @@ def main(argv=None):
     n = 0
     tourneys_closed = set()         # (hwnd, table_key) de torneios já encerrados/fechados
     latency = LatencyMetrics()      # A0: instrumentação de latência real (p50/p95/p99)
+    # Shadow Mode / Monitoring: compara bot x GTO em tempo real e avisa quando o
+    # cérebro sai dos trilhos na sessão (grava logs/shadow/decisoes.jsonl).
+    def _shadow_sink(rec):
+        if rec['verdict'] == 'fora_dos_trilhos':
+            print('[SHADOW] FORA DOS TRILHOS: %s %s %s | GTO=%s acao=%s autoridade=%s'
+                  % (rec.get('hero_cards'), rec.get('position'), rec.get('spot'),
+                     rec.get('gto_recommended'), rec.get('bot_action'), rec.get('authority')),
+                  flush=True)
+    shadow = ShadowMonitor(sink=_shadow_sink)
+
+    def _emit_shadow(result, adv, action, out=None):
+        ts = result.get('table_state') or {}
+        _, health = shadow.observe(
+            frame=n, table=tkey_local, hero_cards=result.get('hero_cards'),
+            position=(ts.get('positions') or {}).get('hero'),
+            stack_bb=adv.get('stack_bb'), to_call_bb=ts.get('to_call_bb'),
+            spot=adv.get('spot'), node_id=adv.get('node_id'), validated=adv.get('validated'),
+            gto_status=adv.get('status'), gto_recommended=adv.get('recommended'),
+            bot_action=action, authority=(out or {}).get('authority'),
+            result_state=(out or {}).get('state'))
+        if health['status'] == 'off_rails':
+            print('[SHADOW] *** CEREBRO FORA DOS TRILHOS *** %d/%d das ultimas decisoes comprometeram ficha contra o GTO'
+                  % (health['off_rails'], health['window']), flush=True)
     try:
         while args.frames == 0 or n < args.frames:
             n += 1
@@ -466,6 +490,8 @@ def main(argv=None):
                         raise_done.add((tkey, hid))
                         print('[%03d] >>> RAISE sequencia: %s' % (n, res.get('reason')
                               or ('preset %sx confirmado=%s' % (res.get('preset'), res.get('confirmed')))), flush=True)
+                        _emit_shadow(result, adv, adv.get('recommended') or 'raise',
+                                     {'authority': 'VALIDATED', 'state': res.get('reason')})
                     continue
                 out = executor.execute(result, br, origin=(x, y), frame_size=(fw, fh),
                                        input_adapter=adapter, validator=validator,
@@ -527,10 +553,12 @@ def main(argv=None):
                         overlay.set_table('mesa %s' % tkey_local, '>>> %s %s (%s)' % (
                             pl['action'], result.get('hero_cards') or '',
                             'DRY' if out['dry_run'] else 'REAL'))
+                    _emit_shadow(result, adv, pl['action'].lower(), out)
                 elif br['status'] == 'EXPERIMENTAL_BUTTON_ROW':
                     # Vez do hero mas NÃO agiu (raise multi-etapa / abstenção / já agiu):
                     # mostra a decisão para a demo.
                     adv = result.get('advice') or {}
+                    _emit_shadow(result, adv, None, out)
                     pos = (result.get('table_state', {}).get('positions') or {}).get('hero')
                     print('[%03d] vez do hero: %s %s | conselho=%s %s | executor: %s' % (
                         n, result.get('hero_cards'), pos, adv.get('status'),
