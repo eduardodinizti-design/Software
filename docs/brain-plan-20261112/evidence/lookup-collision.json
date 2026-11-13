@@ -1,0 +1,27 @@
+{
+  "scope": "SYNTHETIC_LOOKUP_COLLISION_NOT_PRODUCTION_RANGE_AUDIT",
+  "does_not_prove_deployed_packs_conflict": true,
+  "no_capture_or_system_input": true,
+  "cases": [
+    {
+      "input_order": [
+        "SYNTHETIC_OLD",
+        "SYNTHETIC_NEW"
+      ],
+      "chosen_node": "SYNTHETIC_OLD",
+      "action": "raise",
+      "nodes_loaded": 2,
+      "index_keys": 1
+    },
+    {
+      "input_order": [
+        "SYNTHETIC_NEW",
+        "SYNTHETIC_OLD"
+      ],
+      "chosen_node": "SYNTHETIC_NEW",
+      "action": "fold",
+      "nodes_loaded": 2,
+      "index_keys": 1
+    }
+  ]
+}
