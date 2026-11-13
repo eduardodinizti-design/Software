@@ -14,6 +14,8 @@ contrato do pré-flop: status ADVICE/ABSTAIN, `recommended`, métricas e `caveat
 from postflop_eval import classify_board, hand_strength, narrow_to_continuation
 from preflop_equity import required_equity, equity_vs_range, hand_to_combos
 from hud_exploit import classify_villain, exploit_caveats
+from multiway_equity import (apply_multiway_penalty, cbet_bluff_blocked,
+                             count_opponents, penalty_pct)
 
 BASE_CAVEATS = ('EXPLORATORY_NOT_FOR_EXECUTION', 'POSTFLOP_HEURISTIC_NO_SOLVER',
                 'SINGLE_FRAME_NO_VILLAIN_MODEL')
@@ -218,7 +220,8 @@ def _advise_three_bet_pot(info, strength, bclass, caveats, *, pot, to_call,
 
 def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
                     stage='mid', aggressor=None, villain_range=None, pot_type=None,
-                    narrow_range=False, villain_stats=None, iters=4000, seed=0):
+                    narrow_range=False, villain_stats=None, villains=None,
+                    iters=4000, seed=0):
     """Conselho pós-flop para uma leitura. `hero`: 2 strings; `board`: 3-5 strings.
 
     `aggressor` (opcional): quem teve a iniciativa no pré-flop ('hero'/posição), para
@@ -282,8 +285,15 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
     if pot_type == 'three_bet':      # HU 3bet pot (multiway é pego como 'multiway')
         return _advise_three_bet_pot(info, strength, bclass, caveats, pot=pot, to_call=to_call,
                                      hero_stack=hero_stack, spr=spr, street=street)
+    # Nº de oponentes: explícito, senão lido da mesa, senão >=2 se o pote é multiway.
+    n_opp = villains if isinstance(villains, int) and villains > 0 else count_opponents(table_state)
+    if not isinstance(n_opp, int) or n_opp < 1:
+        n_opp = 2 if pot_type == 'multiway' else 1
+    info['opponents'] = n_opp
     if pot_type == 'multiway':
-        return _uncovered_pot('POSTFLOP_MULTIWAY_NOT_COVERED', info, caveats, pot, to_call)
+        # Multiway já NÃO abstém às cegas: segue com PENALIDADE de equity por vilão
+        # extra e BLOQUEIO de blefe de c-bet (>2 oponentes). Camada exploratória.
+        caveats.append('MULTIWAY_%dOPP_EQUITY_PENALTY_%dPCT' % (n_opp, penalty_pct(n_opp)))
 
     # Equity ESTIMADA do hero vs o range do vilão (se dado), Monte Carlo no board com
     # semente fixa -> determinística (mas estimativa). É a Fase 2: CALL quantitativo.
@@ -297,6 +307,11 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
         if vr_cont:
             vr, narrowed = vr_cont, True
     equity = equity_vs_range(hero, vr, board=list(board), iters=iters, seed=seed) if vr else None
+    # Penalidade MULTIWAY: a equity vs UM range superestima a equity vs VÁRIOS.
+    # Reduz -12% (relativo) por vilão extra antes de qualquer decisão de call.
+    if equity is not None and n_opp > 1:
+        equity = apply_multiway_penalty(equity, n_opp)
+        caveats.append('MULTIWAY_EQUITY_PENALTY_%dPCT_%dOPP' % (penalty_pct(n_opp), n_opp))
     haircut = 0.0 if narrowed else _CALL_HAIRCUT
     # Exploit do HUD (opcional): classifica o vilão e nudgeia o limiar de bluffcatch
     # (foldar mais vs passivo/value-heavy; pagar mais largo vs quem blefa). Bounded e
@@ -420,7 +435,10 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
         info.update(recommended='bet', sizing=_size(pot, frac, cap, 'valor por vantagem de range/nuts'),
                     caveats=caveats)
         return info
-    if has_strong_draw:
+    bluff_blocked = cbet_bluff_blocked(n_opp)
+    if bluff_blocked:
+        caveats.append('CBET_BLUFF_BLOCKED_MULTIWAY_%dOPP' % n_opp)
+    if has_strong_draw and not bluff_blocked:
         frac = _bet_fraction(bclass, made, draws)
         caveats.append('SEMI_BLUFF_NEGA_EQUITY_E_CRESCE_POTE')
         info.update(recommended='bet', sizing=_size(pot, frac, cap, 'semi-blefe com draw'),
@@ -434,7 +452,7 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
     # mas vs vilão que FOGE de c-bet (tag folds_to_cbet), blefa com size pequeno (a fold
     # equity é alta). Só o ar — mão média tem showdown value e segue de check.
     if (profile and 'folds_to_cbet' in profile.get('tags', [])
-            and made in ('air', 'overcards')):
+            and made in ('air', 'overcards') and not bluff_blocked):
         info.update(recommended='bet', sizing=_size(pot, 0.4, cap, 'c-bet blefe vs folds_to_cbet'),
                     caveats=caveats + ['EXPLOIT_CBET_BLUFF_VS_FOLDCBET'])
         return info

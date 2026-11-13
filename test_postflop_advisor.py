@@ -293,7 +293,8 @@ class Phase2EquityTests(unittest.TestCase):
 
 
 class PotTypeGatingTests(unittest.TestCase):
-    """3bet pot HU dá HEURÍSTICA (SPR baixo/range mais forte); multiway abstém."""
+    """3bet pot HU dá HEURÍSTICA (SPR baixo); multiway joga COM penalidade de equity
+    por vilão extra e bloqueio de blefe de c-bet (>2 oponentes)."""
 
     def test_three_bet_pot_gives_heuristic(self):
         # Set em 3bet pot (SPR baixo): comete -> raise, com o rótulo de heurística 3bet.
@@ -304,10 +305,14 @@ class PotTypeGatingTests(unittest.TestCase):
         self.assertIn('POSTFLOP_THREE_BET_POT_HEURISTIC', r['caveats'])
         self.assertFalse(r['execution_allowed'])
 
-    def test_multiway_abstains_labeled(self):
+    def test_multiway_plays_with_penalty_label(self):
+        # Multiway já NÃO abstém: joga (set -> raise) com o rótulo de penalidade e
+        # a contagem de oponentes (default 2 quando não informado).
         r = advise_postflop(state(10, 4), ['3c', '3h'], ['As', '9h', '3d'], pot_type='multiway')
-        self.assertEqual(r['reason'], 'POSTFLOP_MULTIWAY_NOT_COVERED')
-        self.assertIsNotNone(r['pot_odds'])         # leitura preservada
+        self.assertEqual(r['status'], 'ADVICE')
+        self.assertEqual(r['made'], 'set')
+        self.assertEqual(r['opponents'], 2)
+        self.assertTrue(any('MULTIWAY' in c and 'PENALTY' in c for c in r['caveats']))
 
     def test_single_raised_still_advises(self):
         r = advise_postflop(state(10, 4), ['3c', '3h'], ['As', '9h', '3d'], pot_type='single_raised')
@@ -330,11 +335,26 @@ class PotTypeGatingTests(unittest.TestCase):
         self.assertEqual(r['status'], 'ADVICE')
         self.assertIsNone(r.get('equity'))
 
-    def test_multiway_skips_equity(self):
-        r = advise_postflop(state(10, 4), ['3c', '3h'], ['As', '9h', '3d'],
-                            villain_range=['AK', 'KQ'], pot_type='multiway')
-        self.assertEqual(r['status'], 'ABSTAIN')
-        self.assertIsNone(r.get('equity'))
+    def test_multiway_applies_equity_penalty(self):
+        # Multiway com range: roda equity COM a penalidade de -12% por vilão extra.
+        full = advise_postflop(state(10, 4), ['3c', '3h'], ['As', '9h', '3d'],
+                               villain_range=['AK', 'KQ'], pot_type='single_raised', villains=1)
+        pen = advise_postflop(state(10, 4), ['3c', '3h'], ['As', '9h', '3d'],
+                              villain_range=['AK', 'KQ'], pot_type='multiway', villains=3)
+        self.assertEqual(pen['status'], 'ADVICE')
+        self.assertIsNotNone(pen.get('equity'))
+        self.assertLess(pen['equity'], full['equity'])     # penalizada < crua
+        self.assertTrue(any('EQUITY_PENALTY_24PCT' in c for c in pen['caveats']))
+
+    def test_multiway_blocks_cbet_bluff_over_two_opponents(self):
+        # Hero com draw forte passando a vez (to_call=0): em HU/3-way semi-blefa;
+        # com 3 oponentes (>2) o blefe de c-bet é BLOQUEADO -> check.
+        s = state(10, 0)                               # to_call = 0 (passaram a vez)
+        bet = advise_postflop(s, ['Jh', 'Th'], ['Qh', '9h', '2c'], pot_type='single_raised', villains=1)
+        blocked = advise_postflop(s, ['Jh', 'Th'], ['Qh', '9h', '2c'], pot_type='multiway', villains=3)
+        self.assertEqual(bet['recommended'], 'bet')    # semi-blefe HU
+        self.assertEqual(blocked['recommended'], 'check')
+        self.assertTrue(any('CBET_BLUFF_BLOCKED' in c for c in blocked['caveats']))
 
 
 class ThreeBetPotTests(unittest.TestCase):
