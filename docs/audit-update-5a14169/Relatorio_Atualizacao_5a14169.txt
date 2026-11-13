@@ -1,4 +1,4 @@
-Auditoria da atualização 5a14169
+Auditoria da atualização 5a14169 e complemento 4687e68
 
 Conclusão: a atualização avançou na organização e nos diagnósticos, mas ainda não cumpre integralmente os Lotes 1 e 2 do plano. A suíte passou; sondas adicionais reproduziram falhas em validade de contexto, replay, roteamento e execução. Leitura antecipada, preparação de decisões e política de presets ainda não foram integradas. Não há homologação nova na máquina local/PPPoker Windows ou capacidade comprovada para seis, doze ou dezesseis mesas.
 
@@ -7,6 +7,7 @@ Base e escopo
 - Repositório eduardodinizti-design/Software, branch fix/audit-a1-a2-safety-gates, commit auditado 5a1416904d4229bad87995227c226688d8c6fc50.
 - Base da revalidação anterior: ace14f6efcb799a277f37bb6c3d901155d08d45b. Nove commits novos, 24 arquivos alterados, 1.785 inserções e 109 remoções.
 - main permanece em 205dbc7ffbfb5f103dc342f4dfce407a3a27915c; ela não contém a atualização examinada.
+- Durante a conclusão entrou 4687e68debe98764c2e6ba3275c626157e9dbad3 na mesma branch, acrescentando latency_metrics.py, seus testes e instrumentação em operar_mesa.py (três arquivos, 183 inserções/5 remoções). Esse complemento também foi revisado em worktree próprio. Os achados de estratégia/execução de 5a14169 não são corrigidos por esse diff; a avaliação de A0 abaixo considera o complemento.
 - Critérios: plano do cérebro, PR #4 (https://github.com/eduardodinizti-design/Software/pull/4), antecipação e presets (https://github.com/eduardodinizti-design/Software/blob/2210101e07df01d28d6506b69505e8d85f059d2d/docs/brain-plan-20261112/ANTECIPACAO_E_PRESETS.md) e revalidação anterior, PR #3 (https://github.com/eduardodinizti-design/Software/pull/3).
 - Executor e acesso GitHub confirmados. HEAD, status e AGENTS.md lidos antes das alterações. Worktree isolado; nenhuma mudança no motor operacional ou nos checkouts anteriores. software-review continua no HEAD e922e33 com seu trabalho local preservado; software-current-audit permanece detached/limpo.
 - Ambiente: Linux, Python 3.12.14, venv isolado já utilizado na auditoria anterior, Tesseract 5.5.0 por subprocesso. Não foi aberta sessão Windows/PPPoker.
@@ -15,7 +16,9 @@ Testes e fontes
 
 | Ensaio novo | Resultado |
 |---|---|
-| python -m unittest discover -v | 848 testes: 839 passaram, 9 pulados, nenhuma falha; 41,087s neste executor |
+| Suíte completa em 5a14169 | 848 testes: 839 passaram, 9 pulados, nenhuma falha; 41,087s neste executor |
+| Suíte completa em 4687e68 | 857 testes: 848 passaram, 9 pulados, nenhuma falha; 43,320s neste executor |
+| test_latency_metrics isolado em 4687e68 | 9/9 passaram; sem uso de cliente Windows |
 | Núcleo estrito de estudo | 16 nós / 2.704 consultas / zero divergências de mix contra o exportado |
 | Matriz do advisor | 10 cenários × 169 classes = 1.690 chamadas, mais cinco sondas de stacks |
 | Sondas específicas desta revisão | Falhas descritas abaixo reproduzidas com estados controlados, predicados puros ou adaptadores passivos |
@@ -139,7 +142,7 @@ O foco continua a máquina local. Nuvem e adaptação Suprema são frentes futur
 
 | Etapa | Situação atual | Próxima entrega verificável |
 |---|---|---|
-| A0 — medir | Logs funcionais; sem distribuição de latência local de ponta a ponta | Tempo de cartas observáveis, leitura pronta, início da vez, fila, revalidação e efeito; p50/p95/p99 e prazos perdidos |
+| A0 — medir | Parcial em 4687e68: coletor limitado, percentis e spans no operador; ainda sem medições da máquina do usuário | Separar leitura/consulta/fila/revalidação/clique e medir resposta desde a vez; conferir extensões descritas abaixo |
 | A1 — ler antes da vez | Não integrado: continue do fast-path permanece antes de advise_table | Confirmar cartas/identidade assim que disponíveis; observar mudanças sem rodar toda a estratégia sempre |
 | A2 — preparar e invalidar | Cache de cartas/HUD não é cache de política contextual | Resultado preparado por mão/street/história/stacks/hash/menu; aposta nova invalida dependências, não necessariamente cartas |
 | A3 — atender simultaneidade | Round-robin sequencial; cursor único | Observação/cálculo seguem durante atendimento de outra mesa; fila por prazo/idade com cancelamento de intenção vencida |
@@ -153,6 +156,16 @@ Presets pós-flop: o leitor atual não interpreta 1/3, 1/2, 2/3 e pote como fra�
 Fold antecipado: primeiro preparar cedo e conferir na vez. Marcar pré-seleção é capacidade separada. Fora do range de open não significa fold universal; BB pode ter check grátis e outros cenários podem permitir call/squeeze. “Mão lixo” não dispensa política contextual nem identidade.
 
 Escala: provar 1 → 2 → 4 → 6 mesas na máquina local, incluindo ações simultâneas e mudanças durante preparação. 12/16 seguem como objetivo, sem throughput certificado nesta auditoria.
+
+Complemento A0: avaliação específica de 4687e68
+
+O novo latency_metrics.py (https://github.com/eduardodinizti-design/Software/blob/4687e68debe98764c2e6ba3275c626157e9dbad3/latency_metrics.py) implementa percentis nearest-rank, janela limitada por série (300 amostras por padrão), descarte de durações negativas/não finitas, spans e contadores. O operador passou a registrar captura, percepcao_cerebro, ciclo e idade_snapshot, com resumo periódico/final. É um avanço concreto sobre 5a14169, que ainda não tinha esse coletor.
+
+O A0 ainda não está completo: a percepção e o cérebro permanecem agrupados; o tempo de read_hand_id anterior ao span, detecção, fila, movimento, revalidação, clique e efeito não têm séries próprias. latencia_resposta e contadores de prazo perdido existem como possibilidades do coletor, mas não são alimentados pelo operador. Não há tempo registrado desde as cartas disponíveis ou desde a detecção da vez do hero, nem identificação por mesa/mão/decisão nas séries agregadas.
+
+idade_snapshot começa após retornar a captura inicial e é registrada depois de executor.execute() retornar, incluindo movimento/revalidação/verificação; não é timestamp do clique nem idade da recaptura final. O caminho RAISE faz continue antes desse registro, ficando fora dessa medida. ciclo é registrado antes do sleep, portanto mede trabalho do ciclo, não intervalo completo de revisita à mesa. Falha de captura faz continue e também não entra nessa série. Registrar o significado exato de cada medida evita interpretar os percentis como resposta operacional ponta a ponta.
+
+Próximo passo A0: timestamps nos limites reais, identificação da decisão, instrumento equivalente para CALL/FOLD/CHECK/RAISE/fechamento, separação trabalho/espera, quantidade de amostras por caminho e coleta local. Percentis de laboratório não substituem amostras no Windows do usuário. A1–A5 continuam pendentes/parciais conforme a tabela; instrumentação não antecipa cartas por si só.
 
 Sequência recomendada de correção e implementação
 
@@ -176,3 +189,5 @@ PYTHONPATH=. python docs/audit-update-5a14169/probe_update.py --pack /caminho/nv
 PYTHONPATH=. python docs/audit-update-5a14169/probe_matrix.py --pack /caminho/nvt-ranges-validados.json --output /tmp/matrix.json
 
 Os scripts de sondagem imprimem o comportamento observado; não corrigem os defeitos nem certificam decisões de poker. A matriz compara classes no mesmo pacote; rótulos sintéticos de ordem/regra testam contratos e não a exatidão da visão. Nenhuma falha reproduzida aqui foi corrigida silenciosamente nesta auditoria.
+
+No checkout complementar 4687e68, a suíte completa e python -m unittest test_latency_metrics -v foram executados novamente; seus logs também acompanham as evidências. O diff complementar foi inspecionado integralmente e não altera os módulos de estratégia/replay/presets examinados nas sondas de 5a14169.
