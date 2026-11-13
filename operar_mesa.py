@@ -38,6 +38,7 @@ from status_overlay import StatusOverlay
 from grade_reader import find_buyin_badges
 from table_reading.tournament_end import detect_tournament_end
 from tournament_metrics import record_tournament_end
+from latency_metrics import LatencyMetrics
 
 DEFAULT_RANGES = r'C:\Meus Projetos\Aplicativos\nvt-ranges-validados.json'
 DEFAULT_DEEP = r'C:\Meus Projetos\Aplicativos\nvt-ranges-deep.json'
@@ -287,6 +288,7 @@ def main(argv=None):
 
     n = 0
     tourneys_closed = set()         # (hwnd, table_key) de torneios já encerrados/fechados
+    latency = LatencyMetrics()      # A0: instrumentação de latência real (p50/p95/p99)
     try:
         while args.frames == 0 or n < args.frames:
             n += 1
@@ -297,7 +299,10 @@ def main(argv=None):
             hwnd = targets[(n - 1) % len(targets)]     # round-robin: 1 janela por ciclo
             ph = per[hwnd]
             executor, validator, verifier = ph['executor'], ph['validator'], ph['verifier']
+            _tcap = time.monotonic()
             frame, meta = engine.capture_frame(hwnd=hwnd)
+            latency.record('captura', (time.monotonic() - _tcap) * 1000)
+            cap_ts = time.monotonic()            # A0: referência p/ idade do snapshot
             if frame is None:
                 time.sleep(max(0.1, args.intervalo - (time.monotonic() - t0)))
                 continue
@@ -356,11 +361,12 @@ def main(argv=None):
                 hkey = hk.get('hand_id') or hk.get('hand_number')
                 override = hero_cache.get((tkey, hkey)) if hkey else None
                 try:
-                    result = advise_table(crop, advisor, stabilizer=stabilizer,
-                                          table_key=tkey, hero_override=override,
-                                          tracker=aggr_tracker, bounty_bb=args.bounty_bb,
-                                          mode=args.mode, stage=args.stage, enable_hud=args.hud,
-                                          read_cache=read_cache)
+                    with latency.span('percepcao_cerebro'):
+                        result = advise_table(crop, advisor, stabilizer=stabilizer,
+                                              table_key=tkey, hero_override=override,
+                                              tracker=aggr_tracker, bounty_bb=args.bounty_bb,
+                                              mode=args.mode, stage=args.stage, enable_hud=args.hud,
+                                              read_cache=read_cache)
                 except Exception as e:                 # noqa: BLE001
                     # NUNCA silencioso (regra do Eduardo: logar TUDO): registra o erro
                     # da leitura/cérebro e PULA p/ a próxima mão/mesa — o fluxo não quebra.
@@ -509,6 +515,7 @@ def main(argv=None):
                         if overlay:
                             overlay.set_table('mesa %s' % tkey_local, '>>> FALLBACK %s' % fb.upper())
                 if out.get('acted'):
+                    latency.note('idade_snapshot', (time.monotonic() - cap_ts) * 1000)
                     pl = out['plan']
                     print('[%03d] >>> AGIU: %s em %s | autoridade=%s estado=%s %s %s' % (
                         n, pl['action'],
@@ -537,6 +544,9 @@ def main(argv=None):
             if not hero_turn_seen and n % 8 == 0:
                 print('[%03d] . vivo | mesas=%d | sua vez: nao | estado=%s'
                       % (n, len(crops), control.state), flush=True)
+            latency.record('ciclo', (time.monotonic() - t0) * 1000)
+            if n % 50 == 0:                      # A0: resumo periódico de latência
+                print(latency.format_report('LATENCIA (A0) @ciclo %d' % n), flush=True)
             time.sleep(max(0.1, args.intervalo - (time.monotonic() - t0)))
     except KeyboardInterrupt:
         print('Encerrado pelo usuario.', flush=True)
@@ -545,6 +555,7 @@ def main(argv=None):
             listener.stop()
         if overlay:
             overlay.stop()
+        print(latency.format_report('LATENCIA (A0) — resumo final'), flush=True)
     return 0
 
 
