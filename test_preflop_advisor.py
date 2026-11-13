@@ -497,10 +497,10 @@ class VsLimpTests(unittest.TestCase):
         self.assertEqual(r['reason'], 'NO_VALIDATED_NODE_FOR_CONTEXT')
 
     def test_vs_limp_borrows_nearest_stack(self):
-        # vs_limp só existe a 25bb; a 10bb a camada heurística empresta o de 25bb
-        # (conselho flagged, não auto-executável) em vez de abster.
+        # vs_limp só existe a 25bb; a 30bb (acima da zona de shove) a camada
+        # heurística empresta o de 25bb (flagged) em vez de abster.
         a = PreflopAdvisor(pack_vs_limp(['AKs'], stack=25))
-        r = a.advise_from_reading(self._sb_limp(hero_stack=10.0), ['As', 'Ks'],
+        r = a.advise_from_reading(self._sb_limp(hero_stack=30.0), ['As', 'Ks'],
                                   mode='chip_ev', stage='mid')
         self.assertEqual(r['status'], 'ADVICE')
         self.assertFalse(r['validated'])
@@ -517,9 +517,10 @@ class FirstInTests(unittest.TestCase):
         self.assertEqual((r['status'], r['recommended']), ('ADVICE', 'all_in'))
 
     def test_borrows_nearest_stack_when_bucket_missing(self):
-        # Camada heurística: sem nó de open em 10bb, pega emprestado o de 25bb —
-        # vira conselho (flagged), mas validated=False (não auto-executável).
-        r = PreflopAdvisor(pack_with_node()).advise_first_in(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=10)
+        # Camada heurística ACIMA da zona de shove: sem nó de open em 30bb, pega
+        # emprestado o de 25bb — conselho flagged, validated=False. (<20bb NÃO
+        # empresta: ver ShoveZoneGuardTests.)
+        r = PreflopAdvisor(pack_with_node()).advise_first_in(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=30)
         self.assertEqual(r['status'], 'ADVICE')
         self.assertFalse(r['validated'])
         self.assertTrue(any('STACK_BORROWED' in c for c in r['caveats']))
@@ -713,6 +714,35 @@ class SourceAndCollisionTests(unittest.TestCase):
         r = a.advise(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=25)
         self.assertEqual((r['node_id'], r['validated']), ('good', True))
         self.assertEqual(a.collisions[0]['resolved_by'], 'validated_over_reference')
+
+
+class ShoveZoneGuardTests(unittest.TestCase):
+    """<20BB: não empresta range de RAISE por proximidade (mini-raise suicida);
+    só push/fold puro. First-in tenta shove antes do open-raise."""
+
+    def test_open_raise_below_20bb_does_not_borrow(self):
+        a = PreflopAdvisor(pack_with_node())      # só BTN open_raise @25 validado
+        r = a.advise(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=15, spot='open_raise')
+        self.assertEqual(r['status'], 'ABSTAIN')
+        self.assertEqual(r['reason'], 'SHOVE_ZONE_PUSHFOLD_ONLY_NO_BORROW')
+
+    def test_open_raise_above_20bb_still_borrows(self):
+        a = PreflopAdvisor(pack_with_node())      # BTN open_raise @25
+        r = a.advise(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=30, spot='open_raise')
+        self.assertEqual(r['status'], 'ADVICE')
+        self.assertEqual(r['stack_borrowed_from'], 25)   # empréstimo permitido fundo
+        self.assertFalse(r['validated'])
+
+    def test_shove_spot_below_20bb_may_borrow(self):
+        a = PreflopAdvisor(shove_pack('open_shove', list(HANDS), 'BTN', (), 25, 'all_in'))
+        r = a.advise(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=15, spot='open_shove')
+        self.assertEqual(r['status'], 'ADVICE')          # push/fold puro pode emprestar
+        self.assertEqual(r['stack_borrowed_from'], 25)
+
+    def test_first_in_below_20bb_without_pushfold_abstains_no_miniraise(self):
+        a = PreflopAdvisor(pack_with_node())      # só open_raise @25, sem nó de shove
+        r = a.advise_first_in(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=15)
+        self.assertEqual(r['status'], 'ABSTAIN')         # nunca um mini-raise emprestado
 
 
 class B08DelegationTests(unittest.TestCase):

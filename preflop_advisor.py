@@ -37,7 +37,14 @@ _PREFLOP_ORDER = ('UTG', 'UTG+1', 'UTG+2', 'LJ', 'HJ', 'CO', 'BTN', 'SB', 'BB')
 # vs_3bet / vs_open_shove ficam de FORA (território de call-off por equity, que é mais
 # preciso que emprestar). open_shove entra para o push/fold curto.
 BORROWABLE_SPOTS = frozenset({'open_raise', 'open_shove', 'vs_open', 'vs_limp'})
+SHOVE_SPOTS = frozenset({'open_shove', 'vs_open_shove'})   # tabelas puras de push/fold
 PUSHFOLD_MAX_BB = 12   # <= isso, first-in tenta SHOVE antes de open-raise
+# ZONA DE SHOVE: abaixo disso o hero está em regime de push/fold. NÃO se pega range
+# emprestada por proximidade de stack para spots de RAISE (open_raise/vs_open/
+# vs_limp) — emprestar uma range de open aqui produz MINI-RAISES SUICIDAS. Só
+# tabelas puras de push/fold (open_shove/vs_open_shove) valem. Além disso, o
+# first-in tenta o SHOVE antes do open-raise nessa zona.
+SHOVE_ZONE_MAX_BB = 20
 
 
 # Catalog stack-distribution profiles by position (UTG..BB), from the engine's
@@ -382,14 +389,20 @@ class PreflopAdvisor:
             table_format = 'pko' if mode in ('pko', 'pko_icm') else 'regular'
         node = self._index.get((mode, table_format, stage, players, bucket, spot, hero_position, tuple(vs), spread))
         borrowed_from = None
-        if node is None and spot in BORROWABLE_SPOTS:
+        # GUARDA DA ZONA DE SHOVE (<20BB): não empresta range de RAISE por proximidade
+        # de stack — isso gerava mini-raises suicidas. Só push/fold puro vale aqui.
+        shove_zone = isinstance(stack_bb, (int, float)) and stack_bb < SHOVE_ZONE_MAX_BB
+        blocked_borrow = shove_zone and spot in BORROWABLE_SPOTS and spot not in SHOVE_SPOTS
+        if node is None and spot in BORROWABLE_SPOTS and not blocked_borrow:
             # Camada heurística: sem nó no bucket exato, PEGA EMPRESTADA a range
             # validada do stack mais próximo (flagged). Vira conselho em vez de
             # abstenção — mas NÃO é auto-executável (validated=False abaixo).
             node, borrowed_from = self._nearest_stack_node(
                 mode, table_format, stage, players, spot, hero_position, tuple(vs), spread, bucket)
         if node is None:
-            return self._abstain('NO_VALIDATED_NODE_FOR_CONTEXT',
+            reason = 'SHOVE_ZONE_PUSHFOLD_ONLY_NO_BORROW' if blocked_borrow \
+                else 'NO_VALIDATED_NODE_FOR_CONTEXT'
+            return self._abstain(reason,
                                  context=dict(mode=mode, stage=stage, stack=bucket, spot=spot,
                                               hero=hero_position, players=players))
         i = self.hands.index(hand)
@@ -459,14 +472,14 @@ class PreflopAdvisor:
                     exploratory=True, execution_allowed=adv.get('execution_allowed'))
 
     def advise_first_in(self, **kwargs):
-        """First-in (unopened): respeita o REGIME por stack. Curto (<=PUSHFOLD_MAX_BB)
-        tenta SHOVE antes do open-raise; mais fundo, open-raise antes do shove. Cada
-        tentativa pode pegar o stack emprestado (camada heurística) — a ordem evita
-        recomendar min-raise onde o certo é jam."""
+        """First-in (unopened): respeita o REGIME por stack. Na ZONA DE SHOVE
+        (<SHOVE_ZONE_MAX_BB) tenta SHOVE antes do open-raise (push/fold puro); mais
+        fundo, open-raise antes do shove. A guarda de zona de shove já impede o
+        empréstimo de ranges de raise aqui — juntas eliminam o mini-raise suicida."""
         kwargs.pop('spot', None)
         kwargs.pop('vs', None)
         stack = kwargs.get('stack_bb')
-        short = isinstance(stack, (int, float)) and stack <= PUSHFOLD_MAX_BB
+        short = isinstance(stack, (int, float)) and stack < SHOVE_ZONE_MAX_BB
         order = ('open_shove', 'open_raise') if short else ('open_raise', 'open_shove')
         result = None
         for spot in order:
