@@ -36,6 +36,8 @@ from window_capture_engine import WindowCaptureEngine
 from table_discovery.pppoker import discover_pppoker
 from status_overlay import StatusOverlay
 from grade_reader import find_buyin_badges
+from table_reading.tournament_end import detect_tournament_end
+from tournament_metrics import record_tournament_end
 
 DEFAULT_RANGES = r'C:\Meus Projetos\Aplicativos\nvt-ranges-validados.json'
 DEFAULT_DEEP = r'C:\Meus Projetos\Aplicativos\nvt-ranges-deep.json'
@@ -51,6 +53,38 @@ def _table_key(x, y):
     """Chave estável de mesa pela origem do crop (robusta a jitter de poucos px).
     NÃO é índice do recorte (que pode reordenar)."""
     return '%dx%d' % (x // 100, y // 100)
+
+
+def _close_tournament_table(frame, crop_box, te, hwnd, adapter, engine, armed):
+    """ROTINA ao cair do torneio: fecha a mesa clicando 'Sair'. Move+clica (o 1º
+    clique só FOCA a janela; por isso move_to antes). Confirma relendo a MESMA
+    região do crop. Em dry-run não clica (só mira). Devolve True se o fechamento
+    foi confirmado (a tela de fim sumiu)."""
+    box = te.get('sair_box')
+    if not box:
+        return False
+    x, y, cbw, cbh = crop_box
+    fh, fw = frame.shape[:2]
+    bx, by, bw, bh = x + box[0], y + box[1], box[2], box[3]
+    rect = rect_frame_to_screen((bx, by, bw, bh), window_rect=_discover_rect(hwnd),
+                                frame_size=(fw, fh))
+    if rect is None:
+        return False
+    cx, cy = int(rect[0] + rect[2] / 2), int(rect[1] + rect[3] / 2)
+    if not armed:
+        return False                                   # dry-run: só detecta/registra
+    try:
+        adapter.move_to(cx, cy)
+        time.sleep(0.15)
+        adapter.click_once(cx, cy)
+        time.sleep(0.9)
+    except Exception as exc:                           # noqa: BLE001
+        print('   (falha ao clicar Sair: %s)' % str(exc)[:80], flush=True)
+        return False
+    f2, _ = engine.capture_frame(hwnd=hwnd)
+    if f2 is None:
+        return True
+    return detect_tournament_end(f2[y:y + cbh, x:x + cbw]).get('status') != 'TOURNAMENT_END'
 
 
 _RANKS = '23456789TJQKA'
@@ -252,6 +286,7 @@ def main(argv=None):
           % len(per), flush=True)
 
     n = 0
+    tourneys_closed = set()         # (hwnd, table_key) de torneios já encerrados/fechados
     try:
         while args.frames == 0 or n < args.frames:
             n += 1
@@ -284,6 +319,27 @@ def main(argv=None):
             for prop in crops:
                 x, y, bw, bh = map(int, prop.box)
                 crop = frame[y:y + bh, x:x + bw]
+                # ROTINA: FIM DE TORNEIO (eliminação). A tela Ranking+Ficar/Sair NÃO é
+                # linha de ação, então o fast-path a pularia p/ sempre (o agente ficava
+                # ocioso numa mesa morta). Detecta ANTES: ao cair, FECHA a mesa (clica
+                # 'Sair') e REGISTRA a métrica de desempenho (ranking/posição/campo).
+                te = detect_tournament_end(crop)
+                if te['status'] == 'TOURNAMENT_END':
+                    tk = _table_key(x, y)
+                    if (hwnd, tk) in tourneys_closed:
+                        continue
+                    closed = _close_tournament_table(frame, (x, y, bw, bh), te, hwnd,
+                                                     adapter, engine, args.arm)
+                    record_tournament_end(
+                        ranking=te.get('ranking'), result='busted', mode=args.mode,
+                        action='closed_via_sair' if args.arm else 'detected_dry_run',
+                        closed=closed, table_key=tk)
+                    tourneys_closed.add((hwnd, tk))
+                    print('[%03d] >>> TORNEIO ENCERRADO (ranking %s) -> %s | metrica registrada'
+                          % (n, te.get('ranking'),
+                             ('SAIR clicado, fechado=%s' % closed) if args.arm else 'DRY-RUN (so detecta)'),
+                          flush=True)
+                    continue
                 # FAST-PATH (agilidade): read_action_buttons custa ~1ms; advise_table
                 # ~330ms. Como o operador só AGE na vez do hero, pulamos a leitura
                 # pesada quando NÃO é a vez — ciclo ocioso cai de ~900ms p/ ~250ms.
