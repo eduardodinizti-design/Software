@@ -715,5 +715,27 @@ class SourceAndCollisionTests(unittest.TestCase):
         self.assertEqual(a.collisions[0]['resolved_by'], 'validated_over_reference')
 
 
+class B08DelegationTests(unittest.TestCase):
+    """infer_live_spot delega ao classificador único (B08): limps deixam de virar
+    first_in cego e os callers não somem."""
+
+    def test_two_limps_are_seen_not_ignored(self):
+        # Dois limps (bet==1.0), sem raise: antes virava first_in 'cego'; agora o
+        # spot é first_in mas com limpers=2 explícito (a camada de iso trata).
+        s = infer_live_spot(dict(
+            positions={'hero': 'BTN', 'a': 'UTG', 'b': 'CO', 'c': 'SB', 'd': 'BB'},
+            bets=[{'seat': 'a', 'bet_bb': 1.0}, {'seat': 'b', 'bet_bb': 1.0},
+                  {'seat': 'c', 'bet_bb': 0.5}, {'seat': 'd', 'bet_bb': 1.0}]))
+        self.assertEqual(s['spot'], 'first_in')
+        self.assertEqual(s.get('limpers'), 2)
+
+    def test_open_with_two_callers_preserves_callers(self):
+        s = infer_live_spot(dict(
+            positions={'hero': 'BB', 'a': 'UTG', 'b': 'HJ', 'c': 'CO', 'd': 'SB'},
+            bets=[{'seat': 'a', 'bet_bb': 2.5}, {'seat': 'b', 'bet_bb': 2.5},
+                  {'seat': 'c', 'bet_bb': 2.5}, {'seat': 'd', 'bet_bb': 0.5}]))
+        self.assertEqual((s['spot'], s['opener'], s['callers']), ('vs_open', 'UTG', 2))
+
+
 if __name__ == '__main__':
     unittest.main()

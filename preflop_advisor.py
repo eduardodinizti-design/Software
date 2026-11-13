@@ -19,6 +19,7 @@ from pathlib import Path
 from preflop_study import hand_key, Blocked
 from preflop_equity import range_from_node, equity_vs_range, required_equity
 from hud_exploit import classify_villain, shove_calloff_delta, exploit_caveats
+from strategy.scenarios import classify as classify_scenario, from_table_state
 
 RAISE_FLOOR_BB = 1.5  # a bet above the BB (1.0) is a raise, not a blind post
 # Detecção de open-shove (all-in de primeira aposta): separa o open/iso normal
@@ -98,52 +99,38 @@ def _opener_is_shove(table_state, opener_position, opener_bet):
 
 
 def infer_live_spot(table_state):
-    """Guess the preflop spot from the bets on the table (approximate, by the
-    nearest-seat bet attribution). If the hero has not raised: no non-hero raiser
-    -> first_in; exactly one -> vs_open (ou vs_open_shove se o open for all-in);
-    else abstain. If the hero already opened:
-    exactly one bet above the hero's -> vs_3bet against that position; else
-    abstain (4bet/multiway). `opener` holds the aggressor (opener or 3bettor)."""
-    positions = table_state.get('positions') or {}
-    hero_bet = 0.0
-    raisers = {}
-    for bet in (table_state.get('bets') or []):
-        seat, amount = bet.get('seat'), bet.get('bet_bb')
-        if not isinstance(amount, (int, float)):
-            continue
-        if seat == 'hero':
-            hero_bet = max(hero_bet, amount)
-            continue
-        if amount > RAISE_FLOOR_BB and seat in positions:
-            raisers[positions[seat]] = max(raisers.get(positions[seat], 0.0), amount)
-    if hero_bet > RAISE_FLOOR_BB:                       # hero has already opened
-        rereraisers = {p: a for p, a in raisers.items() if a > hero_bet + 0.4}
-        if len(rereraisers) == 1:
-            opener = next(iter(rereraisers))
-            # Marca se o re-raise é all-in PROVADO (stack do vilão ~0 ou tamanho de
-            # jam). Um min-3bet com stack atrás NÃO é shove -> allin=False, e o
-            # call-off por equity (que assume shove até o showdown) não é aplicado.
-            allin = _opener_is_shove(table_state, opener, rereraisers[opener])
-            return dict(spot='vs_3bet', opener=opener, allin=allin)
-        return dict(spot='abstain', opener=None,
-                    reason='HERO_OPENED_NO_RERAISE' if not rereraisers else 'MULTIWAY_OR_4BET_NOT_COVERED')
-    if not raisers:
-        return dict(spot='first_in', opener=None)
-    # Group the raises into levels. Callers of a single open sit on one level with
-    # it, so a single level is a (possibly multiway) open the hero can face as
-    # vs_open; two or more levels mean a reraise the pack does not cover cold.
-    levels = _bet_levels(raisers.values())
-    if len(levels) >= 2:
+    """Spot pré-flop para o roteamento ao vivo, DELEGADO ao classificador ÚNICO do
+    B08 (`strategy.scenarios.classify`). Esta função é um ADAPTADOR: converte o
+    cenário explícito (com limpers/callers) para o shape legado usado por
+    `advise_from_reading` ({spot, opener, callers, allin, reason}). Assim há UM só
+    caminho de classificação (laboratório e ao vivo) — limps deixam de virar
+    first_in e os callers não somem. A detecção de SHOVE (stack atrás ~0) segue
+    via `_opener_is_shove`, que o classificador de estrutura não faz."""
+    c = classify_scenario(from_table_state(table_state))
+    scen = c['scenario']
+    opener = c.get('aggressor')
+    top = max(c['raise_levels']) if c.get('raise_levels') else 0.0
+
+    if scen in ('unopened', 'limped'):
+        # Pote não aberto OU só limpado: o hero abre/isola. O roteamento first_in já
+        # trata os limpers (iso) na camada seguinte; o cenário 'limped' é marcado.
+        return dict(spot='first_in', opener=None, limpers=c['n_limpers'])
+    if scen in ('open', 'open_with_callers', 'limp_then_iso'):
+        if _opener_is_shove(table_state, opener, top):
+            return dict(spot='vs_open_shove', opener=opener, callers=c['n_callers'], allin=True)
+        return dict(spot='vs_open', opener=opener, callers=c['n_callers'])
+    if scen == 'vs_3bet':
+        # min-3bet com stack atrás NÃO é shove (allin=False) -> sem call-off por equity.
+        return dict(spot='vs_3bet', opener=opener,
+                    allin=_opener_is_shove(table_state, opener, top))
+    if scen == 'threebet_cold':
         return dict(spot='abstain', opener=None, reason='MULTIWAY_OR_3BET_NOT_COVERED')
-    top = levels[-1]
-    at_top = [p for p, a in raisers.items() if a > top - max(0.5, 0.15 * top)]
-    opener = min(at_top, key=lambda p: _PREFLOP_ORDER.index(p) if p in _PREFLOP_ORDER else 99)
-    callers = len(at_top) - 1
-    # Open all-in (jam de primeira aposta): a decisão do hero é pagar/foldar o
-    # shove, não o vs_open normal (que assume flat/3bet). Roteia p/ vs_open_shove.
-    if _opener_is_shove(table_state, opener, top):
-        return dict(spot='vs_open_shove', opener=opener, callers=callers, allin=True)
-    return dict(spot='vs_open', opener=opener, callers=callers)
+    if scen == 'vs_4bet_or_more':
+        return dict(spot='abstain', opener=None, reason='MULTIWAY_OR_4BET_NOT_COVERED')
+    # pending: hero abriu sem reraise, ou sequência ambígua -> abstém (motivo legado).
+    reason = 'HERO_OPENED_NO_RERAISE' if c.get('reason') == 'HERO_RAISED_NO_RERAISE' \
+        else (c.get('reason') or 'NOT_COVERED')
+    return dict(spot='abstain', opener=None, reason=reason)
 
 
 def _sb_limped(table_state):
