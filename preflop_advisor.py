@@ -20,6 +20,7 @@ from preflop_study import hand_key, Blocked
 from preflop_equity import range_from_node, equity_vs_range, required_equity
 from hud_exploit import classify_villain, shove_calloff_delta, exploit_caveats
 from strategy.scenarios import classify as classify_scenario, from_table_state
+from preflop_tree_book import TreeBook
 
 RAISE_FLOOR_BB = 1.5  # a bet above the BB (1.0) is a raise, not a blind post
 # Detecção de open-shove (all-in de primeira aposta): separa o open/iso normal
@@ -199,8 +200,10 @@ class PreflopAdvisor:
     # Short stacks (5-25) come from the validated NVT pack; 40/100 from the deep
     # reference pack (not HRC-validated, flagged in every answer).
     STACK_BUCKETS = (5, 8, 10, 12, 15, 20, 25, 30, 40)
+    # Clone 0.5: nossos cenários (strategy.scenarios) vs os nomes das árvores solved.
+    _TREE_SCENARIO_ALIASES = {'vs_4bet_or_more': 'vs_4bet'}
 
-    def __init__(self, pack, *, sources=None, strict=True):
+    def __init__(self, pack, *, sources=None, strict=True, tree_book=None):
         if pack.get('format') != 'nvt-range-export' or pack.get('version') != 1:
             raise Blocked('UNSUPPORTED_RANGE_FORMAT')
         self.hands = pack['hands']
@@ -210,6 +213,10 @@ class PreflopAdvisor:
         self.engine_commit = pack.get('engineCommit')
         self.sources = list(sources or [])  # B01: origem(ns) por sha256 (ver manifest())
         self.strict = strict
+        # Clone 0.5: livro de árvores de EV solved (deep/multiway) para spots específicos.
+        # Fonte de ESTUDO (validated=False/execution_allowed=False) — ver advise().
+        # Carga PREGUIÇOSA (só no 1º consult opt-in) p/ não pesar construções em testes.
+        self.tree_book = tree_book
         # B02 — índice de lookup SEM sombra silenciosa. Nós que compartilham a mesma
         # chave são uma COLISÃO: um nó velho JAMAIS pode esconder calado um nó
         # atualizado. Precedência explícita: um nó VALIDADO sempre vence um de
@@ -369,14 +376,43 @@ class PreflopAdvisor:
                 return node, s
         return None, None
 
+    def _trees(self):
+        """TreeBook (Clone 0.5) carregado sob demanda. Diretório ausente -> livro
+        vazio (glob não acha nada), nunca erro. Cacheado (inclusive vazio)."""
+        if self.tree_book is None:
+            try:
+                self.tree_book = TreeBook.from_directory()
+            except Exception:                        # noqa: BLE001 — árvore é opcional
+                self.tree_book = TreeBook()
+        return self.tree_book
+
     def advise(self, *, hero_cards, hero_position, stack_bb, mode='chip_ev',
-               table_format=None, stage='mid', players=9, spot='open_raise', vs=(), spread=None):
+               table_format=None, stage='mid', players=9, spot='open_raise', vs=(), spread=None,
+               scenario=None, aggressor=None, limpers=(), callers=(), effective_stack_bb=None,
+               to_beat=None, to_call=None, facing_all_in=False, tournament_profile=None,
+               reference_tree_study=False):
         """An exploratory recommendation for one preflop spot, or an abstention.
 
         Returns status ADVICE | ABSTAIN | OUT_OF_RANGE with the action mix, EVs,
         the recommended (most frequent) action, and the approximations made. ICM/
         PKO nodes carry a stack spread; absent one, equal stacks ('iguais') are
-        assumed and flagged."""
+        assumed and flagged.
+
+        Camada de ÁRVORE DE REFERÊNCIA (Clone 0.5): para spots específicos deep/
+        multiway (vs_3bet, vs_4bet, open_with_callers, limped) existe uma árvore
+        solved offline. Consulta OPT-IN: só quando o caller informa `scenario`.
+        NUNCA auto-executável (validated=False/execution_allowed=False); se não
+        casar, segue EXATAMENTE o fluxo normal (callers sem `scenario` não mudam)."""
+        if scenario is not None:
+            tree_adv = self._tree_consult(
+                hero_cards=hero_cards, scenario=scenario, hero_position=hero_position,
+                aggressor=aggressor, limpers=limpers, callers=callers, mode=mode, stage=stage,
+                stack_bb=stack_bb,
+                effective_stack_bb=effective_stack_bb if effective_stack_bb is not None else stack_bb,
+                to_beat=to_beat, to_call=to_call, facing_all_in=facing_all_in,
+                tournament_profile=tournament_profile, reference_tree_study=reference_tree_study)
+            if tree_adv is not None:
+                return tree_adv
         bucket, why = self.bucket_stack(stack_bb)
         if bucket is None:
             return self._abstain(why, stack_bb=stack_bb)
@@ -429,6 +465,63 @@ class PreflopAdvisor:
             ev[act] = values[i] if values is not None and len(values) == 169 else None
         recommended = max(mix, key=lambda m: m['frequency'])['action'] if mix else None
         return dict(base, status='ADVICE', mix=mix, ev=ev, ev_unit=node['evUnit'], recommended=recommended)
+
+    def _tree_consult(self, *, hero_cards, scenario, hero_position, aggressor, limpers,
+                      callers, mode, stage, stack_bb, effective_stack_bb, to_beat, to_call,
+                      facing_all_in, tournament_profile, reference_tree_study):
+        """Consulta o TreeBook (Clone 0.5) e devolve um conselho NÃO-executável, ou
+        None (sem árvore -> o advise segue o fluxo normal). Cenário traduzido dos
+        nossos nomes (strategy.scenarios) p/ os das árvores."""
+        book = self._trees()
+        if not getattr(book, 'records', None):
+            return None
+        tree_scenario = self._TREE_SCENARIO_ALIASES.get(scenario, scenario)
+        try:
+            hand = hand_key(hero_cards)
+        except Blocked:
+            return None            # cartas inválidas: deixa o fluxo normal abster
+        ctx = dict(scenario=tree_scenario, hero_position=hero_position, aggressor=aggressor,
+                   limpers=list(limpers or ()), callers=list(callers or ()),
+                   mode=mode, stage=stage, effective_stack_bb=effective_stack_bb,
+                   to_beat=to_beat, to_call=to_call, facing_all_in=facing_all_in,
+                   tournament_profile=tournament_profile,
+                   reference_tree_study=reference_tree_study)
+        node = book.lookup(hero_cards, ctx)
+        if node is None:
+            return None
+        return self._tree_answer(node, hero_cards, hand, scenario, hero_position,
+                                 stack_bb, effective_stack_bb)
+
+    def _tree_answer(self, node, hero_cards, hand, scenario, hero_position,
+                     stack_bb, effective_stack_bb):
+        """Monta o conselho de árvore no MESMO contrato do advise(). SEMPRE
+        validated=False e execution_allowed=False: o operador trata como estudo
+        (sombra) e NÃO clica. NÃO projeta all-in de árvore curta em stack fundo
+        (reinterpretação fica no executor, que aqui nunca roda)."""
+        options = node['options']
+        active = [o for o in options if o['frequency'] > 0]
+        recommended = max(options, key=lambda o: o['frequency'])['action'] if options else None
+        tree_depth = node['context']['effective_stack_bb']
+        caveats = ['CONTEXTUAL_TREE_REFERENCE', 'UNVALIDATED_REFERENCE_RANGE']
+        if node.get('research_only'):
+            caveats.append('STUDY_ONLY_TREE_NOT_CONVERGED')
+        if tree_depth != effective_stack_bb:
+            caveats.append('TREE_DEPTH_%gBB_OBSERVED_%gBB' % (tree_depth, effective_stack_bb))
+        return dict(
+            status='ADVICE', phase='preflop', origin='CONTEXTUAL_TREE_REFERENCE',
+            spot=scenario, hero_position=hero_position, hand=hand, hero_cards=list(hero_cards),
+            node_id=node['id'], source=node['source'], source_sha256=node['sha256'],
+            validated=False, solver_validated=False, source_validated=False,
+            execution_allowed=False, exploratory=True,
+            stack_bb=stack_bb, stack_bucket=tree_depth, effective_stack_bb=effective_stack_bb,
+            bucketed=tree_depth != effective_stack_bb,
+            mix=[dict(action=o['action'], frequency=o['frequency']) for o in active],
+            recommended=recommended,
+            ev={o['action']: o.get('reference_ev_bb') for o in options},
+            ev_unit='reference_bb_relative_to_fold',
+            reference_reasons=node.get('reference_reasons'),
+            tree_quality=node.get('quality'), research_only=node.get('research_only'),
+            caveats=caveats)
 
     def explain(self, *, hero_cards, hero_position, stack_bb, mode='chip_ev',
                 table_format=None, stage='mid', players=9, spot='open_raise', vs=(), spread=None):
