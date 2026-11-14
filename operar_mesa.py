@@ -40,6 +40,7 @@ from table_reading.tournament_end import detect_tournament_end
 from tournament_metrics import record_tournament_end
 from latency_metrics import LatencyMetrics
 from shadow_mode import ShadowMonitor
+from anticipation import AnticipationStore, available_actions, TurnEpochTracker
 
 DEFAULT_RANGES = r'C:\Meus Projetos\Aplicativos\nvt-ranges-validados.json'
 DEFAULT_DEEP = r'C:\Meus Projetos\Aplicativos\nvt-ranges-deep.json'
@@ -224,6 +225,10 @@ def main(argv=None):
                    help='Comeca JA ARMADO (RUNNING), sem precisar do Ctrl+Alt+R. '
                         'Ctrl+Alt+P ainda pausa e Ctrl+Alt+D desabilita a qualquer momento.')
     p.add_argument('--no-hotkeys', dest='hotkeys', action='store_false')
+    p.add_argument('--antecipar', action='store_true',
+                   help='A1: reaproveita a decisao SEGURA (fold/check) ja computada entre '
+                        'frames da MESMA vez do hero, pulando o cerebro (~330ms) em revisitas. '
+                        'Nunca antecipa call/raise. Default off.')
     args = p.parse_args(argv)
 
     import os
@@ -290,6 +295,13 @@ def main(argv=None):
     n = 0
     tourneys_closed = set()         # (hwnd, table_key) de torneios já encerrados/fechados
     latency = LatencyMetrics()      # A0: instrumentação de latência real (p50/p95/p99)
+    # A1 (antecipação, só com --antecipar): reaproveita a decisão SEGURA entre frames
+    # da MESMA vez do hero. Época = cada vez que a ação (re)chega à mesa; dentro de uma
+    # época o adversário NÃO pode agir (é a vez do hero), então a decisão fica congelada
+    # e reusá-la é seguro. O store trava fold/check; call/raise sempre recomputam.
+    anticip = AnticipationStore()
+    anticip_turns = TurnEpochTracker()   # A2: debounce da vez (pisca da linha de botões)
+    anticip_payload = {}            # (tkey, hkey, época) -> (result, adv) p/ pular advise_table
     # Shadow Mode / Monitoring: compara bot x GTO em tempo real e avisa quando o
     # cérebro sai dos trilhos na sessão (grava logs/shadow/decisoes.jsonl).
     def _shadow_sink(rec):
@@ -348,13 +360,17 @@ def main(argv=None):
             for prop in crops:
                 x, y, bw, bh = map(int, prop.box)
                 crop = frame[y:y + bh, x:x + bw]
+                tkey_local = _table_key(x, y)
+                tkey = '%x:%s' % (hwnd, tkey_local)    # chave GLOBAL (isola entre janelas)
                 # ROTINA: FIM DE TORNEIO (eliminação). A tela Ranking+Ficar/Sair NÃO é
                 # linha de ação, então o fast-path a pularia p/ sempre (o agente ficava
                 # ocioso numa mesa morta). Detecta ANTES: ao cair, FECHA a mesa (clica
                 # 'Sair') e REGISTRA a métrica de desempenho (ranking/posição/campo).
                 te = detect_tournament_end(crop)
                 if te['status'] == 'TOURNAMENT_END':
-                    tk = _table_key(x, y)
+                    tk = tkey_local
+                    anticip.invalidate(tkey)           # mesa morta: esquece preparações
+                    anticip_turns.close(tkey)
                     if (hwnd, tk) in tourneys_closed:
                         continue
                     closed = _close_tournament_table(frame, (x, y, bw, bh), te, hwnd,
@@ -374,29 +390,58 @@ def main(argv=None):
                 # pesada quando NÃO é a vez — ciclo ocioso cai de ~900ms p/ ~250ms.
                 # (Trade-off: sem advise_table fora da vez, não se rastreia o agressor
                 #  pré-flop entre frames; a decisão na vez relê as apostas do frame atual.)
-                if read_action_buttons(crop)['status'] != 'EXPERIMENTAL_BUTTON_ROW':
+                br0 = read_action_buttons(crop)
+                if br0['status'] != 'EXPERIMENTAL_BUTTON_ROW':
+                    anticip_turns.on_nonturn(tkey)     # A2: pisca isolado NÃO fecha a época
                     continue
                 hero_turn_seen = True
-                tkey_local = _table_key(x, y)
-                tkey = '%x:%s' % (hwnd, tkey_local)    # chave GLOBAL (isola entre janelas)
                 # Memória de cartas do hero por mão (imutáveis): fallback quando um
                 # frame não lê, evitando HERO_CARDS_UNKNOWN por falha pontual.
                 hk = read_hand_id(crop)
                 hkey = hk.get('hand_id') or hk.get('hand_number')
+                # A1/A2 (época de decisão): a vez está presente. O tracker incrementa a
+                # época só quando a vez (re)abre de verdade (após `debounce` visitas fora)
+                # ou a mão muda — um pisca isolado mantém a época -> reusa em vez de
+                # recomputar. Dentro da época o vilão não pode agir: decisão congelada.
+                epoch = anticip_turns.on_turn(tkey, hkey)
                 override = hero_cache.get((tkey, hkey)) if hkey else None
-                try:
-                    with latency.span('percepcao_cerebro'):
-                        result = advise_table(crop, advisor, stabilizer=stabilizer,
-                                              table_key=tkey, hero_override=override,
-                                              tracker=aggr_tracker, bounty_bb=args.bounty_bb,
-                                              mode=args.mode, stage=args.stage, enable_hud=args.hud,
-                                              read_cache=read_cache)
-                except Exception as e:                 # noqa: BLE001
-                    # NUNCA silencioso (regra do Eduardo: logar TUDO): registra o erro
-                    # da leitura/cérebro e PULA p/ a próxima mão/mesa — o fluxo não quebra.
-                    print('[%03d] ERRO advise_table mesa(%d,%d): %s -> pula p/ proxima'
-                          % (n, x, y, str(e)[:90]), flush=True)
-                    continue
+                # A1: REUSO. Se já há decisão SEGURA (fold/check) preparada p/ esta mesma
+                # vez (mesma época), pula o cérebro (~330ms). O store revalida: cartas
+                # batendo + ação ainda oferecida AGORA. call/raise/pós-flop nunca entram
+                # no store -> recomputam. Só com --antecipar.
+                reuse = None
+                if args.antecipar and hkey is not None and (tkey, hkey, epoch) in anticip_payload:
+                    reuse = anticip.take(tkey, (hkey, epoch), epoch,
+                                         available_actions(br0.get('buttons')), override)
+                if reuse is not None:
+                    result, _ = anticip_payload[(tkey, hkey, epoch)]
+                    latency.incr('antecipado')
+                    print('[%03d] A1 ANTECIPADO: reusa %s (mesa %s epoca %d) sem repagar o cerebro'
+                          % (n, reuse['action'].upper(), tkey_local, epoch), flush=True)
+                else:
+                    try:
+                        with latency.span('percepcao_cerebro'):
+                            result = advise_table(crop, advisor, stabilizer=stabilizer,
+                                                  table_key=tkey, hero_override=override,
+                                                  tracker=aggr_tracker, bounty_bb=args.bounty_bb,
+                                                  mode=args.mode, stage=args.stage, enable_hud=args.hud,
+                                                  read_cache=read_cache)
+                    except Exception as e:                 # noqa: BLE001
+                        # NUNCA silencioso (regra do Eduardo: logar TUDO): registra o erro
+                        # da leitura/cérebro e PULA p/ a próxima mão/mesa — o fluxo não quebra.
+                        print('[%03d] ERRO advise_table mesa(%d,%d): %s -> pula p/ proxima'
+                              % (n, x, y, str(e)[:90]), flush=True)
+                        continue
+                    # A1: guarda a decisão SEGURA desta vez p/ reusar em revisitas da mesma
+                    # época. prepare() só aceita fold/check pré-flop ADVICE (nunca fold de
+                    # premium); o payload guarda o result inteiro p/ o downstream intacto.
+                    if args.antecipar and result.get('is_table') and hkey is not None:
+                        _adv = result.get('advice') or {}
+                        if anticip.prepare(tkey, (hkey, epoch), _adv, epoch,
+                                           result.get('hero_cards'), is_premium=_is_premium):
+                            anticip_payload[(tkey, hkey, epoch)] = (result, _adv)
+                            while len(anticip_payload) > 256:
+                                anticip_payload.pop(next(iter(anticip_payload)))
                 if not result.get('is_table'):
                     continue
                 if hkey and result.get('hero_cards'):
