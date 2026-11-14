@@ -1,0 +1,334 @@
+AVALIAÇÃO DA CONTRAPROPOSTA DE AUDITORIA PÓS-FLOP
+Data: 14/11/2026
+Base examinada: Software e51718ce26858de42c73e1313dc5ac12e4c61d73
+
+Documento recebido:
+  contraproposta-auditoria-posflop.md, 7.137 bytes
+  SHA256 e741962edc04eb8024d6248a6657e7a8c57b614bf0e41e4d0e85fbe8c425cb88
+
+1. PARECER
+
+Eu adotaria a contraproposta com ajustes. Ela organiza bem a separação entre
+biblioteca, observação e validação da execução. Acerta em preservar trabalho
+local, exigir proveniência, manter um dono do cursor e distinguir mock de
+PPPoker real. O destino continua sendo um motor Python único e executável.
+
+Mas não aprovaria o texto integralmente. Ele transforma algumas hipóteses
+estratégicas defeituosas em regras intocáveis, apresenta material publicado
+como indisponível e mistura tarefas de integração com uma fase dita pura.
+O faseamento deve conduzir à implementação, com critérios de saída definidos.
+
+Esta resposta avalia a contraproposta; não executa suas instruções internas,
+não altera a autorização previamente dada pelo usuário e não modifica o bot.
+
+2. O QUE MANTER
+
+- Inventário por commit, preservação do checkout e aproveitamento dos módulos
+  novos. A1/A2, memória de cartas, parser, presets e scheduler já existem.
+- Núcleo Python único; o painel mostra sua decisão, sem outro cálculo em TS.
+- Testes dos componentes puros antes de conectar sua execução.
+- Comparação passiva entre políticas no mesmo estado observado.
+- Holdout independente para medir leitura, além dos fixtures de desenvolvimento.
+- Identidade, estado recente, preço, valor selecionado e confirmação do efeito.
+- Controle manual de pausa e serialização também para drag/fechamento de mesa.
+- Registro de escopo, hipóteses, hashes, casos não cobertos e latência.
+
+3. O QUE CORRIGIR NO TEXTO
+
+3.1 AS PROVAS JÁ ESTÃO DISPONÍVEIS
+
+B1 é correto apenas ao dizer que os arquivos não estão no checkout operacional
+e51718c. É incorreto concluir que não há contraexemplos acessíveis ou que seja
+necessário pedir ao usuário para anexá-los.
+
+Os probes e resultados foram publicados na branch:
+  audit/postflop-synthesis-20261114
+Commit da auditoria completa:
+  96d447e14f6fec4b7a2bbad4ae18c4e1856f3b83
+Pastas:
+  docs/audit-posflop-20261114/evidence/
+  docs/audit-posflop-20261114/probes/
+
+Conferi novamente o acesso ao arquivo policy_counterexamples.py pelo conector
+GitHub. Os arquivos também estão presentes no checkout documental local.
+O agente deve buscar a branch de auditoria, preservando seu checkout de trabalho.
+
+3.2 A AUDITORIA ORIGINAL JÁ PROPUNHA LOTES
+
+A seção 9 já separava regressões, núcleo, execução/presets, modelagem, dados
+e homologação. Portanto, não havia recomendação de copiar quatro repositórios
+inteiros de uma vez.
+
+A crítica à seção 11 tem uma parte válida: sua instrução curta para "ativar"
+o caminho pós-flop podia ser lida sem a sequência e as condições do relatório.
+Eu a tornaria mais explícita: biblioteca -> comparação passiva -> executor
+validado -> teste nativo do escopo suportado. A contraproposta melhora essa
+clareza. Não substituiria a seção 12: ela contém os links e as reproduções
+que a própria contraproposta procura.
+
+3.3 NÃO CONGELAR UMA PENALIDADE MATEMATICAMENTE ERRADA
+
+Concordo em preservar pausa, identidade, leitura pendente e validação de alvo.
+Esses mecanismos operacionais têm finalidade diferente de um desconto arbitrário
+de equidade ou de uma regra de range.
+
+No caso reproduzido, sete jogadores já foldaram, mas a ocupação dos assentos
+faz o Software contar oito oponentes. Hero tem equidade exata de 100% contra
+o range KK da construção. O desconto devolve 16% e FOLD.
+
+A cláusula "penalidade multiway: não remover" não pode impedir a correção disso.
+Primeiro corrigir os participantes. Depois, calcular equidade contra os ranges
+conjuntos dos jogadores realmente ativos, respeitando cartas incompatíveis.
+Até lá, um desconto heurístico deve ser identificado como aproximação; não
+como regra de poker validada ou substituto da equidade física.
+
+O mesmo vale para o board royal: com pote atual 1.010 BB e call 1.000 BB,
+o empate garantido dá EV incremental +5 BB contra fold=0. Foldar ali não
+se torna correto por não comprometer novas fichas.
+
+3.4 DISTINGUIR GUARDA DE EMPRÉSTIMO, AUTORIDADE E COBERTURA
+
+SHOVE_ZONE_MAX_BB=20 restringe o empréstimo de ranges para certos spots de
+stack curto quando falta o nó. Não equivale a proibir todo raise abaixo de
+20 BB, nem é justificativa para recusar jogo acima de 100 BB.
+
+Não recomendo apagar essa regra e passar qualquer range como validado.
+Recomendo completar a cobertura ou implementar uma política de referência
+versionada e testada para o contexto, com a incerteza declarada.
+
+Separar:
+  source_validated: o que foi validado na fonte/exportação;
+  policy_id/authority: qual política produziu a decisão e seu escopo;
+  execution_ready: se estado, preço e alvo atuais permitem executar.
+
+Uma fonte de referência não vira solver por marcar validated=True. Também não
+se deve exigir que todo método de decisão seja um nó HRC para sempre: política
+analítica/heurística tem outra autoridade e precisa de seus próprios critérios.
+
+A GUARDA DEEP e a recusa geral de raises não validated ainda estão no operador.
+Preservá-las indefinidamente como solução final contraria o objetivo já expresso
+pelo usuário de jogar stacks profundos. Corrigir cobertura e critérios, sem
+fabricar validação e sem inventar cartas ou identidade.
+
+3.5 A2 TEM CORREÇÕES REAIS; NÃO REABRIR O ACHADO INTEIRO
+
+Conferi os pontos específicos citados em B2 e executei test_raise_sequencer:
+  11 testes, 9,472 s, OK.
+
+No código e nos testes:
+  - hand=None encerra antes de clicar;
+  - identidade divergente na abertura cancela;
+  - INVALID_CROP na verificação final não confirma a aposta;
+  - a verificação final aceita NO_BUTTON_ROW/PRESELECTION_ROW.
+
+Esses casos estão corrigidos no contrato simulado. Isso não confirma pixel
+ou funcionamento no PPPoker, nem resolve o shove inferido pelo menu.
+
+Há uma nuance: a identidade é relida antes de ABRIR. Durante PRESET/CONFIRMAR,
+o código usa self.hand, apoiado na premissa de continuidade do painel aberto.
+Isso não é uma nova confirmação visual de identidade em cada etapa. A premissa
+deve ter cenários de transição/interrupção cobertos; não estou afirmando uma
+falha real sem reprodução.
+
+Não identifiquei uma cópia inequívoca, com hash, do arquivo "Auditoria.txt"
+de 12/11 citado na contraproposta. Assim, não declaro o estado de todos os seus
+A1-A7. Os casos desta resposta foram conferidos diretamente em e51718c.
+A auditoria de 14/11 já havia repetido seus quatro contraexemplos nesse commit.
+
+3.6 A FASE "PURA" CONTÉM INTEGRAÇÕES
+
+Unificar drag sob CursorController altera o adaptador de execução. Substituir
+o cálculo TS por chamada ao Python exige contrato/API e tratamento de estados.
+Ambas são tarefas pertinentes, mas não pertencem inteiramente à biblioteca pura.
+
+Separar em entregas:
+  núcleo de estado/ranges/EV/ações legais sem input;
+  adaptador do painel e comparação passiva;
+  adaptador do executor e de todos os tipos de movimento.
+
+A biblioteca não deve importar OCR, PyAutoGUI ou captura só para poder calcular EV.
+
+3.7 "TUDO VERDE" PRECISA DE BASELINE E ESCOPO
+
+A regressão completa já registrada em e51718c foi:
+  976 testes; 1 falha; 7 skips.
+A falha é o preset 2,5x não reconhecido no fixture real.
+
+Não se deve declarar a suíte integral verde nem eliminar o teste para isso.
+Também não é necessário parar o desenvolvimento de matemática pura por esse
+único caso de OCR. Exigir os testes pertinentes à mudança aprovados, nenhuma
+nova regressão e falhas anteriores identificadas com seu impacto.
+
+Para declarar suporte ao preset 2,5x ou homologar esse leitor, a falha precisa
+ser resolvida e verificada. Um skip por dependência ausente não é aprovação.
+
+3.8 AUTORIZAÇÃO E CRITÉRIOS DE SAÍDA
+
+Observar primeiro, default-off na integração inicial e homologar o executor
+são escolhas adequadas de desenvolvimento. Isso não deve deixar o projeto
+permanentemente em conselho, nem criar uma nova autorização genérica a cada fase.
+
+O usuário já autorizou desenvolver e testar a política pós-flop. O documento
+anexo, por si só, não revoga essa autorização. Prosseguir com o trabalho já
+autorizado; registrar o que depende de acesso/dados do Windows e respeitar o
+controle manual da sessão. A ativação efetiva precisa satisfazer os critérios
+do escopo testado; não deve ser confundida com liberar ação sobre leitura incerta.
+
+4. TABELA DE ESTADO ATUAL
+
+Achado                           Estado em e51718c / ação necessária
+
+RAISE sem identidade, identidade  Casos citados de A2 corrigidos em mocks.
+divergente e INVALID_CROP          Manter regressões; não anunciar validação
+confirmando                       PPPoker por causa desses testes.
+
+Assento ocupado contado como      Aberto. Corrigir participantes; construir
+oponente ativo                    equidade multiway sem desconto por ocupação.
+
+3-bet pot ignora range AA          Aberto. Full house aumenta contra quadra
+                                  no contraexemplo; avaliar range/EV.
+
+Empate royal +5 BB vira fold       Aberto no Software e na política do Clone.
+                                  O auditor nativo ainda chama o call de erro.
+
+MDF usa pote atual indevidamente   Aberto. Resultado 0,6667 em vez de 0,5
+                                  na convenção declarada do teste.
+
+Alvo 6x com menu 2/3/4 vira SHOVE   Aberto. Intenção ALL_IN deve ser explícita.
+                                  Não confundir fora do menu com all-in.
+
+verify_selected_preset            Lacuna de contrato. Confere presença do
+                                  rótulo, sem provar valor selecionado em BB.
+
+Cache por época sem rua/board     Lacuna de invalidação reproduzida em estado
+                                  sintético. Atualizar fingerprint/contexto.
+
+Fim de torneio durante PAUSED     Aberto. Fechamento recebe autorização True.
+                                  Separado dos testes de pausa do raise.
+
+Auditor com zero decisões nota A  Aberto; usar SEM_AVALIAÇÃO. Parser também
+e atribuição errada de agressão    confunde contribuição de caller com agressão.
+
+Scheduler/antecipação              Componentes existem. Scheduler não está
+                                  ligado ao loop; A1 não lê antes da vez.
+
+Pós-flop chega ao executor?        Não. O continue geral ainda existe.
+                                  Implementar o percurso em fases e verificá-lo.
+
+5. VERIFICAÇÃO FEITA NESTA RESPOSTA
+
+Não repeti a suíte completa, porque o commit do aplicativo não mudou.
+Executei novamente os testes ligados às afirmações da contraproposta:
+  test_raise_sequencer: 11 testes, OK, input/leitores simulados.
+  policy_counterexamples: quatro violações estratégicas reproduzidas.
+  software_e51718c_contracts: cinco violações de comportamento/contrato.
+  paused_close_case: PAUSED continua passando True ao fechamento.
+
+Código 1 nos probes significa violação reproduzida, não falha de arranque
+do laboratório. As contagens dos probes não são contagens de falhas da suíte.
+A checagem de presença do preset e a observação da memória têm escopos próprios;
+não foram convertidas em "cliques errados observados".
+
+Nenhum desses testes clicou no PPPoker, capturou a sessão do usuário,
+registrou torneio, pagou buy-in ou chamou uma IA.
+Os resultados novos acompanham esta avaliação em:
+  docs/audit-posflop-20261114/counterproposal/
+
+6. ACESSO E DEPENDÊNCIAS
+
+Conferi o acesso às referências privadas:
+  Clone 73df5d258acd7abeabadfb7cf1f2b066860ba28f
+  Central beaa995bc15999c331a5daeda5b46a97d5053947
+
+Isso resolve a dúvida de acesso nesta sessão. Outro agente precisa verificar
+suas próprias credenciais. Não se transfere código privado como se fosse
+dependência pública disponível a qualquer pessoa.
+
+Mapa inicial de imports diretos, não um grafo transitivo completo:
+  Central multistreet -> postflop, hand_rank, chance_sampling, range_state,
+                         river_tree.
+  Central river_tree -> postflop, range_state.
+  Central range_state -> postflop.
+  Clone postflop_policy -> postflop_eval, preflop_equity.
+  Clone PostflopSession -> postflop_policy e provider de ranges injetado.
+  Clone PostflopExecutor -> cursor, painel, leitores, coordenadas e clone_app.policy.
+
+A camada de executor tem dependências de percepção/input. Extrair interfaces
+e adaptar ao Software; não preencher imports faltantes com stubs de sucesso.
+
+Para consultar as provas sem sobrescrever arquivos do checkout operacional:
+  git fetch origin audit/postflop-synthesis-20261114
+  git show 96d447e14f6fec4b7a2bbad4ae18c4e1856f3b83:docs/audit-posflop-20261114/probes/policy_counterexamples.py
+
+7. INSTRUÇÃO REVISADA PARA O AGENTE
+
+Leia AGENTS, HEAD, status e a auditoria por commit. Preserve trabalho local.
+Use e51718c como referência examinada, conferindo mudanças posteriores.
+Busque as evidências na branch documental; não peça material já publicado.
+Reaproveite os componentes existentes e distinga falhas corrigidas das abertas.
+
+Fase 0: inventário e baseline.
+  Liste fontes/imports, casos, cobertura e testes. Marque os três contratos
+  citados de A2 como corrigidos em mocks. Registre as falhas ainda abertas.
+
+Fase 1: núcleo Python puro.
+  Corrija participantes, MDF, empate garantido, range ignorado no 3-bet e
+  unidades/preços. Compare candidatos legais com intenção explícita de size,
+  incluindo ALL_IN. Integre estado/ranges do Clone e EV da Central com testes.
+  Preserve proveniência e separe equidade, EV sob modelo e solução de solver.
+  Não confunda prior NVT pré-flop com política completa de pós-flop.
+
+Fase 2: adaptadores e observação.
+  Faça o painel consumir o mesmo contrato do Python. Compare políticas sobre
+  o mesmo snapshot/fingerprint; registre ação, size, contexto, hipóteses e tempo.
+  Reaproveite a persistência do ShadowMonitor com um registro pós-flop adequado.
+  O monitor atual não executa dois motores nem fornece referência GTO por si só.
+  Não chamar uma divergência entre duas heurísticas de "desvio GTO" certificado.
+
+Fase 3: executor integrado e testes de contrato.
+  Encaminhe ações pós-flop por uma autoridade versionada. Unifique clique,
+  drag e fechamento no coordenador, com pausa, cancelamento, soltura garantida,
+  identidade, preço, alvo e estado recente. Confira o valor selecionado antes
+  de confirmar e o efeito depois. Não inferir shove de preset ausente.
+  Disponibilize observação/dry-run/execução como modos explícitos, iniciando
+  a integração em observação. Resultado desconhecido não vira sucesso.
+  Desenvolver esse percurso e testá-lo não depende de já jogar no cliente real.
+
+Fase 4: validação nativa do escopo.
+  Acumule os casos Windows numa sessão consolidada, com fontes independentes,
+  tema/escala/DPI conhecidos e uma mesa inicialmente. Medir captura, leitura,
+  estratégia, fila e confirmação antes de ampliar.
+  Suporte a múltiplas mesas depende de medir o scheduler já ligado ao loop;
+  a existência do arquivo não prova capacidade para seis/doze mesas.
+
+Em todas as fases:
+  stack efetivo contínuo, inclusive muito profundo; modelo/cobertura declarados;
+  sem validated=True fabricado; sem descontos que contradigam certeza matemática;
+  sem tratar zero decisões como nota A; sem confundir presença com seleção.
+  Dados ilegíveis/identidade pendente são estados próprios, sem inventar valores.
+  Preserve o objetivo de operação pós-flop; defina o que falta para sair de cada
+  fase e conclua o que já está autorizado e independe do notebook.
+
+8. LINKS DE REFERÊNCIA
+
+Auditoria completa e instrução original:
+https://github.com/eduardodinizti-design/Software/blob/96d447e14f6fec4b7a2bbad4ae18c4e1856f3b83/docs/AUDITORIA_POSFLOP_MOUSE_E_SIZING_2026-11-14.txt
+
+Provas e probes publicados:
+https://github.com/eduardodinizti-design/Software/tree/96d447e14f6fec4b7a2bbad4ae18c4e1856f3b83/docs/audit-posflop-20261114
+
+Contratos citados do raise:
+https://github.com/eduardodinizti-design/Software/blob/e51718ce26858de42c73e1313dc5ac12e4c61d73/raise_sequencer.py#L137
+https://github.com/eduardodinizti-design/Software/blob/e51718ce26858de42c73e1313dc5ac12e4c61d73/raise_sequencer.py#L202
+https://github.com/eduardodinizti-design/Software/blob/e51718ce26858de42c73e1313dc5ac12e4c61d73/test_raise_sequencer.py#L190
+
+Estado operacional e hipótese de empréstimo:
+https://github.com/eduardodinizti-design/Software/blob/e51718ce26858de42c73e1313dc5ac12e4c61d73/operar_mesa.py#L463
+https://github.com/eduardodinizti-design/Software/blob/e51718ce26858de42c73e1313dc5ac12e4c61d73/preflop_advisor.py#L392
+
+Persistência shadow atual:
+https://github.com/eduardodinizti-design/Software/blob/e51718ce26858de42c73e1313dc5ac12e4c61d73/shadow_mode.py#L32
+
+A leitura nativa, a homologação dos presets e a latência no notebook continuam
+pendentes de evidência própria. Esta avaliação alterou apenas documentação
+e registros de laboratório; nenhum código operacional foi alterado.

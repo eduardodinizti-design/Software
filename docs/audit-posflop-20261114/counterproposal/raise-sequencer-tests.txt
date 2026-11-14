@@ -1,0 +1,16 @@
+test_geometry_change_between_steps_aborts (test_raise_sequencer.RaiseSequencerTest.test_geometry_change_between_steps_aborts) ... ok
+test_hand_mismatch_aborts_no_click (test_raise_sequencer.RaiseSequencerTest.test_hand_mismatch_aborts_no_click) ... ok
+test_happy_path_three_clicks (test_raise_sequencer.RaiseSequencerTest.test_happy_path_three_clicks) ... ok
+test_large_target_allin_via_slider (test_raise_sequencer.RaiseSequencerTest.test_large_target_allin_via_slider) ... ok
+test_large_target_shove_without_slider_is_unknown (test_raise_sequencer.RaiseSequencerTest.test_large_target_shove_without_slider_is_unknown) ... ok
+test_maps_3bet_multiplier_to_nearest_preset (test_raise_sequencer.RaiseSequencerTest.test_maps_3bet_multiplier_to_nearest_preset) ... ok
+test_not_hero_turn_aborts_no_click (test_raise_sequencer.RaiseSequencerTest.test_not_hero_turn_aborts_no_click) ... ok
+test_panel_not_open_is_unknown_after_one_click (test_raise_sequencer.RaiseSequencerTest.test_panel_not_open_is_unknown_after_one_click) ... ok
+test_paused_does_not_click (test_raise_sequencer.RaiseSequencerTest.test_paused_does_not_click) ... ok
+test_read_failure_in_verify_is_not_confirmed (test_raise_sequencer.RaiseSequencerTest.test_read_failure_in_verify_is_not_confirmed) ... ok
+test_unknown_hand_aborts_no_click (test_raise_sequencer.RaiseSequencerTest.test_unknown_hand_aborts_no_click) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 9.472s
+
+OK
