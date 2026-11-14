@@ -1,7 +1,7 @@
 """Robustez do operador p/ horas (BACKLOG D2/D3). Testes puros."""
 import unittest
 
-from operator_robustness import BoundedKeySet, CaptureWatch, raise_outcome
+from operator_robustness import BoundedKeySet, CaptureWatch, raise_outcome, reconcile_targets
 
 
 class BoundedKeySetTests(unittest.TestCase):
@@ -82,6 +82,31 @@ class RaiseOutcomeTests(unittest.TestCase):
     def test_fail_antes_do_confirmar_tambem_retenta(self):
         fail = dict(ok=False, reason='ALVO_AUSENTE')
         self.assertEqual(raise_outcome(fail, 0)[0], 'retry')
+
+
+class ReconcileTargetsTests(unittest.TestCase):
+    def _w(self, h):
+        return dict(hwnd=h, x=0, y=0, w=400, h=700)
+
+    def test_adiciona_mesa_nova_e_dropa_fechada(self):
+        # operava 1 e 2; agora so existem 2 e 3 -> add 3 (balanceamento), drop 1
+        add, drop, by = reconcile_targets([1, 2], [self._w(2), self._w(3)])
+        self.assertEqual(add, [3])
+        self.assertEqual(drop, [1])
+        self.assertIn(3, by)
+
+    def test_allowlist_restringe_novos(self):
+        add, drop, _ = reconcile_targets([1], [self._w(1), self._w(9)], allow={1, 2})
+        self.assertEqual(add, [])          # 9 nao esta no allow -> nao adiciona
+
+    def test_respeita_teto_max_targets(self):
+        disc = [self._w(h) for h in range(1, 20)]
+        add, _, _ = reconcile_targets([1], disc, max_targets=5)
+        self.assertEqual(len(add), 4)      # 1 ja operado + 4 novos = teto 5
+
+    def test_sem_mudanca_nada_a_fazer(self):
+        add, drop, _ = reconcile_targets([1, 2], [self._w(1), self._w(2)])
+        self.assertEqual((add, drop), ([], []))
 
 
 if __name__ == '__main__':

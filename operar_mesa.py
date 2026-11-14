@@ -41,7 +41,7 @@ from table_reading.tournament_end import detect_tournament_end
 from tournament_metrics import record_tournament_end
 from latency_metrics import LatencyMetrics
 from shadow_mode import ShadowMonitor
-from operator_robustness import BoundedKeySet, CaptureWatch
+from operator_robustness import BoundedKeySet, CaptureWatch, raise_outcome, reconcile_targets
 from anticipation import AnticipationStore, available_actions, TurnEpochTracker
 from hero_card_memory import HeroCardMemory
 
@@ -222,6 +222,11 @@ def main(argv=None):
     p.add_argument('--frames', type=int, default=0, help='0 = até Ctrl+C/Disable')
     p.add_argument('--intervalo', type=float, default=1.0)
     p.add_argument('--max-tables', type=int, default=6)
+    p.add_argument('--rediscover', action='store_true',
+                   help='D1: re-descobre janelas periodicamente (pega mesas novas de '
+                        'balanceamento MTT e dropa as fechadas). Off por padrao.')
+    p.add_argument('--rediscover-every', type=int, default=200,
+                   help='ciclos entre re-descobertas (com --rediscover)')
     p.add_argument('--bounty-bb', type=float, default=None,
                    help='PKO: valor do bounty em BB p/ o overlay de call-off (so engata em torneio PKO e cobrindo o shove)')
     p.add_argument('--mode', choices=('chip_ev', 'icm', 'pko', 'pko_icm'), default=None,
@@ -275,21 +280,26 @@ def main(argv=None):
         print('>>> AUTO-ARM: iniciando ARMADO (RUNNING). Ctrl+Alt+P pausa; Ctrl+Alt+D desabilita.', flush=True)
     adapter = WindowsCursorInput() if args.arm else DryRunInput()
     # Uma entrada por janela (HWND): geometria + executor + validator/verifier próprios.
-    wins_all = discover_pppoker().get('windows', [])
     per = {}
+
+    def _build_entry(hwnd, w):
+        wr = (w['x'], w['y'], w['w'], w['h'])
+        return dict(executor=ActionExecutor(window_rect=wr, bot_control=control, armed=args.arm),
+                    validator=make_validator(engine, hwnd, args.max_tables),
+                    verifier=make_verifier(engine, hwnd, args.max_tables))
+
+    wins_all = discover_pppoker().get('windows', [])
     for hwnd in args.hwnd:
         w = next((x for x in wins_all if x['hwnd'] == hwnd), None)
         if w is None:
             print('Janela %#x nao encontrada; ignorada.' % hwnd, flush=True)
             continue
-        wr = (w['x'], w['y'], w['w'], w['h'])
-        per[hwnd] = dict(executor=ActionExecutor(window_rect=wr, bot_control=control, armed=args.arm),
-                         validator=make_validator(engine, hwnd, args.max_tables),
-                         verifier=make_verifier(engine, hwnd, args.max_tables))
+        per[hwnd] = _build_entry(hwnd, w)
     if not per:
         print('Nenhuma janela valida.'); return 1
     targets = list(per)
     raise_done = BoundedKeySet(2048)   # (mesa_global, mao): LRU p/ não vazar em horas (D3)
+    raise_attempts = {}                # D4: tentativas de raise por (mesa,mao) p/ cap de re-try
     hero_mem = HeroCardMemory()   # memória temporal por-slot das cartas do hero (anti HERO_CARDS_UNKNOWN)
     stabilizer = PositionStabilizer()   # suaviza posições (anti-flicker HJ<->UTG+2)
     aggr_tracker = PreflopAggressorTracker()   # agressor pré-flop por mesa (p/ equity pós-flop)
@@ -346,6 +356,30 @@ def main(argv=None):
             if control.state == DISABLED:
                 print('Desabilitado. Encerrando. Nenhum clique a mais.', flush=True)
                 break
+            # D1: re-descoberta periódica (opt-in). Pega mesas NOVAS (balanceamento MTT
+            # abre HWND novo) e dropa as fechadas, sem o humano re-alimentar a lista.
+            if (args.rediscover and args.rediscover_every > 0
+                    and n > 1 and n % args.rediscover_every == 1):
+                try:
+                    _disc = discover_pppoker().get('windows', [])
+                except Exception as _e:               # noqa: BLE001
+                    _disc = None
+                    print('[%03d] [AVISO] re-descoberta falhou: %s' % (n, str(_e)[:80]), flush=True)
+                if _disc is not None:
+                    _add, _drop, _by = reconcile_targets(targets, _disc, max_targets=max(4, args.max_tables * 2))
+                    for _h in _add:
+                        per[_h] = _build_entry(_h, _by[_h])
+                        targets.append(_h)
+                        print('[%03d] mesa NOVA 0x%x -> entra no round-robin (balanceamento?)' % (n, _h), flush=True)
+                    for _h in _drop:
+                        per.pop(_h, None)
+                        if _h in targets:
+                            targets.remove(_h)
+                        capture_watch.ok(_h)
+                        print('[%03d] mesa 0x%x sumiu -> removida do round-robin' % (n, _h), flush=True)
+                    if not targets:
+                        print('[%03d] Nenhuma mesa restante apos re-descoberta. Encerrando.' % n, flush=True)
+                        break
             hwnd = targets[(n - 1) % len(targets)]     # round-robin: 1 janela por ciclo
             ph = per[hwnd]
             executor, validator, verifier = ph['executor'], ph['validator'], ph['verifier']

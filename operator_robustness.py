@@ -91,3 +91,32 @@ def raise_outcome(res, attempts, *, max_attempts=MAX_RAISE_ATTEMPTS):
     if attempts >= max_attempts:
         return 'giveup', attempts
     return 'retry', attempts
+
+
+def reconcile_targets(current_hwnds, discovered, *, allow=None, max_targets=12):
+    """D1: re-descoberta de mesas p/ sessões de horas (balanceamento MTT abre mesas
+    em HWNDs NOVOS; a mesa antiga fecha). Dado os HWNDs operados agora e as janelas
+    DESCOBERTAS (lista de dicts com 'hwnd'...), devolve (to_add, to_drop, by_hwnd):
+      to_add  : HWNDs descobertos ainda não operados (mesas novas) — respeita `allow`
+                (allowlist opcional; None = aceita qualquer janela do cliente) e o teto
+                `max_targets` (não adiciona além do limite).
+      to_drop : HWNDs operados que SUMIRAM da descoberta (mesa fechada) — remover do
+                round-robin p/ não girar em janela morta.
+      by_hwnd : índice {hwnd: janela} da descoberta (p/ a geometria da nova mesa).
+    Puro/determinístico: não descobre nem captura; recebe a descoberta pronta."""
+    by_hwnd = {w['hwnd']: w for w in (discovered or [])
+               if isinstance(w, dict) and 'hwnd' in w}
+    cur = list(current_hwnds or [])
+    cur_set = set(cur)
+    drop = [h for h in cur if h not in by_hwnd]
+    kept = len(cur_set) - len(drop)
+    add = []
+    for h in by_hwnd:
+        if h in cur_set:
+            continue
+        if allow is not None and h not in allow:
+            continue
+        if kept + len(add) >= max_targets:
+            break
+        add.append(h)
+    return add, drop, by_hwnd
