@@ -1,0 +1,127 @@
+{
+  "date": "2026-11-14",
+  "source_repository": "eduardodinizti-design/VisualPilot",
+  "source_commit": "1d100d89c7334380c25e9039ea09d17b1ed301cf",
+  "scope": "Read-only inventory of raw versioned exports; not solver validation. Counts across files can overlap.",
+  "files": [
+    {
+      "file": "nvt-ranges-deep.json",
+      "sha256": "142090a9f2be773cbe40da8a12a0da66ab38d8880ecbae8c8b4177f33464f947",
+      "nodes": 1200,
+      "marked_validated": 80,
+      "spots": {
+        "open_raise": 120,
+        "vs_open": 540,
+        "vs_3bet": 540
+      },
+      "modes": {
+        "chip_ev": 240,
+        "icm": 480,
+        "pko_icm": 480
+      },
+      "stack_values_bb": [
+        25,
+        40,
+        100
+      ],
+      "nodes_with_any_recorded_ev": 117,
+      "nodes_with_explicit_limper_caller_history_keys": 0,
+      "engineCommit": "",
+      "validation_metadata": {
+        "version": "2026-10-30-245refs",
+        "gate": true
+      }
+    },
+    {
+      "file": "nvt-ranges-icm-deep.json",
+      "sha256": "eccd3232652cce898fea83633233d0dd023cfb4fb59c40d590f6e68bb7ad15b9",
+      "nodes": 480,
+      "marked_validated": 0,
+      "spots": {
+        "open_raise": 48,
+        "vs_open": 216,
+        "vs_3bet": 216
+      },
+      "modes": {
+        "icm": 480
+      },
+      "stack_values_bb": [
+        40,
+        100
+      ],
+      "nodes_with_any_recorded_ev": 0,
+      "nodes_with_explicit_limper_caller_history_keys": 0,
+      "engineCommit": "",
+      "validation_metadata": {
+        "version": "2026-10-30-245refs",
+        "gate": true
+      }
+    },
+    {
+      "file": "nvt-ranges-pko-deep.json",
+      "sha256": "e3b5ae24163b99e1b4350a02f81b62f82106f2627428c92e715d1f628cb79232",
+      "nodes": 480,
+      "marked_validated": 0,
+      "spots": {
+        "open_raise": 48,
+        "vs_open": 216,
+        "vs_3bet": 216
+      },
+      "modes": {
+        "pko_icm": 480
+      },
+      "stack_values_bb": [
+        40,
+        100
+      ],
+      "nodes_with_any_recorded_ev": 0,
+      "nodes_with_explicit_limper_caller_history_keys": 0,
+      "engineCommit": "",
+      "validation_metadata": {
+        "version": "2026-10-30-245refs",
+        "gate": true
+      }
+    },
+    {
+      "file": "nvt-ranges-validados.json",
+      "sha256": "c3fafb3921e671c402b8f5b9a026dab091d8c5a0eefb49e9f7e0003f8718b796",
+      "nodes": 7368,
+      "marked_validated": 7368,
+      "spots": {
+        "open_raise": 408,
+        "open_shove": 312,
+        "vs_open_shove": 1440,
+        "3bet_shove": 1800,
+        "vs_open": 1836,
+        "vs_3bet": 1512,
+        "limp": 20,
+        "limp_call": 20,
+        "vs_limp": 20
+      },
+      "modes": {
+        "chip_ev": 706,
+        "icm": 4182,
+        "pko": 439,
+        "pko_icm": 2041
+      },
+      "stack_values_bb": [
+        5,
+        8,
+        10,
+        12,
+        15,
+        20,
+        25,
+        30,
+        40
+      ],
+      "nodes_with_any_recorded_ev": 7368,
+      "nodes_with_explicit_limper_caller_history_keys": 0,
+      "engineCommit": "",
+      "validation_metadata": {
+        "version": "2026-11-12-245refs",
+        "gate": true
+      }
+    }
+  ]
+}

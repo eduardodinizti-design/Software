@@ -1,0 +1,73 @@
+usage: operar_mesa.py [-h] --hwnd HWND [HWND ...] [--ranges RANGES]
+                      [--deep DEEP]
+                      [--reference-ranges [REFERENCE_RANGES ...]]
+                      [--frames FRAMES] [--intervalo INTERVALO]
+                      [--max-tables MAX_TABLES] [--bounty-bb BOUNTY_BB]
+                      [--mode {chip_ev,icm,pko,pko_icm}]
+                      [--stage {pre_itm,bubble,ft,mid}] [--hud] [--arm]
+                      [--overlay] [--auto-arm] [--no-hotkeys] [--antecipar]
+                      [--tournament-type {auto,regular,ko,pko,mystery}]
+                      [--entry-type {auto,freezeout,reentry,rebuy}]
+                      [--bounty-bb-per-unit BOUNTY_BB_PER_UNIT]
+                      [--bounty-cash-fraction BOUNTY_CASH_FRACTION]
+                      [--bounty-active | --no-bounty-active]
+
+Operar a mesa (passo 3) — lê, decide e CLICA Fold/Call/Check, com travas.
+
+DEFAULT = DRY-RUN (não envia clique; só mostra a intenção). Com `--arm` usa o
+cursor REAL, mas só clica com o BotControl em RUNNING. Começa PAUSADO: aperte
+Ctrl+Alt+R para ARMAR, Ctrl+Alt+P para pausar (você assume), Ctrl+Alt+D desabilita.
+Só Fold/Call/Check (clique único); Raise/Bet/all-in ficam de fora (sizing depois).
+Uma ação por mão. Revalida na chegada e verifica o efeito.
+
+Uso:
+  python operar_mesa.py --hwnd 0x...              # dry-run (seguro)
+  python operar_mesa.py --hwnd 0x... --arm        # arma (ainda precisa Ctrl+Alt+R)
+
+options:
+  -h, --help            show this help message and exit
+  --hwnd HWND [HWND ...]
+                        Um ou mais HWND de janelas de mesa (2 mesas = 2 HWND).
+  --ranges RANGES
+  --deep DEEP
+  --reference-ranges [REFERENCE_RANGES ...]
+                        Packs adicionais: deep, ICM-deep, PKO-deep; todos
+                        entram no manifesto.
+  --frames FRAMES       0 = até Ctrl+C/Disable
+  --intervalo INTERVALO
+  --max-tables MAX_TABLES
+  --bounty-bb BOUNTY_BB
+                        PKO: valor do bounty em BB p/ o overlay de call-off
+                        (so engata em torneio PKO e cobrindo o shove)
+  --mode {chip_ev,icm,pko,pko_icm}
+                        Forca o modo do torneio (sobrepoe a deteccao por nome;
+                        ex. PKO quando o skin nao mostra no nome)
+  --stage {pre_itm,bubble,ft,mid}
+                        Forca a fase do torneio (sobrepoe a deteccao)
+  --hud                 Le o HUD VIP (8 stats por vilao) p/ exploit no pos-
+                        flop
+  --arm                 Usa o cursor REAL (ainda gated)
+  --overlay             Faixa de status SEMPRE-NO-TOPO (feedback visível:
+                        ARMADO/PAUSADO + ações)
+  --auto-arm            Comeca JA ARMADO (RUNNING), sem precisar do
+                        Ctrl+Alt+R. Ctrl+Alt+P ainda pausa e Ctrl+Alt+D
+                        desabilita a qualquer momento.
+  --no-hotkeys
+  --antecipar           A1: reaproveita a decisao SEGURA (fold/check) ja
+                        computada entre frames da MESMA vez do hero, pulando o
+                        cerebro (~330ms) em revisitas. Nunca antecipa
+                        call/raise. Default off.
+  --tournament-type {auto,regular,ko,pko,mystery}
+                        Modalidade de prêmio: regular, KO fixo, PKO
+                        progressivo ou Mystery.
+  --entry-type {auto,freezeout,reentry,rebuy}
+                        Regra de entrada, separada da modalidade de bounty.
+  --bounty-bb-per-unit BOUNTY_BB_PER_UNIT
+                        Conversão declarada: BB por unidade de moeda do bounty
+                        lido do alvo.
+  --bounty-cash-fraction BOUNTY_CASH_FRACTION
+                        PKO: fração da cabeça paga imediatamente (0..1);
+                        confirme a regra do torneio.
+  --bounty-active, --no-bounty-active
+                        Mystery: informa explicitamente se os bounties já
+                        estão ativos.

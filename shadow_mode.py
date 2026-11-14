@@ -34,6 +34,8 @@ def classify_decision(rec):
     gto = (rec.get('gto_recommended') or '').lower() or None
     act = (rec.get('bot_action') or '').lower() or None
     authority = (rec.get('authority') or '').upper()
+    if authority=='PREFLOP_POLICY' and rec.get('policy_version'):
+        return 'politica_referencia' if act else 'sem_no'
     if act is None:
         return 'sem_no'
     if rec.get('validated') and gto is not None:
@@ -54,12 +56,13 @@ def classify_decision(rec):
 def make_record(*, frame=None, table=None, hero_cards=None, position=None,
                 stack_bb=None, to_call_bb=None, spot=None, node_id=None,
                 validated=None, gto_status=None, gto_recommended=None,
-                bot_action=None, authority=None, result_state=None, ts=None):
+                bot_action=None, authority=None, result_state=None, ts=None, policy_version=None, tournament_profile=None, source_nodes=None):
     rec = dict(ts=ts or datetime.now(timezone.utc).isoformat(), frame=frame, table=table,
                hero_cards=hero_cards, position=position, stack_bb=stack_bb,
                to_call_bb=to_call_bb, spot=spot, node_id=node_id, validated=validated,
                gto_status=gto_status, gto_recommended=gto_recommended,
-               bot_action=bot_action, authority=authority, result_state=result_state)
+               bot_action=bot_action, authority=authority, result_state=result_state,
+               policy_version=policy_version,tournament_profile=tournament_profile,source_nodes=source_nodes)
     rec['verdict'] = classify_decision(rec)
     return rec
 

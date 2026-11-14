@@ -1,0 +1,121 @@
+..............................................................................................................ssss................s...............................................................................................................................................................................................................................ss...............................................................................................................................................................................................................................<checkout>/test_preflop_advisor.py:553: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp3q7_ntkq/a.json' mode='w' encoding='UTF-8'>
+  json.dump(pack_with_node(), open(p1, 'w'))        # validated BTN 25
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+<checkout>/test_preflop_advisor.py:554: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp3q7_ntkq/b.json' mode='w' encoding='UTF-8'>
+  json.dump(pack_with_reference(), open(p2, 'w'))   # reference BTN 100
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+..............................................................................................................................F.............................................................................................................................Pasta: /tmp/tmpo5kdoq2n/sessao-20261114-051526-c5766882
+COLETA V2: texto; imagens DESLIGADAS.
+Sem cliques. Limite por sessao: 1 MiB. Ctrl+C encerra.
+Cota de texto atingida: leitura continua; registros adicionais nao serao salvos.
+1: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+2: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+3: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+4: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+Encerrado: DURATION_COMPLETE | Resultado: /tmp/tmpo5kdoq2n/sessao-20261114-051526-c5766882
+.Pasta: /tmp/tmpf8uwo0dm/sessao-20261114-051526-91e2a4bc
+COLETA V2: texto; imagens DESLIGADAS.
+Sem cliques. Limite por sessao: 16 MiB. Ctrl+C encerra.
+1: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+2: HWND 2 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+3: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+4: HWND 2 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+Encerrado: DURATION_COMPLETE | Resultado: /tmp/tmpf8uwo0dm/sessao-20261114-051526-91e2a4bc
+.Pasta: /tmp/tmp0f9i493h/sessao-20261114-051526-282788dc
+COLETA V2: texto; imagens DESLIGADAS.
+Sem cliques. Limite por sessao: 16 MiB. Ctrl+C encerra.
+1: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+2: HWND 2 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+3: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+4: HWND 2 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+Encerrado: DURATION_COMPLETE | Resultado: /tmp/tmp0f9i493h/sessao-20261114-051526-282788dc
+.Pasta: /tmp/tmpnzgl0t2a/sessao-20261114-051526-abc0611c
+COLETA V2: texto; imagens DESLIGADAS.
+Sem cliques. Limite por sessao: 16 MiB. Ctrl+C encerra.
+1: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+2: HWND 2 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+3: HWND 1 | SOURCE_CHANGED | 15000 ms | 0.0 MiB
+Encerrado: SOURCE_CHANGED | Resultado: /tmp/tmpnzgl0t2a/sessao-20261114-051526-abc0611c
+.Pasta: /tmp/tmp0bjpmdtg/sessao-20261114-051526-444a4fe9
+COLETA V2: texto e recortes aceitos/rejeitados; nova condicao ou 60s, com cota.
+Sem cliques. Limite por sessao: 16 MiB. Ctrl+C encerra.
+1: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+2: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+3: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+4: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Encerrado: DURATION_COMPLETE | Resultado: /tmp/tmp0bjpmdtg/sessao-20261114-051526-444a4fe9
+.Pasta: /tmp/tmpb3g91r_y/sessao-20261114-051526-b43b2ee3
+COLETA V2: texto e recortes aceitos/rejeitados; nova condicao ou 60s, com cota.
+Sem cliques. Limite por sessao: 16 MiB. Ctrl+C encerra.
+1: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+2: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+3: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+4: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Encerrado: DURATION_COMPLETE | Resultado: /tmp/tmpb3g91r_y/sessao-20261114-051526-b43b2ee3
+.......................................................Pasta: /tmp/tmpx1qcvvdh/sessao-20261114-051526-77b748d4
+COLETA V2: texto; imagens DESLIGADAS.
+Sem cliques. Limite por sessao: 16 MiB. Ctrl+C encerra.
+1: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+2: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+3: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+4: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+Encerrado: DURATION_COMPLETE | Resultado: /tmp/tmpx1qcvvdh/sessao-20261114-051526-77b748d4
+...................................................................usage: python -m unittest [-h] (--hwnd HWND | --image IMAGE)
+                          [--logs-root LOGS_ROOT] [--metadata METADATA]
+                          [--max-tables {1,2,3,4,5,6}]
+python -m unittest: error: one of the arguments --hwnd --image is required
+usage: python -m unittest [-h] (--hwnd HWND | --image IMAGE)
+                          [--logs-root LOGS_ROOT] [--metadata METADATA]
+                          [--max-tables {1,2,3,4,5,6}]
+python -m unittest: error: --image exige --metadata; --hwnd nao aceita --metadata
+usage: python -m unittest [-h] (--hwnd HWND | --image IMAGE)
+                          [--logs-root LOGS_ROOT] [--metadata METADATA]
+                          [--max-tables {1,2,3,4,5,6}]
+python -m unittest: error: --image exige --metadata; --hwnd nao aceita --metadata
+................................................
+======================================================================
+FAIL: test_reads_four_presets_and_confirm (test_raise_panel.RealPanelTest.test_reads_four_presets_and_confirm)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<checkout>/test_raise_panel.py", line 72, in test_reads_four_presets_and_confirm
+    self.assertEqual(mults, [2.0, 2.5, 3.0, 4.0])
+AssertionError: Lists differ: [2.0, 3.0, 4.0] != [2.0, 2.5, 3.0, 4.0]
+
+First differing element 1:
+3.0
+2.5
+
+Second list contains 1 additional elements.
+First extra element 3:
+4.0
+
+- [2.0, 3.0, 4.0]
++ [2.0, 2.5, 3.0, 4.0]
+?       +++++
+
+
+----------------------------------------------------------------------
+Ran 1006 tests in 40.736s
+
+FAILED (failures=1, skipped=7)
+FALHA: Captura estrita falhou: {'status': 'WINDOW_INVALID_HWND'}
+FALHA: Returned HWND differs from requested HWND
+Amostras UNLABELED: /tmp/tmp4n6btfig/logs/leitura/leitura-44f01502f6d94c2cb9082f5d8c8163ef | 1 mesa(s). Sem OCR ou importacao para treino.

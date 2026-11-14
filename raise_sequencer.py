@@ -48,11 +48,12 @@ class RaiseSequencer:
                  sleep=time.sleep, clock=time.monotonic, step_deadline=5.0,
                  read_actions=read_action_buttons, read_panel=read_raise_panel,
                  detect=detect_table_crops, read_hand=read_hand_id,
-                 read_slider=read_raise_slider):
+                 read_slider=read_raise_slider, all_in=False):
         self.capture = capture
         self._geom = window_rect if callable(window_rect) else (lambda: window_rect)
         self.input = input_adapter
         self.target_mult = target_mult
+        self.explicit_all_in = all_in is True
         self.bot = bot_control
         self.table_key = table_key
         self.hand = hand
@@ -259,10 +260,10 @@ class RaiseSequencer:
         # B) escolher o TAMANHO via contrato discreto (A4): PRESET | SHOVE | ABSTAIN.
         # Preset compatível -> clica o preset; SHOVE -> barra (all-in); sem tamanho
         # SEGURO/conferível -> ABSTAIN (não clica, com razão explícita).
-        plan = plan_raise(self.target_mult, panel['presets'])
+        plan = plan_raise(self.target_mult, panel['presets'],all_in=self.explicit_all_in)
         preset = plan['preset'] if plan['kind'] == 'PRESET' else None
         if plan['kind'] == 'ABSTAIN':
-            return self._fail('SEM_PRESET_SEGURO:%s:%s' % (plan.get('reason'), self.target_mult))
+            return self._unknown('SEM_PRESET_SEGURO:%s:%s' % (plan.get('reason'), self.target_mult),out_a)
         if plan['kind'] == 'SHOVE':
             out_b = self._allin_via_slider()
             if out_b['state'] == 'CANCELLED':

@@ -42,6 +42,7 @@ from latency_metrics import LatencyMetrics
 from shadow_mode import ShadowMonitor
 from anticipation import AnticipationStore, available_actions, TurnEpochTracker
 from hero_card_memory import HeroCardMemory
+from preflop_policy import RuntimePreflopAdvisor, execution_reasons, resolve_decision, decision_key
 
 DEFAULT_RANGES = r'C:\Meus Projetos\Aplicativos\nvt-ranges-validados.json'
 DEFAULT_DEEP = r'C:\Meus Projetos\Aplicativos\nvt-ranges-deep.json'
@@ -208,6 +209,7 @@ def main(argv=None):
                    help='Um ou mais HWND de janelas de mesa (2 mesas = 2 HWND).')
     p.add_argument('--ranges', default=DEFAULT_RANGES)
     p.add_argument('--deep', default=None)
+    p.add_argument('--reference-ranges',nargs='*',default=[],help='Packs adicionais: deep, ICM-deep, PKO-deep; todos entram no manifesto.')
     p.add_argument('--frames', type=int, default=0, help='0 = até Ctrl+C/Disable')
     p.add_argument('--intervalo', type=float, default=1.0)
     p.add_argument('--max-tables', type=int, default=6)
@@ -230,21 +232,32 @@ def main(argv=None):
                    help='A1: reaproveita a decisao SEGURA (fold/check) ja computada entre '
                         'frames da MESMA vez do hero, pulando o cerebro (~330ms) em revisitas. '
                         'Nunca antecipa call/raise. Default off.')
+    p.add_argument('--tournament-type',choices=('auto','regular','ko','pko','mystery'),default='auto',help='Modalidade de prêmio: regular, KO fixo, PKO progressivo ou Mystery.')
+    p.add_argument('--entry-type',choices=('auto','freezeout','reentry','rebuy'),default='auto',help='Regra de entrada, separada da modalidade de bounty.')
+    p.add_argument('--bounty-bb-per-unit',type=float,default=None,help='Conversão declarada: BB por unidade de moeda do bounty lido do alvo.')
+    p.add_argument('--bounty-cash-fraction',type=float,default=None,help='PKO: fração da cabeça paga imediatamente (0..1); confirme a regra do torneio.')
+    p.add_argument('--bounty-active',action=argparse.BooleanOptionalAction,default=None,help='Mystery: informa explicitamente se os bounties já estão ativos.')
     args = p.parse_args(argv)
+    from tournament_profiles import validate as validate_tournament
+    try:validate_tournament(args.tournament_type,args.entry_type,args.bounty_bb,args.bounty_cash_fraction,args.bounty_active,args.bounty_bb_per_unit)
+    except ValueError as exc:p.error(str(exc))
 
     import os
     configure_ocr()
     deep = args.deep or (DEFAULT_DEEP if os.path.exists(DEFAULT_DEEP) else None)
-    advisor = (PreflopAdvisor.from_files(args.ranges, deep) if deep
-               else PreflopAdvisor.from_file(args.ranges))
+    range_paths=list(dict.fromkeys([args.ranges,*([deep] if deep else []),*args.reference_ranges]))
+    advisor=PreflopAdvisor.from_files(*range_paths) if len(range_paths)>1 else PreflopAdvisor.from_file(range_paths[0])
     # B01/B02: proveniência auditável no startup — quais pack(s) por sha256 alimentam
     # o cérebro, cobertura de nós e colisões de chave resolvidas SEM sombra silenciosa.
+    if isinstance(getattr(advisor,'nodes',None),list) and not isinstance(advisor,RuntimePreflopAdvisor):
+        advisor=RuntimePreflopAdvisor(advisor)
     _mani = advisor.manifest()
     print('[CEREBRO] fontes: ' + ', '.join(
         '%s(%s.. %dn/%dval)' % (os.path.basename(s['path']), s['sha256'][:8], s['nodes'], s['validated'])
         for s in _mani['sources']) +
         ' | chaves=%d nos=%d colisoes=%d (0 sombra silenciosa)' % (
             _mani['index_keys'], _mani['total_nodes'], len(_mani['collisions'])), flush=True)
+    print('[TORNEIO] tipo=%s entrada=%s fracao_cash=%s bounty_ativo=%s conversao_bb=%s' % (args.tournament_type,args.entry_type,args.bounty_cash_fraction,args.bounty_active,args.bounty_bb_per_unit),flush=True)
     engine = WindowCaptureEngine()
     overlay = StatusOverlay().start() if args.overlay else None
 
@@ -322,7 +335,8 @@ def main(argv=None):
             spot=adv.get('spot'), node_id=adv.get('node_id'), validated=adv.get('validated'),
             gto_status=adv.get('status'), gto_recommended=adv.get('recommended'),
             bot_action=action, authority=(out or {}).get('authority'),
-            result_state=(out or {}).get('state'))
+            result_state=(out or {}).get('state'),policy_version=adv.get('policy_version'),
+            tournament_profile=adv.get('tournament_profile'),source_nodes=adv.get('source_nodes'))
         if health['status'] == 'off_rails':
             print('[SHADOW] *** CEREBRO FORA DOS TRILHOS *** %d/%d das ultimas decisoes comprometeram ficha contra o GTO'
                   % (health['off_rails'], health['window']), flush=True)
@@ -375,6 +389,9 @@ def main(argv=None):
                     hero_mem.invalidate(tkey)
                     if (hwnd, tk) in tourneys_closed:
                         continue
+                    if args.arm and not control.execution_allowed():
+                        print('[TORNEIO] Encerrado; operador pausado, sem fechar janela.',flush=True)
+                        continue
                     closed = _close_tournament_table(frame, (x, y, bw, bh), te, hwnd,
                                                      adapter, engine, args.arm)
                     record_tournament_end(
@@ -394,9 +411,9 @@ def main(argv=None):
                 #  pré-flop entre frames; a decisão na vez relê as apostas do frame atual.)
                 br0 = read_action_buttons(crop)
                 if br0['status'] != 'EXPERIMENTAL_BUTTON_ROW':
-                    anticip_turns.on_nonturn(tkey)     # A2: pisca isolado NÃO fecha a época
-                    continue
-                hero_turn_seen = True
+                    anticip_turns.on_nonturn(tkey)
+                # Keep perception outside the turn; the policy cache is keyed by economic state.
+                hero_turn_seen = br0['status']=='EXPERIMENTAL_BUTTON_ROW'
                 # Memória de cartas do hero por mão (imutáveis): fallback quando um
                 # frame não lê, evitando HERO_CARDS_UNKNOWN por falha pontual.
                 hk = read_hand_id(crop)
@@ -405,14 +422,14 @@ def main(argv=None):
                 # época só quando a vez (re)abre de verdade (após `debounce` visitas fora)
                 # ou a mão muda — um pisca isolado mantém a época -> reusa em vez de
                 # recomputar. Dentro da época o vilão não pode agir: decisão congelada.
-                epoch = anticip_turns.on_turn(tkey, hkey)
+                epoch = anticip_turns.on_turn(tkey, hkey) if br0['status']=='EXPERIMENTAL_BUTTON_ROW' else anticip_turns.epoch(tkey)
                 override = hero_mem.pair(tkey, hkey) if hkey else None
                 # A1: REUSO. Se já há decisão SEGURA (fold/check) preparada p/ esta mesma
                 # vez (mesma época), pula o cérebro (~330ms). O store revalida: cartas
                 # batendo + ação ainda oferecida AGORA. call/raise/pós-flop nunca entram
                 # no store -> recomputam. Só com --antecipar.
                 reuse = None
-                if args.antecipar and hkey is not None and (tkey, hkey, epoch) in anticip_payload:
+                if args.antecipar and not isinstance(advisor,RuntimePreflopAdvisor) and hkey is not None and (tkey, hkey, epoch) in anticip_payload:
                     reuse = anticip.take(tkey, (hkey, epoch), epoch,
                                          available_actions(br0.get('buttons')), override)
                 if reuse is not None:
@@ -427,7 +444,8 @@ def main(argv=None):
                                                   table_key=tkey, hero_override=override,
                                                   tracker=aggr_tracker, bounty_bb=args.bounty_bb,
                                                   mode=args.mode, stage=args.stage, enable_hud=args.hud,
-                                                  read_cache=read_cache)
+                                                  read_cache=read_cache, tournament_type=args.tournament_type, entry_type=args.entry_type,
+                                                  bounty_cash_fraction=args.bounty_cash_fraction, bounty_active=args.bounty_active,bounty_bb_per_unit=args.bounty_bb_per_unit)
                     except Exception as e:                 # noqa: BLE001
                         # NUNCA silencioso (regra do Eduardo: logar TUDO): registra o erro
                         # da leitura/cérebro e PULA p/ a próxima mão/mesa — o fluxo não quebra.
@@ -460,6 +478,9 @@ def main(argv=None):
                     hero_turn_seen = True
                 hid = hkey
                 adv = result.get('advice') or {}
+                if adv.get('phase')=='preflop' and adv.get('authority')=='PREFLOP_POLICY':
+                    adv=resolve_decision(adv,[tkey,hid,result.get('hero_cards')])
+                    result=dict(result,advice=adv)
                 if adv.get('phase') == 'postflop':
                     # Pós-flop é SÓ conselho exploratório. O operador armado joga
                     # pré-flop apenas e NUNCA executa pós-flop (sem clique, sem
@@ -490,32 +511,13 @@ def main(argv=None):
                         adv.get('validated'), adv.get('equity'),
                         adv.get('required_equity_icm') or adv.get('required_equity'),
                         adv.get('status'), adv.get('recommended') or adv.get('reason') or ''), flush=True)
-                # GUARDA DEEP NÃO-VALIDADA (erro grave): a base HRC é validada só p/
-                # short (bucket <=25). Em bucket 40/100 (deep) o cérebro usa RANGES DE
-                # REFERÊNCIA NÃO-validados (val=False), largos → cold-call de lixo (Q6o).
-                # Regra: nó deep não-validado NUNCA compromete fichas — só joga o SEGURO
-                # (CHECK grátis senão FOLD). Folds de lixo deep seguem iguais.
-                if br['status'] == 'EXPERIMENTAL_BUTTON_ROW':
-                    _nid = (adv.get('node_id') or '').split('|')
-                    _bkt = int(_nid[2]) if len(_nid) > 2 and _nid[2].isdigit() else None
-                    if (adv.get('validated') is False and _bkt is not None and _bkt > 25
-                            and adv.get('recommended') not in ('fold', 'check', None)):
-                        _hc = any(b.get('action') == 'CHECK' for b in br.get('buttons', []))
-                        _safe = 'check' if _hc else 'fold'
-                        print('[%03d] GUARDA DEEP(bucket %s nao-validado): %s -> SEGURO %s'
-                              % (n, _bkt, adv.get('recommended'), _safe), flush=True)
-                        # B04: NÃO fabrica validated=True. O seguro (check/fold) é piso
-                        # de não-commit -> o contrato autoriza por SAFETY_NONCOMMIT, sem
-                        # mentir que o cérebro validou. Mantém validated=False + flag.
-                        adv = dict(adv, recommended=_safe, status='ADVICE',
-                                   validated=False, phase='preflop', deep_guard=True)
-                        result = dict(result, advice=adv)
                 _, caveats = map_advice_to_action(adv.get('recommended'))
                 is_raise = 'REQUIRES_SIZING_MULTISTEP' in caveats
+                raise_key=decision_key(result,tkey,hid)
                 # RAISE = fluxo multi-etapa (sequenciador). Só executa ARMADO (em
                 # dry-run os cliques não abrem o painel de verdade).
                 if (br['status'] == 'EXPERIMENTAL_BUTTON_ROW' and adv.get('status') == 'ADVICE'
-                        and is_raise and (tkey, hid) not in raise_done):
+                        and is_raise and raise_key not in raise_done):
                     tmult = target_multiplier(adv, result.get('table_state'))
                     if tmult is None:
                         print('[%03d] vez do hero: RAISE sem target de size -> abstem' % n, flush=True)
@@ -525,7 +527,9 @@ def main(argv=None):
                               % (n, tmult, (pr and pr['label']) or '?'), flush=True)
                     elif not control.execution_allowed():
                         print('[%03d] RAISE mas BOT PAUSADO' % n, flush=True)
-                    elif not adv.get('validated'):
+                    elif adv.get('authority')=='PREFLOP_POLICY' and execution_reasons(adv,result.get('hero_cards')):
+                        print('[PREFLOP] Leitura/decisão pendente: '+str(execution_reasons(adv,result.get('hero_cards'))),flush=True)
+                    elif not adv.get('validated') and adv.get('authority')!='PREFLOP_POLICY':
                         # Autorização única também no RAISE: nó não validado
                         # (referência/deep) não dispara a sequência armada (só estuda).
                         print('[%03d] RAISE de no NAO VALIDADO -> nao executa (so estuda)' % n, flush=True)
@@ -534,13 +538,14 @@ def main(argv=None):
                                              window_rect=lambda h=hwnd: _discover_rect(h),
                                              input_adapter=adapter, target_mult=tmult,
                                              bot_control=control, table_key=tkey_local, hand=hid,
-                                             max_tables=args.max_tables)
+                                             max_tables=args.max_tables,all_in=(adv.get('sizing') or {}).get('all_in') is True)
                         res = seq.run()
-                        raise_done.add((tkey, hid))
+                        if res.get('confirmed') or res.get('unknown'):raise_done.add(raise_key)
+                        if isinstance(advisor,RuntimePreflopAdvisor):advisor.record_confirmation(tkey,hid,adv,res)
                         print('[%03d] >>> RAISE sequencia: %s' % (n, res.get('reason')
                               or ('preset %sx confirmado=%s' % (res.get('preset'), res.get('confirmed')))), flush=True)
                         _emit_shadow(result, adv, adv.get('recommended') or 'raise',
-                                     {'authority': 'VALIDATED', 'state': res.get('reason')})
+                                     {'authority': adv.get('authority') or 'VALIDATED', 'state': res.get('reason')})
                     continue
                 out = executor.execute(result, br, origin=(x, y), frame_size=(fw, fh),
                                        input_adapter=adapter, validator=validator,
@@ -555,6 +560,7 @@ def main(argv=None):
                 # frame (a leitura quase sempre volta; a hero_mem reaproveita a mão).
                 # Foldar sem ver as cartas largava PREMIUM (ex.: KK) — erro gravíssimo.
                 if (not out.get('acted')
+                        and not adv.get('policy_version')
                         and str(out.get('reason', '')).startswith('SEM_ACAO_RECOMENDADA')
                         and br['status'] == 'EXPERIMENTAL_BUTTON_ROW'
                         and result.get('hero_cards')):

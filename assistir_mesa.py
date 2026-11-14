@@ -21,7 +21,7 @@ from state_observer import StateObserver, render
 
 
 def advise_frame(frame_bgr, meta, advisor, max_tables=6, tracker=None, bounty_bb=None,
-                 mode=None, stage=None, enable_hud=False, read_cache=None):
+                 mode=None, stage=None, enable_hud=False, read_cache=None, **tournament_options):
     """Detect the tables in one captured frame and advise each. Returns a list of
     {table_index, table_key, box, result}. Pure read; the full table identity still
     comes from the capture metadata upstream.
@@ -45,7 +45,7 @@ def advise_frame(frame_bgr, meta, advisor, max_tables=6, tracker=None, bounty_bb
         with ocr_frame():
             result = advise_table(crop, advisor, table_key=tkey, tracker=tracker,
                                   bounty_bb=bounty_bb, mode=mode, stage=stage, enable_hud=enable_hud,
-                                  read_cache=read_cache)
+                                  read_cache=read_cache, **tournament_options)
         if result.get('is_table'):   # skip lobby/non-table false positives
             out.append(dict(table_index=len(out) + 1, table_key=tkey, box=[x, y, w, h], result=result))
     return out
@@ -67,8 +67,17 @@ def main(argv=None):
     p.add_argument('--hud', action='store_true', help='Le o HUD VIP p/ exploit no pos-flop')
     p.add_argument('--no-hotkeys', dest='hotkeys', action='store_false',
                    help='Desliga as hotkeys de pausa/takeover (Ctrl+Alt+P/R/D)')
+    p.add_argument('--reference-ranges',nargs='*',default=[])
+    p.add_argument('--tournament-type',choices=('auto','regular','ko','pko','mystery'),default='auto')
+    p.add_argument('--entry-type',choices=('auto','freezeout','reentry','rebuy'),default='auto')
+    p.add_argument('--bounty-bb-per-unit',type=float,default=None)
+    p.add_argument('--bounty-cash-fraction',type=float,default=None)
+    p.add_argument('--bounty-active',action=argparse.BooleanOptionalAction,default=None)
     args = p.parse_args(argv)
-    advisor = PreflopAdvisor.from_files(args.ranges, args.deep) if args.deep else PreflopAdvisor.from_file(args.ranges)
+    paths=list(dict.fromkeys([args.ranges,*([args.deep] if args.deep else []),*args.reference_ranges]))
+    advisor=PreflopAdvisor.from_files(*paths) if len(paths)>1 else PreflopAdvisor.from_file(paths[0])
+    from preflop_policy import RuntimePreflopAdvisor
+    if isinstance(getattr(advisor,'nodes',None),list):advisor=RuntimePreflopAdvisor(advisor)
     from window_capture_engine import WindowCaptureEngine
     engine = WindowCaptureEngine()
     configure_ocr()
@@ -111,7 +120,7 @@ def main(argv=None):
                 for row in advise_frame(frame, meta, advisor, max_tables=args.max_tables,
                                         tracker=aggr_tracker, bounty_bb=args.bounty_bb,
                                         mode=args.mode, stage=args.stage, enable_hud=args.hud,
-                                        read_cache=read_cache):
+                                        read_cache=read_cache,tournament_type=args.tournament_type,entry_type=args.entry_type,bounty_cash_fraction=args.bounty_cash_fraction,bounty_active=args.bounty_active,bounty_bb_per_unit=args.bounty_bb_per_unit):
                     # Estado temporal integrado: amarra mesa/mão/campos e explica
                     # o que mudou/ficou pendente. Imprime só quando o estado muda.
                     # Mesma chave usada no tracker (consistência entre contexto e estado).

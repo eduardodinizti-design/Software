@@ -268,6 +268,7 @@ class PreflopAdvisor:
     def from_file(cls, path, *, strict=True):
         raw = Path(path).read_bytes()
         pack = json.loads(raw.decode('utf-8'))
+        for node in pack['nodes']:node['_source_sha256']=hashlib.sha256(raw).hexdigest()
         return cls(pack, sources=[cls._source_entry(path, raw, pack)], strict=strict)
 
     @classmethod
@@ -289,6 +290,7 @@ class PreflopAdvisor:
         for path in paths:
             raw = Path(path).read_bytes()
             pack = json.loads(raw.decode('utf-8'))
+            for node in pack['nodes']:node['_source_sha256']=hashlib.sha256(raw).hexdigest()
             sources.append(cls._source_entry(path, raw, pack))
             if merged is None:
                 merged = dict(pack)

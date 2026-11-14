@@ -146,6 +146,8 @@ def target_multiplier(advice, table_state):
     absoluto. Aproximação segura: a aposta a bater = maior `bet_bb` lido (ou 1,0).
     """
     sz = (advice or {}).get('sizing') or {}
+    if (advice or {}).get('authority')=='PREFLOP_POLICY' and sz.get('preset_mult') is not None:
+        return sz['preset_mult']
     size_bb = sz.get('size_bb')
     if not isinstance(size_bb, (int, float)) or size_bb <= 0:
         return None

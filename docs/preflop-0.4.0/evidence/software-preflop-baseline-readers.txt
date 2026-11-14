@@ -1,0 +1,26 @@
+......F
+======================================================================
+FAIL: test_reads_four_presets_and_confirm (test_raise_panel.RealPanelTest.test_reads_four_presets_and_confirm)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<Software-e51718c-baseline>/test_raise_panel.py", line 72, in test_reads_four_presets_and_confirm
+    self.assertEqual(mults, [2.0, 2.5, 3.0, 4.0])
+AssertionError: Lists differ: [2.0, 3.0, 4.0] != [2.0, 2.5, 3.0, 4.0]
+
+First differing element 1:
+3.0
+2.5
+
+Second list contains 1 additional elements.
+First extra element 3:
+4.0
+
+- [2.0, 3.0, 4.0]
++ [2.0, 2.5, 3.0, 4.0]
+?       +++++
+
+
+----------------------------------------------------------------------
+Ran 7 tests in 6.981s
+
+FAILED (failures=1)

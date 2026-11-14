@@ -1,0 +1,208 @@
+PRÉ-FLOP PROFUNDO E PERFIS DE TORNEIO — CLONE 0.4.0
+Entrega de 14/11/2026. Política: preflop-continuous-v2.
+
+1. RESPOSTA DIRETA
+
+Foi implementado o desbloqueio estratégico na execução do Software, aproveitando
+e ampliando a política contínua do Clone. A execução reconhece PREFLOP_POLICY
+como autoridade própria: não exige promover uma referência a solver validado.
+
+50, 60, 80, 200 e 5.000 BB não causam bloqueio por profundidade. O risco e o
+tamanho usam o estado atual; a profundidade da fonte fica declarada.
+Se existir um nó de shove aplicável à profundidade, ele não é reescrito apenas
+por ultrapassar 25 BB. Um vetor de shove curto não vira automaticamente jam de
+5.000 BB quando é usado como referência fora de seu contexto.
+
+Há roteamento para open raise, call, limp/overlimp, isolamento, squeeze, 3-bet,
+4-bet, 5-bet e resposta a 5-bet. Reraise não precisa ser all-in. O botão que
+executa overlimp é CALL; o campo strategic_action distingue a linha escolhida.
+
+Isso NÃO significa possuir uma solução ótima/validada para todo estado possível.
+Onde faltam árvores específicas, há regras derivadas identificadas. A entrega
+amplia a cobertura funcional e a configuração; não certifica lucro ou GTO completo.
+
+2. O QUE FOI ALTERADO
+
+- Núcleo preflop_policy.py compartilhado, com os mesmos bytes no Software e Clone.
+  clone_app/preflop_policy.py passa a ser compatibilidade, sem um segundo cérebro.
+- A política seleciona os nós disponíveis por posição, linha, modo, fase,
+  jogadores e profundidade; registra diferenças da referência e os hashes.
+- Decisões mistas são resolvidas de forma estável por mão e contexto econômico.
+- A trava geral GUARDA DEEP foi retirada do operador Software. Call/raise por
+  referência reconhecida seguem a autoridade da política, preservando rótulos
+  honestos de fonte e validação.
+- Assinaturas de execução distinguem open e reraise posterior na MESMA mão.
+- A confirmação de um raise alimenta a leitura seguinte para reconhecer respostas
+  a 4/5-bet. Um valor isolado não é apresentado como histórico completo.
+- O valor esperado pelo preset selecionado é registrado separadamente do alvo
+  solicitado. Ele continua sendo estimativa, não leitura confirmada do dinheiro.
+- All-in exige intenção explícita. Alvo 6x acima do menu 2x/3x/4x não vira shove.
+- A percepção do Software passa a ler fora da vez; o cache da política usa
+  contexto econômico, sem reaproveitar o payload antigo apenas pelo número da época.
+- Leitura pendente de posição/cartas não é convertida em fold/call legado.
+  Board presente e ilegível conserva a fase pós-flop.
+- O shadow registra política de referência como tal, sem chamá-la de ação GTO.
+- Packs adicionais podem entrar no CLI por --reference-ranges, incluindo os
+  arquivos deep, ICM-deep e PKO-deep. Todos aparecem no manifesto.
+
+Os arquivos NVT não foram reescritos para fabricar validação ou aprovação.
+Os projetos/branches antigos e os dados locais anteriores foram preservados.
+
+3. MODALIDADE E REGRA DE ENTRADA SÃO CAMPOS DIFERENTES
+
+Regular/vanilla: sem bônus de eliminação. Pode ser freezeout ou permitir reentrada.
+Freezeout: regra de entrada, sem reentrada; não implica ausência de bounty.
+KO: cabeça fixa, pagamento imediato da cabeça inteira.
+PKO: cabeça progressiva, com a fração imediata configurada separadamente.
+Mystery: requer informar a ativação e o valor esperado do prêmio em BB.
+
+Um PKO pode ser freezeout. Uma modalidade de prêmio não substitui a regra de
+entrada. A fase também é separada: os modos consultados incluem chip_ev, icm,
+pko e pko_icm.
+
+O nome genérico "Bounty" não é convertido automaticamente em certeza de PKO.
+A identificação incerta e os dados faltantes aparecem no perfil. A configuração
+manual permite informar a modalidade quando o nome do cliente é insuficiente.
+A seleção manual é da sessão: todas as mesas selecionadas precisam ter essa
+modalidade. Não misture torneios diferentes sob um único perfil manual.
+
+4. COMO CONFIGURAR NO NOTEBOOK
+
+Instale em pasta NOVA. Preserve a instalação antiga e não copie sua .venv.
+Pare o operador/painel antigo antes de abrir outro na mesma porta.
+Se precisar preservar dados, faça backup de runtime com o programa encerrado.
+Configurações anteriores carregam os novos campos com valores padrão.
+
+1) Baixe a versão clone-v0.4.0 no repositório privado VisualPilot.
+   O Source code (zip) já inclui a interface compilada.
+2) Extraia tudo. Rode 01_INSTALAR.bat e 02_DIAGNOSTICO.bat.
+3) Abra 03_ABRIR_CLONE.bat.
+4) Em Visão geral -> Preparar sessão -> Estratégia do torneio:
+   - Prêmio e bounty: Regular / KO / PKO / Mystery / Automático.
+   - Regra de entrada: Freezeout / Reentrada / Rebuy / Automático.
+   - Cabeça do alvo em BB: KO fixo; no PKO, usada apenas no estudo manual.
+   - PKO ao vivo: informe BB por unidade de moeda da cabeça lida do adversário.
+     Essa conversão econômica deve ser definida e revisada, não é o big blind
+     nominal do torneio nem uma taxa cambial inventada pelo leitor.
+   - PKO: fração paga imediatamente, conforme a regra do torneio.
+   - Mystery: confirme se os bounties estão ativos e informe seu valor esperado.
+5) Salve os campos numéricos saindo deles. As seleções são persistidas localmente.
+   Encerre a observação/operador antes de mudar a configuração.
+6) Observe a leitura passiva e confira o perfil mostrado nos detalhes da decisão.
+7) Rode 13_TESTAR_PREFLOP.bat e 14_TESTAR_TORNEIOS_E_DEEP.bat.
+   Ambos são testes sem captura/cliques no jogo.
+8) 04_TESTAR_SEM_CLIQUES.bat permite conferir intenções e leituras.
+   Para o operador habilitado, mantenha o fluxo 05_OPERAR.bat -> OPERAR ->
+   PAUSADO -> Ctrl+Alt+R. Ctrl+Alt+P pausa; Ctrl+Alt+D desabilita.
+
+O estudo manual do cérebro também aceita vs_4bet e vs_5bet. A modalidade
+Automático do estudo usa a configuração salva; campos manuais não são tratados
+como dados capturados da mesa. Oponentes ativos é diferente de jogadores sentados.
+
+Seu notebook continua sendo o alvo: Windows 10 Pro, i7, 8 GB, Intel HD 620,
+1366x768. A primeira validação do cliente deve usar uma mesa. Esta entrega
+não comprova capacidade para seis/doze mesas.
+
+5. COMO O BOUNTY ENTRA NA DECISÃO
+
+Exemplo com cabeça já convertida em 20 BB:
+  KO: 20 BB de prêmio imediato.
+  PKO com fração 0,5: 10 BB imediatos; a parte progressiva futura não é somada
+  como se fosse dinheiro recebido agora.
+  Mystery inativo: nenhum bônus ativo. Ativação desconhecida permanece desconhecida.
+
+No call all-in HU com cobertura confirmada e range disponível:
+  EV fichas = equity x (pote contestável atual + call adicional) - call adicional.
+  EV bounty imediato = probabilidade de VENCER E ELIMINAR x prêmio imediato.
+  Empates não recebem bounty.
+
+O motor usa probabilidade de vitória separada da equidade, que também inclui
+empates. O excesso não contestável do shove é retirado antes das pot odds.
+Sem cobertura HU/cash confirmados, não se credita esse prêmio como conhecido.
+A fração PKO e a conversão em BB não são inventadas a partir de um nome de torneio.
+No PKO ao vivo, a cabeça pertence a um adversário: somente o alvo all-in é
+lido no frame atual, exigindo confiança alta. O cache antigo de HUD/bounties
+não é usado como prêmio atual. O campo global em BB não substitui essa leitura.
+Uma cabeça já lida em BB não recebe a conversão monetária novamente. Sem
+alvo/fração/conversão confirmados, o prêmio imediato fica desconhecido;
+a consulta aos ranges/regras continua identificada como referência.
+
+O cálculo adicional cobre pagamento imediato terminal HU. Não é um modelo
+completo de valor progressivo futuro, Mystery por distribuição de envelopes,
+side pots multiway ou ICM real de toda a premiação.
+Os priors NVT PKO/ICM preservam suas próprias hipóteses de exportação.
+
+6. VALIDAÇÃO E LIMITES
+
+Os registros de teste estão em docs/preflop-0.4.0/evidence/.
+
+- Varredura original do pacote: 8.450 consultas conhecidas, sem input.
+- Varredura estendida: 343.070 consultas construídas, nove posições, profundidades
+  50/60/80/200/5.000 BB, regular/KO/PKO/Mystery e fases selecionadas.
+  Os packs NVT reais configurados são carregados. As cenas são construções
+  manuais/sintéticas, não mãos capturadas no PPPoker.
+- Regressão local Clone: Ran 1065 tests in 38.390s; OK (skipped=7).
+- Regressão local Software: Ran 1006 tests in 40.736s; FAILED (failures=1, skipped=7).
+- A varredura verifica decisão disponível, mistura normalizada, elegibilidade
+  e tamanho dentro do stack. Não verifica que cada range/ação maximize EV.
+- Testes de operador percorrem open -> 4-bet e 3-bet -> 5-bet na mesma mão.
+  Captura, leitores e adaptador de mouse desses testes são simulados.
+- Há casos para preservar shove profundo de nó compatível, evitar projetar
+  shove curto em stack profundo, separar KO/PKO, excluir bounty de empate,
+  respeitar cobertura, persistir configuração e recusar dados inválidos.
+- TypeScript, testes web e build verificam a interface, sem homologar o cliente.
+- O CI Windows da branch também testa o input em janela própria. Seu resultado,
+  disponível em Actions/release, não é uma sessão real PPPoker.
+
+A regressão Software mantém a falha anterior do fixture de preset 2,5x:
+o leitor encontra 2x/3x/4x e não 2,5x nesse caso. Não reduzi limiares nem removi
+o teste. A política pode solicitar um tamanho diferente do preset disponível;
+o diário distingue alvo solicitado e preset selecionado.
+
+Faltam, para declarar pré-flop estrategicamente completo:
+  a) árvores/ranges específicos e avaliados para todas as linhas e profundidades;
+  b) validação independente das regras derivadas de overlimp/squeeze e reraises;
+  c) histórico de ações completo e confiável no cliente, com identidade contínua;
+  d) modelagem completa de side pots e bounty multiway;
+  e) ICM com premiação/estados reais e valor progressivo futuro;
+  f) comprovação nativa de leitura, valor selecionado, cliques e latência.
+
+Essas lacunas não são uma trava arbitrária por quantidade de blinds.
+Elas são escopo de modelagem/evidência declarado. Campos ilegíveis, pausa manual,
+identidade e ação legal continuam sendo requisitos operacionais.
+
+7. ARQUIVOS PRINCIPAIS E CLI DO SOFTWARE
+
+  preflop_policy.py: política contínua, referências/regras, sizes e elegibilidade.
+  tournament_profiles.py: modalidade/entrada, ativação e prêmio imediato.
+  preflop_equity.py: vitória e empate separados.
+  decision_contract.py: autoridade PREFLOP_POLICY.
+  operar_mesa.py: execução sem o veto geral de profundidade.
+  raise_plan.py / raise_sequencer.py: all-in explícito e resultado parcial.
+  table_advisor.py / assistir_mesa.py: perfil compartilhado com observação.
+  Clone: configuração e interface no painel; a política é a mesma.
+
+Opções adicionadas ao operador Software:
+  --tournament-type auto|regular|ko|pko|mystery
+  --entry-type auto|freezeout|reentry|rebuy
+  --bounty-bb VALOR_TOTAL_DA_CABECA_EM_BB
+  --bounty-bb-per-unit CONVERSAO_ECONOMICA_EM_BB_POR_UNIDADE
+  --bounty-cash-fraction FRACAO_IMEDIATA
+  --bounty-active / --no-bounty-active
+  --reference-ranges PACK_DEEP PACK_ICM_DEEP PACK_PKO_DEEP
+
+O default não habilita cursor nem retira a pausa. Os leitores continuam passivos.
+
+8. REFERÊNCIAS DA ENTREGA
+
+Software, base e51718c, branch isolada de implementação:
+https://github.com/eduardodinizti-design/Software/tree/feat/preflop-depth-tournament-profiles
+
+Clone, base 73df5d2, branch isolada de implementação:
+https://github.com/eduardodinizti-design/VisualPilot/tree/feat/preflop-depth-tournament-profiles
+
+Distribuição para o notebook:
+https://github.com/eduardodinizti-design/VisualPilot/releases/tag/clone-v0.4.0
+
+Os commits das branches antigas/main não foram substituídos por esta entrega.
+O notebook não é atualizado remotamente: é necessário instalar a distribuição nova.

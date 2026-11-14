@@ -21,10 +21,12 @@ clique. PURO: sem OCR, sem captura, sem clique. Ver [[nvt-adendo-antecipacao-a0]
 from raise_panel import map_multiplier_to_preset, is_shove_target
 
 
-def plan_raise(target_mult, presets, *, slider_available=True, tol=None):
+def plan_raise(target_mult, presets, *, slider_available=True, tol=None, all_in=False):
     """Plano discreto do aumento. Explicável (sempre tem `reason` quando abstém) e
     verificável (PRESET carrega `expected_mult`/`label`). Nunca levanta; entradas
     ruins viram ABSTAIN com razão."""
+    if all_in is True:
+        return dict(kind='SHOVE',target_mult=target_mult,explicit_all_in=True) if slider_available else dict(kind='ABSTAIN',reason='SHOVE_SEM_SLIDER',target_mult=target_mult)
     if target_mult is None:
         return dict(kind='ABSTAIN', reason='SEM_ALVO', target_mult=None)
     usable = [p for p in (presets or []) if isinstance(p, dict) and p.get('mult') is not None]
@@ -37,10 +39,7 @@ def plan_raise(target_mult, presets, *, slider_available=True, tol=None):
     # Sem preset na tolerância: distingue SHOVE (acima do maior preset) de alvo
     # intermediário sem preset compatível (abstém — não há tamanho conferível).
     if is_shove_target(target_mult, usable):
-        if slider_available:
-            return dict(kind='SHOVE', target_mult=target_mult,
-                        over=round(target_mult - max(p['mult'] for p in usable), 2))
-        return dict(kind='ABSTAIN', reason='SHOVE_SEM_SLIDER', target_mult=target_mult)
+        return dict(kind='ABSTAIN',reason='ALVO_FORA_DO_MENU_NAO_E_ALLIN',target_mult=target_mult)
     return dict(kind='ABSTAIN', reason='SEM_PRESET_NA_TOLERANCIA', target_mult=target_mult)
 
 

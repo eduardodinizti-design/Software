@@ -1,0 +1,712 @@
+{
+  "app_version": "0.4.0",
+  "policy": "preflop-continuous-v2",
+  "policy_sha256": "94ced6bd9c15ffd3162f5a383cad819def10fa7cb39234d00c0b3722def6d7fb",
+  "status": "PASSOU",
+  "queries": 8450,
+  "actions": {
+    "call": 1460,
+    "fold": 5398,
+    "all_in": 218,
+    "raise": 1046,
+    "three_bet": 223,
+    "four_bet": 105
+  },
+  "failures": [],
+  "failure_count": 0,
+  "reported_case_examples": [
+    {
+      "hero_cards": [
+        "7d",
+        "Td"
+      ],
+      "stack": 30,
+      "players": 6,
+      "action": "raise",
+      "sizing": {
+        "size_bb": 2.0,
+        "basis": "discrete_preflop_preset",
+        "preset_mult": 2.0,
+        "to_beat_bb": 1.0,
+        "unit": "BB",
+        "all_in": false
+      },
+      "covered": true,
+      "node": "chip_ev|mid|30|open_raise|BTN||-",
+      "reference_reasons": [
+        {
+          "node": "chip_ev|mid|30|open_raise|BTN||-",
+          "field": "players",
+          "observed": 6,
+          "source": 9
+        }
+      ]
+    },
+    {
+      "hero_cards": [
+        "7d",
+        "Td"
+      ],
+      "stack": 30,
+      "players": 8,
+      "action": "raise",
+      "sizing": {
+        "size_bb": 2.0,
+        "basis": "discrete_preflop_preset",
+        "preset_mult": 2.0,
+        "to_beat_bb": 1.0,
+        "unit": "BB",
+        "all_in": false
+      },
+      "covered": true,
+      "node": "chip_ev|mid|30|open_raise|BTN||-",
+      "reference_reasons": [
+        {
+          "node": "chip_ev|mid|30|open_raise|BTN||-",
+          "field": "players",
+          "observed": 8,
+          "source": 9
+        }
+      ]
+    },
+    {
+      "hero_cards": [
+        "7d",
+        "Td"
+      ],
+      "stack": 30,
+      "players": 9,
+      "action": "raise",
+      "sizing": {
+        "size_bb": 2.0,
+        "basis": "discrete_preflop_preset",
+        "preset_mult": 2.0,
+        "to_beat_bb": 1.0,
+        "unit": "BB",
+        "all_in": false
+      },
+      "covered": true,
+      "node": "chip_ev|mid|30|open_raise|BTN||-",
+      "reference_reasons": []
+    },
+    {
+      "hero_cards": [
+        "7d",
+        "Td"
+      ],
+      "stack": 30.1,
+      "players": 6,
+      "action": "raise",
+      "sizing": {
+        "size_bb": 2.0,
+        "basis": "discrete_preflop_preset",
+        "preset_mult": 2.0,
+        "to_beat_bb": 1.0,
+        "unit": "BB",
+        "all_in": false
+      },
+      "covered": true,
+      "node": "chip_ev|mid|30|open_raise|BTN||-",
+      "reference_reasons": [
+        {
+          "node": "chip_ev|mid|30|open_raise|BTN||-",
+          "field": "stack",
+          "observed": 30.1,
+          "source": 30
+        },
+        {
+          "node": "chip_ev|mid|30|open_raise|BTN||-",
+          "field": "players",
+          "observed": 6,
+          "source": 9
+        }
+      ]
+    },
+    {
+      "hero_cards": [
+        "7d",
+        "Td"
+      ],
+      "stack": 30.1,
+      "players": 8,
+      "action": "raise",
+      "sizing": {
+        "size_bb": 2.0,
+        "basis": "discrete_preflop_preset",
+        "preset_mult": 2.0,
+        "to_beat_bb": 1.0,
+        "unit": "BB",
+        "all_in": false
+      },
+      "covered": true,
+      "node": "chip_ev|mid|30|open_raise|BTN||-",
+      "reference_reasons": [
+        {
+          "node": "chip_ev|mid|30|open_raise|BTN||-",
+          "field": "stack",
+          "observed": 30.1,
+          "source": 30
+        },
+        {
+          "node": "chip_ev|mid|30|open_raise|BTN||-",
+          "field": "players",
+          "observed": 8,
+          "source": 9
+        }
+      ]
+    },
+    {
+      "hero_cards": [
+        "7d",
+        "Td"
+      ],
+      "stack": 30.1,
+      "players": 9,
+      "action": "raise",
+      "sizing": {
+        "size_bb": 2.0,
+        "basis": "discrete_preflop_preset",
+        "preset_mult": 2.0,
+        "to_beat_bb": 1.0,
+        "unit": "BB",
+        "all_in": false
+      },
+      "covered": true,
+      "node": "chip_ev|mid|30|open_raise|BTN||-",
+      "reference_reasons": [
+        {
+          "node": "chip_ev|mid|30|open_raise|BTN||-",
+          "field": "stack",
+          "observed": 30.1,
+          "source": 30
+        }
+      ]
+    },
+    {
+      "hero_cards": [
+        "7d",
+        "Td"
+      ],
+      "stack": 40,
+      "players": 6,
+      "action": "raise",
+      "sizing": {
+        "size_bb": 2.0,
+        "basis": "discrete_preflop_preset",
+        "preset_mult": 2.0,
+        "to_beat_bb": 1.0,
+        "unit": "BB",
+        "all_in": false
+      },
+      "covered": true,
+      "node": "chip_ev|mid|40|open_raise|BTN||-",
+      "reference_reasons": [
+        {
+          "node": "chip_ev|mid|40|open_raise|BTN||-",
+          "field": "players",
+          "observed": 6,
+          "source": 9
+        }
+      ]
+    },
+    {
+      "hero_cards": [
+        "7d",
+        "Td"
+      ],
+      "stack": 40,
+      "players": 8,
+      "action": "raise",
+      "sizing": {
+        "size_bb": 2.0,
+        "basis": "discrete_preflop_preset",
+        "preset_mult": 2.0,
+        "to_beat_bb": 1.0,
+        "unit": "BB",
+        "all_in": false
+      },
+      "covered": true,
+      "node": "chip_ev|mid|40|open_raise|BTN||-",
+      "reference_reasons": [
+        {
+          "node": "chip_ev|mid|40|open_raise|BTN||-",
+          "field": "players",
+          "observed": 8,
+          "source": 9
+        }
+      ]
+    },
+    {
+      "hero_cards": [
+        "7d",
+        "Td"
+      ],
+      "stack": 40,
+      "players": 9,
+      "action": "raise",
+      "sizing": {
+        "size_bb": 2.0,
+        "basis": "discrete_preflop_preset",
+        "preset_mult": 2.0,
+        "to_beat_bb": 1.0,
+        "unit": "BB",
+        "all_in": false
+      },
+      "covered": true,
+      "node": "chip_ev|mid|40|open_raise|BTN||-",
+      "reference_reasons": []
+    },
+    {
+      "hero_cards": [
+        "7d",
+        "Td"
+      ],
+      "stack": 103.2,
+      "players": 6,
+      "action": "raise",
+      "sizing": {
+        "size_bb": 2.5,
+        "basis": "discrete_preflop_preset",
+        "preset_mult": 2.5,
+        "to_beat_bb": 1.0,
+        "unit": "BB",
+        "all_in": false
+      },
+      "covered": true,
+      "node": "chip_ev|mid|100|open_raise|BTN||-",
+      "reference_reasons": [
+        {
+          "node": "chip_ev|mid|100|open_raise|BTN||-",
+          "field": "stack",
+          "observed": 103.2,
+          "source": 100
+        },
+        {
+          "node": "chip_ev|mid|100|open_raise|BTN||-",
+          "field": "players",
+          "observed": 6,
+          "source": 9
+        },
+        {
+          "node": "chip_ev|mid|100|open_raise|BTN||-",
+          "field": "source_validation",
+          "source": false
+        }
+      ]
+    },
+    {
+      "hero_cards": [
+        "7d",
+        "Td"
+      ],
+      "stack": 103.2,
+      "players": 8,
+      "action": "raise",
+      "sizing": {
+        "size_bb": 2.5,
+        "basis": "discrete_preflop_preset",
+        "preset_mult": 2.5,
+        "to_beat_bb": 1.0,
+        "unit": "BB",
+        "all_in": false
+      },
+      "covered": true,
+      "node": "chip_ev|mid|100|open_raise|BTN||-",
+      "reference_reasons": [
+        {
+          "node": "chip_ev|mid|100|open_raise|BTN||-",
+          "field": "stack",
+          "observed": 103.2,
+          "source": 100
+        },
+        {
+          "node": "chip_ev|mid|100|open_raise|BTN||-",
+          "field": "players",
+          "observed": 8,
+          "source": 9
+        },
+        {
+          "node": "chip_ev|mid|100|open_raise|BTN||-",
+          "field": "source_validation",
+          "source": false
+        }
+      ]
+    },
+    {
+      "hero_cards": [
+        "7d",
+        "Td"
+      ],
+      "stack": 103.2,
+      "players": 9,
+      "action": "raise",
+      "sizing": {
+        "size_bb": 2.5,
+        "basis": "discrete_preflop_preset",
+        "preset_mult": 2.5,
+        "to_beat_bb": 1.0,
+        "unit": "BB",
+        "all_in": false
+      },
+      "covered": true,
+      "node": "chip_ev|mid|100|open_raise|BTN||-",
+      "reference_reasons": [
+        {
+          "node": "chip_ev|mid|100|open_raise|BTN||-",
+          "field": "stack",
+          "observed": 103.2,
+          "source": 100
+        },
+        {
+          "node": "chip_ev|mid|100|open_raise|BTN||-",
+          "field": "source_validation",
+          "source": false
+        }
+      ]
+    },
+    {
+      "hero_cards": [
+        "7d",
+        "Td"
+      ],
+      "stack": 300,
+      "players": 6,
+      "action": "raise",
+      "sizing": {
+        "size_bb": 2.5,
+        "basis": "discrete_preflop_preset",
+        "preset_mult": 2.5,
+        "to_beat_bb": 1.0,
+        "unit": "BB",
+        "all_in": false
+      },
+      "covered": true,
+      "node": "chip_ev|mid|100|open_raise|BTN||-",
+      "reference_reasons": [
+        {
+          "node": "chip_ev|mid|100|open_raise|BTN||-",
+          "field": "stack",
+          "observed": 300.0,
+          "source": 100
+        },
+        {
+          "node": "chip_ev|mid|100|open_raise|BTN||-",
+          "field": "players",
+          "observed": 6,
+          "source": 9
+        },
+        {
+          "node": "chip_ev|mid|100|open_raise|BTN||-",
+          "field": "source_validation",
+          "source": false
+        }
+      ]
+    },
+    {
+      "hero_cards": [
+        "7d",
+        "Td"
+      ],
+      "stack": 300,
+      "players": 8,
+      "action": "raise",
+      "sizing": {
+        "size_bb": 2.5,
+        "basis": "discrete_preflop_preset",
+        "preset_mult": 2.5,
+        "to_beat_bb": 1.0,
+        "unit": "BB",
+        "all_in": false
+      },
+      "covered": true,
+      "node": "chip_ev|mid|100|open_raise|BTN||-",
+      "reference_reasons": [
+        {
+          "node": "chip_ev|mid|100|open_raise|BTN||-",
+          "field": "stack",
+          "observed": 300.0,
+          "source": 100
+        },
+        {
+          "node": "chip_ev|mid|100|open_raise|BTN||-",
+          "field": "players",
+          "observed": 8,
+          "source": 9
+        },
+        {
+          "node": "chip_ev|mid|100|open_raise|BTN||-",
+          "field": "source_validation",
+          "source": false
+        }
+      ]
+    },
+    {
+      "hero_cards": [
+        "7d",
+        "Td"
+      ],
+      "stack": 300,
+      "players": 9,
+      "action": "raise",
+      "sizing": {
+        "size_bb": 2.5,
+        "basis": "discrete_preflop_preset",
+        "preset_mult": 2.5,
+        "to_beat_bb": 1.0,
+        "unit": "BB",
+        "all_in": false
+      },
+      "covered": true,
+      "node": "chip_ev|mid|100|open_raise|BTN||-",
+      "reference_reasons": [
+        {
+          "node": "chip_ev|mid|100|open_raise|BTN||-",
+          "field": "stack",
+          "observed": 300.0,
+          "source": 100
+        },
+        {
+          "node": "chip_ev|mid|100|open_raise|BTN||-",
+          "field": "source_validation",
+          "source": false
+        }
+      ]
+    },
+    {
+      "hero_cards": [
+        "7d",
+        "Td"
+      ],
+      "stack": 1000,
+      "players": 6,
+      "action": "raise",
+      "sizing": {
+        "size_bb": 2.5,
+        "basis": "discrete_preflop_preset",
+        "preset_mult": 2.5,
+        "to_beat_bb": 1.0,
+        "unit": "BB",
+        "all_in": false
+      },
+      "covered": true,
+      "node": "chip_ev|mid|100|open_raise|BTN||-",
+      "reference_reasons": [
+        {
+          "node": "chip_ev|mid|100|open_raise|BTN||-",
+          "field": "stack",
+          "observed": 1000.0,
+          "source": 100
+        },
+        {
+          "node": "chip_ev|mid|100|open_raise|BTN||-",
+          "field": "players",
+          "observed": 6,
+          "source": 9
+        },
+        {
+          "node": "chip_ev|mid|100|open_raise|BTN||-",
+          "field": "source_validation",
+          "source": false
+        }
+      ]
+    },
+    {
+      "hero_cards": [
+        "7d",
+        "Td"
+      ],
+      "stack": 1000,
+      "players": 8,
+      "action": "raise",
+      "sizing": {
+        "size_bb": 2.5,
+        "basis": "discrete_preflop_preset",
+        "preset_mult": 2.5,
+        "to_beat_bb": 1.0,
+        "unit": "BB",
+        "all_in": false
+      },
+      "covered": true,
+      "node": "chip_ev|mid|100|open_raise|BTN||-",
+      "reference_reasons": [
+        {
+          "node": "chip_ev|mid|100|open_raise|BTN||-",
+          "field": "stack",
+          "observed": 1000.0,
+          "source": 100
+        },
+        {
+          "node": "chip_ev|mid|100|open_raise|BTN||-",
+          "field": "players",
+          "observed": 8,
+          "source": 9
+        },
+        {
+          "node": "chip_ev|mid|100|open_raise|BTN||-",
+          "field": "source_validation",
+          "source": false
+        }
+      ]
+    },
+    {
+      "hero_cards": [
+        "7d",
+        "Td"
+      ],
+      "stack": 1000,
+      "players": 9,
+      "action": "raise",
+      "sizing": {
+        "size_bb": 2.5,
+        "basis": "discrete_preflop_preset",
+        "preset_mult": 2.5,
+        "to_beat_bb": 1.0,
+        "unit": "BB",
+        "all_in": false
+      },
+      "covered": true,
+      "node": "chip_ev|mid|100|open_raise|BTN||-",
+      "reference_reasons": [
+        {
+          "node": "chip_ev|mid|100|open_raise|BTN||-",
+          "field": "stack",
+          "observed": 1000.0,
+          "source": 100
+        },
+        {
+          "node": "chip_ev|mid|100|open_raise|BTN||-",
+          "field": "source_validation",
+          "source": false
+        }
+      ]
+    },
+    {
+      "hero_cards": [
+        "7d",
+        "Td"
+      ],
+      "stack": 5000,
+      "players": 6,
+      "action": "raise",
+      "sizing": {
+        "size_bb": 2.5,
+        "basis": "discrete_preflop_preset",
+        "preset_mult": 2.5,
+        "to_beat_bb": 1.0,
+        "unit": "BB",
+        "all_in": false
+      },
+      "covered": true,
+      "node": "chip_ev|mid|100|open_raise|BTN||-",
+      "reference_reasons": [
+        {
+          "node": "chip_ev|mid|100|open_raise|BTN||-",
+          "field": "stack",
+          "observed": 5000.0,
+          "source": 100
+        },
+        {
+          "node": "chip_ev|mid|100|open_raise|BTN||-",
+          "field": "players",
+          "observed": 6,
+          "source": 9
+        },
+        {
+          "node": "chip_ev|mid|100|open_raise|BTN||-",
+          "field": "source_validation",
+          "source": false
+        }
+      ]
+    },
+    {
+      "hero_cards": [
+        "7d",
+        "Td"
+      ],
+      "stack": 5000,
+      "players": 8,
+      "action": "raise",
+      "sizing": {
+        "size_bb": 2.5,
+        "basis": "discrete_preflop_preset",
+        "preset_mult": 2.5,
+        "to_beat_bb": 1.0,
+        "unit": "BB",
+        "all_in": false
+      },
+      "covered": true,
+      "node": "chip_ev|mid|100|open_raise|BTN||-",
+      "reference_reasons": [
+        {
+          "node": "chip_ev|mid|100|open_raise|BTN||-",
+          "field": "stack",
+          "observed": 5000.0,
+          "source": 100
+        },
+        {
+          "node": "chip_ev|mid|100|open_raise|BTN||-",
+          "field": "players",
+          "observed": 8,
+          "source": 9
+        },
+        {
+          "node": "chip_ev|mid|100|open_raise|BTN||-",
+          "field": "source_validation",
+          "source": false
+        }
+      ]
+    },
+    {
+      "hero_cards": [
+        "7d",
+        "Td"
+      ],
+      "stack": 5000,
+      "players": 9,
+      "action": "raise",
+      "sizing": {
+        "size_bb": 2.5,
+        "basis": "discrete_preflop_preset",
+        "preset_mult": 2.5,
+        "to_beat_bb": 1.0,
+        "unit": "BB",
+        "all_in": false
+      },
+      "covered": true,
+      "node": "chip_ev|mid|100|open_raise|BTN||-",
+      "reference_reasons": [
+        {
+          "node": "chip_ev|mid|100|open_raise|BTN||-",
+          "field": "stack",
+          "observed": 5000.0,
+          "source": 100
+        },
+        {
+          "node": "chip_ev|mid|100|open_raise|BTN||-",
+          "field": "source_validation",
+          "source": false
+        }
+      ]
+    }
+  ],
+  "elapsed_seconds": 9.628,
+  "scope": "Offline policy coverage, not solver accuracy, Windows capture, mouse or profitable play.",
+  "source_hashes": [
+    {
+      "name": "nvt-ranges-validados.json",
+      "sha256": "c3fafb3921e671c402b8f5b9a026dab091d8c5a0eefb49e9f7e0003f8718b796"
+    },
+    {
+      "name": "nvt-ranges-deep.json",
+      "sha256": "142090a9f2be773cbe40da8a12a0da66ab38d8880ecbae8c8b4177f33464f947"
+    },
+    {
+      "name": "nvt-ranges-icm-deep.json",
+      "sha256": "eccd3232652cce898fea83633233d0dd023cfb4fb59c40d590f6e68bb7ad15b9"
+    },
+    {
+      "name": "nvt-ranges-pko-deep.json",
+      "sha256": "e3b5ae24163b99e1b4350a02f81b62f82106f2627428c92e715d1f628cb79232"
+    }
+  ]
+}
