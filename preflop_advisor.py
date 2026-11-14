@@ -708,9 +708,15 @@ class PreflopAdvisor:
                 result.setdefault('caveats', []).append('AGGRESSOR_INFERRED_%s' % spot['opener'])
                 if spot.get('callers'):
                     # vs_open is heads-up vs the opener; with callers the pot is
-                    # multiway and the pack has no multiway node, so this is an
-                    # approximation (usually tighter in reality), flagged as such.
+                    # multiway and the pack has NO multiway node, so a HU range aqui é
+                    # LARGA demais (leak executável). A4/A5: marca como NÃO-validado +
+                    # multiway_approx -> o operador NÃO auto-executa a range HU (vira
+                    # estudo/seguro; premium segue protegido pela blindagem). Direção
+                    # correta multiway = mais apertado. Sem inventar range multiway.
                     result.setdefault('caveats', []).append('MULTIWAY_%d_CALLERS_APPROX_VS_OPEN' % spot['callers'])
+                    if result.get('status') == 'ADVICE':
+                        result['validated'] = False
+                        result['multiway_approx'] = True
         elif spot['spot'] == 'first_in':
             import sizing
             # O nó vs_limp do pack é BB vs limp do SB (batalha de blinds). Só roteia
