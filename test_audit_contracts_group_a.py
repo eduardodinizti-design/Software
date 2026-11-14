@@ -92,10 +92,9 @@ class GroupAContractTests(unittest.TestCase):
                                if 'CALL' in m['example_spot'] and m['affected_street'] == 'River']
         self.assertEqual(river_call_mistakes, [])
 
-    @unittest.expectedFailure
     def test_passive_caller_is_not_aggressive_bettor(self):
-        # Classificador de linha: Bettor que aposta flop+turn com um Caller passivo NÃO
-        # é 'passive_turned_aggressive' (isso vem de misturar contribuições do caller).
+        # CONSERTADO: 'passive_turned_aggressive' exige AGRESSÃO (bet/raise) após ter sido
+        # passivo — um CALL não conta (antes `street_bet>0` pegava o caller junto).
         hand = parse_hand_histories(_MULTIWAY, 'Hero')[0]
         turn = [d for d in hand.hero_decisions if d['street'] == 'TURN'][0]
         self.assertIsNone(turn['villain_line'])

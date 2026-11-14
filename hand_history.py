@@ -137,8 +137,9 @@ def _replay(lines, players, hero, bb):
     street = 'PREFLOP'
     preflop_raises = 0
     last_pf_raiser = None
-    # Linha do vilão por rua: quem foi passivo (check/call) e quem agrediu.
+    # Linha do vilão por rua: quem foi passivo (check/call) e quem AGREDIU (bet/raise).
     passive_ever = {n: False for n in players}
+    aggressed_street = {n: False for n in players}   # agrediu (bet/raise) NESTA rua — call NÃO conta
     decisions = []
     saw_flop = set()        # jogadores que chegaram ao flop (não foldaram pré)
 
@@ -148,6 +149,7 @@ def _replay(lines, players, hero, bb):
         street = _STREET_OF.get(len(cards), street)
         for n in street_bet:
             street_bet[n] = 0.0
+            aggressed_street[n] = False
 
     for ln in lines:
         if ln.startswith('*** FLOP ***'):
@@ -199,10 +201,11 @@ def _replay(lines, players, hero, bb):
         if is_hero and street in ('FLOP', 'TURN', 'RIVER'):
             action, amount = _classify_action(body)
             if action:
-                # Vilão que foi passivo antes (check/call) e agora JÁ colocou fichas nesta
-                # rua (bet/check-raise) = passivo->agressivo (tell forte no pool).
+                # Vilão que foi passivo antes (check/call) e agora AGRIDE nesta rua
+                # (bet/check-raise) = passivo->agressivo (tell forte no pool). Um CALL
+                # não é agressão — por isso exige aggressed_street, não street_bet>0.
                 aggro_after_passive = any(
-                    passive_ever[n] and not folded[n] and street_bet[n] > 0
+                    passive_ever[n] and not folded[n] and aggressed_street[n]
                     for n in players if n != hero)
                 decisions.append(_decision_context(
                     street=street, board=list(board), hero=hero,
@@ -232,6 +235,7 @@ def _replay(lines, players, hero, bb):
             street_bet[actor] += paid
             paid_total[actor] += paid
             pot += paid
+            aggressed_street[actor] = True                  # bet = agressão nesta rua
         elif re.match(r'^raises', body, re.I):
             mto = re.search(r'to\s+([\d,.]+)', body, re.I)
             target = _amount(mto.group(1)) if mto else street_bet[actor] + _amount(body)
@@ -241,6 +245,7 @@ def _replay(lines, players, hero, bb):
             street_bet[actor] += paid
             paid_total[actor] += paid
             pot += paid
+            aggressed_street[actor] = True                  # raise = agressão nesta rua
             if street == 'PREFLOP':
                 preflop_raises += 1
                 last_pf_raiser = actor
