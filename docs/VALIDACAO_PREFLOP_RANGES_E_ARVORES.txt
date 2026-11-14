@@ -1,0 +1,192 @@
+VALIDAÇÃO ESTRATÉGICA DO PRÉ-FLOP — RANGES E ÁRVORES
+14/11/2026
+
+1. RESPOSTA DIRETA
+
+Precisamos construir referências para o cenário inteiro, obter as frequências
+e o EV de suas ações e comparar o comportamento do bot com essa referência.
+Para múltiplos limps e open com callers, ranges dos adversários e suas respostas
+ao raise precisam fazer parte do modelo. Uma tabela de open isolada é insuficiente.
+
+Os testes da versão 0.4.0 verificam cobertura funcional, origem, normalização,
+legalidade e contratos de execução. As 343.070 consultas construídas não medem
+perda de EV nem demonstram que as regras derivadas sejam lucrativas ou GTO.
+
+Este documento é um plano de validação. Nenhuma nova resolução HRC, medição de
+EV independente ou sessão real PPPoker foi executada para produzi-lo.
+
+2. INVENTÁRIO CONFERIDO
+
+Fonte: arquivos versionados de ranges do Clone, commit
+1d100d89c7334380c25e9039ea09d17b1ed301cf.
+O JSON VALIDACAO_PREFLOP_INVENTARIO.json registra contagens e hashes dos arquivos.
+As contagens são de nós por arquivo bruto; arquivos podem compartilhar nós.
+
+- nvt-ranges-validados.json: 7.368 nós; stacks de 5 a 40 BB; cenários open,
+  shove, reações a open/3-bet e alguns nós de limp/batalha de blinds.
+- nvt-ranges-deep.json: 1.200 nós; stacks 25/40/100 BB; open_raise, vs_open,
+  vs_3bet. Há algum EV registrado em 117 nós; isso não garante EV completo.
+- nvt-ranges-icm-deep.json: 480 nós; stacks 40/100 BB; nenhum EV registrado.
+- nvt-ranges-pko-deep.json: 480 nós; stacks 40/100 BB; nenhum EV registrado;
+  modo exportado pko_icm, não uma grade completa de todos os modos PKO.
+
+Nenhum dos quatro arquivos contém spots vs_4bet/vs_5bet ou campos explícitos de
+limpers, callers e histórico ordenado que representem as árvores aqui pedidas.
+vs_limp da batalha de blinds não representa dois limpers em posições iniciais.
+
+Os arquivos trazem rótulos de fonte HRC/referência, mas engineCommit está vazio.
+O campo validated=true e a presença de números EV não substituem o projeto da
+resolução, sua configuração, convergência e correspondência com o nó exportado.
+
+No código atual, os três grupos prioritários usam regras identificadas:
+  isolation_value_and_overlimp_v1
+  squeeze_and_overcall_v1
+  deep_four_five_bet_response_v2
+
+Desbloquear essas decisões removeu uma limitação de execução. A qualidade
+estratégica dessas regras ainda precisa ser medida.
+
+3. PRIMEIRA FRENTE: HISTÓRICO E CENÁRIOS REPRESENTATIVOS
+
+Importar mãos do Hand2Note com os IDs dos heroes confirmados e normalizar:
+  posições e jogadores ativos; sequência ordenada de folds/limps/raises/calls;
+  contribuições e stacks por jogador; pote, blinds e antes; sizes e regra de
+  raise mínimo; modalidade, fase, premiação e bounties quando disponíveis.
+
+Deduplicar por sala/torneio/mesa/mão, separar torneios e períodos para avaliação
+e priorizar os cenários frequentes que também arriscam mais fichas.
+As ações humanas e o resultado de uma mão não viram rótulo de jogada correta.
+
+Primeiro lote recomendado, com mesas e posições explicitadas na árvore:
+  A) UTG limp, HJ limp, hero BTN; incluir respostas dos limpers e dos blinds.
+  B) UTG open 2,5 BB, HJ call, CO call, hero BTN ou BB; incluir quem ainda age.
+  C) Hero CO open 2,5 BB, SB 3-bet para 10 BB, hero decide fold/call/4-bet.
+  D) CO open 2,5 BB, hero SB 3-bet para 10 BB, CO 4-bet para 24 BB;
+     hero decide fold/call/5-bet.
+  E) UTG open e HJ 3-bet, hero BTN enfrenta a possibilidade de cold 4-bet.
+
+Esses sizes são pontos iniciais de estudo, não recomendações já validadas.
+Começar pelos stacks 50/60/80 BB e pelas distribuições mais comuns das mãos.
+Incluir depois 100/200 BB e distribuições assimétricas. Um stack efetivo único
+não substitui todos os stacks de uma situação multiway.
+
+Stacks maiores continuam atendidos pela política de referência autorizada;
+a validação de uma profundidade não é transferida automaticamente para outra.
+Não é necessário reintroduzir um veto estratégico para organizar essa avaliação.
+
+4. SEGUNDA FRENTE: REFERÊNCIA NO SOLVER
+
+Usar HRC nos cenários suportados pela versão/licença e pelo modelo utilizado.
+Quando a árvore necessária não for representável, usar ferramenta compatível
+ou manter explicitada a aproximação. Não preencher um EV ausente como se fosse
+resultado de uma resolução que não aconteceu.
+
+Para cada caso, registrar versão da ferramenta, configuração completa, árvore,
+ranges de chegada, sizes, tolerâncias/diagnósticos de convergência disponíveis,
+unidade de EV, arquivo original e hash do export. Repetir com maior precisão
+ou com uma referência independente em uma amostra crítica.
+
+MÚLTIPLOS LIMPS
+Condicionar o modelo aos limps observados e definir ranges de limp/call,
+limp/fold e limp/reraise, quando o modelo permitir. Resolver as respostas do
+hero e dos jogadores restantes. Uma solução que pressupõe outro comportamento
+dos limpers precisa ser identificada como outro cenário.
+
+OPEN COM CALLERS
+Informar posições, range de open e ranges condicionais dos callers. Comparar
+fold, overcall, squeeze e reshove com sizes explícitos. Incluir as respostas dos
+adversários, dead money, jogadores ainda por agir e futuros potes multiway.
+
+3-BET / 4-BET / 5-BET
+Modelar os ranges que chegaram a cada nó pela sequência anterior. Distinguir
+hero como opener, 3-bettor e jogador que considera cold 4-bet. Resolver tamanho
+e frequência; não reutilizar um range genérico vs_open como resposta a 4-bet.
+
+CALLS PROFUNDOS
+Equidade all-in e pot odds são suficientes apenas para o modelo terminal
+apropriado. O EV de call com dinheiro atrás depende de realização de equidade,
+posição, implied/reverse implied odds e da continuação pós-flop. A referência
+precisa modelar essa continuação ou declarar a aproximação usada.
+
+MODALIDADES
+Começar em regular chip-EV para isolar as causas de divergência. Revalidar com
+premiação/ICM e KO/PKO: stacks, cobertura, cabeça de cada jogador, fração imediata
+e regra de progressão. Registrar se o valor progressivo futuro é aproximado.
+Freezeout/reentrada são regras de entrada, separadas da modalidade de prêmio.
+Um EV em BB/fichas não é diretamente comparável a EV monetário ou de premiação.
+
+5. TERCEIRA FRENTE: EXPORTAÇÃO E CONSULTA CORRETAS
+
+O índice atual de seleção da política começa por spot/hero/vs e compara contexto
+de modo, fase, jogadores e profundidade. Para usar árvores específicas multiway,
+é preciso ampliar o contrato do export E a consulta, preservando:
+  - histórico ordenado, limpers, callers e identidades/posições;
+  - stacks e contribuições por jogador, preços e sizes de cada raise;
+  - jogadores restantes, modalidade, fase e hipóteses econômicas;
+  - frequências e EV por ação, unidade, projeto original e hashes.
+
+Uma árvore exportada que o roteador não consegue distinguir não resolve o gap.
+As regras de referência permanecem identificadas quando não houver nó compatível;
+não recebem o rótulo de solução validada pelo simples fato de serem executáveis.
+
+6. QUARTA FRENTE: COMPARAÇÃO AUTOMÁTICA
+
+Separar três verificações:
+  A) A referência resolve o cenário pretendido e tem precisão/modelo documentados.
+  B) O import preserva frequências, ações, sizes, unidades e origem dessa referência.
+  C) O estado do bot consulta o nó correto e executa a ação/tamanho selecionados.
+
+Um teste que compara duas leituras do mesmo JSON comprova B, não comprova A.
+Uma avaliação independente não deve usar a própria regra derivada como gabarito.
+
+Comparar as 169 classes ponderadas pelos combos realmente disponíveis, bloqueios
+e probabilidade de chegada; usar combos individuais quando houver assimetria
+relevante no modelo. Considerar frequências mistas e não apenas a ação dominante.
+
+Para uma política mista p_bot(a), medir no MESMO nó, adversários e unidade:
+  EV da política = soma de p_bot(a) vezes EV_ref(a).
+  Perda local de EV = melhor EV_ref(a) - EV da política.
+
+Exemplo apenas didático, usando EV incremental em BB:
+  raise +0,18; call +0,04; fold 0. Bot sempre dá call: perda local 0,14 BB.
+Se duas ações diferem menos que a incerteza numérica, tratá-las como próximas
+da indiferença, em vez de classificar automaticamente uma como erro grosseiro.
+
+Relatar média ponderada, percentis e pior perda de EV; erro de size; contexto
+errado; cobertura de nós específicos; quantidade de referências/EVs ausentes.
+Escolher os limites de aceitação antes de avaliar. A incerteza do solver precisa
+ser menor que a perda de EV que se pretende distinguir.
+
+Essa perda local não mede sozinha exploitability global, lucro real ou ROI.
+Testar a robustez a perfis plausíveis de limpers/callers e aos sizes do cliente,
+incluindo sizes alternativos aos presets quando a diferença de EV for material.
+
+7. QUINTA FRENTE: REPLAY, OBSERVAÇÃO E CLIENTE
+
+Reservar mãos de torneios/períodos não usados na construção dos ranges.
+Reproduzir a sequência inteira, sem mostrar cartas futuras ou cartas adversárias
+que o bot não conhecia. Conferir classificação, nó, origem, decisão e tamanho.
+
+Confrontar o replay estruturado com leituras reais de imagens e, depois, com a
+observação passiva no PPPoker Windows. Consolidar a checagem nativa em uma sessão:
+histórico/posição/cartas, tamanho solicitado versus selecionado, confirmação
+da ação e latência. Erro de leitura e erro de estratégia precisam ser separados.
+
+Medir também a aproximação imposta pelos presets: pedir 2,5x e selecionar 2x
+muda o nó estratégico. A confirmação do clique não prova que o size foi ótimo.
+
+Calcular as referências offline, numa máquina adequada ao solver; o notebook
+consulta os resultados pré-calculados. Isso mantém a decisão ao vivo rápida.
+O tempo de execução e a capacidade multi-mesa exigem medição própria.
+
+8. PRIORIDADE DE IMPLEMENTAÇÃO
+
+1) Histórico ordenado e export/roteamento com contexto multiway completo.
+2) Primeiro lote regular chip-EV para dois limps, open+dois callers e guerras
+   de 3/4-bet; resolver e comparar EV, incluindo as respostas futuras.
+3) Substituir regras genéricas por nós específicos aprovados e testar holdout.
+4) Ampliar profundidades e assimetrias; calibrar KO/PKO e ICM separadamente.
+5) Homologar a integração no PPPoker Windows e medir latência por mesa.
+
+O objetivo é reduzir perda de EV demonstrável. A quantidade de arquivos,
+o campo validated e o total de testes funcionais não são essa medida.
