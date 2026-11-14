@@ -140,7 +140,7 @@ def required_equity(to_call_bb, pot_bb):
     return to_call_bb / denom if denom > 0 else None
 
 
-def equity_vs_range(hero_cards, range_combos, *, iters=8000, seed=0, board=()):
+def equity_vs_range(hero_cards, range_combos, *, iters=8000, seed=0, board=(), return_details=False):
     """Equity (win+tie/2) do hero all-in até o showdown contra um range ponderado.
 
     hero_cards: 2 strings ('As','7h'). range_combos: [(frozenset{(r,s),(r,s)}, peso)].
@@ -167,6 +167,7 @@ def equity_vs_range(hero_cards, range_combos, *, iters=8000, seed=0, board=()):
     deck_base = [c for c in FULL_DECK if c not in dead0]
     need = 5 - len(board)
     score = 0.0
+    wins = ties = 0
     for _ in range(iters):
         # amostra ponderada de um combo do vilão
         x = rng.random() * total
@@ -187,6 +188,12 @@ def equity_vs_range(hero_cards, range_combos, *, iters=8000, seed=0, board=()):
         vs = eval7(list(v) + full)
         if hs > vs:
             score += 1.0
+            wins += 1
         elif hs == vs:
             score += 0.5
+            ties += 1
+    if return_details:
+        return dict(equity=score/iters, win_probability=wins/iters,
+                    tie_probability=ties/iters, iterations=iters, seed=seed,
+                    method='seeded_monte_carlo' if need else 'sampled_terminal_range')
     return score / iters

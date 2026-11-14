@@ -1,0 +1,35 @@
+{
+  "date": "2026-11-14",
+  "timezone": "Etc/UTC",
+  "scope": "Laboratory: actual imported NVT sources with constructed/manual states; fake capture/input in operator tests; not real PPPoker Windows or GTO/ROI certification.",
+  "bases": {
+    "Software": "e51718ce26858de42c73e1313dc5ac12e4c61d73",
+    "Clone": "73df5d258acd7abeabadfb7cf1f2b066860ba28f"
+  },
+  "policy_version": "preflop-continuous-v2",
+  "source_parity": {
+    "preflop_policy.py": "94ced6bd9c15ffd3162f5a383cad819def10fa7cb39234d00c0b3722def6d7fb",
+    "tournament_profiles.py": "976f91e116fb8131d6483289c2febbef7686ccd59b58a55ebecdb18422dd88dd",
+    "preflop_equity.py": "4d2ecef7c3d7bd1c4462b609f600603b220d1ebd3b4528ca1bd3cc0f8e4f53c4",
+    "test_preflop_policy.py": "3a84cc00ca83691fc1120b1afe32f9afda16311197fa7b1f824244d8dc0db3f0",
+    "raise_plan.py": "eb4c905825d653c75c2a57fb56050c78705fc06040655528e67231a46375c6fd",
+    "test_raise_plan.py": "6f53e6dbabe841a984a2efa1b390502cdba710c729e86de97fb3640b9635641e"
+  },
+  "regression": {
+    "software": {
+      "count": "Ran 1006 tests in 40.736s",
+      "status": "FAILED (failures=1, skipped=7)"
+    },
+    "clone": {
+      "count": "Ran 1065 tests in 38.390s",
+      "status": "OK (skipped=7)"
+    }
+  },
+  "web": {
+    "tsc": "PASS",
+    "tests": 7,
+    "test_status": "PASS",
+    "vite_build": "PASS"
+  },
+  "known_failure": "Software test_raise_panel.RealPanelTest.test_reads_four_presets_and_confirm: 2.5x preset absent; reproduced unchanged on e51718c baseline; board test passed on final sequential run and isolated baseline."
+}

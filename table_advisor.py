@@ -22,6 +22,7 @@ from table_reading.tournament import read_tournament, tournament_context
 from preflop_advisor import PreflopAdvisor, infer_spread
 from postflop_advisor import advise_postflop
 from preflop_context import villain_postflop_range
+from tournament_profiles import resolve as resolve_tournament_profile, finite as bounty_amount_ok
 
 
 def read_hero_card_slots(crop):
@@ -105,7 +106,8 @@ def _postflop_in_context(advisor, tracker, state, hero, board, *, mode, stage, t
 
 def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table_key='default',
                  villain_range=None, hero_override=None, tracker=None, bounty_bb=None,
-                 enable_hud=False, read_cache=None):
+                 enable_hud=False, read_cache=None, tournament_type="auto", entry_type="auto",
+                 bounty_cash_fraction=None, bounty_active=None, bounty_bb_per_unit=None):
     """Read the table and attach an exploratory recommendation. The tournament
     phase chooses chip EV vs ICM unless mode/stage are forced. Pure read; the
     caller wraps it in an ocr_frame so one snapshot reuses OCR.
@@ -140,7 +142,11 @@ def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table
     board = read_board(crop, hero_cards=hero or [None, None])
     tourney = read_tournament(crop)
     auto_mode, auto_stage = tournament_context(tourney)
-    use_mode, use_stage = mode or auto_mode, stage or auto_stage
+    profile=resolve_tournament_profile(tourney,kind=tournament_type,entry=entry_type,
+        mode=mode,stage=stage,bounty_bb=bounty_bb,cash_fraction=bounty_cash_fraction,bounty_active=bounty_active,bounty_bb_per_unit=bounty_bb_per_unit)
+    use_mode, use_stage = profile['mode'], profile['stage']
+    state=dict(state,tournament_profile=profile,decision_table_id=table_key,
+               decision_hand_id=(hand or {}).get('hand_id') or (hand or {}).get('hand_number'))
     # Reject a crop that carries no table field at all (a lobby/tournament list the
     # detector picked up as a false-positive blue table).
     is_table = (state['pot'].get('pot_bb') is not None or state['dealer'].get('seat') is not None
@@ -153,7 +159,7 @@ def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table
     # PKO: lê o bounty por assento e anexa ao estado (p/ o call-off escalar a caça pelo
     # bounty do vilão). Só com o overlay armado (bounty_bb) e torneio PKO, p/ não pagar o
     # custo de OCR fora disso. Best-effort: assentos ilegíveis simplesmente não entram.
-    if bounty_bb and use_mode in ('pko', 'pko_icm'):
+    if bounty_bb and use_mode in ('pko', 'pko_icm') and not hasattr(advisor,'policy'):
         occ = [s for s, d in (state.get('seats') or {}).items() if d.get('occupied')]
         if read_cache is not None:          # cache: relê só a cada N frames (latência)
             state = dict(state, bounties=read_cache.bounties(crop, table_key, occ))
@@ -161,6 +167,22 @@ def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table
             from table_reading.bounty import read_seat_bounties
             bread = read_seat_bounties(crop, seats=occ)
             state = dict(state, bounties={s: v['value'] for s, v in bread.items() if v['value'] is not None})
+    # A progressive reward is bound to one fresh all-in target, never the HUD cache.
+    if profile['kind']=='pko' and hasattr(advisor,'policy'):
+        from strategy.scenarios import classify, from_table_state
+        aggressor=classify(from_table_state(state)).get('aggressor')
+        target=next((seat for seat,pos in (state.get('positions') or {}).items() if pos==aggressor),None)
+        remaining=((state.get('seats') or {}).get(target) or {}).get('stack_bb')
+        if target is not None and bounty_amount_ok(remaining) and remaining<=.05:
+            try:
+                from table_reading.bounty import read_seat_bounties
+                read=read_seat_bounties(crop,seats=[target]).get(target) or {}
+                value=read.get('value')
+                if bounty_amount_ok(value) and read.get('confidence')=='high':
+                    state=dict(state,bounties={**(state.get('bounties') or {}),target:value},
+                               bounty_fresh_seats=[target],bounty_units={target:read.get('unit','unknown')})
+            except Exception as exc:
+                state=dict(state,bounty_read_pending=type(exc).__name__)
     # HUD VIP (opcional): lê os 8 stats por vilão e anexa a state['hud'] (p/ o exploit
     # no pós-flop). Custo ALTO (~1s/8 assentos) -> com read_cache, relê só a cada N frames.
     if enable_hud:
@@ -186,7 +208,7 @@ def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table
             advice = advise_postflop(state, hero, board['cards'], street=board.get('street'),
                                      mode=use_mode, stage=use_stage, villain_range=villain_range)
     elif board_present_unread:
-        advice = dict(status='ABSTAIN', reason='BOARD_PRESENT_BUT_UNREADABLE', exploratory=True, execution_allowed=False)
+        advice = dict(status='ABSTAIN', reason='BOARD_PRESENT_BUT_UNREADABLE', phase='postflop', exploratory=True, execution_allowed=False)
     elif hero is None:
         advice = dict(status='ABSTAIN', reason='HERO_CARDS_UNKNOWN', exploratory=True, execution_allowed=False)
     else:

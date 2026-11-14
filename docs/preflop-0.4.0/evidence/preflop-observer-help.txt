@@ -1,0 +1,41 @@
+usage: assistir_mesa.py [-h] --hwnd HWND --ranges RANGES [--deep DEEP]
+                        [--intervalo INTERVALO] [--max-tables MAX_TABLES]
+                        [--bounty-bb BOUNTY_BB]
+                        [--mode {chip_ev,icm,pko,pko_icm}]
+                        [--stage {pre_itm,bubble,ft,mid}] [--hud]
+                        [--no-hotkeys]
+                        [--reference-ranges [REFERENCE_RANGES ...]]
+                        [--tournament-type {auto,regular,ko,pko,mystery}]
+                        [--entry-type {auto,freezeout,reentry,rebuy}]
+                        [--bounty-bb-per-unit BOUNTY_BB_PER_UNIT]
+                        [--bounty-cash-fraction BOUNTY_CASH_FRACTION]
+                        [--bounty-active | --no-bounty-active]
+
+Live advisor: observe a PPPoker window and print the recommendation per frame.
+Reuses the validated capture + table detection; for each complete table it
+runs table_advisor and prints the read-out and an exploratory recommendation.
+It never clicks, never sends input, and only reads. Ctrl+C stops.
+
+options:
+  -h, --help            show this help message and exit
+  --hwnd HWND           HWND da janela PPPoker
+  --ranges RANGES       nvt-ranges-validados.json
+  --deep DEEP           Pacote deep 40/100bb opcional (reference, nao
+                        validado)
+  --intervalo INTERVALO
+                        Segundos entre leituras
+  --max-tables MAX_TABLES
+  --bounty-bb BOUNTY_BB
+                        PKO: valor do bounty em BB p/ o overlay de call-off
+  --mode {chip_ev,icm,pko,pko_icm}
+                        Forca o modo do torneio (sobrepoe a deteccao por nome)
+  --stage {pre_itm,bubble,ft,mid}
+                        Forca a fase do torneio
+  --hud                 Le o HUD VIP p/ exploit no pos-flop
+  --no-hotkeys          Desliga as hotkeys de pausa/takeover (Ctrl+Alt+P/R/D)
+  --reference-ranges [REFERENCE_RANGES ...]
+  --tournament-type {auto,regular,ko,pko,mystery}
+  --entry-type {auto,freezeout,reentry,rebuy}
+  --bounty-bb-per-unit BOUNTY_BB_PER_UNIT
+  --bounty-cash-fraction BOUNTY_CASH_FRACTION
+  --bounty-active, --no-bounty-active

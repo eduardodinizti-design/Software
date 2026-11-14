@@ -1,0 +1,86 @@
+{
+  "status": "PASS",
+  "policy_version": "preflop-continuous-v2",
+  "policy_sha256": "94ced6bd9c15ffd3162f5a383cad819def10fa7cb39234d00c0b3722def6d7fb",
+  "scope": "Manual known-input coverage, actual NVT imports, no screen/mouse/solver/ROI validation.",
+  "total": 343070,
+  "depths": [
+    50,
+    60,
+    80,
+    200,
+    5000
+  ],
+  "positions": [
+    "UTG",
+    "UTG+1",
+    "UTG+2",
+    "LJ",
+    "HJ",
+    "CO",
+    "BTN",
+    "SB",
+    "BB"
+  ],
+  "tournament_kinds": {
+    "regular": 98020,
+    "ko": 49010,
+    "pko": 98020,
+    "mystery": 98020
+  },
+  "actions": {
+    "raise": 26732,
+    "fold": 264556,
+    "call": 31073,
+    "four_bet": 2077,
+    "five_bet": 315,
+    "six_bet": 315,
+    "three_bet": 6077,
+    "check": 11655,
+    "limp": 270
+  },
+  "failures": [],
+  "seconds": 35.186,
+  "sources": [
+    {
+      "name": "nvt-ranges-validados.json",
+      "path": "nvt-ranges-validados.json",
+      "sha256": "c3fafb3921e671c402b8f5b9a026dab091d8c5a0eefb49e9f7e0003f8718b796",
+      "bytes": 33837283,
+      "engine_commit": null,
+      "generated_at": "2026-11-12T15:14:45.384Z",
+      "nodes": 7368,
+      "marked_validated": 7368
+    },
+    {
+      "name": "nvt-ranges-deep.json",
+      "path": "nvt-ranges-deep.json",
+      "sha256": "142090a9f2be773cbe40da8a12a0da66ab38d8880ecbae8c8b4177f33464f947",
+      "bytes": 3618868,
+      "engine_commit": null,
+      "generated_at": "2026-11-08T23:35:37.265Z",
+      "nodes": 1200,
+      "marked_validated": 80
+    },
+    {
+      "name": "nvt-ranges-icm-deep.json",
+      "path": "nvt-ranges-icm-deep.json",
+      "sha256": "eccd3232652cce898fea83633233d0dd023cfb4fb59c40d590f6e68bb7ad15b9",
+      "bytes": 919090,
+      "engine_commit": null,
+      "generated_at": "2026-11-09T02:32:17.629Z",
+      "nodes": 480,
+      "marked_validated": 0
+    },
+    {
+      "name": "nvt-ranges-pko-deep.json",
+      "path": "nvt-ranges-pko-deep.json",
+      "sha256": "e3b5ae24163b99e1b4350a02f81b62f82106f2627428c92e715d1f628cb79232",
+      "bytes": 925447,
+      "engine_commit": null,
+      "generated_at": "2026-11-09T02:34:59.657Z",
+      "nodes": 480,
+      "marked_validated": 0
+    }
+  ]
+}

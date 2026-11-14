@@ -1,0 +1,19 @@
+
+> clone-local-panel@0.4.0 test
+> tsx --test src/utils/handParser.test.ts
+
+✔ summary does not duplicate seats or overwrite stacks (13.094092ms)
+✔ payout conserves chips and empties the current pot (0.450217ms)
+✔ decimal comma is not multiplied by 100 (0.255087ms)
+✔ unknown hero is never inferred from the first seat (0.280365ms)
+✔ header prefixes do not split inside PokerStars Hand (0.313164ms)
+✔ future board and opponent cards are hidden in earlier steps (0.785323ms)
+✔ impossible payout is reported instead of inventing chips (1.092257ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 122.825599

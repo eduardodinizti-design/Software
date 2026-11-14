@@ -23,12 +23,12 @@ class PlanRaiseTests(unittest.TestCase):
         self.assertEqual(p['expected_mult'], 2.5)
 
     def test_shove_acima_do_maior_preset(self):
-        p = plan_raise(25.0, PRESETS)           # >> 4x -> shove (barra disponível)
+        p = plan_raise(25.0, PRESETS,all_in=True)
         self.assertEqual(p['kind'], 'SHOVE')
-        self.assertEqual(p['over'], 21.0)
+        self.assertTrue(p['explicit_all_in'])
 
     def test_shove_sem_slider_vira_abstain(self):
-        p = plan_raise(25.0, PRESETS, slider_available=False)
+        p = plan_raise(25.0, PRESETS, slider_available=False,all_in=True)
         self.assertEqual(p['kind'], 'ABSTAIN')
         self.assertEqual(p['reason'], 'SHOVE_SEM_SLIDER')
 
@@ -50,6 +50,15 @@ class PlanRaiseTests(unittest.TestCase):
 
     def test_lista_vazia(self):
         self.assertEqual(plan_raise(3.0, [])['reason'], 'SEM_PRESET_LEGIVEL')
+
+    def test_normal_six_times_raise_does_not_become_allin(self):
+        p=plan_raise(6.0,PRESETS)
+        self.assertEqual(p['kind'],'ABSTAIN')
+        self.assertEqual(p['reason'],'ALVO_FORA_DO_MENU_NAO_E_ALLIN')
+
+    def test_explicit_shove_never_selects_a_nearby_preset(self):
+        p=plan_raise(3.3,PRESETS,all_in=True)
+        self.assertEqual(p['kind'],'SHOVE')
 
     def test_entrada_malformada_nao_quebra(self):
         p = plan_raise(3.0, [None, 'x', dict(mult=3.0, box=[0, 0, 1, 1], label='3x')])

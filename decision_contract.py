@@ -60,6 +60,16 @@ def evaluate(advice, *, action, hero_cards=None, action_available=True,
     se o botão da ação existe no estado atual (legalidade)."""
     advice = advice or {}
     action = (action or '').upper()
+    if advice.get('phase')=='preflop' and advice.get('policy_version'):
+        from preflop_policy import execution_reasons
+        reasons=execution_reasons(advice,hero_cards)
+        if not action_available:reasons.append('ACAO_ILEGAL')
+        if action not in _SINGLE_CLICK:reasons.append('SIZING_NAO_SUPORTADO')
+        return dict(source_validated=advice.get('validated') is True,
+                    context_match=not execution_reasons(advice,hero_cards),
+                    observation_confirmed=_cards_ok(hero_cards),action_legal=bool(action_available),
+                    sizing_supported=action in _SINGLE_CLICK,authority='PREFLOP_POLICY',
+                    execution_allowed=not reasons,blockers=reasons)
 
     borrowed = advice.get('stack_borrowed_from') is not None
     is_fallback = bool(advice.get('fallback') or advice.get('deep_guard'))
