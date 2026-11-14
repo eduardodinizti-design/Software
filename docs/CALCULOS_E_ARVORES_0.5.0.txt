@@ -1,0 +1,92 @@
+CLONE 0.5.0 — CÁLCULOS E ÁRVORES DE REFERÊNCIA
+14/11/2026 — America/Sao_Paulo
+
+Foi implementado o importador de árvores e sua consulta no núcleo compartilhado.
+As versões anteriores, main, configurações e trabalho local foram preservados.
+O lote real de cálculo GTOpen executou em CPU no GitHub Actions:
+https://github.com/eduardodinizti-design/Software/actions/runs/43603921966
+
+RESULTADO REAL DO LOTE
+
+12 cenários: dois limps BTN, open com dois callers BB, CO contra 3-bet SB,
+SB contra 4-bet CO; profundidades 50, 80 e 200 BB.
+2.028 linhas de mãos e 8.619 EVs por ação, no modelo configurado.
+Cada cálculo tem configuração, priors de chegada/locks, iterações e proveniência.
+
+Isso não equivale a resolver o poker completo ou a validar os ranges no HRC.
+O motor usa continuação aproximada e priors explícitos não calibrados nas mãos
+do usuário. Os resultados são condicionais a essas hipóteses.
+
+Cinco nós têm diferença local máxima <=0,02 BB entre a política média e a
+melhor ação calculada com as continuações do arquivo:
+  CO vs SB 3-bet: 50 e 80 BB.
+  SB vs CO 4-bet: 50, 80 e 200 BB.
+Eles são referências condicionais, não nós certificados de solver ou de lucro.
+
+Sete nós ficam apenas no estudo: todos os limps/callers e CO vs 3-bet a 200 BB.
+Nos limps/callers o orçamento interrompeu após 8–35 iterações; faltou precisão
+global atual. Nunca interpretamos gap_total=0 com accuracy_iteration=null como
+convergência. Os demais gaps globais também não atingiram o alvo configurado.
+
+O critério local não mede a exploitability global nem valida o modelo. Locks
+de ações passadas podem introduzir perdas que não desaparecem em gaps globais;
+por isso os dois diagnósticos ficam separados. Não houve comparação HRC nem
+validação real PPPoker Windows.
+
+EFEITO NO BOT
+
+As referências são consultadas por cenário, posições de limpers/callers,
+agressor, profundidade e preço. Há hashes e diferenças de contexto declaradas.
+Mãos fora do range de chegada e casos apenas de estudo mantêm a política NVT
+contínua disponível. Não foi reintroduzido um veto geral por quantidade de BB.
+Shove de uma árvore curta não vira automaticamente shove de 5.000 BB.
+Dois raises com sizes diferentes no mesmo mix preservam IDs e tamanhos distintos.
+PKO/ICM continuam usando os caminhos anteriores; as novas árvores deste lote
+são de regular chip-EV. Nenhum prior de cash foi promovido a solução PKO.
+
+COMO VER OS CÁLCULOS NO NOTEBOOK
+
+1) Baixe clone-v0.5.0, opção Source code (zip), e extraia em pasta nova.
+   Preserve a instalação antiga. Não copie .venv. Pare o painel antigo.
+2) Execute 01_INSTALAR.bat, 02_DIAGNOSTICO.bat e 03_ABRIR_CLONE.bat.
+3) Abra Cérebro estratégico -> Árvores calculadas.
+4) Selecione o cenário e a mão. O painel mostra frequências e EVs da referência.
+   Melhor EV no modelo é diferente de certificar a melhor linha na mesa real.
+5) Execute 15_TESTAR_CALCULOS_E_ARVORES.bat para testes sem captura/cliques.
+   Ele verifica o ranking, a distribuição de cartas, side pots, bounties,
+   preservação de sizes e conexão das árvores reais com a API de estudo.
+
+O operador permanece separado: 05_OPERAR.bat -> OPERAR -> PAUSADO.
+Ctrl+Alt+R libera; Ctrl+Alt+P pausa; Ctrl+Alt+D desabilita. Esta entrega não
+executou ações na conta do usuário e não calibrou a leitura do seu Windows.
+
+LABORATÓRIO NUMÉRICO PRÓPRIO
+
+preflop_lab/ permite calcular ações sob um modelo explícito: deals conjuntos
+sem colisões, ranking exato, respostas de apostas, continuação por street,
+side pots, excesso devolvido e cash de eliminação. Treino e avaliação usam
+amostras distintas. O modelo pós-flop simplificado não é uma solução HRC/Nash.
+Esse cálculo pesado é offline, não roda uma resolução em cada clique.
+
+AGREGAÇÃO DOS PROJETOS EXTERNOS
+
+Leia AUDITORIA_SOLVERS_E_BOTS_20261114.txt: compara os sete projetos enviados.
+Recomendação: GTOpen no laboratório pré-flop; motor b-inary para estudar
+pós-flop HU; TexasSolver como alternativa. Os códigos dos motores externos
+não foram embutidos na distribuição. Não requer Rust, CUDA, Node ou GTOpen no
+notebook para consultar as referências já calculadas e a interface compilada.
+
+O HRC Pro está no computador do usuário, fora do alcance desta sessão. Para
+fechar a verificação independente dos limps/callers, precisamos de um projeto
+original/export de solução desse HRC com árvore, ranges, sizes, EV e parâmetros.
+O rótulo HRC de um JSON NVT não substitui esse material.
+
+RELATÓRIOS E EVIDÊNCIAS
+
+docs/reference-solvers/calculation-quality.json: qualidade e exemplos por caso.
+strategy_data/preflop_trees/: dados exatos do lote que o importador consulta.
+docs/reference-solvers/external-poker-math-audit.json: defeitos externos reproduzidos.
+docs/reference-solvers/validation-0.5.0.json: regressão e hashes finais da entrega.
+
+Distribuição:
+https://github.com/eduardodinizti-design/VisualPilot/releases/tag/clone-v0.5.0

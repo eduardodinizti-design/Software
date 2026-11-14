@@ -1,0 +1,96 @@
+{
+  "repository": "dickreuter/Poker",
+  "commit": "cae3a108b6cbf22ed8ef90bc0e70f790346289a4",
+  "source_hashes": {
+    "poker/decisionmaker/montecarlo_python.py": "e92c00ddb9a932c412ced4d5c324969e48cddb0c05dbe9d7a1ff5efc51c7f6b2",
+    "poker/decisionmaker/base.py": "b53f222e894c8eb9b60f4aaa926a0abd75a81f548fae190f251036662dade906"
+  },
+  "scope": "AST-isolated original numeric classes; synthetic known inputs; no upstream entrypoint, capture, input or strategy database.",
+  "cases": [
+    {
+      "name": "royal_board_threeway_split",
+      "expected": 0.3333333333333333,
+      "actual": 1.0,
+      "defect_reproduced": true
+    },
+    {
+      "name": "shared_board_quads_ace_kicker",
+      "expected": "equal_scores",
+      "actual": [
+        [
+          [
+            4
+          ],
+          [
+            12,
+            11
+          ],
+          "FoufOfAKind"
+        ],
+        [
+          [
+            4
+          ],
+          [
+            12,
+            9
+          ],
+          "FoufOfAKind"
+        ]
+      ],
+      "defect_reproduced": true
+    },
+    {
+      "name": "restricted_22_range_keeps_actual_draw_in_range",
+      "expected": 0,
+      "actual": 225,
+      "draws": 1000,
+      "example": [
+        "2C",
+        "3C"
+      ],
+      "defect_reproduced": true
+    },
+    {
+      "name": "zero_requested_range_is_not_full_range",
+      "expected": 0,
+      "actual": 169,
+      "defect_reproduced": true
+    },
+    {
+      "name": "terminal_call_ev_identity",
+      "examples": [
+        {
+          "equity": 0.2,
+          "pot": 10.0,
+          "call": 2.5,
+          "actual": 0.0,
+          "expected": 0.0
+        },
+        {
+          "equity": 0.5,
+          "pot": 10.0,
+          "call": 10.0,
+          "actual": 0.0,
+          "expected": 0.0
+        },
+        {
+          "equity": 1.0,
+          "pot": 10.0,
+          "call": 5.0,
+          "actual": 10.0,
+          "expected": 10.0
+        }
+      ],
+      "matches": true
+    },
+    {
+      "name": "call_limit_with_certain_win",
+      "equity": 1.0,
+      "pot": 10.0,
+      "actual": 0.01,
+      "limitation": "Diagnostic only: the primary decision uses fitted curve limits, not this value."
+    }
+  ],
+  "all_four_defects_reproduced": true
+}
