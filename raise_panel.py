@@ -124,10 +124,21 @@ def read_raise_slider(crop):
                 allin_to=list(allin_to))
 
 
-def is_shove_target(target_mult, presets, *, max_preset_slack=1.15):
-    """True quando o alvo é um SHOVE/all-in: não há preset compatível E o alvo é
-    MAIOR que o maior preset legível (×slack). Distingue 'shove' (usa a barra) de
-    'alvo intermediário sem preset' (abstém)."""
+# Piso ABSOLUTO de shove: um alvo abaixo disto NUNCA é tratado como all-in, mesmo
+# acima do maior preset. "Acima do menu" não prova all-in (A4 / contraexemplo
+# raise-above-menu): um 4bet grande (ex.: 6x) fica sem preset compatível e deve
+# ABSTER (lado seguro: nunca shova por engano), não virar jam. Um alvo >= 8x a
+# aposta-a-bater é magnitude de jam (stack/to_beat), não um sizing que se escolhe
+# por preset. Alvos de jam reais abaixo disso (short stack) abstêm — seguro.
+SHOVE_FLOOR_MULT = 8.0
+
+
+def is_shove_target(target_mult, presets, *, max_preset_slack=1.15, shove_floor=SHOVE_FLOOR_MULT):
+    """True quando o alvo é um SHOVE/all-in: não há preset compatível, o alvo é
+    MAIOR que o maior preset legível (×slack) E atinge o PISO absoluto de shove
+    (`shove_floor`). Sem o piso, "acima do menu" por pouco (ex.: 6x sobre 4x) virava
+    jam — bug de segurança. Distingue 'shove' (barra) de 'alvo acima do menu sem
+    preset' (abstém)."""
     if target_mult is None:
         return False
     if map_multiplier_to_preset(target_mult, presets) is not None:
@@ -135,7 +146,7 @@ def is_shove_target(target_mult, presets, *, max_preset_slack=1.15):
     usable = [p['mult'] for p in presets if p.get('mult') is not None]
     if not usable:
         return False
-    return target_mult > max(usable) * max_preset_slack
+    return target_mult > max(usable) * max_preset_slack and target_mult >= shove_floor
 
 
 def target_multiplier(advice, table_state):

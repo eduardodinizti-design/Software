@@ -3,10 +3,9 @@ código de HOJE, como testes que afirmam o comportamento CORRETO.
 
 Origem: branch `audit/postflop-synthesis-20261114` (396820d), probes
 `software_e51718c_contracts.py` e `paused_close_case.py`. Reproduzidos contra o código
-real do `e51718c`. CONSERTADOS (viraram guard normal): zero-decisões≠A, street-change
-(invalidação por rua) e paused-close. Ainda `@unittest.expectedFailure` (pendentes da
-Entrega A/C): raise-acima-do-menu≠shove, chop-vira-leak (cascata do motor) e
-caller-passivo. Afirmam o certo, falham hoje, mantêm a suíte verde.
+real do `e51718c`. TODOS CONSERTADOS (viraram guard normal): zero-decisões≠A, street-change (invalidação
+por rua), paused-close, raise-acima-do-menu≠shove (piso SHOVE_FLOOR_MULT), chop-vira-leak
+(cascata do motor) e caller-passivo. Sem `@unittest.expectedFailure` restante.
 
 Estados/históricos SINTÉTICOS reproduzidos no código; não certificam PPPoker/pixel/solver.
 """
@@ -71,12 +70,13 @@ Hero: calls 10
 class GroupAContractTests(unittest.TestCase):
     """Contratos do Grupo A. expectedFailure até a Entrega A/C corrigir o código de hoje."""
 
-    @unittest.expectedFailure
     def test_raise_above_menu_is_not_all_in(self):
-        # A4: alvo 6x com presets até 4x NÃO deve virar SHOVE (all-in) sem intenção
-        # ALL_IN — "acima do maior preset" não prova all-in (falta o passo do slider).
+        # CONSERTADO: alvo 6x com presets até 4x NÃO vira SHOVE. is_shove_target agora
+        # exige o PISO absoluto (SHOVE_FLOOR_MULT=8x): "acima do maior preset" por pouco
+        # (6x>4x) abstém (SEM_PRESET_NA_TOLERANCIA), não shova. 25x (jam) segue SHOVE.
         plan = plan_raise(6.0, _PRESETS)
         self.assertNotEqual(plan['kind'], 'SHOVE')
+        self.assertEqual(plan['kind'], 'ABSTAIN')
 
     def test_zero_decisions_is_not_grade_A(self):
         # CONSERTADO: 0 decisões revisadas -> 'UNASSESSED', não nota "A".
