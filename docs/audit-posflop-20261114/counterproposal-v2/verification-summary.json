@@ -1,0 +1,51 @@
+{
+  "date_user_timezone": "2026-11-14 America/Sao_Paulo",
+  "scope": "Document review and arithmetic clarification; application source unchanged, no new client tests or full-suite rerun.",
+  "software_commit": "e51718ce26858de42c73e1313dc5ac12e4c61d73",
+  "counterproposal_v1": {
+    "name": "contraproposta-auditoria-posflop.md",
+    "sha256": "e741962edc04eb8024d6248a6657e7a8c57b614bf0e41e4d0e85fbe8c425cb88"
+  },
+  "counterproposal_v2": {
+    "name": "contraproposta-auditoria-posflop-v2.md",
+    "bytes": 8711,
+    "sha256": "7b1b7f56af744f1bdc99ed165785e1ef9ec26dabaf227f64f2af92232acdfb4a"
+  },
+  "published_path_checks": [
+    {
+      "commit": "96d447e14f6fec4b7a2bbad4ae18c4e1856f3b83",
+      "path": "docs/audit-posflop-20261114/counterproposal/verification-summary.json",
+      "exists": false
+    },
+    {
+      "commit": "396820dab8761d606dc3f288e4202666daa29e86",
+      "path": "docs/audit-posflop-20261114/counterproposal/verification-summary.json",
+      "exists": true
+    }
+  ],
+  "prior_reproduced_mdf_case": {
+    "id": "mdf_uses_pot_before_opponent_bet",
+    "input": {
+      "pot_including_bet": 20,
+      "opponent_bet": 10,
+      "to_call": 10,
+      "hero_already_bet_this_street": 0
+    },
+    "expected_mdf": 0.5,
+    "actual": {
+      "mdf": 0.6667,
+      "pot_odds": 0.3333
+    },
+    "satisfies": false
+  },
+  "independent_mdf_identity": {
+    "pot_before_bet": 10,
+    "bet": 10,
+    "pot_after_bet": 20,
+    "mdf_before_formula": 0.5,
+    "mdf_after_formula": 0.5,
+    "old_implementation": 0.6666666666666666
+  },
+  "source_mutation": false,
+  "real_PPPoker_Windows_validation": false
+}

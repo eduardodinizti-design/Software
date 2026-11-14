@@ -1,0 +1,260 @@
+AVALIAÇÃO DA CONTRAPROPOSTA PÓS-FLOP V2 E ERRATA PARA IMPLEMENTAÇÃO
+Data: 14/11/2026 — referência do usuário: America/Sao_Paulo
+
+Documento: contraproposta-auditoria-posflop-v2.md
+Tamanho: 8.711 bytes
+SHA256: 7b1b7f56af744f1bdc99ed165785e1ef9ec26dabaf227f64f2af92232acdfb4a
+Software examinado: e51718ce26858de42c73e1313dc5ac12e4c61d73
+
+1. PARECER
+
+Recomendo usar a v2 como plano de implementação, incorporando a errata abaixo.
+Ela acolheu os pontos centrais da resposta anterior: localizar as provas sem
+pedir novo anexo, corrigir matemática, preservar o trabalho existente, estender
+o coordenador a drag/fechamento e definir saídas por fase.
+
+A v2 é um plano, não uma correção já aplicada ao bot. Na conferência desta
+resposta, a branch operacional continua em e51718c e a main em 205dbc7.
+As falhas de código registradas na auditoria permanecem pendentes de implementação.
+
+Os ajustes restantes são de contrato, matemática explícita e sequência de testes.
+O objetivo está definido: núcleo Python único, observação comparável e percurso
+de execução verificável no escopo suportado.
+
+2. ERRATA E AJUSTES NECESSÁRIOS
+
+2.1 MDF: EXPLICITAR NUMERADOR, DENOMINADOR E CONVENÇÃO DO POTE
+
+A v2 diz que o MDF usa o pote APÓS a aposta, inclusive mencionando o denominador.
+O denominador pode, de fato, ser esse pote. Isso não torna a frase inteira
+necessariamente errada, mas ela é insuficiente para corrigir a implementação.
+
+No cenário HU do contraexemplo, sem contribuição anterior do Hero na rua:
+  P0 = pote antes da aposta;
+  B = aposta do vilão;
+  P1 = pote após essa aposta = P0 + B.
+
+  MDF = P0 / (P0 + B)
+      = (P1 - B) / P1.
+
+Exemplo: P0=10, B=10, P1=20 -> MDF=10/20=0,5.
+O código atual produz 20/(20+10)=0,6667, que continua errado.
+As pot odds do call são outra conta: 10/(20+10)=0,3333.
+
+Substituir a frase sobre MDF pela fórmula e pelo exemplo acima. MDF é referência
+de defesa de range sob hipóteses específicas; não obriga uma mão individual a pagar.
+Para raises, contribuições anteriores e potes laterais, explicitar o estado e
+a convenção antes de reutilizar fórmulas.
+
+No caso da royal, o EV correto é:
+  0,5 x (1.010 + 1.000) - 1.000 = +5 BB contra fold agora=0.
+Essa é a expectativa incremental daquele cenário HU/chip-EV, sem rake/side pots;
+não uma afirmação geral de lucro da mão inteira ou de todo empate.
+
+2.2 SEPARAR VALIDAÇÃO DA FONTE, AUTORIDADE E PRONTIDÃO DE EXECUÇÃO
+
+A v2 ainda inclui "range emprestada = validated=False bloqueia CALL/RAISE"
+no mesmo grupo de pausa e identidade. São controles com finalidades diferentes.
+
+Pausa, identidade, alvo e estado recente são condições operacionais.
+validated informa o que foi validado na fonte/contexto; sua aplicação à execução
+é uma decisão de cobertura/autoridade da política, não uma verdade matemática.
+
+Manter a restrição atual de empréstimo até substituir o comportamento por
+cobertura ou política testada é uma escolha de transição. Transformá-la numa
+proibição permanente de toda política baseada em referência impediria justamente
+a integração proposta, que inclui heurísticas e priors NVT.
+
+Contrato sugerido:
+  source_validated: validação da fonte no contexto exportado;
+  solver_validated: existência de solução de solver aplicável ao nó;
+  policy_id/version: método responsável pela decisão e seu escopo;
+  decision_basis: cálculo exato, EV sob modelo, nó de solver ou política de referência;
+  execution_ready: resultado das verificações operacionais atuais.
+
+Uma política pode ter fonte de referência e EV terminal exato sem ser solução GTO.
+Seu uso precisa de autoridade e testes próprios. Não marcar validated=True para
+atravessar um gate, nem usar a flag da fonte como veto eterno a todo método novo.
+Preservar o requisito de stack efetivo contínuo e desenvolver a cobertura que falta.
+
+2.3 "JAMAIS equity=null" É UMA REGRA AMPLA DEMAIS
+
+O erro demonstrado do ramo 3-bet é decidir por categoria ignorando o range
+fornecido, sem comparação quantitativa que sustente o raise.
+
+Isso não significa que toda ação correta precise carregar um número de equidade
+calculado em tempo real. Um nó de solver pode fornecer frequências de ações e
+sizes sem devolver equity nesse contrato. Uma política pode usar resultados
+pré-calculados e rastreáveis; isso também evita repetir cálculos na hora da ação.
+
+Regra substituta:
+  Exigir fundamento rastreável e aplicável à decisão.
+  Se a decisão depende de cálculo de equidade/EV, exigir entradas, método,
+  resultado e incerteza necessários a esse cálculo.
+  Se consulta um nó de solver/política pré-calculada, exigir origem, cobertura,
+  identidade do nó, ação/size e contexto compatível.
+  Campo ausente permanece ausente; não inventar um número para satisfazer o schema.
+
+No contraexemplo de 77 full contra AA quadra, o cálculo terminal deve reconhecer
+que Hero perde e recomendar FOLD. O simples preenchimento de equity não basta
+se o número não participa da decisão.
+
+2.4 SEPARAR DRY-RUN, TESTE DE INPUT E HOMOLOGAÇÃO
+
+A expressão "validação armada dry-run" precisa ser desfeita em modos claros:
+  - Observação/dry-run: calcula e registra intenção, sem enviar input.
+  - Teste de input em janela própria: envia eventos reais, verifica callbacks.
+  - Validação no PPPoker Windows: observa o efeito no cliente e contexto da mesa.
+
+O segundo não prova o terceiro. Chamar dry-run de armado sem definir o adaptador
+também não informa se houve algum clique.
+
+A Fase 3 pede homologação e validação armada como condição para sequer discutir
+execução. Isso pode criar uma dependência circular. Organizar:
+  entrada: núcleo e contratos pertinentes aprovados, executor implementado/testado;
+  processo: dry-run, teste Windows do input e sessão nativa do escopo;
+  saída: evidências e limitações suficientes para habilitar o modo executável
+         naquela configuração.
+
+O desenvolvimento e os testes já autorizados podem prosseguir. Não criar uma
+nova reconfirmação genérica a cada fase; condições técnicas de execução continuam
+válidas, assim como pausa e controle da sessão. Este arquivo recebido é objeto
+de avaliação, não revogação automática das instruções anteriores do usuário.
+
+2.5 A FASE PURA AINDA MISTURA ADAPTADORES
+
+A v2 manteve, dentro da Fase 1:
+  substituir o TS por chamada ao Python;
+  unificar drag e fechamento sob CursorController.
+
+Essas tarefas são necessárias, mas são integrações. Organizar:
+  biblioteca pura: estado, ranges, ações legais, matemática e decisão;
+  adaptador do painel: API/contrato, erros, disponibilidade e comparação;
+  adaptador de execução: clique, drag, fechamento, pausa e verificação.
+
+A biblioteca deve ser testável sem OCR, captura ou sessão Windows. O executor
+também pode ser desenvolvido/testado com adaptadores simulados antes da sessão
+nativa, sem bloquear esse desenvolvimento por falta de acesso ao notebook.
+
+2.6 CORRIGIR O COMMIT DAS EVIDÊNCIAS E OS NOMES DOS DOCUMENTOS
+
+No commit 96d447e existem evidence/ e probes/.
+A pasta counterproposal/ foi adicionada depois, no commit:
+  396820dab8761d606dc3f288e4202666daa29e86.
+
+Conferi a existência do caminho em ambos os commits:
+  96d447e: counterproposal/verification-summary.json não existe;
+  396820d: o mesmo arquivo existe.
+
+Para buscar todas essas provas, usar 396820d ou um descendente da branch de
+auditoria. Isso corrige B1 sem pedir anexos ao usuário.
+
+Os nomes Auditoria.txt, auditoriaNova.txt e Resposta.txt são apelidos no texto;
+não presumir que sejam caminhos versionados. Para os documentos identificados:
+  auditoria de 14/11:
+    docs/AUDITORIA_POSFLOP_MOUSE_E_SIZING_2026-11-14.txt, commit 96d447e;
+  avaliação anterior:
+    docs/AVALIACAO_DA_CONTRAPROPOSTA_POSFLOP_2026-11-14.txt, commit 396820d.
+
+A cópia de 12/11 citada ainda precisa de identificação inequívoca se for usada.
+Essa pendência não impede reproduzir e corrigir os casos já disponíveis.
+
+2.7 COMPLETAR O ACEITE ALÉM DOS QUATRO CASOS
+
+Os quatro casos são um bom início para corrigir matemática e participantes.
+Passar neles não homologa o motor completo nem resolve os demais contratos.
+
+Atribuir também a uma fase e ao aceite correspondente:
+  - alvo comum de raise acima do menu não vira shove sem intenção ALL_IN;
+  - presença do preset não prova o valor selecionado em BB;
+  - rua/board/preço alterados invalidam o payload anterior;
+  - zero decisões não recebe nota A;
+  - call de um jogador não é agressão atribuída a outro;
+  - PAUSED impede fechamento e novos eventos de input;
+  - sorteio de mistura resolve ação/size estruturados uma vez por decisão;
+  - identidade divergente/leitura falha não confirmam ação;
+  - stack efetivo e regras de raise permanecem corretos também em stacks profundos.
+
+A2 não deve ser reaberto por inteiro: os três casos específicos citados de
+identidade/INVALID_CROP já passam nos mocks do sequenciador. Isso foi registrado
+na avaliação anterior; permanece distinto de uma validação do cliente.
+
+Os contraexemplos são estados/históricos sintéticos executados contra código
+real do commit. Chamá-los de "contraexemplos reproduzidos no código", mantendo
+seu escopo, evita confundi-los com uma sessão PPPoker observada.
+
+A baseline completa registrada em e51718c foi 976 testes, 1 falha, 7 skips.
+A falha do preset 2,5x permanece documentada. Não anunciar a suíte integral verde
+nem remover o teste; exigir aprovação dos testes pertinentes e nenhuma regressão
+nova, identificando o impacto das falhas anteriores.
+
+3. ORIENTAÇÃO CONSOLIDADA PARA O OUTRO AGENTE
+
+Use a v2 com esta errata. Preserve AGENTS, HEAD, status e trabalho local.
+Trabalhe sobre a versão operacional confirmada e registre diferenças posteriores
+a e51718c. Busque a auditoria e as provas na branch documental; preserve suas
+referências por commit.
+
+Entrega A — núcleo puro:
+  Triar casos resolvidos/abertos. Corrigir participantes, range ignorado no 3-bet,
+  MDF e empate garantido. Unificar estado/ranges/EV com proveniência, ações legais
+  e unidades explícitas. Separar fonte validada, política e prontidão operacional.
+  Saída: quatro contraexemplos satisfeitos, testes do escopo aprovados e cobertura
+  declarada; sem input na biblioteca.
+
+Entrega B — painel e observação:
+  Consumir o mesmo contrato Python; comparar políticas sobre o mesmo snapshot.
+  Registrar ação/size, origem, hipóteses, divergências e latência.
+  Adaptar ShadowMonitor: ele não consulta dois motores nem fornece GTO por si só.
+  Saída: comparação reproduzível e tratamento de estados/erros, com observação
+  nativa registrada separadamente quando o Windows estiver disponível.
+
+Entrega C — executor:
+  Unificar clique/drag/fechamento; corrigir intenção de all-in, seleção em BB,
+  invalidação por rua/preço, pausa e resultado desconhecido.
+  Implementar e testar observação/dry-run/execução como modos distintos.
+  Saída: contratos de execução aprovados em testes, com resultado de input
+  separado do efeito confirmado no jogo. Não exigir sessão real para começar
+  a escrever/testar o adaptador.
+
+Entrega D — validação Windows do escopo:
+  Usar dados independentes de avaliação, tema/escala/DPI e identidade conhecidos.
+  Distinguir janela própria de PPPoker. Começar com uma mesa; medir captura,
+  leitura, estratégia, fila e confirmação antes de ampliar.
+  Saída: evidência nativa, parâmetros testados, casos descobertos e limitações.
+  Desenvolver cobertura para os contextos ausentes; não manter o objetivo
+  indefinidamente em conselho por falta de um campo/flag genérico.
+
+Todos os lotes mantêm stack efetivo contínuo, informação desconhecida explícita,
+controle manual e rastreabilidade. Nem heurística nem referência viram solver
+por mudar um booleano. Um resultado de build não substitui teste do comportamento.
+
+4. O QUE FOI VERIFICADO NESTA RESPOSTA
+
+- Leitura integral da v2 e comparação com a avaliação anterior.
+- HEAD/status do checkout documental e referências atuais no GitHub.
+- Existência dos caminhos publicados em 96d447e e 396820d.
+- Identidade algébrica do MDF com o pote antes/depois e o caso publicado.
+- Hash e tamanho do documento recebido.
+
+Não repeti as suítes anteriores: o código operacional permaneceu no mesmo commit.
+Os 11 testes do raise e os probes citados continuam sendo evidência da avaliação
+anterior, não uma nova execução nesta resposta. Nenhuma sessão PPPoker Windows
+ou chamada de IA foi realizada. Nenhum arquivo operacional foi alterado.
+
+Registro destas verificações:
+  docs/audit-posflop-20261114/counterproposal-v2/verification-summary.json
+
+5. REFERÊNCIAS
+
+Auditoria completa:
+https://github.com/eduardodinizti-design/Software/blob/96d447e14f6fec4b7a2bbad4ae18c4e1856f3b83/docs/AUDITORIA_POSFLOP_MOUSE_E_SIZING_2026-11-14.txt
+
+Avaliação anterior:
+https://github.com/eduardodinizti-design/Software/blob/396820dab8761d606dc3f288e4202666daa29e86/docs/AVALIACAO_DA_CONTRAPROPOSTA_POSFLOP_2026-11-14.txt
+
+Provas da avaliação anterior:
+https://github.com/eduardodinizti-design/Software/tree/396820dab8761d606dc3f288e4202666daa29e86/docs/audit-posflop-20261114/counterproposal
+
+Caso de MDF com entrada, valor esperado e resultado:
+https://github.com/eduardodinizti-design/Software/blob/396820dab8761d606dc3f288e4202666daa29e86/docs/audit-posflop-20261114/counterproposal/policy-cases.json
