@@ -41,6 +41,7 @@ from table_reading.tournament_end import detect_tournament_end
 from tournament_metrics import record_tournament_end
 from latency_metrics import LatencyMetrics
 from shadow_mode import ShadowMonitor
+from operator_robustness import BoundedKeySet, CaptureWatch
 from anticipation import AnticipationStore, available_actions, TurnEpochTracker
 from hero_card_memory import HeroCardMemory
 
@@ -288,7 +289,7 @@ def main(argv=None):
     if not per:
         print('Nenhuma janela valida.'); return 1
     targets = list(per)
-    raise_done = set()   # (mesa_global, mao): uma sequência de aumento por mão/mesa
+    raise_done = BoundedKeySet(2048)   # (mesa_global, mao): LRU p/ não vazar em horas (D3)
     hero_mem = HeroCardMemory()   # memória temporal por-slot das cartas do hero (anti HERO_CARDS_UNKNOWN)
     stabilizer = PositionStabilizer()   # suaviza posições (anti-flicker HJ<->UTG+2)
     aggr_tracker = PreflopAggressorTracker()   # agressor pré-flop por mesa (p/ equity pós-flop)
@@ -304,7 +305,8 @@ def main(argv=None):
           % len(per), flush=True)
 
     n = 0
-    tourneys_closed = set()         # (hwnd, table_key) de torneios já encerrados/fechados
+    tourneys_closed = BoundedKeySet(512)   # (hwnd, table_key): LRU p/ não vazar em horas (D3)
+    capture_watch = CaptureWatch()  # D2: vigia janela morta (captura None consecutiva) sem silêncio
     latency = LatencyMetrics()      # A0: instrumentação de latência real (p50/p95/p99)
     # A1 (antecipação, só com --antecipar): reaproveita a decisão SEGURA entre frames
     # da MESMA vez do hero. Época = cada vez que a ação (re)chega à mesa; dentro de uma
@@ -351,8 +353,16 @@ def main(argv=None):
             latency.record('captura', (time.monotonic() - _tcap) * 1000)
             cap_ts = time.monotonic()            # A0: referência p/ idade do snapshot
             if frame is None:
+                # D2: não fica em silêncio indefinido — conta falhas consecutivas por
+                # janela e avisa quando parece MORTA (minimizada/fechada/coberta/GDI).
+                fails, alert = capture_watch.fail(hwnd)
+                if alert:
+                    print('[%03d] [AVISO] janela 0x%x sem captura ha %d ciclos (morta/'
+                          'minimizada/coberta?) meta=%s' % (n, hwnd, fails, (meta or {}).get('status')),
+                          flush=True)
                 time.sleep(max(0.1, args.intervalo - (time.monotonic() - t0)))
                 continue
+            capture_watch.ok(hwnd)   # captura voltou -> zera o contador da janela
             fh, fw = frame.shape[:2]
             rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             crops = list(detect_table_crops(rgb, max_tables=args.max_tables))

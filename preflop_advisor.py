@@ -5,9 +5,12 @@ validator; this one turns the live table reading into a usable recommendation by
 consulting the validated range pack at the nearest stack bucket. It is labelled
 EXPLORATORY and never authorises execution.
 
-The NVT pack is a reference, optimised for short stacks: it covers discrete
-stacks 5-25bb, 9-max, chip EV + ICM + PKO. Deep stacks (>25bb) and post-flop are
-out of coverage and abstain here, to be developed into the bot's own engine.
+The NVT pack is a reference, optimised for short stacks. VALIDATED buckets are
+5-25bb (9-max, chip EV + ICM + PKO). Buckets 30/40bb exist as UNVALIDATED REFERENCE
+(advise, never auto-execute; flagged UNVALIDATED_REFERENCE_RANGE). Stacks above the
+top bucket (40bb) reuse the 40bb range as a flagged reference (STACK_ABOVE_SOLVED_
+DEPTH), not an abstention. Post-flop is out of coverage here. (The "~100bb" seen in
+older comments was aspirational; the real top bucket is 40bb — see STACK_BUCKETS.)
 
 No capture, no clicks. Stack bucketing and the 9-max table are explicit
 approximations, reported in every answer.
@@ -197,8 +200,9 @@ def scale_bounty_bb(base_bb, bounties, villain_position, positions):
 
 
 class PreflopAdvisor:
-    # Short stacks (5-25) come from the validated NVT pack; 40/100 from the deep
-    # reference pack (not HRC-validated, flagged in every answer).
+    # Short stacks (5-25) come from the validated NVT pack; 30/40 from the deep
+    # reference pack (not HRC-validated, flagged in every answer). 40 is the top
+    # bucket; deeper stacks reuse it as a flagged reference (see bucket_stack).
     STACK_BUCKETS = (5, 8, 10, 12, 15, 20, 25, 30, 40)
     # Clone 0.5: nossos cenários (strategy.scenarios) vs os nomes das árvores solved.
     _TREE_SCENARIO_ALIASES = {'vs_4bet_or_more': 'vs_4bet'}
@@ -315,11 +319,11 @@ class PreflopAdvisor:
     def bucket_stack(self, stack_bb):
         """Nearest covered stack bucket, or (None, reason) when out of coverage.
 
-        The HRC solutions top out at 100bb, but real tournaments play deeper,
-        especially early. Preflop open/3bet ranges change little above 100bb, so
-        a stack at or beyond the top bucket uses the 100bb range as the best
-        available reference (the extrapolation is flagged in the caveats), rather
-        than abstaining and leaving a common deep table without advice."""
+        The validated solutions top out at the 40bb bucket, but real tournaments
+        play deeper, especially early. Preflop open/3bet ranges change slowly when
+        deep, so a stack at or beyond the top bucket (40bb) uses the 40bb range as
+        the best available reference (the extrapolation is flagged in the caveats),
+        rather than abstaining and leaving a common deep table without advice."""
         if not isinstance(stack_bb, (int, float)) or stack_bb <= 0:
             return None, 'STACK_UNKNOWN'
         if stack_bb >= self.STACK_BUCKETS[-1]:
