@@ -453,6 +453,15 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
             return info
         # Mão NÃO-feita com draw: só vale fora do river (no river não vem carta) (#6).
         if street != 'RIVER' and (has_strong_draw or has_weak_draw):
+            # B1 (x/r semi-blefe, EXPLORATÓRIO): com draw FORTE (combo ou nut-flush-draw)
+            # e aposta NÃO-gigante, a linha balanceada OFERECE um RAISE semi-blefe (fold
+            # equity + equity do draw) como ALTERNATIVA. Não troca a decisão call/fold
+            # por equity abaixo — só a enriquece como estudo (o operador nunca executa).
+            if (has_strong_draw and (draws.get('combo') or draws.get('nut_flush_draw'))
+                    and pot_odds <= _BIG_BET_POT_ODDS and cap):
+                info['semi_bluff_raise'] = dict(size_bb=round(min(to_call * 3, cap), 1),
+                                                exploratory=True, basis='x/r semi-blefe draw forte')
+                caveats.append('SEMI_BLUFF_RAISE_AVAILABLE_EXPLORATORY')
             # Implied odds: o ganho futuro quando o draw completa baixa a equity exigida.
             implied = _implied_bb(street, pot, hero_stack, to_call, draws)
             po_imp = required_equity(to_call, pot + implied) if implied > 0 else pot_odds
@@ -511,8 +520,15 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
                                      street_plan=geometric_street_plan(spr, street, pot, hero_stack))
     if strong:
         frac = _bet_fraction(bclass, made, draws)
-        info.update(recommended='bet', sizing=_size(pot, frac, cap, 'valor por vantagem de range/nuts'),
-                    caveats=caveats)
+        sizing = _size(pot, frac, cap, 'valor por vantagem de range/nuts')
+        # B9 (overbet polarizado, EXPLORATÓRIO): com mão NUTADA em rua polar (turn/river),
+        # a linha polar inclui OVERBET (>pote). Oferece como OPÇÃO de size; NÃO troca a
+        # recomendação (segue 'bet') nem o size primário. Sombra; nunca executa.
+        if made in ('full_house', 'quads', 'straight_flush') and street in ('TURN', 'RIVER'):
+            over = round(min(pot * 1.25, cap), 1) if cap else round(pot * 1.25, 1)
+            sizing = dict(sizing, overbet_option_bb=over, overbet_pct=125)
+            caveats = caveats + ['OVERBET_POLAR_EXPLORATORY']
+        info.update(recommended='bet', sizing=sizing, caveats=caveats)
         return info
     bluff_blocked = cbet_bluff_blocked(n_opp)
     if bluff_blocked:
