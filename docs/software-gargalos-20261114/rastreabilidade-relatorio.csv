@@ -1,0 +1,48 @@
+﻿item_relatorio;gargalo;tarefas;avaliacao_atual
+R1.round_robin;Uma janela por ciclo;SW13,SW19;"Confirmado no loop; scheduler ainda não conectado"
+R1.frame_vazio;Captura vazia faz pular;SW02,SW17,SW19;"Não usar pixels sem captura válida; diagnosticar e recuperar"
+R1.lobby;Filtragem lobby/mesa;SW00,SW14,SW17;Preservar e validar identidade da mesa
+R1.fast_path;Não observa fora da vez;SW03,SW12;"Confirmado na operacional; implementação proposta em outra branch"
+R1.epoca;Reuso da decisão por mão/época;SW03,SW12;Incluir rua/board/preço e estados desconhecidos
+R3.1;Não é a vez do hero;SW12,SW13;"Controle legítimo de input; observar/preparar fora da vez"
+R3.2;Pós-flop só loga;SW09,SW10,SW11;Criar despacho/executor Software e ampliar modelos
+R3.3;Agressão sem nó validado bloqueada;SW04,SW05,SW06,SW08;Política explícita separada de validação independente
+R3.4;Guarda deep rebaixa para check/fold;SW05,SW06,SW08;"Integrar política contínua; não falsificar validação"
+R3.5;Raise sem alvo de tamanho;SW01,SW04;"Gerar e validar size; nunca substituir por all-in implícito"
+R3.6;Não armado/pausado/desabilitado;SW04,SW17;"Controle obrigatório; preservar sem auto-armar"
+R3.7;Cartas não lidas;SW02,SW03;"Controle obrigatório; corrigir leitura e memória sem adivinhar"
+R3.8;Exceção na percepção/cérebro;SW02,SW17,SW19;Diagnóstico estruturado, recuperação e alerta
+R3.9;Preço ausente em odds;SW01,SW07,SW08;"Normalizar e medir; distinguir erro do log de OCR"
+R3.10;Short stack impõe push/fold puro;SW06,SW08;"Menus por contexto; depth não define sozinho a linha"
+R4.deep;Deep acima de 40 BB;SW05,SW06,SW08;Cobertura funcional contínua e qualidade declarada
+R4.4bet;vs_4bet_or_more unsupported;SW03,SW05,SW06,SW08;Integrar rastreamento/roteamento e ranges de chegada
+R4.shove_pos_3bet;Shove após meu 3-bet;SW03,SW06,SW07,SW08;Histórico, preço/cobertura e economia corretos
+R4.cold_3bet;3-bet cold;SW03,SW06,SW08;Cenário distinto, sem reciclar open HU
+R4.limp_iso;Limp seguido de isolamento;SW03,SW06,SW08;Distinguir limpers e agressor
+R4.multiway_3bet;Multiway com 3-bet;SW03,SW06,SW08,SW11;"Chegadas individuais; pós-flop com modelo próprio"
+R4.6max_9max;6-max usando referência 9-max;SW06,SW08;Referência identificada e validação por número de jogadores
+R4.posflop;Qualquer pós-flop sem execução;SW09,SW10,SW11;"HU primeiro; expansão explícita por domínio"
+R4.preco;to_call=None;SW01;"Preço aninhado existe; disponibilidade real a medir"
+R5.preco;Preço quase sempre None;SW01;Afirmação quantitativa não comprovada pelo log errado
+R5.10_xfail;Dez bugs ainda em xfail;SW04,SW05;"Na HEAD eff4c1b nove guards normais; resta um xfail"
+R5.cartas_stack;Falhas pontuais de cartas/stack;SW02,SW03;Corpus real e memória vinculada à mão
+R5.preset_25;Preset 2,5 não lido;SW02,SW04;Falha reproduzida na imagem versionada
+R5.rajadas;Raise e multi-mesa só em rajadas curtas;SW13,SW19,SW20;Medição real e soak, não inferir capacidade
+R6.xr;Check-raise como plano valor/blefe;SW10,SW11;Range de chegada e respostas condicionais
+R6.bb_oop;Defesa BB pós-flop OOP;SW10;Linha vinculada à defesa pré-flop/posição/size
+R6.probe;Probe bet;SW10;Distinguir linha de nome de variável do avaliador
+R6.float;Float e continuação após check adversário;SW10;EV de continuação sem compromisso cego futuro
+R6.cap;Atacar range capada;SW10,SW18;Evidência de ações e preservação de traps
+R6.delayed;Delayed c-bet;SW10;Estado anterior e iniciativa confirmados
+R6.donk;Donk;SW10,SW11;Política específica, não regra por nome
+R6.barrels;Double/triple barrel;SW10,SW11;Valor/blefe condicionado a runout e respostas
+R7.1;Horas sem pós-flop funcional;SW09,SW10,SW11,SW20;"Continue vem antes do fallback; não atribuir clique de timeout ao bot"
+R7.2;Sem ciclo completo/runner;SW14,SW15,SW16;Inscrição, mesa, bust e capacidade reconciliados
+R7.3;Amostra enviesada por preço ausente;SW01,SW18;Contar preço conhecido/desconhecido com denominador correto
+R7.4;Multi-mesa não validado;SW12,SW13,SW20;Carga simultânea e hardware medidos
+R7.5;Desconexão/sit-out/modais/balanceamento;SW14,SW17;Máquina de estados e recuperação limitada
+R7.6;Governador não conectado;SW15,SW16;Política configurada aplicada antes de cada novo custo
+R7.7;Handles/memória/estabilidade por horas;SW19,SW20;Warm-up, retenção limitada e soak prolongado
+E1.preco_log;Demonstração: preço 3,5 e log None;SW01;Sondagem contratual, não taxa de erro ao vivo
+E2.retomada;Fechamento pausado/falho não retomado;SW14;Reproduzido em duas iterações com input simulado
+E3.integracao;Correções dispersas entre branches;SW00,SW05;Não confundir código disponível com instalado

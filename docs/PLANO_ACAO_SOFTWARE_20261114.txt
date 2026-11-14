@@ -1,0 +1,319 @@
+PLANO DE AÇÃO — BOT ORIGINAL SOFTWARE
+14/11/2026 — eduardodinizti-design/Software
+
+Escopo: exclusivamente o primeiro bot, no repositório Software. Esta entrega
+contém diagnóstico, backlog e critérios de aceite; não modifica sua execução.
+A máquina-alvo é a que roda esse bot. Seu hardware precisa ser medido, sem
+atribuir a ela a configuração de outro projeto ou prometer 12/16 mesas.
+
+DECISÃO PRINCIPAL
+
+Primeiro corrigir estado/preço e integração das versões. Depois completar a
+execução pré-flop e pós-flop HU. Em seguida desenvolver linhas multi-rua e
+medir o escalonamento de várias mesas. O runner de torneios e a operação por
+horas dependem desses fundamentos e de um ciclo de vida confiável.
+Retirar todos os controles não resolve o cérebro. Manter bloqueios genéricos
+por profundidade ou uma proibição permanente de pós-flop também não atende ao
+objetivo. A solução é uma política explícita, identificada e testável, com
+observação, legalidade e envio de input verificados separadamente.
+
+O QUE A CONFERÊNCIA DO CÓDIGO MUDOU NO RELATÓRIO
+
+Versões consultadas no GitHub:
+main: 205dbc7ffbfb5f103dc342f4dfce407a3a27915c.
+Operacional fix/audit-a1-a2-safety-gates:
+  e51718ce26858de42c73e1313dc5ac12e4c61d73.
+Correções fix/postflop-counterexamples:
+  eff4c1b137471871d2ed81e1f70dcbd09634896d.
+Pré-flop feat/preflop-depth-tournament-profiles, PR #6:
+  99083de9e4f0b731c2205d0d7e2bca88d2bfdc7e.
+Árvores feat/preflop-ev-trees, PR #7:
+  a420ec868ab412a303a786ba19db7133677c7500.
+
+O relatório não identifica o commit instalado no Windows. Assim, capacidade
+numa branch não foi tratada como capacidade já implantada na máquina.
+
+1. Os dez contraexemplos não estão todos abertos na HEAD eff4c1b: nove testes
+   normais passam; resta um expectedFailure de raise acima do menu virar shove.
+   Eles continuam ausentes da branch operacional e51718c. Integrar é trabalho
+   obrigatório; reimplementar os nove sem conferir criaria regressões.
+2. Existe read_to_call. O estado usa to_call.to_call_bb; a mensagem CEREBRO do
+   operador consulta to_call_bb na raiz. Uma demonstração com preço 3,5 BB
+   imprime None nesse acesso, embora o preço exista no estado. A frequência
+   real de falha do OCR no Windows ainda precisa ser medida corretamente.
+3. Pré-flop contínuo, profundidades amplas e leitura fora da vez já existem no
+   Software em branches propostas. Não estão integrados à operacional. O
+   classificador antigo ainda declara cenários limitados, mas a política nova
+   trata parte deles: supported=False isolado não prova ausência da nova rota.
+4. DeadlineScheduler existe, mas operar_mesa.py continua escolhendo uma janela
+   por round-robin. A existência da classe não prova uso ou capacidade multi-mesa.
+5. O pós-flop operacional encontra um continue antes do fallback anti-freeze.
+   Portanto, não é correto atribuir automaticamente check/fold pós-flop ao bot:
+   o código apenas loga. A reação do cliente ao timeout é outra medição.
+6. Outra lacuna foi reproduzida em eff4c1b: um fechamento sem input/sem sucesso
+   entra em tourneys_closed. Ao liberar novamente o controle, a janela não é
+   reconsiderada. O teste de não fechar pausado passa, mas o ciclo de retomada
+   ainda está incompleto.
+
+PROVAS EXECUTADAS NESTA SESSÃO
+
+Base dos testes: eff4c1b, em checkout isolado do Software.
+Regressão dirigida: 209 testes; 206 aprovações normais, 2 pulados e 1 falha
+esperada. Essa falha esperada é um defeito aberto, não uma aprovação.
+Teste isolado do painel real versionado: falha reproduzida; lê 2/3/4 e perde
+o preset 2,5 esperado. Não se alterou a imagem nem o limiar para passar.
+Sondagens sintéticas: preço aninhado versus log, 6x virando SHOVE sem pedido
+all-in e fechamento não retomado após PAUSED -> RUNNING.
+São testes de laboratório. Não houve captura, clique, inscrição ou sessão
+real no PPPoker Windows nesta execução.
+Os tempos de 1 ms/330 ms citados no relatório também não foram medidos por nós
+na máquina Windows; são hipóteses a conferir no SW19.
+
+BACKLOG EXECUTÁVEL
+
+SW00 — P0 — Fixar a versão efetivamente executada
+Registrar SHA, branch, Python/dependências, cliente PPPoker, DPI/resolução,
+HWND/PID, hashes/caminhos de todos os ranges e argumentos reais de partida.
+Artefato: manifesto da sessão e release candidata única. Não usar um ZIP antigo
+ou uma branch diferente e atribuir a falha à versão nova.
+Aceite: outro agente reproduz a mesma configuração; runtime mostra o SHA ativo.
+
+SW01 — P0 — Corrigir contrato, proveniência e diagnóstico do preço
+Padronizar to_call.to_call_bb e corrigir logs/consumidores divergentes. Distinguir
+preço adicional, total da aposta, fichas e BB. Check confirmado vale zero;
+leitura ausente vale desconhecido. Conversão de fichas exige blind confirmado.
+Medir disponibilidade apenas quando a ação está presente e separar motivos:
+sem linha, valor ilegível, unidade desconhecida, conflito e leitura vencida.
+Aceite: log, decisão e botão concordam em casos reais anotados; não inferir
+"OCR quase sempre falha" a partir da chave errada do log. Fixtures cobrem
+decimal, call normal, all-in curto, check, unidade ausente e mudança do preço.
+
+SW02 — P0 — Fechar leitura instável e o preset 2,5
+Montar corpus de falhas reais com layout/tamanho/DPI e hashes. Conservar tema
+de cartas coloridas como prioridade. Separar originais de recortes/transformações
+e treino de avaliação. Corrigir por causa, mantendo abstenção em ambiguidade.
+Congelar o conjunto de avaliação antes de ajustar o leitor.
+O caso 8h->3h continua rastreado até haver reprodução no mesmo tema; a falta
+desse exemplo não paralisa outros casos. Não baixar limiar para esconder erro.
+Aceite: nenhuma leitura errada aceita no lote independente escolhido; reportar
+também quantidade de desconhecidos, cobertura e limites desse lote. O preset
+2,5 passa na imagem original e não cria falsos presets em outras imagens.
+
+SW03 — P0 — Estado da mão e histórico público coerentes
+Separar identidade da mesa/torneio, identidade da captura e identidade da mão.
+Guardar ações/valores observados por assento, rua, ordem e fonte. Um frame
+isolado não reconstrói toda a ação perdida entre capturas. Cartas do hero podem
+ser lembradas na mesma mão; decisão estratégica precisa incluir rua, board,
+preço, pote, stacks e revisão do histórico. Desconhecido não é jogador foldado.
+Aceite: troca de rua/mão/janela invalida a decisão antiga; mudança de preço
+recalcula; novo combo de cartas não recebe evidência do cache de outro combo.
+
+SW04 — P0 — Contrato único de execução e sequência de raise
+Separar autoridade da política de rótulos de fonte e certificação estratégica.
+Manter pausa/desabilitação e revalidar captura/identidade, foco, geometria,
+cartas, rua, ação e preço antes do input. ALL_IN precisa de intenção explícita:
+6x acima de presets 2/3/4 não vira shove. Preset indisponível não vira size
+arbitrário. Relê-lo e conferir o valor selecionado antes de Confirmar.
+Input rejeitado ou efeito incerto não é sucesso nem motivo para reenviar.
+Deduplicar a mesma decisão, permitindo open e posterior 4-bet confirmados;
+um envio incerto exige reconciliação e não nova tentativa cega na mesma mão.
+Aceite: remover o último expectedFailure após corrigir a causa; testes negativos
+provam zero confirmação indevida e positivos preservam raises normais/deep.
+
+SW05 — P0/P1 — Integrar as correções que já existem no Software
+Começar de uma base que contenha as correções eff4c1b. Integrar PR #6 por mudança
+revisada, resolvendo os pontos comuns em operar_mesa.py, table_advisor.py e
+decision_contract.py. Preservar matemática, contagem de ativos, auditoria e
+invalidação por rua. PR #7 depende dessa integração e de sua qualidade declarada.
+Não fazer merge cego de branches antigas sobre a nova base.
+Aceite: release integrada passa os nove guards normais, o novo guard do décimo
+caso, retomada de fim de torneio, pré-flop contínuo e regressão de percepção.
+
+SW06 — P1 — Completar o contrato estratégico pré-flop
+Cobrir 2–9 jogadores, posições, múltiplos limps, limp->iso, open+callers,
+3-bet cold, squeeze, 4/5-bet e respostas posteriores, inclusive após raise do
+hero e diante de shove. Manter raises/calls/limps onde fizerem sentido a menos
+de 20 BB; profundidade sozinha não impõe push/fold puro. Acima de 40/100 BB,
+normal raise não se transforma em jam por usar uma referência curta.
+Aceite: matriz de contexto/169 classes/ações legais em 5/10/15/20/25/40/50/60/
+80/100/200/300/1.000/5.000 BB. Isso prova cobertura funcional, não EV ótimo.
+Onde faltarem árvores, regra/referência explícita, sem fabricar solver validado.
+
+SW07 — P1 — Diferenciar torneios e calcular a economia correta
+Separar regular/KO/PKO/Mystery da regra freezeout/reentrada/rebuy e da fase do
+torneio. Configuração por mesa, sem aplicar um perfil manual a mesas diferentes.
+Normalizar prêmio, cobertura de stacks, fração imediata, side pots e excesso
+não contestável. Empate não elimina nem coleta cabeça. Prêmio progressivo futuro
+não é dinheiro já ganho. ICM requer stacks/premiação/campo e hipóteses conhecidas.
+Aceite: casos analíticos de call/eliminação/empate/side pots com conservação de
+fichas; mudar o bounty só altera decisões nas condições econômicas corretas.
+
+SW08 — P1 contínuo — Validar ranges e EV em referências independentes
+Usar projetos/exports originais HRC Pro com versão, árvore, ranges de chegada,
+stacks, posições, antes, sizes, rake e economia do torneio identificados.
+Priorizar dois/três limps, open+dois calls, 3-bet cold, 4/5-bet e deep. Limps
+raros exigem modelos explícitos de chegada; não usar nó quase inalcançado como
+prova de estratégia contra a população. EV ausente permanece desconhecido.
+No Software já há 12 cálculos GTOpen; cinco referências condicionais e sete
+casos de estudo. Consistência local não é convergência global nem HRC/GTO.
+Aceite: ação/tamanho efetivamente consultados correspondem ao nó; comparar
+frequências/EV por combo com tolerância justificada e loss de EV fora da amostra.
+
+SW09 — P1 — Habilitar execução pós-flop HU no próprio Software
+Substituir o continue geral por despacho para política pós-flop versionada,
+com autoridade, contexto e executor próprios. Começar por HU chip-EV em pote
+simples: check/fold/call e apostas nos presets 1/3, 1/2, 2/3 e pote reconhecidos.
+Size pós-flop é fração do pote, não multiplicador pré-flop. Não passar esse
+despacho pelo fallback pré-flop ou pela proteção premium daquele caminho.
+Aceite: flop/turn/river podem atuar sem duplicar input; pausa/dry-run não clicam;
+board/preço alterado invalida; montante do preset e efeito final são verificados.
+A remoção do bloqueio precisa sair junto com esse caminho testado, não esperar
+indefinidamente pela solução de todas as linhas de poker.
+
+SW10 — P1/P2 — Transformar pós-flop em motor de linhas condicionais
+Ranges ponderados por adversário e ação, com remoção de cartas e memória pública.
+Modelar defesa de BB OOP, x/c e x/r valor/blefe, probe, float, delayed c-bet,
+donk seletiva, double/triple barrel e ataque a ranges possivelmente capadas.
+Cada linha define chegada, condições, ação/size e resposta a novas ações e
+runouts. Não significa comprometer-se a blefar turn/river antes de vê-los.
+Call não é agressão; check não elimina automaticamente premiums do range.
+Aceite: replay sem cartas futuras/escondidas, contrafactuais por ação e EV de
+continuação. Não promover equity de showdown isolada a EV de toda a linha.
+Comparar subconjuntos HU com referências de solver identificadas; registrar
+hipóteses e licença antes de incorporar qualquer motor externo.
+
+SW11 — P2 — Expandir pós-flop para potes 3-bet, multiway e MTT
+Resolver cada domínio com ranges e modelos próprios. Penalizar equidade HU
+por um coeficiente não equivale a resolver multiway. Incluir posição relativa,
+ordem, side pots, all-ins, SPR, ICM e bounty quando o modelo suportar esses dados.
+Aceite: contratos e conjuntos de referência separados por domínio; sem converter
+resultado HU em suposta solução multiway/PKO. Política aproximada identificada
+permanece distinta de uma referência independente ou de lucro comprovado.
+
+SW12 — P1/P2 — Antecipar percepção e preparar decisões
+Observar cartas/board e ações mesmo fora da vez, com orçamento de CPU e cache
+por estado econômico. Preparar planos condicionais; na vez, validar e executar.
+Fold pré-selecionado só quando a política e a semântica da UI forem confirmadas;
+não foldar um check gratuito nem confundir ausência num range de open com fold
+em todos os cenários futuros. Invalidar preparação se contexto/rua mudar.
+Aceite: menos trabalho crítico na vez, sem reaproveitamento de decisão vencida
+e sem antecipar call/raise sobre uma ação adversária ainda não observada.
+
+SW13 — P2 — Conectar o escalonador ao operador real
+Alimentar DeadlineScheduler por todas as mesas observadas, priorizar prazo e
+idade de espera e manter justiça. Clock ilegível usa orçamento declarado como
+heurística, não tempo real inventado. Captura/decisão e fila de input separados;
+mouse único e serializado, com revalidação após espera e cancelamento de vencidos.
+No loop atual, com intervalo de 1 s e uma janela por ciclo, seis janelas podem
+ficar cerca de 6 s entre visitas e dezesseis cerca de 16 s, antes de custos
+extras de ações demoradas. É projeção estrutural, não benchmark Windows.
+O orçamento de aceite exige descoberta+leitura+consulta+fila+input+verificação
+e margem caberem no tempo disponível medido; acompanhar p99 e estouros, não
+somente médias. Primeiro medir e reduzir o ciclo, depois ampliar a carga.
+Aceite: carga com ações simultâneas e rajadas de raises em 1/2/4/6 mesas;
+depois 8/12/16 apenas conforme capacidade medida. Medir p50/p95/p99, espera,
+idade do frame e deadlines perdidos. Scheduler existir em arquivo não basta.
+
+SW14 — P0/P1 — Ciclo de vida do torneio e identidade das janelas
+Estados explícitos: detectado, jogando, encerrado, fechamento pendente,
+fechado confirmado e fechamento incerto. Pausa não conclui um fechamento;
+liberar novamente retoma o pendente. Só marcar closed com evidência positiva.
+Reconciliar balanceamento, HWND novo, eliminação e métricas sem duplicar eventos.
+Aceite: a sondagem atual [False] deve virar tentativa pendente seguida de envio
+autorizado após RUNNING, sem clicar enquanto pausado ou repetir efeito incerto.
+
+SW15 — P2/P3 — Runner de sessão e inscrições
+Costurar descoberta/seleção, reserva, registrar_armado, recibo confirmado,
+descoberta da mesa e operador. Concluir torneio devolve capacidade ao runner.
+Late-reg, reentrada, rebuy e add-on são transições próprias com elegibilidade,
+custo e limite de tentativas/tempo. Freezeout não permite reentrada por padrão.
+Aceite: simulação completa com reinício no meio de cada transição, sem cobrança
+duplicada ou janela órfã. Input financeiro real só dentro da política/orçamento
+configurados; planejar este módulo não executa pagamentos nesta sessão.
+
+SW16 — P1/P2 — Governador de banca e reconciliação
+Usar o RegistrationLedger SQLite existente como fonte de reservas/custos.
+Reconciliar orçamento disponível, vagas, inscrições confirmadas, reentradas,
+prêmios e saldos. Aplicar a política configurada de seleção/encerramento da
+sessão antes de cada nova inscrição. Não inventar limites financeiros.
+Buy-ins de referência, fichas e moeda são unidades distintas; saldos/custos
+precisam de aritmética monetária e conversões explicitamente confirmadas.
+Aceite: reservas concorrentes e falhas/reinícios não excedem o autorizado;
+recibo incerto não libera verba para possível pagamento duplicado. Regras de
+banca não viram limitação arbitrária de estratégia por quantidade de blinds.
+
+SW17 — P1/P2 — Tratar UI inesperada e recuperação
+Catálogo de estados: desconexão/reconexão, sit out, diálogo de rebuy/add-on,
+mudança de nível, modais, foco/DPI/resolução alterados e migração de mesa.
+Cada estado possui observação, transição permitida e recuperação limitada;
+sem apertar confirmações genéricas. Recuperar não arma sozinho o bot.
+Aceite: injeção de cada interrupção entre captura, decisão, movimento e clique;
+zero input no alvo/valor errado e retomada rastreável do estado permitido.
+
+SW18 — P1 contínuo — Salvar mãos e auditar o cérebro
+Histórico por mão/rua com observações, ações, preço, política/nó/hash, contexto,
+size pedido/observado, autoridade e confirmação. Separar ação do bot, usuário
+e timeout do cliente. Importar históricos para replay/testes com heróis definidos.
+Aceite: reconstruir cada decisão e comparar com a mesma política que operou;
+sem ocultar preço desconhecido, grade A em zero decisões ou aprender como certo
+apenas porque uma mão humana ganhou. Calibração e avaliação em mãos separadas.
+
+SW19 — P1/P3 — Medir latência, recursos e estabilidade por horas
+Instrumentar captura, OCR, consulta, fila, movimento, confirmação e recuperação.
+Monitorar RSS/handles/GDI/CPU e descarte de frames; cache e diagnóstico limitados,
+sem gravar imagens continuamente. Watchdog avisa perda de heartbeat/processo;
+uma reinicialização não pode duplicar input, inscrições ou armar o bot.
+Aceite: após warm-up não há crescimento linear contínuo de recursos; logs rodam
+com retenção limitada; testes longos e falhas de captura não deixam handles presos.
+
+SW20 — P1/P3 — Aceite Windows e release reprodutível
+Pacote/manifesto único, regressão e um roteiro agrupado no cliente real.
+Validar captura/DPI/foco, preços e primeiro efeito real de fold, call e raise
+nos presets suportados, nas diferentes ruas liberadas e em mais de uma mesa.
+Depois sessões progressivas de 30 min, 2 h e 4–6 h com eventos anotados,
+incluindo recuperação e ciclo de torneio quando autorizado/configurado.
+Aceite: toda tentativa explica envio, cancelamento, pausa ou incerteza; nenhuma
+ação indevida aceita; capacidade só declarada no hardware/carga efetivamente
+observados. Zero falhas em amostra limitada não prova lucro nem risco zero.
+
+ORDEM DE ENTREGA E DEPENDÊNCIAS
+
+A. Base e execução confiáveis: SW00/01/02/03/04 e correções essenciais SW14.
+   Saída: estado/preço auditáveis, último xfail fechado, pausa/retomada e sizes.
+B. Pré-flop funcional integrado: SW05/06/07, com SW08 e SW18 iniciados.
+   Saída: sem bloqueio geral deep, posições/linhas/modalidades rastreáveis.
+C. Pós-flop HU executável: SW09 sobre estado e execução da entrega A/B.
+   Saída: pós-flop realmente despachado e confirmado nas três ruas.
+D. Cérebro de linhas: SW10 e expansão SW11; SW08/18 continuam produzindo provas.
+   Saída: linhas condicionais avaliadas, não uma lista de nomes ou regras soltas.
+E. Agilidade e várias mesas: SW12/13, com SW17/19 desde o início das medições.
+   Saída: escalonador usado no loop e capacidade medida por prazo/carga.
+F. Sessão completa: SW14/16 antes de SW15, finalizando SW17/19/20.
+   Saída: ciclo de torneios e estabilidade por horas com reconciliação.
+
+Cada entrega termina com diff, regressão, evidência, limitações e release
+identificada. Não é necessário esperar todas as linhas avançadas para entregar
+um HU funcional; nenhum gate de conclusão pode ser substituído por "compilou".
+Datas e capacidade dependem do manifesto SW00, corpus e referências disponíveis;
+não há estimativa confiável de 12/16 mesas ou de solver completo sem esses dados.
+
+COMO ACOMPANHAR A EXECUÇÃO
+
+Backlog com dependências: docs/software-gargalos-20261114/backlog.csv.
+Mapa de TODOS os itens do relatório: rastreabilidade-relatorio.csv nessa pasta.
+Evidências, hashes, comandos e resultados: evidencias.json e arquivos vizinhos.
+O agente implementador deve atualizar status e provas por ID; não fechar item
+apenas por criar classe, remover um if ou marcar a suíte inteira como verde.
+
+Primeira prioridade concreta: SW00 + SW01 + SW04 + retomada SW14, preservando
+as nove correções já existentes. Isso remove erros de diagnóstico e de envio
+antes de avaliar a qualidade do cérebro ou multiplicar a carga de mesas.
+
+REFERÊNCIAS DE REVISÃO
+
+Contraexemplos e contratos na HEAD consultada:
+https://github.com/eduardodinizti-design/Software/blob/eff4c1b137471871d2ed81e1f70dcbd09634896d/test_postflop_counterexamples.py
+https://github.com/eduardodinizti-design/Software/blob/eff4c1b137471871d2ed81e1f70dcbd09634896d/test_audit_contracts_group_a.py
+Integrações de pré-flop já propostas no Software:
+https://github.com/eduardodinizti-design/Software/pull/6
+https://github.com/eduardodinizti-design/Software/pull/7

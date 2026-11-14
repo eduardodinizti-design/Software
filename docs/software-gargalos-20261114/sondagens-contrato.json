@@ -1,0 +1,31 @@
+{
+  "scope": "Synthetic contract demonstrations using Software eff4c1b; no OS input, client capture, registration or live validation.",
+  "price_log": {
+    "reader_contract_value_bb": 3.5,
+    "operator_flat_log_value": null,
+    "conclusion": "The log can print None although a price exists in state; this does not measure actual live OCR missingness."
+  },
+  "raise_above_menu": {
+    "requested_mult": 6,
+    "presets": [
+      2,
+      3,
+      4
+    ],
+    "actual_kind": "SHOVE",
+    "explicit_all_in_requested": false
+  },
+  "tournament_close_resume": {
+    "frames": 2,
+    "operator_exit": 0,
+    "final_control": "RUNNING",
+    "close_authorizations": [
+      false
+    ],
+    "expected_authorizations": [
+      false,
+      true
+    ],
+    "issue": "A dry-run/failed close is marked in tourneys_closed and the resumed loop does not retry the close."
+  }
+}
