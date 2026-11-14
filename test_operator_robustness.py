@@ -1,7 +1,7 @@
 """Robustez do operador p/ horas (BACKLOG D2/D3). Testes puros."""
 import unittest
 
-from operator_robustness import BoundedKeySet, CaptureWatch
+from operator_robustness import BoundedKeySet, CaptureWatch, raise_outcome
 
 
 class BoundedKeySetTests(unittest.TestCase):
@@ -64,6 +64,24 @@ class CaptureWatchTests(unittest.TestCase):
         self.assertEqual(w.consecutive(1), 1)
         self.assertEqual(w.consecutive(2), 0)               # hwnd 2 intacto
         self.assertTrue(w.fail(1)[1])                       # 2a falha do 1 -> alerta
+
+
+class RaiseOutcomeTests(unittest.TestCase):
+    def test_ok_submetida_nunca_retenta(self):
+        # ok=True = confirmar saiu (aposta submetida) -> done, mesmo confirmed=False
+        self.assertEqual(raise_outcome(dict(ok=True, confirmed=True), 0)[0], 'done')
+        self.assertEqual(raise_outcome(dict(ok=True, confirmed=False), 1)[0], 'done')
+
+    def test_unknown_confirmar_nao_saiu_retenta_ate_cap(self):
+        unk = dict(ok=False, unknown=True, maybe_sent=True, reason='CONFIRMAR_CANCELADO')
+        d1, a1 = raise_outcome(unk, 0, max_attempts=2)
+        self.assertEqual((d1, a1), ('retry', 1))
+        d2, a2 = raise_outcome(unk, a1, max_attempts=2)
+        self.assertEqual((d2, a2), ('giveup', 2))   # cap -> desiste (não trava)
+
+    def test_fail_antes_do_confirmar_tambem_retenta(self):
+        fail = dict(ok=False, reason='ALVO_AUSENTE')
+        self.assertEqual(raise_outcome(fail, 0)[0], 'retry')
 
 
 if __name__ == '__main__':

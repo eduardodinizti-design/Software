@@ -495,20 +495,37 @@ def main(argv=None):
                 hid = hkey
                 adv = result.get('advice') or {}
                 if adv.get('phase') == 'postflop':
-                    # Pós-flop é SÓ conselho exploratório. O operador armado joga
-                    # pré-flop apenas e NUNCA executa pós-flop (sem clique, sem
-                    # sequência de aumento) até ser validado à parte.
+                    # Pós-flop NÃO executa a ESTRATÉGIA (não-validada): sem bet/call/raise.
+                    # D6 — ANTI-FREEZE: se há CHECK (GRÁTIS, não compromete ficha), clica
+                    # CHECK p/ não perder a mão no relógio (ver turn/river de graça).
+                    # Enfrentando aposta (sem CHECK) NÃO age: nunca comita NEM folda cego
+                    # pós-flop. CHECK = piso SAFETY_NONCOMMIT (autorizado por legalidade).
+                    has_check = br['status'] == 'EXPERIMENTAL_BUTTON_ROW' and any(
+                        b.get('action') == 'CHECK' for b in br.get('buttons', []))
                     if br['status'] == 'EXPERIMENTAL_BUTTON_ROW' and adv.get('status') == 'ADVICE':
                         eqtxt = ''
                         if adv.get('equity') is not None:
                             eqtxt = ' | eq=%.0f%% vs pot_odds=%.0f%%' % (
                                 adv['equity'] * 100, (adv.get('pot_odds') or 0) * 100)
-                        print('[%03d] vez do hero PÓS-FLOP (%s): %s %s%s | sem execucao (exploratorio)'
+                        print('[%03d] vez do hero PÓS-FLOP (%s): %s %s%s | estrategia nao executa%s'
                               % (n, adv.get('street'), str(adv.get('recommended')).upper(),
-                                 adv.get('made') or '', eqtxt), flush=True)
+                                 adv.get('made') or '', eqtxt,
+                                 ' (CHECK gratis anti-freeze)' if has_check else ''), flush=True)
                     elif br['status'] == 'EXPERIMENTAL_BUTTON_ROW':
-                        print('[%03d] vez do hero PÓS-FLOP (%s): ABSTEM %s | mao=%s | sem execucao'
-                              % (n, adv.get('street'), adv.get('reason'), adv.get('made')), flush=True)
+                        print('[%03d] vez do hero PÓS-FLOP (%s): ABSTEM %s | mao=%s%s'
+                              % (n, adv.get('street'), adv.get('reason'), adv.get('made'),
+                                 ' | CHECK gratis anti-freeze' if has_check else ' | sem execucao'), flush=True)
+                    if has_check:
+                        check_adv = dict(status='ADVICE', recommended='check', validated=False,
+                                         phase='postflop', anti_freeze=True)
+                        out = executor.execute(dict(result, advice=check_adv), br, origin=(x, y),
+                                               frame_size=(fw, fh), input_adapter=adapter,
+                                               validator=validator, verifier=verifier,
+                                               hand_id=hid, table_key=tkey_local)
+                        if out.get('acted'):
+                            print('[%03d] >>> POS-FLOP anti-freeze: CHECK %s'
+                                  % (n, 'DRY-RUN' if out['dry_run'] else 'REAL'), flush=True)
+                            _emit_shadow(result, adv, 'check', out)
                     continue
                 # LOG DO CÉREBRO (toda vez do hero, pré-flop): grava POR QUE a decisão
                 # saiu — hero, posição, to_call, apostas, spot, nó, validated, equity/req.
@@ -570,11 +587,26 @@ def main(argv=None):
                                              bot_control=control, table_key=tkey_local, hand=hid,
                                              max_tables=args.max_tables)
                         res = seq.run()
-                        raise_done.add((tkey, hid))
-                        print('[%03d] >>> RAISE sequencia: %s' % (n, res.get('reason')
-                              or ('preset %sx confirmado=%s' % (res.get('preset'), res.get('confirmed')))), flush=True)
+                        key = (tkey, hid)
+                        # D4: ok=True = aposta submetida -> feito, NUNCA re-tenta. ok=False
+                        # = nada submetido (o passo 0 do seq revalida a vez) -> re-tenta no
+                        # próximo ciclo, com CAP p/ não travar. Nunca duplica raise.
+                        decision, raise_attempts[key] = raise_outcome(res, raise_attempts.get(key, 0))
+                        if decision != 'retry':
+                            raise_done.add(key)
+                            raise_attempts.pop(key, None)
+                        if decision == 'done':
+                            print('[%03d] >>> RAISE sequencia: preset %sx confirmado=%s' % (
+                                n, res.get('preset'), res.get('confirmed')), flush=True)
+                        elif decision == 'giveup':
+                            print('[%03d] [*** RAISE sem efeito apos cap: %s -> desiste (mao pode '
+                                  'precisar de atencao) ***]' % (n, res.get('reason')), flush=True)
+                        else:
+                            print('[%03d] RAISE sem efeito (%s) -> re-tenta no proximo ciclo '
+                                  '(seq revalida a vez)' % (n, res.get('reason')), flush=True)
                         _emit_shadow(result, adv, adv.get('recommended') or 'raise',
-                                     {'authority': 'VALIDATED', 'state': res.get('reason')})
+                                     {'authority': 'VALIDATED', 'state': res.get('reason')
+                                      or ('confirmado=%s' % res.get('confirmed'))})
                     continue
                 out = executor.execute(result, br, origin=(x, y), frame_size=(fw, fh),
                                        input_adapter=adapter, validator=validator,

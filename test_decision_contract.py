@@ -128,6 +128,19 @@ class ContractTests(unittest.TestCase):
         self.assertFalse(c['execution_allowed'])
         self.assertIn('SEM_LEITURA', c['blockers'])
 
+    # ---- D6: anti-freeze pós-flop só CHECK (não-commit); nunca comita pós-flop ----
+    def test_postflop_check_anti_freeze_e_noncommit_autorizado(self):
+        c = evaluate(dict(status='ADVICE', phase='postflop', recommended='check', anti_freeze=True),
+                     action='CHECK', hero_cards=CARDS)
+        self.assertEqual(c['authority'], 'SAFETY_NONCOMMIT')
+        self.assertTrue(c['execution_allowed'])      # CHECK é grátis
+
+    def test_postflop_commit_sem_no_bloqueado(self):
+        c = evaluate(dict(status='ADVICE', phase='postflop', recommended='call'),
+                     action='CALL', hero_cards=CARDS)
+        self.assertFalse(c['execution_allowed'])      # pós-flop não comita sem autoridade
+        self.assertEqual(c['authority'], 'NONE')
+
     # ---- sizing: raise/all-in não é caminho single-click ----
     def test_raise_not_supported_in_single_click_contract(self):
         c = evaluate(adv('raise', validated=True), action='RAISE', hero_cards=CARDS)

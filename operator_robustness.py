@@ -67,3 +67,27 @@ class CaptureWatch:
 
     def consecutive(self, hwnd):
         return self._fails.get(hwnd, 0)
+
+
+MAX_RAISE_ATTEMPTS = 2   # tentativa original + 1 re-tentativa (exposição limitada)
+
+
+def raise_outcome(res, attempts, *, max_attempts=MAX_RAISE_ATTEMPTS):
+    """D4: classifica o resultado do RaiseSequencer p/ o loop, SEM risco de duplo-raise.
+
+    INVARIANTE DE SEGURANÇA (verificada no raise_sequencer): res['ok']=True se e só se
+    o clique de CONFIRMAR saiu -> a aposta FOI submetida (mesmo que o efeito só não
+    tenha sido verificado). ok=False cobre _unknown ('confirmar não saiu') e _fail
+    (falha antes do confirmar): NADA foi submetido. Como o passo 0 do sequenciador
+    revalida a vez do hero antes de qualquer clique, uma RE-TENTATIVA (próximo ciclo,
+    turno-gated) não pode duplicar uma aposta já submetida.
+
+    Devolve (decision, attempts): 'done' (submetida/não re-tenta) | 'retry' (nada
+    submetido, tenta de novo) | 'giveup' (atingiu o cap -> desiste, não trava)."""
+    res = res or {}
+    if res.get('ok'):
+        return 'done', 0
+    attempts = int(attempts) + 1
+    if attempts >= max_attempts:
+        return 'giveup', attempts
+    return 'retry', attempts
