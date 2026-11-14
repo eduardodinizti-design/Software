@@ -103,6 +103,12 @@ class IngestTests(unittest.TestCase):
         self.assertIn('all_in', v3['actions'])                    # HRC 'shove' -> 'all_in'
         self.assertNotIn('shove', v3['actions'])
 
+    def test_vs_3bet_hero_is_opener_not_3bettor(self):
+        # opv3 'UTG>BB' = UTG abriu, BB deu 3bet; o nó é a decisão do UTG (abridor).
+        nodes, _ = hi.nodes_from_file(self.f)
+        v3 = [n for n in nodes if n['spot'] == 'vs_3bet'][0]
+        self.assertEqual((v3['hero'], tuple(v3['vs'])), ('UTG', ('BB',)))
+
     def test_fold_derived_complements(self):
         nodes, _ = hi.nodes_from_file(self.f)
         rfi = [n for n in nodes if n['spot'] == 'open_raise'][0]

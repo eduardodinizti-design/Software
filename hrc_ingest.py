@@ -171,13 +171,18 @@ def _rfi_nodes(data, ctx, reindex, source, evunit):
     return out
 
 
-def _resp_nodes(data, ctx, reindex, source, evunit, section, spot):
+def _resp_nodes(data, ctx, reindex, source, evunit, section, spot, hero_side):
+    """`resp` e `opv3` compartilham a chave 'A>B' (A abriu, B reagiu) mas o HERÓI
+    do nó é lado OPOSTO: em `resp` (vs_open) o nó é a decisão de B (o respondente,
+    hero_side='second', vs=A); em `opv3` (vs_3bet) o nó é a decisão de A (o
+    abridor enfrentando o 3bet de B, hero_side='first', vs=B)."""
     out = []
     for key, blk in (data.get(section) or {}).items():
         if '>' not in key:
             continue
-        opener, hero = key.split('>', 1)
-        if opener not in POSITIONS or hero not in POSITIONS:
+        first, second = key.split('>', 1)
+        hero, vs_pos = (second, first) if hero_side == 'second' else (first, second)
+        if first not in POSITIONS or second not in POSITIONS:
             continue
         freq = {}
         for hrc_a, arr in blk.items():
@@ -188,7 +193,7 @@ def _resp_nodes(data, ctx, reindex, source, evunit, section, spot):
             continue
         freq['fold'] = _derive_fold(freq)
         ev = {ACTION_MAP.get(a, a): reindex(v) for a, v in (blk.get('ev') or {}).items()}
-        out.append(_node(ctx, spot, hero, (opener,), freq, ev, source, evunit))
+        out.append(_node(ctx, spot, hero, (vs_pos,), freq, ev, source, evunit))
     return out
 
 
@@ -239,8 +244,8 @@ def nodes_from_file(path):
                   hrc_source=data.get('source'))
     nodes = []
     nodes += _rfi_nodes(data, ctx, reindex, source, evunit)
-    nodes += _resp_nodes(data, ctx, reindex, source, evunit, 'resp', 'vs_open')
-    nodes += _resp_nodes(data, ctx, reindex, source, evunit, 'opv3', 'vs_3bet')
+    nodes += _resp_nodes(data, ctx, reindex, source, evunit, 'resp', 'vs_open', 'second')
+    nodes += _resp_nodes(data, ctx, reindex, source, evunit, 'opv3', 'vs_3bet', 'first')
     nodes += _limp_nodes(data, ctx, reindex, source, evunit)
     return nodes, source
 
