@@ -1,0 +1,481 @@
+{
+  "upstream": "MatthewPDingle/GTOpen",
+  "commit": "5c2989397abf314f229d293c16f96ea783c7ca5b",
+  "scope": "Bounded CPU laboratory calculations, not PPPoker/HRC validation.",
+  "cases": [
+    {
+      "id": "two_limps_BTN_50",
+      "status": "CALCULATED",
+      "solver_status": {
+        "state": "stopped",
+        "phase": "idle",
+        "gpu": false,
+        "gpu_note": "",
+        "iteration": 10,
+        "published_iteration": 10,
+        "accuracy_iteration": null,
+        "target_gap": 0.02,
+        "stop_reason": "stopped",
+        "preview_note": "Snapshot may include an interrupted player sweep; accuracy has not been measured for this snapshot.",
+        "gaps": [],
+        "gap_total": 0.0,
+        "evs": [],
+        "hero": null,
+        "frozen": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "error": "",
+        "realization_note": "",
+        "multiway_equity_model": "coupled_deck_v1",
+        "trust": null,
+        "trust_seats": [],
+        "trust_readout": null
+      },
+      "low_reach": false,
+      "strategy_note": null
+    },
+    {
+      "id": "open_two_callers_BB_50",
+      "status": "CALCULATED",
+      "solver_status": {
+        "state": "stopped",
+        "phase": "idle",
+        "gpu": false,
+        "gpu_note": "",
+        "iteration": 35,
+        "published_iteration": 35,
+        "accuracy_iteration": null,
+        "target_gap": 0.02,
+        "stop_reason": "stopped",
+        "preview_note": "Snapshot may include an interrupted player sweep; accuracy has not been measured for this snapshot.",
+        "gaps": [],
+        "gap_total": 0.0,
+        "evs": [],
+        "hero": null,
+        "frozen": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "error": "",
+        "realization_note": "",
+        "multiway_equity_model": "coupled_deck_v1",
+        "trust": null,
+        "trust_seats": [],
+        "trust_readout": null
+      },
+      "low_reach": false,
+      "strategy_note": null
+    },
+    {
+      "id": "CO_vs_SB_3bet_50",
+      "status": "CALCULATED",
+      "solver_status": {
+        "state": "done",
+        "phase": "idle",
+        "gpu": false,
+        "gpu_note": "",
+        "iteration": 1000,
+        "published_iteration": 1000,
+        "accuracy_iteration": 1000,
+        "target_gap": 0.02,
+        "stop_reason": "iteration_limit",
+        "preview_note": "",
+        "gaps": [
+          6.106719156897286,
+          0.48510222408551346,
+          0.26309696190771414,
+          0.006029646781923835
+        ],
+        "gap_total": 6.860947989672438,
+        "evs": [
+          0.17611840924148384,
+          0.2009603561337726,
+          -0.17833064506360602,
+          -0.19874846163081233
+        ],
+        "hero": null,
+        "frozen": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "error": "",
+        "realization_note": "",
+        "multiway_equity_model": "coupled_deck_v1",
+        "trust": null,
+        "trust_seats": [],
+        "trust_readout": null
+      },
+      "low_reach": false,
+      "strategy_note": null
+    },
+    {
+      "id": "SB_vs_CO_4bet_50",
+      "status": "CALCULATED",
+      "solver_status": {
+        "state": "done",
+        "phase": "idle",
+        "gpu": false,
+        "gpu_note": "",
+        "iteration": 1000,
+        "published_iteration": 1000,
+        "accuracy_iteration": 1000,
+        "target_gap": 0.02,
+        "stop_reason": "iteration_limit",
+        "preview_note": "",
+        "gaps": [
+          6.1172106002597975,
+          0.48510222408551346,
+          0.4452746937477689,
+          0.006029646781923835
+        ],
+        "gap_total": 7.0536171648750035,
+        "evs": [
+          0.16549435821812017,
+          0.2009603561337726,
+          -0.16770659825119316,
+          -0.1987484616532877
+        ],
+        "hero": null,
+        "frozen": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "error": "",
+        "realization_note": "",
+        "multiway_equity_model": "coupled_deck_v1",
+        "trust": null,
+        "trust_seats": [],
+        "trust_readout": null
+      },
+      "low_reach": false,
+      "strategy_note": null
+    },
+    {
+      "id": "two_limps_BTN_80",
+      "status": "CALCULATED",
+      "solver_status": {
+        "state": "stopped",
+        "phase": "idle",
+        "gpu": false,
+        "gpu_note": "",
+        "iteration": 9,
+        "published_iteration": 9,
+        "accuracy_iteration": null,
+        "target_gap": 0.02,
+        "stop_reason": "stopped",
+        "preview_note": "Snapshot may include an interrupted player sweep; accuracy has not been measured for this snapshot.",
+        "gaps": [],
+        "gap_total": 0.0,
+        "evs": [],
+        "hero": null,
+        "frozen": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "error": "",
+        "realization_note": "",
+        "multiway_equity_model": "coupled_deck_v1",
+        "trust": null,
+        "trust_seats": [],
+        "trust_readout": null
+      },
+      "low_reach": false,
+      "strategy_note": null
+    },
+    {
+      "id": "open_two_callers_BB_80",
+      "status": "CALCULATED",
+      "solver_status": {
+        "state": "stopped",
+        "phase": "idle",
+        "gpu": false,
+        "gpu_note": "",
+        "iteration": 30,
+        "published_iteration": 30,
+        "accuracy_iteration": null,
+        "target_gap": 0.02,
+        "stop_reason": "stopped",
+        "preview_note": "Snapshot may include an interrupted player sweep; accuracy has not been measured for this snapshot.",
+        "gaps": [],
+        "gap_total": 0.0,
+        "evs": [],
+        "hero": null,
+        "frozen": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "error": "",
+        "realization_note": "",
+        "multiway_equity_model": "coupled_deck_v1",
+        "trust": null,
+        "trust_seats": [],
+        "trust_readout": null
+      },
+      "low_reach": false,
+      "strategy_note": null
+    },
+    {
+      "id": "CO_vs_SB_3bet_80",
+      "status": "CALCULATED",
+      "solver_status": {
+        "state": "done",
+        "phase": "idle",
+        "gpu": false,
+        "gpu_note": "",
+        "iteration": 1000,
+        "published_iteration": 1000,
+        "accuracy_iteration": 1000,
+        "target_gap": 0.02,
+        "stop_reason": "iteration_limit",
+        "preview_note": "",
+        "gaps": [
+          8.257691249557114,
+          0.6428999625947622,
+          0.3809704605827776,
+          0.0074327321580501425
+        ],
+        "gap_total": 9.288994404892703,
+        "evs": [
+          0.17588255434575634,
+          0.21257343767754677,
+          -0.1779695895840077,
+          -0.2104870020724835
+        ],
+        "hero": null,
+        "frozen": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "error": "",
+        "realization_note": "",
+        "multiway_equity_model": "coupled_deck_v1",
+        "trust": null,
+        "trust_seats": [],
+        "trust_readout": null
+      },
+      "low_reach": false,
+      "strategy_note": null
+    },
+    {
+      "id": "SB_vs_CO_4bet_80",
+      "status": "CALCULATED",
+      "solver_status": {
+        "state": "done",
+        "phase": "idle",
+        "gpu": false,
+        "gpu_note": "",
+        "iteration": 1000,
+        "published_iteration": 1000,
+        "accuracy_iteration": 1000,
+        "target_gap": 0.02,
+        "stop_reason": "iteration_limit",
+        "preview_note": "",
+        "gaps": [
+          8.267780658305238,
+          0.6428999625947622,
+          0.5566353073077259,
+          0.0074327321580501425
+        ],
+        "gap_total": 9.474748660365776,
+        "evs": [
+          0.16559691262945156,
+          0.21257343767754677,
+          -0.1676839523416816,
+          -0.2104870020724835
+        ],
+        "hero": null,
+        "frozen": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "error": "",
+        "realization_note": "",
+        "multiway_equity_model": "coupled_deck_v1",
+        "trust": null,
+        "trust_seats": [],
+        "trust_readout": null
+      },
+      "low_reach": false,
+      "strategy_note": null
+    },
+    {
+      "id": "two_limps_BTN_200",
+      "status": "CALCULATED",
+      "solver_status": {
+        "state": "stopped",
+        "phase": "idle",
+        "gpu": false,
+        "gpu_note": "",
+        "iteration": 8,
+        "published_iteration": 8,
+        "accuracy_iteration": null,
+        "target_gap": 0.02,
+        "stop_reason": "stopped",
+        "preview_note": "Snapshot may include an interrupted player sweep; accuracy has not been measured for this snapshot.",
+        "gaps": [],
+        "gap_total": 0.0,
+        "evs": [],
+        "hero": null,
+        "frozen": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "error": "",
+        "realization_note": "",
+        "multiway_equity_model": "coupled_deck_v1",
+        "trust": null,
+        "trust_seats": [],
+        "trust_readout": null
+      },
+      "low_reach": false,
+      "strategy_note": null
+    },
+    {
+      "id": "open_two_callers_BB_200",
+      "status": "CALCULATED",
+      "solver_status": {
+        "state": "stopped",
+        "phase": "idle",
+        "gpu": false,
+        "gpu_note": "",
+        "iteration": 27,
+        "published_iteration": 27,
+        "accuracy_iteration": null,
+        "target_gap": 0.02,
+        "stop_reason": "stopped",
+        "preview_note": "Snapshot may include an interrupted player sweep; accuracy has not been measured for this snapshot.",
+        "gaps": [],
+        "gap_total": 0.0,
+        "evs": [],
+        "hero": null,
+        "frozen": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "error": "",
+        "realization_note": "",
+        "multiway_equity_model": "coupled_deck_v1",
+        "trust": null,
+        "trust_seats": [],
+        "trust_readout": null
+      },
+      "low_reach": false,
+      "strategy_note": null
+    },
+    {
+      "id": "CO_vs_SB_3bet_200",
+      "status": "CALCULATED",
+      "solver_status": {
+        "state": "done",
+        "phase": "idle",
+        "gpu": false,
+        "gpu_note": "",
+        "iteration": 1000,
+        "published_iteration": 1000,
+        "accuracy_iteration": 1000,
+        "target_gap": 0.02,
+        "stop_reason": "iteration_limit",
+        "preview_note": "",
+        "gaps": [
+          17.459697920953918,
+          1.394880552214181,
+          0.8589487844660675,
+          0.017177908387022094
+        ],
+        "gap_total": 19.730705166021192,
+        "evs": [
+          0.17830860603043516,
+          0.21734790112442673,
+          -0.18648734780631085,
+          -0.20916949493615286
+        ],
+        "hero": null,
+        "frozen": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "error": "",
+        "realization_note": "",
+        "multiway_equity_model": "coupled_deck_v1",
+        "trust": null,
+        "trust_seats": [],
+        "trust_readout": null
+      },
+      "low_reach": false,
+      "strategy_note": null
+    },
+    {
+      "id": "SB_vs_CO_4bet_200",
+      "status": "CALCULATED",
+      "solver_status": {
+        "state": "done",
+        "phase": "idle",
+        "gpu": false,
+        "gpu_note": "",
+        "iteration": 1000,
+        "published_iteration": 1000,
+        "accuracy_iteration": 1000,
+        "target_gap": 0.02,
+        "stop_reason": "iteration_limit",
+        "preview_note": "",
+        "gaps": [
+          17.470543399084498,
+          1.394880552214181,
+          1.0204188137901424,
+          0.017177908387022094
+        ],
+        "gap_total": 19.903020673475847,
+        "evs": [
+          0.1674631688050098,
+          0.21734790112442673,
+          -0.17564192015525498,
+          -0.20916949502605428
+        ],
+        "hero": null,
+        "frozen": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "error": "",
+        "realization_note": "",
+        "multiway_equity_model": "coupled_deck_v1",
+        "trust": null,
+        "trust_seats": [],
+        "trust_readout": null
+      },
+      "low_reach": false,
+      "strategy_note": null
+    }
+  ]
+}
