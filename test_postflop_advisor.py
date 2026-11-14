@@ -198,7 +198,7 @@ class FacingBetTests(unittest.TestCase):
     def test_mdf_and_pot_odds_reported(self):
         r = advise_postflop(state(10, 5), ['9s', 'Qc'], ['Ah', '9h', '3d'])
         self.assertAlmostEqual(r['pot_odds'], 5 / 15, places=3)
-        self.assertAlmostEqual(r['mdf'], 10 / 15, places=3)
+        self.assertAlmostEqual(r['mdf'], (10 - 5) / 10, places=3)   # P0/(P0+B)=(pot-call)/pot=0,5
 
 
 class CheckedToTests(unittest.TestCase):

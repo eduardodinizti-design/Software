@@ -343,7 +343,12 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
         pot_odds = required_equity(to_call, pot)
         if pot_odds is None:
             return _abstain('CANNOT_COMPUTE_POT_ODDS', pot_bb=pot, to_call_bb=to_call)
-        mdf = round(pot / (pot + to_call), 4) if (pot + to_call) else None
+        # MDF (defesa mínima de range) = P0/(P0+B), P0=pote ANTES da aposta, B=aposta a
+        # pagar. `pot` aqui já inclui a aposta do vilão (P1=P0+B), logo P0=pot-to_call ->
+        # MDF=(pot-to_call)/pot. Ex.: pot=20, call=10 -> 10/20=0,5 (não pot/(pot+call)).
+        # Assume SEM contribuição anterior do hero na rua; p/ raises/potes laterais a
+        # convenção muda (explicitar o estado antes de reusar). Pot odds é conta à parte.
+        mdf = round(max(0.0, min(1.0, (pot - to_call) / pot)), 4) if pot else None
         info.update(pot_odds=round(pot_odds, 4), mdf=mdf)
         # Pool-underbluff: no pool da Evolution, linha passiva->agressiva ou overbet é
         # sub-blefada; desconta o MDF teórico (×0.75). Metadado exploratório.

@@ -47,11 +47,9 @@ class PostflopCounterexampleTests(unittest.TestCase):
                             pot_type='three_bet', villain_range=['AA'], iters=100)
         self.assertEqual(a.get('recommended'), 'fold')      # fix: equidade vs range, nunca commit null
 
-    @unittest.expectedFailure
     def test_mdf_uses_pot_after_opponent_bet(self):
-        # Pote 20 já inclui a aposta de 10 do vilão; call 10. MDF correto = pote-antes /
-        # (pote-antes + aposta) = 10/20 = 0.5. Atual: 0.6667 (usa o pote APÓS a aposta
-        # no denominador errado).
+        # CONSERTADO: pote 20 já inclui a aposta de 10; call 10. MDF = (pot-call)/pot =
+        # 10/20 = 0.5 (antes 0.6667, que usava o denominador errado).
         a = advise_postflop(_table(pot=20, call=10), ['As', 'Ad'], ['Ac', 'Kh', '7d', '2c', '3s'],
                             pot_type='single_raised', villain_range=['KK'], iters=100)
         self.assertAlmostEqual(a.get('mdf', 0.0), 0.5, places=6)
