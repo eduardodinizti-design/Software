@@ -1,0 +1,882 @@
+{
+  "schema_version": 1,
+  "scope": "Detailed design and known-input fixtures only. No runtime strategy implementation or live input.",
+  "input_contract_required": [
+    "capture_identity",
+    "table_id",
+    "hand_id",
+    "street",
+    "hero_cards",
+    "board",
+    "dealt_players",
+    "active_seats",
+    "positions",
+    "actor_to_move",
+    "pot_current_bb",
+    "to_call_additional_bb",
+    "street_committed_bb",
+    "remaining_stack_bb",
+    "public_history",
+    "range_source_hashes",
+    "model_id",
+    "legal_menu"
+  ],
+  "preflop_cases": [
+    {
+      "id": "P01_TWO_LIMPS_BTN_50",
+      "kind": "PREFLOP_CONTRACT_TO_IMPLEMENT",
+      "table_players": 9,
+      "hero_position": "BTN",
+      "initial_effective_stack_bb": 50,
+      "pot_current_bb": 3.5,
+      "hero_committed_bb": 0,
+      "hero_remaining_bb": 50,
+      "to_call_additional_bb": 1,
+      "active_seats": [
+        "UTG",
+        "HJ",
+        "BTN",
+        "SB",
+        "BB"
+      ],
+      "observed_history": [
+        "UTG limp to 1",
+        "HJ limp to 1"
+      ],
+      "candidate_actions": [
+        "FOLD",
+        "OVERLIMP 1",
+        "ISO_TO 3",
+        "ISO_TO 4",
+        "ALL_IN_TO 50"
+      ],
+      "required_assertions": [
+        "Not unopened",
+        "Blinds and limpers can respond",
+        "Overlimp differs from iso",
+        "No optimal action label without calculation"
+      ],
+      "ranges": "A prior/response range per active seat and action path is required. No solved frequencies supplied here.",
+      "independently_validated_policy": false
+    },
+    {
+      "id": "P02_OPEN_TWO_CALLERS_BB_80",
+      "kind": "PREFLOP_CONTRACT_TO_IMPLEMENT",
+      "table_players": 9,
+      "hero_position": "BB",
+      "initial_effective_stack_bb": 80,
+      "pot_current_bb": 9,
+      "hero_committed_bb": 1,
+      "hero_remaining_bb": 79,
+      "to_call_additional_bb": 1.5,
+      "active_seats": [
+        "UTG",
+        "HJ",
+        "CO",
+        "BB"
+      ],
+      "observed_history": [
+        "UTG open to 2.5",
+        "HJ call to 2.5",
+        "CO call to 2.5",
+        "SB folds 0.5"
+      ],
+      "candidate_actions": [
+        "FOLD",
+        "CALL 1.5",
+        "SQUEEZE_TO 7.5",
+        "SQUEEZE_TO 10",
+        "ALL_IN_TO 80"
+      ],
+      "required_assertions": [
+        "Three opponent response ranges",
+        "Opener can backraise",
+        "Fourway continuation if all call",
+        "Not a HU solved node"
+      ],
+      "ranges": "A prior/response range per active seat and action path is required. No solved frequencies supplied here.",
+      "independently_validated_policy": false
+    },
+    {
+      "id": "P03_CO_VS_SB_3BET_200",
+      "kind": "PREFLOP_CONTRACT_TO_IMPLEMENT",
+      "table_players": 9,
+      "hero_position": "CO",
+      "initial_effective_stack_bb": 200,
+      "pot_current_bb": 12.5,
+      "hero_committed_bb": 2.5,
+      "hero_remaining_bb": 197.5,
+      "to_call_additional_bb": 6.5,
+      "active_seats": [
+        "CO",
+        "SB"
+      ],
+      "observed_history": [
+        "CO open to 2.5",
+        "SB threebet to 9",
+        "BB folds 1"
+      ],
+      "candidate_actions": [
+        "FOLD",
+        "CALL 6.5",
+        "FOURBET_TO 22.5",
+        "FOURBET_TO 27",
+        "ALL_IN_TO 200"
+      ],
+      "required_assertions": [
+        "No deep veto",
+        "No short-stack shove projection",
+        "Frequencies and EV require matching ranges/sizes"
+      ],
+      "ranges": "A prior/response range per active seat and action path is required. No solved frequencies supplied here.",
+      "independently_validated_policy": false
+    },
+    {
+      "id": "P04_SB_VS_CO_4BET_200",
+      "kind": "PREFLOP_CONTRACT_TO_IMPLEMENT",
+      "table_players": 9,
+      "hero_position": "SB",
+      "initial_effective_stack_bb": 200,
+      "pot_current_bb": 32.5,
+      "hero_committed_bb": 9,
+      "hero_remaining_bb": 191,
+      "to_call_additional_bb": 13.5,
+      "active_seats": [
+        "SB",
+        "CO"
+      ],
+      "observed_history": [
+        "CO open 2.5",
+        "SB threebet 9",
+        "CO fourbet 22.5",
+        "BB folded 1"
+      ],
+      "candidate_actions": [
+        "FOLD",
+        "CALL 13.5",
+        "FIVEBET_TO 45",
+        "ALL_IN_TO 200"
+      ],
+      "required_assertions": [
+        "Minimum total raise 36 if last full increment is 13.5",
+        "Nonallin fivebet remains distinct",
+        "Price is additional"
+      ],
+      "ranges": "A prior/response range per active seat and action path is required. No solved frequencies supplied here.",
+      "independently_validated_policy": false
+    },
+    {
+      "id": "P05_BB_VS_BTN_OPEN_15",
+      "kind": "PREFLOP_CONTRACT_TO_IMPLEMENT",
+      "table_players": 9,
+      "hero_position": "BB",
+      "initial_effective_stack_bb": 15,
+      "pot_current_bb": 3.7,
+      "hero_committed_bb": 1,
+      "hero_remaining_bb": 14,
+      "to_call_additional_bb": 1.2,
+      "active_seats": [
+        "BTN",
+        "BB"
+      ],
+      "observed_history": [
+        "BTN open 2.2",
+        "SB folds 0.5"
+      ],
+      "candidate_actions": [
+        "FOLD",
+        "CALL 1.2",
+        "THREEBET_TO 6.6",
+        "THREEBET_TO 8.8",
+        "ALL_IN_TO 15"
+      ],
+      "required_assertions": [
+        "No automatic push-fold domain based solely on 15BB",
+        "Call and legal nonallin raises evaluated"
+      ],
+      "ranges": "A prior/response range per active seat and action path is required. No solved frequencies supplied here.",
+      "independently_validated_policy": false
+    },
+    {
+      "id": "P06_BTN_UNOPENED_5000",
+      "kind": "PREFLOP_CONTRACT_TO_IMPLEMENT",
+      "table_players": 9,
+      "hero_position": "BTN",
+      "initial_effective_stack_bb": 5000,
+      "pot_current_bb": 1.5,
+      "hero_committed_bb": 0,
+      "hero_remaining_bb": 5000,
+      "to_call_additional_bb": 1,
+      "active_seats": [
+        "BTN",
+        "SB",
+        "BB"
+      ],
+      "observed_history": [
+        "SB posted 0.5",
+        "BB posted 1"
+      ],
+      "candidate_actions": [
+        "FOLD",
+        "LIMP 1",
+        "RAISE_TO 2",
+        "RAISE_TO 2.5",
+        "RAISE_TO 3",
+        "RAISE_TO 4",
+        "ALL_IN_TO 5000"
+      ],
+      "required_assertions": [
+        "No blanket depth stop",
+        "No automatic 5000BB jam from short reference",
+        "Approximation remains labelled"
+      ],
+      "ranges": "A prior/response range per active seat and action path is required. No solved frequencies supplied here.",
+      "independently_validated_policy": false
+    }
+  ],
+  "postflop_cases": [
+    {
+      "id": "H01_BTN_BB_A72_IP",
+      "kind": "POSTFLOP_CONTRACT_TO_IMPLEMENT",
+      "table_players": 9,
+      "postflop_players": 2,
+      "hero_position": "BTN",
+      "villain_position": "BB",
+      "hero_in_position": true,
+      "hero_role": "OPEN_RAISER",
+      "initial_stack_bb": 25,
+      "pot_current_bb": 5.5,
+      "hero_remaining_bb": 22.5,
+      "villain_remaining_bb": 22.5,
+      "to_call_additional_bb": 0.0,
+      "board": [
+        "As",
+        "7d",
+        "2c"
+      ],
+      "hero_cards": [
+        "Ah",
+        "Qh"
+      ],
+      "hero_prior_or_posterior": "BTN_open_25",
+      "villain_prior_or_posterior": "BB_call_vs_BTN_25",
+      "observed_history": [
+        "PREFLOP: BTN raise 2.5, BB call to 2.5, SB fold 0.5",
+        "FLOP: BB check"
+      ],
+      "candidate_actions": [
+        "CHECK",
+        "BET_1_3",
+        "BET_1_2",
+        "BET_2_3",
+        "BET_POT",
+        "ALL_IN_EXPLICIT"
+      ],
+      "required_assertions": [
+        "Query both public ranges",
+        "Compare check and all supported bet sizes",
+        "After call update BOTH ranges before turn"
+      ],
+      "best_action": null,
+      "action_ev_bb": null,
+      "required_next_artifact": "Matching solved or explicitly modelled PolicyNode, both range posteriors and per-combo EV/frequencies.",
+      "note": "Amounts with 2.5/3/7.5/9BB opens are explicit illustration assumptions, not proven sizes of the historical NVT export.",
+      "independently_validated_policy": false
+    },
+    {
+      "id": "H02_BTN_BB_987_TWO_TONE",
+      "kind": "POSTFLOP_CONTRACT_TO_IMPLEMENT",
+      "table_players": 9,
+      "postflop_players": 2,
+      "hero_position": "BTN",
+      "villain_position": "BB",
+      "hero_in_position": true,
+      "hero_role": "OPEN_RAISER",
+      "initial_stack_bb": 25,
+      "pot_current_bb": 5.5,
+      "hero_remaining_bb": 22.5,
+      "villain_remaining_bb": 22.5,
+      "to_call_additional_bb": 0.0,
+      "board": [
+        "9s",
+        "8s",
+        "7d"
+      ],
+      "hero_cards": [
+        "Jc",
+        "Td"
+      ],
+      "hero_prior_or_posterior": "BTN_open_25",
+      "villain_prior_or_posterior": "BB_call_vs_BTN_25",
+      "observed_history": [
+        "PREFLOP: BTN raise 2.5, BB call to 2.5, SB fold 0.5",
+        "FLOP: BB check"
+      ],
+      "candidate_actions": [
+        "CHECK",
+        "BET_1_3",
+        "BET_1_2",
+        "BET_2_3",
+        "BET_POT",
+        "ALL_IN_EXPLICIT"
+      ],
+      "required_assertions": [
+        "Current nuts not guaranteed river winner",
+        "No categorical assumption of BB nut advantage",
+        "Overpair is a different policy row"
+      ],
+      "best_action": null,
+      "action_ev_bb": null,
+      "required_next_artifact": "Matching solved or explicitly modelled PolicyNode, both range posteriors and per-combo EV/frequencies.",
+      "note": "Amounts with 2.5/3/7.5/9BB opens are explicit illustration assumptions, not proven sizes of the historical NVT export.",
+      "independently_validated_policy": false
+    },
+    {
+      "id": "H03_BTN_BB_PAIRED",
+      "kind": "POSTFLOP_CONTRACT_TO_IMPLEMENT",
+      "table_players": 9,
+      "postflop_players": 2,
+      "hero_position": "BTN",
+      "villain_position": "BB",
+      "hero_in_position": true,
+      "hero_role": "OPEN_RAISER",
+      "initial_stack_bb": 25,
+      "pot_current_bb": 5.5,
+      "hero_remaining_bb": 22.5,
+      "villain_remaining_bb": 22.5,
+      "to_call_additional_bb": 0.0,
+      "board": [
+        "7s",
+        "7h",
+        "2d"
+      ],
+      "hero_cards": [
+        "8c",
+        "8d"
+      ],
+      "hero_prior_or_posterior": "BTN_open_25",
+      "villain_prior_or_posterior": "BB_call_vs_BTN_25",
+      "observed_history": [
+        "PREFLOP: BTN raise 2.5, BB call to 2.5, SB fold 0.5",
+        "FLOP: BB check"
+      ],
+      "candidate_actions": [
+        "CHECK",
+        "BET_1_3",
+        "BET_1_2",
+        "BET_2_3",
+        "BET_POT",
+        "ALL_IN_EXPLICIT"
+      ],
+      "required_assertions": [
+        "Range average and trips concentration both matter",
+        "Posterior after raise differs from original flat"
+      ],
+      "best_action": null,
+      "action_ev_bb": null,
+      "required_next_artifact": "Matching solved or explicitly modelled PolicyNode, both range posteriors and per-combo EV/frequencies.",
+      "note": "Amounts with 2.5/3/7.5/9BB opens are explicit illustration assumptions, not proven sizes of the historical NVT export.",
+      "independently_validated_policy": false
+    },
+    {
+      "id": "H04_UTG_BB_SAME_A72",
+      "kind": "POSTFLOP_CONTRACT_TO_IMPLEMENT",
+      "table_players": 9,
+      "postflop_players": 2,
+      "hero_position": "UTG",
+      "villain_position": "BB",
+      "hero_in_position": true,
+      "hero_role": "OPEN_RAISER",
+      "initial_stack_bb": 25,
+      "pot_current_bb": 5.5,
+      "hero_remaining_bb": 22.5,
+      "villain_remaining_bb": 22.5,
+      "to_call_additional_bb": 0.0,
+      "board": [
+        "As",
+        "7d",
+        "2c"
+      ],
+      "hero_cards": [
+        "Kh",
+        "Kd"
+      ],
+      "hero_prior_or_posterior": "UTG_open_25",
+      "villain_prior_or_posterior": "BB_call_vs_UTG_25",
+      "observed_history": [
+        "UTG raise 2.5, BB call to 2.5, SB fold 0.5",
+        "BB check"
+      ],
+      "candidate_actions": [
+        "CHECK",
+        "BET_1_3",
+        "BET_1_2",
+        "BET_2_3",
+        "BET_POT",
+        "ALL_IN_EXPLICIT"
+      ],
+      "required_assertions": [
+        "Do not reuse BTN opening range",
+        "KK is not top pair on an ace board"
+      ],
+      "best_action": null,
+      "action_ev_bb": null,
+      "required_next_artifact": "Matching solved or explicitly modelled PolicyNode, both range posteriors and per-combo EV/frequencies.",
+      "note": "Amounts with 2.5/3/7.5/9BB opens are explicit illustration assumptions, not proven sizes of the historical NVT export.",
+      "independently_validated_policy": false
+    },
+    {
+      "id": "H05_BB_FACING_BTN_THIRD",
+      "kind": "POSTFLOP_CONTRACT_TO_IMPLEMENT",
+      "table_players": 9,
+      "postflop_players": 2,
+      "hero_position": "BB",
+      "villain_position": "BTN",
+      "hero_in_position": false,
+      "hero_role": "PREFLOP_CALLER",
+      "initial_stack_bb": 25,
+      "pot_current_bb": 7.333333333333333,
+      "hero_remaining_bb": 22.5,
+      "villain_remaining_bb": 20.666666666666668,
+      "to_call_additional_bb": 1.8333333333333333,
+      "board": [
+        "As",
+        "7d",
+        "2c"
+      ],
+      "hero_cards": [
+        "8h",
+        "7h"
+      ],
+      "hero_prior_or_posterior": "BB_call_vs_BTN_25",
+      "villain_prior_or_posterior": "BTN_open_25 x policy(BET_1_3)",
+      "observed_history": [
+        "PREFLOP: BTN raise 2.5, BB call to 2.5, SB fold 0.5",
+        "FLOP: BB check",
+        "BTN bet 1/3"
+      ],
+      "candidate_actions": [
+        "FOLD",
+        "CALL",
+        "RAISE_TO_LEGAL_UI_TARGET",
+        "ALL_IN_EXPLICIT"
+      ],
+      "required_assertions": [
+        "Additional price 11/6",
+        "Pot odds 0.2",
+        "Equity vs original open is not equity vs cbet",
+        "No check facing a price"
+      ],
+      "best_action": null,
+      "action_ev_bb": null,
+      "required_next_artifact": "Matching solved or explicitly modelled PolicyNode, both range posteriors and per-combo EV/frequencies.",
+      "note": "Amounts with 2.5/3/7.5/9BB opens are explicit illustration assumptions, not proven sizes of the historical NVT export.",
+      "independently_validated_policy": false
+    },
+    {
+      "id": "H06_SB_BB_OOP",
+      "kind": "POSTFLOP_CONTRACT_TO_IMPLEMENT",
+      "table_players": 9,
+      "postflop_players": 2,
+      "hero_position": "SB",
+      "villain_position": "BB",
+      "hero_in_position": false,
+      "hero_role": "OPEN_RAISER",
+      "initial_stack_bb": 25,
+      "pot_current_bb": 6.0,
+      "hero_remaining_bb": 22.0,
+      "villain_remaining_bb": 22.0,
+      "to_call_additional_bb": 0.0,
+      "board": [
+        "Kc",
+        "7c",
+        "2h"
+      ],
+      "hero_cards": [
+        "Ac",
+        "Qc"
+      ],
+      "hero_prior_or_posterior": "REQUIRED: SB open to 3 prior",
+      "villain_prior_or_posterior": "REQUIRED: BB call vs SB 3 prior",
+      "observed_history": [
+        "SB open 3, BB call to 3"
+      ],
+      "candidate_actions": [
+        "CHECK",
+        "BET_1_3",
+        "BET_1_2",
+        "BET_2_3",
+        "BET_POT",
+        "ALL_IN_EXPLICIT"
+      ],
+      "required_assertions": [
+        "OOP check does not end street",
+        "After BB stab compare x/f,x/c,x/r",
+        "Nut flush draw needs responses/continuation EV"
+      ],
+      "best_action": null,
+      "action_ev_bb": null,
+      "required_next_artifact": "Matching solved or explicitly modelled PolicyNode, both range posteriors and per-combo EV/frequencies.",
+      "note": "Amounts with 2.5/3/7.5/9BB opens are explicit illustration assumptions, not proven sizes of the historical NVT export.",
+      "independently_validated_policy": false
+    },
+    {
+      "id": "H07_SB_BB_LIMPED",
+      "kind": "POSTFLOP_CONTRACT_TO_IMPLEMENT",
+      "table_players": 9,
+      "postflop_players": 2,
+      "hero_position": "SB",
+      "villain_position": "BB",
+      "hero_in_position": false,
+      "hero_role": "LIMPER",
+      "initial_stack_bb": 25,
+      "pot_current_bb": 2.0,
+      "hero_remaining_bb": 24.0,
+      "villain_remaining_bb": 24.0,
+      "to_call_additional_bb": 0.0,
+      "board": [
+        "8c",
+        "6d",
+        "3s"
+      ],
+      "hero_cards": [
+        "Ah",
+        "8h"
+      ],
+      "hero_prior_or_posterior": "REQUIRED: SB limp prior",
+      "villain_prior_or_posterior": "REQUIRED: BB check behind prior",
+      "observed_history": [
+        "SB limp to 1, BB check"
+      ],
+      "candidate_actions": [
+        "CHECK",
+        "BET_1_3",
+        "BET_1_2",
+        "BET_2_3",
+        "BET_POT",
+        "ALL_IN_EXPLICIT"
+      ],
+      "required_assertions": [
+        "No preflop aggressor",
+        "Not a raised-pot cbet policy",
+        "SPR 12"
+      ],
+      "best_action": null,
+      "action_ev_bb": null,
+      "required_next_artifact": "Matching solved or explicitly modelled PolicyNode, both range posteriors and per-combo EV/frequencies.",
+      "note": "Amounts with 2.5/3/7.5/9BB opens are explicit illustration assumptions, not proven sizes of the historical NVT export.",
+      "independently_validated_policy": false
+    },
+    {
+      "id": "H08_SB_3BET_BTN_CALL",
+      "kind": "POSTFLOP_CONTRACT_TO_IMPLEMENT",
+      "table_players": 9,
+      "postflop_players": 2,
+      "hero_position": "SB",
+      "villain_position": "BTN",
+      "hero_in_position": false,
+      "hero_role": "THREE_BETTOR",
+      "initial_stack_bb": 25,
+      "pot_current_bb": 19.0,
+      "hero_remaining_bb": 16.0,
+      "villain_remaining_bb": 16.0,
+      "to_call_additional_bb": 0.0,
+      "board": [
+        "As",
+        "7d",
+        "2c"
+      ],
+      "hero_cards": [
+        "Kh",
+        "Kd"
+      ],
+      "hero_prior_or_posterior": "REQUIRED: SB 3bet vs BTN to 9",
+      "villain_prior_or_posterior": "REQUIRED: BTN open then call SB 9",
+      "observed_history": [
+        "BTN open 2.5, SB 3bet to 9, BB folds 1, BTN call to 9"
+      ],
+      "candidate_actions": [
+        "CHECK",
+        "BET_1_3",
+        "BET_1_2",
+        "BET_2_3",
+        "BET_POT",
+        "ALL_IN_EXPLICIT"
+      ],
+      "required_assertions": [
+        "SPR 16/19",
+        "Use 3bet/call priors",
+        "Low SPR does not force any made hand to commit"
+      ],
+      "best_action": null,
+      "action_ev_bb": null,
+      "required_next_artifact": "Matching solved or explicitly modelled PolicyNode, both range posteriors and per-combo EV/frequencies.",
+      "note": "Amounts with 2.5/3/7.5/9BB opens are explicit illustration assumptions, not proven sizes of the historical NVT export.",
+      "independently_validated_policy": false
+    },
+    {
+      "id": "H09_UTG_CALL_BTN_3BET",
+      "kind": "POSTFLOP_CONTRACT_TO_IMPLEMENT",
+      "table_players": 9,
+      "postflop_players": 2,
+      "hero_position": "UTG",
+      "villain_position": "BTN",
+      "hero_in_position": false,
+      "hero_role": "PREFLOP_CALLER",
+      "initial_stack_bb": 25,
+      "pot_current_bb": 16.5,
+      "hero_remaining_bb": 17.5,
+      "villain_remaining_bb": 17.5,
+      "to_call_additional_bb": 0.0,
+      "board": [
+        "Qd",
+        "8c",
+        "3h"
+      ],
+      "hero_cards": [
+        "Jh",
+        "Jd"
+      ],
+      "hero_prior_or_posterior": "REQUIRED: UTG open then call BTN 7.5",
+      "villain_prior_or_posterior": "REQUIRED: BTN 3bet vs UTG to 7.5",
+      "observed_history": [
+        "UTG open 2.5, BTN 3bet 7.5, blinds fold 1.5, UTG call"
+      ],
+      "candidate_actions": [
+        "CHECK",
+        "BET_1_3",
+        "BET_1_2",
+        "BET_2_3",
+        "BET_POT",
+        "ALL_IN_EXPLICIT"
+      ],
+      "required_assertions": [
+        "OOP caller differs from OOP 3bettor",
+        "Do not reuse H08 priors"
+      ],
+      "best_action": null,
+      "action_ev_bb": null,
+      "required_next_artifact": "Matching solved or explicitly modelled PolicyNode, both range posteriors and per-combo EV/frequencies.",
+      "note": "Amounts with 2.5/3/7.5/9BB opens are explicit illustration assumptions, not proven sizes of the historical NVT export.",
+      "independently_validated_policy": false
+    },
+    {
+      "id": "H10_DELAYED_CBET",
+      "kind": "POSTFLOP_CONTRACT_TO_IMPLEMENT",
+      "table_players": 9,
+      "postflop_players": 2,
+      "hero_position": "BTN",
+      "villain_position": "BB",
+      "hero_in_position": true,
+      "hero_role": "OPEN_RAISER",
+      "initial_stack_bb": 25,
+      "pot_current_bb": 5.5,
+      "hero_remaining_bb": 22.5,
+      "villain_remaining_bb": 22.5,
+      "to_call_additional_bb": 0.0,
+      "board": [
+        "As",
+        "7d",
+        "2c",
+        "Kh"
+      ],
+      "hero_cards": [
+        "Ah",
+        "Qh"
+      ],
+      "hero_prior_or_posterior": "BTN_open_25 x check_back_flop",
+      "villain_prior_or_posterior": "BB_call_vs_BTN_25 x check_flop x check_turn",
+      "observed_history": [
+        "BTN open/BB call",
+        "BB check flop; BTN check back",
+        "Turn Kh; BB check"
+      ],
+      "candidate_actions": [
+        "CHECK",
+        "BET_1_3",
+        "BET_1_2",
+        "BET_2_3",
+        "BET_POT",
+        "ALL_IN_EXPLICIT"
+      ],
+      "required_assertions": [
+        "Condition both ranges on checks",
+        "Do not delete all traps",
+        "Evaluate delayed bet/check with future responses"
+      ],
+      "best_action": null,
+      "action_ev_bb": null,
+      "required_next_artifact": "Matching solved or explicitly modelled PolicyNode, both range posteriors and per-combo EV/frequencies.",
+      "note": "Amounts with 2.5/3/7.5/9BB opens are explicit illustration assumptions, not proven sizes of the historical NVT export.",
+      "independently_validated_policy": false
+    },
+    {
+      "id": "H11_BB_PROBE",
+      "kind": "POSTFLOP_CONTRACT_TO_IMPLEMENT",
+      "table_players": 9,
+      "postflop_players": 2,
+      "hero_position": "BB",
+      "villain_position": "BTN",
+      "hero_in_position": false,
+      "hero_role": "PREFLOP_CALLER",
+      "initial_stack_bb": 25,
+      "pot_current_bb": 5.5,
+      "hero_remaining_bb": 22.5,
+      "villain_remaining_bb": 22.5,
+      "to_call_additional_bb": 0.0,
+      "board": [
+        "As",
+        "7d",
+        "2c",
+        "7h"
+      ],
+      "hero_cards": [
+        "7c",
+        "6c"
+      ],
+      "hero_prior_or_posterior": "BB_call_vs_BTN_25 x check_flop",
+      "villain_prior_or_posterior": "BTN_open_25 x check_back_flop",
+      "observed_history": [
+        "BTN open/BB call",
+        "BB check flop; BTN check back",
+        "Turn 7h; BB first"
+      ],
+      "candidate_actions": [
+        "CHECK",
+        "BET_1_3",
+        "BET_1_2",
+        "BET_2_3",
+        "BET_POT",
+        "ALL_IN_EXPLICIT"
+      ],
+      "required_assertions": [
+        "Probe is available because aggressor checked back",
+        "7x and bluffs require positive arrival mass",
+        "BTN can have traps"
+      ],
+      "best_action": null,
+      "action_ev_bb": null,
+      "required_next_artifact": "Matching solved or explicitly modelled PolicyNode, both range posteriors and per-combo EV/frequencies.",
+      "note": "Amounts with 2.5/3/7.5/9BB opens are explicit illustration assumptions, not proven sizes of the historical NVT export.",
+      "independently_validated_policy": false
+    },
+    {
+      "id": "H12_FLOAT_THEN_STAB",
+      "kind": "POSTFLOP_CONTRACT_TO_IMPLEMENT",
+      "table_players": 9,
+      "postflop_players": 2,
+      "hero_position": "BTN",
+      "villain_position": "CO",
+      "hero_in_position": true,
+      "hero_role": "PREFLOP_CALLER",
+      "initial_stack_bb": 100,
+      "pot_current_bb": 10.833333333333334,
+      "hero_remaining_bb": 95.33333333333333,
+      "villain_remaining_bb": 95.33333333333333,
+      "to_call_additional_bb": 0.0,
+      "board": [
+        "Qs",
+        "8d",
+        "3c",
+        "Kd"
+      ],
+      "hero_cards": [
+        "Ah",
+        "Jh"
+      ],
+      "hero_prior_or_posterior": "REQUIRED: BTN flat CO then call flop 1/3",
+      "villain_prior_or_posterior": "REQUIRED: CO open/cbet then check turn",
+      "observed_history": [
+        "CO open 2.5, BTN call, blinds fold 1.5",
+        "CO bet flop 1/3; BTN call",
+        "Turn Kd, CO check"
+      ],
+      "candidate_actions": [
+        "CHECK",
+        "BET_1_3",
+        "BET_1_2",
+        "BET_2_3",
+        "BET_POT",
+        "ALL_IN_EXPLICIT"
+      ],
+      "required_assertions": [
+        "Turn pot 65/6",
+        "Flop call must include branches where CO barrels",
+        "No presumed capped range after one check"
+      ],
+      "best_action": null,
+      "action_ev_bb": null,
+      "required_next_artifact": "Matching solved or explicitly modelled PolicyNode, both range posteriors and per-combo EV/frequencies.",
+      "note": "Amounts with 2.5/3/7.5/9BB opens are explicit illustration assumptions, not proven sizes of the historical NVT export.",
+      "independently_validated_policy": false
+    }
+  ],
+  "river_exact_math": "See river_ev_example in demonstracoes-calculadas.json; intentionally isolated fixed-response node.",
+  "policy_output_contract": {
+    "node_id": "string",
+    "model_id": "string",
+    "source_hashes": [
+      "sha256"
+    ],
+    "board": [
+      "exact cards"
+    ],
+    "public_path": [
+      "observed actions"
+    ],
+    "exact_combo": "two exact cards",
+    "action_ids": [
+      "unique action+size IDs"
+    ],
+    "strategy_by_combo": "matrix summing to 1 at reached infosets",
+    "action_ev_bb": "matrix; unknown remains null",
+    "reach": "per combo",
+    "solver_diagnostics": "measured accuracy/gap/iterations and snapshot revision",
+    "explanation": "ranges, board features, posterior, EV comparisons and context differences",
+    "execution_eligibility": "separate from independent strategic validation"
+  },
+  "first_solver_batch": {
+    "position_games": [
+      "BTN_open_BB_call",
+      "CO_open_BB_call",
+      "UTG_open_BB_call",
+      "SB_open_BB_call",
+      "SB_limp_BB_check",
+      "SB_3bet_BTN_call",
+      "BTN_3bet_UTG_call"
+    ],
+    "initial_stacks_bb": [
+      25,
+      50,
+      100
+    ],
+    "flops": [
+      "As 7d 2c",
+      "Kd 8h 3c",
+      "Ah Kd 7c",
+      "Qs 8d 3c",
+      "Js Td 4c",
+      "9s 8s 7d",
+      "8c 6d 3s",
+      "7s 7h 2d",
+      "Kc Kd 5s",
+      "Qs 7s 2s",
+      "Jd 9d 4c",
+      "5c 4d 3s"
+    ],
+    "proposed_root_games": 252,
+    "completed_solved_games_in_this_delivery": 0,
+    "note": "Start with one position/depth, measure memory/build cost and solve coherent trees. The four numerical demonstrations are equities, not solved games."
+  },
+  "strategic_input_source": {
+    "repository": "eduardodinizti-design/Software",
+    "commit": "8c7f585cabf0b53217c9001988de52c387fb5153",
+    "path": "strategy_sources/nvt-356340d/nvt-ranges-validados.json",
+    "public_snapshot_matched": true,
+    "sha256": "c8fc3f0716df16fdeb2cff509814e3ca3c1ec31c05d479da2122db3ec531fcdc",
+    "engine_commit": "356340d",
+    "generated_at": "2026-11-06T23:22:51.050Z",
+    "note": "Public historical NVT snapshot",
+    "limitations": "Not proof of the ranges loaded by Windows. Open size, antes and opponent response policies are not established by this export."
+  }
+}

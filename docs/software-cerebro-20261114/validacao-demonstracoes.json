@@ -1,0 +1,52 @@
+{
+  "scope": "Detailed planning and offline demonstrations for Software only. Production runtime is unchanged.",
+  "python": "3.12.14",
+  "source": {
+    "repository": "eduardodinizti-design/Software",
+    "commit": "8c7f585cabf0b53217c9001988de52c387fb5153",
+    "path": "strategy_sources/nvt-356340d/nvt-ranges-validados.json",
+    "public_snapshot_matched": true,
+    "sha256": "c8fc3f0716df16fdeb2cff509814e3ca3c1ec31c05d479da2122db3ec531fcdc",
+    "engine_commit": "356340d",
+    "generated_at": "2026-11-06T23:22:51.050Z",
+    "note": "Public historical NVT snapshot",
+    "limitations": "Not proof of the ranges loaded by Windows. Open size, antes and opponent response policies are not established by this export."
+  },
+  "offline_metrics": {
+    "reference_ranges": 4,
+    "flop_comparisons": 4,
+    "monte_carlo_estimates": 8,
+    "samples_each": 20000,
+    "total_accepted_deals": 160000
+  },
+  "arithmetic_checks": {
+    "exact_river_fraction": "25/3 BB bet EV versus 15 BB check EV for As5s under the declared model",
+    "limp_iso_pot_branches": "PASS",
+    "squeeze_call_pot": "PASS",
+    "case_card_uniqueness": "PASS",
+    "distribution_normalization": "PASS"
+  },
+  "planned_solver_roots": 252,
+  "solved_full_postflop_games": 0,
+  "planning_cases": {
+    "preflop": 6,
+    "postflop": 12
+  },
+  "independently_solver_validated": false,
+  "windows_pppoker_validation": false,
+  "runtime_core_unchanged": [
+    "operar_mesa.py",
+    "table_advisor.py",
+    "preflop_context.py",
+    "preflop_equity.py",
+    "postflop_advisor.py",
+    "postflop_eval.py"
+  ],
+  "files_sha256": {
+    "calcular_demonstracoes.py": "382a9afd4ebbdd5c7831a98575506e7d6d95b81d962371975e76115d16347fec",
+    "casos-aceite.json": "30ecb2b0a4752844fc64fe350f76efff1f6374489f3537dc6fd906e864ad4d9e",
+    "componentes.csv": "d980b2ad8bd51bc6c33950a6d802e1f011535c2b48f99622cfec2c0e32797913",
+    "demonstracoes-calculadas.json": "40c140f42460768ab3021a3568bad14426859020c725e83125d005eb6906b754",
+    "ranges-referencia.json": "c0cb2430b6e24d6cffb761405ec74e284229ed4860439c1d9be26b8227ff0f2c"
+  }
+}

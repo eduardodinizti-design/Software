@@ -6,6 +6,11 @@ contém diagnóstico, backlog e critérios de aceite; não modifica sua execuç�
 A máquina-alvo é a que roda esse bot. Seu hardware precisa ser medido, sem
 atribuir a ela a configuração de outro projeto ou prometer 12/16 mesas.
 
+Detalhamento técnico do cérebro, com posições, ranges, boards, EVs e linhas:
+ESPECIFICACAO_CEREBRO_SOFTWARE_20261114.txt. Ler esse complemento antes de
+implementar SW06/SW08/SW09/SW10: os títulos deste plano são frentes de trabalho,
+não substituem os contratos, cenários e entregas definidos na especificação.
+
 DECISÃO PRINCIPAL
 
 Primeiro corrigir estado/preço e integração das versões. Depois completar a
