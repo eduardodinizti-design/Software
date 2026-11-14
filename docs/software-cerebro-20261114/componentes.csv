@@ -1,0 +1,13 @@
+﻿entrega;componente_proposto;entrada;saida;reaproveitar_no_software;criterio_de_aceite
+D1;strategy/state_contract.py;snapshot + timeline;DecisionState imutável;"read_table_state;PreflopAggressorTracker";Preço adicional, pot, stacks/committed, posição, rua e atores reconciliados
+D1;strategy/range_catalog.py;Contexto + caminho de ações + hashes;RangeRecord de 1326 combos;"PreflopAdvisor;open_range_combos;call_range_combos";"Nó/ação/size certos; root actions não duplicam probabilidade"
+D1;strategy/range_beliefs.py;Priors + eventos + modelo P(ação|combo);Posteriores dos dois ranges;"preflop_context;hand_history";"Check preserva traps; call não é agressão; zero reach tratado como off-policy"
+D2;strategy/board_features.py;Board + dois ranges ponderados;Distribuições/equity/nuts/draws/blockers;"classify_board;eval7;equity_vs_range";Reproduzir demos e separar showdown equity de action EV
+D3;strategy/action_tree.py;Estado + menus + restrições monetárias;Árvore legal com chance/respostas;"raise_plan;contratos de dinheiro";"Sem raise ilegal; ALL_IN explícito; cada size é ação distinta"
+D3;strategy/ev_evaluator.py;Árvore + beliefs + utilidade/continuação;EVs, reach, estratégia e diagnósticos;"avaliador/side pots;adaptador offline a escolher";"Sem hidden-card/future leak; gap medido; modelo declarado"
+D4;strategy/policy_store.py;Artefatos compilados + contexto;Nó aplicável ou referência rotulada;Catálogos/versionamento existentes;Ranges, board, stack, caminho e size fazem parte da chave
+D4;strategy/strategy_decision.py;PolicyNode + combo exato + decision_id;ActionID/size/mix/EV;Resolução estável de frequências;"Sem novo sorteio a cada frame; contexto novo admite nova decisão"
+D4;strategy/decision_explanation.py;Estado + métricas + comparação de ações;Registro e motivo reproduzíveis;"hand_history;leak_audit;logs limitados";Explicar por que bet perdeu para check e qual size real foi enviado
+D5;postflop_execution.py e operar_mesa.py;Decisão + alvo fresco + controle;Envio/efeito/cancelamento/incerteza;"CursorController;executor do Software";"Sem clique pausado; same hand/board/price; preset e efeito conferidos"
+D6;tools/build_postflop_cases.py (proposto);Famílias/boards/profundidades/modelos;Lotes de resolução + inventário;Catálogo de casos desta especificação;"252 raízes são backlog; só contar artefato concluído com diagnósticos"
+D7;Modelo populacional e economias MTT;Históricos separados e regras de prêmios;Modelos por domínio com validação própria;"HRC nativo;históricos;perfis";Não transportar prova HU chip-EV para multiway/PKO/ICM

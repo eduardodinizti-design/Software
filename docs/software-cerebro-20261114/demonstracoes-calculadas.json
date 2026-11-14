@@ -1,0 +1,435 @@
+{
+  "source": {
+    "repository": "eduardodinizti-design/Software",
+    "commit": "8c7f585cabf0b53217c9001988de52c387fb5153",
+    "path": "strategy_sources/nvt-356340d/nvt-ranges-validados.json",
+    "public_snapshot_matched": true,
+    "sha256": "c8fc3f0716df16fdeb2cff509814e3ca3c1ec31c05d479da2122db3ec531fcdc",
+    "engine_commit": "356340d",
+    "generated_at": "2026-11-06T23:22:51.050Z",
+    "note": "Public historical NVT snapshot",
+    "limitations": "Not proof of the ranges loaded by Windows. Open size, antes and opponent response policies are not established by this export."
+  },
+  "scope": "Offline teaching examples: weighted ranges, blockers, current made-hand distribution and showdown equity. No recommended c-bet or solved full line.",
+  "cases": [
+    {
+      "id": "BTN_vs_BB_As_7d_2c",
+      "hero_position": "BTN",
+      "villain_position": "BB",
+      "table_players": 9,
+      "postflop_players": 2,
+      "board": [
+        "As",
+        "7d",
+        "2c"
+      ],
+      "hero_example": [
+        "Ah",
+        "Qh"
+      ],
+      "hero_range_id": "BTN_open_25",
+      "villain_range_id": "BB_call_vs_BTN_25",
+      "hero_range_summary": {
+        "legal_combos": 587,
+        "weighted_combos": 505.502,
+        "category_mass": {
+          "0": 0.5503914920217919,
+          "1": 0.4090547614054939,
+          "2": 0.028684357331919555,
+          "3": 0.011869389240794299,
+          "4": 0.0,
+          "5": 0.0,
+          "6": 0.0,
+          "7": 0.0,
+          "8": 0.0
+        },
+        "absolute_current_nuts_mass": 0.005934694620397149,
+        "overpair_mass": 0.0,
+        "top_pair_mass": 0.237387784815886,
+        "nuts_definition": "Maximum made-hand score among all legal hole combos on the CURRENT board; not a full future-equity tail.",
+        "distribution_normalization": "Per-range weights after board removal; equity additionally conditions both private hands jointly."
+      },
+      "villain_range_summary": {
+        "legal_combos": 941,
+        "weighted_combos": 695.8639999999999,
+        "category_mass": {
+          "0": 0.7477955462561657,
+          "1": 0.2350502397020104,
+          "2": 0.01715421404182427,
+          "3": 0.0,
+          "4": 0.0,
+          "5": 0.0,
+          "6": 0.0,
+          "7": 0.0,
+          "8": 0.0
+        },
+        "absolute_current_nuts_mass": 0.0,
+        "overpair_mass": 0.0,
+        "top_pair_mass": 0.03707621029396544,
+        "nuts_definition": "Maximum made-hand score among all legal hole combos on the CURRENT board; not a full future-equity tail.",
+        "distribution_normalization": "Per-range weights after board removal; equity additionally conditions both private hands jointly."
+      },
+      "range_vs_range": {
+        "equity": 0.646125,
+        "ci95_monte_carlo_only": [
+          0.6395649091821586,
+          0.6526850908178413
+        ],
+        "samples": 20000,
+        "seed": 1200,
+        "attempted_joint_deals": 21743,
+        "method": "Independent weighted hole proposals, whole-pair collision rejection, uniform legal runout; win plus half ties",
+        "note": "Showdown equity with no future betting. Not action EV, range correctness or solver validation."
+      },
+      "hero_exact_vs_villain": {
+        "equity": 0.905,
+        "ci95_monte_carlo_only": [
+          0.9009414678042205,
+          0.9090585321957796
+        ],
+        "samples": 20000,
+        "seed": 2200,
+        "attempted_joint_deals": 21309,
+        "method": "Independent weighted hole proposals, whole-pair collision rejection, uniform legal runout; win plus half ties",
+        "note": "Showdown equity with no future betting. Not action EV, range correctness or solver validation."
+      }
+    },
+    {
+      "id": "BTN_vs_BB_9s_8s_7d",
+      "hero_position": "BTN",
+      "villain_position": "BB",
+      "table_players": 9,
+      "postflop_players": 2,
+      "board": [
+        "9s",
+        "8s",
+        "7d"
+      ],
+      "hero_example": [
+        "Jc",
+        "Td"
+      ],
+      "hero_range_id": "BTN_open_25",
+      "villain_range_id": "BB_call_vs_BTN_25",
+      "hero_range_summary": {
+        "legal_combos": 583,
+        "weighted_combos": 508.752,
+        "category_mass": {
+          "0": 0.5409787086832092,
+          "1": 0.3784319275403337,
+          "2": 0.019655942384501683,
+          "3": 0.017690348146051513,
+          "4": 0.0432430732459037,
+          "5": 0.0,
+          "6": 0.0,
+          "7": 0.0,
+          "8": 0.0
+        },
+        "absolute_current_nuts_mass": 0.03144950781520269,
+        "overpair_mass": 0.05896782715350505,
+        "top_pair_mass": 0.12622063402207756,
+        "nuts_definition": "Maximum made-hand score among all legal hole combos on the CURRENT board; not a full future-equity tail.",
+        "distribution_normalization": "Per-range weights after board removal; equity additionally conditions both private hands jointly."
+      },
+      "villain_range_summary": {
+        "legal_combos": 926,
+        "weighted_combos": 670.822,
+        "category_mass": {
+          "0": 0.5810602514526965,
+          "1": 0.3287817036412042,
+          "2": 0.029814168289054324,
+          "3": 0.0,
+          "4": 0.06034387661704596,
+          "5": 0.0,
+          "6": 0.0,
+          "7": 0.0,
+          "8": 0.0
+        },
+        "absolute_current_nuts_mass": 0.013625074908097824,
+        "overpair_mass": 0.0,
+        "top_pair_mass": 0.10228197644084419,
+        "nuts_definition": "Maximum made-hand score among all legal hole combos on the CURRENT board; not a full future-equity tail.",
+        "distribution_normalization": "Per-range weights after board removal; equity additionally conditions both private hands jointly."
+      },
+      "range_vs_range": {
+        "equity": 0.56595,
+        "ci95_monte_carlo_only": [
+          0.5592502497732784,
+          0.5726497502267215
+        ],
+        "samples": 20000,
+        "seed": 1201,
+        "attempted_joint_deals": 21682,
+        "method": "Independent weighted hole proposals, whole-pair collision rejection, uniform legal runout; win plus half ties",
+        "note": "Showdown equity with no future betting. Not action EV, range correctness or solver validation."
+      },
+      "hero_exact_vs_villain": {
+        "equity": 0.917375,
+        "ci95_monte_carlo_only": [
+          0.9138087176545823,
+          0.9209412823454178
+        ],
+        "samples": 20000,
+        "seed": 2201,
+        "attempted_joint_deals": 21694,
+        "method": "Independent weighted hole proposals, whole-pair collision rejection, uniform legal runout; win plus half ties",
+        "note": "Showdown equity with no future betting. Not action EV, range correctness or solver validation."
+      }
+    },
+    {
+      "id": "BTN_vs_BB_7s_7h_2d",
+      "hero_position": "BTN",
+      "villain_position": "BB",
+      "table_players": 9,
+      "postflop_players": 2,
+      "board": [
+        "7s",
+        "7h",
+        "2d"
+      ],
+      "hero_example": [
+        "8c",
+        "8d"
+      ],
+      "hero_range_id": "BTN_open_25",
+      "villain_range_id": "BB_call_vs_BTN_25",
+      "hero_range_summary": {
+        "legal_combos": 619,
+        "weighted_combos": 538.8779999999999,
+        "category_mass": {
+          "0": 0.0,
+          "1": 0.8132156072431981,
+          "2": 0.1380757796755481,
+          "3": 0.04685290548138911,
+          "4": 0.0,
+          "5": 0.0,
+          "6": 0.0,
+          "7": 0.0018557075998649048,
+          "8": 0.0
+        },
+        "absolute_current_nuts_mass": 0.0018557075998649048,
+        "overpair_mass": 0.0,
+        "top_pair_mass": 0.0,
+        "nuts_definition": "Maximum made-hand score among all legal hole combos on the CURRENT board; not a full future-equity tail.",
+        "distribution_normalization": "Per-range weights after board removal; equity additionally conditions both private hands jointly."
+      },
+      "villain_range_summary": {
+        "legal_combos": 926,
+        "weighted_combos": 676.729,
+        "category_mass": {
+          "0": 0.0,
+          "1": 0.8197727598492159,
+          "2": 0.08944644015551273,
+          "3": 0.08930310360572694,
+          "4": 0.0,
+          "5": 0.0,
+          "6": 0.0014776963895444114,
+          "7": 0.0,
+          "8": 0.0
+        },
+        "absolute_current_nuts_mass": 0.0,
+        "overpair_mass": 0.0,
+        "top_pair_mass": 0.0,
+        "nuts_definition": "Maximum made-hand score among all legal hole combos on the CURRENT board; not a full future-equity tail.",
+        "distribution_normalization": "Per-range weights after board removal; equity additionally conditions both private hands jointly."
+      },
+      "range_vs_range": {
+        "equity": 0.6009,
+        "ci95_monte_carlo_only": [
+          0.5942633570032196,
+          0.6075366429967803
+        ],
+        "samples": 20000,
+        "seed": 1202,
+        "attempted_joint_deals": 21646,
+        "method": "Independent weighted hole proposals, whole-pair collision rejection, uniform legal runout; win plus half ties",
+        "note": "Showdown equity with no future betting. Not action EV, range correctness or solver validation."
+      },
+      "hero_exact_vs_villain": {
+        "equity": 0.77525,
+        "ci95_monte_carlo_only": [
+          0.7694647428358782,
+          0.7810352571641218
+        ],
+        "samples": 20000,
+        "seed": 2202,
+        "attempted_joint_deals": 21911,
+        "method": "Independent weighted hole proposals, whole-pair collision rejection, uniform legal runout; win plus half ties",
+        "note": "Showdown equity with no future betting. Not action EV, range correctness or solver validation."
+      }
+    },
+    {
+      "id": "UTG_vs_BB_As_7d_2c",
+      "hero_position": "UTG",
+      "villain_position": "BB",
+      "table_players": 9,
+      "postflop_players": 2,
+      "board": [
+        "As",
+        "7d",
+        "2c"
+      ],
+      "hero_example": [
+        "Kh",
+        "Kd"
+      ],
+      "hero_range_id": "UTG_open_25",
+      "villain_range_id": "BB_call_vs_UTG_25",
+      "hero_range_summary": {
+        "legal_combos": 249,
+        "weighted_combos": 191.512,
+        "category_mass": {
+          "0": 0.3655750031329628,
+          "1": 0.5874305526546639,
+          "2": 0.015664814737457705,
+          "3": 0.03132962947491541,
+          "4": 0.0,
+          "5": 0.0,
+          "6": 0.0,
+          "7": 0.0,
+          "8": 0.0
+        },
+        "absolute_current_nuts_mass": 0.015664814737457705,
+        "overpair_mass": 0.0,
+        "top_pair_mass": 0.3289611094866118,
+        "nuts_definition": "Maximum made-hand score among all legal hole combos on the CURRENT board; not a full future-equity tail.",
+        "distribution_normalization": "Per-range weights after board removal; equity additionally conditions both private hands jointly."
+      },
+      "villain_range_summary": {
+        "legal_combos": 791,
+        "weighted_combos": 636.789,
+        "category_mass": {
+          "0": 0.6460413103869571,
+          "1": 0.32687750573580887,
+          "2": 0.02001447889332259,
+          "3": 0.007066704983911469,
+          "4": 0.0,
+          "5": 0.0,
+          "6": 0.0,
+          "7": 0.0,
+          "8": 0.0
+        },
+        "absolute_current_nuts_mass": 0.0,
+        "overpair_mass": 0.0,
+        "top_pair_mass": 0.13456419630364216,
+        "nuts_definition": "Maximum made-hand score among all legal hole combos on the CURRENT board; not a full future-equity tail.",
+        "distribution_normalization": "Per-range weights after board removal; equity additionally conditions both private hands jointly."
+      },
+      "range_vs_range": {
+        "equity": 0.679025,
+        "ci95_monte_carlo_only": [
+          0.6726095804217987,
+          0.6854404195782012
+        ],
+        "samples": 20000,
+        "seed": 1203,
+        "attempted_joint_deals": 21959,
+        "method": "Independent weighted hole proposals, whole-pair collision rejection, uniform legal runout; win plus half ties",
+        "note": "Showdown equity with no future betting. Not action EV, range correctness or solver validation."
+      },
+      "hero_exact_vs_villain": {
+        "equity": 0.76175,
+        "ci95_monte_carlo_only": [
+          0.7558456156931733,
+          0.7676543843068268
+        ],
+        "samples": 20000,
+        "seed": 2203,
+        "attempted_joint_deals": 22080,
+        "method": "Independent weighted hole proposals, whole-pair collision rejection, uniform legal runout; win plus half ties",
+        "note": "Showdown equity with no future betting. Not action EV, range correctness or solver validation."
+      }
+    }
+  ],
+  "river_ev_example": {
+    "kind": "SYNTHETIC_FIXED_RIVER_RESPONSE_MODEL",
+    "board": [
+      "Kc",
+      "8s",
+      "3d",
+      "Ts",
+      "2h"
+    ],
+    "pot_before_bet_bb": 25.0,
+    "bet_bb": 16.666666666666668,
+    "opponent_call_combos": [
+      [
+        "Ah",
+        "Kd"
+      ],
+      [
+        "Ad",
+        "Kh"
+      ],
+      [
+        "Ac",
+        "Ks"
+      ],
+      [
+        "Kh",
+        "Qd"
+      ]
+    ],
+    "opponent_fold_combos": [
+      [
+        "Qs",
+        "Js"
+      ],
+      [
+        "Qh",
+        "Jh"
+      ],
+      [
+        "Qd",
+        "Jd"
+      ],
+      [
+        "Js",
+        "9s"
+      ],
+      [
+        "Jh",
+        "9h"
+      ],
+      [
+        "9s",
+        "7s"
+      ]
+    ],
+    "combo_weights": 1.0,
+    "results": [
+      {
+        "hero": [
+          "As",
+          "5s"
+        ],
+        "legal_opponent_combos": 10,
+        "fold_probability": 0.6,
+        "check_ev_bb": 15.0,
+        "bet_two_thirds_ev_bb": 8.333333333333332,
+        "higher_ev_action": "check"
+      },
+      {
+        "hero": [
+          "6c",
+          "5c"
+        ],
+        "legal_opponent_combos": 10,
+        "fold_probability": 0.6,
+        "check_ev_bb": 0.0,
+        "bet_two_thirds_ev_bb": 8.333333333333332,
+        "higher_ev_action": "bet_two_thirds"
+      }
+    ],
+    "bluff_break_even_fold_probability": 0.39999999999999997,
+    "assumptions": [
+      "Villain already checked; hero is last to act.",
+      "All remaining Kx combos call and the six listed missed draws fold.",
+      "No check-raise, rake, side pot, ICM or bounty. Hero has enough stack.",
+      "This node is supplied in isolation. It does not prove either hero hand should reach this river through two prior barrels."
+    ],
+    "meaning": "Exact ten-combo arithmetic, not a population measurement or a solved strategy."
+  },
+  "solver_validated": false,
+  "pppoker_windows_validation": false
+}

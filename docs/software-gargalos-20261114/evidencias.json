@@ -1,0 +1,94 @@
+{
+  "generated_utc": "2026-11-14T16:31:57.362131+00:00",
+  "repository": "eduardodinizti-design/Software",
+  "scope": "Action plan for the original Software bot only. No runtime changes or deployment.",
+  "source_report_sha256": "b8ad35b04887e1dd63eb52c6ec449d8e35fff633ed8cbe0a1ce27c70ba3c55fd",
+  "heads": {
+    "main": "205dbc7ffbfb5f103dc342f4dfce407a3a27915c",
+    "operational": "e51718ce26858de42c73e1313dc5ac12e4c61d73",
+    "counterexamples": "eff4c1b137471871d2ed81e1f70dcbd09634896d",
+    "preflop": "99083de9e4f0b731c2205d0d7e2bca88d2bfdc7e",
+    "trees": "a420ec868ab412a303a786ba19db7133677c7500"
+  },
+  "deployed_windows_commit": "UNKNOWN: source report omits it",
+  "python": "3.12.14",
+  "regression": {
+    "base": "eff4c1b137471871d2ed81e1f70dcbd09634896d",
+    "run": 209,
+    "ordinary_passes": 206,
+    "skipped": 2,
+    "expected_failures": 1,
+    "unexpected_errors_or_failures": 0,
+    "command": "python -m unittest test_postflop_counterexamples test_audit_contracts_group_a test_table_state test_action_scheduler test_raise_plan test_raise_sequencer test_decision_contract test_postflop_advisor test_postflop_eval test_lobby_runner test_tournament_end"
+  },
+  "isolated_failure": {
+    "command": "python -m unittest test_raise_panel.RealPanelTest.test_reads_four_presets_and_confirm",
+    "run": 1,
+    "failures": 1,
+    "expected": [
+      2,
+      2.5,
+      3,
+      4
+    ],
+    "actual": [
+      2,
+      3,
+      4
+    ]
+  },
+  "ten_reported_counterexamples": {
+    "ordinary_guards_passing": 9,
+    "remaining_expected_failure": "test_raise_above_menu_is_not_all_in",
+    "meaning": "Component tests on eff4c1b; not proof of deployed Windows behavior"
+  },
+  "probes": {
+    "scope": "Synthetic contract demonstrations using Software eff4c1b; no OS input, client capture, registration or live validation.",
+    "price_log": {
+      "reader_contract_value_bb": 3.5,
+      "operator_flat_log_value": null,
+      "conclusion": "The log can print None although a price exists in state; this does not measure actual live OCR missingness."
+    },
+    "raise_above_menu": {
+      "requested_mult": 6,
+      "presets": [
+        2,
+        3,
+        4
+      ],
+      "actual_kind": "SHOVE",
+      "explicit_all_in_requested": false
+    },
+    "tournament_close_resume": {
+      "frames": 2,
+      "operator_exit": 0,
+      "final_control": "RUNNING",
+      "close_authorizations": [
+        false
+      ],
+      "expected_authorizations": [
+        false,
+        true
+      ],
+      "issue": "A dry-run/failed close is marked in tourneys_closed and the resumed loop does not retry the close."
+    }
+  },
+  "unchanged_runtime_sha256": {
+    "operar_mesa.py": "99462ef8359623d49acd688c3e92ee45aabe070a51d8b960b451df519cf7f960",
+    "table_reading/table_state.py": "7cee6ecedba159a5e90f49bb9e378dcbba5f547dffcccfabe1ef30cf069de024",
+    "raise_plan.py": "42b55baa1651ff8eb53436d724103502fdf69c173c5648deea6a55ad514caed8",
+    "raise_sequencer.py": "d35cd60550f88dbc99f5992f6b2092b1da343f70ff31ef6b0615bba960eb5ac8",
+    "postflop_advisor.py": "a55283914f9fc458e97128f8f9cd83a076bed2a0773a74fd42b8990c91e209fc",
+    "postflop_eval.py": "7f28f5b9f4a078379f59363d1829a6a23723b2cc45f2c720e70533d4b442c966",
+    "action_scheduler.py": "cbdc033b8135c1147bc0fbeb707f5a874a109e8541b5325a077f12a9595d4d7c",
+    "registration_flow.py": "c393cdcfa685a76f095ae3b07d5c6603fbbba4cb4eb340549b7b7ca5124726c2",
+    "registration_ledger.py": "a70588b61f4a19cc81821807ccbe5165ca2ee09428d42b37384aab2755c28622",
+    "session_config.py": "abbd823c92d88199b66f6be05ccbbb6e16578f89671a92e5adcb1526371e8d16",
+    "test_postflop_counterexamples.py": "a003fd66cb07699865e1a0153a560f4fe0b1c47187a19123319b1f904113e842",
+    "test_audit_contracts_group_a.py": "fa9f576d0e11dd25afebdcec0b3f9ab2b7c03ac1123a31d58af4885977418dfc"
+  },
+  "backlog_items": 21,
+  "traceability_items": 47,
+  "dependency_validation": "PASS: no missing IDs or cycles",
+  "windows_pppoker_live_validation": false
+}

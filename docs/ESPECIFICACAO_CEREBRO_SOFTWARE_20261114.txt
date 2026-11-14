@@ -1,0 +1,560 @@
+ESPECIFICAÇÃO DO CÉREBRO — SOFTWARE ORIGINAL
+14/11/2026 — complemento implementável do plano de ação
+
+Este documento detalha SW03, SW06–SW12 e SW18. É uma especificação de como
+construir e comprovar o motor, com dados e demonstrações offline. Não é anúncio
+de um motor novo já conectado ao PPPoker. O restante do plano operacional segue
+em PLANO_ACAO_SOFTWARE_20261114.txt. A main e o runtime foram preservados.
+
+1. O RESULTADO QUE O MOTOR DEVE PRODUZIR
+
+Para CADA decisão, responder com dados rastreáveis:
+  - Hero BTN, adversário BB; hero IP; mesa originalmente 9-max, dois ativos.
+  - Sequência observada: BTN raise 2,5 BB, BB call, BB check flop.
+  - Range público do hero e range do BB, com pesos por combo, fonte e ação.
+  - Board exato, sua estrutura, distribuições de força e equidade dos ranges.
+  - Pote, dinheiro já investido, stacks restantes e orçamento efetivo.
+  - Opções legais: check, bet 1/3, 1/2, 2/3, pote, all-in explícito se cabível.
+  - EV e frequência de cada opção para o combo específico do hero.
+  - Ação selecionada, por que alternativas perderam EV ou foram misturadas.
+  - Continuação CONDICIONAL se houver call, raise, nova carta ou novo size.
+  - Qualidade da política: referência, modelo populacional ou regra; erro
+    numérico/hipóteses; nunca chamar presença num JSON de certificação GTO.
+
+Não basta: "tenho top pair", "board seco", "equity 60%, então raise".
+Uma categoria de mão é uma entrada, não a política completa.
+
+2. COMO ISSO SE ENCAIXA NO SOFTWARE EXISTENTE
+
+Hoje table_advisor._postflop_in_context chama villain_postflop_range e depois
+advise_postflop. O código já distingue open do vilão de flat contra o hero.
+Porém o conselho é essencialmente pontual: não conserva uma política completa
+dos DOIS ranges através de todas as ações e ruas.
+
+O agente deve acrescentar os componentes abaixo no pacote strategy/ do Software.
+São módulos A IMPLEMENTAR, não nomes de serviços que já estejam funcionando.
+
+state_contract.py
+  normalize(snapshot, timeline) -> DecisionState imutável.
+  Normaliza dinheiro/participantes/histórico; nunca captura ou clica.
+range_catalog.py
+  get_prior(position, action_path, format, depth, sizes, source) -> RangeRecord.
+  Seleciona a ação do nó certo, não um range genérico "do BB".
+range_beliefs.py
+  from_preflop_history(...) -> PublicBelief por assento.
+  observe_action(belief,event,policy_model) -> novo belief com proveniência.
+board_features.py
+  describe(board) e compare_distributions(ranges,board) -> métricas definidas.
+action_tree.py
+  build(DecisionState,BetMenu) -> árvore legal com fold/check/call/bet/raise.
+  Usada offline para calcular; não resolve toda a árvore durante cada clique.
+ev_evaluator.py
+  evaluate(tree,beliefs,continuation_model) -> EVs/reach/diagnósticos.
+policy_store.py
+  load/get(context_key,range_hashes,board,path) -> política compilada.
+line_policy.py
+  transições entre nós observados; sem decidir um river que ainda não chegou.
+strategy_decision.py
+  choose(policy,exact_hero_combo,decision_id) -> ação/size/frequência/explicação.
+decision_explanation.py
+  registra contexto, comparações e origem da decisão para replay/auditoria.
+
+Ligações concretas:
+  operar_mesa -> snapshot/timeline -> DecisionState -> beliefs -> policy_store
+  -> choose -> contrato de execução -> executor -> confirmação -> timeline.
+
+postflop_advisor.py pode continuar como baseline de comparação/fallback rotulado.
+Não transformar sua heurística atual em solver apenas mudando execution_allowed.
+O operador deve despachar a autoridade pós-flop para executor próprio, com
+frações de pote, sem passar pelo fallback ou multiplicadores pré-flop.
+
+3. CONTRATO EXATO DO ESTADO
+
+DecisionState contém:
+  capture_identity: HWND, PID, criação do processo, geometria, DPI, frame_id/idade.
+  table_id, tournament_id, hand_id, street, public_history_hash, revision.
+  dealt_players: 2..9; active_seats: lista confirmada; folded_seats: evidência.
+  hero_seat/position, villain_seats/positions; actor_to_move; ordem pós-flop.
+  hero_cards: DUAS cartas exatas; board: prefixo exato de 3/4/5 cartas.
+  pot_current_bb: o pote já inclui apostas visíveis não pagas.
+  to_call_additional_bb: quanto o hero precisa acrescentar para pagar.
+  street_committed_bb[seat], remaining_stack_bb[seat].
+  street_start_effective_stack_bb e street_start_pot_bb para SPR comparável.
+  effective_stack_by_pair e elegibilidade de potes, quando houver vários jogadores.
+  last_full_raise_increment_bb e ações legais; short all-in pode não reabrir raise.
+  tournament: prêmio regular/KO/PKO/Mystery; entrada; fase; antes; rake; economia.
+  model_id, source hashes, range hashes, confidence/missing por campo.
+
+Não usar min(stack_remaining_hero, stack_remaining_villain) isoladamente diante
+de aposta: o vilão pode já ter colocado fichas na frente, que ainda são contestáveis.
+Reconstruir o orçamento da rua a partir de committed + remaining e dos side pots.
+Separar call_required = max(0,to_beat-hero_committed) de call_cost, limitado ao
+stack restante do hero. Se o vilão cobre seu all-in, o pote visível pode incluir
+excesso não contestável. Pot odds usam call_cost e o pote elegível, não dinheiro
+que será devolvido ao adversário.
+
+Exemplo SEM antes/rake, ambos iniciando com 25 BB:
+  BTN abre 2,5; BB paga 2,5; SB folda seus 0,5.
+  Pote flop = 2,5 + 2,5 + 0,5 = 5,5 BB.
+  Restam 22,5 BB a cada um. SPR inicial = 22,5 / 5,5 = 4,09.
+  BB check; BTN aposta 1/3 = 1,8333 BB.
+  Agora o pote é 7,3333; BB deve 1,8333; BTN resta 20,6667; BB ainda 22,5.
+  BB paga -> pote 9,1667 e ambos restam 20,6667.
+  Turn bet 2/3 = 6,1111 e call -> pote river 21,3889; ambos restam 14,5556.
+  Shove river = 68,05% do pote, uma ação ALL_IN distinta de bet 2/3.
+Esses números são aritmética ilustrativa. O size real usa o tick/valor da UI.
+
+4. RANGES: DE ONDE VÊM E COMO SÃO USADOS
+
+O formato interno deve armazenar os 1.326 combos físicos, não apenas 169 classes.
+Cada combo recebe o peso/frequência da ação de sua classe. AA tem 6 combos,
+AKs tem 4 e AKo tem 12. Não dividir a frequência por 6/4/12 ao expandir.
+Exemplo didático: A5s com call 30% pesa 4 x 0,30 = 1,2 combos antes do board.
+Se As aparecer, As5s é removido; restam três combos e massa 0,9.
+
+Range público do hero NÃO vira só sua mão real. A mão real seleciona a linha
+da política; o range público inteiro descreve as mãos que ele pode representar.
+
+BTN abriu e BB pagou:
+  R_BTN = prior_BTN x P(raise daquele size | combo, histórico pré-flop).
+  R_BB  = prior_BB  x P(call contra BTN/size | combo, histórico).
+UTG abriu e BB pagou:
+  R_UTG e R_BB_vs_UTG são OUTROS registros, não cópia do caso BTN.
+SB 3-betou BTN e BTN pagou:
+  R_SB  = prior_SB x P(3bet vs BTN | combo).
+  R_BTN = range que abriu x P(call da 3bet específica | combo e ação anterior).
+
+Fonte necessária: nó, ação, contexto, tamanho da abertura/reraise, jogadores,
+stack, modalidade, fase, antes/rake e pesos. Um vs_open cujo export não informa
+o size não vira prova de que foi resolvido contra open 2,5.
+
+Raiz canônica = UMA distribuição normalizada de ações por combo naquele histórico.
+Não somar charts independentes de open_raise/open_shove/limp: eles podem ser
+alternativas de outra representação, não probabilidades compatíveis. Exigir
+parent/action_path e reconciliar a semântica antes da união. "Não está no range
+de raise" não significa necessariamente fold: pode pertencer ao limp ou shove.
+
+Após cada ação pós-flop:
+  w_novo(combo) = w_anterior(combo) x P(ação observada | combo, board, size,
+                                     posição, SPR e histórico).
+  Remover colisões com cartas públicas, manter pesos e normalizar para consulta.
+O modelo de P(ação|combo) vem da política resolvida ou de modelo populacional
+explicitamente identificado. Não vem de "todas as top pairs pagam" sem medição.
+
+Flop bet/call -> atualizar o range do hero PELA APOSTA e o do vilão PELO CALL.
+Turn deve usar esses ranges condicionados, não reiniciar no range pré-flop.
+Depois de check-back, premiums podem continuar no range. Call não é agressão.
+Conservar traps; não declarar range capada só porque houve um check.
+
+Se a mão observada do hero tem peso zero na estratégia planejada, registrar
+OFF_POLICY e reconstruir/modelar a chegada. Isso NÃO prova que a mão deve foldar.
+Também não é permitido apresentar o EV daquele nó incompatível como certificado.
+Ex.: se a política preferia shove com 77 pré-flop e houve call manual, a mão
+precisa de um modelo de chegada compatível, não de uma leitura "impossível".
+
+5. VANTAGEM DE RANGE E NUTS: COMO CALCULAR
+
+Para um board, gerar distribuições de:
+  - pares/overpairs/top pairs, dois pares, trincas, sequências, flushes, fulls;
+  - draws, qualidade dos outs, backdoors e blockers por combo;
+  - massa de nuts atuais e da cauda forte da distribuição;
+  - equidade média de R_H contra R_V, com combos físicos e pesos.
+
+Equidade de range = média de win + fração dos empates em distribuições conjuntas
+sem colisões. Propor as duas mãos ponderadas e rejeitar o DEAL inteiro se colidirem;
+normalizar sequencialmente só a segunda mão pode enviesar o produto desejado.
+No flop, cada deal HU completo deixa 45 cartas para turn e 44 para river.
+As probabilidades públicas são obtidas somando deals compatíveis, não ignorando
+blockers. Modelar cartas não vistas de jogadores foldados é uma hipótese adicional;
+não remover do baralho cartas de fold que ninguém observou.
+
+"Nuts atuais" nesta demonstração = maior score possível no board atual, entre
+todos os combos legais. Isso não resume toda a vantagem de nuts: medir também
+concentração de mãos muito fortes e sua evolução nos runouts. Se usar top 5%,
+definir referência COMUM aos dois ranges e regra de empates; calcular percentis
+separados de cada range tornaria ambos artificialmente "5% de nuts".
+
+CALCULADO: demonstração com snapshot público NVT, engine 356340d, 06/11/2026,
+9-max, 25 BB, chip-EV mid. Não é prova de quais arquivos o Windows está usando.
+O export não estabelece aqui open size/antes nem política pós-flop. Os números
+abaixo são equidade de showdown sem apostas futuras, não EV da c-bet.
+
+Ranges extraídos da ação exata do nó:
+  BTN raise: 99 classes com peso positivo, massa 573,058 combos.
+  UTG raise: 48 classes, massa 223,012 combos.
+  BB call vs BTN: 136 classes, massa 760,340 combos.
+  BB call vs UTG: 129 classes, massa 714,188 combos.
+O JSON ranges-referencia.json contém TODOS os pesos por classe e os IDs/hashes.
+
+Board          Confronto       Equity do range do abridor, IC95% só Monte Carlo
+As 7d 2c       BTN x BB        64,61% [63,96%; 65,27%]
+As 7d 2c       UTG x BB        67,90% [67,26%; 68,54%]
+9s 8s 7d       BTN x BB        56,59% [55,93%; 57,26%]
+7s 7h 2d       BTN x BB        60,09% [59,43%; 60,75%]
+
+20.000 amostras por estimativa, seed gravada. O intervalo não mede erro do range.
+As massas de categorias/nuts do JSON descrevem cada range após remoção do board;
+a equidade conjunta também condiciona as duas mãos a não colidirem entre si.
+Nesse snapshot, BB flat vs BTN tem 77/22/AA com peso zero; 77/22 não podem aparecer
+como valor de check-raise dessa MESMA chegada sem explicar a mudança de modelo.
+Isso não demonstra como um adversário real joga nem valida a qualidade do pack.
+Mostra por que não podemos programar "987 sempre dá vantagem de nuts ao BB".
+No snapshot, JT é mais concentrado no range do BTN que nesse range de flat do BB.
+Já em 772, o BB tem mais massa de trincas ou melhor, apesar de menor equity média.
+
+AhQh tem aproximadamente 90,5% contra o range ORIGINAL de flat do BB em As7d2c.
+Esse número não pode ser usado diretamente para pagar um check-raise: o range
+que check-raisa é outro posterior, potencialmente muito mais forte.
+
+6. QUAL SIZE E QUAL LINHA: CONSTRUIR E RESOLVER A ÁRVORE
+
+Menu inicial sem enfrentar aposta: CHECK, BET_1_3, BET_1_2, BET_2_3, BET_POT.
+ALL_IN é ação explícita; tamanhos duplicados/ilegais são removidos. Diante de
+aposta: FOLD, CALL, raises legais disponíveis e ALL_IN quando legal. Sem CHECK
+se há preço. Um short all-in pode não reabrir o direito de aumentar.
+
+Bet = fração x pote ANTES da nova aposta. Raise é outro contrato:
+  contribution_additional = raise_to - hero_street_committed.
+Se a UI define um raise de f pote como call + f*(pote+call), então:
+  raise_to = hero_committed + call + f*(pote_atual+call).
+Essa semântica precisa ser calibrada no cliente. Não presumir que o botão
+"1/2 pote" em uma tela de raise funciona como uma aposta inicial de meio pote.
+
+O cálculo offline usa o menu que o PPPoker consegue executar. Se quisermos
+retirar/adicionar um size, recalcular a árvore e medir perda de EV. Não calcular
+6,7 BB e mandar 4 BB sem avaliação. Nem converter 6x sem preset em all-in.
+
+Não abrir todos os sizes e reraises em todas as ruas sem medir o custo da árvore.
+Prototipar um menu declarado menor (ex.: flop 1/3 e 2/3, turn 1/2 e 2/3,
+river 2/3 e pote; check e all-in explícito quando cabíveis), medir nós/memória/
+tempo, e refinar os sizes com maior ganho. O menu definitivo deve ser resolvido
+como UM jogo coerente: não misturar frequências de soluções independentes com
+menus diferentes e chamá-las de uma estratégia de equilíbrio. Linhas fora da
+abstração são registradas como tal; o limite do cálculo não muda a legalidade real.
+
+Para cada ação hero:
+  1. Enumerar respostas fold/call/raise do adversário, com pesos por combo.
+  2. Se fold, liquidar o pote; se call, construir próximos estados/runouts.
+  3. Se raise, hero reavalia fold/call/reraise na posição e preço daquele nó.
+  4. No turn/river, atualizar ranges e repetir. Não usar informação futura real.
+  5. Liquidar folhas com fichas investidas, side pots, devoluções e empates.
+  6. Exportar EV por combo/ação e estratégia média/frequências de chegada.
+
+Primeira escolha prática: adaptador OFFLINE de um solver HU nativo auditado,
+com parâmetros e revisão fixados. HRC Pro serve para as referências pré-flop
+compatíveis com seus modelos; não tratá-lo como solver de todas as linhas
+pós-flop. O formato nativo de import/export depende da versão/projeto real;
+não inventar um comando HRC ou converter um JSON rotulado HRC em prova nativa.
+
+Quando usado solver HU chip-EV, registrar árvore, ranges, sizes, rake/antes,
+iterações, precisão medida, revisão e outputs. PKO/ICM/multiway têm utilidades
+e modelos diferentes; a prova desse jogo HU não se transfere automaticamente.
+
+Sem solver nesse domínio, usar modelo de resposta/continuação rotulado e medir
+seus erros. Monte Carlo até o showdown sozinho não resolve bet versus check.
+Uma simulação não pode selecionar a melhor ação de flop sabendo quais serão
+as cartas reais do turn/river ou a mão privada concreta sorteada do vilão.
+A política de cada ator só depende de suas cartas e do histórico público.
+
+Não escolher sempre argmax ruidoso de EV e destruir uma estratégia mista.
+Importar as frequências da política resolvida; se usar best response, identificá-la
+como melhor resposta AO MODELO fixado. Medir diferença de EV e incerteza;
+empates/valores próximos podem preservar mix. Sorteio é estável por decisão,
+não um sorteio novo a cada frame. Timestamp de captura não muda a identidade.
+
+7. AS CONTAS QUE O IMPLEMENTADOR PRECISA RESPEITAR
+
+EV é medido a partir do nó atual, descontando investimentos FUTUROS do hero.
+Dinheiro já comprometido é custo afundado. Fold tem EV zero nesse referencial.
+
+River, CALL, P já inclui aposta adversária e C é call adicional:
+  EV(call) = E*(P+C)-C.
+Flop/turn: essa conta com equity de check-down é apenas diagnóstico; o valor
+correto do call vem das futuras decisões e respostas da árvore.
+
+River, hero IP após check adversário, sem mais ação se passar:
+  EV(check) = E_showdown * P.
+River, bet B, adversário só folda ou paga:
+  EV(bet) = F*P + (1-F)*[E_vs_call*(P+2B)-B].
+Se há raise ou stacks desiguais/side pots, usar as folhas completas, não essa
+identidade simplificada. Equidade contra range de call difere da contra o range total.
+
+EXEMPLO EXATO, ARTIFICIAL: P=25 BB; bet=2/3=16,6667. BB já passou.
+Modelo fornece 4 combos Kx que pagam e 6 draws perdidos que foldam, pesos iguais.
+Board: Kc 8s 3d Ts 2h. Os dez combos estão no JSON calculado.
+  Hero As5s: vence os 6 folds no showdown, perde para os 4 calls.
+    Check = 0,6*25 = 15 BB.
+    Bluff = 0,6*25 - 0,4*16,6667 = 8,3333 BB.
+    Resultado: CHECK ganha do terceiro barrel, embora o bluff seja positivo.
+  Hero 6c5c: perde no showdown contra todos os dez combos.
+    Check = 0; mesmo bluff = 8,3333 BB.
+    Resultado: bluff ganha NESSE modelo, se essa mão realmente chegou à linha.
+Isso não prova que 6c5c deveria ter pago/apostado flop e turn. A chegada também
+precisa de EV e alcance positivo; o exemplo isola a decisão do river.
+
+Nesse bet sem equity quando pago, F precisa superar B/(P+B)=40% para ser positivo.
+Isso não basta se check vale mais, como com As5s. Não confundir F com bluffshare,
+MDF ou pot odds de call. Para esse bet, bluffshare polar simplificado=28,57% e
+MDF teórico=60%, sob hipóteses específicas; não são ordens universais de defesa.
+
+8. LINHAS QUE DEVEM SER PROGRAMADAS, COM CONDIÇÕES
+
+L01 — BTN abriu, BB flat, As7d2c, 25 BB iniciais
+Ranges e aritmética das seções anteriores. Hero AhQh compara check e bets por
+valor/proteção com resposta do BB. Hero QsJs é outro combo: backdoor de espadas
+no flop, não top pair. Ambos usam o MESMO grafo público, linhas por combo diferentes.
+BB call da c-bet -> condicionar ranges. Turn Ts dá draw de flush e gutshot ao QsJs;
+turn Kh, 7h e 4h produzem outros vetores de equity/nuts e respostas. Calcular,
+não marcar todas essas cartas como "favoráveis" por serem altas ou baixas.
+
+L02 — Mesmo pote, board 9s8s7d
+Hero JcTd tem sequência máxima atual, mas runouts podem empatar/superar sua mão.
+Comparar sizes e check com proteção do range e respostas a check-raise. Overpairs
+não recebem a mesma política da sequência. Mãos como JT, T6, 65, sets, dois pares
+e draws só entram em cada range se a chegada lhes der peso. Não inventá-las.
+
+L03 — Mesmo pote, board 7s7h2d
+Hero 8c8d compara thin value/proteção/check contra mais 7x no range adversário.
+Equidade média favorável ao BTN não elimina a concentração de trips do BB.
+O posterior após raise pode inverter o que parecia um valor confortável.
+
+L04 — UTG abriu e BB flat, mesmo As7d2c
+Consultar R_UTG e R_BB_vs_UTG. Hero KhKd tem showdown value e não é top pair.
+Resolver seu combo nesse nó, sem copiar frequência/size da linha BTN com AhQh.
+
+L05 — BB defendeu contra BTN e enfrenta c-bet 1/3 em As7d2c
+Hero OOP; preço 1,8333 em pote atual 7,3333 no exemplo. Pot odds do call = 20%.
+Isso não autoriza qualquer mão com 20% de equity bruta: falta realização futura.
+R_BTN agora é o range QUE APOSTOU esse size, não todo o open. Avaliar fold,
+call e check-raise; separar valor e blefes com draws/blockers úteis. Se 77/22
+foram removidos pelo prior específico, explicitar OFF_POLICY antes de usá-los.
+
+L06 — SB abriu 3 BB e BB pagou, hero SB OOP
+Pote 6, ambos restam 22 em stacks iniciais 25: SPR 3,67. Ranges próprios de SB/BB,
+não BTN/BB. Flop Kc7c2h: comparar c-bet e check com mãos fortes protegendo ambos
+os ramos. Se hero check e BB apostar, avaliar x/f, x/c e x/r com uma árvore de
+resposta. Check do SB não encerra a rua como check-back IP encerraria.
+
+L07 — SB limpou, BB checkou
+Pote 2, stacks 24 a partir de 25: SPR 12. Sem agressor pré-flop. Não chamar
+qualquer aposta de c-bet nem importar ranges de pote aberto com raise.
+Construir a árvore de lead/check/stab e seus próprios ranges de chegada.
+
+L08 — SB 3-betou BTN a 9 BB; BTN pagou
+Com 25 BB iniciais e BB foldando 1: pote 19, restam 16, SPR 0,84. SB OOP,
+BTN IP. Usar range de 3-bet do SB e de call à 3-bet do BTN. Não aplicar menu
+de três barrels de um pote simples deep; nem comprometer qualquer top pair
+apenas por SPR baixo. Para 50/100 BB, recalcular com os stacks reais.
+
+L09 — UTG pagou 3-bet do BTN a 7,5 BB
+Com 25 iniciais e blinds foldados: pote 16,5; restam 17,5. UTG OOP caller,
+BTN IP agressor. A posição e a composição dos ranges são diferentes de L08.
+Flop Qd8c3h: construir check/lead, resposta à c-bet e futuras ruas.
+
+L10 — Delayed c-bet
+BTN abriu, BB check flop, BTN check-back. Turn: BB check novamente.
+R_BTN_turn inclui seu range que CHECKOU, inclusive traps; R_BB inclui checks
+compatíveis e a nova carta. Avaliar bet/check no turn e respostas, sem voltar
+ao range pré-flop nem concluir que dois checks eliminam mãos fortes.
+
+L11 — Probe do BB
+BB defendeu, passou flop e BTN check-back. Turn: BB atua primeiro. A liderança
+pode ser probe porque o agressor pré-flop deixou de c-betar. Ex.: flop As7d2c,
+turn 7h, hero 7c6c. O motor calcula chegada e valor; draws/blefes são outra
+parte do range. Não confundir probe com uma variável de nome semelhante.
+
+L12 — Float e stab posterior
+CO abriu 2,5; BTN pagou; blinds foldaram -> P=6,5. CO bet 1/3 flop Qs8d3c,
+BTN call -> P_turn=10,8333. Turn Kd, CO check. BTN AhJh compara stab e check,
+com novo gutshot e ranges que apostaram/pagaram/checkaram. O call do flop
+precisa ser lucrativo considerando TODOS os ramos, inclusive CO barrelando;
+não pode ser justificado só pelo ramo futuro em que CO passa.
+
+L13 — Segundo/terceiro barrel por valor ou blefe
+Em cada rua comparar EVs com os posteriores atuais. Classificar:
+  (a) continua por valor contra calls piores;
+  (b) semi-blefa com equity/blockers e fold equity;
+  (c) blefa river com baixo showdown e efeito de blockers medido;
+  (d) dá check/give-up quando isso supera apostar.
+Blocker deve reduzir calls/raises fortes sem remover folds demais. Contar os
+combos alterados para CADA mão real; "tenho o As" não é justificativa suficiente.
+Formalmente, para a mão h: F(h) = soma[w(v)*P(fold|v)] / soma[w(v)], usando só
+os combos v que não colidem com h/board. Calcular E_vs_call(h) com os pesos
+w(v)*P(call|v). A escolha compara EV completo e showdown value, não apenas F(h).
+
+L14 — Atacar range supostamente capada
+Medir probabilidade remanescente de mãos muito fortes após o histórico. Manter
+frequências de slowplay. Comparar bets grandes/padrão/check no modelo; se a
+população tiver traps frequentes, recalcular e não manter um blefe dogmático.
+
+9. PRÉ-FLOP: CENÁRIOS CONCRETOS DE CÁLCULO
+
+P01 — UTG limp 1, HJ limp 1, hero BTN com 50, SB 0,5 e BB 1; pote 3,5.
+Hero compara fold, overlimp 1, iso 3/4 BB e jam explícito 50. Há limpers E blinds
+a responder: não resolver como open não contestado ou HU. Ranges de limp/call,
+limp/raise, fold e reação dos blinds precisam de pesos por posição.
+
+Para o iso 4 do P01, calcular estes filhos explicitamente:
+  - todos foldam: hero ganha os 3,5 BB anteriores, não 7,5 de lucro;
+  - um limper paga e os demais foldam: pote = 3,5+4+(4-1)=10,5;
+    ambos têm 46 atrás, SPR 4,38, agora HU;
+  - os dois limpers pagam: pote = 3,5+4+3+3=13,5, agora três jogadores;
+  - um limper aumenta: criar novo nó com seu range de limp/raise e o preço;
+  - um blind aumenta/paga: outro range e outra posição, sem copiar o limper.
+Para overlimp 1: se SB folda e BB checka, P=4,5 e são QUATRO ativos. Se SB
+completa, P=5 e são CINCO. Não avaliar o overlimp como se garantisse heads-up.
+Se algum adversário é short, usar caps/side pots por par; o menor stack global
+não transforma todos os outros duelos naquele mesmo stack efetivo.
+
+P02 — UTG open 2,5, HJ/CO call, hero BB já tem 1, SB foldou 0,5; pote 9.
+Hero acrescenta 1,5 para call; 80 BB iniciais. Comparar call com squeeze para
+os alvos executáveis, fold e jam explícito. Modelar respostas dos TRÊS adversários,
+incluindo backraise do opener. Se todos pagarem, o pós-flop é multiway.
+Se hero pagar: P=10,5 com quatro jogadores. Se squeeze para 10: hero acrescenta
+9, não 10. Todos foldarem vale +9 BB no referencial desse nó; só o opener pagar
+leva a P=9+9+7,5=25,5, com 70 atrás a partir de 80 iniciais. Comparar esses
+ramos ponderados com os ramos de vários calls/raises e com a alternativa de call.
+
+P03 — CO abriu 2,5, SB 3-betou 9; BB foldou 1; pote 12,5; 200 BB iniciais.
+Hero CO deve 6,5. Comparar call, 4-bet 22,5/27, fold e jam explícito 200.
+Não transformar uma tabela de jam 25 BB em shove 200 BB nem abster pelo depth.
+
+P04 — No caso anterior, CO 4-betou 22,5; hero SB tem 9 na frente; pote 32,5.
+Deve 13,5. Raise mínimo total 36 se o incremento cheio foi 13,5. Comparar
+5-bet para alvos legais do menu (ex.: 45), call, fold e all-in explícito 200.
+
+P05 — BB contra open BTN 2,2, stacks 15; SB foldou 0,5; pote 3,7; call 1,2.
+Comparar call, 3-bet não all-in quando legal, jam e fold. Não impor push/fold
+somente pelo stack. As respostas e os ranges condicionais decidem.
+
+P06 — BTN não aberto, stacks 5.000, pote 1,5.
+Manter raises normais e modelo de profundidade/realização; não jam de uma fonte
+curta. O fato de não termos solução independente de todo o jogo 5.000 BB não
+autoriza chamar regra de GTO ou restaurar um bloqueio geral por profundidade.
+
+Em cada cenário, gerar vetor de frequências e EV para os 1.326 combos ou classes
+simétricas comprovadas, não apenas resolver AA/AK. Avaliar valor, blefe, call e
+overlimp com os mesmos adversários/modelos. Formalizar a sequência inteira:
+um open seguido de duas calls não é apenas "vs_open" com pot odds melhores.
+
+10. PRIMEIRO LOTE DE RESOLUÇÃO E COMO CHEGAR À COBERTURA
+
+Sete famílias iniciais: BTN/BB, CO/BB, UTG/BB em pote simples; SB/BB raise;
+SB/BB limp; SB 3-bet versus BTN call; BTN 3-bet versus UTG call.
+Ambos os lados são obtidos do mesmo jogo resolvido, não dois brains divergentes.
+Primeiras profundidades: 25/50/100 BB, com os priors próprios. Depois 15/40/80/
+200 e referências profundas identificadas, sem barreira estratégica por BB.
+
+Doze flops de desenvolvimento:
+  As7d2c, Kd8h3c, AhKd7c, Qs8d3c, JsTd4c, 9s8s7d,
+  8c6d3s, 7s7h2d, KcKd5s, Qs7s2s, Jd9d4c, 5c4d3s.
+São 7 x 12 x 3 = 252 raízes propostas para a primeira matriz completa. Isso é
+backlog, não 252 soluções já produzidas. O lote começa por uma família e fecha
+os artefatos ponta a ponta antes da expansão. Congelar flops adicionais de
+avaliação antes de ajustar regras/modelos.
+
+Cada árvore inclui respostas e runouts; não é só uma tabela de primeira c-bet.
+Para comprimir por naipe, permutar board, hero, ranges e pesos na MESMA bijeção.
+Não canonizar apenas o board quando os ranges têm pesos diferentes por naipe.
+Há 22.100 flops físicos; a redução conhecida a 1.755 classes de naipe só é
+aplicável sob as simetrias correspondentes, não uma licença para ignorar blockers.
+
+Nós exatos compilados são consultados por contexto/ranges/path. Size fora da
+árvore, priors diferentes ou novo board não recebem certificado por nearest-neighbor.
+Criar aproximação/surrogate ou regra explícita, avaliar em boards/ranges/stacks
+fora do ajuste e registrar a origem. Campo de EV não calculado continua null.
+O operador pode usar política aproximada autorizada; não falsifica fonte/solver.
+
+Para exploração populacional, usar históricos com heróis/ações corretamente
+identificados e oportunidades reais. Ajustar o modelo de resposta por posição,
+size, profundidade e fase, com regularização para não transformar amostra pequena
+em certeza. Vitória/derrota de uma mão não é rótulo de ação correta.
+Treino e avaliação separados por mão/torneio/tempo, não por frames da mesma mão.
+
+11. O QUE O COMPILADOR DEVE EXPORTAR
+
+PolicyNode:
+  model_id/type, source hashes, game/payout/rake/ante definitions, ranges hashes;
+  public_path, board/suit mapping, stack/pot/committed, ator e posições;
+  legal_action_ids com tipo e size exatos; reach por combo;
+  strategy[combo][action_id], action_ev_bb[combo][action_id];
+  EV baseline, iterações, precisão/global gap medido e precisão da snapshot;
+  hipóteses de chegada/continuação, método, erro MC separado de erro do modelo.
+
+Decision:
+  observation_fingerprint, node_id, exact_combo, selected_action_id;
+  todos os candidatos com frequência/EV/size e diferença da melhor alternativa;
+  explicação dos ranges, board, posterior e respostas que sustentam a escolha;
+  fallback/model-reference/solver-status e elegibilidade operacional separados.
+
+Registro de decisão deve permitir responder depois: qual range de call ficou
+após flop? Por que turn Ts ajudou QsJs? Contra qual range um bluff foi positivo?
+Qual size real foi clicado? A ação foi confirmada ou só aceita pelo Windows?
+
+12. TESTES DE ACEITE QUE NÃO PODEM FALTAR
+
+  T01 Mesma mão/board e BTN->UTG mudam a chave/ranges; não copiar a política.
+  T02 Mesmo board e IP->OOP mudam a árvore e o significado de check.
+  T03 Mesmo range/board e 25->100 BB mudam SPR/limites/continuações.
+  T04 Bet/call selecionam posteriores; a nova rua não volta ao prior pré-flop.
+  T05 Check preserva traps de acordo com o modelo; call não vira agressão.
+  T06 Bloqueios de cartas removem combos e renormalizam; nenhuma carta duplicada.
+  T07 Duas opções de bet/raise mantêm IDs e sizes diferentes no mix.
+  T08 Valor desconhecido/EV ausente não é zero; off-policy não é fold automático.
+  T09 Trocar carta ainda não revelada ou mão privada adversária no replay não
+      altera os dados disponíveis à política naquela decisão.
+  T10 Turn Ks versus Kh pode mudar flushes; não canonizar só o rank.
+  T11 O exemplo de river As5s prefere check e 6c5c prefere bet no modelo fixado.
+  T12 Call em royal no board, empates, side pots e devoluções conservam dinheiro.
+  T13 Preset real divergiu: reavaliar, não clicar o valor calculado para outro size.
+  T14 Iteração interrompida/gap sem medição não vira convergência.
+  T15 Mesmo estado em novos frames preserva a seleção; nova ação/rua permite
+      decisão nova. Pausa/captura vencida não enviam input.
+
+Além de testes de contrato, comparar EV/estratégia em conjuntos independentes
+com solver/avaliador e validar leitura/execução em Windows real. Frequências
+parecidas, sozinho, não provam modelo correto. Suíte verde não é ROI.
+
+13. ORDEM CONCRETA PARA O AGENTE IMPLEMENTADOR
+
+D1: state_contract + range_catalog + range_beliefs; usar quatro ranges de exemplo
+    e publicar trace dos dois ranges após cada ação de uma mão.
+D2: board_features; reproduzir as quatro comparações numéricas e suas limitações.
+D3: action_tree + adaptador offline + export PolicyNode; fechar BTN/BB numa
+    profundidade, os 12 flops, respostas e runouts, antes de declarar o lote inteiro.
+D4: policy_store + strategy_decision + explanation; reproduzir queries de combos
+    e políticas mistas e ligar ao Software em observação/replay.
+D5: executor HU e contrato; substituir o continue operacional apenas junto com
+    testes positivos/negativos e presets/efeitos conferidos no cliente.
+D6: expandir para as sete famílias, profundidades e linhas L01–L14; medir EV/loss
+    por domínio e fonte, mantendo tarefas não resolvidas explícitas.
+D7: calibrar população e economia PKO/ICM/multiway com dados/modelos próprios;
+    não aplicar os resultados HU chip-EV como se resolvessem esses jogos.
+
+Meta de engenharia proposta: consulta de política compilada p95 <=10 ms em
+benchmark no host Software, separada de captura/OCR/input. Não é medição obtida.
+Cálculo pesado fica offline; a leitura fora da vez prepara estado/consulta.
+Revalidar a observação na vez e após espera do cursor. Nenhum solver pesado
+deve bloquear todas as mesas enquanto uma mão espera.
+
+14. ARQUIVOS CONCRETOS ENTREGUES COM ESTA ESPECIFICAÇÃO
+
+docs/software-cerebro-20261114/ranges-referencia.json:
+  quatro ranges, IDs, fonte/hash e TODOS os pesos de classes.
+demonstracoes-calculadas.json:
+  equidades/distribuições dos quatro flops e EV exato do exemplo de river.
+casos-aceite.json:
+  estados, posições, valores e comportamentos requeridos para construir os testes.
+componentes.csv:
+  entrada/saída, componentes existentes e entregas D1–D7 por módulo proposto.
+calcular_demonstracoes.py:
+  cálculo reproduzível offline usando apenas avaliador existente e stdlib.
+
+Reprodução a partir da raiz de um checkout Software:
+  python docs/software-cerebro-20261114/calcular_demonstracoes.py --ranges CAMINHO_NVT_JSON --out PASTA_RESULTADO --samples 20000
+Fonte pública usada nas demonstrações, não necessariamente a fonte do Windows:
+https://github.com/eduardodinizti-design/Software/blob/8c7f585cabf0b53217c9001988de52c387fb5153/strategy_sources/nvt-356340d/nvt-ranges-validados.json
+SHA256: c8fc3f0716df16fdeb2cff509814e3ca3c1ec31c05d479da2122db3ec531fcdc.
+
+No fim de cada D, exigir arquivos, consulta reproduzível, teste e evidência.
+"Criar motor multi-rua" sem esses contratos/artefatos não fecha a tarefa.
