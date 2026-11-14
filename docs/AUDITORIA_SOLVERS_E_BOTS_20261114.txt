@@ -1,0 +1,243 @@
+AUDITORIA DE SOLVERS E BOTS PARA O VISUALPILOT / CLONE
+14/11/2026 — America/Sao_Paulo
+
+1. CONCLUSÃO OPERACIONAL
+
+Entre os projetos enviados, GTOpen é o mais diretamente alinhado aos gaps de
+pré-flop: vários jogadores, limps, callers, sizes por posição e respostas a
+reraises. Para referências de pós-flop, o motor nativo do b-inary é um candidato
+forte; TexasSolver é uma alternativa de linha de comando. David Vayn oferece
+arquitetura de pesquisa e observabilidade úteis, mas seu modelo ativo é HU.
+
+O dickreuter/Poker tem componentes operacionais aproveitáveis e documentação
+de uso como bot, mas seus cálculos precisam de correções: quatro defeitos
+matemáticos foram reproduzidos no código auditado. Não recomendamos substituir
+o cérebro do Clone por ele.
+
+As integrações devem separar leitura, histórico, decisão, avaliação e execução.
+O cálculo pesado fica offline e gera referências identificadas para consulta.
+Nenhuma capacidade para 6/12/16 mesas ou sucesso PPPoker Windows foi comprovada
+por esta auditoria.
+
+2. GTOpen — PRIORIDADE PARA O LABORATÓRIO PRÉ-FLOP
+
+https://github.com/MatthewPDingle/GTOpen
+Commit auditado: 5c2989397abf314f229d293c16f96ea783c7ca5b.
+
+O código e a API representam mesas 2–9 handed, stacks assimétricos, limps,
+opens, squeezes e reraises com sizes por posição. Há locks por nó e classe,
+frequências, ranges de chegada, diagnósticos de melhor resposta e EV por ação.
+Há modelagem de ICM com premiação/campo, além de modos de pós-flop HU e 3-way.
+Não encontramos um modelo PKO completo no contrato pré-flop auditado.
+
+O ponto decisivo é condicionar o estudo à ação observada. Uma linha de limp
+quase nunca alcançada por uma solução livre não fornece automaticamente uma
+estratégia válida para nossos adversários que limpam. É necessário fixar um
+modelo de chegada/ação naquele nó e resolver as respostas. O próprio projeto
+marca linhas de alcance muito baixo.
+
+Limites importantes do código/documentação:
+  - O pré-flop usa continuação aproximada, não uma solução multiway completa
+    até o river. O modo balanced conserva o pote, mas usa pesos de realização.
+  - coupled_deck_v1 usa amostras latentes e tabela de classes; não equivale
+    a distribuir um baralho físico compartilhado para todos os jogadores.
+    Ranges muito sobrepostos podem ter erro de remoção de cartas relevante.
+  - Gap/convergência pertencem ao jogo aproximado configurado. Não certificam
+    que a continuação ou as hipóteses populacionais sejam corretas.
+  - Dados/priors de cash e rake não viram automaticamente ranges MTT/PKO.
+
+Implementação nesta frente: um controlador próprio compila a revisão fixada em
+CPU, define cenários e locks explícitos e solicita frequências e EVs por ação.
+O importador de árvores distingue sequência, posições, limpers, callers,
+profundidade e sizes. Os nós continuam rotulados como referências.
+Não foi incorporado código-fonte do motor GTOpen à distribuição do Clone.
+Não identificamos uma licença do projeto na raiz ou nos manifests auditados;
+isso precisa ser esclarecido antes de redistribuir seu código/binário.
+
+Resultados e configurações do lote: docs/reference-solvers/calculations/.
+O resultado efetivo de cada caso, inclusive falhas ou convergência insuficiente,
+deve ser consultado no summary.json e no JSON específico; não há aprovação por
+simples quantidade de iterações ou por presença de números.
+
+3. WASM POSTFLOP / MOTOR B-INary — REFERÊNCIA DE PÓS-FLOP
+
+https://github.com/b-inary/wasm-postflop
+Commit: 97360db7644329b1c23a7adf06e9aa59406e4d4b.
+Motor relacionado: https://github.com/b-inary/postflop-solver
+Commit do motor consultado: 9d1509fe5077d019825f833eed04b16d342dfda1.
+Licença: AGPL-3.0.
+
+O projeto web é uma interface para um motor Rust de pós-flop heads-up. É útil
+para resolver árvores de aposta/check/raise e estudar frequências, EVs e sizes.
+O wrapper WASM não é por si um cérebro pré-flop ou um solver de múltiplos limps.
+O desenvolvimento open source foi suspenso em outubro de 2023, conforme README.
+
+A recomendação é avaliar o motor nativo offline como referência, com ranges de
+chegada adequados à linha. O wrapper de navegador pode apoiar estudo/visualização.
+Seu benchmark publicado não é um teste realizado nesta auditoria. Comparações
+antigas com outras versões não decidem a qualidade das versões atuais.
+
+4. TEXASSOLVER — ALTERNATIVA OFFLINE DE PÓS-FLOP
+
+https://github.com/bupticybee/TexasSolver
+Master consultada: 00f4f16d1c11af53d3b32d04f27432616d50cdde.
+Código console inspecionado: 02c8021ee1307c18aa1e76b772c6ae1451601bc6.
+Licença: AGPL-3.0; o README também descreve condições comerciais de integração.
+
+Motor C++ de pós-flop para dois jogadores, com CLI, árvore configurável e export
+JSON. O protocolo textual permite definir pote, stack, board, ranges e menus de
+sizes, rodar a resolução e exportar a estratégia.
+
+Pode servir para comparação de subconjuntos HU e estudos de presets. Não resolve
+diretamente duas entradas de limp numa mesa MTT nem cria modelagem PKO completa.
+A revisão console inclui proteção de isomorfismo para ranges com combos exatos;
+esse detalhe importa quando os ranges não são simétricos entre naipes.
+
+Não executamos aqui o benchmark completo anunciado no README nem homologamos
+o seu desempenho no notebook. A versão GPU anunciada é outro produto; Intel
+HD 620 não fornece CUDA. O caminho relevante para esta máquina é CPU/offline.
+
+5. DAVIDVAYN/POKERSOLVER — ARQUITETURA DE PESQUISA
+
+https://github.com/davidvayn/pokersolver
+Commit: 9592ce29b60f851583c0926766db5a5b8aa1fff6. Licença MIT.
+
+Há Rust/DCFR, estratégias por conjuntos de informação, histórico público,
+propagação de ranges, controle de versão/hash de modelos e análise de perda de
+EV. Isso é mais substancial que um simples avaliador de cartas.
+
+O motor auditado é explicitamente heads-up. O modelo ativo descrito é 20 BB,
+experimental self-play; pilotos 50/100 BB não equivalem a um modelo deep já
+aceito. A estrutura de posições e transições usa dois jogadores.
+Os gráficos de pré-flop 6/9-max da interface não demonstram que o motor de
+treinamento resolva jogos 6/9-max, multiway ou MTT PKO.
+
+Melhores ideias a aproveitar: registrar perda de EV por decisão, separar
+treino/avaliação, preservar modelos imutáveis, condicionar ranges a ações
+públicas e avaliar a mesma política que efetivamente é consultada.
+
+6. DICKREUTER/POKER — BOT OPERACIONAL, ESTRATÉGIA HEURÍSTICA
+
+https://github.com/dickreuter/Poker
+Commit: cae3a108b6cbf22ed8ef90bc0e70f790346289a4. Licença GPL-3.0.
+
+O README apresenta execução para PokerStars, PartyPoker e GGPoker. Isso é uma
+declaração do projeto, não uma validação ao vivo feita nesta auditoria.
+O caminho estratégico auditado combina:
+  - planilhas preflop.xlsx, selecionadas por posição/raisers/callers;
+  - sorteio das frequências Call/Raise/Fold da planilha;
+  - equidade por Monte Carlo e ranges percentuais ou inferidos;
+  - curvas ajustadas que convertem equidade em limite de investimento;
+  - regras de bluff/deception, iniciativa e histórico de streets;
+  - ajuste de parâmetros com resultados registrados.
+
+O chamado algoritmo genético auditado ajusta limiares por regras de contagens
+Won/Lost; não encontramos nesse componente uma busca de equilíbrio/CFR, uma
+população evolutiva clássica ou validação independente de EV. Resultado agregado
+de mãos, isoladamente, mistura força das cartas, seleção e variância.
+
+Também há limites que não cabem diretamente no nosso objetivo:
+  - O wrapper força a simulação pré-flop a heads-up antes de seus demais ajustes.
+  - A seleção de planilha corta parte do nome quando falta um cenário e pode
+    usar a planilha backup 2R1. Isso perde contexto justamente em linhas raras.
+  - Inferir range por um percentil das 169 classes difere de ponderar os 1.326
+    combos físicos. Ranges de chegada e respostas precisam de pesos por combo.
+  - A amostragem usa um range compartilhado para os adversários no caminho
+    principal, em vez de um posterior individual por assento e ação.
+  - Não encontramos ICM/premiação/bounty no motor de decisão inspecionado.
+
+DEFEITOS REPRODUZIDOS EM FUNÇÕES NUMÉRICAS ORIGINAIS:
+  A) Royal flush no board com três mãos conhecidas: equidade correta 1/3;
+     o motor retornou 1,0 para a primeira mão. O desempate escolhe um vencedor
+     único, mesmo quando o pote deve ser dividido.
+  B) Board 2c 2d 2h 2s Ac, KQ contra J9: ambas são quadra de 2 com kicker A;
+     calc_score produziu scores diferentes, incluindo kickers indevidos.
+  C) Sorteio limitado ao range 22, com seed fixo: 225 de 1.000 mãos saíram do
+     range; exemplo 2C 3C. Remover a primeira carta desloca o índice da segunda.
+  D) Range solicitado igual a zero: a função retornou todas as 169 classes,
+     consequência do corte de lista [-0:].
+
+A fórmula terminal de EV do call em base.py coincidiu com a identidade
+E*(pote+call)-call nos casos analíticos testados. Há um cálculo auxiliar de
+limite de call com cap numérico 10 e caso degenerado em equity=1, mas o código
+principal usa limites de curva; não atribuímos a esse auxiliar um efeito que
+não está conectado ao decisor.
+
+O que aproveitar: memória por mão e street; trilha de motivos e resultados;
+posteriores distintos para call/raise; replay e estatísticas por tipo de erro.
+Não recomendamos portar seu avaliador, sorteador, fallback de planilhas ou
+aprendizado automático por ganho/perda para o cérebro de torneios.
+
+Reprodução passiva:
+  python -m tools.audit_external_poker_math --repo CAMINHO_DO_CHECKOUT
+As classes numéricas reais são carregadas por AST. Não são executados o bot,
+GUI, captura, controles do mouse, serviços de dados ou interfaces de jogo.
+Resultados/hashes: docs/reference-solvers/external-poker-math-audit.json.
+
+7. RANGEASSISTANT E HOLD-EM-RANGE-ANALYZER
+
+https://github.com/HoldemPokerTools/RangeAssistant
+Commit: b2ef5f934fa33397cb123300da3ce84bbe514c18. Licença MIT.
+Editor/visualizador de ranges com ações ponderadas, tags, export e RNG.
+Pode melhorar organização e apresentação, mas seu schema não traz EV por ação
+nem prova que os ranges editados sejam corretos. Não é o motor de resolução.
+
+https://github.com/kkwteh/hold-em-range-analyzer
+Commit: 92a7f0c37ae3fe15e80693a924573d6544e42ece. Licença GPL-3.0.
+Analisa um hero contra um oponente. O ranking descrito usa 300 runouts e o
+percentil 70 das forças; esse ranking não é EV de fold/call/raise nem uma
+solução estratégica multiway. Utilidade secundária para explorar ranges.
+
+8. MUDANÇAS IMPLEMENTADAS NESTA FRENTE
+
+- Leitor de árvores externas e consulta por cenário, posições, limpers/callers,
+  profundidade e sizes; EV ausente continua desconhecido.
+- Preservação de dois raises com sizes diferentes no mesmo mix: a seleção
+  estável da mão mantém o ID da ação e seu tamanho correspondente.
+- Painel de estudo das árvores calculadas, usando o mesmo núcleo Python.
+- Laboratório próprio com distribuição conjunta por ranges e rejeição de
+  colisões do negócio inteiro; ranking exato vetorizado; side pots e devolução
+  de excesso; cash de eliminação separado e sem pagar bounty em mero empate.
+- O laboratório de rollout declara hipóteses e usa deals distintos para treino
+  e avaliação. Não é apresentado como solver HRC/Nash ou ativado como solver
+  online em cada clique. A consulta operacional usa dados pré-calculados.
+
+Os testes incluem comparação de 6.000 mãos legais com avaliador independente,
+contagem analítica de distribuições conjuntas, empates, side pots e bounties.
+O lote nativo terminou: 12 cenários, 2.028 linhas de mãos e 8.619 EVs de ações.
+Cinco nós têm consistência local dentro de 0,02 BB nas mãos que chegam ao nó;
+sete ficam apenas no estudo. Esse critério mede a diferença entre o mix do nó
+e a melhor ação com as continuações médias do arquivo, não convergência global,
+qualidade populacional nem uma solução HRC. Nenhum caso foi certificado GTO.
+Nos limps/callers, a parada por orçamento deixou a precisão global sem medição
+atual. Gap total zero com accuracy_iteration=null não é convergência.
+A política NVT contínua permanece disponível quando uma árvore não se aplica.
+Detalhes: docs/reference-solvers/calculation-quality.json. Dados sintéticos são identificados; não há teste real PPPoker aqui.
+
+O HRC Pro que o usuário confirmou está no Windows do usuário. Esta sessão não
+tem acesso a essa instalação nem aos projetos originais de resolução. Portanto,
+as referências acima ainda precisam de comparação com exports originais HRC
+nos mesmos cenários. A edição Pro não identifica por si a versão/contrato de
+exportação; não simulamos um formato nativo desconhecido.
+
+9. O QUE AINDA LIMITA A CERTIFICAÇÃO ESTRATÉGICA
+
+Modelos reais de limpers/callers; referências independentes HRC com seus
+parâmetros; qualidade/convergência em nós raros; realização pós-flop profunda;
+histórico capturado completo; PKO progressivo/ICM com economia real e side pots;
+validação do nó e size efetivamente executados no Windows. Esses pontos são
+distintos de liberar o bot para uma quantidade maior de blinds.
+
+10. REGRESSÃO DESTA ENTREGA
+
+Clone: 1.099 testes, nenhuma falha, 7 pulados no Linux.
+Software: 1.037 testes, 1 falha anterior reproduzível, 7 pulados.
+A falha é test_raise_panel.RealPanelTest.test_reads_four_presets_and_confirm:
+na imagem de referência o OCR local encontra 2x/3x/4x e perde 2,5x. A mesma
+falha foi registrada na base anterior; não foi escondida nem corrigida por
+redução de limiar. O caso e a reprodução estão no relatório de validação.
+A suíte específica executou 62 testes sem falhas. TypeScript passou, os 7
+testes web passaram e a interface de distribuição foi compilada.
+Logs e hashes: docs/reference-solvers/validation-0.5.0.json e arquivos vizinhos.
+A release registra o resultado do workflow Windows do commit publicado. Seus
+testes de mouse usam janela própria de diagnóstico, nunca uma mesa PPPoker.

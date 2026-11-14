@@ -18,7 +18,7 @@ from strategy.scenarios import classify, from_table_state, ORDER
 from sizing import in_position
 from tournament_profiles import resolve as tournament_profile, cash_call_ev, for_target
 
-VERSION='preflop-continuous-v2'
+VERSION='preflop-continuous-v3'
 SHA256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
 AGGRESSIVE={'raise','bet','open_raise','three_bet','four_bet','five_bet','six_bet','all_in','open_shove','three_bet_shove','four_bet_shove'}
 ALLOWED={'fold','check','call','limp',*AGGRESSIVE}
@@ -79,8 +79,10 @@ def observation(state, *, mode='chip_ev',stage='mid'):
 
 
 class PreflopPolicy:
-    def __init__(self, source):
+    def __init__(self, source, tree_book=None):
         self.source=source
+        from preflop_tree_book import TreeBook
+        self.tree_book=tree_book if tree_book is not None else TreeBook.from_directory()
         self._nodes={}
         for n in source.nodes:self._nodes.setdefault((n['spot'],n['hero'],tuple(n.get('vs') or [])),[]).append(n)
         self.cache=OrderedDict()
@@ -113,6 +115,9 @@ class PreflopPolicy:
         c=dict(c)
         c['tournament_profile']=c.get('tournament_profile') or tournament_profile(mode=c.get('mode'),stage=c.get('stage'))
         c['mode']=c['tournament_profile']['mode'];c['stage']=c['tournament_profile']['stage']
+        specific=self.tree_book.lookup(cards,c)
+        if specific is not None:
+            return self._tree_answer(cards,hand,c,specific)
         # Frequencies use the169class, but the execution evidence must retain
         # the EXACT cards of this observation, not another suited combo cached
         # by a previous hand or a browser matrix query.
@@ -267,6 +272,41 @@ class PreflopPolicy:
         if len(self.cache)>1024:self.cache.popitem(last=False)
         return answer
 
+    def _tree_answer(self,cards,hand,c,node):
+        options=[dict(o) for o in node['options']]
+        reinterpreted=False
+        for option in options:
+            if option['action']=='all_in' and option['frequency']>0 and (abs(c['effective_stack_bb']-node['context']['effective_stack_bb'])>.01 or
+                    abs(c['hero_stack']+c.get('hero_bet',0)-node['context']['effective_stack_bb'])>.1):
+                option.update(action={'vs_3bet':'four_bet','vs_4bet':'five_bet','open_with_callers':'three_bet'}.get(c['scenario'],'raise'),
+                              reinterpreted_all_in=True,all_in=False)
+                reinterpreted=True
+        selected=max(options,key=lambda x:x['frequency'])
+        answer=dict(status='ADVICE',phase='preflop',recommended=selected['action'],
+                    policy_version=VERSION,policy_sha256=SHA256,authority='PREFLOP_POLICY',
+                    policy_context=dict(c),hand=hand,hero_position=c['hero_position'],hero_cards=list(cards),
+                    stack_bb=c['hero_stack'],effective_stack_bb=c['effective_stack_bb'],
+                    stack_bucket=node['context']['effective_stack_bb'],node_id=node['id'],
+                    bucketed=node['context']['effective_stack_bb']!=c['effective_stack_bb'],
+                    validated=False,source_validated=False,solver_validated=False,
+                    origin='CONTEXTUAL_TREE_REFERENCE',derived_rule='source_action_reinterpreted_v3' if reinterpreted else None,
+                    source_sha256=node['sha256'],source_nodes=[dict(node_id=node['id'],
+                        source_sha256=node['sha256'],validated=False,spot=c['scenario'],hero=c['hero_position'],
+                        vs=[c['aggressor']] if c.get('aggressor') else [],context=node['context'])],
+                    reference_reasons=node['reference_reasons'],execution_allowed=False,
+                    spot=c['scenario'],opener=c.get('aggressor'),tournament_profile=c['tournament_profile'],
+                    mix=[dict(action=o['action'],frequency=o['frequency'],action_id=o['id']) for o in options if o['frequency']>0],
+                    selected_tree_action_id=selected['id'],
+                    tree_evaluation=dict(provider=node['source'],reference_context=node['context'],
+                                         quality=node.get('quality'),research_only=node.get('research_only'),
+                                         reference_action_changed=reinterpreted,
+                                         actions=options,selected_reference_ev_bb=selected['reference_ev_bb'],
+                                         meaning='EV and frequencies of the identified reference model; not measured EV of a different live state.'),
+                    reason='Árvore específica por histórico/posições; continuação aproximada e priors declarados.')
+        answer['sizing']=size_for(answer,selected['action'])
+        answer['strategic_action']=strategic_action(selected['action'],c)
+        return answer
+
     @staticmethod
     def _playable(hand):
         a,b=RANKS.index(hand[0]),RANKS.index(hand[1])
@@ -297,6 +337,14 @@ def size_for(advice,action):
     if action in ('call','limp'):return dict(size_bb=min(hero,c.get('to_call') or 0),basis='additional_call',unit='BB')
     if action in ('all_in','open_shove','three_bet_shove','four_bet_shove'):
         return dict(size_bb=hero+own,basis='explicit_all_in',all_in=True,unit='BB')
+    tree=advice.get('tree_evaluation') or {}
+    item=next((o for o in tree.get('actions',[]) if o['id']==advice.get('selected_tree_action_id') and o['action']==action),None)
+    if item is not None and not item.get('reinterpreted_all_in'):
+        mult=item.get('preset_mult');beat=max(c.get('to_beat') or 1.,1.)
+        target=round(beat*mult,4)
+        return dict(size_bb=min(target,hero+own),preset_mult=mult,to_beat_bb=beat,
+                    basis='contextual_tree_reference_preset',reference_size_bb=item['to_bb'],unit='BB',
+                    all_in=target>=hero+own-.05)
     to_beat=max(c.get('to_beat') or 1.,1.)
     if scenario=='limped':mult=4. if len(c['limpers'])>=2 or c['hero_position'] in ('SB','BB') else 3.;to_beat=1.
     elif action in ('four_bet','five_bet','six_bet'):mult=2. if action in ('five_bet','six_bet') else 2.5 if in_position(c['hero_position'],c.get('aggressor')) else 3.
@@ -339,12 +387,17 @@ def resolve_decision(advice, identity):
     if not mix:return answer
     raw=json.dumps([identity,answer.get('policy_context'),answer.get('node_id'),mix],sort_keys=True,default=str).encode()
     roll=int.from_bytes(hashlib.sha256(raw).digest()[:8],'big')/2**64
-    weight=sum(m['frequency'] for m in mix);remaining=roll*weight;selected=mix[-1]['action']
+    weight=sum(m['frequency'] for m in mix);remaining=roll*weight;selected=mix[-1]['action'];selected_item=mix[-1]
     for item in mix:
         remaining-=item['frequency']
-        if remaining<0:selected=item['action'];break
+        if remaining<0:selected=item['action'];selected_item=item;break
     answer.update(dominant_recommended=answer.get('recommended'),recommended=selected,
                   sampling=dict(method='stable_hand_context_frequencies',roll=roll))
+    if answer.get('tree_evaluation'):
+        answer['selected_tree_action_id']=selected_item.get('action_id')
+        answer['tree_evaluation']=dict(answer['tree_evaluation'])
+        option=next(o for o in answer['tree_evaluation']['actions'] if o['id']==selected_item['action_id'])
+        answer['tree_evaluation']['selected_reference_ev_bb']=option['reference_ev_bb']
     answer['sizing']=size_for(answer,selected)
     answer['strategic_action']=strategic_action(selected,answer['policy_context'])
     return answer

@@ -1,0 +1,88 @@
+{
+  "generated_utc": "2026-11-14T15:17:32.119687+00:00",
+  "version": "0.5.0",
+  "original_heads_preserved": {
+    "software_main": "205dbc7ffbfb5f103dc342f4dfce407a3a27915c",
+    "software_operational": "e51718ce26858de42c73e1313dc5ac12e4c61d73",
+    "software_feature_base": "99083de9e4f0b731c2205d0d7e2bca88d2bfdc7e",
+    "clone_main": "f9372a3499cacb9aafc2d1ffeef01578a47548f0",
+    "clone_0_4": "1d100d89c7334380c25e9039ea09d17b1ed301cf"
+  },
+  "shared_sha256": {
+    "preflop_lab/__init__.py": "43bad411cc5794450ba0be4d85474df01fae4554c73f330a9bf5bc44690ee07d",
+    "preflop_lab/cards.py": "91b22241558c5edc57ab6287a255182039b9be13ea98bcb8139f3569de26979f",
+    "preflop_lab/engine.py": "8bf97f3671ef4f703eadf98dcf8591762f863696e4ab4269c7e2602fdccffc7a",
+    "preflop_lab/payouts.py": "066a6e1d44fcff60cef4d90bbd943e828a39cd0697f29b3dbd9fba50e3db16ae",
+    "preflop_policy.py": "4634a950b062bcd1da871f035b886b64e0dad68eb7f5c306d0551c4cea2a036c",
+    "preflop_tree_book.py": "ee8cef1ff29e76c2841aceb493024e6e31fc194dcefbf40c8f3ebefe1190f36a",
+    "strategy_data/preflop_trees/CO_vs_SB_3bet_200.json": "76dc9fecf43d2869c4a059cb39dc8c1008d9bbae361dd99baf9dd1d94aaac509",
+    "strategy_data/preflop_trees/CO_vs_SB_3bet_50.json": "9cd620cc9ea878cad945e12bd118fee76015c390c42ec6622207a18f5e4b64ce",
+    "strategy_data/preflop_trees/CO_vs_SB_3bet_80.json": "cc70534f87d33cf2daf4779715561024db8c818cc110a47d8b432b8f7d1144be",
+    "strategy_data/preflop_trees/SB_vs_CO_4bet_200.json": "286d7d6bb4b35b3b0e8ac69ae03f94bc1f2e96b5e77325825688279b923ea907",
+    "strategy_data/preflop_trees/SB_vs_CO_4bet_50.json": "352005209f67d9a3108bcbe44d2b0bae48cabec340ac6ef20633c11106cb416b",
+    "strategy_data/preflop_trees/SB_vs_CO_4bet_80.json": "a817cf4f85f1e803118f51a9fdddf27fa6ff954d41d22e822c446511ba5e647f",
+    "strategy_data/preflop_trees/open_two_callers_BB_200.json": "225017d2869ac95c650ac2783f062b0997a4c9fcd49c79dee0af5b619478696b",
+    "strategy_data/preflop_trees/open_two_callers_BB_50.json": "d5ccfb9765ac03e080e07681f912a1504e8f61e61449d38fac72d931d47b34ed",
+    "strategy_data/preflop_trees/open_two_callers_BB_80.json": "320a5314b1e70aa564728069fb6cb91475cc8c90a44fe6f545fadfef3857842a",
+    "strategy_data/preflop_trees/two_limps_BTN_200.json": "5139e25458e3165e333355f924df3710f4b0d6af42f9c3eedc8a84442bb9a4de",
+    "strategy_data/preflop_trees/two_limps_BTN_50.json": "6d7ff67b6714981a0e815981a5e5af00d4cc92e6308319d8944d1760043988a1",
+    "strategy_data/preflop_trees/two_limps_BTN_80.json": "cbed49d2d52ff6957ba969db500c2c90d2e21f3597e66ba126253b3784f33eca",
+    "test_preflop_lab.py": "e060df3f99c53cdd8d5d71ff2a5f2a96f41248875a59adbfc911852db827ba26",
+    "test_preflop_tree_book.py": "9e0ae20bf56d3d227daac00451440f25b0ffa498107cdd573a7edd343df13e99"
+  },
+  "calculations": {
+    "calculations": 12,
+    "hand_rows": 2028,
+    "action_ev_cells": 8619,
+    "conditional_references": 5,
+    "study_only": 7,
+    "independent_hrc_validation": false,
+    "pppoker_windows_validation": false
+  },
+  "native_calculation_run": "https://github.com/eduardodinizti-design/Software/actions/runs/43603921966",
+  "conditional_reference_scope": "Local action consistency against the saved model continuation; not Nash, global convergence, empirical or HRC validation.",
+  "tests": {
+    "software": {
+      "command": "python -m unittest discover -s . -p test_*.py",
+      "run": 1037,
+      "failures": 1,
+      "skipped": 7,
+      "status": "KNOWN_BASELINE_FAILURE",
+      "failure": "test_raise_panel.RealPanelTest.test_reads_four_presets_and_confirm: expected 2/2.5/3/4 presets, got 2/3/4",
+      "baseline_evidence": "docs/preflop-0.4.0/evidence/software-preflop-baseline-readers.txt"
+    },
+    "clone": {
+      "command": "python -m unittest discover -s . -p test_*.py",
+      "run": 1099,
+      "failures": 0,
+      "skipped": 7,
+      "status": "PASS"
+    },
+    "targeted": {
+      "command": "python -m unittest test_preflop_policy test_preflop_lab test_preflop_tree_book clone_tests.test_reference_trees",
+      "run": 62,
+      "failures": 0,
+      "status": "PASS"
+    },
+    "web": {
+      "typecheck": "PASS: tsc --noEmit",
+      "unit_tests": 7,
+      "failures": 0,
+      "build": "PASS: vite build",
+      "scope": "Compilation and hand parser tests; not browser end-to-end testing"
+    },
+    "windows": {
+      "workflow": "https://github.com/eduardodinizti-design/VisualPilot/actions/workflows/checks.yml",
+      "evidence_location": "Release notes identify the exact candidate run before tag publication",
+      "scope": "Owned diagnostic window and offline reference fixtures only; never a PPPoker session"
+    }
+  },
+  "limitations": [
+    "No independent HRC export/project available; Pro is an edition, version unknown.",
+    "Seven calculated nodes remain study-only; the continuous NVT policy remains available.",
+    "The five conditional references do not certify profitable play or globally converged strategies.",
+    "No complete progressive PKO/future bounty/ICM validation from these chip-EV calculations.",
+    "No real PPPoker Windows or multi-table validation.",
+    "External solver engines and binaries are not redistributed."
+  ]
+}

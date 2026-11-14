@@ -257,6 +257,9 @@ def main(argv=None):
         for s in _mani['sources']) +
         ' | chaves=%d nos=%d colisoes=%d (0 sombra silenciosa)' % (
             _mani['index_keys'], _mani['total_nodes'], len(_mani['collisions'])), flush=True)
+    from preflop_tree_book import startup_line
+    tree_line=startup_line(advisor)
+    if tree_line:print(tree_line,flush=True)
     print('[TORNEIO] tipo=%s entrada=%s fracao_cash=%s bounty_ativo=%s conversao_bb=%s' % (args.tournament_type,args.entry_type,args.bounty_cash_fraction,args.bounty_active,args.bounty_bb_per_unit),flush=True)
     engine = WindowCaptureEngine()
     overlay = StatusOverlay().start() if args.overlay else None

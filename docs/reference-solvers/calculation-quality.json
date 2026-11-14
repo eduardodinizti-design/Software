@@ -1,0 +1,531 @@
+{
+  "upstream": "MatthewPDingle/GTOpen",
+  "commit": "5c2989397abf314f229d293c16f96ea783c7ca5b",
+  "calculations": 12,
+  "hand_rows": 2028,
+  "action_ev_cells": 8619,
+  "conditional_references": 5,
+  "study_only": 7,
+  "independent_hrc_validation": false,
+  "pppoker_windows_validation": false,
+  "scope": "Conditional EVs under a disclosed continuation approximation; local consistency is not Nash/global/empirical validation.",
+  "cases": [
+    {
+      "id": "CO_vs_SB_3bet_200",
+      "iteration": 1000,
+      "stop_reason": "iteration_limit",
+      "current_accuracy_measured": true,
+      "global_gap_bb": 19.730705166021192,
+      "conditional_quality": {
+        "current_complete_snapshot": true,
+        "max_reached_action_regret_bb": 0.5544313490277002,
+        "mean_reached_action_regret_bb": 0.01618000105261214,
+        "conditional_reference_tolerance_bb": 0.02,
+        "meaning": "Local root action agreement against the saved continuation; not Nash/HRC/real-game validation."
+      },
+      "use": "STUDY_ONLY",
+      "hand_rows": 169,
+      "examples": [
+        {
+          "hand": "72o",
+          "best_immediate_action": "Fold",
+          "reference_ev_bb": 0.0
+        },
+        {
+          "hand": "QQ",
+          "best_immediate_action": "4-bet 18.8",
+          "reference_ev_bb": 4.858155250549316
+        },
+        {
+          "hand": "A5s",
+          "best_immediate_action": "Call 7.5",
+          "reference_ev_bb": 1.6579360961914062
+        },
+        {
+          "hand": "AKs",
+          "best_immediate_action": "Call 7.5",
+          "reference_ev_bb": 4.60732364654541
+        },
+        {
+          "hand": "AA",
+          "best_immediate_action": "All-in 200",
+          "reference_ev_bb": 16.08009433746338
+        }
+      ]
+    },
+    {
+      "id": "CO_vs_SB_3bet_50",
+      "iteration": 1000,
+      "stop_reason": "iteration_limit",
+      "current_accuracy_measured": true,
+      "global_gap_bb": 6.860947989672438,
+      "conditional_quality": {
+        "current_complete_snapshot": true,
+        "max_reached_action_regret_bb": 7.667847569786668e-05,
+        "mean_reached_action_regret_bb": 6.699401570000831e-06,
+        "conditional_reference_tolerance_bb": 0.02,
+        "meaning": "Local root action agreement against the saved continuation; not Nash/HRC/real-game validation."
+      },
+      "use": "CONDITIONAL_MODEL_REFERENCE",
+      "hand_rows": 169,
+      "examples": [
+        {
+          "hand": "72o",
+          "best_immediate_action": "Fold",
+          "reference_ev_bb": 0.0
+        },
+        {
+          "hand": "QQ",
+          "best_immediate_action": "Call 7.5",
+          "reference_ev_bb": 4.514712333679199
+        },
+        {
+          "hand": "A5s",
+          "best_immediate_action": "Call 7.5",
+          "reference_ev_bb": 0.8473377227783203
+        },
+        {
+          "hand": "AKs",
+          "best_immediate_action": "All-in 50",
+          "reference_ev_bb": 4.029730796813965
+        },
+        {
+          "hand": "AA",
+          "best_immediate_action": "All-in 50",
+          "reference_ev_bb": 17.608076095581055
+        }
+      ]
+    },
+    {
+      "id": "CO_vs_SB_3bet_80",
+      "iteration": 1000,
+      "stop_reason": "iteration_limit",
+      "current_accuracy_measured": true,
+      "global_gap_bb": 9.288994404892703,
+      "conditional_quality": {
+        "current_complete_snapshot": true,
+        "max_reached_action_regret_bb": 0.0014549080882739762,
+        "mean_reached_action_regret_bb": 8.016444164445824e-05,
+        "conditional_reference_tolerance_bb": 0.02,
+        "meaning": "Local root action agreement against the saved continuation; not Nash/HRC/real-game validation."
+      },
+      "use": "CONDITIONAL_MODEL_REFERENCE",
+      "hand_rows": 169,
+      "examples": [
+        {
+          "hand": "72o",
+          "best_immediate_action": "Fold",
+          "reference_ev_bb": 0.0
+        },
+        {
+          "hand": "QQ",
+          "best_immediate_action": "Call 7.5",
+          "reference_ev_bb": 4.635165214538574
+        },
+        {
+          "hand": "A5s",
+          "best_immediate_action": "Call 7.5",
+          "reference_ev_bb": 1.1317591667175293
+        },
+        {
+          "hand": "AKs",
+          "best_immediate_action": "Call 7.5",
+          "reference_ev_bb": 4.232352256774902
+        },
+        {
+          "hand": "AA",
+          "best_immediate_action": "All-in 80",
+          "reference_ev_bb": 16.711944580078125
+        }
+      ]
+    },
+    {
+      "id": "SB_vs_CO_4bet_200",
+      "iteration": 1000,
+      "stop_reason": "iteration_limit",
+      "current_accuracy_measured": true,
+      "global_gap_bb": 19.903020673475847,
+      "conditional_quality": {
+        "current_complete_snapshot": true,
+        "max_reached_action_regret_bb": 0.000517261866472829,
+        "mean_reached_action_regret_bb": 2.8587463431653898e-05,
+        "conditional_reference_tolerance_bb": 0.02,
+        "meaning": "Local root action agreement against the saved continuation; not Nash/HRC/real-game validation."
+      },
+      "use": "CONDITIONAL_MODEL_REFERENCE",
+      "hand_rows": 169,
+      "examples": [
+        {
+          "hand": "72o",
+          "best_immediate_action": "Fold",
+          "reference_ev_bb": -5.960463766996327e-08
+        },
+        {
+          "hand": "QQ",
+          "best_immediate_action": "5-bet 46.9",
+          "reference_ev_bb": 4.74199852442759
+        },
+        {
+          "hand": "A5s",
+          "best_immediate_action": "Call 18.8",
+          "reference_ev_bb": 0.28693761981277266
+        },
+        {
+          "hand": "AKs",
+          "best_immediate_action": "Call 18.8",
+          "reference_ev_bb": 4.922395298195446
+        },
+        {
+          "hand": "AA",
+          "best_immediate_action": "5-bet 46.9",
+          "reference_ev_bb": 32.14855281727877
+        }
+      ]
+    },
+    {
+      "id": "SB_vs_CO_4bet_50",
+      "iteration": 1000,
+      "stop_reason": "iteration_limit",
+      "current_accuracy_measured": true,
+      "global_gap_bb": 7.0536171648750035,
+      "conditional_quality": {
+        "current_complete_snapshot": true,
+        "max_reached_action_regret_bb": 9.44860471390474e-05,
+        "mean_reached_action_regret_bb": 1.0140764042146316e-05,
+        "conditional_reference_tolerance_bb": 0.02,
+        "meaning": "Local root action agreement against the saved continuation; not Nash/HRC/real-game validation."
+      },
+      "use": "CONDITIONAL_MODEL_REFERENCE",
+      "hand_rows": 169,
+      "examples": [
+        {
+          "hand": "72o",
+          "best_immediate_action": "Fold",
+          "reference_ev_bb": -5.960463766996327e-08
+        },
+        {
+          "hand": "QQ",
+          "best_immediate_action": "All-in 50",
+          "reference_ev_bb": 5.677962520365415
+        },
+        {
+          "hand": "A5s",
+          "best_immediate_action": "Call 18.8",
+          "reference_ev_bb": 0.5881947173840141
+        },
+        {
+          "hand": "AKs",
+          "best_immediate_action": "All-in 50",
+          "reference_ev_bb": 5.9210903142583
+        },
+        {
+          "hand": "AA",
+          "best_immediate_action": "All-in 50",
+          "reference_ev_bb": 31.713288281763997
+        }
+      ]
+    },
+    {
+      "id": "SB_vs_CO_4bet_80",
+      "iteration": 1000,
+      "stop_reason": "iteration_limit",
+      "current_accuracy_measured": true,
+      "global_gap_bb": 9.474748660365776,
+      "conditional_quality": {
+        "current_complete_snapshot": true,
+        "max_reached_action_regret_bb": 0.00032382767104502386,
+        "mean_reached_action_regret_bb": 6.697587143596815e-05,
+        "conditional_reference_tolerance_bb": 0.02,
+        "meaning": "Local root action agreement against the saved continuation; not Nash/HRC/real-game validation."
+      },
+      "use": "CONDITIONAL_MODEL_REFERENCE",
+      "hand_rows": 169,
+      "examples": [
+        {
+          "hand": "72o",
+          "best_immediate_action": "Fold",
+          "reference_ev_bb": -5.960463766996327e-08
+        },
+        {
+          "hand": "QQ",
+          "best_immediate_action": "Call 18.8",
+          "reference_ev_bb": 5.440801865958945
+        },
+        {
+          "hand": "A5s",
+          "best_immediate_action": "Call 18.8",
+          "reference_ev_bb": 0.5279444422788089
+        },
+        {
+          "hand": "AKs",
+          "best_immediate_action": "5-bet 46.9",
+          "reference_ev_bb": 5.39304329239806
+        },
+        {
+          "hand": "AA",
+          "best_immediate_action": "5-bet 46.9",
+          "reference_ev_bb": 34.57421742985041
+        }
+      ]
+    },
+    {
+      "id": "open_two_callers_BB_200",
+      "iteration": 27,
+      "stop_reason": "stopped",
+      "current_accuracy_measured": false,
+      "global_gap_bb": null,
+      "conditional_quality": {
+        "current_complete_snapshot": false,
+        "max_reached_action_regret_bb": 0.4199293450229957,
+        "mean_reached_action_regret_bb": 0.05577247891178064,
+        "conditional_reference_tolerance_bb": 0.02,
+        "meaning": "Local root action agreement against the saved continuation; not Nash/HRC/real-game validation."
+      },
+      "use": "STUDY_ONLY",
+      "hand_rows": 169,
+      "examples": [
+        {
+          "hand": "72o",
+          "best_immediate_action": "Fold",
+          "reference_ev_bb": 0.0
+        },
+        {
+          "hand": "QQ",
+          "best_immediate_action": "3-bet 7.5",
+          "reference_ev_bb": 6.739820345629474
+        },
+        {
+          "hand": "A5s",
+          "best_immediate_action": "Call 2.5",
+          "reference_ev_bb": 0.5872630528964432
+        },
+        {
+          "hand": "AKs",
+          "best_immediate_action": "3-bet 7.5",
+          "reference_ev_bb": 2.7438551034841003
+        },
+        {
+          "hand": "AA",
+          "best_immediate_action": "3-bet 7.5",
+          "reference_ev_bb": 19.5861407867754
+        }
+      ]
+    },
+    {
+      "id": "open_two_callers_BB_50",
+      "iteration": 35,
+      "stop_reason": "stopped",
+      "current_accuracy_measured": false,
+      "global_gap_bb": null,
+      "conditional_quality": {
+        "current_complete_snapshot": false,
+        "max_reached_action_regret_bb": 0.13571162436481599,
+        "mean_reached_action_regret_bb": 0.0063462431395365166,
+        "conditional_reference_tolerance_bb": 0.02,
+        "meaning": "Local root action agreement against the saved continuation; not Nash/HRC/real-game validation."
+      },
+      "use": "STUDY_ONLY",
+      "hand_rows": 169,
+      "examples": [
+        {
+          "hand": "72o",
+          "best_immediate_action": "Fold",
+          "reference_ev_bb": 0.0
+        },
+        {
+          "hand": "QQ",
+          "best_immediate_action": "All-in 50",
+          "reference_ev_bb": 7.706823748756871
+        },
+        {
+          "hand": "A5s",
+          "best_immediate_action": "Call 2.5",
+          "reference_ev_bb": 0.5872630528964432
+        },
+        {
+          "hand": "AKs",
+          "best_immediate_action": "All-in 50",
+          "reference_ev_bb": 5.175086270277874
+        },
+        {
+          "hand": "AA",
+          "best_immediate_action": "All-in 50",
+          "reference_ev_bb": 18.509347051939194
+        }
+      ]
+    },
+    {
+      "id": "open_two_callers_BB_80",
+      "iteration": 30,
+      "stop_reason": "stopped",
+      "current_accuracy_measured": false,
+      "global_gap_bb": null,
+      "conditional_quality": {
+        "current_complete_snapshot": false,
+        "max_reached_action_regret_bb": 0.24752502215461103,
+        "mean_reached_action_regret_bb": 0.01613102924524669,
+        "conditional_reference_tolerance_bb": 0.02,
+        "meaning": "Local root action agreement against the saved continuation; not Nash/HRC/real-game validation."
+      },
+      "use": "STUDY_ONLY",
+      "hand_rows": 169,
+      "examples": [
+        {
+          "hand": "72o",
+          "best_immediate_action": "Fold",
+          "reference_ev_bb": 0.0
+        },
+        {
+          "hand": "QQ",
+          "best_immediate_action": "3-bet 7.5",
+          "reference_ev_bb": 6.401156747410104
+        },
+        {
+          "hand": "A5s",
+          "best_immediate_action": "Call 2.5",
+          "reference_ev_bb": 0.5872630528964432
+        },
+        {
+          "hand": "AKs",
+          "best_immediate_action": "All-in 80",
+          "reference_ev_bb": 4.754893288307982
+        },
+        {
+          "hand": "AA",
+          "best_immediate_action": "3-bet 7.5",
+          "reference_ev_bb": 19.2318736452981
+        }
+      ]
+    },
+    {
+      "id": "two_limps_BTN_200",
+      "iteration": 8,
+      "stop_reason": "stopped",
+      "current_accuracy_measured": false,
+      "global_gap_bb": null,
+      "conditional_quality": {
+        "current_complete_snapshot": false,
+        "max_reached_action_regret_bb": 1.731630869524949,
+        "mean_reached_action_regret_bb": 0.13329635248064733,
+        "conditional_reference_tolerance_bb": 0.02,
+        "meaning": "Local root action agreement against the saved continuation; not Nash/HRC/real-game validation."
+      },
+      "use": "STUDY_ONLY",
+      "hand_rows": 169,
+      "examples": [
+        {
+          "hand": "72o",
+          "best_immediate_action": "Fold",
+          "reference_ev_bb": 0.0
+        },
+        {
+          "hand": "QQ",
+          "best_immediate_action": "Raise 4",
+          "reference_ev_bb": 4.468686357170634
+        },
+        {
+          "hand": "A5s",
+          "best_immediate_action": "Raise 2.5",
+          "reference_ev_bb": 0.2910799486255725
+        },
+        {
+          "hand": "AKs",
+          "best_immediate_action": "Raise 4",
+          "reference_ev_bb": 1.2329100451897659
+        },
+        {
+          "hand": "AA",
+          "best_immediate_action": "All-in 200",
+          "reference_ev_bb": 35.97589303212293
+        }
+      ]
+    },
+    {
+      "id": "two_limps_BTN_50",
+      "iteration": 10,
+      "stop_reason": "stopped",
+      "current_accuracy_measured": false,
+      "global_gap_bb": null,
+      "conditional_quality": {
+        "current_complete_snapshot": false,
+        "max_reached_action_regret_bb": 0.6123057646152779,
+        "mean_reached_action_regret_bb": 0.022327847364940978,
+        "conditional_reference_tolerance_bb": 0.02,
+        "meaning": "Local root action agreement against the saved continuation; not Nash/HRC/real-game validation."
+      },
+      "use": "STUDY_ONLY",
+      "hand_rows": 169,
+      "examples": [
+        {
+          "hand": "72o",
+          "best_immediate_action": "Fold",
+          "reference_ev_bb": 0.0
+        },
+        {
+          "hand": "QQ",
+          "best_immediate_action": "Raise 4",
+          "reference_ev_bb": 2.9553525660739335
+        },
+        {
+          "hand": "A5s",
+          "best_immediate_action": "Raise 2.5",
+          "reference_ev_bb": 0.05912617754879732
+        },
+        {
+          "hand": "AKs",
+          "best_immediate_action": "Raise 4",
+          "reference_ev_bb": 1.1840429620537265
+        },
+        {
+          "hand": "AA",
+          "best_immediate_action": "Raise 4",
+          "reference_ev_bb": 12.035469038262141
+        }
+      ]
+    },
+    {
+      "id": "two_limps_BTN_80",
+      "iteration": 9,
+      "stop_reason": "stopped",
+      "current_accuracy_measured": false,
+      "global_gap_bb": null,
+      "conditional_quality": {
+        "current_complete_snapshot": false,
+        "max_reached_action_regret_bb": 1.4786237408744576,
+        "mean_reached_action_regret_bb": 0.04284692120227029,
+        "conditional_reference_tolerance_bb": 0.02,
+        "meaning": "Local root action agreement against the saved continuation; not Nash/HRC/real-game validation."
+      },
+      "use": "STUDY_ONLY",
+      "hand_rows": 169,
+      "examples": [
+        {
+          "hand": "72o",
+          "best_immediate_action": "Fold",
+          "reference_ev_bb": 0.0
+        },
+        {
+          "hand": "QQ",
+          "best_immediate_action": "Raise 4",
+          "reference_ev_bb": 3.194711353916295
+        },
+        {
+          "hand": "A5s",
+          "best_immediate_action": "Fold",
+          "reference_ev_bb": 0.0
+        },
+        {
+          "hand": "AKs",
+          "best_immediate_action": "Raise 4",
+          "reference_ev_bb": 1.0994745018603167
+        },
+        {
+          "hand": "AA",
+          "best_immediate_action": "Raise 4",
+          "reference_ev_bb": 17.890906385942213
+        }
+      ]
+    }
+  ],
+  "import_errors": []
+}
