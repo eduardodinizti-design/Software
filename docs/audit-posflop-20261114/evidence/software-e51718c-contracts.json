@@ -1,0 +1,124 @@
+{
+  "scope": "All states and histories synthetic; no screen, mouse, game, registration or AI API.",
+  "commit": "e51718ce26858de42c73e1313dc5ac12e4c61d73",
+  "cases": [
+    {
+      "id": "ordinary_raise_above_menu_is_not_all_in",
+      "input": {
+        "target_mult": 6,
+        "presets": [
+          2,
+          3,
+          4
+        ],
+        "hero_stack_bb": 100,
+        "explicit_all_in_intent": false
+      },
+      "actual": {
+        "kind": "SHOVE",
+        "target_mult": 6.0,
+        "over": 2.0
+      },
+      "expected": "Do not infer ALL_IN merely from exceeding the largest preset.",
+      "satisfies": false
+    },
+    {
+      "id": "preset_presence_does_not_prove_selected_amount",
+      "actual": {
+        "ok": true,
+        "reason": null
+      },
+      "scope": "Contract gap: the function sees the unchanged menu only, no selected-value evidence.",
+      "expected": "Selection/BB amount must be confirmed separately before submission."
+    },
+    {
+      "id": "no_graded_decisions_are_not_grade_A",
+      "actual": {
+        "overall_grade": "A",
+        "decisions_reviewed": 0,
+        "total_hands_detected": 0
+      },
+      "expected": "UNASSESSED / no eligible decisions, not a positive poker grade.",
+      "satisfies": false
+    },
+    {
+      "id": "guaranteed_profitable_chop_call_is_not_a_leak",
+      "synthetic_decision": {
+        "street": "RIVER",
+        "board": [
+          "As",
+          "Ks",
+          "Qs",
+          "Js",
+          "Ts"
+        ],
+        "hero": "Hero",
+        "pot_bb": 1010.0,
+        "to_call_bb": 1000.0,
+        "hero_stack_bb": 1995.0,
+        "opponents": 1,
+        "pot_type": null,
+        "aggressor": "hero",
+        "villain_line": "passive_turned_aggressive",
+        "hero_action": "call",
+        "hero_amount_bb": 1000.0,
+        "bb_chips": 1.0
+      },
+      "exact_incremental_call_ev_bb": 5.0,
+      "actual": [
+        {
+          "category": "Hero Call no River (pool underbluff)",
+          "occurrences": 1,
+          "frequency_pct": 100.0,
+          "severity": "alta",
+          "affected_street": "River",
+          "example_spot": "RIVER [As Ks Qs Js Ts] Hero[2c 3d] pote 1010.0 BB, pagar 1000.0 BB — hero CALL; cérebro: FOLD (mão=plays_board, scare=straight_completes)",
+          "recommended_fix": "O cérebro folda: equity < pot odds e a linha passivo->agressivo no pool da Evolution é sub-blefada. Não pague bluffcatcher de 1 par contra aposta/raise grande no river sem leitura (hud_exploit) que justifique."
+        }
+      ],
+      "expected": "No call mistake: equity is exactly 0.5 on the royal board.",
+      "satisfies": false
+    },
+    {
+      "id": "passive_caller_is_not_aggressive_bettor",
+      "actual": {
+        "villain_line": "passive_turned_aggressive"
+      },
+      "input": "Bettor bets flop and turn; Caller only calls; hero faces turn bet.",
+      "expected": "No passive-to-aggressive classification of Bettor from Caller contributions.",
+      "satisfies": false
+    },
+    {
+      "id": "street_change_requires_more_than_same_epoch",
+      "actual": {
+        "old_epoch": 1,
+        "new_epoch": 1,
+        "reused": {
+          "action": "check",
+          "source": "anticipated",
+          "validated": true,
+          "node_id": null
+        }
+      },
+      "scope": "Pure invalidation contract; no executed wrong action is claimed.",
+      "expected": "A fresh street/board fingerprint must invalidate a preflop payload.",
+      "satisfies": false
+    },
+    {
+      "id": "accepted_card_conflict_diagnostic",
+      "actual": {
+        "pair": [
+          "Qd",
+          "5h"
+        ],
+        "stats": {
+          "assembled": 1,
+          "conflicts": 5,
+          "ignored_ambiguous": 0
+        }
+      },
+      "scope": "Availability design observation, not an independent accuracy benchmark."
+    }
+  ],
+  "violations": 5
+}

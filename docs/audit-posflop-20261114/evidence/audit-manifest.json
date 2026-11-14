@@ -12,6 +12,11 @@
       "commit": "f492b37f214c92d2df96f812aff60624e42a6c38"
     },
     {
+      "name": "Software-operacional-final",
+      "branch": "fix/audit-a1-a2-safety-gates",
+      "commit": "e51718ce26858de42c73e1313dc5ac12e4c61d73"
+    },
+    {
       "name": "VisualPilot2.0",
       "branch": "main",
       "commit": "8048f6fc369dd33ae22cee1b0ec901bd90fa2b6d"
@@ -36,5 +41,6 @@
     "tesseract_external": "5.5.0",
     "node": "v24.19.0"
   },
-  "scope": "Offline audits, synthetic analytical states, explicit mocks and isolated loopback HTTP; no PPPoker Windows session or AI API calls."
+  "scope": "Offline audits, synthetic analytical states, explicit mocks and isolated loopback HTTP; no PPPoker Windows session or AI API calls.",
+  "update_scope": "Five additional commits after f492b37 were reviewed; full e51718c suite and the prior policy/pause probes repeated, plus new synthetic module contracts."
 }

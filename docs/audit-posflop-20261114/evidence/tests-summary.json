@@ -45,5 +45,10 @@
     "count": "Ran 2 tests",
     "status": "OK (skipped=2)",
     "scope": "Tests require tesserocr and were skipped without it; no successful external OCR validation"
+  },
+  {
+    "file": "software-e51718c-tests.txt",
+    "count": "Ran 976 tests in 41.796s",
+    "status": "FAILED (failures=1, skipped=7)"
   }
 ]

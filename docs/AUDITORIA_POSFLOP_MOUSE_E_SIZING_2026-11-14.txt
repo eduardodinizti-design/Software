@@ -29,11 +29,16 @@ numéricas indicadas abaixo antes de ser promovida como referência do Software.
 
 SOFTWARE, repositório público eduardodinizti-design/Software:
   main: 205dbc7ffbfb5f103dc342f4dfce407a3a27915c
-  fix/audit-a1-a2-safety-gates: f492b37f214c92d2df96f812aff60624e42a6c38
+  fix/audit-a1-a2-safety-gates, primeira base testada:
+    f492b37f214c92d2df96f812aff60624e42a6c38
+  Mesma branch, atualização recebida durante o fechamento e também auditada:
+    e51718ce26858de42c73e1313dc5ac12e4c61d73
 
-A main e a branch operacional são diferentes. Entre elas há 54 arquivos
-alterados. O roteiro considera f492b37 como referência operacional examinada,
-sem presumir que ela já foi integrada à main ou que seja a cópia em toda máquina.
+A main e a branch operacional são diferentes. Entre main e f492b37 há 54 arquivos
+alterados. Entre f492b37 e e51718c chegaram cinco commits, 21 arquivos e novas
+primitivas de antecipação, memória de cartas, presets, auditor e escalonador.
+O roteiro considera agora e51718c como referência operacional mais recente
+examinada, sem presumir integração à main ou instalação em toda máquina.
 
 VISUALPILOT 2.0/GEMINI, repositório público:
   eduardodinizti-design/VisualPilot2.0, main:
@@ -66,6 +71,7 @@ Suítes executadas nesta auditoria:
 
   Software/main:       762 testes; 3 falhas; 7 skips.
   Software/f492b37:    881 testes; 2 falhas; 7 skips.
+  Software/e51718c:    976 testes; 1 falha; 7 skips.
   VisualPilot2/Python: 731 testes; 4 falhas; 7 erros; 11 skips.
   Clone/pós-flop:       49 testes direcionados; OK.
   Central/pós-flop:     18 testes de equidade/range/river; OK.
@@ -85,6 +91,9 @@ Falhas concretas das suítes:
   continuou falhando. O erro do board depende da sequência/estado do teste ou
   backend: investigar isolamento, estado/cache OCR e modelo antes de concluir
   que o fixture sempre falha. O painel foi reproduzido também isoladamente.
+- Na suíte completa de e51718c, o board passou e o preset 2,5x continuou falhando.
+  O delta não alterou o leitor desse board; isso não comprova uma correção da
+  falha sensível à sequência observada em f492b37.
 - Num ambiente sem tesserocr, esses dois testes foram SKIPPED por seus gates.
   Isso não representa uma segunda validação aprovada do leitor.
 - VisualPilot2/Python: vários erros/falhas são fixtures ou metadados ausentes,
@@ -99,6 +108,12 @@ omissões do requirements, tratadas na seção de arranque.
 Também foram executados casos analíticos novos e testes locais de contrato.
 Os contraexemplos Python retornam código 1 quando reproduzem uma violação.
 Esses casos são separados das contagens das suítes acima.
+
+Os quatro contraexemplos estratégicos do Software e o teste de fechamento
+durante PAUSED foram repetidos contra e51718c: os mesmos problemas persistem.
+Um probe adicional para os módulos novos reproduziu cinco violações de
+comportamento/contrato. A lacuna de confirmação do preset e a memória de cartas
+também foram registradas, sem contá-las como novos cliques incorretos observados.
 
 Nenhum teste desta auditoria enviou mouse ao jogo, registrou torneios,
 pagou buy-ins ou chamou a API Gemini. Mouse/captura dos testes de contrato
@@ -120,6 +135,7 @@ de promover a política à execução; P2, melhoria/modelagem posterior.
 No operador f492b37, operar_mesa.py:414-429, phase=postflop resulta em log e
 continue. A recomendação não chega ao executor nem ao sequenciador. A main
 também mantém o caminho exploratório. Mudar os cálculos não altera isso.
+Em e51718c, o mesmo bloqueio está em operar_mesa.py:463-478.
 
 Orientação: criar um encaminhamento explícito da política pós-flop para um
 executor apropriado à rua, preservando verificação de estado, preço, sizing
@@ -298,6 +314,7 @@ esse ImportError bloqueia o operador atual, que não os importa.
 No fluxo de fim de torneio f492b37, o operador passa args.arm ao fechamento,
 sem conferir BotControl. Em teste simulado, controle=PAUSED e a função de
 fechamento recebeu autorização True. Isso contorna a pausa nesse caminho.
+O teste foi repetido em e51718c e recebeu True novamente.
 
 O slider all-in e rotinas diretas também precisam de revisão: verificar pausa
 somente antes de uma função longa não garante cancelamento antes do mouse-down.
@@ -316,6 +333,8 @@ Para pós-flop, isso perde justamente a sequência necessária ao range de chega
 iniciativa, número de raises, callers e participantes. O Clone lê antes da vez;
 reaproveitar essa estrutura e medir seu custo. Amostragem de imagens ainda pode
 perder ações rápidas; não converter snapshots incompletos em histórico completo.
+Em e51718c, o fast-path permanece em operar_mesa.py:390-398. O cache A1 novo
+reutiliza decisões após a primeira análise na vez; ainda não lê antes da vez.
 
 4.15 [P2] OS NÚMEROS DO LAB GEMINI NÃO SÃO SOLUÇÕES GTO
 
@@ -340,6 +359,95 @@ O prompt da análise Gemini de históricos repete as próprias regras como
 referência. Uma nota gerada assim não é validação independente. Os números
 demonstrativos de bankroll/EV da interface também não são evidência de desempenho.
 
+4.16 [P1] ANTECIPAÇÃO NOVA AINDA NÃO VALIDA A RUA ATUAL
+
+Em e51718c, --antecipar é opcional e vem desligado. A1 reaproveita apenas
+fold/check pré-flop dentro de uma época; A2 tolera até duas visitas sem botões.
+São avanços úteis de cache/debounce, mas não a leitura antecipada pedida pelo
+usuário: o primeiro advise_table continua esperando a linha de ação.
+
+O operador passa o número da época como fingerprint, não o estado atual.
+decision_fingerprint existe em anticipation.py, mas não é usado no operador.
+Na reutilização, as cartas vêm de hero_mem, não de uma leitura nova.
+
+Contrato reproduzido: preparar check pré-flop, duas visitas fora da vez e
+voltar com a mesma mão e botão CHECK mantém epoch=1 e devolve o check antigo.
+Se uma nova rua apareceu nesse intervalo, a chave não a distingue; a rotina
+não recebe board/rua para invalidar o payload anterior. Não se afirmou que
+esse teste executou um check incorreto no PPPoker; é uma lacuna de invalidação.
+
+Orientação: validar rua/board, preço, contribuição, participantes, cartas,
+identidade de captura e prazo antes do reuso. Uma decisão de fold também pode
+perder EV; "não compromete novas fichas" não significa "estrategicamente segura".
+
+4.17 [P1] PRESET AUSENTE AINDA PODE VIRAR SHOVE NÃO PRETENDIDO
+
+O novo raise_plan.py separa PRESET/SHOVE/ABSTAIN e foi ligado ao sequenciador.
+Porém, plan_raise(6, presets=[2x,3x,4x]) retorna SHOVE, apenas porque o alvo
+supera o maior preset. O contrato não recebe intenção explícita de all-in nem
+stack para distinguir raise de 6x de all-in de 100 BB.
+Em raise_sequencer.py:262-267, SHOVE encaminha para _allin_via_slider.
+
+O probe não envia input. Demonstra o plano perigoso e sua ligação no código,
+não um prejuízo real observado. A regra anterior de inferir shove já existia;
+a nova camada a mantém, em vez de resolver a ambiguidade.
+
+verify_selected_preset confere somente se o rótulo esperado continua disponível
+no menu. Isso ajuda a detectar menu alterado, mas retorna True sem qualquer
+evidência de qual valor ficou selecionado. Não confirma o valor em BB antes
+de apertar confirmar; a verificação de efeito posterior tem outro papel.
+
+Orientação: intenção tipada de ALL_IN, comparação de EV dos presets disponíveis,
+risco adicional explícito e leitura do valor efetivamente selecionado. Um alvo
+fora do menu deve provocar nova escolha estratégica, nunca shove por ausência.
+
+4.18 [P1] AUDITOR NATIVO NOVO REPRODUZ ERROS DO PRÓPRIO CÉREBRO
+
+hand_history.py/leak_audit.py são avanços úteis: importação offline de texto,
+replay e normalização fichas/BB, sem enviar históricos para uma IA.
+Mas status=ADVICE exploratório é tratado como referência para graduar o Hero,
+sem um range adversário ou EV independente. Isso mede concordância com a
+heurística; não demonstra se a linha humana perde fichas.
+
+Contraexemplo sintético importado: royal no board, pote 1.010 BB, call 1.000 BB.
+O call tem EV incremental exato +5 BB. O auditor o marca como "Hero Call no
+River (pool underbluff)", gravidade alta, e manda foldar. Logo, usar esse
+auditor como professor perpetuaria o erro da política em vez de corrigi-lo.
+
+Outras falhas reproduzidas:
+  - audit_text('') retorna nota A com zero mãos e zero decisões graduadas.
+    Deve retornar SEM_DADOS/SEM_AVALIAÇÃO, com cobertura explícita.
+  - Em multiway, Bettor aposta flop e turn; Caller apenas paga. O parser usa
+    passividade prévia + qualquer contribuição do Caller para marcar a linha
+    passivo->agressivo, embora o jogador que aposta não tenha sido passivo.
+    O evento agressivo precisa estar ligado ao seu ator e sua ação.
+
+O auditor também fixa positions.hero='BTN' em vez de reconstruir a posição.
+Reaproveitar parser/replay, com validação de unidades, posições, side pots e
+qualidade do contexto; substituir notas de "erro" por divergências de hipótese
+até haver referência rastreável. ADVICE não é certificado de EV correto.
+
+4.19 [P2] MEMÓRIA E ESCALONADOR: AVANÇOS COM INTEGRAÇÃO PENDENTE
+
+HeroCardMemory, ligada ao operador, reúne candidatos por slot com dois votos e
+limite de armazenamento. Ajuda quando as duas cartas nunca são lidas juntas.
+Mas votos correlacionados não provam acurácia. No teste, após aceitar Qd/5h,
+cinco leituras Kd/5h geram cinco conflitos e o par antigo permanece. A aplicação
+não consome esse contador para decidir conflito/pendência ou expor diagnóstico.
+Definir política de evidência conflitante e deduplicar capture_id; não trocar
+limiares do leitor nem anunciar correção nativa apenas com o teste de memória.
+
+DeadlineScheduler é puro, determinístico e distingue relógio lido de orçamento
+heurístico de ordenação; isso é uma boa base. Ainda não é importado nem usado
+por operar_mesa.py. Falta leitor do relógio de ação e wiring da fila/executor.
+Não descrever esse módulo isolado como operação multi-mesa homologada.
+
+postflop_adjustments.py já trouxe sizing geométrico, scare card e MDF x0,75.
+Preserva o rótulo exploratório e evita descontar novamente a equidade física
+por scare card, escolhas úteis. Contudo, SPR usa hero_stack/pot como proxy,
+não o stack efetivo contra cada vilão, e x0,75 segue hipótese não calibrada.
+O MDF-base errado da seção 4.5 também permanece; ajustar seu produto não o corrige.
+
 5. O QUE APROVEITAR DE CADA FRENTE
 
 SOFTWARE
@@ -347,6 +455,9 @@ SOFTWARE
   coordenadas, BotControl, CursorController, testes e métricas.
   Corrigir: participantes, matemática acima, fast-path, alçada de toda rotina
   de input e integração efetiva de pós-flop.
+  Em e51718c, aproveitar também memória por slot, cache/debounce, parser offline,
+  planejamento de presets e DeadlineScheduler, com as correções das seções
+  4.16-4.19. Esses componentes já existem; não precisam ser recriados do zero.
 
 CENTRAL DE LABORATÓRIO
   postflop.py: combos físicos/ponderados, equidade exata no river, Monte Carlo
@@ -410,6 +521,12 @@ Contrato mínimo da decisão:
 Não converter None/ilegível em zero, check ou rua pré-flop por conveniência.
 Separar LEITURA_PENDENTE, MODELO_REFERÊNCIA, DECISÃO_PRONTA, ENVIADA e CONFIRMADA.
 
+Ranges HRC/NVT pré-flop são priors de chegada; não prescrevem por si só c-bet,
+barrels ou respostas a raises no board atual. Separar Hero/vilão e a linha que
+originou cada prior (open, limp, overlimp, call, 3-bet), remover blockers e
+condicionar os combos pela história. Um range aberto no painel só participa
+da decisão quando o processo confirma seu hash, nó e contexto efetivamente usados.
+
 7. MATEMÁTICA E POLÍTICA DE SIZES A IMPLEMENTAR
 
 P = pote atual incluindo aposta adversária contestável.
@@ -451,7 +568,7 @@ preço, alvo e janela. O valor efetivo executado deve constar no diário.
 Não limitar estratégia por Hero ter 300/1.000/5.000 BB. Usar stack efetivo
 contra os jogadores realmente envolvidos. Quando uma árvore exportada não
 existir, indicar referência/regra versionada e seu escopo; não forjar validação.
-O Software f492b37 ainda contém GUARDA DEEP e recusa de raise não validated;
+O Software f492b37, e também e51718c, contém GUARDA DEEP e recusa de raise não validated;
 o agente deve reconciliá-las com o requisito anterior do usuário ao integrar.
 
 8. AVALIAÇÃO DO MOUSE NATURAL E DA ESCALA PARA VÁRIAS MESAS
@@ -475,6 +592,7 @@ distância ou tamanho do alvo. Isso não comprova capacidade para seis mesas.
 Recomendação para o agente:
   a. Manter um executor como único dono do cursor, com fila e prioridade por
      prazo. Coordenar também processos diferentes na mesma sessão Windows.
+     Ligar o DeadlineScheduler existente ao loop; não criar outra fila paralela.
   b. Usar o CursorController existente como base para validação/pausa/efeito.
   c. Oferecer min-jerk ou Bézier como trajetória pura dentro desse coordenador.
   d. Duração relacionada a distância/largura útil do alvo e prazo. O gerador
@@ -506,6 +624,8 @@ LOTE A — BASE E REGRESSÕES
   Confirmar branch, HEAD, AGENTS e status; preservar alterações existentes.
   Corrigir participantes, 3-bet ignorando range, empate garantido, MDF,
   pausa no fechamento e os contratos de start/CLI/dependências.
+  Corrigir o shove inferido por preset ausente, invalidação do cache por rua,
+  atribuição do ator agressivo e avaliação positiva de zero decisões.
   Integrar os contraexemplos desta auditoria como testes de comportamento.
   Investigar os testes OCR que falharam; preservar negativos/limiares.
 
@@ -538,6 +658,8 @@ LOTE E — DADOS E VALIDAÇÃO INDEPENDENTE
   Separar histórico observado de prescrição estratégica. Ganhar a mão não
   torna uma linha correta. Amostrar por posição/SPR/board/linha/street.
   Estimar HUD com oportunidades por estatística, não apenas 30 mãos globais.
+  Aproveitar o parser novo, corrigindo seus contextos. O auditor nativo deve
+  mostrar divergências/cobertura; não graduar seu próprio cérebro como verdade.
   Calibrar modelos com treino/validação separados e exemplos revisados ou
   soluções externas rastreáveis. O texto de uma IA não vira rótulo-verdade.
 
@@ -564,12 +686,22 @@ Critérios de aceite obrigatórios:
   - Preços usam pote atual e dinheiro adicional; MDF usa sua base correta.
   - Nenhum raise abaixo do mínimo ou confusão de raise-to/incremento.
   - Fraction preset não vira multiplicador; all-in não é deduzido de preset ausente.
+  - A presença do preset no menu não é confundida com o valor selecionado.
   - Nova mão/board/preço/foco invalida uma intenção antiga.
   - PAUSED impede novo mouse-down também em fechar mesa e arrastar slider.
   - Sucesso de processo, sucesso de input e confirmação no jogo ficam separados.
   - Cenário manual/sintético não é promovido a observação real.
+  - Nenhuma decisão graduada resulta em SEM_AVALIAÇÃO, nunca aprovação nota A.
+  - Calls de outro jogador não viram agressões atribuídas ao vilão que aposta.
 
 10. MAPA DOS FONTES PARA O AGENTE
+
+No Software e51718c:
+  anticipation.py, hero_card_memory.py e action_scheduler.py: cache/memória/fila.
+  raise_plan.py e raise_sequencer.py: corrigir intenção de all-in e confirmação.
+  hand_history.py, leak_audit.py e audit_hands_cli.py: importação/auditoria offline.
+  postflop_adjustments.py: projeção geométrica e hipóteses exploratórias.
+  operar_mesa.py: ligar leitura antecipada, fila e execução pós-flop de verdade.
 
 No Clone 73df5d2:
   postflop_policy.py: política e equidade; corrigir o caso de empate garantido.
@@ -603,7 +735,9 @@ Não preencher módulos ausentes com retornos simulados de sucesso.
 
 Trabalhe no repositório eduardodinizti-design/Software. Leia este relatório,
 AGENTS.md, HEAD e git status antes de editar. Confirme a branch operacional;
-as referências auditadas são main 205dbc7 e fix/audit-a1-a2-safety-gates f492b37.
+as referências são main 205dbc7 e fix/audit-a1-a2-safety-gates e51718c, com
+medições históricas também em f492b37. Reaproveite os módulos novos existentes;
+não sobrescreva os avanços de antecipação, memória, parser, presets e escalonador.
 Preserve trabalho local e alterações posteriores às bases desta auditoria.
 
 Implemente um motor pós-flop Python único. Reúna a comparação de EV/ranges
@@ -630,6 +764,11 @@ Build e TypeScript sem erro não bastam para declarar o bot operacional.
 12. REFERÊNCIAS IMUTÁVEIS E REPRODUÇÃO
 
 Software — fluxo pós-flop e leitura fora da vez:
+https://github.com/eduardodinizti-design/Software/blob/e51718ce26858de42c73e1313dc5ac12e4c61d73/operar_mesa.py#L390
+https://github.com/eduardodinizti-design/Software/blob/e51718ce26858de42c73e1313dc5ac12e4c61d73/operar_mesa.py#L463
+https://github.com/eduardodinizti-design/Software/blob/e51718ce26858de42c73e1313dc5ac12e4c61d73/raise_plan.py#L25
+https://github.com/eduardodinizti-design/Software/blob/e51718ce26858de42c73e1313dc5ac12e4c61d73/hand_history.py#L198
+https://github.com/eduardodinizti-design/Software/blob/e51718ce26858de42c73e1313dc5ac12e4c61d73/leak_audit.py#L60
 https://github.com/eduardodinizti-design/Software/blob/f492b37f214c92d2df96f812aff60624e42a6c38/operar_mesa.py#L372
 https://github.com/eduardodinizti-design/Software/blob/f492b37f214c92d2df96f812aff60624e42a6c38/operar_mesa.py#L414
 https://github.com/eduardodinizti-design/Software/blob/f492b37f214c92d2df96f812aff60624e42a6c38/postflop_advisor.py#L147
@@ -669,6 +808,7 @@ Contraexemplos, a partir da pasta dos probes, passando o checkout correspondente
   python gemini_mouse_contracts.py --root CAMINHO_VP2
   python gemini_server_contracts.py --root CAMINHO_VP2
   python paused_close_case.py --root CAMINHO_SOFTWARE_F492B37
+  python software_e51718c_contracts.py --root CAMINHO_SOFTWARE_E51718C
 
 O teste de servidor foi feito em Linux com Node, preload de porta/host e
 PATH isolado; não é um launcher para uso normal. Os probes de mouse usam

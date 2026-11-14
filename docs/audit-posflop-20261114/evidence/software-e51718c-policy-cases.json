@@ -1,0 +1,121 @@
+{
+  "scope": "Synthetic analytical states; no solver certification or PPPoker test.",
+  "kind": "software",
+  "commit": "e51718ce26858de42c73e1313dc5ac12e4c61d73",
+  "cases": [
+    {
+      "id": "occupied_seats_are_not_active_opponents",
+      "input": {
+        "hero": [
+          "As",
+          "Ad"
+        ],
+        "board": [
+          "Ac",
+          "Kh",
+          "7d",
+          "2c",
+          "3s"
+        ],
+        "occupied": 9,
+        "active_opponents": 1,
+        "villain_range": [
+          "KK"
+        ],
+        "pot": 30,
+        "to_call": 10
+      },
+      "expected": "Never fold: every eligible KK combo loses to the hero set of aces.",
+      "actual": {
+        "recommended": "fold",
+        "equity": 0.16,
+        "opponents": 8
+      },
+      "with_explicit_single_opponent": {
+        "recommended": "raise",
+        "equity": 1.0,
+        "opponents": 1
+      },
+      "satisfies": false
+    },
+    {
+      "id": "three_bet_branch_ignores_supplied_range",
+      "input": {
+        "hero": [
+          "7h",
+          "7d"
+        ],
+        "board": [
+          "Ac",
+          "Ad",
+          "7c",
+          "2d",
+          "3s"
+        ],
+        "villain_range": [
+          "AA"
+        ],
+        "pot": 30,
+        "to_call": 10
+      },
+      "expected": "Fold: full house always loses to the only eligible AA combo (quads).",
+      "actual": {
+        "recommended": "raise",
+        "equity": null,
+        "made": "full_house",
+        "sizing": {
+          "size_bb": 30,
+          "basis": "3bet pot: comete (SPR baixo)",
+          "heuristic": true
+        }
+      },
+      "satisfies": false
+    },
+    {
+      "id": "mdf_uses_pot_before_opponent_bet",
+      "input": {
+        "pot_including_bet": 20,
+        "opponent_bet": 10,
+        "to_call": 10,
+        "hero_already_bet_this_street": 0
+      },
+      "expected_mdf": 0.5,
+      "actual": {
+        "mdf": 0.6667,
+        "pot_odds": 0.3333
+      },
+      "satisfies": false
+    },
+    {
+      "id": "guaranteed_chop_positive_call_ev",
+      "input": {
+        "hero": [
+          "2c",
+          "3d"
+        ],
+        "board": [
+          "As",
+          "Ks",
+          "Qs",
+          "Js",
+          "Ts"
+        ],
+        "pot_including_villain_bet": 1010,
+        "to_call": 1000,
+        "range": [
+          "AA"
+        ]
+      },
+      "exact_equity": 0.5,
+      "exact_call_ev_bb": 5.0,
+      "expected": "Call is strictly better than fold; no possible losing runout on this royal board.",
+      "actual": {
+        "recommended": "fold",
+        "equity": 0.5,
+        "pot_odds": 0.4975
+      },
+      "satisfies": false
+    }
+  ],
+  "violations": 4
+}
