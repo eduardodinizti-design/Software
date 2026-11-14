@@ -24,14 +24,26 @@ from postflop_advisor import advise_postflop
 from preflop_context import villain_postflop_range
 
 
-def read_hero_cards(crop):
-    """Hero's two face-up cards, or None when not readable/duplicate."""
+def read_hero_card_slots(crop):
+    """Candidatos por slot do hero: 2 entradas (card_candidate ou None cada). Base
+    da leitura por frame E da memória temporal por-slot, que recupera o par quando
+    um slot pisca AMBÍGUO num frame mas lê no outro ([[hero_card_memory]])."""
     from table_reading.inspect_cards import inspect
     reading = inspect(crop, (0, 0, crop.shape[1], crop.shape[0]))
-    cards = [c.get('card_candidate') for c in reading.get('hero_rank_candidates', [])]
-    if len(cards) != 2 or not all(cards) or cards[0] == cards[1]:
+    slots = [c.get('card_candidate') for c in reading.get('hero_rank_candidates', [])]
+    return slots if len(slots) == 2 else [None, None]
+
+
+def _pair_from_slots(slots):
+    """Par válido (2 cartas distintas e lidas) ou None."""
+    if len(slots) != 2 or not all(slots) or slots[0] == slots[1]:
         return None
-    return cards
+    return list(slots)
+
+
+def read_hero_cards(crop):
+    """Hero's two face-up cards, or None when not readable/duplicate."""
+    return _pair_from_slots(read_hero_card_slots(crop))
 
 
 def _pot_type_from_context(ctx):
@@ -117,10 +129,12 @@ def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table
         if sdealer is not None:
             new_dealer['seat'] = sdealer
         state = dict(state, positions=spos, dealer=new_dealer)
-    hero = read_hero_cards(crop)
+    hero_slots = read_hero_card_slots(crop)
+    hero = _pair_from_slots(hero_slots)
     # As cartas do hero são imutáveis na mão: se este frame não leu mas o chamador
     # tem uma leitura confiável da MESMA mão (hero_override), reusa — evita abster
-    # (HERO_CARDS_UNKNOWN) por falha pontual de leitura/animação num frame.
+    # (HERO_CARDS_UNKNOWN) por falha pontual de leitura/animação num frame. O
+    # override vem da memória temporal por-slot ([[hero_card_memory]]).
     if hero is None and hero_override and len(hero_override) == 2:
         hero = list(hero_override)
     board = read_board(crop, hero_cards=hero or [None, None])
@@ -133,7 +147,7 @@ def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table
                 or tourney.get('paid') is not None or hero is not None
                 or any(s['stack_bb'] is not None for s in state['seats'].values()))
     if not is_table:
-        return dict(hand=hand, hero_cards=hero, board=board, table_state=state, tournament=tourney,
+        return dict(hand=hand, hero_cards=hero, hero_slots=hero_slots, board=board, table_state=state, tournament=tourney,
                     context=dict(mode=use_mode, stage=use_stage), is_table=False,
                     advice=dict(status='SKIP', reason='NAO_PARECE_MESA_LOBBY', exploratory=True, execution_allowed=False))
     # PKO: lê o bounty por assento e anexa ao estado (p/ o call-off escalar a caça pelo
@@ -192,7 +206,7 @@ def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table
         if has_board and hero is not None and isinstance(advice, dict) and advice.get('phase') == 'postflop':
             advice = _postflop_in_context(advisor, tracker, state, hero, board,
                                           mode=use_mode, stage=use_stage, table_key=table_key)
-    return dict(hand=hand, hero_cards=hero, board=board, table_state=state, is_table=True,
+    return dict(hand=hand, hero_cards=hero, hero_slots=hero_slots, board=board, table_state=state, is_table=True,
                 tournament=tourney, context=dict(mode=use_mode, stage=use_stage), advice=advice)
 
 

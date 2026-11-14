@@ -22,7 +22,7 @@ def _patch(hero, board_cards):
             pot={'pot_bb': 2.5}, to_call={'to_call_bb': 1.0}, dealer={'seat': 'bot_left'})),
         patch('table_advisor.read_hand_id', return_value=dict(hand_number=10)),
         patch('table_advisor.read_board', return_value=dict(cards=board_cards)),
-        patch('table_advisor.read_hero_cards', return_value=hero),
+        patch('table_advisor.read_hero_card_slots', return_value=list(hero) if hero else [None, None]),
         patch('table_advisor.read_tournament', return_value=dict(paid=20, players_left=55, confidence='high')),
     ]
 
@@ -109,7 +109,7 @@ class AdviseTableTests(unittest.TestCase):
                 pot={'pot_bb': 2.5}, to_call={'to_call_bb': 1.0}, dealer={'seat': 'bot_left'})),
             patch('table_advisor.read_hand_id', return_value=dict(hand_number=10)),
             patch('table_advisor.read_board', return_value=board),
-            patch('table_advisor.read_hero_cards', return_value=['As', 'Ks']),
+            patch('table_advisor.read_hero_card_slots', return_value=['As', 'Ks']),
             patch('table_advisor.read_tournament', return_value=dict(paid=20, players_left=55, confidence='high')),
         ]
         for p in patches:
@@ -150,7 +150,7 @@ class AdviseTableTests(unittest.TestCase):
             dealer={'seat': 'bot_left'})
         tracker = PreflopAggressorTracker()
         with patch('table_advisor.read_hand_id', return_value=dict(hand_number=10)), \
-             patch('table_advisor.read_hero_cards', return_value=['As', 'Ks']), \
+             patch('table_advisor.read_hero_card_slots', return_value=['As', 'Ks']), \
              patch('table_advisor.read_tournament', return_value=dict(paid=20, players_left=55, confidence='high')):
             with patch('table_advisor.read_table_state', return_value=pre_state), \
                  patch('table_advisor.read_board', return_value=dict(cards=[])):

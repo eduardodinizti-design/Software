@@ -41,6 +41,7 @@ from tournament_metrics import record_tournament_end
 from latency_metrics import LatencyMetrics
 from shadow_mode import ShadowMonitor
 from anticipation import AnticipationStore, available_actions, TurnEpochTracker
+from hero_card_memory import HeroCardMemory
 
 DEFAULT_RANGES = r'C:\Meus Projetos\Aplicativos\nvt-ranges-validados.json'
 DEFAULT_DEEP = r'C:\Meus Projetos\Aplicativos\nvt-ranges-deep.json'
@@ -278,7 +279,7 @@ def main(argv=None):
         print('Nenhuma janela valida.'); return 1
     targets = list(per)
     raise_done = set()   # (mesa_global, mao): uma sequência de aumento por mão/mesa
-    hero_cache = {}      # (mesa_global, mao) -> cartas do hero (imutáveis na mão)
+    hero_mem = HeroCardMemory()   # memória temporal por-slot das cartas do hero (anti HERO_CARDS_UNKNOWN)
     stabilizer = PositionStabilizer()   # suaviza posições (anti-flicker HJ<->UTG+2)
     aggr_tracker = PreflopAggressorTracker()   # agressor pré-flop por mesa (p/ equity pós-flop)
     read_cache = ReaderCache()                 # cache de HUD/bounty (latência: relê a cada N frames)
@@ -371,6 +372,7 @@ def main(argv=None):
                     tk = tkey_local
                     anticip.invalidate(tkey)           # mesa morta: esquece preparações
                     anticip_turns.close(tkey)
+                    hero_mem.invalidate(tkey)
                     if (hwnd, tk) in tourneys_closed:
                         continue
                     closed = _close_tournament_table(frame, (x, y, bw, bh), te, hwnd,
@@ -404,7 +406,7 @@ def main(argv=None):
                 # ou a mão muda — um pisca isolado mantém a época -> reusa em vez de
                 # recomputar. Dentro da época o vilão não pode agir: decisão congelada.
                 epoch = anticip_turns.on_turn(tkey, hkey)
-                override = hero_cache.get((tkey, hkey)) if hkey else None
+                override = hero_mem.pair(tkey, hkey) if hkey else None
                 # A1: REUSO. Se já há decisão SEGURA (fold/check) preparada p/ esta mesma
                 # vez (mesma época), pula o cérebro (~330ms). O store revalida: cartas
                 # batendo + ação ainda oferecida AGORA. call/raise/pós-flop nunca entram
@@ -444,10 +446,12 @@ def main(argv=None):
                                 anticip_payload.pop(next(iter(anticip_payload)))
                 if not result.get('is_table'):
                     continue
-                if hkey and result.get('hero_cards'):
-                    if len(hero_cache) >= 512:
-                        hero_cache.clear()
-                    hero_cache[(tkey, hkey)] = result['hero_cards']   # leitura confiável -> memoriza
+                # Memória temporal por-slot: alimenta com os candidatos deste frame (só
+                # quando o cérebro rodou de verdade; no reuso A1 o result é cacheado e
+                # recontaria o mesmo frame). Recupera o par quando um slot pisca AMBÍGUO
+                # num frame e lê no outro -> override na próxima vez, sem inventar carta.
+                if hkey and reuse is None:
+                    hero_mem.observe(tkey, hkey, result.get('hero_slots') or [None, None])
                 # O rastreador do agressor pré-flop e o recálculo do pós-flop em contexto
                 # (pot_type/iniciativa/range do vilão) agora ficam DENTRO de advise_table
                 # (tracker=aggr_tracker), compartilhados com os observadores contínuos.
@@ -548,7 +552,7 @@ def main(argv=None):
                 # antes), só armado, e só quando a razão foi abstenção (não 'já agiu'/pausa).
                 # NUNCA FOLDAR ÀS CEGAS: o fallback só age se as CARTAS do hero foram
                 # LIDAS. Sem leitura (hero_cards None), ABSTÉM e tenta de novo no próximo
-                # frame (a leitura quase sempre volta; o hero_cache reaproveita a mão).
+                # frame (a leitura quase sempre volta; a hero_mem reaproveita a mão).
                 # Foldar sem ver as cartas largava PREMIUM (ex.: KK) — erro gravíssimo.
                 if (not out.get('acted')
                         and str(out.get('reason', '')).startswith('SEM_ACAO_RECOMENDADA')
