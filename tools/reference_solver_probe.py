@@ -62,7 +62,7 @@ def choose(node,kind,target=None):
     return min(candidates,key=lambda x:abs(float(x[1].get('to',x[1].get('amount',0.)))-target))[0]
 
 
-def calculate(port,case,iterations,seconds):
+def calculate(port,case,iterations,seconds,upstream=None):
     cfg=case['config'];estimate=request(port,'preflop/estimate',cfg)
     if not estimate.get('ok'):raise ValueError('Tree exceeds bounded laboratory resources: '+str(estimate))
     build=request(port,'preflop/spot',cfg);path=[];locks=[]
@@ -91,8 +91,24 @@ def calculate(port,case,iterations,seconds):
             time.sleep(.2)
     node=unwrap(request(port,'preflop/node',{'path':path}))
     if status.get('error'):raise ValueError('Solver worker error: '+str(status['error']))
+    action_values=None;value_error=None
+    if upstream is not None:
+        snapshot='visualpilot_'+case['id']
+        saved=upstream/'saves/preflop'/(snapshot+'.gtop')
+        valuefile=upstream/'saves/preflop'/(snapshot+'_values.json')
+        try:
+            request(port,'preflop/save',{'name':snapshot})
+            command=['cargo','run','--release','--locked','-p','solver','--example','preflop_action_evs','--',
+                     str(saved),str(valuefile),','.join(map(str,path))]
+            subprocess.run(command,cwd=upstream,check=True,timeout=180,stdout=subprocess.DEVNULL)
+            action_values=json.loads(valuefile.read_text())
+        except Exception as exc:value_error=str(exc)
+        finally:
+            for own_file in (saved,valuefile):
+                if own_file.exists():own_file.unlink()
     return dict(id=case['id'],config=cfg,estimate=estimate,build=build,path=path,locks=locks,
                 status=status,node=node,hand_order=labels(),
+                action_values=action_values,action_value_error=value_error,
                 scope='CFR for the configured approximate continuation model; fixed prefix hand models are explicit, not empirical/HRC priors.',
                 solver_validated=False,independently_validated=False)
 
@@ -137,9 +153,9 @@ def main():
             for case in cases(args.depths):
                 print('Calculating',case['id'],flush=True)
                 try:
-                    result=calculate(args.port,case,args.iterations,args.case_seconds)
+                    result=calculate(args.port,case,args.iterations,args.case_seconds,root)
                     (out/(case['id']+'.json')).write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')
-                    results.append(dict(id=case['id'],status='CALCULATED',solver_status=result['status'],
+                    results.append(dict(id=case['id'],status='CALCULATED' if result['action_values'] else 'PARTIAL_NO_ACTION_EVS',solver_status=result['status'],
                                         low_reach=result['node'].get('low_reach'),strategy_note=result['node'].get('strategy_note')))
                 except Exception as exc:
                     results.append(dict(id=case['id'],status='FAILED',error=str(exc)))
