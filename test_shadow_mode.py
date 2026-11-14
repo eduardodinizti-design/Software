@@ -55,6 +55,25 @@ class MonitorTests(unittest.TestCase):
         self.assertEqual(len(rows), 1)
         self.assertEqual(rows[0]['verdict'], 'segue_gto')
 
+    def test_rotaciona_jsonl_ao_exceder_tamanho(self):
+        # D16: o log não cresce sem limite — ao passar de max_bytes, rotaciona p/ .1
+        p = self._path()
+        mon = sm.ShadowMonitor(p, max_bytes=400, backups=2)
+        for _ in range(60):
+            mon.observe(hero_cards=['As', 'Ac'], position='BTN', validated=True,
+                        gto_recommended='raise', bot_action='raise', authority='VALIDATED')
+        self.assertTrue(os.path.exists(p + '.1'))          # houve rotação
+        self.assertLess(os.path.getsize(p), 10_000)        # o ativo recomeçou pequeno
+        # nunca acumula mais que os backups configurados
+        self.assertFalse(os.path.exists(p + '.3'))
+
+    def test_sem_max_bytes_nao_rotaciona(self):
+        p = self._path()
+        mon = sm.ShadowMonitor(p, max_bytes=0)
+        for _ in range(5):
+            mon.observe(validated=True, gto_recommended='fold', bot_action='fold', authority='SAFETY_NONCOMMIT')
+        self.assertFalse(os.path.exists(p + '.1'))
+
     def test_health_escalates_on_off_rails(self):
         mon = sm.ShadowMonitor(path=None, warn=2, off=3)   # path None -> não grava
         health = None

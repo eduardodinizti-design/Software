@@ -68,11 +68,34 @@ class ShadowMonitor:
     """Monitor em tempo real: grava cada decisão e mantém um sinal rolante de saúde
     (quantos 'fora_dos_trilhos' nas últimas `window` decisões)."""
 
-    def __init__(self, path=DEFAULT_LOG, *, window=20, warn=2, off=4, sink=None):
+    def __init__(self, path=DEFAULT_LOG, *, window=20, warn=2, off=4, sink=None,
+                 max_bytes=50_000_000, backups=2):
         self.path = path
         self._recent = deque(maxlen=window)
         self.warn, self.off = warn, off
         self._sink = sink                              # callable(record) opcional (overlay/print)
+        # D16: rotação por tamanho p/ o jsonl não crescer sem limite em sessões de horas.
+        self.max_bytes = int(max_bytes) if max_bytes else 0
+        self.backups = max(1, int(backups))
+
+    def _rotate_if_needed(self):
+        """Rotaciona o jsonl quando passa de max_bytes: path -> path.1 -> ... -> path.N
+        (o mais antigo é descartado). Nunca levanta: rotação é best-effort."""
+        if not (self.max_bytes and self.path) or not os.path.exists(self.path):
+            return
+        try:
+            if os.path.getsize(self.path) < self.max_bytes:
+                return
+        except OSError:
+            return
+        for i in range(self.backups, 0, -1):          # do mais antigo p/ o mais novo
+            src = self.path if i == 1 else '%s.%d' % (self.path, i - 1)
+            dst = '%s.%d' % (self.path, i)
+            if os.path.exists(src):
+                try:
+                    os.replace(src, dst)              # sobrescreve o backup mais antigo
+                except OSError:
+                    pass
 
     def observe(self, **fields):
         """Registra UMA decisão (campos de make_record). Grava no JSONL, atualiza o
@@ -82,6 +105,7 @@ class ShadowMonitor:
             directory = os.path.dirname(self.path)
             if directory:
                 os.makedirs(directory, exist_ok=True)
+            self._rotate_if_needed()
             with open(self.path, 'a', encoding='utf-8') as fh:
                 fh.write(json.dumps(rec, ensure_ascii=False) + '\n')
         self._recent.append(rec['verdict'])

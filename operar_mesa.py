@@ -412,6 +412,17 @@ def main(argv=None):
                              ('SAIR clicado, fechado=%s' % closed) if args.arm else 'DRY-RUN (so detecta)'),
                           flush=True)
                     continue
+                # D9/D17: mesa VIVA num slot (hwnd+tkey) que estava marcado como FECHADO
+                # = re-entry / novo torneio no HWND reusado. Limpa o marcador (senão o fim
+                # do NOVO torneio seria ignorado) e INVALIDA a memória da mesa antiga
+                # (cartas/agressor/antecipação não vazam p/ o torneio novo).
+                if (hwnd, tkey_local) in tourneys_closed:
+                    tourneys_closed.discard((hwnd, tkey_local))
+                    hero_mem.invalidate(tkey)
+                    anticip.invalidate(tkey)
+                    anticip_turns.close(tkey)
+                    print('[%03d] mesa reaberta no slot %s (hwnd 0x%x) -> novo torneio: '
+                          'marcador/limpo, memoria invalidada' % (n, tkey_local, hwnd), flush=True)
                 # FAST-PATH (agilidade): read_action_buttons custa ~1ms; advise_table
                 # ~330ms. Como o operador só AGE na vez do hero, pulamos a leitura
                 # pesada quando NÃO é a vez — ciclo ocioso cai de ~900ms p/ ~250ms.
