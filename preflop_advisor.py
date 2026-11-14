@@ -599,15 +599,56 @@ class PreflopAdvisor:
         freq = node['freq'].get('raise') or []
         return i < len(freq) and freq[i] > 0
 
+    # Famílias de árvore (Clone 0.5) que o classificador ÚNICO pode casar ao vivo.
+    _TREE_LIVE_SCENARIOS = frozenset({'vs_3bet', 'vs_4bet_or_more', 'open_with_callers', 'limped'})
+
+    def _tree_from_reading(self, table_state, hero_cards, positions, hero, kwargs):
+        """Consulta a árvore de referência a partir da leitura ao vivo, pelo mesmo
+        classificador (strategy.scenarios). Devolve o conselho de ESTUDO (nunca
+        executável) ou None (sem árvore -> roteamento normal). Shove -> facing_all_in
+        True, então a árvore NÃO-terminal não é usada num all-in."""
+        if not getattr(self._trees(), 'records', None):
+            return None
+        try:
+            c = classify_scenario(from_table_state(table_state))
+        except Exception:                                # noqa: BLE001 — leitura ruim -> fluxo normal
+            return None
+        scen = c.get('scenario')
+        if scen not in self._TREE_LIVE_SCENARIOS or c.get('hero_position') is None:
+            return None
+        top = max(c['raise_levels']) if c.get('raise_levels') else 0.0
+        facing_all_in = bool(c.get('aggressor')) and _opener_is_shove(table_state, c['aggressor'], top)
+        stack_bb = hero.get('stack_bb')
+        return self._tree_consult(
+            hero_cards=hero_cards, scenario=scen, hero_position=c['hero_position'],
+            aggressor=c.get('aggressor'), limpers=c.get('limpers') or (),
+            callers=c.get('callers') or (), mode=kwargs.get('mode', 'chip_ev'),
+            stage=kwargs.get('stage', 'mid'), stack_bb=stack_bb,
+            effective_stack_bb=stack_bb, to_beat=top or None,
+            to_call=(table_state.get('to_call') or {}).get('to_call_bb'),
+            facing_all_in=facing_all_in, tournament_profile=kwargs.get('tournament_profile'),
+            reference_tree_study=kwargs.get('reference_tree_study', False))
+
     def advise_from_reading(self, table_state, hero_cards, **kwargs):
         """Pull hero's position/stack from a read_table_state result, infer the
         spot from the bets (first_in or vs_open), advise, and attach a founded
         raise size for the recommended action. The spot inference is approximate
-        (it rides on the nearest-seat bet attribution)."""
+        (it rides on the nearest-seat bet attribution).
+
+        A árvore de referência (Clone 0.5) é consultada ANTES, como estudo/sombra;
+        ver _tree_from_reading. Nunca autoriza execução."""
         positions = table_state.get('positions') or {}
         hero = table_state.get('seats', {}).get('hero', {})
         if 'hero' not in positions:
             return self._abstain('HERO_POSITION_UNKNOWN')
+        # ÁRVORE DE REFERÊNCIA (Clone 0.5): consulta ANTES do roteamento normal, pelo
+        # MESMO classificador único (strategy.scenarios). Fonte de ESTUDO/sombra
+        # (validated=False/execution_allowed=False) p/ spots deep/multiway que o pack
+        # não cobre. Se casar uma árvore, devolve o conselho dela; senão -> None e o
+        # fluxo normal segue INALTERADO. Só aparece ao vivo o nó NÃO-study-only.
+        tree_adv = self._tree_from_reading(table_state, hero_cards, positions, hero, kwargs)
+        if tree_adv is not None:
+            return tree_adv
         # `bounty_bb` (PKO) só serve ao call-off; tira do kwargs p/ não vazar nos nós
         # de range (self.advise não o aceita).
         bounty_bb = kwargs.pop('bounty_bb', None)

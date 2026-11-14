@@ -13,6 +13,26 @@ from preflop_tree_book import TreeBook
 from test_preflop_advisor import pack_with_node
 
 
+def _ts_vs_3bet_co_vs_sb(stack=50.0):
+    """Leitura ao vivo: hero CO abriu 2.5, SB deu 3bet p/ 7.5 (não-shove)."""
+    return dict(phase='mid',
+                positions={'hero': 'CO', 'bot_left': 'SB', 'left_low': 'BB'},
+                seats={'hero': {'stack_bb': stack}, 'bot_left': {'stack_bb': stack},
+                       'left_low': {'stack_bb': stack}},
+                bets=[dict(seat='hero', bet_bb=2.5), dict(seat='bot_left', bet_bb=7.5),
+                      dict(seat='left_low', bet_bb=1.0)],
+                to_call=dict(to_call_bb=5.0))
+
+
+def _ts_vs_open_bb(stack=50.0):
+    """hero BB encara um open do CO (sem 3bet, sem callers) -> fora das árvores."""
+    return dict(phase='mid',
+                positions={'hero': 'BB', 'bot_left': 'CO'},
+                seats={'hero': {'stack_bb': stack}, 'bot_left': {'stack_bb': stack}},
+                bets=[dict(seat='hero', bet_bb=1.0), dict(seat='bot_left', bet_bb=2.5)],
+                to_call=dict(to_call_bb=1.5))
+
+
 class TreePortTests(unittest.TestCase):
     def setUp(self):
         # pack_with_node() = nó validado BTN 25 (o advisor normal). As árvores reais
@@ -102,6 +122,18 @@ class TreePortTests(unittest.TestCase):
         r = self.a.advise(hero_cards=['Xx', 'Ah'], hero_position='CO', stack_bb=50,
                           scenario='vs_3bet', aggressor='SB', effective_stack_bb=50.)
         self.assertEqual(r['status'], 'ABSTAIN')  # fluxo normal abstém
+
+    # ---- WIRING AO VIVO: advise_from_reading consulta a árvore ------------------
+    def test_wiring_ao_vivo_vs_3bet_roteia_para_arvore(self):
+        r = self.a.advise_from_reading(_ts_vs_3bet_co_vs_sb(50.0), ['As', 'Ah'])
+        self.assertEqual(r.get('origin'), 'CONTEXTUAL_TREE_REFERENCE')
+        self.assertTrue(r['node_id'].startswith('CO_vs_SB_3bet'))
+        self.assertFalse(r['validated'])
+        self.assertFalse(r['execution_allowed'])
+
+    def test_wiring_spot_sem_arvore_segue_fluxo_normal(self):
+        r = self.a.advise_from_reading(_ts_vs_open_bb(50.0), ['As', 'Ah'])
+        self.assertNotEqual(r.get('origin'), 'CONTEXTUAL_TREE_REFERENCE')
 
     # ---- diretório ausente não quebra (árvore é opcional) -----------------------
     def test_sem_arvores_nao_quebra(self):
