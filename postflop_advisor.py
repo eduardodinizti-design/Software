@@ -16,6 +16,8 @@ from preflop_equity import required_equity, equity_vs_range, hand_to_combos
 from hud_exploit import classify_villain, exploit_caveats
 from multiway_equity import (apply_multiway_penalty, cbet_bluff_blocked,
                              count_opponents, penalty_pct)
+from postflop_adjustments import (geometric_bet_pct, geometric_street_plan,
+                                  pool_adjusted_mdf, remaining_streets, scare_present)
 
 BASE_CAVEATS = ('EXPLORATORY_NOT_FOR_EXECUTION', 'POSTFLOP_HEURISTIC_NO_SOLVER',
                 'SINGLE_FRAME_NO_VILLAIN_MODEL')
@@ -221,7 +223,7 @@ def _advise_three_bet_pot(info, strength, bclass, caveats, *, pot, to_call,
 def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
                     stage='mid', aggressor=None, villain_range=None, pot_type=None,
                     narrow_range=False, villain_stats=None, villains=None,
-                    iters=4000, seed=0):
+                    villain_line=None, iters=4000, seed=0):
     """Conselho pós-flop para uma leitura. `hero`: 2 strings; `board`: 3-5 strings.
 
     `aggressor` (opcional): quem teve a iniciativa no pré-flop ('hero'/posição), para
@@ -280,6 +282,14 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
                 structure=bclass['structure'], outs=outs, spr=spr, equity=None,
                 pot_bb=pot, to_call_bb=to_call, exploratory=True, execution_allowed=False)
 
+    # Scare card (metadado exploratório): carta de perigo no turn/river. Não altera a
+    # equity de Monte Carlo (o board já entra lá); serve de sinal p/ mãos de 1 par e p/
+    # o auditor de leaks. Só marca; a decisão de valor segue a lógica existente.
+    scare = scare_present(bclass, street)
+    if scare['present']:
+        info['scare_card'] = scare['kinds']
+        caveats.append('SCARE_CARD_' + '_'.join(scare['kinds']).upper())
+
     # Tipos de pote fora da cobertura: ABSTÉM com rótulo ANTES de qualquer Monte
     # Carlo (abstenção conhecida não paga o custo da equity, a cada frame/mesa).
     if pot_type == 'three_bet':      # HU 3bet pot (multiway é pego como 'multiway')
@@ -335,6 +345,14 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
             return _abstain('CANNOT_COMPUTE_POT_ODDS', pot_bb=pot, to_call_bb=to_call)
         mdf = round(pot / (pot + to_call), 4) if (pot + to_call) else None
         info.update(pot_odds=round(pot_odds, 4), mdf=mdf)
+        # Pool-underbluff: no pool da Evolution, linha passiva->agressiva ou overbet é
+        # sub-blefada; desconta o MDF teórico (×0.75). Metadado exploratório.
+        pta = villain_line == 'passive_turned_aggressive'
+        overbet = pot_odds > _BIG_BET_POT_ODDS
+        if mdf is not None and (pta or overbet):
+            info['pool_adjusted_mdf'] = pool_adjusted_mdf(mdf, passive_turned_aggressive=pta,
+                                                          overbet=overbet)
+            caveats.append('POOL_UNDERBLUFF_MDF_DISCOUNTED')
         cap = hero_stack if isinstance(hero_stack, (int, float)) else None
         board_beats_us = (bclass['straight_on_board']
                           or (bclass['flush_possible'] and made not in
@@ -371,6 +389,12 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
                                 caveats=caveats + ['BLUFFCATCH_BIG_BET_EXPLOIT_%s'
                                                    % ('AGGRO' if profile['aggressive'] else 'PASSIVE')])
                     return info
+                # Sem HUD, mas com a LINHA do vilão informada: passivo que vira agressão
+                # pesada no pool underbluffa -> foldar o bluffcatch (não precisa de range).
+                if villain_line == 'passive_turned_aggressive':
+                    info.update(recommended='fold',
+                                caveats=caveats + ['POOL_UNDERBLUFF_FOLD_BIG_BET'])
+                    return info
                 return _abstain('BLUFFCATCH_VS_BIG_BET_NEEDS_READS', pot_bb=pot,
                                 to_call_bb=to_call, pot_odds=round(pot_odds, 4), made=made,
                                 equity=round(equity, 4) if equity is not None else None)
@@ -378,6 +402,12 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
                 caveats.append('BLUFFCATCH_EQUITY_DRIVEN')
                 info.update(recommended=('call' if equity >= pot_odds + haircut + ex_delta else 'fold'),
                             caveats=caveats)
+                return info
+            # Sem range: default é defender ao MDF (call). Mas com a linha passivo->
+            # agressivo informada, o pool underbluffa -> folda o bluffcatcher de 1 par.
+            if villain_line == 'passive_turned_aggressive':
+                info.update(recommended='fold',
+                            caveats=caveats + ['POOL_UNDERBLUFF_FOLD_TOP_PAIR'])
                 return info
             caveats += ['BLUFFCATCH_DEFEND_TO_MDF', 'EXPLOIT_DEPENDS_ON_VILLAIN']
             info.update(recommended='call', caveats=caveats)
@@ -430,6 +460,15 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
     # ---- Passaram a vez (to_call == 0): apostar ou dar check ---------------------
     info.update(pot_odds=None, mdf=None)
     cap = hero_stack if isinstance(hero_stack, (int, float)) else None
+    # Sizing geométrico (metadado): a fração constante por rua que compromete o stack no
+    # river. Informa o plano; NÃO substitui a fração por-rua escolhida por vantagem de
+    # range/nuts logo abaixo (poucos sizes/rua é intencional).
+    geo_n = remaining_streets(street)
+    if geo_n:
+        geo_pct = geometric_bet_pct(spr, geo_n)
+        if geo_pct is not None:
+            info['geometric'] = dict(pct=geo_pct,
+                                     street_plan=geometric_street_plan(spr, street, pot, hero_stack))
     if strong:
         frac = _bet_fraction(bclass, made, draws)
         info.update(recommended='bet', sizing=_size(pot, frac, cap, 'valor por vantagem de range/nuts'),

@@ -1,0 +1,121 @@
+PPPoker Hand #9841201: Tournament #55102 (Liga Evolution - Carecas PKO), NL Hold'em (100/200, Ante 25) - 2026/11/12 20:14:08
+Table 'Carecas Mesa 4' 8-max Seat #3 is the button
+Seat 1: Vilao_Nit (8400 in chips)
+Seat 2: Hero (11200 in chips)
+Seat 3: Reg_Evolution (9600 in chips)
+Seat 5: Recreativo77 (6500 in chips)
+Recreativo77: posts small blind 100
+Vilao_Nit: posts big blind 200
+*** HOLE CARDS ***
+Dealt to Hero [Kh 9d]
+Hero: raises 420 to 620
+Reg_Evolution: calls 620
+Recreativo77: calls 520
+Vilao_Nit: calls 420
+*** FLOP *** [Qc 7s 2d]
+Recreativo77: checks
+Vilao_Nit: checks
+Hero: bets 1850
+Reg_Evolution: raises 4800 to 6650
+Recreativo77: folds
+Vilao_Nit: folds
+Hero: folds
+Uncalled bet (4800) returned to Reg_Evolution
+Reg_Evolution collected 6380 from pot
+
+PPPoker Hand #9841208: Tournament #55102 (Liga Evolution - Carecas PKO), NL Hold'em (150/300, Ante 35) - 2026/11/12 20:22:41
+Table 'Carecas Mesa 4' 8-max Seat #6 is the button
+Seat 2: Hero (9100 in chips)
+Seat 4: Passivo_SP (14500 in chips)
+Hero: posts big blind 300
+*** HOLE CARDS ***
+Dealt to Hero [As Jd]
+Passivo_SP: calls 300
+Hero: raises 900 to 1200
+Passivo_SP: calls 900
+*** FLOP *** [Ad 8c 4s]
+Hero: bets 850
+Passivo_SP: calls 850
+*** TURN *** [Ad 8c 4s] [5h]
+Hero: checks
+Passivo_SP: checks
+*** RIVER *** [Ad 8c 4s 5h] [5d]
+Hero: bets 1400
+Passivo_SP: raises 4800 to 6200
+Hero: calls 4800
+*** SHOW DOWN ***
+Passivo_SP: shows [5c 4c] (a full house, Fives full of Fours)
+Hero: mucks hand [As Jd]
+Passivo_SP collected 16780 from pot
+
+PPPoker Hand #9841219: Tournament #55102 (Liga Evolution - Carecas PKO), NL Hold'em (200/400, Ante 50) - 2026/11/12 20:35:12
+Table 'Carecas Mesa 4' 8-max Seat #1 is the button
+Seat 1: ShortBounty (3200 in chips, Bounty R$ 25)
+Seat 2: Hero (12400 in chips)
+Hero: posts big blind 400
+*** HOLE CARDS ***
+Dealt to Hero [9h 8h]
+ShortBounty: raises 400 to 800
+Hero: calls 400
+*** FLOP *** [7h 6c 2h]
+Hero: checks
+ShortBounty: bets 900
+Hero: calls 900
+*** TURN *** [7h 6c 2h] [Kd]
+Hero: checks
+ShortBounty: bets 1450 and is all-in
+Hero: folds
+Uncalled bet (1450) returned to ShortBounty
+ShortBounty collected 3500 from pot
+
+PPPoker Hand #9841234: Tournament #55102 (Liga Evolution - Carecas PKO), NL Hold'em (250/500, Ante 60) - 2026/11/12 20:49:05
+Table 'Carecas Mesa 4' 8-max Seat #5 is the button
+Seat 2: Hero (10800 in chips)
+Seat 3: Maniaco_RJ (16200 in chips)
+Seat 5: Tight_MG (11500 in chips)
+Hero: posts small blind 250
+Maniaco_RJ: posts big blind 500
+*** HOLE CARDS ***
+Dealt to Hero [Td Th]
+Tight_MG: folds
+Hero: raises 750 to 1250
+Maniaco_RJ: calls 750
+*** FLOP *** [Jc 9c 4c]
+Hero: bets 800
+Maniaco_RJ: raises 2600 to 3400
+Hero: calls 2600
+*** TURN *** [Jc 9c 4c] [Ac]
+Hero: checks
+Maniaco_RJ: bets 5200
+Hero: calls 5200
+*** RIVER *** [Jc 9c 4c Ac] [2s]
+Hero: checks
+Maniaco_RJ: bets 1000 and is all-in
+Hero: folds
+Uncalled bet (1000) returned to Maniaco_RJ
+Maniaco_RJ collected 19860 from pot
+
+PPPoker Hand #9841247: Tournament #55102 (Liga Evolution - Carecas PKO), NL Hold'em (300/600, Ante 75) - 2026/11/12 21:03:29
+Table 'Carecas Mesa 4' 8-max Seat #2 is the button
+Seat 2: Hero (18500 in chips)
+Seat 4: Passivo_SP (15400 in chips)
+Seat 6: Reg_Evolution (14100 in chips)
+Hero: raises 600 to 1200
+Passivo_SP: calls 900
+Reg_Evolution: calls 600
+*** FLOP *** [Kd Qs 3h]
+Passivo_SP: checks
+Reg_Evolution: checks
+Hero: bets 2900
+Passivo_SP: calls 2900
+Reg_Evolution: folds
+*** TURN *** [Kd Qs 3h] [2c]
+Passivo_SP: checks
+Hero: checks
+*** RIVER *** [Kd Qs 3h 2c] [Jh]
+Passivo_SP: bets 6800
+Hero: calls 6800
+*** SHOW DOWN ***
+Passivo_SP: shows [Tc 9c] (a straight, Nine to King)
+Hero: shows [Ks 7s] (a pair of Kings)
+Passivo_SP collected 23625 from pot
