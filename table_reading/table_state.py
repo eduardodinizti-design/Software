@@ -4,8 +4,9 @@ Observation only, labelled experimental. Each numeric field carries its source
 (ocr), a confidence (high/medium) and the raw OCR text; a field that cannot be
 read is None (abstain), never guessed. PPPoker stacks and the pot show one
 decimal (X,X BB); when OCR drops the comma we restore it from that fixed rule,
-at medium confidence. Dealer button, positions, per-seat bets and to-call are
-NOT read here yet (returned as None) and must not be inferred from cards/buttons.
+at medium confidence. Per-seat bets are read from the felt chips; to-call comes
+from two independent routes (the Call button and a derivation from the read bets,
+cross-checked in merge_to_call). Nothing is inferred from cards.
 
 Validated on a real gabarito (9/9 seat stacks, pot) with both OCR backends; only
 the blue 9-max layout at the gabarito scale is validated.
@@ -147,6 +148,59 @@ def read_to_call(crop):
     return dict(to_call_bb=None, confidence='abstain', source='buttons', raw=None)
 
 
+def derive_to_call(bets, *, hero_seat='hero'):
+    """to_call DERIVADO das apostas lidas: max(aposta na mesa) - aposta do hero, em
+    BB. Segunda ROTA independente do botão Call (que só entrega valor quando o rótulo
+    traz 'BB' explícito; sem isso, abstém). NÃO inventa: só usa apostas efetivamente
+    LIDAS (bet_bb não-None). Sem nenhuma aposta -> abstain (None). É o mesmo cálculo
+    que o hand_history faz offline, agora disponível ao vivo p/ reduzir to_call=None.
+
+    Confiança 'medium' (depende de ler as apostas relevantes); o consumidor que for
+    COMPROMETER ficha deve exigir confiança alta (cruzar com o botão) — ver
+    merge_to_call e read_table_state."""
+    seat_bet = {}
+    for b in bets or []:
+        v = b.get('bet_bb')
+        if isinstance(v, (int, float)):
+            seat_bet[b.get('seat')] = float(v)
+    if not seat_bet:
+        return dict(to_call_bb=None, confidence='abstain', source='no_bets_read', raw=None)
+    max_bet = max(seat_bet.values())
+    hero_bet = seat_bet.get(hero_seat, 0.0)
+    return dict(to_call_bb=round(max(0.0, max_bet - hero_bet), 2), confidence='medium',
+                source='derived_from_bets', max_bet_bb=max_bet, hero_bet_bb=hero_bet,
+                seats_with_bet=len(seat_bet))
+
+
+def merge_to_call(button, derived, *, tol_bb=0.2, tol_frac=0.12):
+    """Combina a rota do BOTÃO (displayed, autoritária quando em BB) com a rota
+    DERIVADA das apostas, sem nunca inventar:
+      - botão com valor BB  -> usa o botão (high). Se o derivado existe e DISCORDA,
+        mantém o botão mas marca 'DERIVED_DISAGREES' (o jogo é a verdade exibida).
+        Se CONCORDA, sobe p/ 'call_button+derived_agree'.
+      - botão abstém/None mas derivado tem valor -> usa o DERIVADO (medium). É o ganho:
+        preenche to_call quando o rótulo do Call não trazia 'BB'.
+      - ambos sem valor -> None.
+    Mantém sempre os dois diagnósticos em _routes p/ auditoria."""
+    b = button or {}
+    d = derived or {}
+    bv, dv = b.get('to_call_bb'), d.get('to_call_bb')
+    routes = dict(button=b, derived=d)
+    if bv is not None:
+        out = dict(b, to_call_bb=bv, _routes=routes)
+        if dv is not None:
+            agree = abs(bv - dv) <= max(tol_bb, tol_frac * max(bv, dv))
+            if agree:
+                out['confidence'] = 'high'
+                out['source'] = 'call_button+derived_agree'
+            else:
+                out.setdefault('caveats', []).append('DERIVED_DISAGREES_%.2f_vs_%.2f' % (bv, dv))
+        return out
+    if dv is not None:
+        return dict(d, to_call_bb=dv, _routes=routes)
+    return dict(to_call_bb=None, confidence='abstain', source='no_to_call', _routes=routes)
+
+
 def _detect_red_chips(crop):
     """Bounding centres (cx, cy, w, h) of the red bet chips on the felt.
 
@@ -262,11 +316,12 @@ def read_break_state(crop):
 
 
 def read_table_state(crop):
-    """Experimental table state: per-seat stacks, pot, dealer button and derived
-    positions. Per-seat bets and to-call are placeholders (None) for the next
-    increment, never inferred from cards or buttons. Positions use the occupancy
-    implied by readable stacks, so an unreadable (occluded) seat can shift them;
-    that limitation rides on the stacks' own confidence."""
+    """Experimental table state: per-seat stacks, pot, dealer button, derived
+    positions, per-seat bets (felt chips) and to-call (Call button cross-checked
+    with a derivation from the read bets; see merge_to_call). Nothing is inferred
+    from cards. Positions use the occupancy implied by readable stacks, so an
+    unreadable (occluded) seat can shift them; that limitation rides on the stacks'
+    own confidence."""
     if crop is None or crop.ndim != 3 or crop.shape[2] != 3:
         raise ValueError('Expected a BGR table crop')
     stacks = read_seat_stacks(crop)
@@ -277,6 +332,11 @@ def read_table_state(crop):
     dealer = find_dealer_seat(crop)
     occupied = [s for s in SEAT_ANCHORS if seats[s]['occupied']]
     positions = derive_positions(dealer['seat'], occupied) if dealer['seat'] else {}
+    bets = read_bets(crop)
+    # to_call por DUAS rotas independentes, cruzadas (merge_to_call): o botão Call
+    # (autoritário em BB) + a derivação das apostas (max - aposta do hero). Reduz o
+    # to_call=None quando o rótulo do Call não traz 'BB'. Nunca inventa.
+    to_call = merge_to_call(read_to_call(crop), derive_to_call(bets))
     return dict(experimental=True, scope='BLUE_LAYOUT_PASSIVE_READING', source='ocr',
                 seats=seats, pot=read_pot(crop), dealer=dealer, positions=positions,
-                to_call=read_to_call(crop), bets=read_bets(crop))
+                to_call=to_call, bets=bets)
