@@ -1,0 +1,79 @@
+{
+  "scope": "All mouse/capture operations explicitly mocked; timings model Python waits plus pyautogui.PAUSE, not hardware throughput.",
+  "timing_trials": [
+    {
+      "steps": 20,
+      "move_calls": 21,
+      "click_calls": 1,
+      "modeled_seconds": 0.313,
+      "final_point": [
+        100,
+        100
+      ],
+      "target": [
+        100,
+        100
+      ]
+    },
+    {
+      "steps": 35,
+      "move_calls": 36,
+      "click_calls": 1,
+      "modeled_seconds": 0.81,
+      "final_point": [
+        100,
+        100
+      ],
+      "target": [
+        100,
+        100
+      ]
+    }
+  ],
+  "engine_bridge": {
+    "imported": false,
+    "type": "ImportError",
+    "error": "cannot import name 'OCRProcessor' from 'ocr_processor' (/workspace/work/audit-postflop-20261114/visualpilot2/python_bot/modules/ocr_processor.py)"
+  },
+  "blank_frame_result": {
+    "status": "success",
+    "timestamp": 1794620189.6765134,
+    "hwnd": "0x1234",
+    "frame_shape": [
+      600,
+      800,
+      3
+    ],
+    "cards_read": true
+  },
+  "cli": [
+    {
+      "flags": [
+        "--help"
+      ],
+      "returncode": 0,
+      "error_tail": "                        flop\n  --arm                 Usa o cursor REAL (ainda gated)\n  --no-hotkeys"
+    },
+    {
+      "flags": [
+        "--human-mouse"
+      ],
+      "returncode": 2,
+      "error_tail": "                      [--stage {pre_itm,bubble,ft,mid}] [--hud] [--arm]\n                      [--no-hotkeys]\noperar_mesa.py: error: unrecognized arguments: --human-mouse"
+    },
+    {
+      "flags": [
+        "--bounty-bb"
+      ],
+      "returncode": 2,
+      "error_tail": "                      [--stage {pre_itm,bubble,ft,mid}] [--hud] [--arm]\n                      [--no-hotkeys]\noperar_mesa.py: error: argument --bounty-bb: expected one argument"
+    },
+    {
+      "flags": [
+        "--overlay"
+      ],
+      "returncode": 2,
+      "error_tail": "                      [--stage {pre_itm,bubble,ft,mid}] [--hud] [--arm]\n                      [--no-hotkeys]\noperar_mesa.py: error: unrecognized arguments: --overlay"
+    }
+  ]
+}

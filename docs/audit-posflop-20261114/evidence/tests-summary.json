@@ -1,0 +1,49 @@
+[
+  {
+    "file": "software-main-tests.txt",
+    "count": "Ran 762 tests in 51.053s",
+    "status": "FAILED (failures=3, skipped=7)"
+  },
+  {
+    "file": "central-pko-tests.txt",
+    "count": "Ran 6 tests in 0.036s",
+    "status": "OK"
+  },
+  {
+    "file": "visualpilot2-python-tests.txt",
+    "count": "Ran 731 tests in 24.288s",
+    "status": "FAILED (failures=4, errors=7, skipped=11)"
+  },
+  {
+    "file": "central-postflop-tests.txt",
+    "count": "Ran 18 tests in 0.508s",
+    "status": "OK"
+  },
+  {
+    "file": "clone-postflop-tests.txt",
+    "count": "Ran 49 tests in 1.300s",
+    "status": "OK"
+  },
+  {
+    "file": "central-multistreet-tests.txt",
+    "count": "Ran 19 tests in 0.052s",
+    "status": "OK"
+  },
+  {
+    "file": "software-operacional-tests.txt",
+    "count": "Ran 881 tests in 52.160s",
+    "status": "FAILED (failures=2, skipped=7)"
+  },
+  {
+    "file": "software-operacional-ocr-isolated.txt",
+    "count": "Ran 2 tests in a new process",
+    "status": "FAILED (failures=1); board passed, 2.5x preset failed",
+    "scope": "Same native OCR backend; narrower execution order, not independent evaluation"
+  },
+  {
+    "file": "software-operacional-external-ocr.txt",
+    "count": "Ran 2 tests",
+    "status": "OK (skipped=2)",
+    "scope": "Tests require tesserocr and were skipped without it; no successful external OCR validation"
+  }
+]

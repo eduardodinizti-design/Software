@@ -1,0 +1,20 @@
+{
+  "scope": "Isolated loopback server, nonexistent Python executable, no real input/registration/AI request.",
+  "default_ui_start": {
+    "http": 400,
+    "body": {
+      "success": false,
+      "error": "Flags depreciadas (--overlay ou --human-mouse) são rejeitadas explicitamente."
+    }
+  },
+  "missing_python_start": {
+    "http": 200,
+    "body": {
+      "success": true,
+      "running": true,
+      "message": "Sessão do bot iniciada com sucesso via Python."
+    }
+  },
+  "server_exit_after_spawn_error": 1,
+  "spawn_error_seen": true
+}

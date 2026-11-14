@@ -1,0 +1,7 @@
+test_reads_full_river_board (test_board_karekas.BoardKarekasTest.test_reads_full_river_board) ... skipped 'OCR/gabarito board ausente'
+test_reads_four_presets_and_confirm (test_raise_panel.RealPanelTest.test_reads_four_presets_and_confirm) ... skipped 'OCR/gabarito ausente'
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.000s
+
+OK (skipped=2)

@@ -1,0 +1,208 @@
+............................................s...................[ WARN:0@11.747] global loadsave.cpp:268 findDecoder imread_('tests/fixtures/bounty_live/machine-pko-bounty-135.png'): can't open/read file: check file path/integrity
+E[ WARN:0@11.775] global loadsave.cpp:268 findDecoder imread_('tests/fixtures/bounty_live/machine-pko-bounty-135.png'): can't open/read file: check file path/integrity
+F[ WARN:0@11.827] global loadsave.cpp:268 findDecoder imread_('tests/fixtures/bounty_live/machine-pko-bounty-135.png'): can't open/read file: check file path/integrity
+F...ssss................s.E........................E.......................................................[ WARN:0@12.904] global loadsave.cpp:268 findDecoder imread_('public/assets/aistudio/_8C143E80-F85C-4DE6-ADCD-0641771AE2E6__2a4e7ea0.png'): can't open/read file: check file path/integrity
+E....[ WARN:0@12.938] global loadsave.cpp:268 findDecoder imread_('tests/fixtures/bounty_live/machine-pko-bounty-135.png'): can't open/read file: check file path/integrity
+E[ WARN:0@12.938] global loadsave.cpp:268 findDecoder imread_('tests/fixtures/bounty_live/machine-pko-bounty-135.png'): can't open/read file: check file path/integrity
+F[ WARN:0@12.938] global loadsave.cpp:268 findDecoder imread_('tests/fixtures/seat_live/pppoker-8max-rebuy-topcenter-dekkii-488.png'): can't open/read file: check file path/integrity
+F.........................................[ WARN:0@12.945] global loadsave.cpp:268 findDecoder imread_('tests/fixtures/hud_live/minifreeze-9max-huds.png'): can't open/read file: check file path/integrity
+s.................ss................................................................................................................................................................................................/workspace/work/audit-postflop-20261114/visualpilot2/python_bot/test_preflop_advisor.py:551: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpfb70ly3d/a.json' mode='w' encoding='UTF-8'>
+  json.dump(pack_with_node(), open(p1, 'w'))        # validated BTN 25
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/workspace/work/audit-postflop-20261114/visualpilot2/python_bot/test_preflop_advisor.py:552: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpfb70ly3d/b.json' mode='w' encoding='UTF-8'>
+  json.dump(pack_with_reference(), open(p2, 'w'))   # reference BTN 100
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+......................................................................................s.........................................................................................Pasta: /tmp/tmpxr5ujl2h/sessao-20261114-011227-bdb1db32
+COLETA V2: texto; imagens DESLIGADAS.
+Sem cliques. Limite por sessao: 1 MiB. Ctrl+C encerra.
+Cota de texto atingida: leitura continua; registros adicionais nao serao salvos.
+1: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+2: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+3: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+4: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+Encerrado: DURATION_COMPLETE | Resultado: /tmp/tmpxr5ujl2h/sessao-20261114-011227-bdb1db32
+.Pasta: /tmp/tmpamfon812/sessao-20261114-011227-eb4d8b26
+COLETA V2: texto; imagens DESLIGADAS.
+Sem cliques. Limite por sessao: 16 MiB. Ctrl+C encerra.
+1: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+2: HWND 2 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+3: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+4: HWND 2 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+Encerrado: DURATION_COMPLETE | Resultado: /tmp/tmpamfon812/sessao-20261114-011227-eb4d8b26
+.Pasta: /tmp/tmp7g96wdxk/sessao-20261114-011227-70aa4ab0
+COLETA V2: texto; imagens DESLIGADAS.
+Sem cliques. Limite por sessao: 16 MiB. Ctrl+C encerra.
+1: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+2: HWND 2 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+3: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+4: HWND 2 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+Encerrado: DURATION_COMPLETE | Resultado: /tmp/tmp7g96wdxk/sessao-20261114-011227-70aa4ab0
+.Pasta: /tmp/tmp_nql0hw0/sessao-20261114-011227-9414de7d
+COLETA V2: texto; imagens DESLIGADAS.
+Sem cliques. Limite por sessao: 16 MiB. Ctrl+C encerra.
+1: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+2: HWND 2 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+3: HWND 1 | SOURCE_CHANGED | 15000 ms | 0.0 MiB
+Encerrado: SOURCE_CHANGED | Resultado: /tmp/tmp_nql0hw0/sessao-20261114-011227-9414de7d
+.Pasta: /tmp/tmp7uqrw21m/sessao-20261114-011227-d84654b7
+COLETA V2: texto e recortes aceitos/rejeitados; nova condicao ou 60s, com cota.
+Sem cliques. Limite por sessao: 16 MiB. Ctrl+C encerra.
+1: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+2: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+3: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+4: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Encerrado: DURATION_COMPLETE | Resultado: /tmp/tmp7uqrw21m/sessao-20261114-011227-d84654b7
+.Pasta: /tmp/tmpovoh1lg5/sessao-20261114-011227-30e77df8
+COLETA V2: texto e recortes aceitos/rejeitados; nova condicao ou 60s, com cota.
+Sem cliques. Limite por sessao: 16 MiB. Ctrl+C encerra.
+1: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+2: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+3: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+4: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Encerrado: DURATION_COMPLETE | Resultado: /tmp/tmpovoh1lg5/sessao-20261114-011227-30e77df8
+....................................Pasta: /tmp/tmpu5bpjmo7/sessao-20261114-011227-df3859ef
+COLETA V2: texto; imagens DESLIGADAS.
+Sem cliques. Limite por sessao: 16 MiB. Ctrl+C encerra.
+1: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+2: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+3: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+4: HWND 1 | ANALYZED | 15000 ms | 0.0 MiB
+Mesas aceitas para leitura: 0 | Regioes rejeitadas: 0
+Encerrado: DURATION_COMPLETE | Resultado: /tmp/tmpu5bpjmo7/sessao-20261114-011227-df3859ef
+...........................[ WARN:0@24.391] global loadsave.cpp:268 findDecoder imread_('tests/fixtures/hud_live/minifreeze-9max-huds.png'): can't open/read file: check file path/integrity
+s.......E...................[ WARN:0@24.597] global loadsave.cpp:268 findDecoder imread_('public/assets/aistudio/_8C143E80-F85C-4DE6-ADCD-0641771AE2E6__2a4e7ea0.png'): can't open/read file: check file path/integrity
+E.............................
+======================================================================
+ERROR: test_read_seat_bounties_voting_never_confident_wrong (test_bounty.RealPkoFixtureTests.test_read_seat_bounties_voting_never_confident_wrong)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/work/audit-postflop-20261114/visualpilot2/python_bot/test_bounty.py", line 139, in test_read_seat_bounties_voting_never_confident_wrong
+    b = read_seat_bounties(crop, seats=occ)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/work/audit-postflop-20261114/visualpilot2/python_bot/table_reading/bounty.py", line 119, in read_seat_bounties
+    h, w = crop.shape[:2]
+           ^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'shape'
+
+======================================================================
+ERROR: test_development_empty_screens (test_community_cards.BoardTests.test_development_empty_screens)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/work/audit-postflop-20261114/visualpilot2/python_bot/test_community_cards.py", line 86, in test_development_empty_screens
+    rows=json.loads(Path('docs/table-reading/development-labels.json').read_text())['tables']
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1027, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'docs/table-reading/development-labels.json'
+
+======================================================================
+ERROR: setUpClass (test_corner_sampling.CornerSamplingTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/work/audit-postflop-20261114/visualpilot2/python_bot/test_corner_sampling.py", line 9, in setUpClass
+    rows=json.loads(Path('docs/table-reading/development-labels.json').read_text())['tables']
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1027, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'docs/table-reading/development-labels.json'
+
+======================================================================
+ERROR: setUpClass (test_detector_proposals.DetectorProposalTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/work/audit-postflop-20261114/visualpilot2/python_bot/test_detector_proposals.py", line 14, in setUpClass
+    if im is None:raise RuntimeError('Missing real regression fixture '+str(source))
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Missing real regression fixture public/assets/aistudio/_8C143E80-F85C-4DE6-ADCD-0641771AE2E6__2a4e7ea0.png
+
+======================================================================
+ERROR: test_nine_max_top_seats_empty_on_8max (test_eightmax_layout.TopCenterSeatTests.test_nine_max_top_seats_empty_on_8max)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/work/audit-postflop-20261114/visualpilot2/python_bot/test_eightmax_layout.py", line 45, in test_nine_max_top_seats_empty_on_8max
+    occ = read_occupancy(crop)
+          ^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/work/audit-postflop-20261114/visualpilot2/python_bot/table_reading/table_state.py", line 93, in read_occupancy
+    x0, y0, x1, y1 = nameplate_box(crop.shape[1], crop.shape[0], seat)
+                                   ^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'shape'
+
+======================================================================
+ERROR: setUpClass (test_table_reading.PipelineContracts)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/work/audit-postflop-20261114/visualpilot2/python_bot/test_table_reading.py", line 32, in setUpClass
+    if not (ASSETS/SOURCE).is_file():raise RuntimeError('Required real fixture missing: '+str(ASSETS/SOURCE))
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Required real fixture missing: public/assets/aistudio/_21D744E1-8BE6-4C79-82AF-5582DD6A9547__6988a9e2.png
+
+======================================================================
+ERROR: setUpClass (test_template_sample_collection.SampleCollectionTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/work/audit-postflop-20261114/visualpilot2/python_bot/test_template_sample_collection.py", line 12, in setUpClass
+    if cls.frame is None:raise RuntimeError('Missing real fixture')
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Missing real fixture
+
+======================================================================
+FAIL: test_read_seat_bounties_with_profile (test_bounty.RealPkoFixtureTests.test_read_seat_bounties_with_profile)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/work/audit-postflop-20261114/visualpilot2/python_bot/test_bounty.py", line 119, in test_read_seat_bounties_with_profile
+    self.assertIsNotNone(crop)
+AssertionError: unexpectedly None
+
+======================================================================
+FAIL: test_reads_135_from_real_pills (test_bounty.RealPkoFixtureTests.test_reads_135_from_real_pills)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/work/audit-postflop-20261114/visualpilot2/python_bot/test_bounty.py", line 106, in test_reads_135_from_real_pills
+    self.assertIsNotNone(crop, 'fixture ausente: %s' % self.PATH)
+AssertionError: unexpectedly None : fixture ausente: tests/fixtures/bounty_live/machine-pko-bounty-135.png
+
+======================================================================
+FAIL: test_pko_reads_top_center_stack (test_eightmax_layout.TopCenterSeatTests.test_pko_reads_top_center_stack)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/work/audit-postflop-20261114/visualpilot2/python_bot/test_eightmax_layout.py", line 29, in test_pko_reads_top_center_stack
+    self.assertIsNotNone(crop, 'fixture ausente: %s' % PKO)
+AssertionError: unexpectedly None : fixture ausente: tests/fixtures/bounty_live/machine-pko-bounty-135.png
+
+======================================================================
+FAIL: test_rebuy_reads_top_center_stack (test_eightmax_layout.TopCenterSeatTests.test_rebuy_reads_top_center_stack)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/work/audit-postflop-20261114/visualpilot2/python_bot/test_eightmax_layout.py", line 37, in test_rebuy_reads_top_center_stack
+    self.assertIsNotNone(crop, 'fixture ausente: %s' % REBUY)
+AssertionError: unexpectedly None : fixture ausente: tests/fixtures/seat_live/pppoker-8max-rebuy-topcenter-dekkii-488.png
+
+----------------------------------------------------------------------
+Ran 731 tests in 24.288s
+
+FAILED (failures=4, errors=7, skipped=11)

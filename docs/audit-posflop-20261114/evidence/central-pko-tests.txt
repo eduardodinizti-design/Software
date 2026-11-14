@@ -1,0 +1,11 @@
+test_allin_on_flop_receives_bounty_once (tests.test_pko_lab.PKOLabTests.test_allin_on_flop_receives_bounty_once) ... ok
+test_coverage_cash_and_progressive_are_distinct (tests.test_pko_lab.PKOLabTests.test_coverage_cash_and_progressive_are_distinct) ... ok
+test_coverage_changes_marginal_call (tests.test_pko_lab.PKOLabTests.test_coverage_changes_marginal_call) ... ok
+test_missing_conversion_or_inconsistent_coverage_rejected (tests.test_pko_lab.PKOLabTests.test_missing_conversion_or_inconsistent_coverage_rejected) ... ok
+test_no_bounty_for_fold_tie_or_non_allin (tests.test_pko_lab.PKOLabTests.test_no_bounty_for_fold_tie_or_non_allin) ... ok
+test_nvt_does_not_ignore_live_bounty_context (tests.test_pko_lab.PKOLabTests.test_nvt_does_not_ignore_live_bounty_context) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.036s
+
+OK

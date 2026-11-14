@@ -1,0 +1,24 @@
+test_allin_prevents_future_betting (tests.test_multistreet.MultiStreetTests.test_allin_prevents_future_betting) ... ok
+test_facing_bet_pot_convention_and_future_street (tests.test_multistreet.MultiStreetTests.test_facing_bet_pot_convention_and_future_street) ... ok
+test_flop_tracks_investment_across_three_streets (tests.test_multistreet.MultiStreetTests.test_flop_tracks_investment_across_three_streets) ... ok
+test_future_betting_changes_turn_value (tests.test_multistreet.MultiStreetTests.test_future_betting_changes_turn_value) ... ok
+test_ip_facing_bet_does_not_require_opponent_check (tests.test_multistreet.MultiStreetTests.test_ip_facing_bet_does_not_require_opponent_check) ... ok
+test_ip_future_actor_order_and_current_checked_to (tests.test_multistreet.MultiStreetTests.test_ip_future_actor_order_and_current_checked_to) ... ok
+test_reproducible_and_invalid_models (tests.test_multistreet.MultiStreetTests.test_reproducible_and_invalid_models) ... ok
+test_river_matches_independent_previous_tree (tests.test_multistreet.MultiStreetTests.test_river_matches_independent_previous_tree) ... ok
+test_seed_validation_and_budget_guard (tests.test_multistreet.MultiStreetTests.test_seed_validation_and_budget_guard) ... ok
+test_size_sensitive_model_river_matches_prior_solver (tests.test_multistreet.MultiStreetTests.test_size_sensitive_model_river_matches_prior_solver) ... ok
+test_sizes_caps_dedup_and_budget_no_advice (tests.test_multistreet.MultiStreetTests.test_sizes_caps_dedup_and_budget_no_advice) ... ok
+test_default_matches_legacy_choices (tests.test_chance_sampling.ChanceSamplingTests.test_default_matches_legacy_choices) ... ok
+test_equal_strata_cover_uniform_distribution (tests.test_chance_sampling.ChanceSamplingTests.test_equal_strata_cover_uniform_distribution) ... ok
+test_exact_turn_ignores_sampling_method (tests.test_chance_sampling.ChanceSamplingTests.test_exact_turn_ignores_sampling_method) ... ok
+test_stratified_flop_respects_blockers_and_declares_sampling (tests.test_chance_sampling.ChanceSamplingTests.test_stratified_flop_respects_blockers_and_declares_sampling) ... ok
+test_weighted_probability_and_zero_mass (tests.test_chance_sampling.ChanceSamplingTests.test_weighted_probability_and_zero_mass) ... ok
+test_agreeing_searches_can_all_be_wrong (tests.test_numerical_audit.NumericalAuditTests.test_agreeing_searches_can_all_be_wrong) ... ok
+test_different_actions_can_be_numerically_equivalent (tests.test_numerical_audit.NumericalAuditTests.test_different_actions_can_be_numerically_equivalent) ... ok
+test_missing_reference_or_budget_never_passes (tests.test_numerical_audit.NumericalAuditTests.test_missing_reference_or_budget_never_passes) ... ok
+
+----------------------------------------------------------------------
+Ran 19 tests in 0.052s
+
+OK

@@ -1,0 +1,678 @@
+AUDITORIA E ORIENTAÇÃO PARA O AGENTE DO REPOSITÓRIO SOFTWARE
+Pós-flop, tamanhos de aposta, antecipação e controle do mouse
+Data: 14/11/2026. Evidências de laboratório; sem sessão PPPoker Windows nesta auditoria.
+
+1. RESUMO PARA DECISÃO
+
+Recomendo manter o Software como base operacional e reunir quatro contribuições:
+
+- Software: captura, leitores, rastreamento e coordenador de execução existentes.
+- Central de laboratório: comparação explícita de EV, ranges condicionais,
+  árvore de river e busca limitada de flop/turn/river contra modelo adversário.
+- Clone: sessão pós-flop por mão/rua, autoridade separada da fonte NVT,
+  revalidação, presets de fração de pote e confirmação do valor/efeito.
+- VisualPilot 2.0/Gemini: apresentação de SPR, planejamento geométrico,
+  taxonomia de situações, perfis e interface de estudo.
+
+A junção deve produzir UM motor Python consultado pelo painel e pelo operador.
+Hoje existem cálculos e interfaces que não alimentam a execução real.
+
+Prioridade principal: corrigir estado e matemática, integrar decisão a intenção
+legal, e conferir a leitura/execução no cliente. Mais telas e novas animações
+de mouse vêm depois dessa base.
+
+Esta auditoria encontrou falhas também no código do Clone. Seus componentes
+de contexto/execução são aproveitáveis; a política v1 precisa das correções
+numéricas indicadas abaixo antes de ser promovida como referência do Software.
+
+2. VERSÕES EXATAS AUDITADAS
+
+SOFTWARE, repositório público eduardodinizti-design/Software:
+  main: 205dbc7ffbfb5f103dc342f4dfce407a3a27915c
+  fix/audit-a1-a2-safety-gates: f492b37f214c92d2df96f812aff60624e42a6c38
+
+A main e a branch operacional são diferentes. Entre elas há 54 arquivos
+alterados. O roteiro considera f492b37 como referência operacional examinada,
+sem presumir que ela já foi integrada à main ou que seja a cópia em toda máquina.
+
+VISUALPILOT 2.0/GEMINI, repositório público:
+  eduardodinizti-design/VisualPilot2.0, main:
+  8048f6fc369dd33ae22cee1b0ec901bd90fa2b6d
+  É uma atualização posterior à base feaedcd das auditorias anteriores.
+
+CLONE, repositório privado eduardodinizti-design/VisualPilot:
+  delivery/clone-v0.3.1:
+  73df5d258acd7abeabadfb7cf1f2b066860ba28f
+
+CENTRAL DE LABORATÓRIO, no mesmo repositório privado:
+  entrega-visualpilot-piloto:
+  beaa995bc15999c331a5daeda5b46a97d5053947
+
+A main do VisualPilot privado, f9372a3499cacb9aafc2d1ffeef01578a47548f0,
+contém apenas README. O laboratório está na branch de entrega acima.
+No Software, repo_visualpilot/docs contém seus relatórios, mas não os módulos
+visualpilot/lab. Isso importa para o agente conseguir localizar os fontes.
+
+As cópias auditadas foram isoladas. Código operacional, mains e trabalhos locais
+anteriores não foram editados. A entrega desta auditoria é documental, com
+provas reproduzíveis. Não é uma implementação já conectada ao PPPoker.
+
+3. TESTES EXECUTADOS E LIMITES
+
+Ambiente: Linux, Python 3.12.14, NumPy 2.2.6, OpenCV 4.11.0,
+Tesseract nativo 5.5.3, executável Tesseract 5.5.0, Node v24.19.0.
+
+Suítes executadas nesta auditoria:
+
+  Software/main:       762 testes; 3 falhas; 7 skips.
+  Software/f492b37:    881 testes; 2 falhas; 7 skips.
+  VisualPilot2/Python: 731 testes; 4 falhas; 7 erros; 11 skips.
+  Clone/pós-flop:       49 testes direcionados; OK.
+  Central/pós-flop:     18 testes de equidade/range/river; OK.
+  Central/busca:        19 testes multistreet/chance/auditoria numérica; OK.
+  Central/PKO:           6 testes do modelo experimental; OK.
+  VisualPilot2/web:     TypeScript e build; OK.
+
+Os 43 testes direcionados da Central não equivalem à execução de toda a sua
+suíte, de todo o espaço de poker ou a validação de um adversário real.
+
+Falhas concretas das suítes:
+- Software/main: duas regressões de bounty; uma delas aceita 35 onde o fixture
+  espera 135. O preset 2,5x também não foi reconhecido.
+- Software/f492b37: BOARD_INCOMPLETE em um board conhecido que deveria retornar
+  7d Jh 9d As Jd; preset 2,5x ausente, embora 2x/3x/4x tenham sido encontrados.
+- Ao repetir apenas board + painel em processo novo, o board passou e o painel
+  continuou falhando. O erro do board depende da sequência/estado do teste ou
+  backend: investigar isolamento, estado/cache OCR e modelo antes de concluir
+  que o fixture sempre falha. O painel foi reproduzido também isoladamente.
+- Num ambiente sem tesserocr, esses dois testes foram SKIPPED por seus gates.
+  Isso não representa uma segunda validação aprovada do leitor.
+- VisualPilot2/Python: vários erros/falhas são fixtures ou metadados ausentes,
+  como docs/table-reading/development-labels.json e imagens de bounty/assento.
+  Não foram classificados como erros de decisão estratégica.
+
+Os testes web usaram dependências já instaladas, com lockfile sem alteração
+entre feaedcd e 8048f6f. Não foi alegada uma instalação Python limpa do VP2:
+o ambiente de testes contém dependências adicionais que podem mascarar as
+omissões do requirements, tratadas na seção de arranque.
+
+Também foram executados casos analíticos novos e testes locais de contrato.
+Os contraexemplos Python retornam código 1 quando reproduzem uma violação.
+Esses casos são separados das contagens das suítes acima.
+
+Nenhum teste desta auditoria enviou mouse ao jogo, registrou torneios,
+pagou buy-ins ou chamou a API Gemini. Mouse/captura dos testes de contrato
+foram simulados; o servidor foi limitado a loopback e não tinha python3 no PATH.
+
+Existe evidência anterior do Clone 0.3.1 em CI Windows: três botões de uma
+janela própria receberam cliques reais, Ctrl+Alt+R foi verificado e o overlay
+abriu/encerrou sem o erro Tcl observado antes. É evidência histórica de input
+e GUI em Windows de CI, não teste novo do PPPoker Windows 10 do notebook.
+https://github.com/eduardodinizti-design/VisualPilot/actions/runs/43536438152
+
+4. ACHADOS PRIORITÁRIOS
+
+P0 significa bloqueio do objetivo operacional; P1, correção necessária antes
+de promover a política à execução; P2, melhoria/modelagem posterior.
+
+4.1 [P0] O SOFTWARE AINDA NÃO EXECUTA PÓS-FLOP
+
+No operador f492b37, operar_mesa.py:414-429, phase=postflop resulta em log e
+continue. A recomendação não chega ao executor nem ao sequenciador. A main
+também mantém o caminho exploratório. Mudar os cálculos não altera isso.
+
+Orientação: criar um encaminhamento explícito da política pós-flop para um
+executor apropriado à rua, preservando verificação de estado, preço, sizing
+e efeito. A política pura continua sem enviar input por conta própria.
+
+4.2 [P1] LUGARES OCUPADOS SÃO CONTADOS COMO OPONENTES ATIVOS
+
+multiway_equity.py:50-60 considera occupied ou stack conhecido mesmo quando
+in_hand=False. postflop_advisor.py:289-314 aplica então desconto de equidade
+por vários oponentes, inclusive quando o pote foi informado como single_raised.
+
+Contraexemplo controlado:
+  Hero As Ad; board Ac Kh 7d 2c 3s; range adversário KK.
+  Nove lugares ocupados; sete jogadores explicitamente fora da mão.
+  Pote atual 30 BB; call adicional 10 BB.
+  Resultado padrão: opponents=8, equity=0,16, FOLD.
+  Informando villains=1: equity=1,00, RAISE.
+
+Todo combo elegível de KK perde para a trinca de ases nessa construção.
+O desconto sobre ocupação criou a decisão errada.
+
+Orientação: separar table_players, occupied, dealt_in, folded, all_in e
+active_participants. Campos desconhecidos devem permanecer desconhecidos.
+Equidade multiway exige ranges conjuntos e cartas compatíveis entre jogadores;
+um desconto fixo de 12% por adversário não é esse cálculo.
+
+4.3 [P1] A RAMIFICAÇÃO 3-BET POT IGNORA O RANGE FORNECIDO
+
+postflop_advisor.py:285-287 retorna para _advise_three_bet_pot antes de calcular
+a equidade contra o range. O ramo usa principalmente categoria e SPR.
+
+Contraexemplo, reproduzido na main e em f492b37:
+  Hero 7h 7d; board Ac Ad 7c 2d 3s; range do vilão AA.
+  Hero tem full house; o único combo elegível de AA tem quadra.
+  Pote 30 BB; call 10 BB; resultado: RAISE para 30 BB, equity=None.
+
+Orientação: aceitar prior de 3-bet identificado e condicionado à linha; avaliar
+equidade/EV antes da categoria. SPR ausente também é tratado como baixo no
+ramo atual; corrigir essa classificação. Top pair/overpair/SPR não determinam
+compromisso obrigatório contra qualquer range.
+
+4.4 [P1] MARGEM GENÉRICA PRODUZ FOLD ATÉ EM EMPATE GARANTIDO
+
+Falha reproduzida no Software/main, em f492b37 e na minha política do Clone.
+
+  Hero 2c 3d; board As Ks Qs Js Ts.
+  Pote atual 1.010 BB, incluindo a aposta adversária; call 1.000 BB.
+  Não há possibilidade de perder o showdown: todos jogam a royal do board.
+  Equidade exata 0,5. EV incremental do call = 0,5 x 2.010 - 1.000 = +5 BB.
+  EV de fold agora = 0.
+
+Software recomenda FOLD pelo haircut. Clone também recomenda FOLD; registra
+checkdown_call_ev_bb=+5 e conservative_call_ev_proxy_bb=-45,25.
+O comparador exato da Central escolhe CALL, EV=+5 BB.
+
+Orientação: separar incerteza de modelo de certeza matemática. Uma margem
+fixa não deve alterar a conclusão de um empate garantido por um board terminal.
+O ganho é relativo a abandonar agora, não uma afirmação de lucro da mão inteira.
+Isso não autoriza remover proteções quando cartas/board não foram confirmados.
+
+4.5 [P1] MDF E POT ODDS PRECISAM DA MESMA CONVENÇÃO DE POTE
+
+No Software, para pote atual 20 BB que já inclui bet 10 BB, com Hero ainda
+sem contribuição na rua, o cálculo retorna pot_odds=0,3333 e mdf=0,6667.
+As pot odds estão consistentes com esse pote atual; o MDF HU de referência
+é 10/(10+10)=0,5, usando o pote anterior à aposta.
+
+Orientação: manter campos diferentes para pote antes da aposta, pote atual,
+valor adicional a pagar e contribuição já feita. Não reutilizar o mesmo
+denominador por conveniência. MDF é uma referência de defesa do range sob
+hipóteses específicas, não uma ordem automática para pagar uma mão individual.
+
+4.6 [P1] O MOTOR GEMINI FOLDA UM SHOVE BARATO CONTRA SUA PRÓPRIA EQUIDADE
+
+No postflopEngine.ts, medium_showdown enfrentando facing_shove cai no fold
+genérico, fora dos casos de small/large bet.
+
+  River; potBB=100; effectiveStackBB=2; medium_showdown; IP.
+  O próprio motor mostra equity bruta 50%, efetiva 54%, exigida 2%.
+  Resultado: FOLD.
+
+É uma inconsistência interna do simulador. A ação precisa comparar o preço
+adicional observado ao valor da mão contra o range, incluindo calls all-in.
+
+4.7 [P1] EQR DO GEMINI MUDA UMA DECISÃO ALL-IN SOMENTE PELA POSIÇÃO
+
+  Turn; potBB=10; effectiveStackBB=10; nut_draw; 9 outs; facing_shove.
+  IP:  EQR 1,08; equity efetiva 39%; CALL.
+  OOP: EQR 0,78; equity efetiva 28%; FOLD.
+
+Mantidas as mesmas hipóteses de cartas/range, um call que encerra as apostas
+realiza a equidade de showdown em ambas as posições. EQR por pressão futura
+não cabe nesse estado. Realização deve entrar num modelo de EV das decisões
+futuras e não alterar a chance física de vitória no showdown.
+
+4.8 [P1] RNG DO GEMINI ALTERA O TEXTO, NÃO A AÇÃO ESTRUTURADA
+
+  Flop; pote 10; stack 60; strong_value; board wet_connected; Hero IP/PFR.
+  Frequências 80% bet / 20% check; RNG ligado; roll=99.
+  Texto: Mixa p/ Check.
+  Campos retornados: action=BET / VALUE, sizingBB=6,8.
+
+Orientação: resolver a mistura uma vez por identidade de decisão; produzir
+ação e tamanho finais coerentes. O executor recebe esses campos resolvidos.
+Reprocessar frames não deve sortear uma nova ação. O Clone já tem uma
+resolução estável útil, mas ela precisa incluir o contexto completo.
+
+4.9 [P1] SIZING DO GEMINI NÃO TEM CONTRATO DE RAISE-TO/RAISE-BY
+
+Com pote 10 BB, nut_value e facing_large_bet, o motor modela uma aposta de
+7,5 BB e retorna RAISE / SHOVE de 10 BB. Interpretado como raise-to, isso
+fica abaixo do mínimo de 15 BB para esse caso sem contribuição anterior.
+Se o valor fosse incremento, o significado e o risco seriam outros.
+
+Esta é uma falha de contrato para a futura integração, não evidência de
+um raise ilegal executado hoje: o resultado TS não está ligado ao mouse.
+
+Há outras simplificações: preço inferido de rótulos small/large/overbet,
+33%/75%/135%, projeção que pressupõe calls e plano de apostas mesmo quando
+a ação atual é Fold. Tratar streetPlan como projeção hipotética, com hipóteses
+visíveis; não usá-lo como sequência automática de cliques.
+
+4.10 [P0] INICIAR PELO PAINEL VP2 FALHA COM SUA CONFIGURAÇÃO PADRÃO
+
+App.tsx:32 fixa overlayActive=true; o start envia overlay=true.
+server.ts:143 rejeita overlay. Reproduzido em HTTP local: status 400.
+
+O launcher gerado em App.tsx:172-184 também contém:
+  --human-mouse: argumento inexistente, código 2.
+  --overlay: argumento inexistente, código 2.
+  --bounty-bb sem valor: código 2.
+  Não inclui --arm; corrigir somente os erros de parser ainda deixaria dry-run.
+
+O servidor usa python3. Ao reproduzir a ausência desse executável, a API
+respondeu sucesso/running=true e depois o Node encerrou com código 1 por
+spawn python3 ENOENT sem handler de error.
+
+Orientação: unificar gerador/API/parser, validar janelas reais, configurar
+o Python da .venv e confirmar prontidão. Exibir separadamente processo vivo,
+leitor pronto, PAUSADO/RUNNING, decisão e resultado. O polling existente é útil,
+mas child process existente não significa execução liberada ou mão jogada.
+
+4.11 [P1] REGRESSÃO NA DECLARAÇÃO DE DEPENDÊNCIAS E CAMINHOS
+
+8048f6f removeu pytesseract e pywin32 de requirements.txt, embora o código
+real ainda os importe. A instalação documentada e o BAT usam pip install -r.
+setup.py declara outra lista. Consolidar as dependências e markers por OS.
+Os testes em ambiente já equipado não comprovam a instalação pelo requirements.
+
+O operador VP2 mantém DEFAULT_RANGES em C:\Meus Projetos\Aplicativos e a API
+não passa --ranges/--deep para os arquivos NVT incluídos em public/assets.
+O funcionamento fica dependente de arquivos externos nesse caminho.
+
+Orientação: configuração persistente única, manifesto com hashes e passagem
+explícita dos packs ao Python. A interface precisa mostrar o pack efetivamente
+carregado pelo processo, e não somente o arquivo visível no navegador.
+
+4.12 [P1] MOUSE NATURAL DO GEMINI NÃO ESTÁ INTEGRADO AO OPERADOR
+
+HumanizedMouseController existe em modules/mouse_controller.py, mas operar_mesa
+usa o CursorController/WindowsCursorInput copiado do projeto anterior.
+Os sliders de curvatura/jitter do React não chegam ao processo Python.
+
+EngineBridge importa OCRProcessor e MouseController; os nomes definidos são
+PPPokerOCRProcessor e HumanizedMouseController. A importação falhou no teste.
+Há ainda chamada a read_table_state inexistente nesse helper. Sua decisão se
+resume a comparar stack/pot e não consulta o motor TS nem executa o mouse.
+
+O helper OCR marca cards_read=True até para um frame vazio preto, sem retornar
+cartas ou pote lidos. Reproduzido com captura simulada. Esses helpers não devem
+substituir o leitor canônico. São módulos desconectados; não se afirmou que
+esse ImportError bloqueia o operador atual, que não os importa.
+
+4.13 [P1] PAUSA NÃO COBRE TODAS AS ROTINAS DE INPUT NO SOFTWARE
+
+No fluxo de fim de torneio f492b37, o operador passa args.arm ao fechamento,
+sem conferir BotControl. Em teste simulado, controle=PAUSED e a função de
+fechamento recebeu autorização True. Isso contorna a pausa nesse caminho.
+
+O slider all-in e rotinas diretas também precisam de revisão: verificar pausa
+somente antes de uma função longa não garante cancelamento antes do mouse-down.
+No Clone houve melhora na entrada do fechamento, mas o helper ainda recebe
+um booleano; unificar sua execução cancelável continua sendo recomendável.
+
+Orientação: toda ação de GUI passa pelo mesmo dono do cursor, validação fresca,
+checagem de controle imediatamente antes de pressionar e soltura garantida.
+
+4.14 [P1] O FAST-PATH DO SOFTWARE DESCARTA O HISTÓRICO ANTES DA VEZ
+
+operar_mesa.py:372-378 pula advise_table fora da linha de ação. O comentário
+reconhece que isso impede rastrear o agressor entre frames.
+
+Para pós-flop, isso perde justamente a sequência necessária ao range de chegada,
+iniciativa, número de raises, callers e participantes. O Clone lê antes da vez;
+reaproveitar essa estrutura e medir seu custo. Amostragem de imagens ainda pode
+perder ações rápidas; não converter snapshots incompletos em histórico completo.
+
+4.15 [P2] OS NÚMEROS DO LAB GEMINI NÃO SÃO SOLUÇÕES GTO
+
+BASE_EQUITY_BY_HAND fixa 88/71/50/48/36/21/10 por categoria. Os fatores EQR,
+desconto multiway, limiares de agressividade e underbluff do pool são hipóteses.
+Range/nut advantage vem de regras de textura/iniciativa, sem comparar ranges.
+O input nem recebe as cartas físicas e os combos para calcular a equidade.
+
+A conta de outs contém uma aproximação útil, mas probabilidade de acertar um
+draw não é automaticamente equidade de vitória contra um range. O desconto
+de outs sujos de 0,85 e a mistura com equidades-base também não são exatos.
+
+SPR < 1,5 transforma ações agressivas em all-in automaticamente. Isso precisa
+de comparação de EV/legality contra o range que continua; SPR baixo não cria
+valor onde ele não existe.
+
+No PKO, bountyCoverBB x 0,45 não é uma conversão universal. A Central tem um
+modelo explícito de pagamento imediato/cobertura, ainda experimental, que
+declara conversão e exclui ICM/futuro progressivo. Preferir esse contrato.
+
+O prompt da análise Gemini de históricos repete as próprias regras como
+referência. Uma nota gerada assim não é validação independente. Os números
+demonstrativos de bankroll/EV da interface também não são evidência de desempenho.
+
+5. O QUE APROVEITAR DE CADA FRENTE
+
+SOFTWARE
+  Aproveitar: leitores canônicos, captura por HWND/processo, conversão de
+  coordenadas, BotControl, CursorController, testes e métricas.
+  Corrigir: participantes, matemática acima, fast-path, alçada de toda rotina
+  de input e integração efetiva de pós-flop.
+
+CENTRAL DE LABORATÓRIO
+  postflop.py: combos físicos/ponderados, equidade exata no river, Monte Carlo
+  reproduzível e comparação de EV por tamanho com resposta por combo.
+  range_state.py: atualização bayesiana e rejeição de eventos repetidos/ilegais.
+  river_tree.py: melhor resposta numa árvore finita com um raise por linha.
+  multistreet.py: busca limitada de flop/turn/river, IP/OOP, cartas futuras,
+  budgets, sementes e all-in; o adversário não recebe as cartas reais do Hero.
+  pko.py: pagamento imediato e cobertura com origem explícita da conversão.
+
+  Limites: melhor resposta contra modelo informado; não equilíbrio GTO.
+  A busca não cobre multiway/rake/ICM completos. PKO não contabiliza como
+  dinheiro presente todo o valor futuro do bounty progressivo.
+  Não interpretar os relatórios copiados no Software como módulos já integrados.
+
+CLONE
+  Aproveitar: sessão por mesa/mão, histórico confirmado de ruas, priors NVT
+  identificados, condicionamento por ações, cache de equidade, fingerprint
+  de estado, executor pós-flop, leitura de presets e diário limitado.
+  Autoridade POSTFLOP_POLICY mantém regras distintas de solver_validated.
+  Stack efetivo é contínuo; risco não é truncado em 100 BB.
+  O excesso não contestável de shove maior é tratado antes das pot odds.
+
+  Corrigir o empate garantido e ampliar comparação de EV. Hoje a política é
+  HU de um raise, regular distante do ITM/chip-EV. Não resolve 3-bet/multiway,
+  ICM/PKO, raises/shoves automáticos nem um jogo completo de três barrels.
+  A leitura nativa de botões, ID, board e painel pós-flop segue dependente
+  da calibração; o log recente do notebook mostrou falhas antes do mouse.
+
+GEMINI / VISUALPILOT 2.0
+  Aproveitar: tela de estudo, SPR, comparação visual de perfis, textura,
+  iniciativa, scare cards, exportação de cenário JSON e projeções por ruas.
+  Transformar os campos em visualização de respostas do Python canônico.
+  Taxonomias ajudam a explicar; features de textura devem permitir combinações,
+  como board simultaneamente pareado e com pressão de flush.
+  Corrigir os contratos e hipóteses apontados antes de usar essas saídas ao vivo.
+
+6. ARQUITETURA PROPOSTA PARA A JUNÇÃO
+
+Captura -> leitura -> estado da mão -> ranges de chegada/atualizados ->
+features -> candidatos legais de ação/size -> avaliação -> decisão resolvida ->
+fila do cursor -> revalidação -> clique -> confirmação -> atualização do histórico.
+
+O painel consome a mesma resposta do motor. Um campo deve distinguir origem:
+observação real, cenário manual, histórico importado ou experimento sintético.
+
+Contrato mínimo do estado:
+  table_id e identidade de processo/janela; hand_id/hand_number; rua e board;
+  cartas; posição e ordem de ação; ocupados e participantes ativos separados;
+  pote atual; aposta adversária; contribuição do Hero na rua; to_call;
+  stacks restantes; último incremento completo de raise; ações anteriores;
+  modalidade/fase; timestamp da captura; pendências e evidências de leitura.
+
+Contrato mínimo da decisão:
+  policy_id/version/hash; origem/hash dos ranges; contexto/referências;
+  ação final; size_kind; bet_bb/raise_to_bb/call_bb; risk_additional_bb;
+  preset_id; limites legais; equidade e método/erro amostral; hipóteses do modelo;
+  EVs comparados com a mesma convenção; mistura resolvida por identidade;
+  estado/fingerprint de origem; motivo; prazo; resultado de execução separado.
+
+Não converter None/ilegível em zero, check ou rua pré-flop por conveniência.
+Separar LEITURA_PENDENTE, MODELO_REFERÊNCIA, DECISÃO_PRONTA, ENVIADA e CONFIRMADA.
+
+7. MATEMÁTICA E POLÍTICA DE SIZES A IMPLEMENTAR
+
+P = pote atual incluindo aposta adversária contestável.
+C = valor adicional do call. B = nova aposta do Hero em pote não aberto.
+P0 = pote anterior à aposta adversária.
+
+  pot_odds = C / (P + C)
+  call_EV terminal = equity x (P + C) - C
+  fold_EV incremental = 0
+  check_EV simplificado = equity x P, supondo showdown sem apostas futuras
+  bet_EV simplificado = FE x P + (1-FE) x [eq_vs_call x (P + 2B) - B]
+
+A última fórmula exige um modelo de folds/calls e exclui raises/futuras
+apostas. No flop/turn é um proxy; mesmo no river deve declarar respostas
+adversárias omitidas. Não deduzir FE do MDF ou de um percentual de HUD isolado.
+
+MDF HU básico = P0 / (P0 + aposta adversária). Exige sua própria convenção.
+
+Sizing geométrico HU, stacks efetivos S, n ruas e ambas as partes pagando
+valores iguais em cada rua:
+  fração = [(1 + 2S/P)^(1/n) - 1] / 2
+
+É uma projeção sob calls futuros, não uma obrigação de apostar. Caps e
+arredondamentos devem aparecer. Multiway ou raises mudam o modelo.
+
+Presets iniciais pós-flop:
+  1/3, 1/2, 2/3 e POT, desde que reconhecidos no cliente e legais no estado.
+  Comparar os sizes disponíveis, em vez de ordenar um size inexistente e
+  aproximá-lo sem atualizar risco/avaliação. Apostas e raises são tipos distintos.
+  1/3 de pote não é 3x. All-in precisa de intenção explícita e avaliação própria.
+
+Raise-to mínimo = maior contribuição na rua + último incremento completo.
+Risco adicional = raise_to - contribuição já feita pelo Hero.
+Short all-in e apostas não reabertas exigem regras específicas.
+
+Antes de confirmar: reler preset e valor real em BB, limites, rua, mão, board,
+preço, alvo e janela. O valor efetivo executado deve constar no diário.
+
+Não limitar estratégia por Hero ter 300/1.000/5.000 BB. Usar stack efetivo
+contra os jogadores realmente envolvidos. Quando uma árvore exportada não
+existir, indicar referência/regra versionada e seu escopo; não forjar validação.
+O Software f492b37 ainda contém GUARDA DEEP e recusa de raise não validated;
+o agente deve reconciliá-las com o requisito anterior do usuário ao integrar.
+
+8. AVALIAÇÃO DO MOUSE NATURAL E DA ESCALA PARA VÁRIAS MESAS
+
+A curva Bézier do Gemini termina no destino e o jitter diminui até zero.
+Isso é aproveitável como uma opção de geometria. O jitter do código é uniforme;
+o texto da interface o chama de gaussiano. Não há calibração de movimentos do
+usuário, revalidação de mão/alvo, deadline, fila ou confirmação do efeito nesse
+helper. A mensagem de sucesso significa apenas que pyautogui.click retornou.
+
+Soma nominal das esperas, reproduzida com input simulado:
+  20 passos: 21 moveTo + clique + esperas = 0,313 s.
+  35 passos: 36 moveTo + clique + esperas = 0,810 s.
+Inclui PAUSE=0,01 do PyAutoGUI. Não inclui custo de API, OCR, renderização ou
+atraso do Windows. Não são limites medidos de latência do notebook.
+
+Seis raises de três cliques somariam nominalmente 5,6-14,6 s só dessas esperas,
+antes dos outros custos. A quantidade fixa de passos não reage à urgência,
+distância ou tamanho do alvo. Isso não comprova capacidade para seis mesas.
+
+Recomendação para o agente:
+  a. Manter um executor como único dono do cursor, com fila e prioridade por
+     prazo. Coordenar também processos diferentes na mesma sessão Windows.
+  b. Usar o CursorController existente como base para validação/pausa/efeito.
+  c. Oferecer min-jerk ou Bézier como trajetória pura dentro desse coordenador.
+  d. Duração relacionada a distância/largura útil do alvo e prazo. O gerador
+     atual suporta Fitts, mas o controlador chama plan sem passar a largura
+     do botão: usa o default 48. Corrigir essa ligação e medir coeficientes.
+  e. Ligar a detecção de intervenção do mouse quando desejada. O parâmetro
+     cancel_check é opcional e não é passado nos executores examinados;
+     o modo de demonstração não prova takeover na produção.
+  f. Pausa/desabilitação antes de cada movimento e imediatamente antes do
+     mouse-down; cancelamento de drag com soltura garantida.
+  g. Revalidar depois do movimento, antes de pressionar. Intenção vencida não
+     deve ser acelerada para chegar à força. Confirmar a ação no cliente.
+
+Antecipação deve reduzir o trabalho na hora da ação:
+  Ler mão/board e manter ranges fora da vez; pré-calcular features/candidatos;
+  cache por mão/board/range/modelo e preços relevantes; atualizar o que mudou.
+  Na vez, reler preço, alçada e alvo. Não repetir a árvore inteira por frame.
+  Busca multistreet pesada fica offline/cacheada; orçamento esgotado deve ser
+  identificado. Uma política rápida declarada pode servir como fallback para
+  contexto suportado, sem transformar um resultado parcial em EV certificado.
+
+Auto-fold antecipado exige uma regra válida para todas as chegadas relevantes
+daquela posição. BB com opção de check e SB/blind battles não podem ser
+tratados como a mesma situação de uma mão que folda enfrentando aposta.
+
+9. ROTEIRO DE IMPLEMENTAÇÃO EM LOTES
+
+LOTE A — BASE E REGRESSÕES
+  Confirmar branch, HEAD, AGENTS e status; preservar alterações existentes.
+  Corrigir participantes, 3-bet ignorando range, empate garantido, MDF,
+  pausa no fechamento e os contratos de start/CLI/dependências.
+  Integrar os contraexemplos desta auditoria como testes de comportamento.
+  Investigar os testes OCR que falharam; preservar negativos/limiares.
+
+LOTE B — NÚCLEO ÚNICO
+  Criar provider de ranges e um estado de mão explícito.
+  Reaproveitar Bayes/EV da Central e contexto/execução do Clone com adaptações
+  de imports. Unificar avaliador de mãos e representar unidades de forma única.
+  Exportar ao painel a mesma decisão, sem outro cérebro independente em TS.
+  Rotular heurística, melhor resposta ao modelo e nó de solver separadamente.
+
+LOTE C — PÓS-FLOP EXECUTÁVEL E PRESETS
+  Começar com HU confirmado e regras completas para os seus candidatos legais,
+  incluindo calls que encerram apostas e baixo SPR. Comparar check/fold/call,
+  presets de bet e all-in quando apropriado; adicionar raises com regras legais.
+  Substituir o continue geral do operador pelo encaminhamento explícito.
+  Portar fingerprint, revalidação, confirmação e diário limitado.
+  Recolher painel nativo 1/3, 1/2, 2/3/POT e conferir valor após seleção.
+
+LOTE D — LINHAS E MODELO ADVERSÁRIO
+  Condicionar ranges por ação/size e cartas novas, sem duplicar o mesmo evento.
+  Usar multistreet para estudar barrels, checks e respostas a raises, com
+  budget/seeds e modelos comparados. Textura é feature, não ordem de c-bet range.
+  Extender 3-bet pots com ranges próprios. Multiway exige sorteios conjuntos
+  sem cartas repetidas e distribuição de side pots, não só multiplicador EQR.
+  PKO/ICM exigem dados e modelos próprios; declarar pagamentos, cobertura,
+  conversão de bounty, premiação e o que ainda não foi modelado.
+
+LOTE E — DADOS E VALIDAÇÃO INDEPENDENTE
+  Usar Hand2Note para replays e distribuição de spots, identificando Heroes.
+  Separar histórico observado de prescrição estratégica. Ganhar a mão não
+  torna uma linha correta. Amostrar por posição/SPR/board/linha/street.
+  Estimar HUD com oportunidades por estatística, não apenas 30 mãos globais.
+  Calibrar modelos com treino/validação separados e exemplos revisados ou
+  soluções externas rastreáveis. O texto de uma IA não vira rótulo-verdade.
+
+LOTE F — LATÊNCIA E HOMOLOGAÇÃO
+  Medir captura/leitura/estratégia/fila/movimento/confirmação separadamente,
+  com p50/p95, idade do snapshot e prazo restante. Fila de percepção limitada
+  por mesa; substituir frames velhos. Mouse continua serializado.
+  Acumular as verificações nativas numa sessão Windows, começando por uma mesa
+  e depois duas. Seis, doze e dezesseis precisam de medição real própria.
+
+  Notebook-alvo informado: Windows 10 Pro, i7 sem modelo detalhado, 8 GB RAM,
+  Intel HD 620 e desktop 1366x768. A resolução do desktop não é o tamanho da
+  área cliente da mesa. Medir HWND/área cliente/DPI; não portar coordenadas
+  absolutas da outra máquina. Limitar workers, caches e diagnósticos por memória;
+  a GPU integrada não demonstra capacidade para seis mesas. O teste deve medir
+  também CPU, RAM e atrasos enquanto as mesas pedem ações simultaneamente.
+
+Critérios de aceite obrigatórios:
+  - Nove ocupados com sete folds confirmados deixam UM adversário.
+  - Full house não aumenta contra range conhecido composto só de quadra.
+  - Royal no board e call EV positivo não vira fold por margem genérica.
+  - Mesma equidade all-in não muda apenas por EQR IP/OOP.
+  - O sorteio da mistura muda ação estruturada e tamanho de forma coerente.
+  - Preços usam pote atual e dinheiro adicional; MDF usa sua base correta.
+  - Nenhum raise abaixo do mínimo ou confusão de raise-to/incremento.
+  - Fraction preset não vira multiplicador; all-in não é deduzido de preset ausente.
+  - Nova mão/board/preço/foco invalida uma intenção antiga.
+  - PAUSED impede novo mouse-down também em fechar mesa e arrastar slider.
+  - Sucesso de processo, sucesso de input e confirmação no jogo ficam separados.
+  - Cenário manual/sintético não é promovido a observação real.
+
+10. MAPA DOS FONTES PARA O AGENTE
+
+No Clone 73df5d2:
+  postflop_policy.py: política e equidade; corrigir o caso de empate garantido.
+  clone_app/postflop.py: estado por mão/rua e chegada via NVT.
+  clone_app/postflop_execution.py: executor com revalidação e prazo global.
+  postflop_panel.py: frações e conferência do valor em BB.
+  clone_app/postflop_audit.py: registro limitado.
+  clone_tests/test_postflop_policy.py, test_postflop_execution.py e
+  test_postflop_reading_integration.py: regressões portáveis com adaptação.
+
+No laboratório beaa995:
+  visualpilot/lab/postflop.py, range_state.py, river_tree.py,
+  multistreet.py, hand_rank.py, chance_sampling.py e pko.py.
+  tests/test_postflop_lab.py, test_postflop_tree.py, test_multistreet.py,
+  test_chance_sampling.py, test_numerical_audit.py e test_pko_lab.py.
+
+No Gemini 8048f6f:
+  src/components/PostflopBrainLab.tsx e src/utils/postflopEngine.ts:
+  reaproveitar organização visual/features; substituir cálculo duplicado
+  por resposta do Python e corrigir as inconsistências documentadas.
+  server.ts contém a orientação textual da análise Gemini de históricos;
+  usá-la como hipóteses de revisão, com validação externa das conclusões.
+  modules/mouse_controller.py: apenas uma fonte opcional de geometria.
+
+Os arquivos do Clone usam imports relativos de clone_app e seu provider de
+configuração/ranges. Copiar só um arquivo não fecha as dependências. Adaptar
+interfaces ao Software, listar os imports transitivos e testar o arranque.
+Não preencher módulos ausentes com retornos simulados de sucesso.
+
+11. INSTRUÇÃO PRONTA PARA ENVIAR AO OUTRO AGENTE
+
+Trabalhe no repositório eduardodinizti-design/Software. Leia este relatório,
+AGENTS.md, HEAD e git status antes de editar. Confirme a branch operacional;
+as referências auditadas são main 205dbc7 e fix/audit-a1-a2-safety-gates f492b37.
+Preserve trabalho local e alterações posteriores às bases desta auditoria.
+
+Implemente um motor pós-flop Python único. Reúna a comparação de EV/ranges
+condicionais do laboratório beaa995, contexto e executor do Clone 73df5d2 e
+a organização de SPR/sizing do VisualPilot2.0 8048f6f. Corrija primeiro os
+contraexemplos listados. Não promova equidades-base por categoria ou texto
+de RNG a decisões executáveis sem campos de ação/tamanho coerentes.
+
+Mantenha stack efetivo contínuo e referências de origem declaradas. O usuário
+não aceita recusas estratégicas arbitrárias por quantidade de blinds. Faça a
+política considerar candidatos legais, valores reais e incerteza explícita.
+Leitura pendente e controle manual são estados operacionais próprios.
+
+Ative o caminho pós-flop no operador por uma autoridade versionada, com
+participantes/linha/rua confirmados, presets reconhecidos, preço atual,
+revalidação e confirmação do efeito. Una todas as rotinas de input ao controle
+de pausa e ao dono único do cursor. Antecipe leituras e cálculos fora da vez.
+
+Entregue um lote integrado com resultados dos testes, casos não cobertos,
+origens/hashes, exemplos antes/depois e um roteiro nativo consolidado. Separe
+testes simulados, imagens reais, Windows de teste e PPPoker efetivamente usado.
+Build e TypeScript sem erro não bastam para declarar o bot operacional.
+
+12. REFERÊNCIAS IMUTÁVEIS E REPRODUÇÃO
+
+Software — fluxo pós-flop e leitura fora da vez:
+https://github.com/eduardodinizti-design/Software/blob/f492b37f214c92d2df96f812aff60624e42a6c38/operar_mesa.py#L372
+https://github.com/eduardodinizti-design/Software/blob/f492b37f214c92d2df96f812aff60624e42a6c38/operar_mesa.py#L414
+https://github.com/eduardodinizti-design/Software/blob/f492b37f214c92d2df96f812aff60624e42a6c38/postflop_advisor.py#L147
+https://github.com/eduardodinizti-design/Software/blob/f492b37f214c92d2df96f812aff60624e42a6c38/multiway_equity.py#L50
+
+Gemini — motor TS, mouse, bridge e servidor:
+https://github.com/eduardodinizti-design/VisualPilot2.0/blob/8048f6fc369dd33ae22cee1b0ec901bd90fa2b6d/src/utils/postflopEngine.ts#L219
+https://github.com/eduardodinizti-design/VisualPilot2.0/blob/8048f6fc369dd33ae22cee1b0ec901bd90fa2b6d/python_bot/modules/mouse_controller.py#L24
+https://github.com/eduardodinizti-design/VisualPilot2.0/blob/8048f6fc369dd33ae22cee1b0ec901bd90fa2b6d/python_bot/modules/engine_bridge.py#L17
+https://github.com/eduardodinizti-design/VisualPilot2.0/blob/8048f6fc369dd33ae22cee1b0ec901bd90fa2b6d/server.ts#L140
+
+Clone e Central — exigem acesso ao repositório privado:
+https://github.com/eduardodinizti-design/VisualPilot/blob/73df5d258acd7abeabadfb7cf1f2b066860ba28f/postflop_policy.py#L245
+https://github.com/eduardodinizti-design/VisualPilot/tree/73df5d258acd7abeabadfb7cf1f2b066860ba28f/clone_app
+https://github.com/eduardodinizti-design/VisualPilot/tree/beaa995bc15999c331a5daeda5b46a97d5053947/visualpilot/lab
+
+Os arquivos de evidência e probes acompanham esta auditoria em:
+  docs/audit-posflop-20261114/evidence/
+  docs/audit-posflop-20261114/probes/
+
+Com Python/dependências preparados, na raiz do checkout correto:
+  python -m unittest discover -s . -p "test_*.py"
+No VP2, a suíte Python acima foi executada dentro de python_bot.
+No Clone:
+  python -m unittest clone_tests.test_postflop_policy clone_tests.test_postflop_execution clone_tests.test_postflop_reading_integration -v
+Na Central beaa995:
+  python -m unittest tests.test_postflop_lab tests.test_postflop_tree tests.test_multistreet tests.test_chance_sampling tests.test_numerical_audit tests.test_pko_lab -v
+No VP2 web:
+  npm run lint
+  npm run build
+
+Contraexemplos, a partir da pasta dos probes, passando o checkout correspondente:
+  python policy_counterexamples.py --kind software --root CAMINHO_SOFTWARE
+  python policy_counterexamples.py --kind clone --root CAMINHO_CLONE
+  python policy_counterexamples.py --kind central --root CAMINHO_CENTRAL
+  tsx gemini_postflop_cases.mts CAMINHO_VP2/src/utils/postflopEngine.ts
+  python gemini_mouse_contracts.py --root CAMINHO_VP2
+  python gemini_server_contracts.py --root CAMINHO_VP2
+  python paused_close_case.py --root CAMINHO_SOFTWARE_F492B37
+
+O teste de servidor foi feito em Linux com Node, preload de porta/host e
+PATH isolado; não é um launcher para uso normal. Os probes de mouse usam
+adaptadores falsos e não medem o aplicativo. Consulte seus campos scope.
+
+Esta entrega fornece orientação e provas de auditoria. A integração e a
+validação nativa propostas permanecem trabalho a implementar e medir.

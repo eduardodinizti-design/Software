@@ -1,0 +1,46 @@
+{
+  "scope": "Synthetic analytical states; no solver certification or PPPoker test.",
+  "kind": "clone",
+  "commit": "73df5d258acd7abeabadfb7cf1f2b066860ba28f",
+  "cases": [
+    {
+      "id": "guaranteed_chop_positive_call_ev",
+      "input": {
+        "hero": [
+          "2c",
+          "3d"
+        ],
+        "board": [
+          "As",
+          "Ks",
+          "Qs",
+          "Js",
+          "Ts"
+        ],
+        "mode": "chip_ev",
+        "stage": "mid",
+        "hero_position": "BTN",
+        "villain_position": "BB",
+        "pot_type": "single_raised",
+        "opponents": 1,
+        "aggressor": "villain",
+        "pot": 1010.0,
+        "to_call": 1000.0,
+        "hero_stack": 5000.0,
+        "villain_stack": 4000.0
+      },
+      "exact_equity": 0.5,
+      "exact_call_ev_bb": 5.0,
+      "expected": "Call; exact guaranteed split on a royal board.",
+      "actual": {
+        "recommended": "fold",
+        "equity": 0.5,
+        "pot_odds": 0.4975124378109453,
+        "checkdown_call_ev_bb": 5.0,
+        "conservative_call_ev_proxy_bb": -45.25
+      },
+      "satisfies": false
+    }
+  ],
+  "violations": 1
+}

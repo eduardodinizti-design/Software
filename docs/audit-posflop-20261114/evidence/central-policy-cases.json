@@ -1,0 +1,86 @@
+{
+  "scope": "Synthetic analytical states; no solver certification or PPPoker test.",
+  "kind": "central",
+  "commit": "beaa995bc15999c331a5daeda5b46a97d5053947",
+  "cases": [
+    {
+      "id": "guaranteed_chop_positive_call_ev",
+      "result": {
+        "status": "experimental",
+        "laboratory_only": true,
+        "equity": {
+          "equity": 0.5,
+          "standard_error": 0.0,
+          "method": "exact_river",
+          "trials": 3
+        },
+        "comparisons": [
+          {
+            "action": "call",
+            "amount": 1000,
+            "ev": 5.0
+          },
+          {
+            "action": "fold",
+            "amount": 0.0,
+            "ev": 0.0
+          }
+        ],
+        "best_under_model": {
+          "action": "call",
+          "amount": 1000,
+          "ev": 5.0
+        },
+        "inputs": {
+          "hero": [
+            "2c",
+            "3d"
+          ],
+          "board": [
+            "As",
+            "Ks",
+            "Qs",
+            "Js",
+            "Ts"
+          ],
+          "range": [
+            [
+              "Ac",
+              "Ad",
+              1.0
+            ],
+            [
+              "Ac",
+              "Ah",
+              1.0
+            ],
+            [
+              "Ad",
+              "Ah",
+              1.0
+            ]
+          ],
+          "pot": 1010,
+          "stack": 5000,
+          "bets": [],
+          "to_call": 1000,
+          "seed": 42,
+          "samples": 2000,
+          "response": {}
+        },
+        "input_sha256": "6e4d2c39050c96e0f045502174e4f10e0d7bb1e1972d8698b27454c931e45c00",
+        "assumptions": [
+          "heads_up_chip_ev",
+          "opponent_fold_or_call_only",
+          "no_future_betting",
+          "no_rake_or_icm",
+          "response_model_is_hypothesis_not_solver"
+        ],
+        "uncertainty": "Monte Carlo error excludes response-model error; ranking is not GTO proof."
+      },
+      "expected": "Call EV=+5BB, fold EV=0 under exact river enumeration.",
+      "satisfies": true
+    }
+  ],
+  "violations": 0
+}

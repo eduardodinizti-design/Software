@@ -1,0 +1,21 @@
+{
+  "source_commit": "8048f6fc369dd33ae22cee1b0ec901bd90fa2b6d",
+  "cwd": "VisualPilot2.0 root",
+  "commands": [
+    {
+      "command": "npm run lint",
+      "exit_code": 0,
+      "purpose": "tsc --noEmit"
+    },
+    {
+      "command": "npm run build",
+      "exit_code": 0,
+      "purpose": "vite build"
+    }
+  ],
+  "dependency_scope": "Existing node_modules reused; package.json and lockfile unchanged from feaedcd. Not a clean installation test.",
+  "limitations": [
+    "No browser or PPPoker Windows runtime validation",
+    "Passing TypeScript/build does not validate Python startup or strategic decisions"
+  ]
+}

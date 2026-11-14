@@ -1,0 +1,40 @@
+{
+  "created_at": "2026-11-14T01:50:05.162930+00:00",
+  "sources": [
+    {
+      "name": "Software-main",
+      "branch": "main",
+      "commit": "205dbc7ffbfb5f103dc342f4dfce407a3a27915c"
+    },
+    {
+      "name": "Software-operacional",
+      "branch": "fix/audit-a1-a2-safety-gates",
+      "commit": "f492b37f214c92d2df96f812aff60624e42a6c38"
+    },
+    {
+      "name": "VisualPilot2.0",
+      "branch": "main",
+      "commit": "8048f6fc369dd33ae22cee1b0ec901bd90fa2b6d"
+    },
+    {
+      "name": "Central-laboratorio",
+      "branch": "entrega-visualpilot-piloto",
+      "commit": "beaa995bc15999c331a5daeda5b46a97d5053947"
+    },
+    {
+      "name": "Clone",
+      "branch": "delivery/clone-v0.3.1",
+      "commit": "73df5d258acd7abeabadfb7cf1f2b066860ba28f"
+    }
+  ],
+  "environment": {
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "python": "3.12.14",
+    "numpy": "2.2.6",
+    "opencv": "4.11.0",
+    "tesseract_native": "tesseract 5.5.3",
+    "tesseract_external": "5.5.0",
+    "node": "v24.19.0"
+  },
+  "scope": "Offline audits, synthetic analytical states, explicit mocks and isolated loopback HTTP; no PPPoker Windows session or AI API calls."
+}

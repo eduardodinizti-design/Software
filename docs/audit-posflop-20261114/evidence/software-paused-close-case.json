@@ -1,0 +1,8 @@
+{
+  "scope": "All readers, captures and closing input explicitly mocked; no OS mouse.",
+  "control_state": "PAUSED",
+  "close_called": true,
+  "armed_argument_received_by_close": true,
+  "expected": "Closing path must not receive input authorization while control is PAUSED.",
+  "satisfies": false
+}
