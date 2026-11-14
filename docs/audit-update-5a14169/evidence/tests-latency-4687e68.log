@@ -1,0 +1,14 @@
+test_bounded_window (test_latency_metrics.LatencyMetricsTests.test_bounded_window) ... ok
+test_counters_and_empty_report (test_latency_metrics.LatencyMetricsTests.test_counters_and_empty_report) ... ok
+test_negative_and_nan_ignored (test_latency_metrics.LatencyMetricsTests.test_negative_and_nan_ignored) ... ok
+test_note_snapshot_age (test_latency_metrics.LatencyMetricsTests.test_note_snapshot_age) ... ok
+test_record_and_report (test_latency_metrics.LatencyMetricsTests.test_record_and_report) ... ok
+test_span_times_with_injected_clock (test_latency_metrics.LatencyMetricsTests.test_span_times_with_injected_clock) ... ok
+test_empty_is_none (test_latency_metrics.PercentileTests.test_empty_is_none) ... ok
+test_ignores_nonfinite (test_latency_metrics.PercentileTests.test_ignores_nonfinite) ... ok
+test_nearest_rank (test_latency_metrics.PercentileTests.test_nearest_rank) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.001s
+
+OK
