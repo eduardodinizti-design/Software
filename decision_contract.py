@@ -50,6 +50,25 @@ def _cards_ok(cards):
             and cards[0] != cards[1])
 
 
+# A13: SAFETY_PREMIUM é a ÚNICA autoridade que comita ficha sem nó validado (Opção A
+# do usuário: nunca foldar premium). Restringido p/ não virar porta larga: só paga
+# (CALL, nunca agride) e só mãos PREMIUM de verdade (I1: TT+/AK/AQ) — defesa em
+# profundidade contra flag setado por engano em mão fraca.
+_RANKS = 'AKQJT98765432'
+_PREMIUM_PAIRS = frozenset({'TT', 'JJ', 'QQ', 'KK', 'AA'})
+_PREMIUM_OFFPAIR = frozenset({'AK', 'AQ'})
+
+
+def _is_premium_cards(cards):
+    if not _cards_ok(cards):
+        return False
+    r0, r1 = cards[0][0], cards[1][0]
+    if r0 == r1:
+        return (r0 + r1) in _PREMIUM_PAIRS
+    hi, lo = sorted((r0, r1), key=_RANKS.index)
+    return (hi + lo) in _PREMIUM_OFFPAIR
+
+
 def evaluate(advice, *, action, hero_cards=None, action_available=True,
              call_margin=0.04):
     """Avalia o contrato de validade de uma ação. Devolve os campos do contrato +
@@ -117,11 +136,16 @@ def evaluate(advice, *, action, hero_cards=None, action_available=True,
         authority = 'VALIDATED'
     elif calloff_authority:
         authority = 'CALL_OFF'
-    elif is_premium:
+    elif is_premium and action == 'CALL' and _is_premium_cards(hero_cards):
+        # A13: premium sem nó PAGA (honra I1), mas só com CALL e mão premium real.
         authority = 'SAFETY_PREMIUM'
     else:
         authority = 'NONE'
-        if not is_calloff:
+        if is_premium and action != 'CALL':
+            blockers.append('PREMIUM_SO_PAGA_NAO_AGRIDE')   # premium nunca inicia agressão sem nó
+        elif is_premium and observation_confirmed and not _is_premium_cards(hero_cards):
+            blockers.append('PREMIUM_FLAG_SEM_MAO_PREMIUM')  # flag setado em mão não-premium
+        elif not is_calloff:
             blockers.append('SEM_AUTORIDADE_VALIDADA')
 
     allowed = (authority != 'NONE' and observation_confirmed

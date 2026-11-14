@@ -80,6 +80,35 @@ class ContractTests(unittest.TestCase):
         self.assertFalse(c['execution_allowed'])     # rótulo não dispensa leitura
         self.assertIn('SEM_LEITURA', c['blockers'])
 
+    # ---- A13: SAFETY_PREMIUM restrito (só CALL + mão premium real) ----
+    def test_premium_paga_AQ_offsuit(self):
+        c = evaluate(adv('call', safety_premium=True), action='CALL', hero_cards=['Ah', 'Qs'])
+        self.assertEqual(c['authority'], 'SAFETY_PREMIUM')   # AQ é premium (I1)
+        self.assertTrue(c['execution_allowed'])
+
+    def test_premium_paga_par_TT(self):
+        c = evaluate(adv('call', safety_premium=True), action='CALL', hero_cards=['Tc', 'Td'])
+        self.assertEqual(c['authority'], 'SAFETY_PREMIUM')
+
+    def test_premium_flag_em_mao_fraca_nao_comita(self):
+        # defesa em profundidade: flag setado por engano em mão não-premium NÃO paga
+        c = evaluate(adv('call', safety_premium=True), action='CALL', hero_cards=['7c', '2d'])
+        self.assertEqual(c['authority'], 'NONE')
+        self.assertFalse(c['execution_allowed'])
+        self.assertIn('PREMIUM_FLAG_SEM_MAO_PREMIUM', c['blockers'])
+
+    def test_premium_nunca_agride_sem_no(self):
+        # premium sem nó validado nunca INICIA agressão (raise/bet/all-in)
+        c = evaluate(adv('raise', safety_premium=True), action='RAISE', hero_cards=['As', 'Ac'])
+        self.assertNotEqual(c['authority'], 'SAFETY_PREMIUM')
+        self.assertFalse(c['execution_allowed'])
+        self.assertIn('PREMIUM_SO_PAGA_NAO_AGRIDE', c['blockers'])
+
+    def test_premium_allin_sem_no_nao_comita(self):
+        c = evaluate(adv('all_in', safety_premium=True), action='ALL_IN', hero_cards=['As', 'Ac'])
+        self.assertNotEqual(c['authority'], 'SAFETY_PREMIUM')
+        self.assertFalse(c['execution_allowed'])
+
     # ---- R2: margem de call-off não substitui os demais requisitos ----
     def test_calloff_with_margin_authorized(self):
         c = evaluate(adv('call', spot='call_off_vs_3bet_shove', equity=0.52,

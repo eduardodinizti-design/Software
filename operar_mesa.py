@@ -307,6 +307,7 @@ def main(argv=None):
     n = 0
     tourneys_closed = BoundedKeySet(512)   # (hwnd, table_key): LRU p/ não vazar em horas (D3)
     capture_watch = CaptureWatch()  # D2: vigia janela morta (captura None consecutiva) sem silêncio
+    advise_watch = CaptureWatch(alert_after=3, repeat=20)  # D7: circuit-breaker de exceção do advise_table
     latency = LatencyMetrics()      # A0: instrumentação de latência real (p50/p95/p99)
     # A1 (antecipação, só com --antecipar): reaproveita a decisão SEGURA entre frames
     # da MESMA vez do hero. Época = cada vez que a ação (re)chega à mesa; dentro de uma
@@ -455,11 +456,16 @@ def main(argv=None):
                                                   tracker=aggr_tracker, bounty_bb=args.bounty_bb,
                                                   mode=args.mode, stage=args.stage, enable_hud=args.hud,
                                                   read_cache=read_cache)
+                        advise_watch.ok(tkey)   # D7: leitura/cérebro voltou nesta mesa
                     except Exception as e:                 # noqa: BLE001
                         # NUNCA silencioso (regra do Eduardo: logar TUDO): registra o erro
                         # da leitura/cérebro e PULA p/ a próxima mão/mesa — o fluxo não quebra.
-                        print('[%03d] ERRO advise_table mesa(%d,%d): %s -> pula p/ proxima'
-                              % (n, x, y, str(e)[:90]), flush=True)
+                        # D7: circuit-breaker — se a MESMA mesa falha sempre (layout novo/
+                        # skin), escala o aviso em vez de perder a mão em silêncio a cada vez.
+                        fails, alert = advise_watch.fail(tkey)
+                        tag = ' [*** MESA TRAVADA: %d falhas seguidas ***]' % fails if alert else ''
+                        print('[%03d] ERRO advise_table mesa(%d,%d): %s -> pula p/ proxima%s'
+                              % (n, x, y, str(e)[:90], tag), flush=True)
                         continue
                     # A1: guarda a decisão SEGURA desta vez p/ reusar em revisitas da mesma
                     # época. prepare() só aceita fold/check pré-flop ADVICE (nunca fold de
