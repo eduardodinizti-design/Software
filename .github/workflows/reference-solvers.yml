@@ -19,7 +19,7 @@ jobs:
           git -C /tmp/gtopen-reference remote add origin https://github.com/MatthewPDingle/GTOpen.git
           git -C /tmp/gtopen-reference fetch --depth 1 --filter=blob:none origin 5c2989397abf314f229d293c16f96ea783c7ca5b
           git -C /tmp/gtopen-reference sparse-checkout init --cone
-          git -C /tmp/gtopen-reference sparse-checkout set crates/solver crates/server/src cache docs/preflop_balanced_model.md
+          git -C /tmp/gtopen-reference sparse-checkout set --skip-checks crates/solver crates/server/src cache research/preflop-evolution/behavior/pass3/evidence-metadata.json docs/preflop_balanced_model.md
           git -C /tmp/gtopen-reference checkout --detach FETCH_HEAD
       - name: Compile the CPU backend, with no GUI or application input
         run: |
