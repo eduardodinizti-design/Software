@@ -26,6 +26,7 @@ from table_reading.action_buttons import read_action_buttons
 from table_reading.hand_tracking import read_hand_id
 from raise_panel import (read_raise_panel, map_multiplier_to_preset,
                          read_raise_slider, is_shove_target)
+from raise_plan import plan_raise, verify_selected_preset
 from screen_coords import rect_frame_to_screen, frame_to_screen
 from cursor_controller import CursorController, Intent
 
@@ -255,12 +256,14 @@ class RaiseSequencer:
         if not panel or panel.get('status') != 'EXPERIMENTAL_RAISE_PANEL':
             return self._unknown('PAINEL_NAO_ABRIU', out_a)
 
-        # B) escolher o TAMANHO: preset compatível -> clica o preset; senão, se é
-        # SHOVE -> ajusta pela BARRA (all-in). Nunca deixa o painel aberto sem agir.
-        preset = map_multiplier_to_preset(self.target_mult, panel['presets'])
-        if preset is None:
-            if not is_shove_target(self.target_mult, panel['presets']):
-                return self._fail('SEM_PRESET_NAO_SHOVE:%s' % self.target_mult)
+        # B) escolher o TAMANHO via contrato discreto (A4): PRESET | SHOVE | ABSTAIN.
+        # Preset compatível -> clica o preset; SHOVE -> barra (all-in); sem tamanho
+        # SEGURO/conferível -> ABSTAIN (não clica, com razão explícita).
+        plan = plan_raise(self.target_mult, panel['presets'])
+        preset = plan['preset'] if plan['kind'] == 'PRESET' else None
+        if plan['kind'] == 'ABSTAIN':
+            return self._fail('SEM_PRESET_SEGURO:%s:%s' % (plan.get('reason'), self.target_mult))
+        if plan['kind'] == 'SHOVE':
             out_b = self._allin_via_slider()
             if out_b['state'] == 'CANCELLED':
                 return self._unknown('ALLIN_SLIDER_CANCELADO', out_b)
@@ -275,6 +278,13 @@ class RaiseSequencer:
         if not panel2 or panel2.get('status') != 'EXPERIMENTAL_RAISE_PANEL' \
                 or not panel2.get('confirm'):
             return self._unknown('CONFIRMAR_SEM_PAINEL', out_b)
+        # A4: antes de confirmar, confere que o preset pretendido ainda está no painel
+        # relido (pega painel trocado / rótulo mis-OCR entre etapas). Só BARRA, nunca
+        # adiciona clique. Shove (sem preset) não tem o que conferir aqui.
+        if preset is not None:
+            ok_sel, why_sel = verify_selected_preset(panel2, plan['expected_mult'])
+            if not ok_sel:
+                return self._unknown('PRESET_MUDOU_ANTES_DE_CONFIRMAR:%s' % why_sel, out_b)
         out_c = self._step('CONFIRMAR', self._tf_confirm, verifier=self._verify_bet, lock_hand=True)
         if out_c['state'] == 'CANCELLED':
             return self._unknown('CONFIRMAR_CANCELADO', out_c)
