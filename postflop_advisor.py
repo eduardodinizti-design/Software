@@ -220,6 +220,18 @@ def _advise_three_bet_pot(info, strength, bclass, caveats, *, pot, to_call,
     return info
 
 
+def _board_is_nuts_chop(board):
+    """True se os 5 cards do board formam um NUTS imbatível (royal flush): qualquer um
+    joga o board -> chop garantido, independente das cartas do vilão. (Outros boards
+    imbatíveis — ex. quadra com kicker máximo — ficam p/ depois; royal cobre o contrato
+    e é 100% seguro: nada bate um royal no board.)"""
+    if not board or len(board) != 5:
+        return False
+    suits = {c[1] for c in board if isinstance(c, str) and len(c) >= 2}
+    ranks = {c[0] for c in board if isinstance(c, str) and c}
+    return len(suits) == 1 and ranks == set('TJQKA')
+
+
 def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
                     stage='mid', aggressor=None, villain_range=None, pot_type=None,
                     narrow_range=False, villain_stats=None, villains=None,
@@ -454,6 +466,16 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
             info.update(draw_equity=round(deq, 4), clean_outs=clean, implied_bb=implied,
                         pot_odds_implied=round(po_imp, 4),
                         recommended=('call' if deq >= po_imp else 'fold'), caveats=caveats)
+            return info
+        # EMPATE GARANTIDO / equidade TRAVADA no river com o board JOGADO. Chop quando:
+        # (a) há range e a equidade é >= 0.5 (nenhum combo do range bate o board), OU
+        # (b) o board é um NUTS imbatível (royal flush) — chop independente das cartas do
+        # vilão, logo vale mesmo SEM range (p/ o auditor de leaks que replaya sem cartas).
+        # Pagar é +EV sempre que pot>to_call (recupera metade), SEM haircut: é lock, 0
+        # runout perdedor. NUNCA foldar um chop garantido.
+        if (street == 'RIVER' and made == 'plays_board' and pot > to_call
+                and ((equity is not None and equity >= 0.5 - 1e-6) or _board_is_nuts_chop(board))):
+            info.update(recommended='call', caveats=caveats + ['GUARANTEED_CHOP_LOCKED_EQUITY'])
             return info
         # Ar / joga o board: folda, salvo equity (vs range) acima das pot odds.
         if equity is not None and equity >= pot_odds + haircut + ex_delta:

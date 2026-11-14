@@ -84,9 +84,9 @@ class GroupAContractTests(unittest.TestCase):
         self.assertNotEqual(empty['overall_grade'], 'A')
         self.assertEqual(empty['overall_grade'], 'UNASSESSED')
 
-    @unittest.expectedFailure
     def test_guaranteed_chop_call_is_not_a_leak(self):
-        # Cascata do chop: o call correto do empate garantido (board royal) não é leak.
+        # CONSERTADO (cascata do chop): o advisor agora paga o empate garantido, então o
+        # leak_audit não marca mais o call correto do hero como leak.
         rep = audit_text(_ROYAL, 'Hero')
         river_call_mistakes = [m for m in rep['top_mistakes']
                                if 'CALL' in m['example_spot'] and m['affected_street'] == 'River']

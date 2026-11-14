@@ -54,11 +54,9 @@ class PostflopCounterexampleTests(unittest.TestCase):
                             pot_type='single_raised', villain_range=['KK'], iters=100)
         self.assertAlmostEqual(a.get('mdf', 0.0), 0.5, places=6)
 
-    @unittest.expectedFailure
     def test_guaranteed_chop_is_a_call(self):
-        # Board royal (A-K-Q-J-T de espadas): os dois jogam o board -> CHOP garantido.
-        # Pote 1010, call 1000: chamar é estritamente melhor que foldar (EV +5BB, 0
-        # runout perdedor). Atual: FOLD @0.5 (não reconhece o empate garantido).
+        # CONSERTADO: board royal -> CHOP garantido; pote 1010, call 1000 -> CALL (+5BB).
+        # Detecção: plays_board + river + equity>=0.5 -> lock, paga sem haircut.
         a = advise_postflop(_table(pot=1010, call=1000, stack=5000), ['2c', '3d'],
                             ['As', 'Ks', 'Qs', 'Js', 'Ts'],
                             pot_type='single_raised', villain_range=['AA'], iters=100)
