@@ -50,7 +50,7 @@ class AuditTests(unittest.TestCase):
         empty = audit_text('', 'Hero')
         self.assertEqual(empty['total_hands_detected'], 0)
         self.assertEqual(empty['total_mistakes_found'], 0)
-        self.assertEqual(empty['overall_grade'], 'A')
+        self.assertEqual(empty['overall_grade'], 'UNASSESSED')   # 0 decisões != nota A
         self.assertEqual(empty['top_mistakes'], [])
 
 

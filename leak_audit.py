@@ -199,7 +199,9 @@ def _aggregate(total_hands, postflop_hands, decisions_reviewed, leaks):
 
     weighted = sum(_SEV_WEIGHT.get(lk['severity'], 0) for lk in leaks)
     ratio = (weighted / decisions_reviewed) if decisions_reviewed else 0.0
-    grade = _grade_scale(ratio)
+    # Zero decisão elegível NÃO é nota 'A' (perfeito) — é SEM AVALIAÇÃO. Dar 'A' a um
+    # histórico sem decisões pós-flop revisadas mente cobertura (contrato da auditoria).
+    grade = _grade_scale(ratio) if decisions_reviewed else 'UNASSESSED'
 
     spew = sum(1 for lk in leaks if lk['category'] in (
         'Hero Call no River (pool underbluff)', 'Pagada indevida (call sem equity vs range)',

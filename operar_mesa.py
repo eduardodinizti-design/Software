@@ -20,6 +20,7 @@ from table_reading.pipeline import configure_ocr
 from table_reading.automatic_table_crops import detect_table_crops
 from table_reading.action_buttons import read_action_buttons
 from table_reading.hand_tracking import read_hand_id
+from table_reading.community_cards import read_board
 from table_advisor import advise_table
 from preflop_advisor import PreflopAdvisor
 from preflop_context import PreflopAggressorTracker
@@ -92,6 +93,15 @@ def _close_tournament_table(frame, crop_box, te, hwnd, adapter, engine, armed):
 
 
 _RANKS = '23456789TJQKA'
+
+
+def _board_sig(board):
+    """Assinatura barata da RUA/board p/ a impressão digital da antecipação. Uma
+    decisão pré-flop (preparada sem board) NÃO pode ser reusada depois do flop:
+    mesma mão/época mas rua nova muda esta assinatura -> invalida o payload. Usa
+    rua + nº de cartas do board (robusto a leitura parcial)."""
+    board = board or {}
+    return (board.get('street'), len(board.get('cards') or []))
 
 
 def _is_premium(cards):
@@ -375,11 +385,15 @@ def main(argv=None):
                     hero_mem.invalidate(tkey)
                     if (hwnd, tk) in tourneys_closed:
                         continue
+                    # Autorização de input AO VIVO: só fecha (clica 'Sair') se ARMADO
+                    # E o controle permitir agora. PAUSADO/DESABILITADO -> dry-run, mesmo
+                    # com --arm (o fechamento é input e respeita a pausa como o clique).
+                    close_armed = args.arm and control.execution_allowed()
                     closed = _close_tournament_table(frame, (x, y, bw, bh), te, hwnd,
-                                                     adapter, engine, args.arm)
+                                                     adapter, engine, close_armed)
                     record_tournament_end(
                         ranking=te.get('ranking'), result='busted', mode=args.mode,
-                        action='closed_via_sair' if args.arm else 'detected_dry_run',
+                        action='closed_via_sair' if close_armed else 'detected_dry_run',
                         closed=closed, table_key=tk)
                     tourneys_closed.add((hwnd, tk))
                     print('[%03d] >>> TORNEIO ENCERRADO (ranking %s) -> %s | metrica registrada'
@@ -413,7 +427,10 @@ def main(argv=None):
                 # no store -> recomputam. Só com --antecipar.
                 reuse = None
                 if args.antecipar and hkey is not None and (tkey, hkey, epoch) in anticip_payload:
-                    reuse = anticip.take(tkey, (hkey, epoch), epoch,
+                    # Lê o board (barato) só aqui: um flop novo na MESMA época invalida a
+                    # decisão pré-flop preparada — a impressão digital inclui a rua.
+                    _bsig = _board_sig(read_board(crop, hero_cards=override or [None, None]))
+                    reuse = anticip.take(tkey, (hkey, epoch), (epoch, _bsig),
                                          available_actions(br0.get('buttons')), override)
                 if reuse is not None:
                     result, _ = anticip_payload[(tkey, hkey, epoch)]
@@ -439,7 +456,8 @@ def main(argv=None):
                     # premium); o payload guarda o result inteiro p/ o downstream intacto.
                     if args.antecipar and result.get('is_table') and hkey is not None:
                         _adv = result.get('advice') or {}
-                        if anticip.prepare(tkey, (hkey, epoch), _adv, epoch,
+                        if anticip.prepare(tkey, (hkey, epoch), _adv,
+                                           (epoch, _board_sig(result.get('board'))),
                                            result.get('hero_cards'), is_premium=_is_premium):
                             anticip_payload[(tkey, hkey, epoch)] = (result, _adv)
                             while len(anticip_payload) > 256:

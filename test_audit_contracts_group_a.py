@@ -3,9 +3,10 @@ código de HOJE, como testes que afirmam o comportamento CORRETO.
 
 Origem: branch `audit/postflop-synthesis-20261114` (396820d), probes
 `software_e51718c_contracts.py` e `paused_close_case.py`. Reproduzidos contra o código
-real do `e51718c` (confirmado: 6 violações). Cada caso é `@unittest.expectedFailure`:
-afirma o certo, falha hoje (documenta o bug) e mantém a suíte verde. Quando a Entrega
-A/C corrigir, vira "unexpected success" -> remover o decorador e virar guard.
+real do `e51718c`. CONSERTADOS (viraram guard normal): zero-decisões≠A, street-change
+(invalidação por rua) e paused-close. Ainda `@unittest.expectedFailure` (pendentes da
+Entrega A/C): raise-acima-do-menu≠shove, chop-vira-leak (cascata do motor) e
+caller-passivo. Afirmam o certo, falham hoje, mantêm a suíte verde.
 
 Estados/históricos SINTÉTICOS reproduzidos no código; não certificam PPPoker/pixel/solver.
 """
@@ -16,7 +17,7 @@ from unittest.mock import Mock, patch
 
 import numpy as np
 
-from anticipation import AnticipationStore, TurnEpochTracker
+from anticipation import AnticipationStore
 from hand_history import parse_hand_histories
 from leak_audit import audit_text
 from raise_plan import plan_raise
@@ -77,11 +78,11 @@ class GroupAContractTests(unittest.TestCase):
         plan = plan_raise(6.0, _PRESETS)
         self.assertNotEqual(plan['kind'], 'SHOVE')
 
-    @unittest.expectedFailure
     def test_zero_decisions_is_not_grade_A(self):
-        # leak_audit: 0 decisões revisadas deve ser UNASSESSED, não nota "A".
+        # CONSERTADO: 0 decisões revisadas -> 'UNASSESSED', não nota "A".
         empty = audit_text('')
         self.assertNotEqual(empty['overall_grade'], 'A')
+        self.assertEqual(empty['overall_grade'], 'UNASSESSED')
 
     @unittest.expectedFailure
     def test_guaranteed_chop_call_is_not_a_leak(self):
@@ -99,27 +100,22 @@ class GroupAContractTests(unittest.TestCase):
         turn = [d for d in hand.hero_decisions if d['street'] == 'TURN'][0]
         self.assertIsNone(turn['villain_line'])
 
-    @unittest.expectedFailure
     def test_street_change_invalidates_preflop_payload(self):
-        # A1/A2: prepara 'check' pré-flop na época 1; 2 visitas fora da vez (< debounce
-        # 3) NÃO fecham a época; a vez volta na MESMA época mas com nova RUA -> o payload
-        # pré-flop NÃO pode ser reusado. Falta fingerprint de board/rua.
-        epochs = TurnEpochTracker()
+        # CONSERTADO: o operador agora dobra a assinatura da RUA (_board_sig) na
+        # impressão digital do payload: (época, (rua, nº cartas do board)). Mesma
+        # mão/época, mas RUA diferente -> NÃO reusa a decisão pré-flop; mesma rua reusa.
         store = AnticipationStore()
-        e0 = epochs.on_turn('t', 'h')
-        store.prepare('t', ('h', e0),
+        preflop = (1, (None, 0))      # época 1, sem board
+        flop = (1, ('flop', 3))       # mesma época, board novo
+        store.prepare('t', ('h', 1),
                       dict(status='ADVICE', phase='preflop', recommended='check', validated=True),
-                      e0, ['2c', '3d'])
-        for _ in range(2):
-            epochs.on_nonturn('t')
-        e1 = epochs.on_turn('t', 'h')
-        reused = store.take('t', ('h', e1), e1, {'CHECK'}, ['2c', '3d'])
-        self.assertIsNone(reused)
+                      preflop, ['2c', '3d'])
+        self.assertIsNone(store.take('t', ('h', 1), flop, {'CHECK'}, ['2c', '3d']))      # rua nova -> invalida
+        self.assertIsNotNone(store.take('t', ('h', 1), preflop, {'CHECK'}, ['2c', '3d']))  # mesma rua -> reusa
 
-    @unittest.expectedFailure
     def test_paused_control_blocks_table_close(self):
-        # Rotina fim de torneio: com controle PAUSED, o fechamento de mesa NÃO deve
-        # receber autorização de input (hoje recebe o args.arm estático = True).
+        # CONSERTADO: com controle PAUSED, o fechamento de mesa NÃO recebe autorização
+        # de input — o operador passa `args.arm and control.execution_allowed()`.
         import operar_mesa as op
         from bot_control import BotControl
         from table_reading.automatic_table_crops import TableCrop
@@ -136,6 +132,7 @@ class GroupAContractTests(unittest.TestCase):
                        detect_tournament_end=Mock(return_value={'status': 'TOURNAMENT_END', 'ranking': 10, 'sair_box': [0, 0, 40, 20]}),
                        _close_tournament_table=closed, record_tournament_end=Mock())
         changes['PreflopAdvisor'].from_file.return_value = advisor
+        changes['PreflopAdvisor'].from_files.return_value = advisor   # cobre o caminho deep
         with contextlib.ExitStack() as stack:
             for name, value in changes.items():
                 stack.enter_context(patch.object(op, name, value))
