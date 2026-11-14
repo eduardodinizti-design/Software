@@ -26,11 +26,9 @@ def _table(pot=30, call=10, stack=100):
 class PostflopCounterexampleTests(unittest.TestCase):
     """Cada teste trava uma decisão que o motor atual erra. expectedFailure até Fase 1."""
 
-    @unittest.expectedFailure
     def test_occupied_seats_are_not_active_opponents(self):
-        # AA (trinca de ases) no board A-K-7-2-3 vs range [KK]; 7 assentos foldaram
-        # mas seguem OCUPADOS. Esperado: NUNCA foldar (bate 100% de KK). Atual: FOLD
-        # @equity 0.16 contando 8 oponentes (penalidade multiway sobre contagem errada).
+        # CONSERTADO: 7 assentos foldados (in_hand=False) não contam como oponentes;
+        # n_opp=1 -> sem penalidade multiway -> AA (trinca) bate KK -> não folda.
         s = _table()
         for i in range(7):
             s['seats']['folded%d' % i] = {'occupied': True, 'in_hand': False, 'stack_bb': 100}
@@ -38,11 +36,9 @@ class PostflopCounterexampleTests(unittest.TestCase):
                             pot_type='single_raised', villain_range=['KK'], iters=100)
         self.assertNotEqual(a.get('recommended'), 'fold')   # fix: contar oponentes ATIVOS
 
-    @unittest.expectedFailure
     def test_three_bet_branch_respects_supplied_range(self):
-        # 77 full house no board A-A-7-2-3 vs range [AA] (quadra de ases). Esperado:
-        # FOLD (drawing dead). Atual: RAISE com equity=null (compromete por categoria
-        # 'full_house', heuristic=true), ignorando a range fornecida.
+        # CONSERTADO: 77 full vs [AA] quadra -> o ramo 3bet computa a equidade vs a range
+        # e folda o monstro dominado (equity < pot odds), em vez de comprometer por categoria.
         a = advise_postflop(_table(), ['7h', '7d'], ['Ac', 'Ad', '7c', '2d', '3s'],
                             pot_type='three_bet', villain_range=['AA'], iters=100)
         self.assertEqual(a.get('recommended'), 'fold')      # fix: equidade vs range, nunca commit null

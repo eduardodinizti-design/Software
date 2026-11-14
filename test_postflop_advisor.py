@@ -327,13 +327,15 @@ class PotTypeGatingTests(unittest.TestCase):
         r = advise_postflop(state(10, 4), ['3c', '3h'], ['As', '9h', '3d'])
         self.assertEqual(r['status'], 'ADVICE')
 
-    def test_three_bet_heuristic_is_tier_based_no_equity(self):
-        # A heurística de 3bet é por TIER+SPR (não há range de 3bet) -> não roda Monte
-        # Carlo mesmo com um range dado; equity fica None.
+    def test_three_bet_uses_supplied_range(self):
+        # CONSERTADO (antes ignorava a range): o ramo 3bet agora COMPUTA a equidade vs o
+        # range dado p/ não comprometer um monstro DOMINADO. Set de 3s vs [AK,KQ] domina
+        # -> equity alta, segue cometendo (não folda).
         r = advise_postflop(state(10, 4), ['3c', '3h'], ['As', '9h', '3d'],
                             villain_range=['AK', 'KQ'], pot_type='three_bet')
         self.assertEqual(r['status'], 'ADVICE')
-        self.assertIsNone(r.get('equity'))
+        self.assertIsNotNone(r.get('equity'))            # usa a range fornecida
+        self.assertNotEqual(r['recommended'], 'fold')    # set domina -> comete
 
     def test_multiway_applies_equity_penalty(self):
         # Multiway com range: roda equity COM a penalidade de -12% por vilão extra.

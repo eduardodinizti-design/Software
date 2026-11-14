@@ -55,6 +55,8 @@ def count_opponents(table_state):
     for key, s in seats.items():
         if key == 'hero' or not isinstance(s, dict):
             continue
+        if s.get('in_hand') is False:
+            continue                                   # FOLDOU: assento ocupado != oponente ativo
         if s.get('in_hand') is True or s.get('occupied') is True or s.get('stack_bb') is not None:
             n += 1
     return n or None

@@ -147,7 +147,7 @@ def _size(pot_bb, fraction, cap_bb, basis):
 
 
 def _advise_three_bet_pot(info, strength, bclass, caveats, *, pot, to_call,
-                          hero_stack, spr, street):
+                          hero_stack, spr, street, equity=None):
     """Heurística pós-flop para 3bet pot HEADS-UP (antes abstinha). Três ajustes vs o
     pote de um raise só, fundamentados: (1) SPR BAIXO -> mãos fortes (até top pair)
     COMETEM; (2) range do vilão mais FORTE/POLARIZADO -> marginais foldam; (3) implied
@@ -170,6 +170,14 @@ def _advise_three_bet_pot(info, strength, bclass, caveats, *, pot, to_call,
         if pot_odds is None:
             return _abstain('CANNOT_COMPUTE_POT_ODDS', pot_bb=pot, to_call_bb=to_call)
         info.update(pot_odds=round(pot_odds, 4))
+        if equity is not None:
+            info['equity'] = round(equity, 4)
+            # Range FORNECIDO manda: um "monstro" DOMINADO (equity < pot odds, ex.: full
+            # vs quadra) NÃO compromete por categoria — folda em vez de pagar/raise.
+            if equity < pot_odds:
+                info.update(recommended='fold',
+                            caveats=caveats + ['THREE_BET_DOMINATED_BY_RANGE'])
+                return info
         if strong:
             if monster and not board_beats_us:
                 raise_to = round(min(to_call * 3, cap), 1) if cap else round(to_call * 3, 1)
@@ -305,8 +313,13 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
     # Tipos de pote fora da cobertura: ABSTÉM com rótulo ANTES de qualquer Monte
     # Carlo (abstenção conhecida não paga o custo da equity, a cada frame/mesa).
     if pot_type == 'three_bet':      # HU 3bet pot (multiway é pego como 'multiway')
+        # Com um range FORNECIDO, computa a equidade vs esse range p/ o ramo 3bet não
+        # comprometer por CATEGORIA um "monstro" dominado (ex.: full vs quadra). Sem
+        # range, segue a heurística (não temos um range de 3bet).
+        _vr3 = _normalize_range(villain_range)
+        _eq3 = equity_vs_range(hero, _vr3, board=list(board), iters=iters, seed=seed) if _vr3 else None
         return _advise_three_bet_pot(info, strength, bclass, caveats, pot=pot, to_call=to_call,
-                                     hero_stack=hero_stack, spr=spr, street=street)
+                                     hero_stack=hero_stack, spr=spr, street=street, equity=_eq3)
     # Nº de oponentes: explícito, senão lido da mesa, senão >=2 se o pote é multiway.
     n_opp = villains if isinstance(villains, int) and villains > 0 else count_opponents(table_state)
     if not isinstance(n_opp, int) or n_opp < 1:
