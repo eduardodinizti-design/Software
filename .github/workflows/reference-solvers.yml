@@ -1,0 +1,49 @@
+name: Pinned solver reference laboratory
+on:
+  push:
+    branches: [feat/preflop-ev-trees]
+    paths: ['.github/workflows/reference-solvers.yml', 'tools/reference_solver_probe.py']
+permissions:
+  contents: write
+jobs:
+  cpu-reference:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Check out the audited external source in a separate folder
+        run: |
+          git init /tmp/gtopen-reference
+          git -C /tmp/gtopen-reference remote add origin https://github.com/MatthewPDingle/GTOpen.git
+          git -C /tmp/gtopen-reference fetch --depth 1 --filter=blob:none origin 5c2989397abf314f229d293c16f96ea783c7ca5b
+          git -C /tmp/gtopen-reference sparse-checkout init --cone
+          git -C /tmp/gtopen-reference sparse-checkout set crates/solver crates/server/src cache docs/preflop_balanced_model.md
+          git -C /tmp/gtopen-reference checkout --detach FETCH_HEAD
+      - name: Compile the CPU backend, with no GUI or application input
+        run: |
+          rustc --version
+          cargo build --release --locked --manifest-path /tmp/gtopen-reference/Cargo.toml -p server --bin gto-server
+      - name: Calculate locked-prefix preflop references on CPU
+        run: |
+          python tools/reference_solver_probe.py --upstream /tmp/gtopen-reference --binary /tmp/gtopen-reference/target/release/gto-server --out docs/reference-solvers/calculations --depths 50 80 200 --iterations 1000 --case-seconds 90
+      - name: Publish only bounded calculation evidence to the feature branch
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          import base64,json,os,subprocess
+          from pathlib import Path
+          root=Path('docs/reference-solvers/calculations')
+          for p in sorted(root.glob('*.json')):
+              raw=p.read_bytes()
+              if len(raw)>2000000:raise ValueError('Oversized evidence file')
+              body=dict(message='Record pinned CPU solver calculation '+p.name,
+                        branch=os.environ['GITHUB_REF_NAME'],content=base64.b64encode(raw).decode())
+              endpoint='repos/'+os.environ['GITHUB_REPOSITORY']+'/contents/'+p.as_posix()
+              prior=subprocess.run(['gh','api',endpoint+'?ref='+os.environ['GITHUB_REF_NAME']],capture_output=True,text=True)
+              if prior.returncode==0:body['sha']=json.loads(prior.stdout)['sha']
+              subprocess.run(['gh','api','--method','PUT',endpoint,'--input','-'],input=json.dumps(body),text=True,stdout=subprocess.DEVNULL,check=True)
+          PY
