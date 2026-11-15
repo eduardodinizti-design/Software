@@ -1,8 +1,10 @@
 """Publish a checked 16-model Windows transfer report and a source-code ZIP."""
 import argparse
 import json
+import math
 import os
 from pathlib import Path
+import re
 import subprocess
 import sys
 import zipfile
@@ -25,7 +27,7 @@ def checked_windows_results(catalog,rows):
                 or r['board']!=c['board'] or r['policy_sha256']!=c['policy_sha256']
                 or r['file_sha256']!=c['file_sha256'] or r['archive_sha256']!=c['archive_sha256']
                 or r.get('native_target_met') is not True or not r.get('coverage',{}).get('structurally_complete')
-                or abs(r['global_native_gap_bb']-c['global_gap_bb'])>1e-12
+                or not math.isfinite(r['global_native_gap_bb']) or abs(r['global_native_gap_bb']-c['global_gap_bb'])>1e-12
                 or set(r.get('source_lookup',{}).get('probes',{}))!={'flop','turn','river'}
                 or set(r.get('exact_suit_alias',{}).get('probes',{}))!={'flop','turn','river'}
                 or r.get('pppoker_windows_validated') is not False or r.get('input_devices_used') is not False):
@@ -33,19 +35,27 @@ def checked_windows_results(catalog,rows):
         a,b=r['independent_river'],c['independent_river']
         if (not a.get('exact_enumeration') or a['runout']!=b['runout']
                 or a['joint_private_deals']!=b['joint_private_deals']
-                or abs(a['nash_conv_bb']-b['nash_conv_bb'])>1e-8):
+                or not math.isfinite(a['nash_conv_bb']) or abs(a['nash_conv_bb']-b['nash_conv_bb'])>1e-8):
             raise StrategyError('WINDOWS_CONDITIONAL_RIVER_DIFFERS_FROM_LINUX:'+str(r['ordinal']))
     return sorted(rows,key=lambda r:r['ordinal'])
 
 
 def main(argv=None):
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--output',required=True)
+    p.add_argument('--catalog-asset')
     p.add_argument('--run-id',required=True);p.add_argument('--run-url',required=True)
     args=p.parse_args(argv);out=Path(args.output)
     if out.exists():raise StrategyError('FINAL_DELIVERY_OUTPUT_MUST_BE_NEW')
-    out.mkdir(parents=True);catalog,asset=load_catalog();rows=[]
-    for n in range(1,17):rows.append(read_json(ASSET_BASE+BATCH_TAG+f'/windows-case-{n:02d}-{args.run_id}.json'))
+    out.mkdir(parents=True);catalog,asset=load_catalog(args.catalog_asset);rows=[]
+    release=read_json(f'https://api.github.com/repos/{REPOSITORY}/releases/tags/{BATCH_TAG}')
+    for n in range(1,17):
+        pattern=rf'windows-case-{n:02d}-{re.escape(args.run_id)}-a([0-9]+)\.json'
+        candidates=[(int(m[1]),a['name']) for a in release['assets']
+                    if a['state']=='uploaded' and (m:=re.fullmatch(pattern,a['name']))]
+        if not candidates:raise StrategyError('MISSING_WINDOWS_CASE:'+str(n))
+        rows.append(read_json(ASSET_BASE+BATCH_TAG+'/'+max(candidates)[1]))
     rows=checked_windows_results(catalog,rows)
+    stamp=args.run_id+'-a'+os.environ.get('GITHUB_RUN_ATTEMPT','1')
     native=catalog['cases'];total_bytes=sum(c['policy_file_bytes'] for c in native)
     summary=dict(schema='software.hu-next16-delivery.v1',status='PASS',new_flops=16,
         previous_full_pilot_flops=1,total_reference_models_with_pilot=17,
@@ -60,13 +70,14 @@ def main(argv=None):
         max_measured_process_tree_rss_bytes=max(c['measurements']['peak_process_tree_rss_bytes'] for c in native),
         all_workers_exited=all(c['worker_exited'] for c in native),
         all_native_temporaries_cleaned_after_validation=all(c['temporary_cleanup_verified'] for c in native),
-        source_commit=os.environ['GITHUB_SHA'],plan_sha256=catalog['plan_sha256'],catalog_asset=asset,
+        source_commit=os.environ['GITHUB_SHA'],native_producer_source_commits=sorted({c['source_commit'] for c in native}),
+        plan_sha256=catalog['plan_sha256'],catalog_asset=asset,
         windows_run_url=args.run_url,pilot_release=PILOT_TAG,release=BATCH_TAG,
         source_ranges=catalog['source_ranges'],context=catalog['context'],root_template=catalog['root_template'],
         scope='NVT_REFERENCE_COMPLETE_POLICIES_NATIVE_PRECISION_AND_WINDOWS_DATA_QUERY_VALIDATION',
         native_global_gap_independently_certified=False,pppoker_windows_validated=False,user_notebook_validated=False,
         windows_cases=rows)
-    atomic_json(out/f'entrega-lote-16-{args.run_id}.json',summary)
+    atomic_json(out/f'entrega-lote-16-{stamp}.json',summary)
     lines=['SOFTWARE ORIGINAL — 16 NOVOS FLOPS BTN x BB','',
         'CONCLUIDO: 16/16 politicas completas, 16/16 no alvo nativo e 16/16 transferidas e consultadas no Windows.',
         'Incluindo o piloto A72 anterior, sao 17 modelos completos de referencia. Variantes de naipe nao contam como novos estudos.',
@@ -100,12 +111,12 @@ def main(argv=None):
         f'https://github.com/{REPOSITORY}/releases/tag/{BATCH_TAG}',
         f'https://github.com/{REPOSITORY}/tree/feat/hu-next16-20261115',
         f'Plano SHA-256: {catalog["plan_sha256"]}',f'Catalogo: {asset}',f'Codigo verificado: {os.environ["GITHUB_SHA"]}'])
-    report=out/f'RELATORIO_LOTE_16_WINDOWS-{args.run_id}.txt';report.write_text('\n'.join(lines)+'\n',encoding='utf-8')
-    source=out/f'Software-HU-next16-{os.environ["GITHUB_SHA"][:8]}-{args.run_id}.zip'
+    report=out/f'RELATORIO_LOTE_16_WINDOWS-{stamp}.txt';report.write_text('\n'.join(lines)+'\n',encoding='utf-8')
+    source=out/f'Software-HU-next16-{os.environ["GITHUB_SHA"][:8]}-{stamp}.zip'
     subprocess.run(['git','archive','--format=zip','--prefix=Software-HU-next16/','HEAD','-o',str(source)],check=True)
     with zipfile.ZipFile(source,'a',compression=zipfile.ZIP_DEFLATED) as archive:
         archive.write(report,'Software-HU-next16/RELATORIO_ENTREGA_LOTE_16.txt')
-    atomic_json(out/f'source-download-manifest-{args.run_id}.json',dict(asset=source.name,
+    atomic_json(out/f'source-download-manifest-{stamp}.json',dict(asset=source.name,
         bytes=source.stat().st_size,sha256=file_hash(source),source_commit=os.environ['GITHUB_SHA'],contains_full_policy_data=False))
     for path in sorted(out.iterdir()):
         subprocess.run(['gh','release','upload',BATCH_TAG,'--repo',REPOSITORY,str(path)],check=True)

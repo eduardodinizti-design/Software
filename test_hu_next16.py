@@ -10,6 +10,7 @@ import subprocess
 import tempfile
 import unittest
 from unittest.mock import patch
+from urllib.error import HTTPError
 
 from strategy.batch_archive import (BATCH_TAG,checked_batch_plan,make_batch_plan,make_catalog,
                                     split_archive,verify_remote_parts)
@@ -67,6 +68,28 @@ class WindowsEvidenceTests(unittest.TestCase):
     def test_lab_evidence_cannot_claim_a_real_pppoker_session(self):
         self.rows[0]['pppoker_windows_validated']=True
         with self.assertRaisesRegex(StrategyError,'DOES_NOT_MATCH'):self.check(self.catalog,self.rows)
+
+
+class CatalogReadinessTests(unittest.TestCase):
+    def test_missing_asset_waits_then_checks_the_full_published_catalog(self):
+        from tools.wait_hu_next16_catalog import wait_catalog
+        ready=dict(schema='software.hu-batch-catalog.v1',status='COMPLETE',native_target_met_flops=16)
+        complete=dict(ready,plan_sha256='control-only',published_new_flops=16)
+        missing=HTTPError('https://example.invalid/catalog',404,'Not Found',{},None)
+        with (patch('tools.wait_hu_next16_catalog.read_json',side_effect=[missing,ready]),
+                patch('tools.wait_hu_next16_catalog.load_catalog',return_value=(complete,'batch-catalog-123.json')) as verify,
+                patch('tools.wait_hu_next16_catalog.time.sleep')):
+            result=wait_catalog('batch-catalog-123.json',30)
+        self.assertEqual(result['status'],'PASS');verify.assert_called_once_with('batch-catalog-123.json')
+
+    def test_a_published_partial_catalog_is_not_mistaken_for_learning_sixteen_models(self):
+        from tools.wait_hu_next16_catalog import wait_catalog
+        with patch('tools.wait_hu_next16_catalog.read_json',return_value=dict(status='PARTIAL')):
+            with self.assertRaisesRegex(StrategyError,'CATALOG_IS_PARTIAL'):wait_catalog('batch-catalog-123.json',30)
+
+    def test_timeout_cannot_report_success(self):
+        from tools.wait_hu_next16_catalog import wait_catalog
+        with self.assertRaisesRegex(StrategyError,'WAIT_TIMEOUT'):wait_catalog('batch-catalog-123.json',0)
 
 
 class Next16PlanTests(unittest.TestCase):
@@ -277,6 +300,20 @@ class NativeBatchTransferTests(unittest.TestCase):
         resumed=self.install(dest,resume=True)
         self.assertEqual(resumed['status'],'PASS');self.assertEqual(file_hash(path),before)
         self.assertEqual(resumed['total_models'],receipt['total_models'])
+
+    def test_native_export_closes_monotone_paired_and_two_tone_control_trees(self):
+        from strategy.batch_jobs import make_plan,run_queue
+        from strategy.native_stream import query_probe
+        plan=make_plan(self.root/'game.json',boards=['Qs 7s 2s','Kc Kd 5s','9s 8s 7d'],
+            iterations=51,threads=2,memory_mb=2048)
+        atomic_json(self.root/'textures-plan.json',plan)
+        bank=self.root/'textures-bank'
+        with redirect_stdout(io.StringIO()):
+            result=run_queue(self.root/'textures-plan.json',bank,os.environ['HU_STREAM_TEST_BINARY'],os.environ['HU_STREAM_TEST_RESOURCES'])
+        self.assertEqual(result,dict(COMPLETE=3));self.assertEqual(list((bank/'temporary').iterdir()),[])
+        for entry in json.loads((bank/'library.json').read_text())['entries']:
+            self.assertTrue(entry['quality']['structurally_complete'])
+            self.assertEqual(set(query_probe(bank/entry['path'])['probes']),{'flop','turn','river'})
 
 
 if __name__=='__main__':unittest.main()
