@@ -1,0 +1,1263 @@
+{
+  "hero_range": "BTN_open_25",
+  "results": [
+    {
+      "board": [
+        "As",
+        "7d",
+        "2c"
+      ],
+      "categories": [
+        {
+          "air": 0.5503914920217928,
+          "second_pair": 0.051180806406304985,
+          "set": 0.0118693892407943,
+          "third_pair": 0.008498482696408719,
+          "top_pair": 0.23738778481588568,
+          "two_pair": 0.028684357331919562,
+          "underpair": 0.1119876874868941
+        },
+        {
+          "air": 0.7477955462561696,
+          "second_pair": 0.11960526769598671,
+          "third_pair": 0.07836876171205873,
+          "top_pair": 0.037076210293965496,
+          "two_pair": 0.01715421404182426
+        }
+      ],
+      "equity_player0": 0.652425,
+      "mc_ci95": [
+        0.6459018632354097,
+        0.6589481367645904
+      ],
+      "method": "weighted_joint_deals_showdown_only_not_action_ev",
+      "partition": "development",
+      "range_features": [
+        {
+          "categories": {
+            "air": 0.5503914920217928,
+            "second_pair": 0.051180806406304985,
+            "set": 0.0118693892407943,
+            "third_pair": 0.008498482696408719,
+            "top_pair": 0.23738778481588568,
+            "two_pair": 0.028684357331919562,
+            "underpair": 0.1119876874868941
+          },
+          "common_upper_tail_mass": 0.08803130353589098,
+          "current_absolute_nuts_mass": 0.005934694620397149,
+          "draw_mass": {
+            "backdoor_flush": 0.24763898065685166,
+            "gutshot": 0.0039564630802647665
+          },
+          "tail_reference": "95th percentile uniform legal physical combos; includes threshold ties"
+        },
+        {
+          "categories": {
+            "air": 0.7477955462561696,
+            "second_pair": 0.11960526769598671,
+            "third_pair": 0.07836876171205873,
+            "top_pair": 0.037076210293965496,
+            "two_pair": 0.01715421404182426
+          },
+          "common_upper_tail_mass": 0.01715421404182426,
+          "current_absolute_nuts_mass": 0.0,
+          "draw_mass": {
+            "backdoor_flush": 0.253880068519136,
+            "gutshot": 0.06897899589574978
+          },
+          "tail_reference": "95th percentile uniform legal physical combos; includes threshold ties"
+        }
+      ],
+      "range_sha256": [
+        "3a635d6b3b6e83567b0f6735ab598da4b3ed466cf218749b8d1e920a169f70ff",
+        "678f32b5a9ea0c88d4d8c159072b9a127b53bc18602725f522f02eb6ba54aac5"
+      ],
+      "samples": 20000,
+      "seed": 20261115
+    },
+    {
+      "board": [
+        "Kd",
+        "8h",
+        "3c"
+      ],
+      "categories": [
+        {
+          "air": 0.5730344591591529,
+          "overpair": 0.011799734899289264,
+          "second_pair": 0.08718234130339872,
+          "set": 0.014366177239884679,
+          "third_pair": 0.02394166211065792,
+          "top_pair": 0.17364489877794084,
+          "two_pair": 0.021632847315363656,
+          "underpair": 0.09439787919431407
+        },
+        {
+          "air": 0.6199393304748848,
+          "second_pair": 0.11670332242162039,
+          "third_pair": 0.10245858599800178,
+          "top_pair": 0.13089405036590765,
+          "two_pair": 0.03000471073958613
+        }
+      ],
+      "equity_player0": 0.60655,
+      "mc_ci95": [
+        0.599843303608497,
+        0.613256696391503
+      ],
+      "method": "weighted_joint_deals_showdown_only_not_action_ev",
+      "partition": "development",
+      "range_features": [
+        {
+          "categories": {
+            "air": 0.5730344591591529,
+            "overpair": 0.011799734899289264,
+            "second_pair": 0.08718234130339872,
+            "set": 0.014366177239884679,
+            "third_pair": 0.02394166211065792,
+            "top_pair": 0.17364489877794084,
+            "two_pair": 0.021632847315363656,
+            "underpair": 0.09439787919431407
+          },
+          "common_upper_tail_mass": 0.0949976990516946,
+          "current_absolute_nuts_mass": 0.005899867449644632,
+          "draw_mass": {
+            "backdoor_flush": 0.24747387342031094
+          },
+          "tail_reference": "95th percentile uniform legal physical combos; includes threshold ties"
+        },
+        {
+          "categories": {
+            "air": 0.6199393304748848,
+            "second_pair": 0.11670332242162039,
+            "third_pair": 0.10245858599800178,
+            "top_pair": 0.13089405036590765,
+            "two_pair": 0.03000471073958613
+          },
+          "common_upper_tail_mass": 0.040252819692691795,
+          "current_absolute_nuts_mass": 0.0,
+          "draw_mass": {
+            "backdoor_flush": 0.2572918948274884
+          },
+          "tail_reference": "95th percentile uniform legal physical combos; includes threshold ties"
+        }
+      ],
+      "range_sha256": [
+        "3a635d6b3b6e83567b0f6735ab598da4b3ed466cf218749b8d1e920a169f70ff",
+        "678f32b5a9ea0c88d4d8c159072b9a127b53bc18602725f522f02eb6ba54aac5"
+      ],
+      "samples": 20000,
+      "seed": 20261116
+    },
+    {
+      "board": [
+        "Ah",
+        "Kd",
+        "7c"
+      ],
+      "categories": [
+        {
+          "air": 0.36410839700466496,
+          "second_pair": 0.17715781328620187,
+          "set": 0.019027403689624987,
+          "third_pair": 0.03884127339842115,
+          "top_pair": 0.2441850140168545,
+          "two_pair": 0.04968266518957639,
+          "underpair": 0.10699743341465781
+        },
+        {
+          "air": 0.6740040404040424,
+          "second_pair": 0.1480242424242423,
+          "third_pair": 0.11126391184573016,
+          "top_pair": 0.04671735537190089,
+          "two_pair": 0.019990449954086317
+        }
+      ],
+      "equity_player0": 0.688525,
+      "mc_ci95": [
+        0.68222670499691,
+        0.6948232950030901
+      ],
+      "method": "weighted_joint_deals_showdown_only_not_action_ev",
+      "partition": "development",
+      "range_features": [
+        {
+          "categories": {
+            "air": 0.36410839700466496,
+            "second_pair": 0.17715781328620187,
+            "set": 0.019027403689624987,
+            "third_pair": 0.03884127339842115,
+            "top_pair": 0.2441850140168545,
+            "two_pair": 0.04968266518957639,
+            "underpair": 0.10699743341465781
+          },
+          "common_upper_tail_mass": 0.11944981205153458,
+          "current_absolute_nuts_mass": 0.006342467896541664,
+          "draw_mass": {
+            "backdoor_flush": 0.24456979040257806,
+            "gutshot": 0.10147948634466657
+          },
+          "tail_reference": "95th percentile uniform legal physical combos; includes threshold ties"
+        },
+        {
+          "categories": {
+            "air": 0.6740040404040424,
+            "second_pair": 0.1480242424242423,
+            "third_pair": 0.11126391184573016,
+            "top_pair": 0.04671735537190089,
+            "two_pair": 0.019990449954086317
+          },
+          "common_upper_tail_mass": 0.019990449954086317,
+          "current_absolute_nuts_mass": 0.0,
+          "draw_mass": {
+            "backdoor_flush": 0.2626101010101013,
+            "gutshot": 0.04469421487603306
+          },
+          "tail_reference": "95th percentile uniform legal physical combos; includes threshold ties"
+        }
+      ],
+      "range_sha256": [
+        "3a635d6b3b6e83567b0f6735ab598da4b3ed466cf218749b8d1e920a169f70ff",
+        "678f32b5a9ea0c88d4d8c159072b9a127b53bc18602725f522f02eb6ba54aac5"
+      ],
+      "samples": 20000,
+      "seed": 20261117
+    },
+    {
+      "board": [
+        "Qs",
+        "8d",
+        "3c"
+      ],
+      "categories": [
+        {
+          "air": 0.5759469623541236,
+          "overcards": 0.031016167177141077,
+          "overpair": 0.02326212538285581,
+          "second_pair": 0.09465940371418606,
+          "set": 0.014160818826813477,
+          "third_pair": 0.02907765672856976,
+          "top_pair": 0.13957275229713506,
+          "two_pair": 0.01088667467917652,
+          "underpair": 0.08141743883999537
+        },
+        {
+          "air": 0.6342143190357556,
+          "second_pair": 0.122646444683905,
+          "third_pair": 0.103907427196838,
+          "top_pair": 0.11628832421943129,
+          "two_pair": 0.0229434848640665
+        }
+      ],
+      "equity_player0": 0.596275,
+      "mc_ci95": [
+        0.5895394175181392,
+        0.6030105824818608
+      ],
+      "method": "weighted_joint_deals_showdown_only_not_action_ev",
+      "partition": "development",
+      "range_features": [
+        {
+          "categories": {
+            "air": 0.5759469623541236,
+            "overcards": 0.031016167177141077,
+            "overpair": 0.02326212538285581,
+            "second_pair": 0.09465940371418606,
+            "set": 0.014160818826813477,
+            "third_pair": 0.02907765672856976,
+            "top_pair": 0.13957275229713506,
+            "two_pair": 0.01088667467917652,
+            "underpair": 0.08141743883999537
+          },
+          "common_upper_tail_mass": 0.07157174427170161,
+          "current_absolute_nuts_mass": 0.005815531345713953,
+          "draw_mass": {
+            "backdoor_flush": 0.24756910789749206,
+            "gutshot": 0.09304850153142331
+          },
+          "tail_reference": "95th percentile uniform legal physical combos; includes threshold ties"
+        },
+        {
+          "categories": {
+            "air": 0.6342143190357556,
+            "second_pair": 0.122646444683905,
+            "third_pair": 0.103907427196838,
+            "top_pair": 0.11628832421943129,
+            "two_pair": 0.0229434848640665
+          },
+          "common_upper_tail_mass": 0.0229434848640665,
+          "current_absolute_nuts_mass": 0.0,
+          "draw_mass": {
+            "backdoor_flush": 0.255831630531498,
+            "gutshot": 0.05733933673446574
+          },
+          "tail_reference": "95th percentile uniform legal physical combos; includes threshold ties"
+        }
+      ],
+      "range_sha256": [
+        "3a635d6b3b6e83567b0f6735ab598da4b3ed466cf218749b8d1e920a169f70ff",
+        "678f32b5a9ea0c88d4d8c159072b9a127b53bc18602725f522f02eb6ba54aac5"
+      ],
+      "samples": 20000,
+      "seed": 20261118
+    },
+    {
+      "board": [
+        "Js",
+        "Td",
+        "4c"
+      ],
+      "categories": [
+        {
+          "air": 0.4910335063709283,
+          "overcards": 0.0943841434638981,
+          "overpair": 0.03539405379896178,
+          "second_pair": 0.1161455875412931,
+          "set": 0.017697026899480887,
+          "third_pair": 0.03539405379896178,
+          "top_pair": 0.12492331288343562,
+          "two_pair": 0.02090608777725342,
+          "underpair": 0.06412222746578576
+        },
+        {
+          "air": 0.6336888196222501,
+          "overcards": 0.013518868974730048,
+          "second_pair": 0.10915284426138254,
+          "third_pair": 0.11356562395636192,
+          "top_pair": 0.10685962373371913,
+          "two_pair": 0.02321421945155665
+        }
+      ],
+      "equity_player0": 0.610875,
+      "mc_ci95": [
+        0.6042049608292941,
+        0.6175450391707058
+      ],
+      "method": "weighted_joint_deals_showdown_only_not_action_ev",
+      "partition": "development",
+      "range_features": [
+        {
+          "categories": {
+            "air": 0.4910335063709283,
+            "overcards": 0.0943841434638981,
+            "overpair": 0.03539405379896178,
+            "second_pair": 0.1161455875412931,
+            "set": 0.017697026899480887,
+            "third_pair": 0.03539405379896178,
+            "top_pair": 0.12492331288343562,
+            "two_pair": 0.02090608777725342,
+            "underpair": 0.06412222746578576
+          },
+          "common_upper_tail_mass": 0.09759320434167064,
+          "current_absolute_nuts_mass": 0.005899008966493629,
+          "draw_mass": {
+            "backdoor_flush": 0.24796680824288106,
+            "gutshot": 0.12977819726285986,
+            "oesd": 0.08258612553091084
+          },
+          "tail_reference": "95th percentile uniform legal physical combos; includes threshold ties"
+        },
+        {
+          "categories": {
+            "air": 0.6336888196222501,
+            "overcards": 0.013518868974730048,
+            "second_pair": 0.10915284426138254,
+            "third_pair": 0.11356562395636192,
+            "top_pair": 0.10685962373371913,
+            "two_pair": 0.02321421945155665
+          },
+          "common_upper_tail_mass": 0.02321421945155665,
+          "current_absolute_nuts_mass": 0.0,
+          "draw_mass": {
+            "backdoor_flush": 0.25840216705629065,
+            "gutshot": 0.06827711603399013,
+            "oesd": 0.06101599317228839
+          },
+          "tail_reference": "95th percentile uniform legal physical combos; includes threshold ties"
+        }
+      ],
+      "range_sha256": [
+        "3a635d6b3b6e83567b0f6735ab598da4b3ed466cf218749b8d1e920a169f70ff",
+        "678f32b5a9ea0c88d4d8c159072b9a127b53bc18602725f522f02eb6ba54aac5"
+      ],
+      "samples": 20000,
+      "seed": 20261119
+    },
+    {
+      "board": [
+        "9s",
+        "8s",
+        "7d"
+      ],
+      "categories": [
+        {
+          "air": 0.2579331383463846,
+          "overcards": 0.28304557033682376,
+          "overpair": 0.05896782715350507,
+          "second_pair": 0.09008514954240965,
+          "set": 0.017690348146051513,
+          "straight": 0.04324307324590371,
+          "third_pair": 0.06264741956788376,
+          "top_pair": 0.12622063402207742,
+          "two_pair": 0.019655942384501683,
+          "underpair": 0.040510897254457966
+        },
+        {
+          "air": 0.5012775371111873,
+          "overcards": 0.07978271434150945,
+          "second_pair": 0.10925401969523962,
+          "straight": 0.06034387661704597,
+          "third_pair": 0.11724570750512076,
+          "top_pair": 0.10228197644084418,
+          "two_pair": 0.029814168289054314
+        }
+      ],
+      "equity_player0": 0.561825,
+      "mc_ci95": [
+        0.5551277174366352,
+        0.5685222825633648
+      ],
+      "method": "weighted_joint_deals_showdown_only_not_action_ev",
+      "partition": "development",
+      "range_features": [
+        {
+          "categories": {
+            "air": 0.2579331383463846,
+            "overcards": 0.28304557033682376,
+            "overpair": 0.05896782715350507,
+            "second_pair": 0.09008514954240965,
+            "set": 0.017690348146051513,
+            "straight": 0.04324307324590371,
+            "third_pair": 0.06264741956788376,
+            "top_pair": 0.12622063402207742,
+            "two_pair": 0.019655942384501683,
+            "underpair": 0.040510897254457966
+          },
+          "common_upper_tail_mass": 0.07272698682265621,
+          "current_absolute_nuts_mass": 0.031449507815202685,
+          "draw_mass": {
+            "backdoor_flush": 0.3799356071327476,
+            "combo": 0.036245557757021096,
+            "flush_draw": 0.06669261251061423,
+            "gutshot": 0.23521676573261596,
+            "nut_flush_draw": 0.01965594238450168,
+            "oesd": 0.2467115608390725
+          },
+          "tail_reference": "95th percentile uniform legal physical combos; includes threshold ties"
+        },
+        {
+          "categories": {
+            "air": 0.5012775371111873,
+            "overcards": 0.07978271434150945,
+            "second_pair": 0.10925401969523962,
+            "straight": 0.06034387661704597,
+            "third_pair": 0.11724570750512076,
+            "top_pair": 0.10228197644084418,
+            "two_pair": 0.029814168289054314
+          },
+          "common_upper_tail_mass": 0.07376025234712036,
+          "current_absolute_nuts_mass": 0.013625074908097829,
+          "draw_mass": {
+            "backdoor_flush": 0.3837620113830504,
+            "combo": 0.03947843093995127,
+            "flush_draw": 0.06960713870445513,
+            "gutshot": 0.25321322198735335,
+            "nut_flush_draw": 0.006360852804469739,
+            "oesd": 0.28625626470211185
+          },
+          "tail_reference": "95th percentile uniform legal physical combos; includes threshold ties"
+        }
+      ],
+      "range_sha256": [
+        "3a635d6b3b6e83567b0f6735ab598da4b3ed466cf218749b8d1e920a169f70ff",
+        "678f32b5a9ea0c88d4d8c159072b9a127b53bc18602725f522f02eb6ba54aac5"
+      ],
+      "samples": 20000,
+      "seed": 20261120
+    },
+    {
+      "board": [
+        "8c",
+        "6d",
+        "3s"
+      ],
+      "categories": [
+        {
+          "air": 0.23295139425997227,
+          "overcards": 0.45274305699657696,
+          "overpair": 0.06791145854948671,
+          "second_pair": 0.06454418206307468,
+          "set": 0.01378036679733334,
+          "third_pair": 0.028624679778608643,
+          "top_pair": 0.10393848730998945,
+          "two_pair": 0.0015506449702132796,
+          "underpair": 0.03395572927474335
+        },
+        {
+          "air": 0.4289438202247214,
+          "overcards": 0.18872209737827728,
+          "second_pair": 0.13176179775280883,
+          "third_pair": 0.11021573033707854,
+          "top_pair": 0.11653932584269651,
+          "two_pair": 0.02381722846441948
+        }
+      ],
+      "equity_player0": 0.54275,
+      "mc_ci95": [
+        0.5358924863255695,
+        0.5496075136744304
+      ],
+      "method": "weighted_joint_deals_showdown_only_not_action_ev",
+      "partition": "development",
+      "range_features": [
+        {
+          "categories": {
+            "air": 0.23295139425997227,
+            "overcards": 0.45274305699657696,
+            "overpair": 0.06791145854948671,
+            "second_pair": 0.06454418206307468,
+            "set": 0.01378036679733334,
+            "third_pair": 0.028624679778608643,
+            "top_pair": 0.10393848730998945,
+            "two_pair": 0.0015506449702132796,
+            "underpair": 0.03395572927474335
+          },
+          "common_upper_tail_mass": 0.06060531746720441,
+          "current_absolute_nuts_mass": 0.005659288212457226,
+          "draw_mass": {
+            "backdoor_flush": 0.24609037505989384,
+            "gutshot": 0.04150144689135298,
+            "oesd": 0.012254245409374044
+          },
+          "tail_reference": "95th percentile uniform legal physical combos; includes threshold ties"
+        },
+        {
+          "categories": {
+            "air": 0.4289438202247214,
+            "overcards": 0.18872209737827728,
+            "second_pair": 0.13176179775280883,
+            "third_pair": 0.11021573033707854,
+            "top_pair": 0.11653932584269651,
+            "two_pair": 0.02381722846441948
+          },
+          "common_upper_tail_mass": 0.02381722846441948,
+          "current_absolute_nuts_mass": 0.0,
+          "draw_mass": {
+            "backdoor_flush": 0.2553483146067417,
+            "gutshot": 0.08412883895131083,
+            "oesd": 0.06292134831460672
+          },
+          "tail_reference": "95th percentile uniform legal physical combos; includes threshold ties"
+        }
+      ],
+      "range_sha256": [
+        "3a635d6b3b6e83567b0f6735ab598da4b3ed466cf218749b8d1e920a169f70ff",
+        "678f32b5a9ea0c88d4d8c159072b9a127b53bc18602725f522f02eb6ba54aac5"
+      ],
+      "samples": 20000,
+      "seed": 20261121
+    },
+    {
+      "board": [
+        "7s",
+        "7h",
+        "2d"
+      ],
+      "categories": [
+        {
+          "board_pair_only": 0.8132156072431925,
+          "quads": 0.0018557075998649043,
+          "trips": 0.04685290548138913,
+          "two_pair": 0.13807577967554804
+        },
+        {
+          "board_pair_only": 0.8197727598492215,
+          "full_house": 0.0014776963895444114,
+          "trips": 0.08930310360572706,
+          "two_pair": 0.08944644015551279
+        }
+      ],
+      "equity_player0": 0.596675,
+      "mc_ci95": [
+        0.590033499519269,
+        0.6033165004807309
+      ],
+      "method": "weighted_joint_deals_showdown_only_not_action_ev",
+      "partition": "development",
+      "range_features": [
+        {
+          "categories": {
+            "board_pair_only": 0.8132156072431925,
+            "quads": 0.0018557075998649043,
+            "trips": 0.04685290548138913,
+            "two_pair": 0.13807577967554804
+          },
+          "common_upper_tail_mass": 0.04453698239675773,
+          "current_absolute_nuts_mass": 0.0018557075998649043,
+          "draw_mass": {
+            "backdoor_flush": 0.23949391142336407
+          },
+          "tail_reference": "95th percentile uniform legal physical combos; includes threshold ties"
+        },
+        {
+          "categories": {
+            "board_pair_only": 0.8197727598492215,
+            "full_house": 0.0014776963895444114,
+            "trips": 0.08930310360572706,
+            "two_pair": 0.08944644015551279
+          },
+          "common_upper_tail_mass": 0.05827443481807341,
+          "current_absolute_nuts_mass": 0.0,
+          "draw_mass": {
+            "backdoor_flush": 0.25321657561594185
+          },
+          "tail_reference": "95th percentile uniform legal physical combos; includes threshold ties"
+        }
+      ],
+      "range_sha256": [
+        "3a635d6b3b6e83567b0f6735ab598da4b3ed466cf218749b8d1e920a169f70ff",
+        "678f32b5a9ea0c88d4d8c159072b9a127b53bc18602725f522f02eb6ba54aac5"
+      ],
+      "samples": 20000,
+      "seed": 20261122
+    },
+    {
+      "board": [
+        "Kc",
+        "Kd",
+        "5s"
+      ],
+      "categories": [
+        {
+          "board_pair_only": 0.683490032299871,
+          "full_house": 0.013372559507889807,
+          "quads": 0.002057316847367663,
+          "trips": 0.1313884831402885,
+          "two_pair": 0.16969160820457946
+        },
+        {
+          "board_pair_only": 0.7496154022601862,
+          "full_house": 0.0075772636214885385,
+          "trips": 0.10309972015353312,
+          "two_pair": 0.1397076139647974
+        }
+      ],
+      "equity_player0": 0.625125,
+      "mc_ci95": [
+        0.6185515995482742,
+        0.6316984004517259
+      ],
+      "method": "weighted_joint_deals_showdown_only_not_action_ev",
+      "partition": "development",
+      "range_features": [
+        {
+          "categories": {
+            "board_pair_only": 0.683490032299871,
+            "full_house": 0.013372559507889807,
+            "quads": 0.002057316847367663,
+            "trips": 0.1313884831402885,
+            "two_pair": 0.16969160820457946
+          },
+          "common_upper_tail_mass": 0.12446766926574372,
+          "current_absolute_nuts_mass": 0.002057316847367663,
+          "draw_mass": {
+            "backdoor_flush": 0.24122040035385794
+          },
+          "tail_reference": "95th percentile uniform legal physical combos; includes threshold ties"
+        },
+        {
+          "categories": {
+            "board_pair_only": 0.7496154022601862,
+            "full_house": 0.0075772636214885385,
+            "trips": 0.10309972015353312,
+            "two_pair": 0.1397076139647974
+          },
+          "common_upper_tail_mass": 0.06740018044744846,
+          "current_absolute_nuts_mass": 0.0,
+          "draw_mass": {
+            "backdoor_flush": 0.26609117183796416
+          },
+          "tail_reference": "95th percentile uniform legal physical combos; includes threshold ties"
+        }
+      ],
+      "range_sha256": [
+        "3a635d6b3b6e83567b0f6735ab598da4b3ed466cf218749b8d1e920a169f70ff",
+        "678f32b5a9ea0c88d4d8c159072b9a127b53bc18602725f522f02eb6ba54aac5"
+      ],
+      "samples": 20000,
+      "seed": 20261123
+    },
+    {
+      "board": [
+        "Qs",
+        "7s",
+        "2s"
+      ],
+      "categories": [
+        {
+          "air": 0.5573572064768058,
+          "flush": 0.05734578756251858,
+          "overcards": 0.028547285724073362,
+          "overpair": 0.022837828579258687,
+          "second_pair": 0.06636672985132576,
+          "set": 0.011418914289629342,
+          "third_pair": 0.019594856921003954,
+          "top_pair": 0.14306757713476598,
+          "two_pair": 0.008564185717222006,
+          "underpair": 0.0848996277433942
+        },
+        {
+          "air": 0.6053626979638018,
+          "flush": 0.05696761877828057,
+          "second_pair": 0.12247684530542972,
+          "third_pair": 0.07475784785067872,
+          "top_pair": 0.11610488546380068,
+          "two_pair": 0.024330104638009047
+        }
+      ],
+      "equity_player0": 0.579275,
+      "mc_ci95": [
+        0.5725367894572854,
+        0.5860132105427146
+      ],
+      "method": "weighted_joint_deals_showdown_only_not_action_ev",
+      "partition": "development",
+      "range_features": [
+        {
+          "categories": {
+            "air": 0.5573572064768058,
+            "flush": 0.05734578756251858,
+            "overcards": 0.028547285724073362,
+            "overpair": 0.022837828579258687,
+            "second_pair": 0.06636672985132576,
+            "set": 0.011418914289629342,
+            "third_pair": 0.019594856921003954,
+            "top_pair": 0.14306757713476598,
+            "two_pair": 0.008564185717222006,
+            "underpair": 0.0848996277433942
+          },
+          "common_upper_tail_mass": 0.07447415899696261,
+          "current_absolute_nuts_mass": 0.0019031523816048905,
+          "draw_mass": {
+            "flush_draw": 0.30362322150409826,
+            "nut_flush_draw": 0.07136821431018342
+          },
+          "tail_reference": "95th percentile uniform legal physical combos; includes threshold ties"
+        },
+        {
+          "categories": {
+            "air": 0.6053626979638018,
+            "flush": 0.05696761877828057,
+            "second_pair": 0.12247684530542972,
+            "third_pair": 0.07475784785067872,
+            "top_pair": 0.11610488546380068,
+            "two_pair": 0.024330104638009047
+          },
+          "common_upper_tail_mass": 0.06580528846153846,
+          "current_absolute_nuts_mass": 0.0,
+          "draw_mass": {
+            "flush_draw": 0.2822354001696832,
+            "nut_flush_draw": 0.010870333710407241
+          },
+          "tail_reference": "95th percentile uniform legal physical combos; includes threshold ties"
+        }
+      ],
+      "range_sha256": [
+        "3a635d6b3b6e83567b0f6735ab598da4b3ed466cf218749b8d1e920a169f70ff",
+        "678f32b5a9ea0c88d4d8c159072b9a127b53bc18602725f522f02eb6ba54aac5"
+      ],
+      "samples": 20000,
+      "seed": 20261124
+    },
+    {
+      "board": [
+        "Jd",
+        "9d",
+        "4c"
+      ],
+      "categories": [
+        {
+          "air": 0.4821480612156497,
+          "overcards": 0.09451721394759026,
+          "overpair": 0.03544395523034634,
+          "second_pair": 0.1234926473483984,
+          "set": 0.017721977615173166,
+          "third_pair": 0.038397618166208534,
+          "top_pair": 0.1250994399855074,
+          "two_pair": 0.0189664542654831,
+          "underpair": 0.06421263222564412
+        },
+        {
+          "air": 0.6350050429055464,
+          "overcards": 0.01352894954569288,
+          "second_pair": 0.10860145895193711,
+          "third_pair": 0.11810202562895215,
+          "top_pair": 0.09929696400746861,
+          "two_pair": 0.0254655589604039
+        }
+      ],
+      "equity_player0": 0.60505,
+      "mc_ci95": [
+        0.5983459189533687,
+        0.6117540810466312
+      ],
+      "method": "weighted_joint_deals_showdown_only_not_action_ev",
+      "partition": "development",
+      "range_features": [
+        {
+          "categories": {
+            "air": 0.4821480612156497,
+            "overcards": 0.09451721394759026,
+            "overpair": 0.03544395523034634,
+            "second_pair": 0.1234926473483984,
+            "set": 0.017721977615173166,
+            "third_pair": 0.038397618166208534,
+            "top_pair": 0.1250994399855074,
+            "two_pair": 0.0189664542654831,
+            "underpair": 0.06421263222564412
+          },
+          "common_upper_tail_mass": 0.0957616905979002,
+          "current_absolute_nuts_mass": 0.005907325871724389,
+          "draw_mass": {
+            "backdoor_flush": 0.3786398972912946,
+            "combo": 0.013783760367356904,
+            "flush_draw": 0.065029812304566,
+            "gutshot": 0.09845543119540652,
+            "nut_flush_draw": 0.019691086239081296,
+            "oesd": 0.040870818597837144
+          },
+          "tail_reference": "95th percentile uniform legal physical combos; includes threshold ties"
+        },
+        {
+          "categories": {
+            "air": 0.6350050429055464,
+            "overcards": 0.01352894954569288,
+            "second_pair": 0.10860145895193711,
+            "third_pair": 0.11810202562895215,
+            "top_pair": 0.09929696400746861,
+            "two_pair": 0.0254655589604039
+          },
+          "common_upper_tail_mass": 0.0254655589604039,
+          "current_absolute_nuts_mass": 0.0,
+          "draw_mass": {
+            "backdoor_flush": 0.3812377176656178,
+            "combo": 0.009323805039340605,
+            "flush_draw": 0.07222718178077697,
+            "gutshot": 0.0820173998808716,
+            "nut_flush_draw": 0.0077210671649661404,
+            "oesd": 0.034579923739979174
+          },
+          "tail_reference": "95th percentile uniform legal physical combos; includes threshold ties"
+        }
+      ],
+      "range_sha256": [
+        "3a635d6b3b6e83567b0f6735ab598da4b3ed466cf218749b8d1e920a169f70ff",
+        "678f32b5a9ea0c88d4d8c159072b9a127b53bc18602725f522f02eb6ba54aac5"
+      ],
+      "samples": 20000,
+      "seed": 20261125
+    },
+    {
+      "board": [
+        "5c",
+        "4d",
+        "3s"
+      ],
+      "categories": [
+        {
+          "air": 0.010553564683881309,
+          "overcards": 0.7272673674125553,
+          "overpair": 0.0994924044918977,
+          "second_pair": 0.03491077926504592,
+          "set": 0.013459111385431733,
+          "straight": 0.025794327090492026,
+          "third_pair": 0.027957365662223285,
+          "top_pair": 0.05872262807344008,
+          "two_pair": 0.0018424519350351447
+        },
+        {
+          "air": 0.07897895661757041,
+          "overcards": 0.5358869346359457,
+          "second_pair": 0.09953832635858642,
+          "straight": 0.04169359762908247,
+          "third_pair": 0.08830625344393644,
+          "top_pair": 0.1153856464175615,
+          "two_pair": 0.04021028489731486
+        }
+      ],
+      "equity_player0": 0.5029,
+      "mc_ci95": [
+        0.4961186182376156,
+        0.5096813817623844
+      ],
+      "method": "weighted_joint_deals_showdown_only_not_action_ev",
+      "partition": "development",
+      "range_features": [
+        {
+          "categories": {
+            "air": 0.010553564683881309,
+            "overcards": 0.7272673674125553,
+            "overpair": 0.0994924044918977,
+            "second_pair": 0.03491077926504592,
+            "set": 0.013459111385431733,
+            "straight": 0.025794327090492026,
+            "third_pair": 0.027957365662223285,
+            "top_pair": 0.05872262807344008,
+            "two_pair": 0.0018424519350351447
+          },
+          "common_upper_tail_mass": 0.04109589041095889,
+          "current_absolute_nuts_mass": 0.007369807740140579,
+          "draw_mass": {
+            "backdoor_flush": 0.24917319969415355,
+            "gutshot": 0.3212720288159482,
+            "oesd": 0.12987812180449734
+          },
+          "tail_reference": "95th percentile uniform legal physical combos; includes threshold ties"
+        },
+        {
+          "categories": {
+            "air": 0.07897895661757041,
+            "overcards": 0.5358869346359457,
+            "second_pair": 0.09953832635858642,
+            "straight": 0.04169359762908247,
+            "third_pair": 0.08830625344393644,
+            "top_pair": 0.1153856464175615,
+            "two_pair": 0.04021028489731486
+          },
+          "common_upper_tail_mass": 0.05509702592818743,
+          "current_absolute_nuts_mass": 0.023828316976186578,
+          "draw_mass": {
+            "backdoor_flush": 0.25306417263615666,
+            "gutshot": 0.16709905133513067,
+            "oesd": 0.2824876762923138
+          },
+          "tail_reference": "95th percentile uniform legal physical combos; includes threshold ties"
+        }
+      ],
+      "range_sha256": [
+        "3a635d6b3b6e83567b0f6735ab598da4b3ed466cf218749b8d1e920a169f70ff",
+        "678f32b5a9ea0c88d4d8c159072b9a127b53bc18602725f522f02eb6ba54aac5"
+      ],
+      "samples": 20000,
+      "seed": 20261126
+    },
+    {
+      "board": [
+        "Ac",
+        "9h",
+        "4d"
+      ],
+      "categories": [
+        {
+          "air": 0.4582760225239152,
+          "second_pair": 0.1285572845028154,
+          "set": 0.018448785147498037,
+          "third_pair": 0.017317259658451493,
+          "top_pair": 0.23675940939289186,
+          "two_pair": 0.036897570294996074,
+          "underpair": 0.10374366847943056
+        },
+        {
+          "air": 0.7023184824478504,
+          "second_pair": 0.12156115996802093,
+          "third_pair": 0.11924994549022448,
+          "top_pair": 0.04642052474743804,
+          "two_pair": 0.010449887346464131
+        }
+      ],
+      "equity_player0": 0.68075,
+      "mc_ci95": [
+        0.6743848349310485,
+        0.6871151650689514
+      ],
+      "method": "weighted_joint_deals_showdown_only_not_action_ev",
+      "partition": "frozen_holdout",
+      "range_features": [
+        {
+          "categories": {
+            "air": 0.4582760225239152,
+            "second_pair": 0.1285572845028154,
+            "set": 0.018448785147498037,
+            "third_pair": 0.017317259658451493,
+            "top_pair": 0.23675940939289186,
+            "two_pair": 0.036897570294996074,
+            "underpair": 0.10374366847943056
+          },
+          "common_upper_tail_mass": 0.10454311583582214,
+          "current_absolute_nuts_mass": 0.006149595049166012,
+          "draw_mass": {
+            "backdoor_flush": 0.25319317722927986
+          },
+          "tail_reference": "95th percentile uniform legal physical combos; includes threshold ties"
+        },
+        {
+          "categories": {
+            "air": 0.7023184824478504,
+            "second_pair": 0.12156115996802093,
+            "third_pair": 0.11924994549022448,
+            "top_pair": 0.04642052474743804,
+            "two_pair": 0.010449887346464131
+          },
+          "common_upper_tail_mass": 0.010449887346464131,
+          "current_absolute_nuts_mass": 0.0,
+          "draw_mass": {
+            "backdoor_flush": 0.2571465949560279,
+            "gutshot": 0.04360782033578022
+          },
+          "tail_reference": "95th percentile uniform legal physical combos; includes threshold ties"
+        }
+      ],
+      "range_sha256": [
+        "3a635d6b3b6e83567b0f6735ab598da4b3ed466cf218749b8d1e920a169f70ff",
+        "678f32b5a9ea0c88d4d8c159072b9a127b53bc18602725f522f02eb6ba54aac5"
+      ],
+      "samples": 20000,
+      "seed": 20261127
+    },
+    {
+      "board": [
+        "Kh",
+        "Jh",
+        "6c"
+      ],
+      "categories": [
+        {
+          "air": 0.49711532814787635,
+          "overpair": 0.012150249991393572,
+          "second_pair": 0.12753509903466267,
+          "set": 0.01822537498709036,
+          "third_pair": 0.05355830196206289,
+          "top_pair": 0.1696903913798027,
+          "two_pair": 0.03138814581110007,
+          "underpair": 0.09033710868601125
+        },
+        {
+          "air": 0.5870717050423601,
+          "second_pair": 0.10917068876590244,
+          "third_pair": 0.1334469755981723,
+          "top_pair": 0.1403623141275888,
+          "two_pair": 0.029948316465977662
+        }
+      ],
+      "equity_player0": 0.60575,
+      "mc_ci95": [
+        0.5990616606429547,
+        0.6124383393570453
+      ],
+      "method": "weighted_joint_deals_showdown_only_not_action_ev",
+      "partition": "frozen_holdout",
+      "range_features": [
+        {
+          "categories": {
+            "air": 0.49711532814787635,
+            "overpair": 0.012150249991393572,
+            "second_pair": 0.12753509903466267,
+            "set": 0.01822537498709036,
+            "third_pair": 0.05355830196206289,
+            "top_pair": 0.1696903913798027,
+            "two_pair": 0.03138814581110007,
+            "underpair": 0.09033710868601125
+          },
+          "common_upper_tail_mass": 0.11036477075515834,
+          "current_absolute_nuts_mass": 0.006075124995696787,
+          "draw_mass": {
+            "backdoor_flush": 0.3701573659878054,
+            "combo": 0.01012520832616131,
+            "flush_draw": 0.05973467904102129,
+            "gutshot": 0.12960266657486483,
+            "nut_flush_draw": 0.020250416652322623,
+            "oesd": 0.0324006666437162
+          },
+          "tail_reference": "95th percentile uniform legal physical combos; includes threshold ties"
+        },
+        {
+          "categories": {
+            "air": 0.5870717050423601,
+            "second_pair": 0.10917068876590244,
+            "third_pair": 0.1334469755981723,
+            "top_pair": 0.1403623141275888,
+            "two_pair": 0.029948316465977662
+          },
+          "common_upper_tail_mass": 0.04028048564673993,
+          "current_absolute_nuts_mass": 0.0,
+          "draw_mass": {
+            "backdoor_flush": 0.37484855680877976,
+            "combo": 0.002772488084956416,
+            "flush_draw": 0.0749101172370712,
+            "gutshot": 0.04436585952424531,
+            "nut_flush_draw": 0.008610897254586403,
+            "oesd": 0.020086547609504204
+          },
+          "tail_reference": "95th percentile uniform legal physical combos; includes threshold ties"
+        }
+      ],
+      "range_sha256": [
+        "3a635d6b3b6e83567b0f6735ab598da4b3ed466cf218749b8d1e920a169f70ff",
+        "678f32b5a9ea0c88d4d8c159072b9a127b53bc18602725f522f02eb6ba54aac5"
+      ],
+      "samples": 20000,
+      "seed": 20261128
+    },
+    {
+      "board": [
+        "Td",
+        "8d",
+        "5s"
+      ],
+      "categories": [
+        {
+          "air": 0.393065710572874,
+          "overcards": 0.18787869299055868,
+          "overpair": 0.04696967324763978,
+          "second_pair": 0.1003272220569585,
+          "set": 0.017613627467864917,
+          "third_pair": 0.05944012149488815,
+          "top_pair": 0.13210220600898684,
+          "two_pair": 0.010525120946908615,
+          "underpair": 0.05207762521332061
+        },
+        {
+          "air": 0.5788280338607897,
+          "overcards": 0.040543208399389775,
+          "second_pair": 0.11634411175256507,
+          "third_pair": 0.13158595315724927,
+          "top_pair": 0.10902156680924897,
+          "two_pair": 0.02367712602075917
+        }
+      ],
+      "equity_player0": 0.591,
+      "mc_ci95": [
+        0.5842466124411522,
+        0.5977533875588478
+      ],
+      "method": "weighted_joint_deals_showdown_only_not_action_ev",
+      "partition": "frozen_holdout",
+      "range_features": [
+        {
+          "categories": {
+            "air": 0.393065710572874,
+            "overcards": 0.18787869299055868,
+            "overpair": 0.04696967324763978,
+            "second_pair": 0.1003272220569585,
+            "set": 0.017613627467864917,
+            "third_pair": 0.05944012149488815,
+            "top_pair": 0.13210220600898684,
+            "two_pair": 0.010525120946908615,
+            "underpair": 0.05207762521332061
+          },
+          "common_upper_tail_mass": 0.07510842166241331,
+          "current_absolute_nuts_mass": 0.005871209155954972,
+          "draw_mass": {
+            "backdoor_flush": 0.3837892001064648,
+            "combo": 0.013513566407289696,
+            "flush_draw": 0.06523891907125301,
+            "gutshot": 0.07753910225297868,
+            "nut_flush_draw": 0.019570697186516575,
+            "oesd": 0.04696967324763978
+          },
+          "tail_reference": "95th percentile uniform legal physical combos; includes threshold ties"
+        },
+        {
+          "categories": {
+            "air": 0.5788280338607897,
+            "overcards": 0.040543208399389775,
+            "second_pair": 0.11634411175256507,
+            "third_pair": 0.13158595315724927,
+            "top_pair": 0.10902156680924897,
+            "two_pair": 0.02367712602075917
+          },
+          "common_upper_tail_mass": 0.02367712602075917,
+          "current_absolute_nuts_mass": 0.0,
+          "draw_mass": {
+            "backdoor_flush": 0.3815994137178063,
+            "combo": 0.012712751637701535,
+            "flush_draw": 0.07207232807872928,
+            "gutshot": 0.10169603063025347,
+            "nut_flush_draw": 0.0071221321527923185,
+            "oesd": 0.06281594926864283
+          },
+          "tail_reference": "95th percentile uniform legal physical combos; includes threshold ties"
+        }
+      ],
+      "range_sha256": [
+        "3a635d6b3b6e83567b0f6735ab598da4b3ed466cf218749b8d1e920a169f70ff",
+        "678f32b5a9ea0c88d4d8c159072b9a127b53bc18602725f522f02eb6ba54aac5"
+      ],
+      "samples": 20000,
+      "seed": 20261129
+    },
+    {
+      "board": [
+        "6h",
+        "6s",
+        "3c"
+      ],
+      "categories": [
+        {
+          "board_pair_only": 0.8120833434003053,
+          "full_house": 0.0024253665462966234,
+          "quads": 0.0018585184262809374,
+          "trips": 0.0439205074498711,
+          "two_pair": 0.13971226417724292
+        },
+        {
+          "board_pair_only": 0.7791388903568602,
+          "full_house": 0.004635466604256476,
+          "trips": 0.10061227417199547,
+          "two_pair": 0.11561336886687762
+        }
+      ],
+      "equity_player0": 0.564625,
+      "mc_ci95": [
+        0.5579052276907064,
+        0.5713447723092937
+      ],
+      "method": "weighted_joint_deals_showdown_only_not_action_ev",
+      "partition": "frozen_holdout",
+      "range_features": [
+        {
+          "categories": {
+            "board_pair_only": 0.8120833434003053,
+            "full_house": 0.0024253665462966234,
+            "quads": 0.0018585184262809374,
+            "trips": 0.0439205074498711,
+            "two_pair": 0.13971226417724292
+          },
+          "common_upper_tail_mass": 0.042628837143605845,
+          "current_absolute_nuts_mass": 0.0018585184262809374,
+          "draw_mass": {
+            "backdoor_flush": 0.2435551227272636,
+            "gutshot": 0.0009218251394353449,
+            "oesd": 0.0037170368525618748
+          },
+          "tail_reference": "95th percentile uniform legal physical combos; includes threshold ties"
+        },
+        {
+          "categories": {
+            "board_pair_only": 0.7791388903568602,
+            "full_house": 0.004635466604256476,
+            "trips": 0.10061227417199547,
+            "two_pair": 0.11561336886687762
+          },
+          "common_upper_tail_mass": 0.06598971741772802,
+          "current_absolute_nuts_mass": 0.0,
+          "draw_mass": {
+            "backdoor_flush": 0.2587903999033647,
+            "gutshot": 0.05990774364510747,
+            "oesd": 0.02415878360524548
+          },
+          "tail_reference": "95th percentile uniform legal physical combos; includes threshold ties"
+        }
+      ],
+      "range_sha256": [
+        "3a635d6b3b6e83567b0f6735ab598da4b3ed466cf218749b8d1e920a169f70ff",
+        "678f32b5a9ea0c88d4d8c159072b9a127b53bc18602725f522f02eb6ba54aac5"
+      ],
+      "samples": 20000,
+      "seed": 20261130
+    }
+  ],
+  "scope": "HU range/board diagnostics, no action EV or solved games",
+  "unique_flops": 16,
+  "villain_range": "BB_call_vs_BTN_25"
+}

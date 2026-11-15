@@ -1,0 +1,61 @@
+{
+  "context": {
+    "positions": [
+      "BTN",
+      "BB"
+    ],
+    "pot_type": "single_raised",
+    "mode": "chip_ev",
+    "stage": "mid",
+    "tournament_format": "regular",
+    "dealt_players": 9,
+    "arrival_id": "validation-only-2x2-subgame-after:5288b6c656d3e817ae2ca3c35cae2609941d1914ad0400475733df47ca28747f"
+  },
+  "betting": {
+    "board": [
+      "As",
+      "7d",
+      "2c",
+      "Ts"
+    ],
+    "pot_bb": 9.166,
+    "stacks": [
+      20.667,
+      20.667
+    ],
+    "committed": [
+      0.0,
+      0.0
+    ],
+    "actor": 0,
+    "oop": 1,
+    "min_bet_bb": 1.0,
+    "last_full_raise_bb": 1.0,
+    "acted": [
+      false,
+      true
+    ],
+    "raise_rights": [
+      true,
+      true
+    ],
+    "raises": 0,
+    "history": [
+      "1:check:0",
+      "0:bet:1.833",
+      "1:call:1.833",
+      "BOARD:Ts",
+      "1:check:0"
+    ],
+    "terminal": "",
+    "winner": -1,
+    "needs_cards": 0
+  },
+  "hero_cards": [
+    "Ah",
+    "Qh"
+  ],
+  "table_id": "lab-table",
+  "hand_id": "lab-hand",
+  "revision": 0
+}

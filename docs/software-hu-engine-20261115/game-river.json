@@ -1,0 +1,74 @@
+{
+  "schema": "software.hu-game.v1",
+  "context": {
+    "positions": [
+      "BTN",
+      "BB"
+    ],
+    "pot_type": "single_raised",
+    "mode": "chip_ev",
+    "stage": "mid",
+    "tournament_format": "regular",
+    "dealt_players": 9,
+    "arrival_id": "synthetic-polar-river-v1"
+  },
+  "root": {
+    "board": [
+      "Kc",
+      "8s",
+      "3d",
+      "Ts",
+      "2h"
+    ],
+    "pot_bb": 25.0,
+    "stacks": [
+      50.0,
+      50.0
+    ],
+    "committed": [
+      0.0,
+      0.0
+    ],
+    "actor": 1,
+    "oop": 1,
+    "min_bet_bb": 1.0,
+    "last_full_raise_bb": 1.0,
+    "acted": [
+      false,
+      false
+    ],
+    "raise_rights": [
+      true,
+      true
+    ],
+    "raises": 0,
+    "history": [],
+    "terminal": "",
+    "winner": -1,
+    "needs_cards": 0
+  },
+  "ranges": [
+    {
+      "weights": {
+        "5c6c": 1.0,
+        "5sAs": 1.0,
+        "AhKd": 1.0
+      },
+      "source_id": "synthetic-hero-v1"
+    },
+    {
+      "weights": {
+        "JsQs": 1.0,
+        "KhQd": 1.0
+      },
+      "source_id": "synthetic-villain-v1"
+    }
+  ],
+  "menu": {
+    "fractions": [
+      0.6666666666666666
+    ],
+    "max_raises": 2,
+    "include_all_in": true
+  }
+}

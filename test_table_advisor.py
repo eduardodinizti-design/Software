@@ -3,7 +3,7 @@
 The individual readers are tested elsewhere; here they are mocked so the glue is
 checked without OCR."""
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 import numpy as np
 
 import table_advisor
@@ -52,6 +52,31 @@ class AdviseTableTests(unittest.TestCase):
         self.assertEqual(r['advice']['made'], 'top_pair')
         self.assertEqual(r['advice']['recommended'], 'call')
         self.assertFalse(r['advice']['execution_allowed'])
+
+    def test_compiled_policy_hit_bypasses_legacy_postflop_calculation(self):
+        patches = _patch(['As', 'Ks'], ['Kh', 'Qd', '2c'])
+        for p in patches:
+            p.start()
+        self.addCleanup(lambda: [p.stop() for p in patches])
+        observer = Mock()
+        observer.advise.return_value = dict(status='ADVICE', phase='postflop',
+                                            recommended='check', execution_allowed=False,
+                                            policy_sha256='compiled-source')
+        with patch('table_advisor.advise_postflop', side_effect=AssertionError('legacy calculation used')):
+            result = table_advisor.advise_table(self.crop, FakeAdvisor(), postflop_policy=observer)
+        self.assertEqual(result['advice']['policy_sha256'], 'compiled-source')
+        observer.advise.assert_called_once()
+
+    def test_policy_miss_preserves_reader_and_reports_actual_missing_context(self):
+        patches = _patch(['As', 'Ks'], ['Kh', 'Qd', '2c'])
+        for p in patches:
+            p.start()
+        self.addCleanup(lambda: [p.stop() for p in patches])
+        observer = Mock()
+        observer.advise.return_value = dict(status='CONTEXT_MISSING', reason='TIMELINE_REQUIRED')
+        result = table_advisor.advise_table(self.crop, FakeAdvisor(), postflop_policy=observer)
+        self.assertEqual(result['advice']['recommended'], 'call')
+        self.assertEqual(result['advice']['hu_policy_diagnostic']['reason'], 'TIMELINE_REQUIRED')
 
     def test_bounty_bb_threaded_to_advisor(self):
         # O --bounty-bb do operador chega ao advise_from_reading (p/ o overlay de call-off).

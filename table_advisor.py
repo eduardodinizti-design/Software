@@ -105,7 +105,7 @@ def _postflop_in_context(advisor, tracker, state, hero, board, *, mode, stage, t
 
 def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table_key='default',
                  villain_range=None, hero_override=None, tracker=None, bounty_bb=None,
-                 enable_hud=False, read_cache=None):
+                 enable_hud=False, read_cache=None, postflop_policy=None):
     """Read the table and attach an exploratory recommendation. The tournament
     phase chooses chip EV vs ICM unless mode/stage are forced. Pure read; the
     caller wraps it in an ocr_frame so one snapshot reuses OCR.
@@ -178,7 +178,16 @@ def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table
     board_present_unread = (board_status in ('BOARD_INCOMPLETE', 'BOARD_DUPLICATE_REJECTED')
                             or (board_status == 'BOARD_PARTIAL_OR_OBSTRUCTED'
                                 and board_reason != 'FIRST_CARD_ANCHOR_MISSING'))
-    if board.get('cards'):
+    policy_advice = None
+    if board.get('cards') and hero is not None and postflop_policy is not None:
+        hkey = (hand or {}).get('hand_id') or (hand or {}).get('hand_number')
+        policy_advice = postflop_policy.advise(
+            table_key=table_key, hand_key=hkey, table_state=state, hero_cards=hero,
+            board=board['cards'], mode=use_mode, stage=use_stage)
+    policy_hit = policy_advice is not None and policy_advice.get('status') == 'ADVICE'
+    if policy_hit:
+        advice = policy_advice
+    elif board.get('cards'):
         if hero is None:
             advice = dict(status='ABSTAIN', reason='HERO_CARDS_UNKNOWN', phase='postflop',
                           exploratory=True, execution_allowed=False)
@@ -203,9 +212,12 @@ def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table
         hkey = (hand or {}).get('hand_id') or (hand or {}).get('hand_number')
         has_board = bool(board.get('cards'))
         tracker.update(table_key=table_key, hand_key=hkey, table_state=state, has_board=has_board)
-        if has_board and hero is not None and isinstance(advice, dict) and advice.get('phase') == 'postflop':
+        if (has_board and hero is not None and not policy_hit
+                and isinstance(advice, dict) and advice.get('phase') == 'postflop'):
             advice = _postflop_in_context(advisor, tracker, state, hero, board,
                                           mode=use_mode, stage=use_stage, table_key=table_key)
+    if policy_advice is not None and not policy_hit:
+        advice['hu_policy_diagnostic'] = policy_advice
     return dict(hand=hand, hero_cards=hero, hero_slots=hero_slots, board=board, table_state=state, is_table=True,
                 tournament=tourney, context=dict(mode=use_mode, stage=use_stage), advice=advice)
 
@@ -234,7 +246,13 @@ def _summary(result):
             '%s=%sbb(%s)' % (b['seat'], b['bet_bb'], st['positions'].get(b['seat'], '-')) for b in bets))
     adv = result['advice']
     lines.append('=== RECOMENDACAO (exploratoria, nao-executar) ===')
-    if adv.get('phase') == 'postflop' and adv.get('status') == 'ADVICE':
+    if adv.get('phase') == 'postflop' and adv.get('status') == 'ADVICE' and adv.get('policy_sha256'):
+        explanation = adv.get('explanation') or {}
+        lines.append(explanation.get('situation', 'Politica HU compilada'))
+        lines.append('ACAO: %s | fonte %s | sem execucao' % (
+            str(adv.get('recommended')).upper(), adv['policy_sha256'][:16]))
+        lines.extend('  ' + text for text in explanation.get('comparisons', ()))
+    elif adv.get('phase') == 'postflop' and adv.get('status') == 'ADVICE':
         sz = adv.get('sizing') or {}
         size_txt = ' %.1fbb (%s)' % (sz['size_bb'], sz.get('basis', '')) if sz.get('size_bb') else ''
         extra = []
@@ -277,6 +295,7 @@ def main(argv=None):
     p.add_argument('--mode', default=None, help='Forca o modo; padrao: detecta da fase do torneio')
     p.add_argument('--stage', default=None, help='Forca o estagio; padrao: detecta da fase')
     p.add_argument('--json', action='store_true')
+    p.add_argument('--postflop-policy', help='Politica HU compilada; observacao, exige timeline confirmada')
     args = p.parse_args(argv)
     advisor = PreflopAdvisor.from_files(args.ranges, args.deep) if args.deep else PreflopAdvisor.from_file(args.ranges)
     crop = cv2.imread(args.imagem)
@@ -284,7 +303,13 @@ def main(argv=None):
         raise SystemExit('Nao consegui ler a imagem: ' + args.imagem)
     configure_ocr()
     with ocr_frame():
-        result = advise_table(crop, advisor, mode=args.mode, stage=args.stage)
+        policy_observer = None
+        if args.postflop_policy:
+            from strategy.policy_observer import PolicyObserver
+            from strategy.policy_store import CompiledPolicy
+            policy_observer = PolicyObserver(CompiledPolicy.load(args.postflop_policy))
+        result = advise_table(crop, advisor, mode=args.mode, stage=args.stage,
+                              postflop_policy=policy_observer)
     if args.json:
         print(json.dumps({k: v for k, v in result.items() if k != 'table_state'}, ensure_ascii=False, indent=2, default=str))
     else:

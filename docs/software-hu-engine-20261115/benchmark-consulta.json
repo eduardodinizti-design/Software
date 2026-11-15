@@ -1,0 +1,12 @@
+{
+  "environment": "Linux lab; not the notebook or PPPoker Windows",
+  "work": "normalize immutable state + validate context + lookup + stable mix + explanation; no capture/OCR/input",
+  "iterations": 5000,
+  "policy_nodes": 1642,
+  "load_and_validate_ms": 188.98493699998653,
+  "p50_ms": 0.092697,
+  "p95_ms": 0.146977,
+  "max_ms": 0.437728,
+  "target_p95_ms": 10,
+  "target_met": true
+}
