@@ -123,6 +123,7 @@ def main(argv=None):
 
 def package_study(output,game_path,asset_name,elapsed_seconds):
     output=Path(output);bank=output/'bank';delivery=output/'delivery';delivery.mkdir(exist_ok=True)
+    if any(delivery.iterdir()):raise SystemExit('Preserve existing delivery; package only a new empty delivery directory')
     game=json.loads(Path(game_path).read_text())
     index=json.loads((bank/'library.json').read_text())
     if len(index['entries'])!=1:raise SystemExit('Expected exactly one complete policy')
