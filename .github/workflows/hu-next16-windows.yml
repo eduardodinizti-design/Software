@@ -15,7 +15,7 @@ concurrency:
 env:
   PYTHONUTF8: '1'
   OPENBLAS_NUM_THREADS: '1'
-  HU_BATCH_CATALOG_ASSET: batch-catalog-43757186506.json
+  HU_BATCH_CATALOG_ASSET: batch-catalog-43764947533.json
 
 jobs:
   await-published-data:
