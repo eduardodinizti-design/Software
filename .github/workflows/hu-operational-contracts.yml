@@ -30,7 +30,7 @@ jobs:
           Get-Content runtime/hu/ci/contracts.txt
           if ($code -ne 0) {
             $detail = Get-Content -Raw runtime/hu/ci/contracts.txt
-            $detail = $detail.Substring([Math]::Max(0, $detail.Length - 9000))
+            $detail = $detail.Substring([Math]::Max(0, $detail.Length - 3000))
             $detail = $detail.Replace('%', '%25').Replace("`r", '%0D').Replace("`n", '%0A')
             Write-Output "::error title=Windows contract details::$detail"
           }
@@ -57,7 +57,7 @@ jobs:
           }
           if ($code -ne 0) {
             $detail = Get-Content -Raw runtime/hu/ci/owned-console.txt
-            $detail = $detail.Substring([Math]::Max(0, $detail.Length - 9000))
+            $detail = $detail.Substring([Math]::Max(0, $detail.Length - 3000))
             $detail = $detail.Replace('%', '%25').Replace("`r", '%0D').Replace("`n", '%0A')
             Write-Output "::error title=Owned Windows details::$detail"
           }
