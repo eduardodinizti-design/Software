@@ -1,0 +1,229 @@
+ENTREGA — ROTINA DE LOTES BTN x BB
+Data: 15/11/2026
+Projeto: eduardodinizti-design/Software (original; nao e o Clone)
+Branch: feat/hu-resumable-batches-20261115
+Base preservada: a485e89d960cbe5632103835c9c8cbf220542956
+
+1. O QUE FOI IMPLEMENTADO
+
+Fila retomavel para 100 flops distintos por simetria de naipes. Organizacao
+padrao: 16 + 16 + 16 + 16 + 16 + 16 + 4. Um unico flop e calculado por vez,
+em processo separado. O programa avanca sozinho para os proximos grupos.
+16 nao e limite do ambiente: --batch-size pode ser alterado. O tamanho do
+grupo organiza o acompanhamento; nao multiplica a memoria do solver.
+
+Para cada flop:
+  a) registra jogo, ranges, stacks, menu de apostas e hashes;
+  b) executa o solver nativo com orcamento de memoria, tempo e disco;
+  c) exporta a arvore por pequenos blocos, sem montar o JSON completo na RAM;
+  d) conserva acoes, frequencias por combo, valores e respostas de flop,
+     turn e river em SQLite comprimido, consultado por indice;
+  e) verifica todos os sucessores das acoes exportadas e todos os runouts
+     fisicamente possiveis para os priors, sem aprovar amostras como cobertura;
+  f) consulta a politica pela MESMA funcao choose() usada pelo bot nas ruas;
+  g) espera o worker encerrar, confirma hashes e publica a politica e o indice;
+  h) preserva parametros, metricas e logs pequenos; so entao apaga os
+     temporarios grandes daquela tentativa e inicia o proximo flop.
+
+Interrupcao: repita o mesmo comando run. COMPLETE nao e recalculado.
+VALIDATED pode terminar a publicacao apos uma queda. FAILED preserva os
+arquivos de diagnostico e nao entra no banco; retry-failed solicita nova
+tentativa. Apenas uma instancia pode dirigir a fila. Mudancas no plano,
+binario ou dicionario exigem nova fila, para nao misturar calculos.
+
+2. O QUE REALMENTE FOI CALCULADO E VALIDADO
+
+A. Um flop com os ranges COMPLETOS do modelo versionado:
+   As 7d 2c; BTN x BB, single-raised pot, 9 jogadores originalmente,
+   chip-EV, formato regular, pote 5,5 BB, stacks restantes 22,5 / 22,5 BB.
+   Priors publicos NVT 356340d, com chegada ilustrativa de open 2,5 BB sem ante.
+   Nao sao um novo export HRC do notebook do usuario, nem priors certificados.
+   Menu mantido: bet 1/3 do pote, raise de 100% do pote e all-in, com duas
+   agressoes por rua conforme o contrato nativo. Nao foram incluidos
+   silenciosamente 1/2, 2/3 ou outros sizes. Mais sizes exigem outro modelo.
+
+   Resultado completo armazenado:
+     FLOP:          10 nos de decisao
+     TURN:       2.254 nos de decisao
+     RIVER:    343.392 nos de decisao
+     TOTAL:    345.656 nos; 541.364 arestas terminais
+     Arquivo: 2.121.625.600 bytes (cerca de 2,12 GB / 1,98 GiB)
+     Fingerprint: 901f6e09f9d8d1232465715b684598996036f843d9f206ccd62a6c03143721cc
+
+   Piloto de capacidade/exportacao: 11 iteracoes. NAO CONVERGIU.
+   Gap global informado pelo backend: 1,856568699 BB; nao foi certificado por
+   um segundo solver. O backend nao fornece EV por acao neste export;
+   o campo permanece nulo, sem inventar EV zero.
+   O solve nativo usou aproximadamente 6,44 GB de RSS; a compactacao ficou
+   na ordem de dezenas de MB e levou cerca de 710 segundos apos o export.
+   O arquivo bruto gzip tinha cerca de 4,6 GiB. Os numeros detalhados e as
+   consultas efetivas com frequencias/sizes estao em full-range-pilot.json.
+
+   Cobertura completa de arvore e convergencia sao verificacoes distintas.
+   O download e REFERENCIA DE LABORATORIO, nao recomendacao GTO pronta para
+   operar. A politica completa pode ser consultada, mas nao certifica lucro.
+
+B. Dois flops sequenciais de teste nativo controlado:
+   As 7d 2c e Kd 8h 3c; ranges QQ contra JJ, 1 BB restante por jogador.
+   Cada um exportou FLOP 4, TURN 196, RIVER 9.408: 9.608 nos.
+   Ambos foram publicados, consultados, tiveram temporarios apagados e
+   retomaram sem recalculo. Pico medido da familia de processos: ~124 MB.
+   Esses dois casos comprovam a mecanica; nao substituem dois estudos com
+   os ranges completos. Ha tambem teste de equivalencia exata entre export
+   antigo e novo do MESMO solve, incluindo isomorfismo de naipes.
+
+C. Planejados: 100 flops. Nao foram calculados 100 solves convergidos.
+   O plano versionado usa ate 501 iteracoes e alvo nativo de 0,5% do pote.
+   Atingir o numero de iteracoes nao significa atingir o alvo. A qualidade
+   fica no relatorio e no indice de cada politica, mesmo quando insuficiente.
+
+3. QUANTOS CABEM E POR QUE APAGAR TEMPORARIOS NAO RESOLVE TODO O DISCO
+
+A RAM e reutilizada apos CADA flop; nao precisa guardar 16 solves vivos.
+O SQLite final precisa permanecer salvo para o bot consultar. Um resumo
+textual de tendencias nao substitui as frequencias completas da arvore.
+
+Na medicao desta entrega havia aproximadamente 43 GiB livres. Com reserva
+para 8 GiB de trabalho, 512 MiB livres e margem de 25% no tamanho do arquivo,
+a estimativa conservadora foi de 13 novos flops desse porte naquele instante.
+A limpeza posterior liberou 5.135.931.435 bytes (5,14 GB) de temporarios;
+SQLite final, ZIP, parametros e metricas permaneceram salvos. Outros boards
+podem ocupar mais ou menos: nao e uma garantia nem um teto de estrategia.
+
+Cem arquivos do tamanho medido equivalem a ~212 GB finais sem margem.
+Com 25% de margem, 8 GiB de trabalho e reserva, a estimativa e ~274 GB.
+Para guardar 100 politicas completas desse porte, use um destino maior ou
+arquivamento externo duravel. A rotina aceita --output em outro disco.
+Nao e correto prometer os 100 arquivos num disco de 63 GB apenas apagando
+os temporarios. Nao foi implementado descarte das politicas finais nem
+arquivamento remoto automatico. A falta de disco e informada; nao apaga
+trabalho local para tentar continuar.
+
+O notebook de 8 GB pode consultar o banco em disco sem carregar a arvore
+inteira. Esse piloto nao demonstra que caiba executar o solve completo
+junto com Windows, OCR e PPPoker nessa mesma memoria. Calculo offline
+medido: Linux com 16 GiB, worker limitado a 8 GiB. A compilacao desse novo
+backend nativo ainda nao foi validada no Windows do usuario.
+
+4. COMO EXECUTAR
+
+Dependencias Python: as do projeto, incluindo psutil. Para calcular no
+Linux, instalar separadamente TexasSolver no commit
+02c8021ee1307c18aa1e76b772c6ae1451601bc6, fmt headers, GCC/OpenMP e zlib-dev.
+O backend e AGPL-3.0; nao esta embutido no Software. O builder cria copias
+adaptadas fora do checkout externo e registra hashes, sem alterar o original.
+O novo caminho corrige a contagem de quatro cartas privadas no chance HU.
+
+Compilar (ajuste os caminhos locais):
+  python tools/build_texassolver_console.py --source /caminho/TexasSolver --fmt-include /caminho/fmt/include --out /caminho/build/solver-stream --stream-export
+
+Usar o plano entregue ou criar outro (nao sobrescreve plano existente):
+  python -m strategy.batch_jobs plan --game docs/software-hu-engine-20261115/game-flop-btn-bb.json --out plano-100.json --count 100 --batch-size 16
+
+Iniciar a fila; use um destino com espaco para as politicas finais:
+  python -m strategy.batch_jobs run --plan docs/software-hu-batches-20261115/plan-100.json --output /disco-maior/banco-btn-bb --binary /caminho/build/solver-stream --resources /caminho/TexasSolver/resources
+
+Para um piloto inicial, acrescente --max-cases 1. Sem essa opcao, avanca
+por todos os flops pendentes. Ctrl+C interrompe preservando checkpoints.
+Orcamentos padrao: memoria 8192 MiB, trabalho 8192 MiB, 3600 segundos para
+o nativo e ate o dobro para o worker completo. A memoria RSS da familia
+tambem e monitorada. Limite de tempo pode exigir ajuste para mais iteracoes.
+
+Consultar andamento e etapa ativa:
+  python -m strategy.batch_jobs status --output /disco-maior/banco-btn-bb
+
+Solicitar nova tentativa dos casos FAILED:
+  python -m strategy.batch_jobs retry-failed --output /disco-maior/banco-btn-bb
+Depois, repetir run. Logs antigos de falha sao preservados e contam no
+orcamento de temporarios; nao sao apagados automaticamente para ocultar erros.
+
+Estimar capacidade a partir de um SQLite final real:
+  python -m strategy.batch_jobs capacity --policy-reference /caminho/politica.sqlite --destination /disco-maior --count 100
+
+O banco contem library.json, policies/*.sqlite, reports/*, progress.json,
+progress.sqlite3 e temporary/. Somente COMPLETE entra em library.json.
+A limpeza exige caminho interno a temporary/ e marcador do proprio plano.
+Nao percorre nem apaga pastas antigas, projetos ou trabalho do usuario.
+
+5. COMO O BOT CONSULTA
+
+O operador ganhou --postflop-library. Ele escolhe a politica pelo flop,
+conserva o historico confirmado da mao e consulta a frequencia do combo
+no estado exato: posicao, pote, stacks, acoes anteriores e board.
+Os hashes dos arquivos sao conferidos na preparacao da biblioteca, antes
+da observacao. Durante o jogo, a consulta abre apenas nos necessarios,
+com cache limitado. Nao calcula CFR durante a vez do hero.
+
+Exemplo Windows de observacao (sem input):
+  python operar_mesa.py --hwnd 0xSEUHWND --postflop-library "D:\banco-btn-bb\library.json"
+Use os demais parametros de ranges que sua instalacao exige. --execute-postflop
+e --arm continuam separados, com historico e verificacao do executor.
+A consulta nao transforma um modelo impreciso em modelo aprovado para input.
+
+A selecao atual exige flop com cartas/naipes compativeis com a entrada.
+O catalogo evita contar permutacoes de naipes como novos estudos, mas o
+runtime ainda NAO transfere automaticamente uma politica para todo flop
+isomorfo. Nao ha aproximacao por board parecido, stacks diferentes, PKO,
+ICM, multiway ou apostas fora da arvore. Esses contextos pedem modelos
+proprios, em vez de aplicar um solve BTN/BB regular como se fosse universal.
+
+6. DOWNLOADS, EVIDENCIAS E VALIDACAO
+
+Codigo e plano:
+https://github.com/eduardodinizti-design/Software/tree/feat/hu-resumable-batches-20261115
+
+Politica completa de referencia e indice foram salvos e empacotados em ZIP
+de 1,81 GB, com leitura integral do ZIP conferida por SHA-256. O upload para
+uploads.github.com foi BLOQUEADO pelo tunel deste executor: HTTP 403.
+NAO HA ZIP DISPONIVEL PARA DOWNLOAD NA RELEASE nesta entrega. O SQLite de
+2,12 GB e o ZIP foram preservados no workspace; codigo, plano, frequencias
+das consultas e evidencias pequenas estao publicados no GitHub.
+Pagina de status: https://github.com/eduardodinizti-design/Software/releases/tag/hu-batch-lab-20261115
+Hashes e estado do upload: docs/software-hu-batches-20261115/download-manifest.json.
+O outro agente pode integrar/reproduzir pelo codigo, mas ainda precisa
+receber o SQLite ou recalcular o modelo para consultar toda esta arvore.
+
+Evidencias versionadas em docs/software-hu-batches-20261115/:
+  plan-100.json: os 100 flops, priors, menu e orcamentos;
+  full-range-pilot.json: arvore completa e consultas do bot nas tres ruas;
+  pilot-diagnostics/: comandos, metricas e log do solver;
+  controlled-reports/: os dois testes pequenos de processamento sequencial;
+  capacity-measured.json: capacidade observada antes da limpeza do piloto;
+  capacity-after-cleanup.json e pilot-cleanup.json: limpeza e nova estimativa;
+  windows-owned-ci.json/.txt: teste Windows controlado aprovado;
+  lookup-benchmark.json: 100 consultas repetidas ao mesmo no, cache aquecido;
+  regressao.json e regressao.txt: resultado detalhado dos testes.
+
+Regressao final: 506 testes, 503 aprovados, zero falhas/erros, 3 pulados.
+Os tres skips exigem Windows nativo ou dois crops de lobby ausentes.
+O lote novo acrescenta 28 testes, incluindo dois nativos com solver real.
+Compileall e git diff --check tambem passaram.
+
+No Windows Server 2025 do GitHub, 223 testes: 220 aprovados, 3 pulados
+(dois exigem backend de solve externo e um e de lock Linux). Captura GDI
+e seis acoes SendInput em janela Tk propria passaram, com efeito confirmado.
+A primeira tentativa encontrou um handle SQLite aberto no teste de
+corrupcao; corrigido com fechamento explicito. Nova execucao aprovada:
+https://github.com/eduardodinizti-design/Software/actions/runs/43743925216
+Codigo testado: 7d5454c41abc378ce4bf18974ddae5832bc4c376.
+A publicacao posterior altera apenas documentacao/evidencias.
+
+Este lote testa calculo, persistencia, consulta e ciclo de processos em
+laboratorio Linux. Nao e validacao de leitura/clique em PPPoker Windows.
+O verificador Windows anterior usa janela propria; a execucao do usuario
+em PPPoker ainda nao foi recebida como evidencia confirmada. O caso de
+leitura 8h como 3h no tema colorido segue pendente de reproducao e correcao.
+Nenhum threshold do leitor foi alterado neste lote.
+
+PENDENCIAS CONCRETAS
+  1) Calcular os 100 modelos com armazenamento suficiente e convergencia
+     registrada, usando priors/chegada confirmados para a operacao desejada.
+  2) Acrescentar e calcular menus adicionais se desejados: 1/2, 2/3 etc.
+  3) Validar EV/precisao contra uma referencia independente, incluindo HRC
+     instalado no Windows quando aplicavel ao mesmo modelo.
+  4) Implementar transferencia exata de naipes e outras familias (stacks,
+     posicoes, potes, ICM/PKO) antes de alegar cobertura universal.
+  5) Receber o teste real Windows/PPPoker e concluir validacao operacional.
+  6) Transferir o ZIP/SQLite completo: upload da Release bloqueado por HTTP 403.
+
+A main, as branches anteriores e o trabalho local foram preservados.

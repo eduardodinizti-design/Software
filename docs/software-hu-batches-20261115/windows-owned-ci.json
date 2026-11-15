@@ -1,0 +1,76 @@
+{
+  "pppoker_windows_validated": false,
+  "status": "PASS",
+  "native_owned_capture": "PASS",
+  "platform": "Windows-2025Server-10.0.26100-SP0",
+  "scope": "WINDOWS_GDI_AND_SENDINPUT_OWNED_TK_ONLY",
+  "reason": null,
+  "cases": [
+    {
+      "state": "DONE",
+      "reason": null,
+      "callbacks": [
+        "CHECK"
+      ],
+      "selected_text": "",
+      "kind": "check"
+    },
+    {
+      "state": "DONE",
+      "reason": null,
+      "callbacks": [
+        "CALL"
+      ],
+      "selected_text": "",
+      "kind": "call"
+    },
+    {
+      "state": "DONE",
+      "reason": null,
+      "callbacks": [
+        "FOLD"
+      ],
+      "selected_text": "",
+      "kind": "fold"
+    },
+    {
+      "state": "DONE",
+      "reason": null,
+      "callbacks": [
+        "BET",
+        "CONFIRM"
+      ],
+      "selected_text": "5,000",
+      "kind": "bet"
+    },
+    {
+      "state": "DONE",
+      "reason": null,
+      "callbacks": [
+        "RAISE",
+        "CONFIRM"
+      ],
+      "selected_text": "15,000",
+      "kind": "raise"
+    },
+    {
+      "state": "DONE",
+      "reason": null,
+      "callbacks": [
+        "BET",
+        "CONFIRM"
+      ],
+      "selected_text": "30,000",
+      "kind": "all_in"
+    }
+  ],
+  "source_commit": "7d5454c41abc378ce4bf18974ddae5832bc4c376",
+  "run_url": "https://github.com/eduardodinizti-design/Software/actions/runs/43743925216",
+  "run_id": 43743925216,
+  "job_id": 132902937174,
+  "contract_tests": 223,
+  "passed": 220,
+  "skipped": 3,
+  "skip_scope": "2 optional native Linux solver tests; 1 Linux driver lock test; Windows GDI executed",
+  "solver_native_windows_build_validated": false
+}

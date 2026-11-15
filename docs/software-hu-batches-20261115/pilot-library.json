@@ -1,0 +1,76 @@
+{
+  "complete_flops": 1,
+  "entries": [
+    {
+      "board": [
+        "As",
+        "7d",
+        "2c"
+      ],
+      "case_id": "0fa9d9ebbf6ad9c01085",
+      "file_sha256": "333407cd59456fcda67a98b2c8fd2af4b99f31115eb8071666fdd5f846cbfb41",
+      "path": "policies/0fa9d9ebbf6ad9c01085.sqlite",
+      "policy_sha256": "901f6e09f9d8d1232465715b684598996036f843d9f206ccd62a6c03143721cc",
+      "quality": {
+        "action_ev_available": false,
+        "actual_sizes": "native_rounding_to_one_unit_then_legality_checked",
+        "converged": false,
+        "export_depth_in_streets": 3,
+        "exported_depth_is_not_full_tree_coverage": false,
+        "gap_scope": "native_full_tree_declared_menu_and_ranges",
+        "global_gap_bb": 1.8565686988830565,
+        "iterations": 11,
+        "method": "texassolver_discounted_cfr",
+        "native_metric_independently_verified": false,
+        "nodes_by_street": {
+          "FLOP": 10,
+          "RIVER": 343392,
+          "TURN": 2254
+        },
+        "provenance": {
+          "binary_sha256": "9bb1753c2e4ffa9d24a0d64dae932caf378c460fbd8370a8ab1929f1e6f33005",
+          "command_sha256": "72e58b49a6f15cb22a0cef884e48cee4128eff8e0ed1be518a10f2ee9be5e4d6",
+          "evaluator_dictionary_sha256": "13e0f4bd3cb99388caec49b36f98b98b70ae30407cbd740d880db65ed4db5e7b",
+          "license": "AGPL-3.0 backend installed separately; not bundled with Software",
+          "repository": "https://github.com/bupticybee/TexasSolver",
+          "reused_export": true,
+          "stream_generated_sha256": {
+            "console_solver_stream.CommandLineTool.cpp": "ab5b0075bc925033a86b4b3f0934932894245a80e0b72e18bdd1c4b47e627a3c",
+            "console_solver_stream.PCfrSolver.cpp": "04e09c274aa302ffe765a76c1558c5617fa136add76178e2ac52b7716d357109",
+            "console_solver_stream.PokerSolver.cpp": "e704576c6982e476c97df32e08de3dba5b425daa96d8b682e86546c50e2b5a31"
+          },
+          "tested_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6"
+        },
+        "public_nodes": 345656,
+        "settings": {
+          "dump_rounds": 3,
+          "export_format": "street_jsonl_gzip",
+          "ip_range_common_scale": 1.0,
+          "iterations": 11,
+          "memory_budget_mb": 8192,
+          "memory_limit_enforced": false,
+          "native_raise_limit": 2,
+          "oop_range_common_scale": 1.0,
+          "python_menu_raise_limit_not_used": false,
+          "raise_fractions": [
+            1.0
+          ],
+          "root_effective_stack_bb": 22.5,
+          "suit_isomorphism": true,
+          "suit_symmetry_verified_on_both_priors": true,
+          "target_exploitability_pct_pot": 0.5,
+          "threads": 2,
+          "units_per_bb": 1000
+        },
+        "stream_chunks": 49834,
+        "structurally_complete": true,
+        "terminal_edges": 541364,
+        "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS",
+        "windows_validated": false
+      }
+    }
+  ],
+  "planned_flops": 100,
+  "schema": "software.hu-policy-library.v1",
+  "scope": "FULL TREE STRUCTURE, LOW ITERATION NON-CONVERGED LAB REFERENCE; NOT PRODUCTION GTO"
+}

@@ -1,0 +1,14 @@
+{
+  "available_bytes": 49517490176,
+  "estimated_additional_flops_fitting": 15,
+  "estimated_policy_bytes_per_flop": 2652032000,
+  "estimated_required_bytes": 274330005504,
+  "free_space_reserve_bytes": 536870912,
+  "planned_flops": 100,
+  "reference_policy_bytes": 2121625600,
+  "reference_policy_sha256": "901f6e09f9d8d1232465715b684598996036f843d9f206ccd62a6c03143721cc",
+  "safety_factor": 1.25,
+  "schema": "software.hu-storage-estimate.v1",
+  "scope": "Estimate from one retained policy; board size varies. Cleaning temporary files does not reclaim final policies.",
+  "working_space_bytes": 8589934592
+}

@@ -1,0 +1,37 @@
+set_pot 5500
+set_effective_stack 22500
+set_board As,7d,2c
+set_range_ip 33:0.435,44:1,54s:0.5,55:1,65s:0.5,66:1,75s:0.124,76s:1,77:1,85s:0.5,86s:0.411,87s:1,88:1,95s:0.5,96s:0.905,97s:1,98o:0.5,98s:1,99:1,A2o:0.5,A2s:1,A3o:1,A3s:1,A4o:1,A4s:1,A5o:1,A5s:1,A6o:1,A6s:1,A7o:1,A7s:1,A8o:1,A8s:1,A9o:1,A9s:1,AA:1,AJo:1,AJs:1,AKo:1,AKs:1,AQo:1,AQs:1,ATo:1,ATs:1,J4s:0.316,J5s:1,J6s:0.5,J7s:1,J8o:0.559,J8s:1,J9o:1,J9s:1,JJ:1,JTo:1,JTs:1,K2s:0.932,K3s:1,K4s:1,K5o:0.5,K5s:1,K6o:0.5,K6s:1,K7o:0.5,K7s:1,K8o:1,K8s:1,K9o:1,K9s:1,KJo:1,KJs:1,KK:1,KQo:1,KQs:1,KTo:1,KTs:1,Q2s:0.5,Q3s:0.058,Q4s:0.5,Q5s:1,Q6s:1,Q7s:1,Q8o:0.5,Q8s:1,Q9o:1,Q9s:1,QJo:1,QJs:1,QQ:1,QTo:1,QTs:1,T4s:0.5,T5s:0.5,T6s:1,T7s:1,T8o:0.063,T8s:1,T9o:1,T9s:1,TT:1
+set_range_oop 32s:1,42o:0.14,42s:1,43o:1,43s:1,52o:0.5,52s:1,53o:1,53s:1,54o:1,54s:1,62s:1,63o:0.414,63s:1,64o:1,64s:1,65o:1,65s:1,72s:1,73s:1,74o:0.333,74s:1,75o:1,75s:1,76o:1,76s:1,82s:1,83s:1,84s:1,85o:0.5,85s:1,86o:1,86s:1,87o:0.5,87s:1,92s:1,93s:1,94s:1,95o:0.181,95s:1,96o:0.5,96s:1,97o:0.5,97s:1,98o:1,98s:1,A2o:0.333,A2s:1,A3o:0.333,A3s:1,A4o:0.333,A4s:0.934,A5o:0.137,A5s:0.5,A6o:0.333,A6s:0.333,A7o:0.658,A7s:0.5,A8o:0.333,A8s:0.931,A9s:0.495,J2o:0.333,J2s:1,J3o:0.333,J3s:1,J4o:0.592,J4s:1,J5o:0.5,J5s:1,J6o:0.5,J6s:1,J7o:0.5,J7s:1,J8o:1,J8s:1,J9o:1,J9s:1,JTo:0.595,JTs:0.5,K2o:1,K2s:1,K3o:1,K3s:1,K4o:0.5,K4s:1,K5o:0.791,K5s:1,K6o:1,K6s:0.65,K7o:1,K7s:0.5,K8o:1,K8s:1,K9o:1,K9s:1,KJo:0.5,KJs:1,KQo:0.5,KQs:0.777,KTo:0.761,KTs:1,Q2o:0.753,Q2s:1,Q3o:0.842,Q3s:1,Q4o:0.884,Q4s:1,Q5o:0.5,Q5s:1,Q6o:0.5,Q6s:1,Q7o:0.5,Q7s:1,Q8o:0.5,Q8s:1,Q9o:1,Q9s:1,QJo:0.5,QJs:0.5,QTo:0.94,QTs:0.5,T2s:1,T3o:0.333,T3s:1,T4o:0.333,T4s:1,T5o:0.333,T5s:1,T6o:0.945,T6s:1,T7o:0.748,T7s:1,T8o:0.5,T8s:1,T9o:1,T9s:0.333
+set_raise_limit 2
+set_bet_sizes oop,flop,bet,33.33333333
+set_bet_sizes oop,flop,raise,100
+set_bet_sizes oop,flop,donk,33.33333333
+set_bet_sizes oop,flop,allin
+set_bet_sizes oop,turn,bet,33.33333333
+set_bet_sizes oop,turn,raise,100
+set_bet_sizes oop,turn,donk,33.33333333
+set_bet_sizes oop,turn,allin
+set_bet_sizes oop,river,bet,33.33333333
+set_bet_sizes oop,river,raise,100
+set_bet_sizes oop,river,donk,33.33333333
+set_bet_sizes oop,river,allin
+set_bet_sizes ip,flop,bet,33.33333333
+set_bet_sizes ip,flop,raise,100
+set_bet_sizes ip,flop,allin
+set_bet_sizes ip,turn,bet,33.33333333
+set_bet_sizes ip,turn,raise,100
+set_bet_sizes ip,turn,allin
+set_bet_sizes ip,river,bet,33.33333333
+set_bet_sizes ip,river,raise,100
+set_bet_sizes ip,river,allin
+set_allin_threshold 1000000
+build_tree
+set_thread_num 2
+set_accuracy 0.5
+set_max_iteration 11
+set_print_interval 10
+set_use_isomorphism 1
+start_solve
+set_dump_rounds 3
+dump_result_stream strategy.jsonl.gz

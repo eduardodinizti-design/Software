@@ -1,0 +1,11 @@
+{
+  "asset": "btn-bb-As7d2c-full-tree-lab.zip",
+  "bytes": 1809679917,
+  "policy_file_sha256": "333407cd59456fcda67a98b2c8fd2af4b99f31115eb8071666fdd5f846cbfb41",
+  "policy_sha256": "901f6e09f9d8d1232465715b684598996036f843d9f206ccd62a6c03143721cc",
+  "sha256": "134b797b91495502224e2cd588508966d0e2b7a1252ec3118c29a164f2ab9861",
+  "expected_url": "https://github.com/eduardodinizti-design/Software/releases/download/hu-batch-lab-20261115/btn-bb-As7d2c-full-tree-lab.zip",
+  "publication_status": "BLOCKED_HTTP_403",
+  "published": false,
+  "reason": "Executor CONNECT tunnel to uploads.github.com returned HTTP 403; no release asset was uploaded. The complete ZIP and SQLite are retained in the workspace."
+}
