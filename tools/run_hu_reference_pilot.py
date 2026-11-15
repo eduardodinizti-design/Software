@@ -1,0 +1,107 @@
+"""Compute and package one full NVT reference on a GitHub runner, without input."""
+import argparse
+from datetime import datetime,timezone
+import json
+from pathlib import Path
+import subprocess
+import sys
+import time
+import zipfile
+
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
+from strategy.batch_jobs import atomic_json,make_plan
+from strategy.texassolver_backend import file_hash
+
+
+def notice(value):
+    value=json.dumps(value,sort_keys=True,allow_nan=False)
+    print('::notice title=HU reference progress::'+value.replace('%','%25').replace('\n','%0A').replace('\r','%0D'),flush=True)
+
+
+def progress(bank):
+    out={}
+    try:out.update(json.loads((bank/'progress.json').read_text()))
+    except FileNotFoundError:pass
+    for attempt in (bank/'temporary').glob('*'):
+        stage=attempt/'stage.json';metrics=attempt/'native/tmp_log.txt'
+        try:out['stage']=json.loads(stage.read_text())
+        except FileNotFoundError:pass
+        try:
+            lines=metrics.read_text().splitlines()
+            if lines:out['last_native_metric']=json.loads(lines[-1])
+        except (FileNotFoundError,json.JSONDecodeError):pass
+    return out
+
+
+def main(argv=None):
+    p=argparse.ArgumentParser(description=__doc__)
+    p.add_argument('--binary',required=True);p.add_argument('--resources',required=True)
+    p.add_argument('--output',required=True)
+    p.add_argument('--game',default='docs/software-hu-engine-20261115/game-flop-btn-bb.json')
+    p.add_argument('--iterations',type=int,default=501);p.add_argument('--threads',type=int,default=4)
+    p.add_argument('--accuracy-pct',type=float,default=.5)
+    args=p.parse_args(argv)
+    output=Path(args.output).resolve()
+    if output.exists():p.error('Use a new output directory; previous calculations are preserved')
+    output.mkdir(parents=True)
+    bank=output/'bank';delivery=output/'delivery';delivery.mkdir()
+    game=json.loads(Path(args.game).read_text())
+    plan=make_plan(args.game,boards=[game['root']['board']],iterations=args.iterations,
+        accuracy_pct=args.accuracy_pct,threads=args.threads,memory_mb=8192,
+        timeout_seconds=7200,work_disk_mb=10240,batch_size=1)
+    atomic_json(output/'plan.json',plan)
+    command=[sys.executable,'-m','strategy.batch_jobs','run','--plan',str(output/'plan.json'),
+        '--output',str(bank),'--binary',str(Path(args.binary).resolve()),'--resources',str(Path(args.resources).resolve())]
+    started=time.monotonic()
+    with (output/'driver.txt').open('w') as log:
+        worker=subprocess.Popen(command,stdout=log,stderr=subprocess.STDOUT)
+        try:
+            last=0
+            while worker.poll() is None:
+                elapsed=time.monotonic()-started
+                if elapsed-last>=60 or last==0:
+                    notice(dict(elapsed_seconds=round(elapsed),**progress(bank)));last=max(1,elapsed)
+                time.sleep(5)
+        except BaseException:
+            from strategy.batch_jobs import terminate_tree
+            terminate_tree(worker);raise
+    if worker.returncode:raise SystemExit('Pilot failed; reports and diagnostics retained at '+str(output))
+    index=json.loads((bank/'library.json').read_text())
+    if len(index['entries'])!=1:raise SystemExit('Expected exactly one complete policy')
+    entry=index['entries'][0];report=json.loads((bank/'reports'/(entry['case_id']+'.json')).read_text())
+    if not report['coverage']['structurally_complete'] or set(report['lookup_validation']['probes'])!={'flop','turn','river'}:
+        raise SystemExit('Missing complete tree or bot lookup proof')
+    if list((bank/'temporary').iterdir()):raise SystemExit('Successful attempt was not cleaned up')
+    summary=dict(schema='software.hu-reference-delivery.v1',created_at=datetime.now(timezone.utc).isoformat(),
+        scope='NVT_REFERENCE_FULL_TREE_NATIVE_REPORTED_PRECISION_NOT_INDEPENDENT_GTO_OR_PPPOKER_VALIDATION',
+        policy_sha256=entry['policy_sha256'],file_sha256=entry['file_sha256'],
+        board=entry['board'],quality=entry['quality'],coverage=report['coverage'],
+        native_target_met=bool(entry['quality'].get('converged')),iterations=entry['quality'].get('iterations'),
+        global_gap_bb=entry['quality'].get('global_gap_bb'),source_game_sha256=file_hash(args.game),
+        prior_ranges_confirmed_as='User approved available NVT ranges as reference; no direct HRC export certification',
+        elapsed_seconds=time.monotonic()-started,temporary_cleanup_verified=True,worker_exited=True,
+        pppoker_windows_validated=False,source_commit=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip())
+    atomic_json(delivery/'result.json',summary)
+    readme=('REFERENCIA NVT BTN x BB — banco completo de flop/turn/river.\n'
+        'Precisao nativa atingida: '+str(summary['native_target_met'])+'\n'
+        'Gap global nativo (BB): '+str(summary['global_gap_bb'])+'\n'
+        'O indicador nativo nao substitui validacao independente ou no PPPoker Windows.\n'
+        'Extraia em pasta nova. Consulte pelo Software com --postflop-library library.json.\n'
+        'Modelo: chip-EV regular, 5,5 BB no pote, 22,5 BB restantes; bet 1/3, raise 100% e all-in.\n')
+    (delivery/'LEIA_PRIMEIRO.txt').write_text(readme,encoding='utf-8')
+    archive=delivery/'btn-bb-As7d2c-nvt-reference.zip'
+    with zipfile.ZipFile(archive,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=1,allowZip64=True) as z:
+        for folder in ('policies','reports'):
+            for path in sorted((bank/folder).rglob('*')):
+                if path.is_file():z.write(path,str(path.relative_to(bank)))
+        for name in ('library.json','plan.json','progress.json'):z.write(bank/name,name)
+        z.write(delivery/'result.json','result.json');z.write(delivery/'LEIA_PRIMEIRO.txt','LEIA_PRIMEIRO.txt')
+    manifest=dict(schema='software.hu-reference-asset.v1',asset=archive.name,bytes=archive.stat().st_size,
+        sha256=file_hash(archive),file_sha256=entry['file_sha256'],policy_sha256=entry['policy_sha256'],
+        native_target_met=summary['native_target_met'])
+    atomic_json(delivery/'download-manifest.json',manifest)
+    notice(dict(event='PACKAGED',**manifest))
+    return 0
+
+
+if __name__=='__main__':raise SystemExit(main())

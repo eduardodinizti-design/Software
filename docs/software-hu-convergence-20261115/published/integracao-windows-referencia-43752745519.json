@@ -1,0 +1,142 @@
+{
+  "contract_tests": {
+    "passed": 237,
+    "skipped": 3,
+    "tests_run": 240
+  },
+  "downloaded_policy_hand": {
+    "chain_valid": true,
+    "decisions": 3,
+    "event_counts": {
+      "action": 9,
+      "board": 2
+    },
+    "input_devices_used": false,
+    "library_routing_tested": true,
+    "scenario_sampling": "COVERAGE_DRIVEN_TRIPLE_BARREL_NOT_UNBIASED_PLAY_OR_EV_ESTIMATION",
+    "scope": "STORED_POLICY_WITH_SYNTHETIC_READINGS_NOT_A_PLAYED_PPPOKER_HAND",
+    "selected_actions_match": true,
+    "source": "ACTUAL_PUBLISHED_NVT_SOLVER_POLICY"
+  },
+  "exact_suit_routing": {
+    "board": [
+      "Ah",
+      "7c",
+      "2s",
+      "Th",
+      "2d"
+    ],
+    "complete_to_showdown": true,
+    "derived_policy_sha256": "e037f4881cbc95831c08ea9ab85305d4e727492842846dbe8b3761c68adc1f29",
+    "source_policy_sha256": "70b17cc7e89c5d2da9eb490718e698e492d25e9bbff9c9dfd190b4de5022e6a3",
+    "status": "PASS"
+  },
+  "independent_river": {
+    "elapsed_seconds": 0.3429999999999609,
+    "joint_private_deals": 439058,
+    "method": "exact_river_frozen_profile_evs_and_information_set_best_responses",
+    "nash_conv_bb": 0.025621133249669775,
+    "policy_modified": false,
+    "scope": "CONDITIONAL_RIVER_PRIORS_AND_DECLARED_MENU_NOT_FULL_FLOP_GTO_CERTIFICATION"
+  },
+  "native_executor": {
+    "capture": "PASS",
+    "cases": [
+      {
+        "callbacks": [
+          "CHECK"
+        ],
+        "kind": "check",
+        "state": "DONE"
+      },
+      {
+        "callbacks": [
+          "CALL"
+        ],
+        "kind": "call",
+        "state": "DONE"
+      },
+      {
+        "callbacks": [
+          "FOLD"
+        ],
+        "kind": "fold",
+        "state": "DONE"
+      },
+      {
+        "callbacks": [
+          "BET",
+          "CONFIRM"
+        ],
+        "kind": "bet",
+        "state": "DONE"
+      },
+      {
+        "callbacks": [
+          "RAISE",
+          "CONFIRM"
+        ],
+        "kind": "raise",
+        "state": "DONE"
+      },
+      {
+        "callbacks": [
+          "BET",
+          "CONFIRM"
+        ],
+        "kind": "all_in",
+        "state": "DONE"
+      }
+    ],
+    "generic_case_policies": "SYNTHETIC_CONTROLLED_TEST_POLICIES",
+    "reference_hand": {
+      "callbacks": [
+        "BET",
+        "PRESET_THIRD",
+        "CONFIRM",
+        "BET",
+        "PRESET_THIRD",
+        "CONFIRM",
+        "BET",
+        "PRESET_THIRD",
+        "CONFIRM"
+      ],
+      "complete_to_showdown": true,
+      "event_counts": {
+        "action": 9,
+        "board": 2,
+        "execution_confirmed": 3
+      },
+      "policy_sha256": "70b17cc7e89c5d2da9eb490718e698e492d25e9bbff9c9dfd190b4de5022e6a3",
+      "pot_presets_used": 3,
+      "scope": "STORED_NVT_POLICY_REAL_SENDINPUT_OWNED_TK_SYNTHETIC_GAME_STATE",
+      "status": "PASS",
+      "steps": [
+        {
+          "confirmed": true,
+          "state": "DONE",
+          "street": "FLOP"
+        },
+        {
+          "confirmed": true,
+          "state": "DONE",
+          "street": "TURN"
+        },
+        {
+          "confirmed": true,
+          "state": "DONE",
+          "street": "RIVER"
+        }
+      ]
+    },
+    "scope": "WINDOWS_GDI_AND_SENDINPUT_OWNED_TK_ONLY"
+  },
+  "native_target_met": true,
+  "platform": "Windows-2025Server-10.0.26100-SP0",
+  "policy_sha256": "70b17cc7e89c5d2da9eb490718e698e492d25e9bbff9c9dfd190b4de5022e6a3",
+  "pppoker_windows_validated": false,
+  "run_url": "https://github.com/eduardodinizti-design/Software/actions/runs/43752745519",
+  "source_commit": "b44eeee373fcc7f1444a2a990ebf232aeb1d68ea",
+  "status": "PASS",
+  "user_notebook_validated": false
+}

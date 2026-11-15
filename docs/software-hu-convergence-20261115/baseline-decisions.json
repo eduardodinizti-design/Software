@@ -1,0 +1,482 @@
+[
+  {
+    "action_id": "bet:1.833",
+    "candidates": [
+      {
+        "action": "check",
+        "action_id": "check:0",
+        "additional_bb": 0.0,
+        "ev_bb": null,
+        "frequency": 0.11311417143856457,
+        "raise_to_bb": null,
+        "selection_frequency": 0.11311417143856457
+      },
+      {
+        "action": "bet",
+        "action_id": "bet:1.833",
+        "additional_bb": 1.833,
+        "ev_bb": null,
+        "frequency": 0.7703199523496657,
+        "raise_to_bb": null,
+        "selection_frequency": 0.7703199523496657
+      },
+      {
+        "action": "all_in",
+        "action_id": "all_in:22.5",
+        "additional_bb": 22.5,
+        "ev_bb": null,
+        "frequency": 0.11656587621176981,
+        "raise_to_bb": 22.5,
+        "selection_frequency": 0.11656587621176981
+      }
+    ],
+    "caveats": [
+      "HU_CHIP_EV_COMPILED_POLICY",
+      "LAB_POLICY_REQUIRES_WINDOWS_EXECUTION_VALIDATION"
+    ],
+    "combo": "TcTd",
+    "context": {
+      "arrival_id": "public-NVT-356340d-25bb-illustrative-2.5-open-no-ante",
+      "dealt_players": 9,
+      "mode": "chip_ev",
+      "positions": [
+        "BTN",
+        "BB"
+      ],
+      "pot_type": "single_raised",
+      "stage": "mid",
+      "tournament_format": "regular"
+    },
+    "execution_allowed": false,
+    "explanation": {
+      "arrival_model": "public-NVT-356340d-25bb-illustrative-2.5-open-no-ante",
+      "comparisons": [
+        "check 0.000 BB: mix 11.3%, EV ainda nao avaliado",
+        "bet 1.833 BB: mix 77.0%, EV ainda nao avaliado",
+        "all_in 22.500 BB: mix 11.7%, EV ainda nao avaliado"
+      ],
+      "gap_bb": 1.8565686988830565,
+      "gap_scope": "native_full_tree_declared_menu_and_ranges",
+      "limitation": "Ausencia de EV nao significa EV zero; gap do modelo nao comprova lucro real.",
+      "method": "texassolver_discounted_cfr",
+      "public_history": [
+        "1:check:0"
+      ],
+      "reason": "Frequencia do combo no no exato da politica; sorteio estavel por decisao.",
+      "selected_action": "bet:1.833",
+      "situation": "BTN IP vs BB; FLOP As 7d 2c; pote 5.500 BB; stacks 22.500/22.500 BB"
+    },
+    "exploratory": true,
+    "node_id": "07da817ae1866d321482d7c85c1ce1c78a35a85e1146ea6fc591da7581e78a59",
+    "operational": {
+      "amount_alignment": "WITHIN_DISPLAY_ROUNDING_INTERVAL",
+      "history_confirmation": "UNIQUE_LEGAL_PATH_AND_REPEATED_PASSIVE_OBSERVATIONS",
+      "history_revision": 2,
+      "observed_quantum_bb": 0.1,
+      "profile_sha256": "7602424c1adb183b5e4fe5a0c6be0e5e8c7f1e147abd4faf411167a63b7e1265",
+      "solver_certificate_for_actual_chips": false,
+      "source_authority": "COMPILED_HU_REFERENCE"
+    },
+    "phase": "postflop",
+    "policy_sha256": "901f6e09f9d8d1232465715b684598996036f843d9f206ccd62a6c03143721cc",
+    "quality": {
+      "action_ev_available": false,
+      "actual_sizes": "native_rounding_to_one_unit_then_legality_checked",
+      "converged": false,
+      "current_information_set_reach_probability": null,
+      "export_depth_in_streets": 3,
+      "exported_depth_is_not_full_tree_coverage": false,
+      "gap_scope": "native_full_tree_declared_menu_and_ranges",
+      "global_gap_bb": 1.8565686988830565,
+      "iterations": 11,
+      "method": "texassolver_discounted_cfr",
+      "native_metric_independently_verified": false,
+      "nodes_by_street": {
+        "FLOP": 10,
+        "RIVER": 343392,
+        "TURN": 2254
+      },
+      "provenance": {
+        "binary_sha256": "9bb1753c2e4ffa9d24a0d64dae932caf378c460fbd8370a8ab1929f1e6f33005",
+        "command_sha256": "72e58b49a6f15cb22a0cef884e48cee4128eff8e0ed1be518a10f2ee9be5e4d6",
+        "evaluator_dictionary_sha256": "13e0f4bd3cb99388caec49b36f98b98b70ae30407cbd740d880db65ed4db5e7b",
+        "license": "AGPL-3.0 backend installed separately; not bundled with Software",
+        "repository": "https://github.com/bupticybee/TexasSolver",
+        "reused_export": true,
+        "stream_generated_sha256": {
+          "console_solver_stream.CommandLineTool.cpp": "ab5b0075bc925033a86b4b3f0934932894245a80e0b72e18bdd1c4b47e627a3c",
+          "console_solver_stream.PCfrSolver.cpp": "04e09c274aa302ffe765a76c1558c5617fa136add76178e2ac52b7716d357109",
+          "console_solver_stream.PokerSolver.cpp": "e704576c6982e476c97df32e08de3dba5b425daa96d8b682e86546c50e2b5a31"
+        },
+        "tested_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6"
+      },
+      "public_nodes": 345656,
+      "selected_profile_global_gap_bb": 1.8565686988830565,
+      "selection_mode": "policy_mix",
+      "settings": {
+        "dump_rounds": 3,
+        "export_format": "street_jsonl_gzip",
+        "ip_range_common_scale": 1.0,
+        "iterations": 11,
+        "memory_budget_mb": 8192,
+        "memory_limit_enforced": false,
+        "native_raise_limit": 2,
+        "oop_range_common_scale": 1.0,
+        "python_menu_raise_limit_not_used": false,
+        "raise_fractions": [
+          1.0
+        ],
+        "root_effective_stack_bb": 22.5,
+        "suit_isomorphism": true,
+        "suit_symmetry_verified_on_both_priors": true,
+        "target_exploitability_pct_pot": 0.5,
+        "threads": 2,
+        "units_per_bb": 1000
+      },
+      "stream_chunks": 49834,
+      "structurally_complete": true,
+      "terminal_edges": 541364,
+      "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS",
+      "windows_validated": false
+    },
+    "range_sha256": [
+      "3a635d6b3b6e83567b0f6735ab598da4b3ed466cf218749b8d1e920a169f70ff",
+      "678f32b5a9ea0c88d4d8c159072b9a127b53bc18602725f522f02eb6ba54aac5"
+    ],
+    "recommended": "bet",
+    "selection_id": "bf09b717bfc80826b0a79abc4bd7349f1fe1db1d1703327cb48b0bb041e88487",
+    "sizing": {
+      "fraction_of_current_pot": 0.3332727272727273,
+      "heuristic": false,
+      "raise_to_bb": 1.833,
+      "semantics": "ADDITIONAL_BB",
+      "size_bb": 1.833
+    },
+    "status": "ADVICE",
+    "street": "FLOP"
+  },
+  {
+    "action_id": "bet:3.055",
+    "candidates": [
+      {
+        "action": "check",
+        "action_id": "check:0",
+        "additional_bb": 0.0,
+        "ev_bb": null,
+        "frequency": 0.2188264080357436,
+        "raise_to_bb": null,
+        "selection_frequency": 0.2188264080357436
+      },
+      {
+        "action": "bet",
+        "action_id": "bet:3.055",
+        "additional_bb": 3.055,
+        "ev_bb": null,
+        "frequency": 0.46873851725780297,
+        "raise_to_bb": null,
+        "selection_frequency": 0.46873851725780297
+      },
+      {
+        "action": "all_in",
+        "action_id": "all_in:20.667",
+        "additional_bb": 20.667,
+        "ev_bb": null,
+        "frequency": 0.31243507470645343,
+        "raise_to_bb": 20.667,
+        "selection_frequency": 0.31243507470645343
+      }
+    ],
+    "caveats": [
+      "HU_CHIP_EV_COMPILED_POLICY",
+      "LAB_POLICY_REQUIRES_WINDOWS_EXECUTION_VALIDATION"
+    ],
+    "combo": "TcTd",
+    "context": {
+      "arrival_id": "public-NVT-356340d-25bb-illustrative-2.5-open-no-ante",
+      "dealt_players": 9,
+      "mode": "chip_ev",
+      "positions": [
+        "BTN",
+        "BB"
+      ],
+      "pot_type": "single_raised",
+      "stage": "mid",
+      "tournament_format": "regular"
+    },
+    "execution_allowed": false,
+    "explanation": {
+      "arrival_model": "public-NVT-356340d-25bb-illustrative-2.5-open-no-ante",
+      "comparisons": [
+        "check 0.000 BB: mix 21.9%, EV ainda nao avaliado",
+        "bet 3.055 BB: mix 46.9%, EV ainda nao avaliado",
+        "all_in 20.667 BB: mix 31.2%, EV ainda nao avaliado"
+      ],
+      "gap_bb": 1.8565686988830565,
+      "gap_scope": "native_full_tree_declared_menu_and_ranges",
+      "limitation": "Ausencia de EV nao significa EV zero; gap do modelo nao comprova lucro real.",
+      "method": "texassolver_discounted_cfr",
+      "public_history": [
+        "1:check:0",
+        "0:bet:1.833",
+        "1:call:1.833",
+        "BOARD:Ts",
+        "1:check:0"
+      ],
+      "reason": "Frequencia do combo no no exato da politica; sorteio estavel por decisao.",
+      "selected_action": "bet:3.055",
+      "situation": "BTN IP vs BB; TURN As 7d 2c Ts; pote 9.166 BB; stacks 20.667/20.667 BB"
+    },
+    "exploratory": true,
+    "node_id": "02307f2425986db7220aae49154b271fa1f5a5d2585cb5d4061c88c2d886db6b",
+    "operational": {
+      "amount_alignment": "WITHIN_DISPLAY_ROUNDING_INTERVAL",
+      "history_confirmation": "UNIQUE_LEGAL_PATH_AND_REPEATED_PASSIVE_OBSERVATIONS",
+      "history_revision": 5,
+      "observed_quantum_bb": 0.1,
+      "profile_sha256": "7602424c1adb183b5e4fe5a0c6be0e5e8c7f1e147abd4faf411167a63b7e1265",
+      "solver_certificate_for_actual_chips": false,
+      "source_authority": "COMPILED_HU_REFERENCE"
+    },
+    "phase": "postflop",
+    "policy_sha256": "901f6e09f9d8d1232465715b684598996036f843d9f206ccd62a6c03143721cc",
+    "quality": {
+      "action_ev_available": false,
+      "actual_sizes": "native_rounding_to_one_unit_then_legality_checked",
+      "converged": false,
+      "current_information_set_reach_probability": null,
+      "export_depth_in_streets": 3,
+      "exported_depth_is_not_full_tree_coverage": false,
+      "gap_scope": "native_full_tree_declared_menu_and_ranges",
+      "global_gap_bb": 1.8565686988830565,
+      "iterations": 11,
+      "method": "texassolver_discounted_cfr",
+      "native_metric_independently_verified": false,
+      "nodes_by_street": {
+        "FLOP": 10,
+        "RIVER": 343392,
+        "TURN": 2254
+      },
+      "provenance": {
+        "binary_sha256": "9bb1753c2e4ffa9d24a0d64dae932caf378c460fbd8370a8ab1929f1e6f33005",
+        "command_sha256": "72e58b49a6f15cb22a0cef884e48cee4128eff8e0ed1be518a10f2ee9be5e4d6",
+        "evaluator_dictionary_sha256": "13e0f4bd3cb99388caec49b36f98b98b70ae30407cbd740d880db65ed4db5e7b",
+        "license": "AGPL-3.0 backend installed separately; not bundled with Software",
+        "repository": "https://github.com/bupticybee/TexasSolver",
+        "reused_export": true,
+        "stream_generated_sha256": {
+          "console_solver_stream.CommandLineTool.cpp": "ab5b0075bc925033a86b4b3f0934932894245a80e0b72e18bdd1c4b47e627a3c",
+          "console_solver_stream.PCfrSolver.cpp": "04e09c274aa302ffe765a76c1558c5617fa136add76178e2ac52b7716d357109",
+          "console_solver_stream.PokerSolver.cpp": "e704576c6982e476c97df32e08de3dba5b425daa96d8b682e86546c50e2b5a31"
+        },
+        "tested_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6"
+      },
+      "public_nodes": 345656,
+      "selected_profile_global_gap_bb": 1.8565686988830565,
+      "selection_mode": "policy_mix",
+      "settings": {
+        "dump_rounds": 3,
+        "export_format": "street_jsonl_gzip",
+        "ip_range_common_scale": 1.0,
+        "iterations": 11,
+        "memory_budget_mb": 8192,
+        "memory_limit_enforced": false,
+        "native_raise_limit": 2,
+        "oop_range_common_scale": 1.0,
+        "python_menu_raise_limit_not_used": false,
+        "raise_fractions": [
+          1.0
+        ],
+        "root_effective_stack_bb": 22.5,
+        "suit_isomorphism": true,
+        "suit_symmetry_verified_on_both_priors": true,
+        "target_exploitability_pct_pot": 0.5,
+        "threads": 2,
+        "units_per_bb": 1000
+      },
+      "stream_chunks": 49834,
+      "structurally_complete": true,
+      "terminal_edges": 541364,
+      "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS",
+      "windows_validated": false
+    },
+    "range_sha256": [
+      "3a635d6b3b6e83567b0f6735ab598da4b3ed466cf218749b8d1e920a169f70ff",
+      "678f32b5a9ea0c88d4d8c159072b9a127b53bc18602725f522f02eb6ba54aac5"
+    ],
+    "recommended": "bet",
+    "selection_id": "3f74ddb72b728174ca4868aa59694ba6a1e6fb0a91aa34fba35864b939d9169f",
+    "sizing": {
+      "fraction_of_current_pot": 0.33329696705214923,
+      "heuristic": false,
+      "raise_to_bb": 3.055,
+      "semantics": "ADDITIONAL_BB",
+      "size_bb": 3.055
+    },
+    "status": "ADVICE",
+    "street": "TURN"
+  },
+  {
+    "action_id": "bet:5.092",
+    "candidates": [
+      {
+        "action": "check",
+        "action_id": "check:0",
+        "additional_bb": 0.0,
+        "ev_bb": null,
+        "frequency": 0.0,
+        "raise_to_bb": null,
+        "selection_frequency": 0.0
+      },
+      {
+        "action": "bet",
+        "action_id": "bet:5.092",
+        "additional_bb": 5.092,
+        "ev_bb": null,
+        "frequency": 0.4625482123330768,
+        "raise_to_bb": null,
+        "selection_frequency": 0.4625482123330768
+      },
+      {
+        "action": "all_in",
+        "action_id": "all_in:17.612",
+        "additional_bb": 17.612,
+        "ev_bb": null,
+        "frequency": 0.5374517876669231,
+        "raise_to_bb": 17.612,
+        "selection_frequency": 0.5374517876669231
+      }
+    ],
+    "caveats": [
+      "HU_CHIP_EV_COMPILED_POLICY",
+      "LAB_POLICY_REQUIRES_WINDOWS_EXECUTION_VALIDATION"
+    ],
+    "combo": "TcTd",
+    "context": {
+      "arrival_id": "public-NVT-356340d-25bb-illustrative-2.5-open-no-ante",
+      "dealt_players": 9,
+      "mode": "chip_ev",
+      "positions": [
+        "BTN",
+        "BB"
+      ],
+      "pot_type": "single_raised",
+      "stage": "mid",
+      "tournament_format": "regular"
+    },
+    "execution_allowed": false,
+    "explanation": {
+      "arrival_model": "public-NVT-356340d-25bb-illustrative-2.5-open-no-ante",
+      "comparisons": [
+        "check 0.000 BB: mix 0.0%, EV ainda nao avaliado",
+        "bet 5.092 BB: mix 46.3%, EV ainda nao avaliado",
+        "all_in 17.612 BB: mix 53.7%, EV ainda nao avaliado"
+      ],
+      "gap_bb": 1.8565686988830565,
+      "gap_scope": "native_full_tree_declared_menu_and_ranges",
+      "limitation": "Ausencia de EV nao significa EV zero; gap do modelo nao comprova lucro real.",
+      "method": "texassolver_discounted_cfr",
+      "public_history": [
+        "1:check:0",
+        "0:bet:1.833",
+        "1:call:1.833",
+        "BOARD:Ts",
+        "1:check:0",
+        "0:bet:3.055",
+        "1:call:3.055",
+        "BOARD:2h",
+        "1:check:0"
+      ],
+      "reason": "Frequencia do combo no no exato da politica; sorteio estavel por decisao.",
+      "selected_action": "bet:5.092",
+      "situation": "BTN IP vs BB; RIVER As 7d 2c Ts 2h; pote 15.276 BB; stacks 17.612/17.612 BB"
+    },
+    "exploratory": true,
+    "node_id": "fb1821c169f8ea944ab54ff57e80a224fb8df1fef6ab52c412c508f3e3f1e6b3",
+    "operational": {
+      "amount_alignment": "WITHIN_DISPLAY_ROUNDING_INTERVAL",
+      "history_confirmation": "UNIQUE_LEGAL_PATH_AND_REPEATED_PASSIVE_OBSERVATIONS",
+      "history_revision": 8,
+      "observed_quantum_bb": 0.1,
+      "profile_sha256": "7602424c1adb183b5e4fe5a0c6be0e5e8c7f1e147abd4faf411167a63b7e1265",
+      "solver_certificate_for_actual_chips": false,
+      "source_authority": "COMPILED_HU_REFERENCE"
+    },
+    "phase": "postflop",
+    "policy_sha256": "901f6e09f9d8d1232465715b684598996036f843d9f206ccd62a6c03143721cc",
+    "quality": {
+      "action_ev_available": false,
+      "actual_sizes": "native_rounding_to_one_unit_then_legality_checked",
+      "converged": false,
+      "current_information_set_reach_probability": null,
+      "export_depth_in_streets": 3,
+      "exported_depth_is_not_full_tree_coverage": false,
+      "gap_scope": "native_full_tree_declared_menu_and_ranges",
+      "global_gap_bb": 1.8565686988830565,
+      "iterations": 11,
+      "method": "texassolver_discounted_cfr",
+      "native_metric_independently_verified": false,
+      "nodes_by_street": {
+        "FLOP": 10,
+        "RIVER": 343392,
+        "TURN": 2254
+      },
+      "provenance": {
+        "binary_sha256": "9bb1753c2e4ffa9d24a0d64dae932caf378c460fbd8370a8ab1929f1e6f33005",
+        "command_sha256": "72e58b49a6f15cb22a0cef884e48cee4128eff8e0ed1be518a10f2ee9be5e4d6",
+        "evaluator_dictionary_sha256": "13e0f4bd3cb99388caec49b36f98b98b70ae30407cbd740d880db65ed4db5e7b",
+        "license": "AGPL-3.0 backend installed separately; not bundled with Software",
+        "repository": "https://github.com/bupticybee/TexasSolver",
+        "reused_export": true,
+        "stream_generated_sha256": {
+          "console_solver_stream.CommandLineTool.cpp": "ab5b0075bc925033a86b4b3f0934932894245a80e0b72e18bdd1c4b47e627a3c",
+          "console_solver_stream.PCfrSolver.cpp": "04e09c274aa302ffe765a76c1558c5617fa136add76178e2ac52b7716d357109",
+          "console_solver_stream.PokerSolver.cpp": "e704576c6982e476c97df32e08de3dba5b425daa96d8b682e86546c50e2b5a31"
+        },
+        "tested_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6"
+      },
+      "public_nodes": 345656,
+      "selected_profile_global_gap_bb": 1.8565686988830565,
+      "selection_mode": "policy_mix",
+      "settings": {
+        "dump_rounds": 3,
+        "export_format": "street_jsonl_gzip",
+        "ip_range_common_scale": 1.0,
+        "iterations": 11,
+        "memory_budget_mb": 8192,
+        "memory_limit_enforced": false,
+        "native_raise_limit": 2,
+        "oop_range_common_scale": 1.0,
+        "python_menu_raise_limit_not_used": false,
+        "raise_fractions": [
+          1.0
+        ],
+        "root_effective_stack_bb": 22.5,
+        "suit_isomorphism": true,
+        "suit_symmetry_verified_on_both_priors": true,
+        "target_exploitability_pct_pot": 0.5,
+        "threads": 2,
+        "units_per_bb": 1000
+      },
+      "stream_chunks": 49834,
+      "structurally_complete": true,
+      "terminal_edges": 541364,
+      "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS",
+      "windows_validated": false
+    },
+    "range_sha256": [
+      "3a635d6b3b6e83567b0f6735ab598da4b3ed466cf218749b8d1e920a169f70ff",
+      "678f32b5a9ea0c88d4d8c159072b9a127b53bc18602725f522f02eb6ba54aac5"
+    ],
+    "recommended": "bet",
+    "selection_id": "1177dc3fdfa0fe71cec46ba5d3cbc0709f0e3b0f04609627e71c624d8a9e6ead",
+    "sizing": {
+      "fraction_of_current_pot": 0.3333333333333333,
+      "heuristic": false,
+      "raise_to_bb": 5.092,
+      "semantics": "ADDITIONAL_BB",
+      "size_bb": 5.092
+    },
+    "status": "ADVICE",
+    "street": "RIVER"
+  }
+]

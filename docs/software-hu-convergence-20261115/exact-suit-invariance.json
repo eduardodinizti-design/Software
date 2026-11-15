@@ -1,0 +1,221 @@
+{
+  "complete_to_showdown": true,
+  "derived_policy_sha256": "a14446230fcd54e6e06ef11e76841b8556ef0b7841fda5d53d074a8863ded6cc",
+  "distinct_suit_flops_verified": 24,
+  "mapping": {
+    "c": "s",
+    "d": "c",
+    "h": "d",
+    "s": "h"
+  },
+  "nash_conv_bb_renamed": 2.644441487445959,
+  "nash_conv_bb_source": 2.644441487445957,
+  "new_solve": false,
+  "observed_flop": [
+    "Ah",
+    "7c",
+    "2s"
+  ],
+  "pppoker_windows_validated": false,
+  "runout": [
+    "Th",
+    "2d"
+  ],
+  "same_game_under_exact_suit_bijection": true,
+  "source_policy_sha256": "901f6e09f9d8d1232465715b684598996036f843d9f206ccd62a6c03143721cc",
+  "status": "PASS",
+  "variants": [
+    {
+      "board": [
+        "As",
+        "7d",
+        "2c"
+      ],
+      "policy_sha256": "901f6e09f9d8d1232465715b684598996036f843d9f206ccd62a6c03143721cc"
+    },
+    {
+      "board": [
+        "Ah",
+        "7d",
+        "2c"
+      ],
+      "policy_sha256": "146f73cd94808d30c70589abbbb80d126ebc8b6a093ec7494647c83628ab919c"
+    },
+    {
+      "board": [
+        "As",
+        "7h",
+        "2c"
+      ],
+      "policy_sha256": "95b473489a0579c2a042f18a127ef19ee49a83ca5405cf6ddff4e836ce087075"
+    },
+    {
+      "board": [
+        "Ad",
+        "7h",
+        "2c"
+      ],
+      "policy_sha256": "26b33b9f2722c694258cb2b6612361908a4ff7bf063fd0caeb430e32edc0d4d1"
+    },
+    {
+      "board": [
+        "Ah",
+        "7s",
+        "2c"
+      ],
+      "policy_sha256": "5bb194e440291d7f4570e16af6d0310ab99ca1a5ce3ebb7474f88bae90fa8ce7"
+    },
+    {
+      "board": [
+        "Ad",
+        "7s",
+        "2c"
+      ],
+      "policy_sha256": "9d6557f71bcf90e4dbe6303ec001c1344cb789907e40c28cf5aa1f289c702030"
+    },
+    {
+      "board": [
+        "As",
+        "7c",
+        "2d"
+      ],
+      "policy_sha256": "8e0d0c35c2abdda92db2698dd5db441af3a3cedad6d05d92346868cc02cb4b18"
+    },
+    {
+      "board": [
+        "Ah",
+        "7c",
+        "2d"
+      ],
+      "policy_sha256": "21ca0cf4364cea4497990937dcab56705fe6b01ed788f66d3a5d0d7bade65e9b"
+    },
+    {
+      "board": [
+        "As",
+        "7h",
+        "2d"
+      ],
+      "policy_sha256": "de6add9781b088faaed65f8467fa0c4e7a62976ee9f4ef6034fadb6cf7f562e2"
+    },
+    {
+      "board": [
+        "Ac",
+        "7h",
+        "2d"
+      ],
+      "policy_sha256": "25fbc9d7b087873b270afe189c3f10917e4a392e1bf4a0aa14f0f1454e189ee7"
+    },
+    {
+      "board": [
+        "Ah",
+        "7s",
+        "2d"
+      ],
+      "policy_sha256": "82a804057a993779760a0bc7d4bbf780c90627a0e46b7ad2a8236113ffee2b6d"
+    },
+    {
+      "board": [
+        "Ac",
+        "7s",
+        "2d"
+      ],
+      "policy_sha256": "023b7afaa5ffc24066c18d2e883a47f76913b30297b01fab2e93c2f8c2534195"
+    },
+    {
+      "board": [
+        "As",
+        "7c",
+        "2h"
+      ],
+      "policy_sha256": "a06249e8327ecec99208d27569c3b74c28a508839f3bcab08f027715c1f23780"
+    },
+    {
+      "board": [
+        "Ad",
+        "7c",
+        "2h"
+      ],
+      "policy_sha256": "79bcd969e989a1862dc6b7d306e4132f70400c045239db19c3e475745dcfa0d7"
+    },
+    {
+      "board": [
+        "As",
+        "7d",
+        "2h"
+      ],
+      "policy_sha256": "d5ac51caa1252db03ed98f57c89d3ba5cf7f4a7e6cd51dd80d9635981f757c00"
+    },
+    {
+      "board": [
+        "Ac",
+        "7d",
+        "2h"
+      ],
+      "policy_sha256": "456426465471a780532e1c0807f73fa093e09231b299f5a01a16d86bfd3aa37e"
+    },
+    {
+      "board": [
+        "Ad",
+        "7s",
+        "2h"
+      ],
+      "policy_sha256": "f1509a38401308d6f2db2b04e14d2d1853d5b15c8001818ab42fdb3d7b6c8736"
+    },
+    {
+      "board": [
+        "Ac",
+        "7s",
+        "2h"
+      ],
+      "policy_sha256": "091c8b2ca3aac77a9ebb0887766a4c554b7d8940577fa77ad9bf8d076c8a99ee"
+    },
+    {
+      "board": [
+        "Ah",
+        "7c",
+        "2s"
+      ],
+      "policy_sha256": "a14446230fcd54e6e06ef11e76841b8556ef0b7841fda5d53d074a8863ded6cc"
+    },
+    {
+      "board": [
+        "Ad",
+        "7c",
+        "2s"
+      ],
+      "policy_sha256": "9077da280750c77fb96a839b95f2ca30d0a0117935cd12767966a75cba68bf14"
+    },
+    {
+      "board": [
+        "Ah",
+        "7d",
+        "2s"
+      ],
+      "policy_sha256": "f16be8c87b84ec87df05e2c69cbbbf91d7f64997e4bb84e1213161fee75f0460"
+    },
+    {
+      "board": [
+        "Ac",
+        "7d",
+        "2s"
+      ],
+      "policy_sha256": "2d1bcdce9c942138326728dfb2e5d3e457abbf815772f696584cc5c4b1096469"
+    },
+    {
+      "board": [
+        "Ad",
+        "7h",
+        "2s"
+      ],
+      "policy_sha256": "61e5e0a3f6864edcb744e47f48b4c6347687029d41183245bf010b396024686f"
+    },
+    {
+      "board": [
+        "Ac",
+        "7h",
+        "2s"
+      ],
+      "policy_sha256": "3fd7943da92cebf7c68a053184aae413d437244eefd4ea3af658bb7f9d4a746c"
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+SOFTWARE ORIGINAL — REFERENCIA NVT POS-FLOP NO NOTEBOOK
+
+1. BAIXAR EM PASTA NOVA
+
+Codigo completo desta entrega:
+https://github.com/eduardodinizti-design/Software/archive/refs/heads/feat/hu-converged-pilot-20261115.zip
+
+Extraia o ZIP em uma pasta nova. Preserve a instalacao antiga, seus ranges,
+calibracoes e logs. Este e o Software original, nao o Clone privado.
+
+Use Python 3.12 x64. Para um ambiente separado, abra o terminal na pasta:
+  py -3.12 -m venv .venv
+  .\.venv\Scripts\python.exe -m pip install -r requirements.txt
+
+A leitura real do PPPoker tambem precisa de Tesseract English/configuracao
+OCR ja usada no seu computador. Os testes de banco nao precisam do PPPoker
+aberto. A GPU dedicada nao e requisito para consultar as politicas.
+
+2. BAIXAR O BANCO E VERIFICAR SEM CLIQUES
+
+Abra VERIFICAR_REFERENCIA_NVT.bat com duplo clique.
+
+Ele baixa o ZIP completo da Release, confere SHA-256, extrai para uma pasta
+nova e verifica o SQLite e o fingerprint da politica. Depois confirma uma
+mao de laboratorio pelas mesmas classes de historico e consulta do bot.
+O teste nao movimenta o mouse, nao clica e nao entra em torneios.
+
+Release e manifesto de tamanho/hash:
+https://github.com/eduardodinizti-design/Software/releases/tag/hu-btn-bb-nvt-reference-20261115
+
+Reserve espaco para o ZIP e o banco extraido simultaneamente. Depois da
+validacao, o programa remove somente o ZIP temporario que acabou de baixar;
+o banco final permanece. A transferencia pode demorar conforme a internet.
+A pasta runtime e criada automaticamente na pasta nova do projeto.
+
+O terminal mostra o caminho absoluto. Resultados:
+  runtime\hu\nvt-reference-DATA-ID\download-receipt.json
+  runtime\hu\nvt-reference-DATA-ID\verification\result.json
+  runtime\hu\nvt-reference-DATA-ID\verification\hand.json
+  runtime\hu\nvt-reference-DATA-ID\verification\decisions.json
+  runtime\hu\nvt-reference-DATA-ID\bank\library.json
+
+PASS no verificador significa integridade e integracao confirmadas para o
+caso de laboratorio. O campo native_target_met informa separadamente se o
+solver atingiu o alvo declarado. Isso nao e certificado GTO ou prova de lucro.
+A mao e sintetica e foi escolhida para exercitar tres bets do mix. Nao e uma
+mao historica sua nem uma amostra imparcial de desempenho do bot.
+
+3. TESTAR CLIQUES COM O BANCO, EM JANELA PROPRIA
+
+Substitua PASTA_REAL pelo caminho que o passo anterior imprimiu:
+  .\.venv\Scripts\python.exe verificar_executor_hu.py --windows-owned --reference-library "PASTA_REAL\bank\library.json"
+
+Esse comando abre uma janela propria. Encerre outros executores que disputam
+o cursor e deixe o mouse concluir o teste. Ele verifica os seis tipos de
+acao em casos controlados e depois usa a politica NVT baixada para os bets
+de flop, turn e river da mesma mao, incluindo o preset de 1/3 do pote,
+readback do valor e confirmacao do efeito. Cartas e estado sao sinteticos;
+os cliques SendInput e os callbacks nessa janela sao reais no Windows.
+
+Ctrl+Alt+P pausa; Ctrl+Alt+D desabilita; fechar a janela encerra.
+Resultado em runtime\hu\verificacao-DATA\resultado.json, campo reference_hand.
+O historico da mao com os inputs fica em mao-referencia-input-nativo.json.
+Esse teste nao certifica OCR, geometria ou cliques no cliente PPPoker.
+
+4. USAR O BANCO NA OBSERVACAO DO PPPOKER
+
+Liste as janelas:
+  .\.venv\Scripts\python.exe testar_windows.py --listar
+
+Use o HWND atual da mesa MTT NLH e seus arquivos NVT locais:
+  .\.venv\Scripts\python.exe operar_mesa.py --hwnd 0xSEUHWND --ranges "C:\SEU_CAMINHO\nvt-ranges-validados.json" --deep "C:\SEU_CAMINHO\nvt-ranges-deep.json" --postflop-library "PASTA_REAL\bank\library.json" --overlay
+
+Esse exemplo observa, sem input. Comece antes da distribuicao: o historico
+precisa testemunhar blinds, open, call e passagem ao flop. Se nao utilizar
+um arquivo deep, remova os dois argumentos --deep e seu caminho.
+
+A politica corresponde a BTN x BB em pote single-raised, 25 BB iniciais,
+22,5 BB restantes, pote de 5,5 BB, sem ante, 9 jogadores originalmente,
+chip-EV regular. Menu: bet 1/3, raise de 100% e all-in no limite de agressoes
+configurado. Nao cria cobertura de PKO, ICM, multiway ou outros stacks.
+
+A biblioteca reconhece naipes equivalentes SOMENTE quando a bijecao preserva
+os dois ranges completos. Outros ranks/boards precisam de politicas proprias.
+O diagnostico explica um modelo ausente; ele nao transforma a mesa no modelo.
+
+O executor HU e solicitado separadamente com --execute-postflop; o envio de
+input tambem exige --arm e estado RUNNING. Ctrl+Alt+R retoma, Ctrl+Alt+P pausa,
+Ctrl+Alt+D desabilita e Ctrl+C encerra. --arm inclui o executor preflop legado.
+Esses parametros nao comprovam compatibilidade com uma mesa de outro modelo.
+
+5. O QUE ENVIAR COMO RESULTADO DO NOTEBOOK
+
+Preserve download-receipt.json, verification\result.json e, se executar o
+teste com input em janela propria, o resultado.json e a mao exportada.
+A validacao real no seu PPPoker continua separada dos testes em janela propria.
+Nenhuma imagem e gravada continuamente por estes verificadores de banco.

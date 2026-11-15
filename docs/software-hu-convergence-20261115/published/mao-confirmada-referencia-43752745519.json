@@ -1,0 +1,3000 @@
+{
+  "chain_valid": true,
+  "completeness": {
+    "hand_closed": true,
+    "has_confirmed_root": true,
+    "has_observation_gaps": false,
+    "last_confirmed_terminal": "showdown"
+  },
+  "events": [
+    {
+      "event_hash": "4aa58be9ce3ac850e5dd7a2c5f9c99a5110257a9d799fa4c35e8d3e5722b3033",
+      "event_id": "root:f8b585dab6450895290ca04eddb903eb731a882dcd17a891bb6d43d3374a2408",
+      "payload": {
+        "actual_preflop_sources": [
+          {
+            "sha256": "3a635d6b3b6e83567b0f6735ab598da4b3ed466cf218749b8d1e920a169f70ff",
+            "source": "USER_APPROVED_NVT_REFERENCE"
+          },
+          {
+            "sha256": "678f32b5a9ea0c88d4d8c159072b9a127b53bc18602725f522f02eb6ba54aac5",
+            "source": "USER_APPROVED_NVT_REFERENCE"
+          }
+        ],
+        "confirmed_captures": [
+          {
+            "bets": {},
+            "captured_at": 725.593,
+            "pot": 5.5,
+            "sample_id": "synthetic-3",
+            "stacks": {
+              "hero": 22.5,
+              "s1": 30.0,
+              "s2": 30.0,
+              "s3": 30.0,
+              "s4": 30.0,
+              "s5": 30.0,
+              "s6": 30.0,
+              "small": 30.0,
+              "villain": 22.5
+            }
+          },
+          {
+            "bets": {},
+            "captured_at": 725.625,
+            "pot": 5.5,
+            "sample_id": "synthetic-4",
+            "stacks": {
+              "hero": 22.5,
+              "s1": 30.0,
+              "s2": 30.0,
+              "s3": 30.0,
+              "s4": 30.0,
+              "s5": 30.0,
+              "s6": 30.0,
+              "small": 30.0,
+              "villain": 22.5
+            }
+          }
+        ],
+        "event_type": "root_confirmed",
+        "money_precision_bb": 0.1,
+        "observation_source": "STORED_POLICY_WITH_SYNTHETIC_READINGS_NOT_A_PLAYED_PPPOKER_HAND",
+        "policy_sha256": "70b17cc7e89c5d2da9eb490718e698e492d25e9bbff9c9dfd190b4de5022e6a3",
+        "range_alignment": "DECLARED_POLICY_PRIORS_NOT_PROVEN_FROM_LIVE_NVT_DECISIONS",
+        "root": {
+          "acted": [
+            false,
+            false
+          ],
+          "actor": 1,
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "committed": [
+            0.0,
+            0.0
+          ],
+          "history": [],
+          "last_full_raise_bb": 1.0,
+          "min_bet_bb": 1.0,
+          "needs_cards": 0,
+          "oop": 1,
+          "pot_bb": 5.5,
+          "raise_rights": [
+            true,
+            true
+          ],
+          "raises": 0,
+          "stacks": [
+            22.5,
+            22.5
+          ],
+          "terminal": "",
+          "winner": -1
+        },
+        "witness": {
+          "active_seats": [
+            "hero",
+            "villain"
+          ],
+          "amount_precision_bb": 0.1,
+          "baseline_sample": "synthetic-1",
+          "evidence": [
+            {
+              "bets": {
+                "small": 0.5,
+                "villain": 1.0
+              },
+              "bets_complete": true,
+              "captured_at": 725.593,
+              "positions": {
+                "hero": "BTN",
+                "s1": "UTG",
+                "s2": "UTG+1",
+                "s3": "UTG+2",
+                "s4": "LJ",
+                "s5": "HJ",
+                "s6": "CO",
+                "small": "SB",
+                "villain": "BB"
+              },
+              "pot": 1.5,
+              "sample_id": "synthetic-1",
+              "stacks": {
+                "hero": 25.0,
+                "s1": 30.0,
+                "s2": 30.0,
+                "s3": 30.0,
+                "s4": 30.0,
+                "s5": 30.0,
+                "s6": 30.0,
+                "small": 30.0,
+                "villain": 24.0
+              }
+            },
+            {
+              "bets": {
+                "hero": 2.5,
+                "small": 0.5,
+                "villain": 1.0
+              },
+              "bets_complete": true,
+              "captured_at": 725.593,
+              "positions": {
+                "hero": "BTN",
+                "s1": "UTG",
+                "s2": "UTG+1",
+                "s3": "UTG+2",
+                "s4": "LJ",
+                "s5": "HJ",
+                "s6": "CO",
+                "small": "SB",
+                "villain": "BB"
+              },
+              "pot": 4.0,
+              "sample_id": "synthetic-2",
+              "stacks": {
+                "hero": 22.5,
+                "s1": 30.0,
+                "s2": 30.0,
+                "s3": 30.0,
+                "s4": 30.0,
+                "s5": 30.0,
+                "s6": 30.0,
+                "small": 30.0,
+                "villain": 24.0
+              }
+            },
+            {
+              "bets": {},
+              "bets_complete": true,
+              "captured_at": 725.625,
+              "positions": {
+                "hero": "BTN",
+                "s1": "UTG",
+                "s2": "UTG+1",
+                "s3": "UTG+2",
+                "s4": "LJ",
+                "s5": "HJ",
+                "s6": "CO",
+                "small": "SB",
+                "villain": "BB"
+              },
+              "pot": 5.5,
+              "sample_id": "synthetic-4",
+              "stacks": {
+                "hero": 22.5,
+                "s1": 30.0,
+                "s2": 30.0,
+                "s3": 30.0,
+                "s4": 30.0,
+                "s5": 30.0,
+                "s6": 30.0,
+                "small": 30.0,
+                "villain": 22.5
+              }
+            }
+          ],
+          "kind": "OBSERVED_SRP_BASELINE_OPEN_AND_FLOP_CONSERVATION",
+          "note": "Other players did not match the observed open; positive-stack conservation plus flop excludes them.",
+          "opener_sample": "synthetic-2",
+          "recipe": {
+            "aggressor": "BTN",
+            "caller": "BB",
+            "forced_pot_bb": 1.5,
+            "open_to_bb": 2.5,
+            "posts": {
+              "BB": 1.0,
+              "SB": 0.5
+            }
+          }
+        }
+      },
+      "previous_hash": null
+    },
+    {
+      "event_hash": "451ca254d4d7a1367144440cbf67727eba265592ae5eca4f3f7fbcd71dac1c48",
+      "event_id": "state:7647d35948f4a0357ebbe84a5d20b0117c49f8c1579fe0cdc35e1d6422c35184",
+      "payload": {
+        "event_type": "state_confirmed",
+        "hero": [
+          "3s",
+          "Ad"
+        ],
+        "outside_stacks": {
+          "s1": 30.0,
+          "s2": 30.0,
+          "s3": 30.0,
+          "s4": 30.0,
+          "s5": 30.0,
+          "s6": 30.0,
+          "small": 30.0
+        },
+        "policy_sha256": "70b17cc7e89c5d2da9eb490718e698e492d25e9bbff9c9dfd190b4de5022e6a3",
+        "positions": {
+          "hero": "BTN",
+          "s1": "UTG",
+          "s2": "UTG+1",
+          "s3": "UTG+2",
+          "s4": "LJ",
+          "s5": "HJ",
+          "s6": "CO",
+          "small": "SB",
+          "villain": "BB"
+        },
+        "profile_sha256": "72f77aa5a0936ad06ec9527013b8bc41ae0d8bf331121455e8fbba0995c88f96",
+        "revision": 1,
+        "roles": [
+          "hero",
+          "villain"
+        ],
+        "state": {
+          "acted": [
+            false,
+            false
+          ],
+          "actor": 1,
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "committed": [
+            0.0,
+            0.0
+          ],
+          "history": [],
+          "last_full_raise_bb": 1.0,
+          "min_bet_bb": 1.0,
+          "needs_cards": 0,
+          "oop": 1,
+          "pot_bb": 5.5,
+          "raise_rights": [
+            true,
+            true
+          ],
+          "raises": 0,
+          "stacks": [
+            22.5,
+            22.5
+          ],
+          "terminal": "",
+          "winner": -1
+        },
+        "witness": {
+          "active_seats": [
+            "hero",
+            "villain"
+          ],
+          "amount_precision_bb": 0.1,
+          "baseline_sample": "synthetic-1",
+          "evidence": [
+            {
+              "bets": {
+                "small": 0.5,
+                "villain": 1.0
+              },
+              "bets_complete": true,
+              "captured_at": 725.593,
+              "positions": {
+                "hero": "BTN",
+                "s1": "UTG",
+                "s2": "UTG+1",
+                "s3": "UTG+2",
+                "s4": "LJ",
+                "s5": "HJ",
+                "s6": "CO",
+                "small": "SB",
+                "villain": "BB"
+              },
+              "pot": 1.5,
+              "sample_id": "synthetic-1",
+              "stacks": {
+                "hero": 25.0,
+                "s1": 30.0,
+                "s2": 30.0,
+                "s3": 30.0,
+                "s4": 30.0,
+                "s5": 30.0,
+                "s6": 30.0,
+                "small": 30.0,
+                "villain": 24.0
+              }
+            },
+            {
+              "bets": {
+                "hero": 2.5,
+                "small": 0.5,
+                "villain": 1.0
+              },
+              "bets_complete": true,
+              "captured_at": 725.593,
+              "positions": {
+                "hero": "BTN",
+                "s1": "UTG",
+                "s2": "UTG+1",
+                "s3": "UTG+2",
+                "s4": "LJ",
+                "s5": "HJ",
+                "s6": "CO",
+                "small": "SB",
+                "villain": "BB"
+              },
+              "pot": 4.0,
+              "sample_id": "synthetic-2",
+              "stacks": {
+                "hero": 22.5,
+                "s1": 30.0,
+                "s2": 30.0,
+                "s3": 30.0,
+                "s4": 30.0,
+                "s5": 30.0,
+                "s6": 30.0,
+                "small": 30.0,
+                "villain": 24.0
+              }
+            },
+            {
+              "bets": {},
+              "bets_complete": true,
+              "captured_at": 725.625,
+              "positions": {
+                "hero": "BTN",
+                "s1": "UTG",
+                "s2": "UTG+1",
+                "s3": "UTG+2",
+                "s4": "LJ",
+                "s5": "HJ",
+                "s6": "CO",
+                "small": "SB",
+                "villain": "BB"
+              },
+              "pot": 5.5,
+              "sample_id": "synthetic-4",
+              "stacks": {
+                "hero": 22.5,
+                "s1": 30.0,
+                "s2": 30.0,
+                "s3": 30.0,
+                "s4": 30.0,
+                "s5": 30.0,
+                "s6": 30.0,
+                "small": 30.0,
+                "villain": 22.5
+              }
+            }
+          ],
+          "kind": "OBSERVED_SRP_BASELINE_OPEN_AND_FLOP_CONSERVATION",
+          "note": "Other players did not match the observed open; positive-stack conservation plus flop excludes them.",
+          "opener_sample": "synthetic-2",
+          "recipe": {
+            "aggressor": "BTN",
+            "caller": "BB",
+            "forced_pot_bb": 1.5,
+            "open_to_bb": 2.5,
+            "posts": {
+              "BB": 1.0,
+              "SB": 0.5
+            }
+          }
+        }
+      },
+      "previous_hash": "4aa58be9ce3ac850e5dd7a2c5f9c99a5110257a9d799fa4c35e8d3e5722b3033"
+    },
+    {
+      "event_hash": "0c678a4f925cbdcf832253a40283db0acc92625860754afc74004330c4b0f002",
+      "event_id": "evidence:d324a7993c876623dfa421fc2048886501e1439e39f71e958aa90b659369672d",
+      "payload": {
+        "captured_at": 725.625,
+        "display_quantum_bb": 0.1,
+        "displayed_bets_bb": {},
+        "displayed_pot_bb": 5.5,
+        "displayed_stacks_bb": {
+          "hero": 22.5,
+          "s1": 30.0,
+          "s2": 30.0,
+          "s3": 30.0,
+          "s4": 30.0,
+          "s5": 30.0,
+          "s6": 30.0,
+          "small": 30.0,
+          "villain": 22.5
+        },
+        "event_type": "observation_evidence",
+        "independent_captures": [
+          {
+            "bets": {},
+            "captured_at": 725.593,
+            "pot": 5.5,
+            "sample_id": "synthetic-3",
+            "stacks": {
+              "hero": 22.5,
+              "s1": 30.0,
+              "s2": 30.0,
+              "s3": 30.0,
+              "s4": 30.0,
+              "s5": 30.0,
+              "s6": 30.0,
+              "small": 30.0,
+              "villain": 22.5
+            }
+          },
+          {
+            "bets": {},
+            "captured_at": 725.625,
+            "pot": 5.5,
+            "sample_id": "synthetic-4",
+            "stacks": {
+              "hero": 22.5,
+              "s1": 30.0,
+              "s2": 30.0,
+              "s3": 30.0,
+              "s4": 30.0,
+              "s5": 30.0,
+              "s6": 30.0,
+              "small": 30.0,
+              "villain": 22.5
+            }
+          }
+        ],
+        "model_state_sha256": "7647d35948f4a0357ebbe84a5d20b0117c49f8c1579fe0cdc35e1d6422c35184",
+        "observation_source": "STORED_POLICY_WITH_SYNTHETIC_READINGS_NOT_A_PLAYED_PPPOKER_HAND",
+        "sample_id": "synthetic-4"
+      },
+      "previous_hash": "451ca254d4d7a1367144440cbf67727eba265592ae5eca4f3f7fbcd71dac1c48"
+    },
+    {
+      "event_hash": "bb35761c02cc272676ab97897a6d4ab8490ce34b42edc29ca994a530c4589e34",
+      "event_id": "73abffb6a11b65f4945431d539619a8e2ef45ab8262dc678eecf6f711f042366",
+      "payload": {
+        "action": "check",
+        "actor": 1,
+        "compatible_amount_interval_bb": [
+          0.0,
+          0.05
+        ],
+        "event_type": "action",
+        "exact_observed_chips": false,
+        "model_additional_bb": 0.0,
+        "position": "BB"
+      },
+      "previous_hash": "0c678a4f925cbdcf832253a40283db0acc92625860754afc74004330c4b0f002"
+    },
+    {
+      "event_hash": "5b29af74edd64944ed594ac3609e45a33ff01fcfb3346a8abf377e98604e22c7",
+      "event_id": "state:07da817ae1866d321482d7c85c1ce1c78a35a85e1146ea6fc591da7581e78a59",
+      "payload": {
+        "event_type": "state_confirmed",
+        "hero": [
+          "3s",
+          "Ad"
+        ],
+        "outside_stacks": {
+          "s1": 30.0,
+          "s2": 30.0,
+          "s3": 30.0,
+          "s4": 30.0,
+          "s5": 30.0,
+          "s6": 30.0,
+          "small": 30.0
+        },
+        "policy_sha256": "70b17cc7e89c5d2da9eb490718e698e492d25e9bbff9c9dfd190b4de5022e6a3",
+        "positions": {
+          "hero": "BTN",
+          "s1": "UTG",
+          "s2": "UTG+1",
+          "s3": "UTG+2",
+          "s4": "LJ",
+          "s5": "HJ",
+          "s6": "CO",
+          "small": "SB",
+          "villain": "BB"
+        },
+        "profile_sha256": "72f77aa5a0936ad06ec9527013b8bc41ae0d8bf331121455e8fbba0995c88f96",
+        "revision": 2,
+        "roles": [
+          "hero",
+          "villain"
+        ],
+        "state": {
+          "acted": [
+            false,
+            true
+          ],
+          "actor": 0,
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "committed": [
+            0.0,
+            0.0
+          ],
+          "history": [
+            "1:check:0"
+          ],
+          "last_full_raise_bb": 1.0,
+          "min_bet_bb": 1.0,
+          "needs_cards": 0,
+          "oop": 1,
+          "pot_bb": 5.5,
+          "raise_rights": [
+            true,
+            true
+          ],
+          "raises": 0,
+          "stacks": [
+            22.5,
+            22.5
+          ],
+          "terminal": "",
+          "winner": -1
+        },
+        "witness": {
+          "active_seats": [
+            "hero",
+            "villain"
+          ],
+          "amount_precision_bb": 0.1,
+          "baseline_sample": "synthetic-1",
+          "evidence": [
+            {
+              "bets": {
+                "small": 0.5,
+                "villain": 1.0
+              },
+              "bets_complete": true,
+              "captured_at": 725.593,
+              "positions": {
+                "hero": "BTN",
+                "s1": "UTG",
+                "s2": "UTG+1",
+                "s3": "UTG+2",
+                "s4": "LJ",
+                "s5": "HJ",
+                "s6": "CO",
+                "small": "SB",
+                "villain": "BB"
+              },
+              "pot": 1.5,
+              "sample_id": "synthetic-1",
+              "stacks": {
+                "hero": 25.0,
+                "s1": 30.0,
+                "s2": 30.0,
+                "s3": 30.0,
+                "s4": 30.0,
+                "s5": 30.0,
+                "s6": 30.0,
+                "small": 30.0,
+                "villain": 24.0
+              }
+            },
+            {
+              "bets": {
+                "hero": 2.5,
+                "small": 0.5,
+                "villain": 1.0
+              },
+              "bets_complete": true,
+              "captured_at": 725.593,
+              "positions": {
+                "hero": "BTN",
+                "s1": "UTG",
+                "s2": "UTG+1",
+                "s3": "UTG+2",
+                "s4": "LJ",
+                "s5": "HJ",
+                "s6": "CO",
+                "small": "SB",
+                "villain": "BB"
+              },
+              "pot": 4.0,
+              "sample_id": "synthetic-2",
+              "stacks": {
+                "hero": 22.5,
+                "s1": 30.0,
+                "s2": 30.0,
+                "s3": 30.0,
+                "s4": 30.0,
+                "s5": 30.0,
+                "s6": 30.0,
+                "small": 30.0,
+                "villain": 24.0
+              }
+            },
+            {
+              "bets": {},
+              "bets_complete": true,
+              "captured_at": 725.625,
+              "positions": {
+                "hero": "BTN",
+                "s1": "UTG",
+                "s2": "UTG+1",
+                "s3": "UTG+2",
+                "s4": "LJ",
+                "s5": "HJ",
+                "s6": "CO",
+                "small": "SB",
+                "villain": "BB"
+              },
+              "pot": 5.5,
+              "sample_id": "synthetic-4",
+              "stacks": {
+                "hero": 22.5,
+                "s1": 30.0,
+                "s2": 30.0,
+                "s3": 30.0,
+                "s4": 30.0,
+                "s5": 30.0,
+                "s6": 30.0,
+                "small": 30.0,
+                "villain": 22.5
+              }
+            }
+          ],
+          "kind": "OBSERVED_SRP_BASELINE_OPEN_AND_FLOP_CONSERVATION",
+          "note": "Other players did not match the observed open; positive-stack conservation plus flop excludes them.",
+          "opener_sample": "synthetic-2",
+          "recipe": {
+            "aggressor": "BTN",
+            "caller": "BB",
+            "forced_pot_bb": 1.5,
+            "open_to_bb": 2.5,
+            "posts": {
+              "BB": 1.0,
+              "SB": 0.5
+            }
+          }
+        }
+      },
+      "previous_hash": "bb35761c02cc272676ab97897a6d4ab8490ce34b42edc29ca994a530c4589e34"
+    },
+    {
+      "event_hash": "bf014f04a85f0a66f26c1fe232b669145467e0bb7d26832572c4af51ba7d48a0",
+      "event_id": "evidence:84c0ea65aba98f1133d74d5001cef2319f93d0d2dd0a81610760c885e2829d20",
+      "payload": {
+        "captured_at": 725.625,
+        "display_quantum_bb": 0.1,
+        "displayed_bets_bb": {},
+        "displayed_pot_bb": 5.5,
+        "displayed_stacks_bb": {
+          "hero": 22.5,
+          "s1": 30.0,
+          "s2": 30.0,
+          "s3": 30.0,
+          "s4": 30.0,
+          "s5": 30.0,
+          "s6": 30.0,
+          "small": 30.0,
+          "villain": 22.5
+        },
+        "event_type": "observation_evidence",
+        "independent_captures": [
+          {
+            "bets": {},
+            "captured_at": 725.625,
+            "pot": 5.5,
+            "sample_id": "synthetic-5",
+            "stacks": {
+              "hero": 22.5,
+              "s1": 30.0,
+              "s2": 30.0,
+              "s3": 30.0,
+              "s4": 30.0,
+              "s5": 30.0,
+              "s6": 30.0,
+              "small": 30.0,
+              "villain": 22.5
+            }
+          },
+          {
+            "bets": {},
+            "captured_at": 725.625,
+            "pot": 5.5,
+            "sample_id": "synthetic-6",
+            "stacks": {
+              "hero": 22.5,
+              "s1": 30.0,
+              "s2": 30.0,
+              "s3": 30.0,
+              "s4": 30.0,
+              "s5": 30.0,
+              "s6": 30.0,
+              "small": 30.0,
+              "villain": 22.5
+            }
+          }
+        ],
+        "model_state_sha256": "07da817ae1866d321482d7c85c1ce1c78a35a85e1146ea6fc591da7581e78a59",
+        "observation_source": "STORED_POLICY_WITH_SYNTHETIC_READINGS_NOT_A_PLAYED_PPPOKER_HAND",
+        "sample_id": "synthetic-6"
+      },
+      "previous_hash": "5b29af74edd64944ed594ac3609e45a33ff01fcfb3346a8abf377e98604e22c7"
+    },
+    {
+      "event_hash": "03d5ea4665ac597a718a07fc480b81827b3ca747a8f9528f720c0bc8799b62c0",
+      "event_id": "3e32dbebb17ee29dbaa3aeaaaccfe0d04f328baaf00890dd492ac828b1af2bdc",
+      "payload": {
+        "action": "bet",
+        "actor": 0,
+        "compatible_amount_interval_bb": [
+          1.783,
+          1.883
+        ],
+        "event_type": "action",
+        "exact_observed_chips": false,
+        "model_additional_bb": 1.833,
+        "position": "BTN"
+      },
+      "previous_hash": "bf014f04a85f0a66f26c1fe232b669145467e0bb7d26832572c4af51ba7d48a0"
+    },
+    {
+      "event_hash": "7724d85aad2377b9a322f6575ea401fcc59d71d374157d293ae4b334749cf54c",
+      "event_id": "state:71e3873cc55b1b0d1353e6bf67de7c6d91e29e2d393a4dcc843b6191f19261b1",
+      "payload": {
+        "event_type": "state_confirmed",
+        "hero": [
+          "3s",
+          "Ad"
+        ],
+        "outside_stacks": {
+          "s1": 30.0,
+          "s2": 30.0,
+          "s3": 30.0,
+          "s4": 30.0,
+          "s5": 30.0,
+          "s6": 30.0,
+          "small": 30.0
+        },
+        "policy_sha256": "70b17cc7e89c5d2da9eb490718e698e492d25e9bbff9c9dfd190b4de5022e6a3",
+        "positions": {
+          "hero": "BTN",
+          "s1": "UTG",
+          "s2": "UTG+1",
+          "s3": "UTG+2",
+          "s4": "LJ",
+          "s5": "HJ",
+          "s6": "CO",
+          "small": "SB",
+          "villain": "BB"
+        },
+        "profile_sha256": "72f77aa5a0936ad06ec9527013b8bc41ae0d8bf331121455e8fbba0995c88f96",
+        "revision": 3,
+        "roles": [
+          "hero",
+          "villain"
+        ],
+        "state": {
+          "acted": [
+            true,
+            false
+          ],
+          "actor": 1,
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "committed": [
+            1.833,
+            0.0
+          ],
+          "history": [
+            "1:check:0",
+            "0:bet:1.833"
+          ],
+          "last_full_raise_bb": 1.833,
+          "min_bet_bb": 1.0,
+          "needs_cards": 0,
+          "oop": 1,
+          "pot_bb": 7.333,
+          "raise_rights": [
+            false,
+            true
+          ],
+          "raises": 1,
+          "stacks": [
+            20.667,
+            22.5
+          ],
+          "terminal": "",
+          "winner": -1
+        },
+        "witness": {
+          "active_seats": [
+            "hero",
+            "villain"
+          ],
+          "amount_precision_bb": 0.1,
+          "baseline_sample": "synthetic-1",
+          "evidence": [
+            {
+              "bets": {
+                "small": 0.5,
+                "villain": 1.0
+              },
+              "bets_complete": true,
+              "captured_at": 725.593,
+              "positions": {
+                "hero": "BTN",
+                "s1": "UTG",
+                "s2": "UTG+1",
+                "s3": "UTG+2",
+                "s4": "LJ",
+                "s5": "HJ",
+                "s6": "CO",
+                "small": "SB",
+                "villain": "BB"
+              },
+              "pot": 1.5,
+              "sample_id": "synthetic-1",
+              "stacks": {
+                "hero": 25.0,
+                "s1": 30.0,
+                "s2": 30.0,
+                "s3": 30.0,
+                "s4": 30.0,
+                "s5": 30.0,
+                "s6": 30.0,
+                "small": 30.0,
+                "villain": 24.0
+              }
+            },
+            {
+              "bets": {
+                "hero": 2.5,
+                "small": 0.5,
+                "villain": 1.0
+              },
+              "bets_complete": true,
+              "captured_at": 725.593,
+              "positions": {
+                "hero": "BTN",
+                "s1": "UTG",
+                "s2": "UTG+1",
+                "s3": "UTG+2",
+                "s4": "LJ",
+                "s5": "HJ",
+                "s6": "CO",
+                "small": "SB",
+                "villain": "BB"
+              },
+              "pot": 4.0,
+              "sample_id": "synthetic-2",
+              "stacks": {
+                "hero": 22.5,
+                "s1": 30.0,
+                "s2": 30.0,
+                "s3": 30.0,
+                "s4": 30.0,
+                "s5": 30.0,
+                "s6": 30.0,
+                "small": 30.0,
+                "villain": 24.0
+              }
+            },
+            {
+              "bets": {},
+              "bets_complete": true,
+              "captured_at": 725.625,
+              "positions": {
+                "hero": "BTN",
+                "s1": "UTG",
+                "s2": "UTG+1",
+                "s3": "UTG+2",
+                "s4": "LJ",
+                "s5": "HJ",
+                "s6": "CO",
+                "small": "SB",
+                "villain": "BB"
+              },
+              "pot": 5.5,
+              "sample_id": "synthetic-4",
+              "stacks": {
+                "hero": 22.5,
+                "s1": 30.0,
+                "s2": 30.0,
+                "s3": 30.0,
+                "s4": 30.0,
+                "s5": 30.0,
+                "s6": 30.0,
+                "small": 30.0,
+                "villain": 22.5
+              }
+            }
+          ],
+          "kind": "OBSERVED_SRP_BASELINE_OPEN_AND_FLOP_CONSERVATION",
+          "note": "Other players did not match the observed open; positive-stack conservation plus flop excludes them.",
+          "opener_sample": "synthetic-2",
+          "recipe": {
+            "aggressor": "BTN",
+            "caller": "BB",
+            "forced_pot_bb": 1.5,
+            "open_to_bb": 2.5,
+            "posts": {
+              "BB": 1.0,
+              "SB": 0.5
+            }
+          }
+        }
+      },
+      "previous_hash": "03d5ea4665ac597a718a07fc480b81827b3ca747a8f9528f720c0bc8799b62c0"
+    },
+    {
+      "event_hash": "fd549c5ae5eeeeb53707fc3aa942135fbd783111dda88fc909551f7b52fe3bed",
+      "event_id": "evidence:8643b8236263d24af26dffdeeec2c94e6147120befcab10b32779c044338d115",
+      "payload": {
+        "captured_at": 725.64,
+        "display_quantum_bb": 0.1,
+        "displayed_bets_bb": {
+          "hero": 1.8
+        },
+        "displayed_pot_bb": 7.3,
+        "displayed_stacks_bb": {
+          "hero": 20.7,
+          "s1": 30.0,
+          "s2": 30.0,
+          "s3": 30.0,
+          "s4": 30.0,
+          "s5": 30.0,
+          "s6": 30.0,
+          "small": 30.0,
+          "villain": 22.5
+        },
+        "event_type": "observation_evidence",
+        "independent_captures": [
+          {
+            "bets": {
+              "hero": 1.8
+            },
+            "captured_at": 725.64,
+            "pot": 7.3,
+            "sample_id": "synthetic-7",
+            "stacks": {
+              "hero": 20.7,
+              "s1": 30.0,
+              "s2": 30.0,
+              "s3": 30.0,
+              "s4": 30.0,
+              "s5": 30.0,
+              "s6": 30.0,
+              "small": 30.0,
+              "villain": 22.5
+            }
+          },
+          {
+            "bets": {
+              "hero": 1.8
+            },
+            "captured_at": 725.64,
+            "pot": 7.3,
+            "sample_id": "synthetic-8",
+            "stacks": {
+              "hero": 20.7,
+              "s1": 30.0,
+              "s2": 30.0,
+              "s3": 30.0,
+              "s4": 30.0,
+              "s5": 30.0,
+              "s6": 30.0,
+              "small": 30.0,
+              "villain": 22.5
+            }
+          }
+        ],
+        "model_state_sha256": "71e3873cc55b1b0d1353e6bf67de7c6d91e29e2d393a4dcc843b6191f19261b1",
+        "observation_source": "STORED_POLICY_WITH_SYNTHETIC_READINGS_NOT_A_PLAYED_PPPOKER_HAND",
+        "sample_id": "synthetic-8"
+      },
+      "previous_hash": "7724d85aad2377b9a322f6575ea401fcc59d71d374157d293ae4b334749cf54c"
+    },
+    {
+      "event_hash": "4cde65e844849636987599a5588046f007ea470efddf9be012ecc5d075e81161",
+      "event_id": "b0a1636c6532ece05b0d7588bc130d062b3d27e7c37ed8ed5e05bd8bc2748cc0",
+      "payload": {
+        "action": "call",
+        "actor": 1,
+        "compatible_amount_interval_bb": [
+          1.783,
+          1.883
+        ],
+        "event_type": "action",
+        "exact_observed_chips": false,
+        "model_additional_bb": 1.833,
+        "position": "BB"
+      },
+      "previous_hash": "fd549c5ae5eeeeb53707fc3aa942135fbd783111dda88fc909551f7b52fe3bed"
+    },
+    {
+      "event_hash": "6531f4259de17800d15fbb7aa9e57b431999063ecce151602a379400e3cb1197",
+      "event_id": "f5ba39b507cdc1ba29edcb26b3a6531677a5397bc57e9ed68fe879a4cbe4711d",
+      "payload": {
+        "card": "Ts",
+        "event_type": "board"
+      },
+      "previous_hash": "4cde65e844849636987599a5588046f007ea470efddf9be012ecc5d075e81161"
+    },
+    {
+      "event_hash": "ec6b569e4e99c66e792ce5f9949ba1a05ea639c8ba99a3f1caa6fa30e149ee46",
+      "event_id": "state:2db2c6f85c202e34197c7d74a3015bebf980d8ad62cc38aa42c62929d16df91a",
+      "payload": {
+        "event_type": "state_confirmed",
+        "hero": [
+          "3s",
+          "Ad"
+        ],
+        "outside_stacks": {
+          "s1": 30.0,
+          "s2": 30.0,
+          "s3": 30.0,
+          "s4": 30.0,
+          "s5": 30.0,
+          "s6": 30.0,
+          "small": 30.0
+        },
+        "policy_sha256": "70b17cc7e89c5d2da9eb490718e698e492d25e9bbff9c9dfd190b4de5022e6a3",
+        "positions": {
+          "hero": "BTN",
+          "s1": "UTG",
+          "s2": "UTG+1",
+          "s3": "UTG+2",
+          "s4": "LJ",
+          "s5": "HJ",
+          "s6": "CO",
+          "small": "SB",
+          "villain": "BB"
+        },
+        "profile_sha256": "72f77aa5a0936ad06ec9527013b8bc41ae0d8bf331121455e8fbba0995c88f96",
+        "revision": 4,
+        "roles": [
+          "hero",
+          "villain"
+        ],
+        "state": {
+          "acted": [
+            false,
+            false
+          ],
+          "actor": 1,
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "Ts"
+          ],
+          "committed": [
+            0.0,
+            0.0
+          ],
+          "history": [
+            "1:check:0",
+            "0:bet:1.833",
+            "1:call:1.833",
+            "BOARD:Ts"
+          ],
+          "last_full_raise_bb": 1.0,
+          "min_bet_bb": 1.0,
+          "needs_cards": 0,
+          "oop": 1,
+          "pot_bb": 9.166,
+          "raise_rights": [
+            true,
+            true
+          ],
+          "raises": 0,
+          "stacks": [
+            20.667,
+            20.667
+          ],
+          "terminal": "",
+          "winner": -1
+        },
+        "witness": {
+          "active_seats": [
+            "hero",
+            "villain"
+          ],
+          "amount_precision_bb": 0.1,
+          "baseline_sample": "synthetic-1",
+          "evidence": [
+            {
+              "bets": {
+                "small": 0.5,
+                "villain": 1.0
+              },
+              "bets_complete": true,
+              "captured_at": 725.593,
+              "positions": {
+                "hero": "BTN",
+                "s1": "UTG",
+                "s2": "UTG+1",
+                "s3": "UTG+2",
+                "s4": "LJ",
+                "s5": "HJ",
+                "s6": "CO",
+                "small": "SB",
+                "villain": "BB"
+              },
+              "pot": 1.5,
+              "sample_id": "synthetic-1",
+              "stacks": {
+                "hero": 25.0,
+                "s1": 30.0,
+                "s2": 30.0,
+                "s3": 30.0,
+                "s4": 30.0,
+                "s5": 30.0,
+                "s6": 30.0,
+                "small": 30.0,
+                "villain": 24.0
+              }
+            },
+            {
+              "bets": {
+                "hero": 2.5,
+                "small": 0.5,
+                "villain": 1.0
+              },
+              "bets_complete": true,
+              "captured_at": 725.593,
+              "positions": {
+                "hero": "BTN",
+                "s1": "UTG",
+                "s2": "UTG+1",
+                "s3": "UTG+2",
+                "s4": "LJ",
+                "s5": "HJ",
+                "s6": "CO",
+                "small": "SB",
+                "villain": "BB"
+              },
+              "pot": 4.0,
+              "sample_id": "synthetic-2",
+              "stacks": {
+                "hero": 22.5,
+                "s1": 30.0,
+                "s2": 30.0,
+                "s3": 30.0,
+                "s4": 30.0,
+                "s5": 30.0,
+                "s6": 30.0,
+                "small": 30.0,
+                "villain": 24.0
+              }
+            },
+            {
+              "bets": {},
+              "bets_complete": true,
+              "captured_at": 725.625,
+              "positions": {
+                "hero": "BTN",
+                "s1": "UTG",
+                "s2": "UTG+1",
+                "s3": "UTG+2",
+                "s4": "LJ",
+                "s5": "HJ",
+                "s6": "CO",
+                "small": "SB",
+                "villain": "BB"
+              },
+              "pot": 5.5,
+              "sample_id": "synthetic-4",
+              "stacks": {
+                "hero": 22.5,
+                "s1": 30.0,
+                "s2": 30.0,
+                "s3": 30.0,
+                "s4": 30.0,
+                "s5": 30.0,
+                "s6": 30.0,
+                "small": 30.0,
+                "villain": 22.5
+              }
+            }
+          ],
+          "kind": "OBSERVED_SRP_BASELINE_OPEN_AND_FLOP_CONSERVATION",
+          "note": "Other players did not match the observed open; positive-stack conservation plus flop excludes them.",
+          "opener_sample": "synthetic-2",
+          "recipe": {
+            "aggressor": "BTN",
+            "caller": "BB",
+            "forced_pot_bb": 1.5,
+            "open_to_bb": 2.5,
+            "posts": {
+              "BB": 1.0,
+              "SB": 0.5
+            }
+          }
+        }
+      },
+      "previous_hash": "6531f4259de17800d15fbb7aa9e57b431999063ecce151602a379400e3cb1197"
+    },
+    {
+      "event_hash": "a6e6adc37a5b4bf5461baf77a77356f673d13b65562476602adf5a7fef3bbbee",
+      "event_id": "evidence:5b79802b3b831afbf9d632f8d729a6319daf0ac2d2229d6e47fae1f0807fb5b8",
+      "payload": {
+        "captured_at": 725.656,
+        "display_quantum_bb": 0.1,
+        "displayed_bets_bb": {},
+        "displayed_pot_bb": 9.2,
+        "displayed_stacks_bb": {
+          "hero": 20.7,
+          "s1": 30.0,
+          "s2": 30.0,
+          "s3": 30.0,
+          "s4": 30.0,
+          "s5": 30.0,
+          "s6": 30.0,
+          "small": 30.0,
+          "villain": 20.7
+        },
+        "event_type": "observation_evidence",
+        "independent_captures": [
+          {
+            "bets": {},
+            "captured_at": 725.64,
+            "pot": 9.2,
+            "sample_id": "synthetic-9",
+            "stacks": {
+              "hero": 20.7,
+              "s1": 30.0,
+              "s2": 30.0,
+              "s3": 30.0,
+              "s4": 30.0,
+              "s5": 30.0,
+              "s6": 30.0,
+              "small": 30.0,
+              "villain": 20.7
+            }
+          },
+          {
+            "bets": {},
+            "captured_at": 725.656,
+            "pot": 9.2,
+            "sample_id": "synthetic-10",
+            "stacks": {
+              "hero": 20.7,
+              "s1": 30.0,
+              "s2": 30.0,
+              "s3": 30.0,
+              "s4": 30.0,
+              "s5": 30.0,
+              "s6": 30.0,
+              "small": 30.0,
+              "villain": 20.7
+            }
+          }
+        ],
+        "model_state_sha256": "2db2c6f85c202e34197c7d74a3015bebf980d8ad62cc38aa42c62929d16df91a",
+        "observation_source": "STORED_POLICY_WITH_SYNTHETIC_READINGS_NOT_A_PLAYED_PPPOKER_HAND",
+        "sample_id": "synthetic-10"
+      },
+      "previous_hash": "ec6b569e4e99c66e792ce5f9949ba1a05ea639c8ba99a3f1caa6fa30e149ee46"
+    },
+    {
+      "event_hash": "b67f90f5b6e73b2de3d6d308393d3a9db3e56e003e1e126d272685eae83cd273",
+      "event_id": "f76e329f104369612c7c46b20cd972732b9896ce413aa0fbe3213111afbb7f30",
+      "payload": {
+        "action": "check",
+        "actor": 1,
+        "compatible_amount_interval_bb": [
+          0.0,
+          0.05
+        ],
+        "event_type": "action",
+        "exact_observed_chips": false,
+        "model_additional_bb": 0.0,
+        "position": "BB"
+      },
+      "previous_hash": "a6e6adc37a5b4bf5461baf77a77356f673d13b65562476602adf5a7fef3bbbee"
+    },
+    {
+      "event_hash": "f849e8427c28b1bf1a21a35554d42770c4f8f8c588906b70fdff0316634dd616",
+      "event_id": "state:02307f2425986db7220aae49154b271fa1f5a5d2585cb5d4061c88c2d886db6b",
+      "payload": {
+        "event_type": "state_confirmed",
+        "hero": [
+          "3s",
+          "Ad"
+        ],
+        "outside_stacks": {
+          "s1": 30.0,
+          "s2": 30.0,
+          "s3": 30.0,
+          "s4": 30.0,
+          "s5": 30.0,
+          "s6": 30.0,
+          "small": 30.0
+        },
+        "policy_sha256": "70b17cc7e89c5d2da9eb490718e698e492d25e9bbff9c9dfd190b4de5022e6a3",
+        "positions": {
+          "hero": "BTN",
+          "s1": "UTG",
+          "s2": "UTG+1",
+          "s3": "UTG+2",
+          "s4": "LJ",
+          "s5": "HJ",
+          "s6": "CO",
+          "small": "SB",
+          "villain": "BB"
+        },
+        "profile_sha256": "72f77aa5a0936ad06ec9527013b8bc41ae0d8bf331121455e8fbba0995c88f96",
+        "revision": 5,
+        "roles": [
+          "hero",
+          "villain"
+        ],
+        "state": {
+          "acted": [
+            false,
+            true
+          ],
+          "actor": 0,
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "Ts"
+          ],
+          "committed": [
+            0.0,
+            0.0
+          ],
+          "history": [
+            "1:check:0",
+            "0:bet:1.833",
+            "1:call:1.833",
+            "BOARD:Ts",
+            "1:check:0"
+          ],
+          "last_full_raise_bb": 1.0,
+          "min_bet_bb": 1.0,
+          "needs_cards": 0,
+          "oop": 1,
+          "pot_bb": 9.166,
+          "raise_rights": [
+            true,
+            true
+          ],
+          "raises": 0,
+          "stacks": [
+            20.667,
+            20.667
+          ],
+          "terminal": "",
+          "winner": -1
+        },
+        "witness": {
+          "active_seats": [
+            "hero",
+            "villain"
+          ],
+          "amount_precision_bb": 0.1,
+          "baseline_sample": "synthetic-1",
+          "evidence": [
+            {
+              "bets": {
+                "small": 0.5,
+                "villain": 1.0
+              },
+              "bets_complete": true,
+              "captured_at": 725.593,
+              "positions": {
+                "hero": "BTN",
+                "s1": "UTG",
+                "s2": "UTG+1",
+                "s3": "UTG+2",
+                "s4": "LJ",
+                "s5": "HJ",
+                "s6": "CO",
+                "small": "SB",
+                "villain": "BB"
+              },
+              "pot": 1.5,
+              "sample_id": "synthetic-1",
+              "stacks": {
+                "hero": 25.0,
+                "s1": 30.0,
+                "s2": 30.0,
+                "s3": 30.0,
+                "s4": 30.0,
+                "s5": 30.0,
+                "s6": 30.0,
+                "small": 30.0,
+                "villain": 24.0
+              }
+            },
+            {
+              "bets": {
+                "hero": 2.5,
+                "small": 0.5,
+                "villain": 1.0
+              },
+              "bets_complete": true,
+              "captured_at": 725.593,
+              "positions": {
+                "hero": "BTN",
+                "s1": "UTG",
+                "s2": "UTG+1",
+                "s3": "UTG+2",
+                "s4": "LJ",
+                "s5": "HJ",
+                "s6": "CO",
+                "small": "SB",
+                "villain": "BB"
+              },
+              "pot": 4.0,
+              "sample_id": "synthetic-2",
+              "stacks": {
+                "hero": 22.5,
+                "s1": 30.0,
+                "s2": 30.0,
+                "s3": 30.0,
+                "s4": 30.0,
+                "s5": 30.0,
+                "s6": 30.0,
+                "small": 30.0,
+                "villain": 24.0
+              }
+            },
+            {
+              "bets": {},
+              "bets_complete": true,
+              "captured_at": 725.625,
+              "positions": {
+                "hero": "BTN",
+                "s1": "UTG",
+                "s2": "UTG+1",
+                "s3": "UTG+2",
+                "s4": "LJ",
+                "s5": "HJ",
+                "s6": "CO",
+                "small": "SB",
+                "villain": "BB"
+              },
+              "pot": 5.5,
+              "sample_id": "synthetic-4",
+              "stacks": {
+                "hero": 22.5,
+                "s1": 30.0,
+                "s2": 30.0,
+                "s3": 30.0,
+                "s4": 30.0,
+                "s5": 30.0,
+                "s6": 30.0,
+                "small": 30.0,
+                "villain": 22.5
+              }
+            }
+          ],
+          "kind": "OBSERVED_SRP_BASELINE_OPEN_AND_FLOP_CONSERVATION",
+          "note": "Other players did not match the observed open; positive-stack conservation plus flop excludes them.",
+          "opener_sample": "synthetic-2",
+          "recipe": {
+            "aggressor": "BTN",
+            "caller": "BB",
+            "forced_pot_bb": 1.5,
+            "open_to_bb": 2.5,
+            "posts": {
+              "BB": 1.0,
+              "SB": 0.5
+            }
+          }
+        }
+      },
+      "previous_hash": "b67f90f5b6e73b2de3d6d308393d3a9db3e56e003e1e126d272685eae83cd273"
+    },
+    {
+      "event_hash": "a7aae57fa9dd0f9de2b8bb81d9180a7fa1509071c8afe169f64362735afea1f7",
+      "event_id": "evidence:905cf5a02cef31a57365b39fc673c41137488337aa5fab979c3a99013dc775f5",
+      "payload": {
+        "captured_at": 725.656,
+        "display_quantum_bb": 0.1,
+        "displayed_bets_bb": {},
+        "displayed_pot_bb": 9.2,
+        "displayed_stacks_bb": {
+          "hero": 20.7,
+          "s1": 30.0,
+          "s2": 30.0,
+          "s3": 30.0,
+          "s4": 30.0,
+          "s5": 30.0,
+          "s6": 30.0,
+          "small": 30.0,
+          "villain": 20.7
+        },
+        "event_type": "observation_evidence",
+        "independent_captures": [
+          {
+            "bets": {},
+            "captured_at": 725.656,
+            "pot": 9.2,
+            "sample_id": "synthetic-11",
+            "stacks": {
+              "hero": 20.7,
+              "s1": 30.0,
+              "s2": 30.0,
+              "s3": 30.0,
+              "s4": 30.0,
+              "s5": 30.0,
+              "s6": 30.0,
+              "small": 30.0,
+              "villain": 20.7
+            }
+          },
+          {
+            "bets": {},
+            "captured_at": 725.656,
+            "pot": 9.2,
+            "sample_id": "synthetic-12",
+            "stacks": {
+              "hero": 20.7,
+              "s1": 30.0,
+              "s2": 30.0,
+              "s3": 30.0,
+              "s4": 30.0,
+              "s5": 30.0,
+              "s6": 30.0,
+              "small": 30.0,
+              "villain": 20.7
+            }
+          }
+        ],
+        "model_state_sha256": "02307f2425986db7220aae49154b271fa1f5a5d2585cb5d4061c88c2d886db6b",
+        "observation_source": "STORED_POLICY_WITH_SYNTHETIC_READINGS_NOT_A_PLAYED_PPPOKER_HAND",
+        "sample_id": "synthetic-12"
+      },
+      "previous_hash": "f849e8427c28b1bf1a21a35554d42770c4f8f8c588906b70fdff0316634dd616"
+    },
+    {
+      "event_hash": "46444e99f9364c69f7489ceec4fdee90eeac53047ce6464fcb3e3f36ec2ed9dc",
+      "event_id": "2da4932b9a683b0a0eccd9998ee8a74fdd68d7980cc8ae9263618482b69b8984",
+      "payload": {
+        "action": "bet",
+        "actor": 0,
+        "compatible_amount_interval_bb": [
+          3.0050000000000003,
+          3.105
+        ],
+        "event_type": "action",
+        "exact_observed_chips": false,
+        "model_additional_bb": 3.055,
+        "position": "BTN"
+      },
+      "previous_hash": "a7aae57fa9dd0f9de2b8bb81d9180a7fa1509071c8afe169f64362735afea1f7"
+    },
+    {
+      "event_hash": "b3692dafd38a85f1459f1238f5e1df81c7f6d5702e07ae768b0e28858334f120",
+      "event_id": "state:b076622a76635d5b0d81fcbad589fcf14c64ca0d9ae8246e0cfd3c5f9f2f94bd",
+      "payload": {
+        "event_type": "state_confirmed",
+        "hero": [
+          "3s",
+          "Ad"
+        ],
+        "outside_stacks": {
+          "s1": 30.0,
+          "s2": 30.0,
+          "s3": 30.0,
+          "s4": 30.0,
+          "s5": 30.0,
+          "s6": 30.0,
+          "small": 30.0
+        },
+        "policy_sha256": "70b17cc7e89c5d2da9eb490718e698e492d25e9bbff9c9dfd190b4de5022e6a3",
+        "positions": {
+          "hero": "BTN",
+          "s1": "UTG",
+          "s2": "UTG+1",
+          "s3": "UTG+2",
+          "s4": "LJ",
+          "s5": "HJ",
+          "s6": "CO",
+          "small": "SB",
+          "villain": "BB"
+        },
+        "profile_sha256": "72f77aa5a0936ad06ec9527013b8bc41ae0d8bf331121455e8fbba0995c88f96",
+        "revision": 6,
+        "roles": [
+          "hero",
+          "villain"
+        ],
+        "state": {
+          "acted": [
+            true,
+            false
+          ],
+          "actor": 1,
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "Ts"
+          ],
+          "committed": [
+            3.055,
+            0.0
+          ],
+          "history": [
+            "1:check:0",
+            "0:bet:1.833",
+            "1:call:1.833",
+            "BOARD:Ts",
+            "1:check:0",
+            "0:bet:3.055"
+          ],
+          "last_full_raise_bb": 3.055,
+          "min_bet_bb": 1.0,
+          "needs_cards": 0,
+          "oop": 1,
+          "pot_bb": 12.221,
+          "raise_rights": [
+            false,
+            true
+          ],
+          "raises": 1,
+          "stacks": [
+            17.612,
+            20.667
+          ],
+          "terminal": "",
+          "winner": -1
+        },
+        "witness": {
+          "active_seats": [
+            "hero",
+            "villain"
+          ],
+          "amount_precision_bb": 0.1,
+          "baseline_sample": "synthetic-1",
+          "evidence": [
+            {
+              "bets": {
+                "small": 0.5,
+                "villain": 1.0
+              },
+              "bets_complete": true,
+              "captured_at": 725.593,
+              "positions": {
+                "hero": "BTN",
+                "s1": "UTG",
+                "s2": "UTG+1",
+                "s3": "UTG+2",
+                "s4": "LJ",
+                "s5": "HJ",
+                "s6": "CO",
+                "small": "SB",
+                "villain": "BB"
+              },
+              "pot": 1.5,
+              "sample_id": "synthetic-1",
+              "stacks": {
+                "hero": 25.0,
+                "s1": 30.0,
+                "s2": 30.0,
+                "s3": 30.0,
+                "s4": 30.0,
+                "s5": 30.0,
+                "s6": 30.0,
+                "small": 30.0,
+                "villain": 24.0
+              }
+            },
+            {
+              "bets": {
+                "hero": 2.5,
+                "small": 0.5,
+                "villain": 1.0
+              },
+              "bets_complete": true,
+              "captured_at": 725.593,
+              "positions": {
+                "hero": "BTN",
+                "s1": "UTG",
+                "s2": "UTG+1",
+                "s3": "UTG+2",
+                "s4": "LJ",
+                "s5": "HJ",
+                "s6": "CO",
+                "small": "SB",
+                "villain": "BB"
+              },
+              "pot": 4.0,
+              "sample_id": "synthetic-2",
+              "stacks": {
+                "hero": 22.5,
+                "s1": 30.0,
+                "s2": 30.0,
+                "s3": 30.0,
+                "s4": 30.0,
+                "s5": 30.0,
+                "s6": 30.0,
+                "small": 30.0,
+                "villain": 24.0
+              }
+            },
+            {
+              "bets": {},
+              "bets_complete": true,
+              "captured_at": 725.625,
+              "positions": {
+                "hero": "BTN",
+                "s1": "UTG",
+                "s2": "UTG+1",
+                "s3": "UTG+2",
+                "s4": "LJ",
+                "s5": "HJ",
+                "s6": "CO",
+                "small": "SB",
+                "villain": "BB"
+              },
+              "pot": 5.5,
+              "sample_id": "synthetic-4",
+              "stacks": {
+                "hero": 22.5,
+                "s1": 30.0,
+                "s2": 30.0,
+                "s3": 30.0,
+                "s4": 30.0,
+                "s5": 30.0,
+                "s6": 30.0,
+                "small": 30.0,
+                "villain": 22.5
+              }
+            }
+          ],
+          "kind": "OBSERVED_SRP_BASELINE_OPEN_AND_FLOP_CONSERVATION",
+          "note": "Other players did not match the observed open; positive-stack conservation plus flop excludes them.",
+          "opener_sample": "synthetic-2",
+          "recipe": {
+            "aggressor": "BTN",
+            "caller": "BB",
+            "forced_pot_bb": 1.5,
+            "open_to_bb": 2.5,
+            "posts": {
+              "BB": 1.0,
+              "SB": 0.5
+            }
+          }
+        }
+      },
+      "previous_hash": "46444e99f9364c69f7489ceec4fdee90eeac53047ce6464fcb3e3f36ec2ed9dc"
+    },
+    {
+      "event_hash": "bcd79f52a3ce8724003cedf0916d5d7e0b36405088cfac4390b654064f5f6411",
+      "event_id": "evidence:28e8e35172f1578301534cf91424aa83566e544ae29e8b2699167b361a056a2f",
+      "payload": {
+        "captured_at": 725.671,
+        "display_quantum_bb": 0.1,
+        "displayed_bets_bb": {
+          "hero": 3.1
+        },
+        "displayed_pot_bb": 12.2,
+        "displayed_stacks_bb": {
+          "hero": 17.6,
+          "s1": 30.0,
+          "s2": 30.0,
+          "s3": 30.0,
+          "s4": 30.0,
+          "s5": 30.0,
+          "s6": 30.0,
+          "small": 30.0,
+          "villain": 20.7
+        },
+        "event_type": "observation_evidence",
+        "independent_captures": [
+          {
+            "bets": {
+              "hero": 3.1
+            },
+            "captured_at": 725.671,
+            "pot": 12.2,
+            "sample_id": "synthetic-13",
+            "stacks": {
+              "hero": 17.6,
+              "s1": 30.0,
+              "s2": 30.0,
+              "s3": 30.0,
+              "s4": 30.0,
+              "s5": 30.0,
+              "s6": 30.0,
+              "small": 30.0,
+              "villain": 20.7
+            }
+          },
+          {
+            "bets": {
+              "hero": 3.1
+            },
+            "captured_at": 725.671,
+            "pot": 12.2,
+            "sample_id": "synthetic-14",
+            "stacks": {
+              "hero": 17.6,
+              "s1": 30.0,
+              "s2": 30.0,
+              "s3": 30.0,
+              "s4": 30.0,
+              "s5": 30.0,
+              "s6": 30.0,
+              "small": 30.0,
+              "villain": 20.7
+            }
+          }
+        ],
+        "model_state_sha256": "b076622a76635d5b0d81fcbad589fcf14c64ca0d9ae8246e0cfd3c5f9f2f94bd",
+        "observation_source": "STORED_POLICY_WITH_SYNTHETIC_READINGS_NOT_A_PLAYED_PPPOKER_HAND",
+        "sample_id": "synthetic-14"
+      },
+      "previous_hash": "b3692dafd38a85f1459f1238f5e1df81c7f6d5702e07ae768b0e28858334f120"
+    },
+    {
+      "event_hash": "0f2afc4544bcca40d699d0b19fc310400f6fd2ca05672ff5630322a9d2cd18dc",
+      "event_id": "436010a4ddba1beca852b7f50de3af8b3f369de4c93fe9ee6ab3029d0f868fc4",
+      "payload": {
+        "action": "call",
+        "actor": 1,
+        "compatible_amount_interval_bb": [
+          3.0050000000000003,
+          3.105
+        ],
+        "event_type": "action",
+        "exact_observed_chips": false,
+        "model_additional_bb": 3.055,
+        "position": "BB"
+      },
+      "previous_hash": "bcd79f52a3ce8724003cedf0916d5d7e0b36405088cfac4390b654064f5f6411"
+    },
+    {
+      "event_hash": "e7897d45d61ab9c6fe0a0bffc295bc00330c7ecede572c5adf402166f309296f",
+      "event_id": "918c84ebe89689380501533d9ba1a1c0696644453650751563e271f022b62ec3",
+      "payload": {
+        "card": "2h",
+        "event_type": "board"
+      },
+      "previous_hash": "0f2afc4544bcca40d699d0b19fc310400f6fd2ca05672ff5630322a9d2cd18dc"
+    },
+    {
+      "event_hash": "3610c2ca531d47cd8d6b1b033784bf66fdf1719baf87d5fedf72495feebc5edf",
+      "event_id": "state:d6145c8a81926fb634eac56b8eb9f99ed40e991fce4f820c555eb6be8f1cae5e",
+      "payload": {
+        "event_type": "state_confirmed",
+        "hero": [
+          "3s",
+          "Ad"
+        ],
+        "outside_stacks": {
+          "s1": 30.0,
+          "s2": 30.0,
+          "s3": 30.0,
+          "s4": 30.0,
+          "s5": 30.0,
+          "s6": 30.0,
+          "small": 30.0
+        },
+        "policy_sha256": "70b17cc7e89c5d2da9eb490718e698e492d25e9bbff9c9dfd190b4de5022e6a3",
+        "positions": {
+          "hero": "BTN",
+          "s1": "UTG",
+          "s2": "UTG+1",
+          "s3": "UTG+2",
+          "s4": "LJ",
+          "s5": "HJ",
+          "s6": "CO",
+          "small": "SB",
+          "villain": "BB"
+        },
+        "profile_sha256": "72f77aa5a0936ad06ec9527013b8bc41ae0d8bf331121455e8fbba0995c88f96",
+        "revision": 7,
+        "roles": [
+          "hero",
+          "villain"
+        ],
+        "state": {
+          "acted": [
+            false,
+            false
+          ],
+          "actor": 1,
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "Ts",
+            "2h"
+          ],
+          "committed": [
+            0.0,
+            0.0
+          ],
+          "history": [
+            "1:check:0",
+            "0:bet:1.833",
+            "1:call:1.833",
+            "BOARD:Ts",
+            "1:check:0",
+            "0:bet:3.055",
+            "1:call:3.055",
+            "BOARD:2h"
+          ],
+          "last_full_raise_bb": 1.0,
+          "min_bet_bb": 1.0,
+          "needs_cards": 0,
+          "oop": 1,
+          "pot_bb": 15.276,
+          "raise_rights": [
+            true,
+            true
+          ],
+          "raises": 0,
+          "stacks": [
+            17.612,
+            17.612
+          ],
+          "terminal": "",
+          "winner": -1
+        },
+        "witness": {
+          "active_seats": [
+            "hero",
+            "villain"
+          ],
+          "amount_precision_bb": 0.1,
+          "baseline_sample": "synthetic-1",
+          "evidence": [
+            {
+              "bets": {
+                "small": 0.5,
+                "villain": 1.0
+              },
+              "bets_complete": true,
+              "captured_at": 725.593,
+              "positions": {
+                "hero": "BTN",
+                "s1": "UTG",
+                "s2": "UTG+1",
+                "s3": "UTG+2",
+                "s4": "LJ",
+                "s5": "HJ",
+                "s6": "CO",
+                "small": "SB",
+                "villain": "BB"
+              },
+              "pot": 1.5,
+              "sample_id": "synthetic-1",
+              "stacks": {
+                "hero": 25.0,
+                "s1": 30.0,
+                "s2": 30.0,
+                "s3": 30.0,
+                "s4": 30.0,
+                "s5": 30.0,
+                "s6": 30.0,
+                "small": 30.0,
+                "villain": 24.0
+              }
+            },
+            {
+              "bets": {
+                "hero": 2.5,
+                "small": 0.5,
+                "villain": 1.0
+              },
+              "bets_complete": true,
+              "captured_at": 725.593,
+              "positions": {
+                "hero": "BTN",
+                "s1": "UTG",
+                "s2": "UTG+1",
+                "s3": "UTG+2",
+                "s4": "LJ",
+                "s5": "HJ",
+                "s6": "CO",
+                "small": "SB",
+                "villain": "BB"
+              },
+              "pot": 4.0,
+              "sample_id": "synthetic-2",
+              "stacks": {
+                "hero": 22.5,
+                "s1": 30.0,
+                "s2": 30.0,
+                "s3": 30.0,
+                "s4": 30.0,
+                "s5": 30.0,
+                "s6": 30.0,
+                "small": 30.0,
+                "villain": 24.0
+              }
+            },
+            {
+              "bets": {},
+              "bets_complete": true,
+              "captured_at": 725.625,
+              "positions": {
+                "hero": "BTN",
+                "s1": "UTG",
+                "s2": "UTG+1",
+                "s3": "UTG+2",
+                "s4": "LJ",
+                "s5": "HJ",
+                "s6": "CO",
+                "small": "SB",
+                "villain": "BB"
+              },
+              "pot": 5.5,
+              "sample_id": "synthetic-4",
+              "stacks": {
+                "hero": 22.5,
+                "s1": 30.0,
+                "s2": 30.0,
+                "s3": 30.0,
+                "s4": 30.0,
+                "s5": 30.0,
+                "s6": 30.0,
+                "small": 30.0,
+                "villain": 22.5
+              }
+            }
+          ],
+          "kind": "OBSERVED_SRP_BASELINE_OPEN_AND_FLOP_CONSERVATION",
+          "note": "Other players did not match the observed open; positive-stack conservation plus flop excludes them.",
+          "opener_sample": "synthetic-2",
+          "recipe": {
+            "aggressor": "BTN",
+            "caller": "BB",
+            "forced_pot_bb": 1.5,
+            "open_to_bb": 2.5,
+            "posts": {
+              "BB": 1.0,
+              "SB": 0.5
+            }
+          }
+        }
+      },
+      "previous_hash": "e7897d45d61ab9c6fe0a0bffc295bc00330c7ecede572c5adf402166f309296f"
+    },
+    {
+      "event_hash": "fcefe5de2cf3e2039b755424eca0b520b3f0c2eb428f9579f164f5024c3cba34",
+      "event_id": "evidence:bb93ae2f08ebab24d962207defc76b7cc3f2660943eb6decbbb59ccea64dab76",
+      "payload": {
+        "captured_at": 725.671,
+        "display_quantum_bb": 0.1,
+        "displayed_bets_bb": {},
+        "displayed_pot_bb": 15.3,
+        "displayed_stacks_bb": {
+          "hero": 17.6,
+          "s1": 30.0,
+          "s2": 30.0,
+          "s3": 30.0,
+          "s4": 30.0,
+          "s5": 30.0,
+          "s6": 30.0,
+          "small": 30.0,
+          "villain": 17.6
+        },
+        "event_type": "observation_evidence",
+        "independent_captures": [
+          {
+            "bets": {},
+            "captured_at": 725.671,
+            "pot": 15.3,
+            "sample_id": "synthetic-15",
+            "stacks": {
+              "hero": 17.6,
+              "s1": 30.0,
+              "s2": 30.0,
+              "s3": 30.0,
+              "s4": 30.0,
+              "s5": 30.0,
+              "s6": 30.0,
+              "small": 30.0,
+              "villain": 17.6
+            }
+          },
+          {
+            "bets": {},
+            "captured_at": 725.671,
+            "pot": 15.3,
+            "sample_id": "synthetic-16",
+            "stacks": {
+              "hero": 17.6,
+              "s1": 30.0,
+              "s2": 30.0,
+              "s3": 30.0,
+              "s4": 30.0,
+              "s5": 30.0,
+              "s6": 30.0,
+              "small": 30.0,
+              "villain": 17.6
+            }
+          }
+        ],
+        "model_state_sha256": "d6145c8a81926fb634eac56b8eb9f99ed40e991fce4f820c555eb6be8f1cae5e",
+        "observation_source": "STORED_POLICY_WITH_SYNTHETIC_READINGS_NOT_A_PLAYED_PPPOKER_HAND",
+        "sample_id": "synthetic-16"
+      },
+      "previous_hash": "3610c2ca531d47cd8d6b1b033784bf66fdf1719baf87d5fedf72495feebc5edf"
+    },
+    {
+      "event_hash": "97bcf148dd9f33a4abbe2e672ecc69675aae93d8f6f1bf94ba133384d1853060",
+      "event_id": "d603d30344e0c6b776e182037f065568a21926d75e17818c42b4ff67e7a604d8",
+      "payload": {
+        "action": "check",
+        "actor": 1,
+        "compatible_amount_interval_bb": [
+          0.0,
+          0.05
+        ],
+        "event_type": "action",
+        "exact_observed_chips": false,
+        "model_additional_bb": 0.0,
+        "position": "BB"
+      },
+      "previous_hash": "fcefe5de2cf3e2039b755424eca0b520b3f0c2eb428f9579f164f5024c3cba34"
+    },
+    {
+      "event_hash": "27e8242bccee49596384caf4b3d0aa087de5d0eb4dcc44028c651097ad5a0185",
+      "event_id": "state:fb1821c169f8ea944ab54ff57e80a224fb8df1fef6ab52c412c508f3e3f1e6b3",
+      "payload": {
+        "event_type": "state_confirmed",
+        "hero": [
+          "3s",
+          "Ad"
+        ],
+        "outside_stacks": {
+          "s1": 30.0,
+          "s2": 30.0,
+          "s3": 30.0,
+          "s4": 30.0,
+          "s5": 30.0,
+          "s6": 30.0,
+          "small": 30.0
+        },
+        "policy_sha256": "70b17cc7e89c5d2da9eb490718e698e492d25e9bbff9c9dfd190b4de5022e6a3",
+        "positions": {
+          "hero": "BTN",
+          "s1": "UTG",
+          "s2": "UTG+1",
+          "s3": "UTG+2",
+          "s4": "LJ",
+          "s5": "HJ",
+          "s6": "CO",
+          "small": "SB",
+          "villain": "BB"
+        },
+        "profile_sha256": "72f77aa5a0936ad06ec9527013b8bc41ae0d8bf331121455e8fbba0995c88f96",
+        "revision": 8,
+        "roles": [
+          "hero",
+          "villain"
+        ],
+        "state": {
+          "acted": [
+            false,
+            true
+          ],
+          "actor": 0,
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "Ts",
+            "2h"
+          ],
+          "committed": [
+            0.0,
+            0.0
+          ],
+          "history": [
+            "1:check:0",
+            "0:bet:1.833",
+            "1:call:1.833",
+            "BOARD:Ts",
+            "1:check:0",
+            "0:bet:3.055",
+            "1:call:3.055",
+            "BOARD:2h",
+            "1:check:0"
+          ],
+          "last_full_raise_bb": 1.0,
+          "min_bet_bb": 1.0,
+          "needs_cards": 0,
+          "oop": 1,
+          "pot_bb": 15.276,
+          "raise_rights": [
+            true,
+            true
+          ],
+          "raises": 0,
+          "stacks": [
+            17.612,
+            17.612
+          ],
+          "terminal": "",
+          "winner": -1
+        },
+        "witness": {
+          "active_seats": [
+            "hero",
+            "villain"
+          ],
+          "amount_precision_bb": 0.1,
+          "baseline_sample": "synthetic-1",
+          "evidence": [
+            {
+              "bets": {
+                "small": 0.5,
+                "villain": 1.0
+              },
+              "bets_complete": true,
+              "captured_at": 725.593,
+              "positions": {
+                "hero": "BTN",
+                "s1": "UTG",
+                "s2": "UTG+1",
+                "s3": "UTG+2",
+                "s4": "LJ",
+                "s5": "HJ",
+                "s6": "CO",
+                "small": "SB",
+                "villain": "BB"
+              },
+              "pot": 1.5,
+              "sample_id": "synthetic-1",
+              "stacks": {
+                "hero": 25.0,
+                "s1": 30.0,
+                "s2": 30.0,
+                "s3": 30.0,
+                "s4": 30.0,
+                "s5": 30.0,
+                "s6": 30.0,
+                "small": 30.0,
+                "villain": 24.0
+              }
+            },
+            {
+              "bets": {
+                "hero": 2.5,
+                "small": 0.5,
+                "villain": 1.0
+              },
+              "bets_complete": true,
+              "captured_at": 725.593,
+              "positions": {
+                "hero": "BTN",
+                "s1": "UTG",
+                "s2": "UTG+1",
+                "s3": "UTG+2",
+                "s4": "LJ",
+                "s5": "HJ",
+                "s6": "CO",
+                "small": "SB",
+                "villain": "BB"
+              },
+              "pot": 4.0,
+              "sample_id": "synthetic-2",
+              "stacks": {
+                "hero": 22.5,
+                "s1": 30.0,
+                "s2": 30.0,
+                "s3": 30.0,
+                "s4": 30.0,
+                "s5": 30.0,
+                "s6": 30.0,
+                "small": 30.0,
+                "villain": 24.0
+              }
+            },
+            {
+              "bets": {},
+              "bets_complete": true,
+              "captured_at": 725.625,
+              "positions": {
+                "hero": "BTN",
+                "s1": "UTG",
+                "s2": "UTG+1",
+                "s3": "UTG+2",
+                "s4": "LJ",
+                "s5": "HJ",
+                "s6": "CO",
+                "small": "SB",
+                "villain": "BB"
+              },
+              "pot": 5.5,
+              "sample_id": "synthetic-4",
+              "stacks": {
+                "hero": 22.5,
+                "s1": 30.0,
+                "s2": 30.0,
+                "s3": 30.0,
+                "s4": 30.0,
+                "s5": 30.0,
+                "s6": 30.0,
+                "small": 30.0,
+                "villain": 22.5
+              }
+            }
+          ],
+          "kind": "OBSERVED_SRP_BASELINE_OPEN_AND_FLOP_CONSERVATION",
+          "note": "Other players did not match the observed open; positive-stack conservation plus flop excludes them.",
+          "opener_sample": "synthetic-2",
+          "recipe": {
+            "aggressor": "BTN",
+            "caller": "BB",
+            "forced_pot_bb": 1.5,
+            "open_to_bb": 2.5,
+            "posts": {
+              "BB": 1.0,
+              "SB": 0.5
+            }
+          }
+        }
+      },
+      "previous_hash": "97bcf148dd9f33a4abbe2e672ecc69675aae93d8f6f1bf94ba133384d1853060"
+    },
+    {
+      "event_hash": "5a86784c353916b380a2214ba873f5dd0958bbe66a1792d8954e06d450ce6dfe",
+      "event_id": "evidence:d1af2e3af146f34e2af9da4f75ff602a7ee98cd806cbb045470d3dccd6d0bc8d",
+      "payload": {
+        "captured_at": 725.687,
+        "display_quantum_bb": 0.1,
+        "displayed_bets_bb": {},
+        "displayed_pot_bb": 15.3,
+        "displayed_stacks_bb": {
+          "hero": 17.6,
+          "s1": 30.0,
+          "s2": 30.0,
+          "s3": 30.0,
+          "s4": 30.0,
+          "s5": 30.0,
+          "s6": 30.0,
+          "small": 30.0,
+          "villain": 17.6
+        },
+        "event_type": "observation_evidence",
+        "independent_captures": [
+          {
+            "bets": {},
+            "captured_at": 725.687,
+            "pot": 15.3,
+            "sample_id": "synthetic-17",
+            "stacks": {
+              "hero": 17.6,
+              "s1": 30.0,
+              "s2": 30.0,
+              "s3": 30.0,
+              "s4": 30.0,
+              "s5": 30.0,
+              "s6": 30.0,
+              "small": 30.0,
+              "villain": 17.6
+            }
+          },
+          {
+            "bets": {},
+            "captured_at": 725.687,
+            "pot": 15.3,
+            "sample_id": "synthetic-18",
+            "stacks": {
+              "hero": 17.6,
+              "s1": 30.0,
+              "s2": 30.0,
+              "s3": 30.0,
+              "s4": 30.0,
+              "s5": 30.0,
+              "s6": 30.0,
+              "small": 30.0,
+              "villain": 17.6
+            }
+          }
+        ],
+        "model_state_sha256": "fb1821c169f8ea944ab54ff57e80a224fb8df1fef6ab52c412c508f3e3f1e6b3",
+        "observation_source": "STORED_POLICY_WITH_SYNTHETIC_READINGS_NOT_A_PLAYED_PPPOKER_HAND",
+        "sample_id": "synthetic-18"
+      },
+      "previous_hash": "27e8242bccee49596384caf4b3d0aa087de5d0eb4dcc44028c651097ad5a0185"
+    },
+    {
+      "event_hash": "1d5e25efd306d6039808ecd9bcef4289cd4ec012036962ebe3dece286b2dde99",
+      "event_id": "e366242dce7934097e519464286e7b1589cc154b9c7d3ed0e976b8bc9149f165",
+      "payload": {
+        "action": "bet",
+        "actor": 0,
+        "compatible_amount_interval_bb": [
+          5.042,
+          5.1419999999999995
+        ],
+        "event_type": "action",
+        "exact_observed_chips": false,
+        "model_additional_bb": 5.092,
+        "position": "BTN"
+      },
+      "previous_hash": "5a86784c353916b380a2214ba873f5dd0958bbe66a1792d8954e06d450ce6dfe"
+    },
+    {
+      "event_hash": "b253d82569cfe10dce43c41d99c45d372d7a9c3b4441f47f9596c21f9eeaa404",
+      "event_id": "state:1bf4ef8aeff1399a14ea4e6feec3ff92e2d7fee95899c92e34bade9cf82a0dd4",
+      "payload": {
+        "event_type": "state_confirmed",
+        "hero": [
+          "3s",
+          "Ad"
+        ],
+        "outside_stacks": {
+          "s1": 30.0,
+          "s2": 30.0,
+          "s3": 30.0,
+          "s4": 30.0,
+          "s5": 30.0,
+          "s6": 30.0,
+          "small": 30.0
+        },
+        "policy_sha256": "70b17cc7e89c5d2da9eb490718e698e492d25e9bbff9c9dfd190b4de5022e6a3",
+        "positions": {
+          "hero": "BTN",
+          "s1": "UTG",
+          "s2": "UTG+1",
+          "s3": "UTG+2",
+          "s4": "LJ",
+          "s5": "HJ",
+          "s6": "CO",
+          "small": "SB",
+          "villain": "BB"
+        },
+        "profile_sha256": "72f77aa5a0936ad06ec9527013b8bc41ae0d8bf331121455e8fbba0995c88f96",
+        "revision": 9,
+        "roles": [
+          "hero",
+          "villain"
+        ],
+        "state": {
+          "acted": [
+            true,
+            false
+          ],
+          "actor": 1,
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "Ts",
+            "2h"
+          ],
+          "committed": [
+            5.092,
+            0.0
+          ],
+          "history": [
+            "1:check:0",
+            "0:bet:1.833",
+            "1:call:1.833",
+            "BOARD:Ts",
+            "1:check:0",
+            "0:bet:3.055",
+            "1:call:3.055",
+            "BOARD:2h",
+            "1:check:0",
+            "0:bet:5.092"
+          ],
+          "last_full_raise_bb": 5.092,
+          "min_bet_bb": 1.0,
+          "needs_cards": 0,
+          "oop": 1,
+          "pot_bb": 20.368,
+          "raise_rights": [
+            false,
+            true
+          ],
+          "raises": 1,
+          "stacks": [
+            12.52,
+            17.612
+          ],
+          "terminal": "",
+          "winner": -1
+        },
+        "witness": {
+          "active_seats": [
+            "hero",
+            "villain"
+          ],
+          "amount_precision_bb": 0.1,
+          "baseline_sample": "synthetic-1",
+          "evidence": [
+            {
+              "bets": {
+                "small": 0.5,
+                "villain": 1.0
+              },
+              "bets_complete": true,
+              "captured_at": 725.593,
+              "positions": {
+                "hero": "BTN",
+                "s1": "UTG",
+                "s2": "UTG+1",
+                "s3": "UTG+2",
+                "s4": "LJ",
+                "s5": "HJ",
+                "s6": "CO",
+                "small": "SB",
+                "villain": "BB"
+              },
+              "pot": 1.5,
+              "sample_id": "synthetic-1",
+              "stacks": {
+                "hero": 25.0,
+                "s1": 30.0,
+                "s2": 30.0,
+                "s3": 30.0,
+                "s4": 30.0,
+                "s5": 30.0,
+                "s6": 30.0,
+                "small": 30.0,
+                "villain": 24.0
+              }
+            },
+            {
+              "bets": {
+                "hero": 2.5,
+                "small": 0.5,
+                "villain": 1.0
+              },
+              "bets_complete": true,
+              "captured_at": 725.593,
+              "positions": {
+                "hero": "BTN",
+                "s1": "UTG",
+                "s2": "UTG+1",
+                "s3": "UTG+2",
+                "s4": "LJ",
+                "s5": "HJ",
+                "s6": "CO",
+                "small": "SB",
+                "villain": "BB"
+              },
+              "pot": 4.0,
+              "sample_id": "synthetic-2",
+              "stacks": {
+                "hero": 22.5,
+                "s1": 30.0,
+                "s2": 30.0,
+                "s3": 30.0,
+                "s4": 30.0,
+                "s5": 30.0,
+                "s6": 30.0,
+                "small": 30.0,
+                "villain": 24.0
+              }
+            },
+            {
+              "bets": {},
+              "bets_complete": true,
+              "captured_at": 725.625,
+              "positions": {
+                "hero": "BTN",
+                "s1": "UTG",
+                "s2": "UTG+1",
+                "s3": "UTG+2",
+                "s4": "LJ",
+                "s5": "HJ",
+                "s6": "CO",
+                "small": "SB",
+                "villain": "BB"
+              },
+              "pot": 5.5,
+              "sample_id": "synthetic-4",
+              "stacks": {
+                "hero": 22.5,
+                "s1": 30.0,
+                "s2": 30.0,
+                "s3": 30.0,
+                "s4": 30.0,
+                "s5": 30.0,
+                "s6": 30.0,
+                "small": 30.0,
+                "villain": 22.5
+              }
+            }
+          ],
+          "kind": "OBSERVED_SRP_BASELINE_OPEN_AND_FLOP_CONSERVATION",
+          "note": "Other players did not match the observed open; positive-stack conservation plus flop excludes them.",
+          "opener_sample": "synthetic-2",
+          "recipe": {
+            "aggressor": "BTN",
+            "caller": "BB",
+            "forced_pot_bb": 1.5,
+            "open_to_bb": 2.5,
+            "posts": {
+              "BB": 1.0,
+              "SB": 0.5
+            }
+          }
+        }
+      },
+      "previous_hash": "1d5e25efd306d6039808ecd9bcef4289cd4ec012036962ebe3dece286b2dde99"
+    },
+    {
+      "event_hash": "8652b39c71e2bd20474836d6eaf76ba8821bd369553a0f8b056293a232a2a974",
+      "event_id": "evidence:ddbb768464b66a3ce45d896072d6b76cd9395e26d21e1fc704190f02b9d4fca6",
+      "payload": {
+        "captured_at": 725.687,
+        "display_quantum_bb": 0.1,
+        "displayed_bets_bb": {
+          "hero": 5.1
+        },
+        "displayed_pot_bb": 20.4,
+        "displayed_stacks_bb": {
+          "hero": 12.5,
+          "s1": 30.0,
+          "s2": 30.0,
+          "s3": 30.0,
+          "s4": 30.0,
+          "s5": 30.0,
+          "s6": 30.0,
+          "small": 30.0,
+          "villain": 17.6
+        },
+        "event_type": "observation_evidence",
+        "independent_captures": [
+          {
+            "bets": {
+              "hero": 5.1
+            },
+            "captured_at": 725.687,
+            "pot": 20.4,
+            "sample_id": "synthetic-19",
+            "stacks": {
+              "hero": 12.5,
+              "s1": 30.0,
+              "s2": 30.0,
+              "s3": 30.0,
+              "s4": 30.0,
+              "s5": 30.0,
+              "s6": 30.0,
+              "small": 30.0,
+              "villain": 17.6
+            }
+          },
+          {
+            "bets": {
+              "hero": 5.1
+            },
+            "captured_at": 725.687,
+            "pot": 20.4,
+            "sample_id": "synthetic-20",
+            "stacks": {
+              "hero": 12.5,
+              "s1": 30.0,
+              "s2": 30.0,
+              "s3": 30.0,
+              "s4": 30.0,
+              "s5": 30.0,
+              "s6": 30.0,
+              "small": 30.0,
+              "villain": 17.6
+            }
+          }
+        ],
+        "model_state_sha256": "1bf4ef8aeff1399a14ea4e6feec3ff92e2d7fee95899c92e34bade9cf82a0dd4",
+        "observation_source": "STORED_POLICY_WITH_SYNTHETIC_READINGS_NOT_A_PLAYED_PPPOKER_HAND",
+        "sample_id": "synthetic-20"
+      },
+      "previous_hash": "b253d82569cfe10dce43c41d99c45d372d7a9c3b4441f47f9596c21f9eeaa404"
+    },
+    {
+      "event_hash": "90a71fdea76d3bb9d956e87c1bd7138dfc68bbf406b42888b5633c3980bcce5e",
+      "event_id": "a3674a6952a3af6b99793e82823127445c01ae3cf5e9f50e829ec06fd819bbf0",
+      "payload": {
+        "action": "call",
+        "actor": 1,
+        "compatible_amount_interval_bb": [
+          5.042,
+          5.1419999999999995
+        ],
+        "event_type": "action",
+        "exact_observed_chips": false,
+        "model_additional_bb": 5.092,
+        "position": "BB"
+      },
+      "previous_hash": "8652b39c71e2bd20474836d6eaf76ba8821bd369553a0f8b056293a232a2a974"
+    },
+    {
+      "event_hash": "ff5acaafe7ceb367c87bf4b4ee2c2589dc5cb9b0bd0b6fbb8889c45c608345f0",
+      "event_id": "state:208caa2763ee4440b2a4c62e61f7c97af216bcc80e6aa3d622de016cdd37c2ec",
+      "payload": {
+        "event_type": "state_confirmed",
+        "hero": [
+          "3s",
+          "Ad"
+        ],
+        "outside_stacks": {
+          "s1": 30.0,
+          "s2": 30.0,
+          "s3": 30.0,
+          "s4": 30.0,
+          "s5": 30.0,
+          "s6": 30.0,
+          "small": 30.0
+        },
+        "policy_sha256": "70b17cc7e89c5d2da9eb490718e698e492d25e9bbff9c9dfd190b4de5022e6a3",
+        "positions": {
+          "hero": "BTN",
+          "s1": "UTG",
+          "s2": "UTG+1",
+          "s3": "UTG+2",
+          "s4": "LJ",
+          "s5": "HJ",
+          "s6": "CO",
+          "small": "SB",
+          "villain": "BB"
+        },
+        "profile_sha256": "72f77aa5a0936ad06ec9527013b8bc41ae0d8bf331121455e8fbba0995c88f96",
+        "revision": 10,
+        "roles": [
+          "hero",
+          "villain"
+        ],
+        "state": {
+          "acted": [
+            false,
+            false
+          ],
+          "actor": 1,
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "Ts",
+            "2h"
+          ],
+          "committed": [
+            0.0,
+            0.0
+          ],
+          "history": [
+            "1:check:0",
+            "0:bet:1.833",
+            "1:call:1.833",
+            "BOARD:Ts",
+            "1:check:0",
+            "0:bet:3.055",
+            "1:call:3.055",
+            "BOARD:2h",
+            "1:check:0",
+            "0:bet:5.092",
+            "1:call:5.092"
+          ],
+          "last_full_raise_bb": 1.0,
+          "min_bet_bb": 1.0,
+          "needs_cards": 0,
+          "oop": 1,
+          "pot_bb": 25.46,
+          "raise_rights": [
+            true,
+            true
+          ],
+          "raises": 0,
+          "stacks": [
+            12.52,
+            12.52
+          ],
+          "terminal": "showdown",
+          "winner": -1
+        },
+        "witness": {
+          "active_seats": [
+            "hero",
+            "villain"
+          ],
+          "amount_precision_bb": 0.1,
+          "baseline_sample": "synthetic-1",
+          "evidence": [
+            {
+              "bets": {
+                "small": 0.5,
+                "villain": 1.0
+              },
+              "bets_complete": true,
+              "captured_at": 725.593,
+              "positions": {
+                "hero": "BTN",
+                "s1": "UTG",
+                "s2": "UTG+1",
+                "s3": "UTG+2",
+                "s4": "LJ",
+                "s5": "HJ",
+                "s6": "CO",
+                "small": "SB",
+                "villain": "BB"
+              },
+              "pot": 1.5,
+              "sample_id": "synthetic-1",
+              "stacks": {
+                "hero": 25.0,
+                "s1": 30.0,
+                "s2": 30.0,
+                "s3": 30.0,
+                "s4": 30.0,
+                "s5": 30.0,
+                "s6": 30.0,
+                "small": 30.0,
+                "villain": 24.0
+              }
+            },
+            {
+              "bets": {
+                "hero": 2.5,
+                "small": 0.5,
+                "villain": 1.0
+              },
+              "bets_complete": true,
+              "captured_at": 725.593,
+              "positions": {
+                "hero": "BTN",
+                "s1": "UTG",
+                "s2": "UTG+1",
+                "s3": "UTG+2",
+                "s4": "LJ",
+                "s5": "HJ",
+                "s6": "CO",
+                "small": "SB",
+                "villain": "BB"
+              },
+              "pot": 4.0,
+              "sample_id": "synthetic-2",
+              "stacks": {
+                "hero": 22.5,
+                "s1": 30.0,
+                "s2": 30.0,
+                "s3": 30.0,
+                "s4": 30.0,
+                "s5": 30.0,
+                "s6": 30.0,
+                "small": 30.0,
+                "villain": 24.0
+              }
+            },
+            {
+              "bets": {},
+              "bets_complete": true,
+              "captured_at": 725.625,
+              "positions": {
+                "hero": "BTN",
+                "s1": "UTG",
+                "s2": "UTG+1",
+                "s3": "UTG+2",
+                "s4": "LJ",
+                "s5": "HJ",
+                "s6": "CO",
+                "small": "SB",
+                "villain": "BB"
+              },
+              "pot": 5.5,
+              "sample_id": "synthetic-4",
+              "stacks": {
+                "hero": 22.5,
+                "s1": 30.0,
+                "s2": 30.0,
+                "s3": 30.0,
+                "s4": 30.0,
+                "s5": 30.0,
+                "s6": 30.0,
+                "small": 30.0,
+                "villain": 22.5
+              }
+            }
+          ],
+          "kind": "OBSERVED_SRP_BASELINE_OPEN_AND_FLOP_CONSERVATION",
+          "note": "Other players did not match the observed open; positive-stack conservation plus flop excludes them.",
+          "opener_sample": "synthetic-2",
+          "recipe": {
+            "aggressor": "BTN",
+            "caller": "BB",
+            "forced_pot_bb": 1.5,
+            "open_to_bb": 2.5,
+            "posts": {
+              "BB": 1.0,
+              "SB": 0.5
+            }
+          }
+        }
+      },
+      "previous_hash": "90a71fdea76d3bb9d956e87c1bd7138dfc68bbf406b42888b5633c3980bcce5e"
+    },
+    {
+      "event_hash": "23d9b342a4aae86e971b7bc7e05b87526e5de7579bfd7fb0a16c6aa24b8b5365",
+      "event_id": "evidence:74a452b72cbbfda63ba770f29af7dff538bc135f2f556aa677e894e443857054",
+      "payload": {
+        "captured_at": 725.703,
+        "display_quantum_bb": 0.1,
+        "displayed_bets_bb": {},
+        "displayed_pot_bb": 0.0,
+        "displayed_stacks_bb": {
+          "hero": 38.0,
+          "s1": 30.0,
+          "s2": 30.0,
+          "s3": 30.0,
+          "s4": 30.0,
+          "s5": 30.0,
+          "s6": 30.0,
+          "small": 30.0,
+          "villain": 12.5
+        },
+        "event_type": "observation_evidence",
+        "independent_captures": [
+          {
+            "bets": {},
+            "captured_at": 725.703,
+            "pot": 0.0,
+            "sample_id": "synthetic-21",
+            "stacks": {
+              "hero": 38.0,
+              "s1": 30.0,
+              "s2": 30.0,
+              "s3": 30.0,
+              "s4": 30.0,
+              "s5": 30.0,
+              "s6": 30.0,
+              "small": 30.0,
+              "villain": 12.5
+            }
+          },
+          {
+            "bets": {},
+            "captured_at": 725.703,
+            "pot": 0.0,
+            "sample_id": "synthetic-22",
+            "stacks": {
+              "hero": 38.0,
+              "s1": 30.0,
+              "s2": 30.0,
+              "s3": 30.0,
+              "s4": 30.0,
+              "s5": 30.0,
+              "s6": 30.0,
+              "small": 30.0,
+              "villain": 12.5
+            }
+          }
+        ],
+        "model_state_sha256": "208caa2763ee4440b2a4c62e61f7c97af216bcc80e6aa3d622de016cdd37c2ec",
+        "observation_source": "STORED_POLICY_WITH_SYNTHETIC_READINGS_NOT_A_PLAYED_PPPOKER_HAND",
+        "sample_id": "synthetic-22"
+      },
+      "previous_hash": "ff5acaafe7ceb367c87bf4b4ee2c2589dc5cb9b0bd0b6fbb8889c45c608345f0"
+    }
+  ],
+  "execution_claims": [],
+  "hand_id": "reference-70b17cc7e89c5d2d-0",
+  "note": "Each event states its evidence and precision. Gaps are not fabricated actions.",
+  "schema": "software.confirmed-hand.v1",
+  "table_id": "reference-validation",
+  "unresolved_input": false
+}

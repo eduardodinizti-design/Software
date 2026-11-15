@@ -9,6 +9,7 @@ from strategy.policy_observer import PolicyObserver
 from strategy.policy_disk import DiskPolicy
 from strategy.state_contract import StrategyError
 from strategy.texassolver_backend import file_hash
+from strategy.suit_policy import flop_signature,exact_suit_map,SuitPolicy
 
 
 class PolicyLibrary:
@@ -19,14 +20,15 @@ class PolicyLibrary:
     def reload(self):
         value=json.loads(self.path.read_text())
         if value.get('schema')!='software.hu-policy-library.v1':raise StrategyError('POLICY_LIBRARY_SCHEMA_MISMATCH')
-        entries={}
+        entries={};equivalent={}
         for entry in value['entries']:
             key=tuple(sorted(entry['board']))
             if key in entries:raise StrategyError('AMBIGUOUS_LIBRARY_FLOP')
             target=(self.base/entry['path']).resolve()
             if not target.is_relative_to(self.base):raise StrategyError('LIBRARY_POLICY_PATH_OUTSIDE_BANK')
             entries[key]=dict(entry,resolved_path=target)
-        self.entries,self.data=entries,value
+            equivalent.setdefault(flop_signature(key),[]).append(entries[key])
+        self.entries,self.data,self.equivalent=entries,value,equivalent
         self.signature=self.path.stat().st_mtime_ns
 
     def verify_file(self,entry):
@@ -39,15 +41,31 @@ class PolicyLibrary:
         """Verify the bank before observing hands, not during the first decision."""
         for entry in self.entries.values():self.verify_file(entry)
 
-    def open(self,board):
-        if self.path.stat().st_mtime_ns!=self.signature:self.reload()
-        entry=self.entries.get(tuple(sorted(board[:3])))
-        if not entry:raise StrategyError('FLOP_NOT_YET_IN_VALIDATED_LIBRARY')
+    def _open_entry(self,entry):
         path=entry['resolved_path'];self.verify_file(entry)
         policy=DiskPolicy(path)
         if policy.fingerprint!=entry['policy_sha256']:
             policy.close();raise StrategyError('LIBRARY_POLICY_IDENTITY_CHANGED')
         return policy
+
+    def open(self,board):
+        if self.path.stat().st_mtime_ns!=self.signature:self.reload()
+        entry=self.entries.get(tuple(sorted(board[:3])))
+        if entry:return self._open_entry(entry)
+        candidates=self.equivalent.get(flop_signature(board[:3]),())
+        if not candidates:raise StrategyError('FLOP_NOT_YET_IN_VALIDATED_LIBRARY')
+        matches=[]
+        try:
+            for candidate in candidates:
+                source=self._open_entry(candidate)
+                try:mapping=exact_suit_map(source.root.board[:3],board[:3],source.ranges)
+                except StrategyError:source.close();continue
+                matches.append(SuitPolicy(source,mapping))
+            if len(matches)>1:raise StrategyError('AMBIGUOUS_SUIT_EQUIVALENT_LIBRARY_FLOP')
+            if not matches:raise StrategyError('SUIT_EQUIVALENCE_DOES_NOT_PRESERVE_BOTH_PRIORS')
+            return matches.pop()
+        finally:
+            for policy in matches:policy.close()
 
 
 class LibraryHistory:

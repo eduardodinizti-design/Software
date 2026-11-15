@@ -1,0 +1,2 @@
+# Preserve original Windows evidence bytes and their release asset hashes.
+docs/software-hu-convergence-20261115/published/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

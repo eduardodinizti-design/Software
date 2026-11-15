@@ -1,0 +1,194 @@
+SOFTWARE ORIGINAL — ENTREGA DA REFERENCIA NVT POS-FLOP
+Data: 15/11/2026
+Branch: feat/hu-converged-pilot-20261115
+Codigo e revisao: https://github.com/eduardodinizti-design/Software/pull/12
+Base: PR #11, que inclui a integracao operacional do PR #10. Main preservada.
+
+RESULTADO CONCRETO
+
+O piloto BTN x BB atingiu o alvo nativo de precisao e o banco COMPLETO foi
+publicado para download. Um Windows Server 2025 baixou o ZIP, conferiu os
+hashes, consultou as tres ruas e usou essa mesma politica para enviar tres
+bets/presets/confirmacoes reais numa janela propria, confirmando o showdown.
+Esse teste usa estado/cartas sinteticos e callbacks da GUI. A validacao no
+PPPoker real e no notebook do usuario continua separada.
+
+ANTES E DEPOIS — MESMO MODELO NVT DE REFERENCIA
+
+Antes: 11 iteracoes, gap global nativo de 1.856568699 BB, alvo nao atingido,
+ZIP local sem upload devido ao bloqueio do executor para uploads.github.com.
+Agora: 91 iteracoes efetivas (limite solicitado 501), gap global
+nativo de 0.046181640 BB. Reducao de 97.51%
+do gap informado. Alvo: exploitability de 0,5% do pote inicial; equivalente
+a NashConv global de ate 0,055 BB neste modelo. Indicador nativo: atingido.
+O calculo parou no checkpoint que atingiu o alvo; nao precisou usar 501.
+
+O indicador de convergencia vem do TexasSolver. O campo
+native_metric_independently_verified continua false para o jogo COMPLETO
+do flop; a verificacao independente nova cobre um river condicionado.
+Nao e certificacao geral GTO ou garantia de lucro no PPPoker.
+
+Cobertura estrutural do banco salvo:
+  FLOP: 10 nos de decisao
+  TURN: 2.254 nos
+  RIVER: 343.392 nos
+  TOTAL: 345.656 nos; 541.364 arestas terminais
+Todos os sucessores das acoes do menu e runouts fisicamente possiveis foram
+verificados. Isso nao e apenas um resumo textual nem uma exportacao so do flop.
+
+SOURCE E MODELO
+
+O usuario autorizou: "Use os ranges NVT disponiveis como referencia".
+Foram mantidos os priors versionados: BTN open_25 e BB call_vs_BTN_25;
+660 e 1.040 combos antes de excluir cartas publicas, respectivamente.
+Sao priors NVT de referencia, sem certificacao de export direto do HRC Pro.
+O source_game_sha256 e 5e8304b8fc45ffe952006b40a85c95a88517b1c742aec8e22573855655837ea0.
+
+BTN x BB, single-raised, 9 jogadores originalmente, chip-EV regular,
+25 BB iniciais, 22,5/22,5 BB restantes, pote 5,5 BB, open ilustrativo 2,5 BB,
+sem ante. Menu: bet de 1/3 do pote, raise de 100% do pote e all-in, com o
+limite nativo de duas agressoes por rua declarado no modelo.
+Outros sizes, stacks, formatos e sequencias pedem modelos correspondentes.
+
+ARQUIVO PUBLICADO E INTEGRIDADE
+
+Release:
+https://github.com/eduardodinizti-design/Software/releases/tag/hu-btn-bb-nvt-reference-20261115
+
+ZIP completo, 2.023.718.632 bytes (aproximadamente 2,02 GB):
+https://github.com/eduardodinizti-design/Software/releases/download/hu-btn-bb-nvt-reference-20261115/btn-bb-As7d2c-nvt-reference.zip
+
+SHA-256 do ZIP:
+ae37d3380efb9dba745ef38a433a950448f8df60f82bfb533f073263de6f8652
+SHA-256 do SQLite:
+74c5b5a5ff1c2455aacf2f1a21a38d1efc4d561ed35494b9b6e4e5570d8903db
+Fingerprint da politica:
+70b17cc7e89c5d2da9eb490718e698e492d25e9bbff9c9dfd190b4de5022e6a3
+
+O bloqueio do upload local foi resolvido publicando pelo runner do GitHub.
+O Windows baixou o arquivo inteiro e validou ZIP, SQLite e fingerprint.
+O banco anterior de 11 iteracoes e a pasta/ambiente antigos foram preservados.
+No calculo novo, worker_exited e temporary_cleanup_verified sao true.
+O arquivo final fica salvo; os temporarios grandes foram apagados depois
+da validacao. Memoria e reutilizada a cada flop/processo.
+
+CONSULTA, NAIPES E DESEMPENHO
+
+A operacao usa --postflop-library library.json. Escolhe o modelo pelo flop,
+confirma o historico e consulta a frequencia do combo no estado correspondente.
+As verificacoes de hash ocorrem na preparacao da biblioteca.
+
+Foi implementada a troca EXATA de naipes quando uma bijecao preserva os
+DOIS priors completos. Uma politica deste flop rainbow cobre suas 24 trocas
+de naipes. Isso nao sao 24 solves novos e nao aproxima ranks diferentes.
+Os estados, combos e historico sao renomeados e o fingerprint derivado
+registra a politica fonte e o mapa. Priors assimetricos incompativeis sao
+rejeitados para essa transferencia; a consulta original permanece disponivel.
+
+Os 24 flops de naipes foram comparados ao banco completo anterior. Uma mao
+inteira com Ah 7c 2s / Th / 2d passou pela consulta e pelo historico, inclusive
+no Windows com o banco novo. A verificacao independente do river preservou
+o resultado sob renomeacao, com erro numerico menor que 1e-10 BB.
+
+Benchmark Linux de 100 consultas em nos diferentes: mediana 0,879 ms,
+p95 1,114 ms e maximo 3,271 ms. Cache de nos limpo antes de cada consulta;
+cache de disco do sistema nao controlado. Foi uma sequencia com seis IDs,
+sem execucao concorrente. O resultado mede a consulta, nao o ciclo completo
+de seis mesas no PPPoker, nem seu notebook i7/8 GB/Intel HD 620/1366x768.
+
+MAO CONFIRMADA E INPUT WINDOWS
+
+Caso de cobertura: hero Ad 3s, board As 7d 2c / Ts / 2h.
+Foi escolhida uma identidade estavel em que o mix seleciona tres bets.
+As respostas check/call do adversario sao roteirizadas e possuem suporte
+positivo nos posteriors. Nao e amostra imparcial de jogo ou de lucro.
+
+Decisoes realmente selecionadas no caso:
+  FLOP: bet 1.833 BB; mix: check=0.033%, bet=99.924%, all_in=0.043%.
+  TURN: bet 3.055 BB; mix: check=23.713%, bet=76.011%, all_in=0.276%.
+  RIVER: bet 5.092 BB; mix: check=6.544%, bet=17.267%, all_in=76.189%.
+
+A frequencia de shove no river e maior que a de bet nesse combo; o caso foi
+selecionado para exercitar o preset de 1/3. A politica continua usando o mix.
+O verificador nao transforma todos os rivers em bet de 1/3.
+
+Windows: os tres inputs passaram por OPEN, PRESET e CONFIRM com valor relido.
+Os callbacks foram BET/PRESET_THIRD/CONFIRM em cada rua. A cadeia da mao tem
+9 acoes, 2 revelacoes e 3 execution_confirmed; o showdown foi confirmado.
+As seis acoes genericas CHECK/CALL/FOLD/BET/RAISE/ALL-IN tambem terminaram DONE.
+Essas seis usam politicas sinteticas; a mao adicional usa a politica NVT
+REALMENTE publicada, com o fingerprint acima.
+
+O estado/cartas dessas janelas vem de dados de teste e callbacks, e o valor
+do painel vem do widget. Nao e OCR/captura/clique no cliente PPPoker.
+O campo pppoker_windows_validated permanece false.
+
+VALIDACAO INDEPENDENTE DO RIVER
+
+Metodo separado do solver nativo: enumeracao exata dos blockers, priors
+condicionados e melhores respostas por conjunto de informacao. A decisao
+soma a crenca inteira do adversario antes de maximizar; nao escolhe uma
+acao diferente conforme cartas ocultas. Nao utiliza Monte Carlo.
+
+Linha avaliada: check/bet/call no flop e no turn, depois check do BB no river.
+Pares privados enumerados: 439058.
+Nos de decisao desse subgame: 4.
+NashConv local: 0.025621133 BB.
+Tempo Windows: 0.343 s.
+
+Para Ad 3s no river, EVs de um desvio local seguido da politica congelada,
+medidos a partir do no atual (custos anteriores sao afundados):
+  check: 12,196603 BB
+  bet 5,092 BB: 12,324977 BB
+  all-in 17,612 BB: 12,313675 BB
+Esses EVs sao do modelo condicionado. A avaliacao nao substitui a politica
+mista, nao e EV de toda a mao e nao representa lucro real.
+
+O river antigo tinha gap local de 2,644441487 BB. Os priors condicionados
+mudam com a politica; a comparacao e diagnostica. O gap local do river e o
+gap global nativo do flop possuem escopos distintos.
+
+TESTES E EVIDENCIAS
+
+Linux: 523 testes, 520 aprovados, zero falhas/erros, 3 pulados (dois crops de
+lobby ausentes e uma captura Windows). Inclui os dois testes nativos reais.
+Windows Server 2025: 240 testes, 237 aprovados, zero falhas/erros, 3 pulados
+(dois testes com backend Linux separado e um de lock Linux).
+A compilacao Python e git diff --check passaram. Nenhum threshold do leitor
+foi reduzido. A validacao real no Windows 10 do usuario ainda nao foi recebida.
+
+Calculo/publicacao:
+https://github.com/eduardodinizti-design/Software/actions/runs/43748815748
+Windows/download/mao/presets/input:
+https://github.com/eduardodinizti-design/Software/actions/runs/43752745519
+
+JSONs completos de decisoes, mao com inputs e avaliacao independente foram
+anexados a Release e versionados em docs/software-hu-convergence-20261115/published/.
+Proveniencia, testes, benchmark e equivalencia de naipes estao na mesma pasta.
+
+COMO USAR NO NOTEBOOK E NO OUTRO AGENTE
+
+Baixe o checkout completo da branch em pasta nova e execute
+VERIFICAR_REFERENCIA_NVT.bat. Ele cria runtime e deixa o banco pronto para
+consulta, sem input. Para testar input em janela propria com o banco,
+veja docs/ORIENTACOES_NVT_WINDOWS_20261115.txt. Para integrar o codigo,
+o outro agente deve revisar o PR #12 sobre o PR #11, preservando suas
+alteracoes locais. A main ainda nao foi mesclada automaticamente.
+
+PENDENCIAS CONCRETAS
+
+1. Validar leitura, continuidade, botoes, presets e efeitos no PPPoker real
+   do notebook. A janela de teste nao certifica o cliente.
+2. Corrigir o caso de leitura 8h como 3h no tema colorido, ainda pendente
+   de reproducao/correcao com evidencia real. O leitor nao foi alterado aqui.
+3. Executar os proximos flops do plano de 100 com armazenamento duravel.
+   Ha UM flop com priors completos novo atingindo o alvo, nao 100 solves.
+   Um ciclo calculo/exportacao/validacao deste porte levou ~43 minutos;
+   custo e tamanho variam. As politicas finais precisam permanecer salvas.
+4. Ampliar modelos para outros ranks, menus/sizes, stacks, ICM/PKO e multiway.
+   A entrega atual cobre o modelo declarado e suas trocas exatas de naipes.
+5. Validar a precisao global com referencia independente. A conferencia
+   independente entregue e exata para o river condicionado descrito.
+
+Nao ha processos de calculo deste lote prometidos para continuar apos esta
+entrega. Os dois workflows terminaram, os artefatos estao salvos e publicados.

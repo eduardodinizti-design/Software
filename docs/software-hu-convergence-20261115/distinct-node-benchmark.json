@@ -1,0 +1,13 @@
+{
+  "concurrent_execution": false,
+  "max_ms": 3.2709430015529506,
+  "median_ms": 0.879161998454947,
+  "node_cache": "cleared before each query",
+  "os_disk_cache": "not controlled; startup validation reads file",
+  "p95_ms": 1.1144099989905953,
+  "policy_sha256": "901f6e09f9d8d1232465715b684598996036f843d9f206ccd62a6c03143721cc",
+  "pppoker_windows_validated": false,
+  "queries": 100,
+  "scope": "LINUX_STORED_POLICY_QUERIES_DISTINCT_NODES_NOT_PPPOKER_OR_OCR_OR_CLICK_LATENCY",
+  "table_identifiers": 6
+}

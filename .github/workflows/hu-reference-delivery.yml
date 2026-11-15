@@ -1,0 +1,86 @@
+name: HU NVT reference convergence and complete policy delivery
+on:
+  push:
+    branches: [feat/hu-converged-pilot-20261115]
+    paths:
+      - .github/workflows/hu-reference-delivery.yml
+      - tools/run_hu_reference_pilot.py
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: hu-nvt-reference-delivery
+  cancel-in-progress: false
+
+jobs:
+  solve-and-publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      OMP_NUM_THREADS: '4'
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install separate native build and lab dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libfmt-dev zlib1g-dev
+          python -m pip install numpy==2.2.6 opencv-python-headless==4.11.0.86 psutil==6.1.1 pytesseract==0.3.13
+          git clone https://github.com/bupticybee/TexasSolver.git "$RUNNER_TEMP/TexasSolver"
+          git -C "$RUNNER_TEMP/TexasSolver" checkout 02c8021ee1307c18aa1e76b772c6ae1451601bc6
+      - name: Build the separately installed source without changing its checkout
+        run: |
+          python tools/build_texassolver_console.py --source "$RUNNER_TEMP/TexasSolver" --fmt-include /usr/include --out "$RUNNER_TEMP/hu-native/solver-stream" --stream-export
+      - name: Native parity, all-street closure, resume and cleanup tests
+        run: |
+          HU_STREAM_TEST_BINARY="$RUNNER_TEMP/hu-native/solver-stream" HU_STREAM_TEST_RESOURCES="$RUNNER_TEMP/TexasSolver/resources" python -m unittest test_hu_batches -v
+      - name: Calculate one full NVT-reference policy and validate bot lookup
+        run: |
+          python tools/run_hu_reference_pilot.py --binary "$RUNNER_TEMP/hu-native/solver-stream" --resources "$RUNNER_TEMP/TexasSolver/resources" --output runtime/hu-nvt-reference --iterations 501 --threads 4 --accuracy-pct 0.5
+      - name: Publish the complete policy from the GitHub runner
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          import json,pathlib
+          d=pathlib.Path('runtime/hu-nvt-reference/delivery')
+          r=json.loads((d/'result.json').read_text())
+          text=('Full NVT-reference policy: BTN x BB, As 7d 2c, flop/turn/river.\n\n'
+              f'Native target met: {r["native_target_met"]}. Iterations: {r["iterations"]}. Global native gap: {r["global_gap_bb"]} BB.\n\n'
+              'The native metric is not independent GTO certification or real PPPoker Windows validation. The NVT priors were approved as reference.\n\n'
+              'Extract the ZIP into a new folder. It contains library.json, full policies/*.sqlite, reports, plan and result.\n'
+              'Source: '+r['source_commit']+'\n')
+          (d/'release-notes.txt').write_text(text)
+          PY
+          tag=hu-btn-bb-nvt-reference-20261115
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release already exists; refusing to overwrite its policy."
+            exit 1
+          fi
+          gh release create "$tag" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --prerelease --title "BTN/BB NVT reference: full flop, turn and river policy" --notes-file runtime/hu-nvt-reference/delivery/release-notes.txt
+          gh release upload "$tag" --repo "$GITHUB_REPOSITORY" runtime/hu-nvt-reference/delivery/btn-bb-As7d2c-nvt-reference.zip runtime/hu-nvt-reference/delivery/result.json runtime/hu-nvt-reference/delivery/download-manifest.json runtime/hu-nvt-reference/delivery/LEIA_PRIMEIRO.txt
+      - name: Save small reproducibility evidence even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hu-nvt-reference-evidence
+          path: |
+            runtime/hu-nvt-reference/**/*.json
+            runtime/hu-nvt-reference/**/*.txt
+            runtime/hu-nvt-reference/**/*.log
+          retention-days: 14
+      - name: Preserve a complete ZIP if release upload failed
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hu-nvt-reference-policy-fallback
+          path: runtime/hu-nvt-reference/delivery/*.zip
+          if-no-files-found: ignore
+          retention-days: 14
