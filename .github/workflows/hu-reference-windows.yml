@@ -1,0 +1,75 @@
+name: HU downloaded reference on Windows and owned executor
+on:
+  push:
+    branches: [feat/hu-converged-pilot-20261115]
+    paths:
+      - .github/workflows/hu-reference-windows.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  downloaded-reference:
+    runs-on: windows-latest
+    timeout-minutes: 70
+    env:
+      PYTHONUTF8: '1'
+      OPENBLAS_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install controlled test dependencies
+        run: python -m pip install numpy==2.2.6 opencv-python==4.11.0.86 psutil==6.1.1 pytesseract==0.3.13
+      - name: Test contracts and native GDI in an owned window
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force runtime/hu-reference-ci | Out-Null
+          python -m unittest test_hu_reference test_hu_batches test_hu_policy_engine test_hu_operational test_cursor test_window_capture_engine test_window_capture_audit test_capture_windows_native test_raise_plan test_raise_sequencer -v *> runtime/hu-reference-ci/contracts.txt
+          $code = $LASTEXITCODE
+          Get-Content runtime/hu-reference-ci/contracts.txt
+          if ($code -ne 0) {
+            $detail = Get-Content -Raw runtime/hu-reference-ci/contracts.txt
+            $detail = $detail.Substring([Math]::Max(0, $detail.Length - 3500))
+            $detail = $detail.Replace('%', '%25').Replace("`r", '%0D').Replace("`n", '%0A')
+            Write-Output "::error title=Reference Windows contracts::$detail"
+          }
+          exit $code
+      - name: Wait for the complete ZIP and manifest publication
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python tools/wait_hu_reference_release.py --seconds 3000
+      - name: Download the complete bank and confirm a hand using its actual frequencies
+        run: python -m strategy.reference_download --verify --output runtime/hu-reference-ci/download
+      - name: Validate exact suit renaming with a complete confirmed hand
+        run: python -m strategy.reference_validation --library runtime/hu-reference-ci/download/bank/library.json --flop Ah 7c 2s --output runtime/hu-reference-ci/alias-validation
+      - name: Independently enumerate river EVs and information-set best responses
+        run: python -m strategy.river_validation --library runtime/hu-reference-ci/download/bank/library.json --output runtime/hu-reference-ci/river-exact.json
+      - name: Exercise real SendInput only in our controlled Tk window
+        run: python verificar_executor_hu.py --windows-owned --reference-library runtime/hu-reference-ci/download/bank/library.json --output runtime/hu-reference-ci/owned
+      - name: Collect and publish small evidence without changing the original bank
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python tools/collect_hu_reference_evidence.py --root runtime/hu-reference-ci --run-id "${{ github.run_id }}" --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          $files = @(Get-ChildItem runtime/hu-reference-ci/delivery/*.json | ForEach-Object { $_.FullName })
+          gh release upload hu-btn-bb-nvt-reference-20261115 --repo "${{ github.repository }}" @files
+      - name: Save evidence without duplicating the large SQLite bank
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hu-downloaded-reference-windows
+          path: |
+            runtime/hu-reference-ci/contracts.txt
+            runtime/hu-reference-ci/river-exact.json
+            runtime/hu-reference-ci/alias-validation/*.json
+            runtime/hu-reference-ci/delivery/*.json
+            runtime/hu-reference-ci/owned/*.json
+            runtime/hu-reference-ci/owned/*.txt
+            runtime/hu-reference-ci/download/download-receipt.json
+            runtime/hu-reference-ci/download/verification/*.json
+          retention-days: 14
