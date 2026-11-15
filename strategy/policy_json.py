@@ -5,6 +5,7 @@ an interoperability export, not a second in-memory copy of a multi-GB tree.
 """
 import argparse
 from collections import Counter
+from dataclasses import asdict
 import gzip
 import hashlib
 import json
@@ -15,6 +16,15 @@ from strategy.policy_library import PolicyLibrary
 from strategy.state_contract import BettingState,DecisionState,GameContext,StrategyError
 from strategy.strategy_decision import choose
 from strategy.texassolver_backend import file_hash
+
+
+def export_header(policy):
+    value=dict(type='header',schema='software.hu-full-policy-jsonl.v1',
+        source_policy_sha256=policy.fingerprint,metadata={k:v for k,v in policy.data.items() if k!='nodes'},
+        model=dict(context=asdict(policy.context),root=policy.root.to_dict(),ranges=[r.to_dict() for r in policy.ranges],
+                   menu=asdict(policy.menu),quality=policy.quality),
+        expected_public_nodes=len(policy.nodes),frequencies='EXACT_NORMALIZED_LOOKUP_VALUES')
+    return json.loads(json.dumps(value,allow_nan=False))
 
 
 def query(library_path,request):
@@ -39,9 +49,7 @@ def export_complete(policy,output):
     def encoded(value):return (json.dumps(value,sort_keys=True,separators=(',',':'),allow_nan=False)+'\n').encode()
     try:
         with partial.open('xb') as raw,gzip.GzipFile(filename='',fileobj=raw,mode='wb',compresslevel=1,mtime=0) as out:
-            header=dict(type='header',schema='software.hu-full-policy-jsonl.v1',
-                source_policy_sha256=policy.fingerprint,metadata=policy.data,
-                expected_public_nodes=len(policy.nodes),frequencies='EXACT_NORMALIZED_LOOKUP_VALUES')
+            header=export_header(policy)
             line=encoded(header);out.write(line);sha.update(line)
             for key in policy.nodes:
                 node=policy.get_node(key);record=encoded(dict(type='node',key=key,node=node))
@@ -65,7 +73,7 @@ def verify_export(path,policy):
             value=json.loads(raw)
             if count==0 and value.get('type')=='header':
                 if seen_header:raise StrategyError('JSON_EXPORT_DUPLICATE_HEADER')
-                if value['source_policy_sha256']!=policy.fingerprint or value['metadata']!=policy.data:
+                if value!=export_header(policy):
                     raise StrategyError('JSON_EXPORT_HEADER_CHANGED')
                 seen_header=True;sha.update(raw);continue
             if not seen_header:raise StrategyError('JSON_EXPORT_MISSING_HEADER')

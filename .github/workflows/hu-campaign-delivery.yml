@@ -34,9 +34,9 @@ jobs:
         with: {persist-credentials: false}
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
-      - run: python -m pip install numpy==2.2.6
-      - name: Verify campaign integrity and the corrected temporary-export progress monitor
-        run: python -m unittest test_hu_campaign test_hu_campaign_delivery -q
+      - run: python -m pip install numpy==2.2.6 opencv-python-headless==4.11.0.86 psutil==6.1.1 pytesseract==0.3.13
+      - name: Verify campaign integrity, complete JSON transcription and the corrected progress monitor
+        run: python -m unittest test_hu_campaign test_hu_campaign_delivery test_hu_policy_json -q
       - name: Wait independently for this family's complete Windows consumer evidence
         env:
           GH_TOKEN: ${{ github.token }}

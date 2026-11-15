@@ -60,5 +60,16 @@ class PolicyJSONTests(unittest.TestCase):
         with self.assertRaisesRegex(StrategyError,'MUST_BE_NEW'):export_complete(self.policy,path)
         self.assertEqual(path.read_bytes(),b'existing-work')
 
+    def test_header_contains_the_complete_model_and_cannot_misstate_coverage(self):
+        path=self.root/'full.jsonl.gz';export_complete(self.policy,path)
+        with gzip.open(path,'rt') as f:rows=[json.loads(r) for r in f]
+        self.assertEqual(rows[0]['model']['context']['positions'],['BTN','BB'])
+        self.assertEqual(rows[0]['model']['ranges'],[r.to_dict() for r in self.policy.ranges])
+        rows[0]['expected_public_nodes']+=1
+        bad=self.root/'bad-header.jsonl.gz'
+        with gzip.open(bad,'wt') as f:
+            for row in rows:f.write(json.dumps(row)+'\n')
+        with self.assertRaisesRegex(StrategyError,'HEADER_CHANGED'):verify_export(bad,self.policy)
+
 
 if __name__=='__main__':unittest.main()
