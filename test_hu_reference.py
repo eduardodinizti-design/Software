@@ -1,6 +1,8 @@
 """Confirmed reference-hand integration and portable-bank transfer contracts."""
 from contextlib import ExitStack
 import io
+import copy
+from dataclasses import replace
 import json
 from pathlib import Path
 import stat
@@ -20,6 +22,9 @@ from strategy.ev_evaluator import exact_hu_gap,evaluate_profile
 from strategy.range_catalog import ComboRange
 from strategy.river_validation import exact_river_review
 from strategy.state_contract import BettingState
+from strategy.suit_policy import SuitPolicy,exact_suit_map,rename_card,rename_state
+from strategy.policy_library import PolicyLibrary
+from strategy.action_tree import Action
 from test_hu_batches import disk_copy,TURN_POLICY
 from test_hu_operational import make_test_policy
 
@@ -145,6 +150,63 @@ class IndependentRiverTests(unittest.TestCase):
         source=CompiledPolicy.load(Path(__file__).parent/'docs/software-hu-engine-20261115/policy-river-native.json.gz')
         with self.assertRaisesRegex(StrategyError,'NO_PARTIAL_EV'):
             exact_river_review(source.root,source.ranges,source.probabilities,source.actions,max_grid=1)
+
+
+class ExactSuitRoutingTests(unittest.TestCase):
+    def symmetric_policy(self):
+        source=make_test_policy(root=BettingState(('Kc','8s','3d','Ts','2h'),10,(30,30),actor=1,oop=1))
+        data=copy.deepcopy(source.data)
+        ranges=(ComboRange.from_classes({'QQ':1},'symmetric-Q'),ComboRange.from_classes({'JJ':1},'symmetric-J'))
+        data['ranges']=[r.to_dict() for r in ranges]
+        for node in data['nodes'].values():
+            template=next(iter(node['combos'].values()));actor=node['state']['actor'];ids=list(template['frequencies'])
+            node['combos']={}
+            for i,(key,w) in enumerate(ranges[actor].weights):
+                row=copy.deepcopy(template)
+                values=[float(i+j+1) for j in range(len(ids))];total=sum(values)
+                row['frequencies']={a:v/total for a,v in zip(ids,values)};node['combos'][key]=row
+        return CompiledPolicy(data)
+
+    def test_renamed_combos_keep_the_exact_source_frequencies_and_sizes(self):
+        source=self.symmetric_policy();actual=['Kh','8d','3c']
+        mapping=exact_suit_map(source.root.board[:3],actual,source.ranges)
+        view=SuitPolicy(source,mapping)
+        self.assertNotEqual(view.fingerprint,source.fingerprint)
+        self.assertEqual(view.quality['source_policy_sha256'],source.fingerprint)
+        for key,row in source.nodes[source.node_key(source.root)]['combos'].items():
+            hand=tuple(rename_card(c,mapping) for c in (key[:2],key[2:]))
+            self.assertEqual(view.probabilities(view.root,hand),source.probabilities(source.root,(key[:2],key[2:])))
+        self.assertEqual(view.actions(view.root),source.actions(source.root))
+        self.assertLessEqual(len(view._cache),8)
+
+    def test_asymmetric_priors_cannot_be_relabelled_as_symmetric(self):
+        source=make_test_policy()
+        with self.assertRaisesRegex(StrategyError,'PRESERVE_BOTH_PRIORS'):
+            exact_suit_map(source.root.board,('Kh','8s','3d'),source.ranges)
+
+    def test_turn_and_river_history_are_renamed_and_reversible(self):
+        mapping={'c':'h','d':'c','h':'s','s':'d'}
+        root=BettingState(('Kc','8s','3d','Ts','2h'),10,(30,30),actor=1,oop=1,
+            history=('1:check:0','BOARD:Ts','0:check:0','BOARD:2h'))
+        renamed=rename_state(root,mapping)
+        self.assertEqual(renamed.history,('1:check:0','BOARD:Td','0:check:0','BOARD:2s'))
+        self.assertEqual(rename_state(renamed,{v:k for k,v in mapping.items()}),root)
+
+    def test_library_routes_an_exact_suit_equivalent_without_an_additional_solve(self):
+        source=self.symmetric_policy()
+        with tempfile.TemporaryDirectory() as tmp:
+            folder=Path(tmp);result=disk_copy(source,folder/'model.sqlite')
+            atomic_json(folder/'library.json',dict(schema='software.hu-policy-library.v1',entries=[dict(
+                board=list(source.root.board[:3]),path='model.sqlite',file_sha256=file_hash(folder/'model.sqlite'),
+                policy_sha256=result['policy_sha256'])]))
+            view=PolicyLibrary(folder/'library.json').open(['Kh','8d','3c'])
+            try:
+                self.assertTrue(view.quality['exact_suit_renaming']);self.assertFalse(view.quality['new_solve'])
+                self.assertEqual(set(view.root.board[:3]),{'Kh','8d','3c'})
+                expected=exact_river_review(source.root,source.ranges,source.probabilities,source.actions)
+                actual=exact_river_review(view.root,view.ranges,view.probabilities,view.actions)
+                self.assertAlmostEqual(actual['nash_conv_bb'],expected['nash_conv_bb'],places=10)
+            finally:view.close()
 
 
 if __name__=='__main__':unittest.main()

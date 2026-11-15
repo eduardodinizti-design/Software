@@ -22,6 +22,7 @@ from strategy.policy_store import CompiledPolicy
 from strategy.range_catalog import joint_deals
 from strategy.state_contract import DecisionState,StrategyError,cards
 from strategy.strategy_decision import choose
+from strategy.suit_policy import rename_card
 
 
 SEATS={'hero':'BTN','villain':'BB','small':'SB','s1':'UTG','s2':'UTG+1',
@@ -164,11 +165,14 @@ def verify_reference_hand(policy,output,*,runout=('Ts','2h'),library=None):
 def main(argv=None):
     p=argparse.ArgumentParser(description=__doc__);group=p.add_mutually_exclusive_group(required=True)
     group.add_argument('--policy');group.add_argument('--library');p.add_argument('--output',required=True)
-    p.add_argument('--turn',default='Ts');p.add_argument('--river',default='2h')
+    p.add_argument('--turn');p.add_argument('--river');p.add_argument('--flop',nargs=3)
     args=p.parse_args(argv)
+    if args.flop and not args.library:p.error('--flop requires a policy library')
     library=PolicyLibrary(args.library) if args.library else None
-    policy=library.open(next(iter(library.entries))) if library else CompiledPolicy.load(args.policy)
-    try:summary=verify_reference_hand(policy,args.output,runout=(args.turn,args.river),library=library)
+    policy=library.open(args.flop or next(iter(library.entries))) if library else CompiledPolicy.load(args.policy)
+    mapping=getattr(policy,'mapping',dict(zip('cdhs','cdhs')))
+    runout=(args.turn or rename_card('Ts',mapping),args.river or rename_card('2h',mapping))
+    try:summary=verify_reference_hand(policy,args.output,runout=runout,library=library)
     finally:
         if hasattr(policy,'close'):policy.close()
     print(json.dumps(dict(status=summary['status'],policy_sha256=summary['policy_sha256'],

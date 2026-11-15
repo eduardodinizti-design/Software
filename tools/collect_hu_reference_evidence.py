@@ -18,11 +18,13 @@ def main(argv=None):
     args=p.parse_args(argv);root=Path(args.root);delivery=root/'delivery';delivery.mkdir(exist_ok=True)
     def read(path):return json.loads((root/path).read_text(encoding='utf-8-sig'))
     receipt=read('download/download-receipt.json');hand=read('download/verification/result.json')
-    river=read('river-exact.json');owned=read('owned/resultado.json')
+    river=read('river-exact.json');owned=read('owned/resultado.json');alias=read('alias-validation/result.json')
     if (receipt['policy_sha256']!=hand['policy_sha256'] or receipt['policy_sha256']!=river['source_policy_sha256']
             or hand['status']!='PASS' or not hand['complete_to_showdown']
             or not hand['hero_selected_actions_match_lab_actions'] or not river['exact_enumeration']):
         raise SystemExit('Reference evidence does not refer to one validated policy')
+    if alias.get('status')!='PASS' or alias['quality'].get('source_policy_sha256')!=receipt['policy_sha256']:
+        raise SystemExit('Equivalent-suit hand is not bound to the same source policy')
     if (owned['status']!='PASS' or owned.get('native_owned_capture')!='PASS'
             or len(owned['cases'])!=6 or any(c['result']['state']!='DONE' for c in owned['cases'])):
         raise SystemExit('Owned-window executor evidence is incomplete')
@@ -43,6 +45,8 @@ def main(argv=None):
             input_devices_used=False,scenario_sampling=hand['scenario_sampling']),
         independent_river=dict(method=river['method'],scope=river['scope'],joint_private_deals=river['joint_private_deals'],
             nash_conv_bb=river['nash_conv_bb'],elapsed_seconds=river['elapsed_seconds'],policy_modified=False),
+        exact_suit_routing=dict(status=alias['status'],source_policy_sha256=receipt['policy_sha256'],
+            derived_policy_sha256=alias['policy_sha256'],board=alias['board'],complete_to_showdown=alias['complete_to_showdown']),
         native_executor=dict(scope=owned['scope'],capture=owned['native_owned_capture'],
             cases=[dict(kind=c['kind'],state=c['result']['state'],callbacks=c['callbacks']) for c in owned['cases']],
             generic_case_policies='SYNTHETIC_CONTROLLED_TEST_POLICIES',
