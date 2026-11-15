@@ -500,21 +500,21 @@ test_runtime_generates_advice_and_resets_at_the_next_hand (test_hu_batches.Libra
 test_startup_preparation_avoids_hashing_a_large_file_again_at_decision_time (test_hu_batches.LibraryTests.test_startup_preparation_avoids_hashing_a_large_file_again_at_decision_time) ... ok
 test_stream_matches_nested_export_of_the_same_solve_including_suit_isomorphism (test_hu_batches.NativeEndToEndTests.test_stream_matches_nested_export_of_the_same_solve_including_suit_isomorphism) ... ok
 test_two_real_workers_advance_batches_cleanup_and_resume_without_recalculation (test_hu_batches.NativeEndToEndTests.test_two_real_workers_advance_batches_cleanup_and_resume_without_recalculation) ... {"event": "START", "flop": 1, "total": 2, "batch": 1, "board": ["As", "7d", "2c"]}
-{"event": "COMPLETE", "flop": 1, "board": ["As", "7d", "2c"], "policy_sha256": "403f39cf78bb8d60eac8cb73e1f3ab34f90ba6639a22145570c46692756e8384", "converged": true, "peak_rss_mb": 124.29296875}
+{"event": "COMPLETE", "flop": 1, "board": ["As", "7d", "2c"], "policy_sha256": "403f39cf78bb8d60eac8cb73e1f3ab34f90ba6639a22145570c46692756e8384", "converged": true, "peak_rss_mb": 124.26171875}
 {"event": "START", "flop": 2, "total": 2, "batch": 2, "board": ["Kd", "8h", "3c"]}
-{"event": "COMPLETE", "flop": 2, "board": ["Kd", "8h", "3c"], "policy_sha256": "18a795fd73ef17adcfc1cccb3c85a6f66977ca48572ca4c560f7aeeccb0b6545", "converged": true, "peak_rss_mb": 124.26171875}
+{"event": "COMPLETE", "flop": 2, "board": ["Kd", "8h", "3c"], "policy_sha256": "18a795fd73ef17adcfc1cccb3c85a6f66977ca48572ca4c560f7aeeccb0b6545", "converged": true, "peak_rss_mb": 124.2578125}
 {"event": "STOPPED", "counts": {"COMPLETE": 2}}
 {"event": "STOPPED", "counts": {"COMPLETE": 2}}
 {"event": "STOPPED", "counts": {"COMPLETE": 2}}
 ok
 test_failed_job_preserves_evidence_and_continues_to_the_next (test_hu_batches.QueueFailureTests.test_failed_job_preserves_evidence_and_continues_to_the_next) ... {"event": "START", "flop": 1, "total": 2, "batch": 1, "board": ["As", "7d", "2c"]}
-{"event": "FAILED", "flop": 1, "reason": "WORKER_FAILED_SEE_PRESERVED_LOG", "attempt": "/tmp/tmpz5zkz4t7/bank/temporary/0fa9d9ebbf6ad9c01085-da783701cbd14e2eb8c87e6ec86664d2"}
+{"event": "FAILED", "flop": 1, "reason": "WORKER_FAILED_SEE_PRESERVED_LOG", "attempt": "/tmp/tmpu7ujf07m/bank/temporary/0fa9d9ebbf6ad9c01085-536b2236748a40d1b64a2df0d561ff03"}
 {"event": "START", "flop": 2, "total": 2, "batch": 1, "board": ["Kd", "8h", "3c"]}
-{"event": "FAILED", "flop": 2, "reason": "WORKER_FAILED_SEE_PRESERVED_LOG", "attempt": "/tmp/tmpz5zkz4t7/bank/temporary/16f70fa6bf40e2c3f918-1158a94d1e8f423a8dcd1dd5b4805553"}
+{"event": "FAILED", "flop": 2, "reason": "WORKER_FAILED_SEE_PRESERVED_LOG", "attempt": "/tmp/tmpu7ujf07m/bank/temporary/16f70fa6bf40e2c3f918-dd811fa4bbf746469c2407c55301149c"}
 {"event": "STOPPED", "counts": {"FAILED": 2}}
 ok
 test_max_cases_limits_failed_attempts_too (test_hu_batches.QueueFailureTests.test_max_cases_limits_failed_attempts_too) ... {"event": "START", "flop": 1, "total": 2, "batch": 1, "board": ["As", "7d", "2c"]}
-{"event": "FAILED", "flop": 1, "reason": "WORKER_FAILED_SEE_PRESERVED_LOG", "attempt": "/tmp/tmpayn4hmlo/bank/temporary/0fa9d9ebbf6ad9c01085-c88120255ebf40349f6bd039198db7c8"}
+{"event": "FAILED", "flop": 1, "reason": "WORKER_FAILED_SEE_PRESERVED_LOG", "attempt": "/tmp/tmpsq8urh4t/bank/temporary/0fa9d9ebbf6ad9c01085-b1afe5cab86b462b8801871302890d20"}
 {"event": "STOPPED", "counts": {"FAILED": 1, "PENDING": 1}}
 ok
 test_one_driver_at_a_time (test_hu_batches.QueueFailureTests.test_one_driver_at_a_time) ... ok
@@ -533,9 +533,9 @@ test_altered_observer_frequency_cannot_be_reported_as_query_equivalent (test_hu_
 test_existing_local_work_is_not_overwritten (test_hu_reference.ReferenceHandTests.test_existing_local_work_is_not_overwritten) ... ok
 test_corrupt_download_is_retained_for_diagnosis_and_never_published (test_hu_reference.ReferenceTransferTests.test_corrupt_download_is_retained_for_diagnosis_and_never_published) ... ok
 test_existing_user_bank_is_not_overwritten_or_downloaded_again (test_hu_reference.ReferenceTransferTests.test_existing_user_bank_is_not_overwritten_or_downloaded_again) ... ok
-test_full_download_checks_archive_and_policy_then_removes_only_its_archive (test_hu_reference.ReferenceTransferTests.test_full_download_checks_archive_and_policy_then_removes_only_its_archive) ... Banco salvo em: /tmp/tmp5kus0eka/download/bank
+test_full_download_checks_archive_and_policy_then_removes_only_its_archive (test_hu_reference.ReferenceTransferTests.test_full_download_checks_archive_and_policy_then_removes_only_its_archive) ... Banco salvo em: /tmp/tmpl3ddjxsl/download/bank
 Alvo de precisao nativo atingido: SIM
-Resultado: /tmp/tmp5kus0eka/download/download-receipt.json
+Resultado: /tmp/tmpl3ddjxsl/download/download-receipt.json
 ok
 test_zip_parent_traversal_is_rejected_before_extraction (test_hu_reference.ReferenceTransferTests.test_zip_parent_traversal_is_rejected_before_extraction) ... ok
 test_zip_symlink_is_rejected_before_extraction (test_hu_reference.ReferenceTransferTests.test_zip_symlink_is_rejected_before_extraction) ... ok
@@ -550,10 +550,15 @@ test_resume_cannot_claim_an_existing_unmanaged_folder (test_hu_next16.BatchDownl
 test_whole_archive_checksum_is_checked_in_addition_to_parts (test_hu_next16.BatchDownloadTests.test_whole_archive_checksum_is_checked_in_addition_to_parts) ... Parte verificada: p1.zip.part001 (0 MiB)
 Parte verificada: p1.zip.part002 (0 MiB)
 ok
+test_a_published_partial_catalog_is_not_mistaken_for_learning_sixteen_models (test_hu_next16.CatalogReadinessTests.test_a_published_partial_catalog_is_not_mistaken_for_learning_sixteen_models) ... ok
+test_missing_asset_waits_then_checks_the_full_published_catalog (test_hu_next16.CatalogReadinessTests.test_missing_asset_waits_then_checks_the_full_published_catalog) ... Awaiting complete immutable catalog: batch-catalog-123.json; elapsed=0s
+ok
+test_timeout_cannot_report_success (test_hu_next16.CatalogReadinessTests.test_timeout_cannot_report_success) ... ok
 test_existing_local_work_is_preserved (test_hu_next16.MultipartArchiveTests.test_existing_local_work_is_preserved) ... ok
 test_invalid_part_size_and_unsafe_path_are_rejected (test_hu_next16.MultipartArchiveTests.test_invalid_part_size_and_unsafe_path_are_rejected) ... ok
 test_lossless_order_and_hashes_across_part_boundaries (test_hu_next16.MultipartArchiveTests.test_lossless_order_and_hashes_across_part_boundaries) ... ok
 test_complete_native_model_is_transferred_queried_and_reused_without_redownload (test_hu_next16.NativeBatchTransferTests.test_complete_native_model_is_transferred_queried_and_reused_without_redownload) ... ok
+test_native_export_closes_monotone_paired_and_two_tone_control_trees (test_hu_next16.NativeBatchTransferTests.test_native_export_closes_monotone_paired_and_two_tone_control_trees) ... ok
 test_resume_recovers_a_policy_promoted_before_index_publication (test_hu_next16.NativeBatchTransferTests.test_resume_recovers_a_policy_promoted_before_index_publication) ... ok
 test_bad_precision_label_or_incomplete_lookup_cannot_pass_catalog (test_hu_next16.Next16PlanTests.test_bad_precision_label_or_incomplete_lookup_cannot_pass_catalog) ... ok
 test_catalog_counts_actual_complete_and_converged_models (test_hu_next16.Next16PlanTests.test_catalog_counts_actual_complete_and_converged_models) ... ok
@@ -562,8 +567,12 @@ test_duplicates_cannot_be_published_even_with_a_matching_plan_hash (test_hu_next
 test_frozen_plan_contains_sixteen_new_models_and_preserves_the_game (test_hu_next16.Next16PlanTests.test_frozen_plan_contains_sixteen_new_models_and_preserves_the_game) ... ok
 test_status_timeout_cannot_terminate_an_expensive_native_solve (test_hu_next16.ProgressTests.test_status_timeout_cannot_terminate_an_expensive_native_solve) ... Commit progress status unavailable; calculation continues.
 ok
+test_every_windows_proof_must_match_the_published_policy (test_hu_next16.WindowsEvidenceTests.test_every_windows_proof_must_match_the_published_policy) ... ok
+test_lab_evidence_cannot_claim_a_real_pppoker_session (test_hu_next16.WindowsEvidenceTests.test_lab_evidence_cannot_claim_a_real_pppoker_session) ... ok
+test_missing_duplicate_and_linux_proofs_cannot_be_counted_as_sixteen_windows_models (test_hu_next16.WindowsEvidenceTests.test_missing_duplicate_and_linux_proofs_cannot_be_counted_as_sixteen_windows_models) ... ok
+test_windows_river_must_reproduce_the_independent_linux_calculation (test_hu_next16.WindowsEvidenceTests.test_windows_river_must_reproduce_the_independent_linux_calculation) ... ok
 
 ----------------------------------------------------------------------
-Ran 541 tests in 64.625s
+Ran 549 tests in 87.210s
 
 OK (skipped=3)
