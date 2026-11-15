@@ -60,6 +60,13 @@ class BatchPlanTests(unittest.TestCase):
     def test_batch_size_has_no_environment_cap_of_sixteen(self):
         self.assertEqual(make_plan(FLOP_GAME,boards=self.boards,batch_size=100)['batch_size'],100)
 
+    def test_thread_budget_is_explicit_and_does_not_change_the_game(self):
+        p=make_plan(FLOP_GAME,boards=self.boards,threads=4)
+        self.assertEqual(p['settings']['threads'],4)
+        self.assertEqual(p['game'],json.loads(FLOP_GAME.read_text()))
+        with self.assertRaisesRegex(StrategyError,'THREAD_BUDGET'):
+            make_plan(FLOP_GAME,boards=self.boards,threads=0)
+
     def test_flop_suit_permutations_are_not_counted_as_new_studies(self):
         self.assertEqual(canonical_flop(['As','7d','2c']),canonical_flop(['Ah','7s','2d']))
         with self.assertRaisesRegex(StrategyError,'DUPLICATE_SUIT'):

@@ -63,19 +63,20 @@ def catalogue_flops(count=100,seed=20261115):
 
 
 def make_plan(game_path,*,count=100,batch_size=16,boards=None,iterations=501,accuracy_pct=.5,
-              memory_mb=8192,timeout_seconds=3600,work_disk_mb=8192,bank_disk_mb=0,seed=20261115):
+              memory_mb=8192,timeout_seconds=3600,work_disk_mb=8192,bank_disk_mb=0,seed=20261115,threads=2):
     game=json.loads(Path(game_path).read_text());context,root,ranges,menu=load_game(game_path)
     if context.positions!=('BTN','BB') or len(root.board)!=3 or root.history or any(root.acted) or root.actor!=root.oop:
         raise StrategyError('BTN_BB_FLOP_STREET_START_TEMPLATE_REQUIRED')
     if type(batch_size) is not int or batch_size<1 or iterations<11 or accuracy_pct<=0:
         raise StrategyError('INVALID_BATCH_OR_SOLVER_BUDGET')
     if min(memory_mb,timeout_seconds,work_disk_mb)<=0 or bank_disk_mb<0:raise StrategyError('POSITIVE_RESOURCE_BUDGETS_REQUIRED')
+    if type(threads) is not int or threads<1:raise StrategyError('POSITIVE_THREAD_BUDGET_REQUIRED')
     values=catalogue_flops(count,seed) if boards is None else [list(cards(b.split() if isinstance(b,str) else b,(3,))) for b in boards]
     identities=[canonical_flop(b) for b in values]
     if not values or len(set(identities))!=len(identities):raise StrategyError('DUPLICATE_SUIT_EQUIVALENT_FLOPS')
     plan=dict(schema='software.hu-batch-plan.v1',game=game,boards=values,batch_size=batch_size,
         workers=1,settings=dict(iterations=iterations,accuracy_pct=accuracy_pct,memory_mb=memory_mb,
-        timeout_seconds=timeout_seconds,threads=2,work_disk_mb=work_disk_mb,bank_disk_mb=bank_disk_mb),
+        timeout_seconds=timeout_seconds,threads=threads,work_disk_mb=work_disk_mb,bank_disk_mb=bank_disk_mb),
         scope='Exact configured chip-EV BTN/BB model; board coverage is not GTO convergence or Windows validation',
         seed=seed)
     plan['plan_sha256']=digest(plan)
@@ -367,6 +368,7 @@ def main(argv=None):
     a=subs.add_parser('plan');a.add_argument('--game',required=True);a.add_argument('--out',required=True)
     a.add_argument('--count',type=int,default=100);a.add_argument('--boards');a.add_argument('--batch-size',type=int,default=16)
     a.add_argument('--iterations',type=int,default=501);a.add_argument('--accuracy-pct',type=float,default=.5)
+    a.add_argument('--threads',type=int,default=2)
     a.add_argument('--memory-mb',type=int,default=8192);a.add_argument('--timeout-seconds',type=int,default=3600)
     a.add_argument('--work-disk-mb',type=int,default=8192);a.add_argument('--bank-disk-mb',type=int,default=0,help='0: no artificial bank quota; disk free-space guard remains')
     a=subs.add_parser('run');a.add_argument('--plan',required=True);a.add_argument('--output',required=True)
