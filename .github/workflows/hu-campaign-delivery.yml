@@ -1,0 +1,53 @@
+name: HU complete32 and SB40 verified data delivery
+on:
+  push:
+    branches: [feat/hu-close32-sb40-20261115]
+    paths: [.github/workflows/hu-campaign-delivery.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: hu-campaign-delivery-20261115
+  cancel-in-progress: false
+env:
+  PYTHONUNBUFFERED: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  WINDOWS_RUN: '43770197113'
+jobs:
+  deliver:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 320
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - family: btn32
+            tag: hu-btn-bb-nvt-complete32-20261115
+            catalog: batch-catalog-43769271278.json
+            count: 15
+          - family: sb40
+            tag: hu-sb-bb40-nvt-pilot-20261115
+            catalog: batch-catalog-43769679234.json
+            count: 1
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install numpy==2.2.6
+      - name: Wait independently for this family's complete Windows consumer evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python tools/wait_hu_windows_receipts.py --tag "${{ matrix.tag }}" --family "${{ matrix.family }}" --run-id "$WINDOWS_RUN" --count "${{ matrix.count }}"
+      - name: Publish checked inventory, complete-model references, TXT and installation source
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python tools/finalize_hu_campaign.py --family "${{ matrix.family }}" --catalog-asset "${{ matrix.catalog }}" --windows-run-id "$WINDOWS_RUN" --output runtime/hu-campaign-final
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: hu-campaign-final-${{ matrix.family }}-a${{ github.run_attempt }}
+          path: |
+            runtime/hu-campaign-final/*.json
+            runtime/hu-campaign-final/*.txt
+          retention-days: 14
