@@ -1,0 +1,21 @@
+{
+  "archive_retained": true,
+  "bytes_reclaimed": 5135931435,
+  "deleted": [
+    {
+      "bytes": 4907907115,
+      "name": "strategy.jsonl.gz",
+      "reason": "owned pilot temporary; final policy and ZIP verified and retained"
+    },
+    {
+      "bytes": 228024320,
+      "name": "software-hu-full-flop-stream-pilot-20261115.sqlite",
+      "reason": "owned pilot temporary; final policy and ZIP verified and retained"
+    }
+  ],
+  "final_sqlite_retained": true,
+  "free_bytes_after": 49517494272,
+  "free_bytes_before": 44381552640,
+  "publication_status": "BLOCKED_HTTP_403",
+  "solver_processes_for_this_pilot": []
+}

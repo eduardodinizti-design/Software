@@ -506,6 +506,6 @@ test_stream_record_from_another_schema_is_rejected (test_hu_batches.StreamCounte
 test_stream_without_final_root_is_not_a_complete_policy (test_hu_batches.StreamCounterexamples.test_stream_without_final_root_is_not_a_complete_policy) ... ok
 
 ----------------------------------------------------------------------
-Ran 506 tests in 52.286s
+Ran 506 tests in 53.683s
 
 OK (skipped=3)

@@ -86,7 +86,8 @@ textual de tendencias nao substitui as frequencias completas da arvore.
 Na medicao desta entrega havia aproximadamente 43 GiB livres. Com reserva
 para 8 GiB de trabalho, 512 MiB livres e margem de 25% no tamanho do arquivo,
 a estimativa conservadora foi de 13 novos flops desse porte naquele instante.
-Liberar os temporarios do piloto aumenta essa estimativa. Outros boards
+A limpeza posterior liberou 5.135.931.435 bytes (5,14 GB) de temporarios;
+SQLite final, ZIP, parametros e metricas permaneceram salvos. Outros boards
 podem ocupar mais ou menos: nao e uma garantia nem um teto de estrategia.
 
 Cem arquivos do tamanho medido equivalem a ~212 GB finais sem margem.
@@ -188,12 +189,24 @@ Evidencias versionadas em docs/software-hu-batches-20261115/:
   pilot-diagnostics/: comandos, metricas e log do solver;
   controlled-reports/: os dois testes pequenos de processamento sequencial;
   capacity-measured.json: capacidade observada antes da limpeza do piloto;
+  capacity-after-cleanup.json e pilot-cleanup.json: limpeza e nova estimativa;
+  windows-owned-ci.json/.txt: teste Windows controlado aprovado;
+  lookup-benchmark.json: 100 consultas repetidas ao mesmo no, cache aquecido;
   regressao.json e regressao.txt: resultado detalhado dos testes.
 
 Regressao final: 506 testes, 503 aprovados, zero falhas/erros, 3 pulados.
 Os tres skips exigem Windows nativo ou dois crops de lobby ausentes.
 O lote novo acrescenta 28 testes, incluindo dois nativos com solver real.
 Compileall e git diff --check tambem passaram.
+
+No Windows Server 2025 do GitHub, 223 testes: 220 aprovados, 3 pulados
+(dois exigem backend de solve externo e um e de lock Linux). Captura GDI
+e seis acoes SendInput em janela Tk propria passaram, com efeito confirmado.
+A primeira tentativa encontrou um handle SQLite aberto no teste de
+corrupcao; corrigido com fechamento explicito. Nova execucao aprovada:
+https://github.com/eduardodinizti-design/Software/actions/runs/43743925216
+Codigo testado: 7d5454c41abc378ce4bf18974ddae5832bc4c376.
+A publicacao posterior altera apenas documentacao/evidencias.
 
 Este lote testa calculo, persistencia, consulta e ciclo de processos em
 laboratorio Linux. Nao e validacao de leitura/clique em PPPoker Windows.

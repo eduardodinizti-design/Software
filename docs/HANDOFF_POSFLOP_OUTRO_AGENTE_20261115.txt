@@ -1,0 +1,70 @@
+ORIENTACAO AO AGENTE DO SOFTWARE — POS-FLOP BTN x BB
+
+Endereco principal: https://github.com/eduardodinizti-design/Software/pull/11
+Branch: feat/hu-resumable-batches-20261115
+Base necessaria: feat/hu-operational-integration-20261115 (PR #10).
+Nao e o Clone e ainda nao esta integrado a main.
+
+Leia AGENTS.md e docs/ENTREGA_LOTES_BTN_BB_20261115.txt. Preserve trabalho
+local e revise o diff do PR antes de integrar ao seu checkout.
+
+IMPLEMENTACAO PARA INTEGRAR
+
+1. strategy/batch_jobs.py: plano de 100 flops, workers sequenciais, checkpoints,
+   retomada, promocao atomica, orcamentos e limpeza de temporarios proprios.
+2. tools/build_texassolver_console.py e tools/native_stream_export.py:
+   backend externo TexasSolver adaptado para exportar todas as streets por
+   blocos gzip sem construir o JSON integral na memoria. Fonte externa
+   preservada, manifestos e correcao HU de quatro cartas privadas.
+3. strategy/native_stream.py: importacao, validacao de fechamento da arvore
+   e query_probe(), que chama a mesma choose() do bot no flop/turn/river.
+4. strategy/policy_disk.py: SQLite final com acao/valor/frequencia por combo,
+   todas as respostas e runouts do menu; codificacao sem perda de numeros,
+   hashes e consulta por indice com cache limitado. Nada de carregar o
+   banco inteiro no inicio de cada decisao.
+5. strategy/policy_library.py, strategy/policy_store.py e operar_mesa.py:
+   ligar --postflop-library library.json, escolher politica pelo flop exato,
+   manter historico confirmado por mesa/mao e consultar o combo/estado.
+   Hashes do banco sao preparados antes da observacao.
+
+ACEITE
+
+Execute test_hu_batches junto aos testes HU/operacionais existentes.
+Com backend externo compilado, defina HU_STREAM_TEST_BINARY e
+HU_STREAM_TEST_RESOURCES para executar tambem os dois testes nativos.
+Verifique equivalencia de TODAS as frequencias do mesmo solve entre o
+export antigo e o novo, tres streets, duas tentativas sequenciais,
+retomada sem recalculo, falhas preservadas e limpeza apos validacao.
+No Windows, feche explicitamente conexoes SQLite: o contexto da conexao
+faz commit/rollback, mas nao fecha o handle.
+
+ESTADO REAL DOS DADOS
+
+Um piloto com os priors completos do modelo versionado As 7d 2c tem
+345.656 nos nas tres streets, incluindo todas as respostas da arvore,
+e passou na consulta do bot. Tem APENAS 11 iteracoes e NAO convergiu.
+Os priors sao NVT publicos/ilustrativos do modelo, nao um novo export HRC.
+Dois flops adicionais QQ x JJ / 1 BB testam a mecanica de lotes; nao sao
+mais dois estudos com os priors completos. Os 100 flops estao PLANEJADOS.
+
+Evidencias: docs/software-hu-batches-20261115/full-range-pilot.json,
+pilot-diagnostics/, regressao.json, lookup-benchmark.json e plan-100.json.
+O primeiro JSON mostra acoes, frequencias e sizes das consultas nas ruas;
+nao contem, sozinho, as 345.656 tabelas de frequencias.
+
+O SQLite integral (2,12 GB) e o ZIP (1,81 GB) foram salvos no workspace
+original. O upload da Release foi bloqueado por HTTP 403 do executor.
+NAO afirmar que o banco completo pode ser baixado pelo PR ou pela Release.
+Consulte download-manifest.json: contem hashes e estado da publicacao.
+Para operar toda a arvore, receber o SQLite ou reproduzir o calculo
+pelos comandos do relatorio. Nao substituir politica completa por resumo.
+
+Precisao, priors, convergencia e validacao PPPoker Windows permanecem
+verificacoes distintas. Ha somente um size de bet (1/3) nesse modelo,
+mais raise 100% do pote e all-in; ampliar menus exige novo calculo.
+Nao generalizar para outros stacks, PKO, ICM, multiway ou naipes sem
+transformacao exata validada. Nao rotular referencia como GTO certificado.
+
+O banco final cresce: 100 politicas semelhantes ao piloto somam cerca
+de 212 GB antes de margem. Temporarios sao reutilizaveis; politicas
+finais precisam permanecer em armazenamento duravel.
