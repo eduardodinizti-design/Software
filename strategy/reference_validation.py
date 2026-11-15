@@ -6,11 +6,13 @@ does not turn synthetic snapshots into a real played hand or solver certificate.
 import argparse
 from contextlib import ExitStack
 import copy
+import itertools
 import json
 from pathlib import Path
 import time
 
 from hand_journal import HandJournal
+from strategy.action_tree import Action
 from preflop_equity import eval7,parse_card
 from strategy.batch_jobs import atomic_json
 from strategy.confirmed_history import ConfirmedHistory
@@ -30,12 +32,13 @@ SEATS={'hero':'BTN','villain':'BB','small':'SB','s1':'UTG','s2':'UTG+1',
 SCOPE='STORED_POLICY_WITH_SYNTHETIC_READINGS_NOT_A_PLAYED_PPPOKER_HAND'
 
 
-def three_street_line(policy,runout):
-    """A declared bet/call line, not a claim every hand should triple barrel."""
+def three_street_line(policy,runout,hero_actions=('bet','bet','bet')):
+    """A declared supported line, not a prescription to bet on every street."""
     cards(tuple(policy.root.board)+tuple(runout),(5,))
     line=LinePolicy(policy);scenes=[line.state]
     for street in range(3):
-        for kind in (('bet','call') if policy.root.oop==0 else ('check','bet','call')):
+        kinds=(('bet','call') if policy.root.oop==0 else ('check','bet','call')) if hero_actions[street]=='bet' else ('check','check')
+        for kind in kinds:
             choices=[a for a in policy.actions(line.state) if a.kind==kind]
             if not choices:raise StrategyError('REFERENCE_MODEL_HAS_NO_ORDINARY_'+kind.upper())
             line.observe(choices[0])
@@ -45,6 +48,32 @@ def three_street_line(policy,runout):
     pair=max(joint_deals(line.ranges,line.state.board),key=lambda p:p[1],default=None)
     if pair is None:raise StrategyError('REFERENCE_LINE_HAS_NO_COMPATIBLE_PRIVATE_HANDS')
     return scenes,pair[0],line.trace
+
+
+def supported_reference_line(policy,runout,table_id):
+    """Choose a deterministic coverage fixture whose actual mixed actions fit.
+
+    A perfectly valid check strategy must not fail because a test forces bets.
+    Match full action IDs, so selecting another bet size cannot pass as the
+    action actually executed in the lab. This is still coverage sampling.
+    """
+    for pattern in itertools.product(('bet','check'),repeat=3):
+        try:scenes,hands,trace=three_street_line(policy,runout,pattern)
+        except StrategyError as exc:
+            if str(exc).startswith(('OFF_POLICY_ZERO_REACH','EMPTY_RANGE','REFERENCE_MODEL_HAS_NO_ORDINARY',
+                                    'REFERENCE_LINE_HAS_NO_COMPATIBLE_PRIVATE_HANDS')):continue
+            raise
+        expected={}
+        for state,following in zip(scenes,scenes[1:]):
+            if state.actor==0:
+                actor,kind,paid=following.history[len(state.history)].split(':')
+                expected[state.key()]=Action(kind,float(paid)).id
+        for seed in range(256):
+            hand_id='reference-'+policy.fingerprint[:16]+'-'+str(seed)
+            if all(choose(policy,DecisionState(policy.context,s,hands[0],table_id,hand_id))['action_id']==expected[s.key()]
+                   for s in scenes if s.actor==0 and not s.terminal):
+                return scenes,hands,trace,expected,hand_id,seed,pattern
+    raise StrategyError('REFERENCE_SUPPORTED_THREE_STREET_COVERAGE_SEED_NOT_FOUND')
 
 
 def synthetic_reading(state,hero,hand_id,*,payouts=None,positions=None):
@@ -79,7 +108,8 @@ def verify_reference_hand(policy,output,*,runout=('Ts','2h'),library=None,profil
     else:
         positions=dict(hero='SB',villain='BB',**{'s'+str(i+1):p for i,p in enumerate(
             ('UTG','UTG+1','UTG+2','LJ','HJ','CO','BTN'))})
-    scenes,hands,posterior_trace=three_street_line(policy,tuple(runout))
+    table_id='reference-validation'
+    scenes,hands,posterior_trace,expected_actions,hand_id,seed,pattern=supported_reference_line(policy,tuple(runout),table_id)
     output.mkdir(parents=True)
     with ExitStack() as resources:
         journal=HandJournal(output/'hand-history.sqlite3');resources.callback(journal.close)
@@ -89,16 +119,6 @@ def verify_reference_hand(policy,output,*,runout=('Ts','2h'),library=None,profil
         if library:resources.callback(history.close)
         observer=history.observer if library else PolicyObserver(policy,profile)
         history.preflop_manifest=[dict(source='USER_APPROVED_NVT_REFERENCE',sha256=r.fingerprint) for r in policy.ranges]
-        table_id='reference-validation'
-        # Coverage-driven fixture: choose a stable hand identity for which the
-        # hero's actual mixed selections exercise the three ordinary bets.
-        # This is not unbiased play sampling or an EV/performance estimate.
-        hero_scenes=[s for s in scenes if s.actor==0 and not s.terminal]
-        for seed in range(256):
-            hand_id='reference-'+policy.fingerprint[:16]+'-'+str(seed)
-            if all(choose(policy,DecisionState(policy.context,s,hands[0],table_id,hand_id))['recommended']=='bet' for s in hero_scenes):
-                break
-        else:raise StrategyError('REFERENCE_TRIPLE_BARREL_COVERAGE_SEED_NOT_FOUND')
         serial=0;captures=[];decisions=[]
 
         def observe(result,buttons):
@@ -141,8 +161,12 @@ def verify_reference_hand(policy,output,*,runout=('Ts','2h'),library=None,profil
                     hero_cards=hands[0],board=expected.board,mode=policy.context.mode,stage=policy.context.stage)
                 if advice['status']!='ADVICE' or advice['policy_sha256']!=policy.fingerprint:
                     raise StrategyError('REFERENCE_BOT_LOOKUP_FAILED:'+str(advice))
-                if advice['recommended']!='bet':raise StrategyError('REFERENCE_SELECTED_ACTION_DIFFERS_FROM_EXECUTED_LAB_ACTION')
+                if advice['action_id']!=expected_actions[expected.key()]:raise StrategyError('REFERENCE_SELECTED_ACTION_DIFFERS_FROM_EXECUTED_LAB_ACTION')
                 _,row=policy.row(expected,hands[0]);actions=policy.actions(expected)
+                selected=next(a for a in actions if a.id==advice['action_id'])
+                if (advice['recommended']!=selected.kind or advice['sizing']['semantics']!='ADDITIONAL_BB'
+                        or advice['sizing']['size_bb']!=selected.amount_bb):
+                    raise StrategyError('REFERENCE_SELECTED_SIZE_DIFFERS_FROM_EXECUTED_LAB_ACTION')
                 got={a['action_id']:a for a in advice['candidates']}
                 if set(got)!={a.id for a in actions}:raise StrategyError('REFERENCE_ACTION_MENU_CHANGED')
                 for action in actions:
@@ -152,8 +176,8 @@ def verify_reference_hand(policy,output,*,runout=('Ts','2h'),library=None,profil
                 decisions.append(advice)
         hand=journal.export_hand(table_id,hand_id)
         counts={kind:sum(e['payload'].get('event_type')==kind for e in hand['events']) for kind in ('action','board')}
-        expected_actions=6 if policy.root.oop==0 else 9
-        if not hand['chain_valid'] or counts!={'action':expected_actions,'board':2}:
+        expected_count=len(scenes)-1
+        if not hand['chain_valid'] or counts!={'action':expected_count,'board':2}:
             raise StrategyError('REFERENCE_HAND_ACTIONS_OR_REVEALS_DO_NOT_MATCH_POSITIONAL_LINE')
         if {d['street'] for d in decisions}!={'FLOP','TURN','RIVER'}:
             raise StrategyError('REFERENCE_DECISIONS_NOT_CONFIRMED_ON_THREE_STREETS')
@@ -164,7 +188,9 @@ def verify_reference_hand(policy,output,*,runout=('Ts','2h'),library=None,profil
             preflop_witness=history.current(table_id)['witness'],journal_chain_valid=True,
             frequencies_and_sizes_exactly_match_stored_policy=True,
             hero_selected_actions_match_lab_actions=True,coverage_seed=seed,
-            scenario_sampling='COVERAGE_DRIVEN_TRIPLE_BARREL_NOT_UNBIASED_PLAY_OR_EV_ESTIMATION',
+            declared_hero_actions_by_street=[dict(street=s.street,action_id=expected_actions[s.key()])
+                for s in scenes if s.actor==0 and not s.terminal],
+            scenario_sampling='COVERAGE_DRIVEN_STORED_ACTIONS_NOT_UNBIASED_PLAY_OR_EV_ESTIMATION',
             opponent_actions='SCRIPTED_CHECK_CALL_WITH_POSITIVE_POSTERIOR_SUPPORT',
             library_routing_tested=library is not None,pppoker_windows_validated=False,input_devices_used=False)
         atomic_json(output/'result.json',summary);atomic_json(output/'hand.json',hand)

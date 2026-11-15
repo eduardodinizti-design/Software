@@ -37,7 +37,11 @@ def checked_results(catalog,rows):
         if (not a.get('exact_enumeration') or a['runout']!=b['runout'] or a['joint_private_deals']!=b['joint_private_deals']
                 or not math.isfinite(a['nash_conv_bb']) or abs(a['nash_conv_bb']-b['nash_conv_bb'])>1e-8):
             raise StrategyError('CAMPAIGN_WINDOWS_RIVER_DIFFERS_FROM_NATIVE:'+str(row['ordinal']))
-        actions=6 if catalog['context']['positions'][0]=='SB' else 9
+        declared=hand.get('declared_hero_actions_by_street',[])
+        if (len(declared)!=3 or {a['street'] for a in declared}!={'FLOP','TURN','RIVER'}
+                or any(a['action_id'].split(':')[0] not in ('bet','check') for a in declared)):
+            raise StrategyError('CAMPAIGN_WINDOWS_HISTORY_INCOMPLETE:DECLARED_LINE_MISSING_OR_INVALID')
+        actions=sum(2+(1 if catalog['context']['positions'][0]!='SB' and a['action_id'].startswith('bet:') else 0) for a in declared)
         if (hand.get('status')!='PASS' or hand.get('event_counts')!=dict(action=actions,board=2)
                 or not hand.get('journal_chain_valid') or not hand.get('complete_to_showdown')
                 or hand.get('policy_sha256')!=case['policy_sha256']

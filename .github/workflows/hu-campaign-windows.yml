@@ -27,7 +27,7 @@ jobs:
       - shell: pwsh
         run: |
           New-Item -ItemType Directory -Force runtime/hu-campaign-contracts | Out-Null
-          python -m unittest test_hu_campaign test_hu_blind_war test_hu_campaign_download test_hu_policy_json test_hu_next16 test_hu_reference test_hu_batches test_hu_policy_engine test_hu_operational test_cursor test_window_capture_engine test_window_capture_audit test_capture_windows_native test_raise_plan test_raise_sequencer -v *> runtime/hu-campaign-contracts/contracts.txt
+          python -m unittest test_hu_campaign test_hu_blind_war test_hu_campaign_download test_hu_campaign_delivery test_hu_policy_json test_hu_next16 test_hu_reference test_hu_batches test_hu_policy_engine test_hu_operational test_cursor test_window_capture_engine test_window_capture_audit test_capture_windows_native test_raise_plan test_raise_sequencer -v *> runtime/hu-campaign-contracts/contracts.txt
           $code = $LASTEXITCODE
           Get-Content runtime/hu-campaign-contracts/contracts.txt -Tail 18
           exit $code

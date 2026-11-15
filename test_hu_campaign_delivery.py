@@ -18,6 +18,7 @@ class CampaignDeliveryTests(unittest.TestCase):
             all_json_responses_exactly_match_stored_policy=True,json_roundtrip_streets=['flop','turn','river'],
             source_lookup=dict(probes=dict(flop={},turn={},river={})),exact_suit_alias=dict(probes=dict(flop={},turn={},river={})),
             confirmed_hand=dict(status='PASS',policy_sha256='a'*64,event_counts=dict(action=6 if sb else 9,board=2),
+                declared_hero_actions_by_street=[dict(street=s,action_id='bet:1') for s in ('FLOP','TURN','RIVER')],
                 journal_chain_valid=True,complete_to_showdown=True,frequencies_and_sizes_exactly_match_stored_policy=True,
                 hero_selected_actions_match_lab_actions=True,operational_profile_settings=settings))
         row['independent_river']=dict(case['independent_river'],exact_enumeration=True)

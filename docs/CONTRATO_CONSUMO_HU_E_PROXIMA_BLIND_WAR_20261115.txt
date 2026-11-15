@@ -31,7 +31,7 @@ library.json que so indexa o flop. Esta entrega usa bibliotecas separadas.
 INTEGRACAO JA EXISTENTE NO SOFTWARE
 
 operar_mesa.py recebe --postflop-library e cria PolicyLibrary/LibraryHistory.
-LibraryHistory.prepare verifica os arquivos antes das decisoes; a mesma
+PolicyLibrary.prepare verifica os arquivos antes das decisoes; a mesma
 instancia permanece na sessao. Nao reabra/revalide um banco de varios GB a
 cada frame. Cada mesa mantem sua propria vista SQLite e seu historico.
 
