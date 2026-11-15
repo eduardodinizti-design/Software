@@ -101,6 +101,7 @@ def windows_owned(output):
 
     root=tk.Tk();root.title('Software - verificador HU (janela propria, sem PPPoker)')
     root.geometry('700x430+80+70')
+    root.deiconify();root.lift();root.focus_force()
     control=BotControl();control.resume()
     listener=HotkeyListener(control);listener.start()
     adapter=WindowsCursorInput()
@@ -201,6 +202,12 @@ def windows_owned(output):
                     bot_control=control,scene_supplier=read,armed=True,deadline_s=15,effect_timeout_s=3.)
                 out=executor.execute(initial)
                 case=dict(kind=kind,result=out,callbacks=ui(lambda:list(world['callbacks'])))
+                if out['state']!='DONE':
+                    user32.GetForegroundWindow.restype=ctypes.c_void_p
+                    user32.GetAncestor.argtypes=(ctypes.c_void_p,ctypes.c_uint)
+                    user32.GetAncestor.restype=ctypes.c_void_p
+                    case['focus_diagnostics']=ui(lambda:dict(requested=root.winfo_id(),
+                        root=user32.GetAncestor(root.winfo_id(),2),foreground=user32.GetForegroundWindow()))
                 cases.append(case)
                 write_json(output/('mao-janela-propria-%s.json'%kind),journal.export_hand('owned-tk',world['hand_id']))
                 if out['state']!='DONE':break

@@ -555,6 +555,22 @@ class LiveIntegrationTests(unittest.TestCase):
 
 
 class KeyboardEntryTests(unittest.TestCase):
+    def test_async_foreground_activation_waits_for_observed_focus(self):
+        from cursor_input_win import WindowsCursorInput
+        clock=Clock();calls=[]
+        def foreground(s,hwnd):calls.append(hwnd);return len(calls)>=3
+        backend=type('Backend',(),{'activate':lambda s,h:False,'is_foreground':foreground})()
+        adapter=WindowsCursorInput(_backend=backend,clock=clock,sleep=clock.sleep)
+        self.assertTrue(adapter.activate_window(123))
+        self.assertGreaterEqual(len(calls),3)
+
+    def test_activation_request_without_real_foreground_never_authorizes_input(self):
+        from cursor_input_win import WindowsCursorInput
+        clock=Clock()
+        backend=type('Backend',(),{'activate':lambda s,h:True,'is_foreground':lambda s,h:False})()
+        adapter=WindowsCursorInput(_backend=backend,clock=clock,sleep=clock.sleep)
+        self.assertFalse(adapter.activate_window(123))
+
     def test_cancel_before_typing_sends_no_keyboard_input(self):
         from cursor_input_win import WindowsCursorInput
         calls=[]

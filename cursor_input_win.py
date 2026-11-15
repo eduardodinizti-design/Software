@@ -149,7 +149,17 @@ class WindowsCursorInput:
         return self.backend.is_foreground(hwnd)
 
     def activate_window(self, hwnd):
-        return self.backend.activate(hwnd)
+        # Activation across GUI threads can complete after SetForegroundWindow
+        # returns. Wait briefly for the actual foreground handle; never treat
+        # the request itself as proof of focus.
+        self.backend.activate(hwnd)
+        until = self._clock() + .4
+        while True:
+            if self.backend.is_foreground(hwnd):
+                return True
+            if self._clock() >= until:
+                return False
+            self._sleep(.01)
 
     def write_amount(self, text, *, cancel_check=None):
         """Numeric BB field only. Ctrl is released even if SelectAll fails."""
