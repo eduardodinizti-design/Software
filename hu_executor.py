@@ -343,6 +343,26 @@ class HUExecutor:
                         if quantum/2 > self.profile.max_size_error_bb+1e-8 or not compatible(value,target,quantum):
                             raise StrategyError('HU_SELECTED_AMOUNT_DIFFERS_FROM_PLAN')
                         return scene['panel']['confirm']['box']
+                    # Keyboard/preset events enter a GUI queue. Accepted input
+                    # does not mean that its displayed value has updated yet.
+                    # Poll read-only; never retype or repeat a click on a timeout.
+                    until = min(deadline,self.clock()+1.0)
+                    amount_ready = False
+                    amount_error = None
+                    while self.clock()<until:
+                        if not self._running():
+                            raise StrategyError('HU_BOT_NOT_RUNNING')
+                        current = self.read(panel=True)
+                        self._same(current,initial,d,panel=True)
+                        try:
+                            confirm(current)
+                            amount_ready = True
+                            break
+                        except StrategyError as exc:
+                            amount_error = str(exc)
+                        self.sleep(.02)
+                    if not amount_ready:
+                        raise StrategyError(amount_error or 'HU_SELECTED_AMOUNT_UPDATE_TIMEOUT')
                     self._step('CONFIRM',confirm,initial=initial,decision=d,panel=True,
                                deadline=deadline,adapter=adapter,verifier=verify_effect)
                 self.journal.append(d.table_id,d.hand_id,'execution:'+decision_id,

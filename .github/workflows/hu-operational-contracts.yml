@@ -49,7 +49,7 @@ jobs:
               scope = $report.scope
               reason = $report.reason
               native_owned_capture = $report.native_owned_capture
-              cases = @($report.cases | ForEach-Object { @{ kind = $_.kind; state = $_.result.state; reason = $_.result.reason; callbacks = $_.callbacks } })
+              cases = @($report.cases | ForEach-Object { @{ kind = $_.kind; state = $_.result.state; reason = $_.result.reason; callbacks = $_.callbacks; selected_text = $_.selected_text } })
               pppoker_windows_validated = $false
             } | ConvertTo-Json -Depth 6 -Compress
             $summary = $summary.Replace('%', '%25').Replace("`r", '%0D').Replace("`n", '%0A')

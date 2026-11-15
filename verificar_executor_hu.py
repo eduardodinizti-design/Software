@@ -201,7 +201,8 @@ def windows_owned(output):
                 executor=HUExecutor(policy=policy,profile=profile,journal=journal,input_adapter=adapter,
                     bot_control=control,scene_supplier=read,armed=True,deadline_s=15,effect_timeout_s=3.)
                 out=executor.execute(initial)
-                case=dict(kind=kind,result=out,callbacks=ui(lambda:list(world['callbacks'])))
+                case=dict(kind=kind,result=out,callbacks=ui(lambda:list(world['callbacks'])),
+                          selected_text=ui(entry.get))
                 if out['state']!='DONE':
                     user32.GetForegroundWindow.restype=ctypes.c_void_p
                     user32.GetAncestor.argtypes=(ctypes.c_void_p,ctypes.c_uint)
