@@ -1,0 +1,24 @@
+test_card_order_and_suits (test_preflop_study.PreflopStudyTests.test_card_order_and_suits) ... ok
+test_cli_simulation_and_abstention_exit_codes (test_preflop_study.PreflopStudyTests.test_cli_simulation_and_abstention_exit_codes) ... ok
+test_empty_seats_and_rotated_dealer (test_preflop_study.PreflopStudyTests.test_empty_seats_and_rotated_dealer) ... ok
+test_exact_state_and_source_mix_without_execution (test_preflop_study.PreflopStudyTests.test_exact_state_and_source_mix_without_execution) ... ok
+test_history_gap_out_of_turn_and_missing_start (test_preflop_study.PreflopStudyTests.test_history_gap_out_of_turn_and_missing_start) ... ok
+test_invalid_frequency_does_not_recommend (test_preflop_study.PreflopStudyTests.test_invalid_frequency_does_not_recommend) ... ok
+test_limp_is_not_unopened (test_preflop_study.PreflopStudyTests.test_limp_is_not_unopened) ... ok
+test_live_evidence_is_not_promoted (test_preflop_study.PreflopStudyTests.test_live_evidence_is_not_promoted) ... ok
+test_missing_or_unconfirmed_data_never_consults (test_preflop_study.PreflopStudyTests.test_missing_or_unconfirmed_data_never_consults) ... ok
+test_nan_negative_and_boolean_amounts_abstain (test_preflop_study.PreflopStudyTests.test_nan_negative_and_boolean_amounts_abstain) ... ok
+test_no_borrowing_another_players_stack (test_preflop_study.PreflopStudyTests.test_no_borrowing_another_players_stack) ... ok
+test_no_context_or_stack_approximation (test_preflop_study.PreflopStudyTests.test_no_context_or_stack_approximation) ... ok
+test_pot_call_and_stack_reconciliation (test_preflop_study.PreflopStudyTests.test_pot_call_and_stack_reconciliation) ... ok
+test_raise_reopens_action_in_order_and_reconciles (test_preflop_study.PreflopStudyTests.test_raise_reopens_action_in_order_and_reconciles) ... ok
+test_six_tables_isolate_missing_state_and_new_snapshots (test_preflop_study.PreflopStudyTests.test_six_tables_isolate_missing_state_and_new_snapshots) ... ok
+test_sixmax_cannot_use_ninemax_node (test_preflop_study.PreflopStudyTests.test_sixmax_cannot_use_ninemax_node) ... ok
+test_unvalidated_duplicate_and_nonreaching_source (test_preflop_study.PreflopStudyTests.test_unvalidated_duplicate_and_nonreaching_source) ... ok
+test_wrong_supplied_turn_does_not_make_hero_turn (test_preflop_study.PreflopStudyTests.test_wrong_supplied_turn_does_not_make_hero_turn) ... ok
+test_zero_unplayed_ev_becomes_unknown (test_preflop_study.PreflopStudyTests.test_zero_unplayed_ev_becomes_unknown) ... ok
+
+----------------------------------------------------------------------
+Ran 19 tests in 0.021s
+
+OK

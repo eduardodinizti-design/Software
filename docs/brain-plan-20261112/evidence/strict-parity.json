@@ -1,0 +1,14 @@
+{
+  "scope": "OFFLINE_EXPORTED_SCENARIO_PARITY_NOT_SOLVER_OR_WINDOWS_VALIDATION",
+  "provenance": {
+    "sha256": "c8fc3f0716df16fdeb2cff509814e3ca3c1ec31c05d479da2122db3ec531fcdc",
+    "engine_commit": "356340d",
+    "generated_at": "2026-11-06T23:22:51.050Z"
+  },
+  "nodes": 16,
+  "queries": 2704,
+  "out_of_range": 0,
+  "failures": 0,
+  "examples": [],
+  "passed": true
+}
