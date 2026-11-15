@@ -65,8 +65,8 @@ def catalogue_flops(count=100,seed=20261115):
 def make_plan(game_path,*,count=100,batch_size=16,boards=None,iterations=501,accuracy_pct=.5,
               memory_mb=8192,timeout_seconds=3600,work_disk_mb=8192,bank_disk_mb=0,seed=20261115,threads=2):
     game=json.loads(Path(game_path).read_text());context,root,ranges,menu=load_game(game_path)
-    if context.positions!=('BTN','BB') or len(root.board)!=3 or root.history or any(root.acted) or root.actor!=root.oop:
-        raise StrategyError('BTN_BB_FLOP_STREET_START_TEMPLATE_REQUIRED')
+    if len(root.board)!=3 or root.history or any(root.acted) or root.actor!=root.oop or root.oop!=context.oop_player:
+        raise StrategyError('HU_FLOP_STREET_START_TEMPLATE_REQUIRED')
     if type(batch_size) is not int or batch_size<1 or iterations<11 or accuracy_pct<=0:
         raise StrategyError('INVALID_BATCH_OR_SOLVER_BUDGET')
     if min(memory_mb,timeout_seconds,work_disk_mb)<=0 or bank_disk_mb<0:raise StrategyError('POSITIVE_RESOURCE_BUDGETS_REQUIRED')
@@ -77,7 +77,7 @@ def make_plan(game_path,*,count=100,batch_size=16,boards=None,iterations=501,acc
     plan=dict(schema='software.hu-batch-plan.v1',game=game,boards=values,batch_size=batch_size,
         workers=1,settings=dict(iterations=iterations,accuracy_pct=accuracy_pct,memory_mb=memory_mb,
         timeout_seconds=timeout_seconds,threads=threads,work_disk_mb=work_disk_mb,bank_disk_mb=bank_disk_mb),
-        scope='Exact configured chip-EV BTN/BB model; board coverage is not GTO convergence or Windows validation',
+        scope='Exact configured chip-EV HU model; board coverage is not GTO convergence or Windows validation',
         seed=seed)
     plan['plan_sha256']=digest(plan)
     return plan

@@ -26,6 +26,7 @@ def post_progress_status(value):
     if stage=='SOLVING' and value.get('native_export_gzip_bytes',0)>0:stage='EXPORTING'
     metric=value.get('last_native_metric') or {}
     description=stage+(' i='+str(metric['iteration']+1) if 'iteration' in metric else '')
+    if 'public_nodes' in (value.get('stage') or {}):description+=' nodes='+str(value['stage']['public_nodes'])
     if 'exploitibility' in metric:description+=' exploit='+format(metric['exploitibility'],'.4f')+'%'
     payload=dict(state='pending',context=context,description=description[:140],
         target_url=os.environ.get('HU_GITHUB_RUN_URL',''))
@@ -77,7 +78,9 @@ def main(argv=None):
     p.add_argument('--memory-mb',type=int,default=8192)
     p.add_argument('--work-disk-mb',type=int,default=10240)
     p.add_argument('--timeout-seconds',type=int,default=7200)
+    p.add_argument('--asset-name',default='btn-bb-As7d2c-nvt-reference.zip')
     args=p.parse_args(argv)
+    if Path(args.asset_name).name!=args.asset_name or not args.asset_name.endswith('.zip'):p.error('Safe ZIP asset name required')
     output=Path(args.output).resolve()
     if output.exists():p.error('Use a new output directory; previous calculations are preserved')
     output.mkdir(parents=True)
@@ -126,14 +129,14 @@ def main(argv=None):
         peak_process_tree_rss_bytes=report['peak_process_tree_rss_bytes'],
         pppoker_windows_validated=False,source_commit=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip())
     atomic_json(delivery/'result.json',summary)
-    readme=('REFERENCIA NVT BTN x BB — banco completo de flop/turn/river.\n'
+    readme=('REFERENCIA NVT '+ ' x '.join(game['context']['positions'])+' — banco completo de flop/turn/river.\n'
         'Precisao nativa atingida: '+str(summary['native_target_met'])+'\n'
         'Gap global nativo (BB): '+str(summary['global_gap_bb'])+'\n'
         'O indicador nativo nao substitui validacao independente ou no PPPoker Windows.\n'
         'Extraia em pasta nova. Consulte pelo Software com --postflop-library library.json.\n'
-        'Modelo: chip-EV regular, 5,5 BB no pote, 22,5 BB restantes; bet 1/3, raise 100% e all-in.\n')
+        'Modelo exato: '+json.dumps(dict(context=game['context'],root=game['root'],menu=game['menu']))+'\n')
     (delivery/'LEIA_PRIMEIRO.txt').write_text(readme,encoding='utf-8')
-    archive=delivery/'btn-bb-As7d2c-nvt-reference.zip'
+    archive=delivery/args.asset_name
     with zipfile.ZipFile(archive,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=1,allowZip64=True) as z:
         for folder in ('policies','reports'):
             for path in sorted((bank/folder).rglob('*')):
