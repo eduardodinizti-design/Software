@@ -17,6 +17,13 @@ Substitua NUMERO pelo HWND atual. Ctrl+C encerra. O observador nao clica e nao s
 
 `testar_windows.py --hwnd NUMERO --cliques` e um executor MANUAL separado. Nao faz parte da reproducao do observador e nao decide jogadas.
 
+## Motor HU e historico confirmado
+
+A integracao opcional de politica HU, diario SQLite e executor esta descrita em
+[OPERACAO_HU_SOFTWARE_20261115.txt](docs/OPERACAO_HU_SOFTWARE_20261115.txt).
+`VERIFICAR_EXECUTOR_HU.bat` testa captura e input numa janela propria no Windows.
+Essa verificacao e separada da validacao real de leitura/cliques no PPPoker.
+
 ## Estrutura preservada
 
 - `table_reading/`: detector, leitores e templates.

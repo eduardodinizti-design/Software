@@ -7,12 +7,12 @@ VERIFICÁVEL — uma árvore discreta de opções:
 
     plan_raise(target, presets, slider_available) -> {kind, ...}
       kind='PRESET'  : clica o preset (carrega expected_mult/label p/ conferir depois)
-      kind='SHOVE'   : alvo acima do maior preset + barra disponível -> all-in
+      kind='SHOVE'   : intencao explicita de all-in + barra disponivel
       kind='ABSTAIN' : nenhum tamanho SEGURO e conferível -> não clica (com razão)
 
 Princípio (igual ao resto do operador): NUNCA aproxima à força — fora da tolerância
-é ABSTAIN, não "clica o mais perto e torce". Reusa a semântica exata de raise_panel
-(mesma tolerância, mesmo critério de shove) para não divergir do que já foi validado.
+é ABSTAIN. Multiplicador fora do menu nao declara all-in; o chamador fornece
+explicit_all_in a partir da decisao, sem inferir essa intencao pelo tamanho.
 
 `verify_selected_preset(panel, expected_mult)` fecha o laço: antes de CONFIRMAR, o
 sequencer relê o painel e confirma que o preset pretendido ainda está lá (pega painel
@@ -21,12 +21,17 @@ clique. PURO: sem OCR, sem captura, sem clique. Ver [[nvt-adendo-antecipacao-a0]
 from raise_panel import map_multiplier_to_preset, is_shove_target
 
 
-def plan_raise(target_mult, presets, *, slider_available=True, tol=None):
+def plan_raise(target_mult, presets, *, slider_available=True, tol=None, explicit_all_in=False):
     """Plano discreto do aumento. Explicável (sempre tem `reason` quando abstém) e
     verificável (PRESET carrega `expected_mult`/`label`). Nunca levanta; entradas
     ruins viram ABSTAIN com razão."""
     if target_mult is None:
         return dict(kind='ABSTAIN', reason='SEM_ALVO', target_mult=None)
+    if explicit_all_in:
+        if not slider_available:
+            return dict(kind='ABSTAIN', reason='SHOVE_SEM_SLIDER', target_mult=target_mult)
+        return dict(kind='SHOVE', target_mult=target_mult,
+                    over=max(0, target_mult-max((p.get('mult') or 0 for p in (presets or []) if isinstance(p,dict)),default=0)))
     usable = [p for p in (presets or []) if isinstance(p, dict) and p.get('mult') is not None]
     if not usable:
         return dict(kind='ABSTAIN', reason='SEM_PRESET_LEGIVEL', target_mult=target_mult)
@@ -37,10 +42,7 @@ def plan_raise(target_mult, presets, *, slider_available=True, tol=None):
     # Sem preset na tolerância: distingue SHOVE (acima do maior preset) de alvo
     # intermediário sem preset compatível (abstém — não há tamanho conferível).
     if is_shove_target(target_mult, usable):
-        if slider_available:
-            return dict(kind='SHOVE', target_mult=target_mult,
-                        over=round(target_mult - max(p['mult'] for p in usable), 2))
-        return dict(kind='ABSTAIN', reason='SHOVE_SEM_SLIDER', target_mult=target_mult)
+        return dict(kind='ABSTAIN', reason='ALVO_FORA_DO_MENU_NAO_E_ALL_IN', target_mult=target_mult)
     return dict(kind='ABSTAIN', reason='SEM_PRESET_NA_TOLERANCIA', target_mult=target_mult)
 
 

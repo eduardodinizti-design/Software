@@ -15,8 +15,11 @@ class LinePolicy:
             raise StrategyError('ACTION_OUTSIDE_COMPILED_TREE')
         actor = self.state.actor
         likelihoods = {}
+        node = self.policy.nodes[self.policy.node_key(self.state)]
         for combo, _ in self.ranges[actor].weights:
-            _, row = self.policy.row(self.state, combo)
+            row = node['combos'].get(combo)
+            if row is None:
+                raise StrategyError('POLICY_COMBO_MISS_OR_OFF_POLICY')
             likelihoods[combo] = row['frequencies'][action.id]
         # Compute every result first: a missing row/zero reach never half-mutates the hand.
         updated = self.ranges[actor].posterior(likelihoods, self.state.key() + ':' + action.id)

@@ -1,10 +1,10 @@
-"""Operar a mesa (passo 3) — lê, decide e CLICA Fold/Call/Check, com travas.
+"""Operar a mesa — observacao, decisao e execucao com efeito verificado.
 
 DEFAULT = DRY-RUN (não envia clique; só mostra a intenção). Com `--arm` usa o
 cursor REAL, mas só clica com o BotControl em RUNNING. Começa PAUSADO: aperte
 Ctrl+Alt+R para ARMAR, Ctrl+Alt+P para pausar (você assume), Ctrl+Alt+D desabilita.
-Só Fold/Call/Check (clique único); Raise/Bet/all-in ficam de fora (sizing depois).
-Uma ação por mão. Revalida na chegada e verifica o efeito.
+Preflop usa o contrato legado. HU pos-flop usa politica compilada + historico
+confirmado + --execute-postflop. Revalida na chegada e verifica o efeito.
 
 Uso:
   python operar_mesa.py --hwnd 0x...              # dry-run (seguro)
@@ -13,6 +13,7 @@ Uso:
 import argparse
 import sys
 import time
+import uuid
 
 import cv2
 
@@ -230,7 +231,12 @@ def main(argv=None):
     p.add_argument('--hud', action='store_true',
                    help='Le o HUD VIP (8 stats por vilao) p/ exploit no pos-flop')
     p.add_argument('--postflop-policy', default=None,
-                   help='Consulta HU compilada em observacao; requer estado/historico confirmado')
+                   help='Politica HU compilada: observa continuamente e confirma historico')
+    p.add_argument('--hu-profile', help='Perfil HU de precisao/chegada vinculado ao hash da politica')
+    p.add_argument('--execute-postflop', action='store_true',
+                   help='Liga executor HU; input exige tambem --arm e controle RUNNING')
+    p.add_argument('--hand-journal', default='runtime/hu/hand-history.sqlite3',
+                   help='Historico escalar duravel e deduplicacao entre reinicios')
     p.add_argument('--arm', action='store_true', help='Usa o cursor REAL (ainda gated)')
     p.add_argument('--overlay', action='store_true',
                    help='Faixa de status SEMPRE-NO-TOPO (feedback visível: ARMADO/PAUSADO + ações)')
@@ -244,13 +250,29 @@ def main(argv=None):
                         'Nunca antecipa call/raise. Default off.')
     args = p.parse_args(argv)
 
-    policy_observer = None
+    policy_observer = history = journal = hu_profile = None
+    if args.execute_postflop and not args.postflop_policy:
+        p.error('--execute-postflop exige --postflop-policy')
+    if args.hu_profile and not args.postflop_policy:
+        p.error('--hu-profile exige --postflop-policy')
+    if args.antecipar and args.postflop_policy:
+        p.error('--antecipar reutiliza frames; para historico HU use capturas independentes')
     if args.postflop_policy:
         from strategy.policy_observer import PolicyObserver
         from strategy.policy_store import CompiledPolicy
-        policy_observer = PolicyObserver(CompiledPolicy.load(args.postflop_policy))
-        print('[HU] politica %s | observacao; contexto ausente sera registrado' %
-              policy_observer.policy.fingerprint[:16], flush=True)
+        from strategy.operational_profile import OperationalProfile
+        from strategy.confirmed_history import ConfirmedHistory
+        from hand_journal import HandJournal
+        policy = CompiledPolicy.load(args.postflop_policy)
+        hu_profile = (OperationalProfile.load(args.hu_profile,policy) if args.hu_profile
+                      else OperationalProfile(policy.fingerprint))
+        if args.execute_postflop and not hu_profile.require_preflop_witness:
+            p.error('Perfil sem testemunho preflop e exclusivo do verificador controlado')
+        policy_observer = PolicyObserver(policy,hu_profile)
+        journal = HandJournal(args.hand_journal)
+        history = ConfirmedHistory(policy,hu_profile,journal)
+        print('[HU] politica %s | executor=%s | diario=%s | autoridade=REFERENCIA, nao certificacao GTO/Windows' %
+              (policy.fingerprint[:16],args.execute_postflop,journal.path),flush=True)
 
     import os
     configure_ocr()
@@ -260,6 +282,8 @@ def main(argv=None):
     # B01/B02: proveniência auditável no startup — quais pack(s) por sha256 alimentam
     # o cérebro, cobertura de nós e colisões de chave resolvidas SEM sombra silenciosa.
     _mani = advisor.manifest()
+    if history is not None:
+        history.preflop_manifest = [{k:s[k] for k in ('sha256','nodes','validated')} for s in _mani['sources']]
     print('[CEREBRO] fontes: ' + ', '.join(
         '%s(%s.. %dn/%dval)' % (os.path.basename(s['path']), s['sha256'][:8], s['nodes'], s['validated'])
         for s in _mani['sources']) +
@@ -359,7 +383,7 @@ def main(argv=None):
             _tcap = time.monotonic()
             frame, meta = engine.capture_frame(hwnd=hwnd)
             latency.record('captura', (time.monotonic() - _tcap) * 1000)
-            cap_ts = time.monotonic()            # A0: referência p/ idade do snapshot
+            cap_ts = _tcap                       # idade inclui tempo da captura e OCR
             if frame is None:
                 time.sleep(max(0.1, args.intervalo - (time.monotonic() - t0)))
                 continue
@@ -383,6 +407,10 @@ def main(argv=None):
                 crop = frame[y:y + bh, x:x + bw]
                 tkey_local = _table_key(x, y)
                 tkey = '%x:%s' % (hwnd, tkey_local)    # chave GLOBAL (isola entre janelas)
+                if history is not None:
+                    from hu_runtime import table_identity
+                    tkey = table_identity(meta,tkey_local)
+                sample_id = uuid.uuid4().hex
                 # ROTINA: FIM DE TORNEIO (eliminação). A tela Ranking+Ficar/Sair NÃO é
                 # linha de ação, então o fast-path a pularia p/ sempre (o agente ficava
                 # ocioso numa mesa morta). Detecta ANTES: ao cair, FECHA a mesa (clica
@@ -419,8 +447,10 @@ def main(argv=None):
                 br0 = read_action_buttons(crop)
                 if br0['status'] != 'EXPERIMENTAL_BUTTON_ROW':
                     anticip_turns.on_nonturn(tkey)     # A2: pisca isolado NÃO fecha a época
-                    continue
-                hero_turn_seen = True
+                    if history is None:
+                        continue
+                else:
+                    hero_turn_seen = True
                 # Memória de cartas do hero por mão (imutáveis): fallback quando um
                 # frame não lê, evitando HERO_CARDS_UNKNOWN por falha pontual.
                 hk = read_hand_id(crop)
@@ -454,6 +484,10 @@ def main(argv=None):
                                                   table_key=tkey, hero_override=override,
                                                   tracker=aggr_tracker, bounty_bb=args.bounty_bb,
                                                   postflop_policy=policy_observer,
+                                                  history=history, buttons_result=br0,
+                                                  observation_source='PPPOKER_WINDOWS_PHYSICAL_CLIENT_CAPTURE',
+                                                  sample_id=sample_id,captured_at=cap_ts,
+                                                  observation_only=br0['status']!='EXPERIMENTAL_BUTTON_ROW',
                                                   mode=args.mode, stage=args.stage, enable_hud=args.hud,
                                                   read_cache=read_cache)
                     except Exception as e:                 # noqa: BLE001
@@ -489,12 +523,27 @@ def main(argv=None):
                     hero_turn_seen = True
                 hid = hkey
                 adv = result.get('advice') or {}
+                if history is not None:
+                    hc = (result.get('table_state') or {}).get('confirmed_history') or {}
+                    print('[HISTORICO] mesa=%s mao=%s status=%s revisao=%s motivo=%s' %
+                          (tkey_local,hkey,hc.get('status'),hc.get('revision'),hc.get('reason')),flush=True)
                 if adv.get('phase') == 'postflop':
                     if adv.get('hu_policy_diagnostic'):
                         print('[HU] %s' % adv['hu_policy_diagnostic'].get('reason'), flush=True)
-                    # Pós-flop é SÓ conselho exploratório. O operador armado joga
-                    # pré-flop apenas e NUNCA executa pós-flop (sem clique, sem
-                    # sequência de aumento) até ser validado à parte.
+                    if args.execute_postflop and adv.get('policy_sha256') and adv.get('status')=='ADVICE':
+                        from hu_executor import HUExecutor
+                        from hu_runtime import LiveHUScenes,scene_from_result
+                        initial = scene_from_result(result,br,meta,(x,y,bw,bh),tkey,sample_id,cap_ts)
+                        supplier = LiveHUScenes(engine=engine,hwnd=hwnd,crop_key=tkey_local,
+                            advisor=advisor,history=history,policy_observer=policy_observer,
+                            profile=hu_profile,stabilizer=stabilizer,mode=args.mode,stage=args.stage,
+                            max_tables=args.max_tables).bind(initial)
+                        hu = HUExecutor(policy=policy_observer.policy,profile=hu_profile,journal=journal,
+                            input_adapter=adapter,bot_control=control,scene_supplier=supplier,armed=args.arm)
+                        out = hu.execute(initial)
+                        print('[HU EXECUTOR] %s | confirmado=%s | %s' %
+                              (out['state'],out.get('confirmed'),out.get('reason') or out.get('plan')),flush=True)
+                        continue
                     if br['status'] == 'EXPERIMENTAL_BUTTON_ROW' and adv.get('status') == 'ADVICE':
                         eqtxt = ''
                         if adv.get('equity') is not None:
@@ -565,6 +614,7 @@ def main(argv=None):
                                              window_rect=lambda h=hwnd: _discover_rect(h),
                                              input_adapter=adapter, target_mult=tmult,
                                              bot_control=control, table_key=tkey_local, hand=hid,
+                                             explicit_all_in='ALL_IN' in caveats,
                                              max_tables=args.max_tables)
                         res = seq.run()
                         raise_done.add((tkey, hid))
@@ -659,6 +709,8 @@ def main(argv=None):
     except KeyboardInterrupt:
         print('Encerrado pelo usuario.', flush=True)
     finally:
+        if journal is not None:
+            journal.close()
         if listener:
             listener.stop()
         if overlay:

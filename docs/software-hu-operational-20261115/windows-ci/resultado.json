@@ -1,0 +1,118 @@
+{
+  "schema": "software.owned-windows-ci-proof.v1",
+  "run_id": 43736745803,
+  "run_url": "https://github.com/eduardodinizti-design/Software/actions/runs/43736745803",
+  "source_commit": "2fe52ba7a5245965048609efdff04fcfa31f2493",
+  "job_id": 132880922488,
+  "job_conclusion": "success",
+  "steps": [
+    {
+      "name": "Set up job",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run actions/checkout@v4",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run actions/setup-python@v5",
+      "conclusion": "success"
+    },
+    {
+      "name": "Install dependencies for controlled tests",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run contracts and native GDI on an owned Tk window",
+      "conclusion": "success"
+    },
+    {
+      "name": "Exercise real SendInput only in our owned window",
+      "conclusion": "success"
+    },
+    {
+      "name": "Save evidence (owned window, not PPPoker)",
+      "conclusion": "success"
+    },
+    {
+      "name": "Post Run actions/setup-python@v5",
+      "conclusion": "success"
+    },
+    {
+      "name": "Post Run actions/checkout@v4",
+      "conclusion": "success"
+    },
+    {
+      "name": "Complete job",
+      "conclusion": "success"
+    }
+  ],
+  "observed_summary": {
+    "cases": [
+      {
+        "reason": null,
+        "selected_text": "",
+        "callbacks": [
+          "CHECK"
+        ],
+        "kind": "check",
+        "state": "DONE"
+      },
+      {
+        "reason": null,
+        "selected_text": "",
+        "callbacks": [
+          "CALL"
+        ],
+        "kind": "call",
+        "state": "DONE"
+      },
+      {
+        "reason": null,
+        "selected_text": "",
+        "callbacks": [
+          "FOLD"
+        ],
+        "kind": "fold",
+        "state": "DONE"
+      },
+      {
+        "reason": null,
+        "selected_text": "5,000",
+        "callbacks": [
+          "BET",
+          "CONFIRM"
+        ],
+        "kind": "bet",
+        "state": "DONE"
+      },
+      {
+        "reason": null,
+        "selected_text": "15,000",
+        "callbacks": [
+          "RAISE",
+          "CONFIRM"
+        ],
+        "kind": "raise",
+        "state": "DONE"
+      },
+      {
+        "reason": null,
+        "selected_text": "30,000",
+        "callbacks": [
+          "BET",
+          "CONFIRM"
+        ],
+        "kind": "all_in",
+        "state": "DONE"
+      }
+    ],
+    "pppoker_windows_validated": false,
+    "native_owned_capture": "PASS",
+    "reason": null,
+    "platform": "Windows-2025Server-10.0.26100-SP0",
+    "scope": "WINDOWS_GDI_AND_SENDINPUT_OWNED_TK_ONLY",
+    "status": "PASS"
+  },
+  "scope_note": "GitHub hosted Windows Server 2025, Python 3.12.10, owned Tk GUI. No PPPoker/Unity or user notebook validation."
+}

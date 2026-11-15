@@ -1,0 +1,9 @@
+{
+  "schema": "software.hu-executor-check.v1",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "python": "3.12.14",
+  "report_path": "/workspace/work/software-hu-operational-20261115/docs/software-hu-operational-20261115/windows-status/resultado.json",
+  "status": "NOT_RUN",
+  "reason": "WINDOWS_REQUIRED",
+  "pppoker_windows_validated": false
+}

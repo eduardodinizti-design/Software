@@ -1,0 +1,230 @@
+SOFTWARE ORIGINAL — ENTREGA DA INTEGRACAO OPERACIONAL HU
+15/11/2026
+
+Resultado: implementados o produtor de historico confirmado, a ligacao ao motor
+HU e o executor com verificacao de efeito. A regressao de laboratorio passou.
+A validacao nativa no notebook e a aprovacao em mesas PPPoker continuam pendentes.
+Este executor de trabalho e Linux e nao possui acesso ao Windows do usuario.
+
+Repositorio: eduardodinizti-design/Software
+Branch: feat/hu-operational-integration-20261115
+Base de codigo: 82395c1d66de2ec7090504b8fdf9d26e5a7fc785
+Dependencia: feat/hu-policy-engine-20261115, PR #9.
+Trabalho isolado em worktree nova; main e demais trabalhos locais preservados.
+Esta branch nao foi aplicada ao Clone privado nem mesclada automaticamente.
+
+ANTES E DEPOIS
+
+1. O observador HU anterior so consultava um strategy_state fornecido pelo
+chamador. O leitor real nao produzia esse estado. Agora ConfirmedHistory recebe
+as leituras passivas e gera DecisionState quando a sequencia e demonstravel.
+
+O modo HU observa tambem fora da vez do hero. Sem isso nao ha como conhecer a
+acao que levou ao no seguinte. Essas observacoes dispensam o calculo heuristico
+pesado. O restante do operador conserva seu caminho legado quando HU nao e usado.
+
+2. O historico anterior de agressor nao era uma historia completa entre ruas.
+Agora ha identidade por HWND/PID/criacao do processo/mesa/mao, posicoes, potes,
+stacks, preco de call, apostas e cartas publicas ordenadas. O flop pode ser
+reordenado sem alterar sua identidade; turn e river conservam a cronologia.
+
+Para a chegada SRP, exige-se observacao separada dos blinds e do open, seguida
+de conservacao de fichas no flop. Ocupacao nao significa jogador ativo. Um
+short stack externo que possa ter entrado all-in nao e descartado como fold.
+Mudanca de fichas de um terceiro participante invalida a hipotese HU.
+
+O coletor pesquisa caminhos legais compativeis. Duas capturas independentes
+confirmam uma unica sequencia. IDs duplicados, imagem velha, mao ilegivel,
+board ilegivel, falta de preco, mudanca de posicoes e caminhos ambiguos geram
+diagnostico; nao viram uma sequencia inventada. Uma aposta observada fora da
+arvore pode ser registrada, mas nao ganha um range de resposta ficticio.
+
+3. Ha persistencia SQLite atomica, WAL e synchronous=FULL. O diario guarda:
+- testemunho e evidencias da chegada, inclusive leituras numericas;
+- acoes e contribuicoes de MODELO, com intervalo da exibicao em BB;
+- cartas publicas, revisoes e capturas que sustentaram a confirmacao;
+- fonte de observacao, hashes da politica, perfil e ranges;
+- candidatos de decisao, frequencias, EVs quando disponiveis e acao escolhida;
+- lacunas e claims de input, incluindo UNKNOWN_RESULT;
+- cadeia de hashes verificada durante exportacao e retomada.
+
+O leitor exibe normalmente uma casa decimal: 1,8 BB nao prova 1,833333 BB em
+fichas reais. A compatibilidade usa o intervalo de arredondamento e declara a
+quantia exata como valor do modelo. A origem dos arquivos NVT carregados e
+registrada; observar um open nao demonstra sozinho o range do agressor. Os
+priors continuam declarados pela politica de referencia, com essa limitacao.
+
+runtime/hu/hand-history.sqlite3 e criado automaticamente. Nao ha dump continuo
+de imagens. A retencao padrao e de 10.000 maos encerradas. A exportacao separa
+hand_closed de last_confirmed_terminal: encerrar a janela/mao nao fabrica um
+showdown. Ela mostra lacunas e inputs ainda sem resultado confirmado.
+
+4. O executor HU faz CHECK/CALL/FOLD e o fluxo de BET/RAISE/ALL-IN:
+decisao confirmada -> foco -> captura atual -> movimento -> recaptura na chegada
+-> input -> observacao do efeito -> registro duravel.
+
+A identidade da decisao inclui o estado publico/historico, permitindo outra
+acao na mesma mao em outro no/rua. O claim persiste antes do mouse-down. Um
+resultado incerto nao e repetido automaticamente apos reiniciar. Cancelamento
+comprovadamente anterior ao input permite nova tentativa com leitura atual.
+
+O cursor permanece exclusivo durante toda a transacao do processo. Usa o
+CursorController/TrajectoryGenerator existente. Pausa, prazo, foco, mao,
+geometria ou intervencao manual podem interromper o movimento. Ha nova checagem
+apos a gravacao do claim, imediatamente antes do envio. A aceitacao do
+SendInput e registrada separadamente do efeito no jogo.
+
+Coordenadas do novo fluxo partem da origem FISICA da area cliente e do recorte,
+sem usar a borda logica da janela como escala. O backend de input usa contexto
+DPI fisico e entrada numerica Unicode com Ctrl liberado ao final. O campo nao
+recebe Enter; confirmar o jogo exige a etapa posterior com valor conferido.
+
+Se o painel ocultar o ID, o fluxo registra um lease curto e explicito da mesma
+janela/processo/geometria, com cartas e board frescos. Nao informa falsamente
+que o ID oculto foi relido. Essa continuidade precisa ser validada no PPPoker
+Windows. Ela expira com o prazo da transacao, nao persiste entre maos.
+
+CHECK e FOLD exigem transicao de historico confirmada. Acoes que comprometem
+fichas podem confirmar sua propria contribuicao por duas leituras distintas
+de queda do stack e crescimento do pote; isso nao confirma por si toda a
+sequencia adversaria. Apenas desaparecer a linha de botoes nao basta.
+
+CORRECOES REPRODUZIVEIS DESTE LOTE
+
+A. Raise fora do maior preset virava SHOVE no contrato antigo sem intencao de
+all-in. Agora plan_raise exige explicit_all_in, passado pelo operador a partir
+da decisao. O contraexemplo de 6x deixou de ser expectedFailure e passa como
+regressao normal. Os testes de shove agora declaram a intencao explicitamente.
+
+B. No PNG real do painel Karekas, o preset 2,5x podia sair como "2.5%x" e ficar
+ilegivel. A recuperacao exige o glifo x compativel com outros x da mesma imagem
+e consenso numerico de dois modos de OCR. Percentual nao vira multiplicador
+apenas pelo numero ou posicao. O mesmo PNG agora retorna 2x/2,5x/3x/4x.
+
+C. Preset disponivel nao demonstra valor selecionado. O novo leitor separa o
+campo de valor: nesse PNG leu 2,0 BB, mesmo havendo preset de 2,5x. O HU compara
+unidade BB, raise-to, precisao e valor com o plano antes de confirmar. Valor
+errado deixa o resultado do fluxo parcial incerto e nao confirma a aposta.
+
+D. No reconhecimento de showdown, aceitar qualquer distribuicao do pote
+permitia explicar o mesmo frame com apostas nao observadas. Agora sao aceitos
+somente pagamentos HU compativeis com vencedor ou divisao igual, mais o pote
+exibido. Caminhos ainda indistinguiveis permanecem ambiguos.
+
+E. Board detectado/ja rastreado que fica ilegivel e marcado como pos-flop, para
+nao cair no fallback preflop. ID oculto retorna PENDING sem recuperar uma decisao
+antiga. Ha regressao para captura duplicada no verificador de efeito: ela nao
+conta como duas provas monetarias.
+
+EVIDENCIAS E TESTES
+
+Regressao selecionada: 478 testes, 475 aprovados, 0 falhas, 0 erros, 3 pulados.
+Dois testes de OCR do lobby nao tinham o crop especifico esperado; o terceiro
+exige Windows para capturar uma janela Tk nativa. Nao foram contados como
+validacao real. Modulos, motivos e log completo:
+docs/software-hu-operational-20261115/regressao.json
+docs/software-hu-operational-20261115/regressao.txt
+
+49 testes novos de integracao operacional cobrem entrada por leituras, chegada
+preflop, multiplas ruas, recuperacao apos reinicio, concorrencia entre claims,
+historia incompleta, apostas fora da arvore, valor errado, pausa, foco,
+intervencao, mudanca de mao/processo/geometria e ACK sem efeito.
+
+A fonte real do teste do painel e UMA imagem independente, sem novos frames
+Windows. Seu hash, dimensoes e resultados estao em preset-real-source.json.
+O teste sintetico e a transformacao de uma imagem nao ampliam o numero de
+fontes reais avaliadas. Nenhum threshold de cartas foi reduzido neste lote.
+
+Foi gerada uma mao de laboratorio ate o showdown, por snapshots sinteticos:
+BTN vs BB, Kc 8s 3d / Ts / 2h, pote inicial 5,5 BB, bet/call de 2,75 BB no
+flop, bet/call de 5,5 BB no turn, check/check no river, pote final 22 BB.
+Ela contem oito acoes pos-flop e duas revelacoes, alem do testemunho preflop.
+A cadeia de hashes foi verificada. Nao e uma mao jogada pelo usuario/PPPoker,
+nem um solve: as frequencias usadas no teste sao deliberadamente sinteticas.
+
+Arquivos:
+docs/software-hu-operational-20261115/lab/mao-confirmada-laboratorio.json
+docs/software-hu-operational-20261115/lab/mao-confirmada-laboratorio.txt
+docs/software-hu-operational-20261115/lab/resultado.json
+
+VALIDACAO NO WINDOWS
+
+VERIFICAR_EXECUTOR_HU.bat executa um lote unico:
+1) captura GDI de janela propria;
+2) seis acoes na janela Tk propria usando SendInput real e callbacks da GUI;
+3) registro das etapas, efeitos e maos em runtime/hu/verificacao-.../.
+O readback nessa janela vem do widget, e nao de OCR do cliente PPPoker.
+
+O modo --observe-pppoker captura o HWND real sem input, separa o lobby e gera
+observacao.json, SQLite e exportacoes das maos. Ele testa leitura/continuidade,
+mas nao aprova cliques. A execucao real do novo motor e ligada separadamente
+por --execute-postflop, --arm e controle RUNNING. O guia contem os comandos.
+
+Neste executor Linux, --windows-owned produziu NOT_RUN / WINDOWS_REQUIRED.
+O arquivo windows-status/resultado.json registra essa limitacao local.
+A workflow hu-operational-contracts.yml executa a verificacao nativa em um
+runner Windows do GitHub ao publicar esta branch. O resultado fica em Actions,
+com o artefato hu-windows-owned-evidence. Essa prova e separada dos testes Linux
+e da validacao no notebook: mesmo um PASS nao certifica PPPoker/Unity, o Windows
+10 do usuario, seu DPI ou sua resolucao. O proximo passo no notebook e executar
+o BAT e conferir o JSON e a observacao real.
+
+O teste nativo tambem foi executado em Windows Server 2025 do GitHub, Python
+3.12.10: captura GDI aprovada e CHECK, CALL, FOLD, BET, RAISE e ALL-IN em DONE,
+com callbacks reais da janela propria. As quantias relidas foram 5,000 BB no
+BET, 15,000 BB no RAISE e 30,000 BB no ALL-IN. Nao houve PPPoker nesse runner.
+
+A primeira execucao revelou dois testes que apagavam a pasta temporaria antes
+de fechar o SQLite (WinError 32). A ordem de fechamento foi corrigida. Depois,
+o teste revelou ativacao de foco e atualizacao de texto assincronas: o backend
+agora aguarda ate 400 ms pelo foco realmente observado; o executor aguarda ate
+1 s pela quantia relida, dentro do prazo global, sem repetir input. O confirmar
+continua exigindo valor correto em outra revalidacao na chegada. Ha regressao
+para foco recusado e para atraso do campo sem redigitar a quantia.
+
+Evidencia nativa: docs/software-hu-operational-20261115/windows-ci/resultado.json
+Execucao aprovada, referente ao codigo de producao 2fe52ba:
+https://github.com/eduardodinizti-design/Software/actions/runs/43736745803
+
+Execucoes seguintes e artefatos da workflow:
+https://github.com/eduardodinizti-design/Software/actions/workflows/hu-operational-contracts.yml
+
+LIMITES E PENDENCIAS CONCRETAS
+
+1. Aprovar transporte, captura, DPI, entrada de valor, lease do painel, pausa
+e efeito no seu Windows 10/1366x768. Faltam esses resultados reais. Os logs
+agora permitem separar falha de leitura, cobertura, input e confirmacao.
+
+2. A integracao consulta modelos compativeis; nao ampliou o catalogo de solves.
+A referencia de ranges completos ja existente e BTN/BB, 9-max, As 7d 2c,
+5,5 BB, stacks restantes 22,5/22,5, com exportacao limitada ao flop e sem
+certificado de convergencia global. O subgame turn/river 2x2 continua sendo
+laboratorio, e nao ranges populacionais completos. Portanto nao foi validado
+um bot que joga qualquer board, stack, linha, PKO/ICM ou multiway.
+
+3. Ligar os modelos de chegada aos exports HRC Pro realmente carregados no
+notebook, incluindo antes, posicoes, sizes e formato de torneio. O perfil de
+referencia fornecido assume ante zero e pote incluindo apostas. Esses valores
+precisam corresponder ao jogo; nao se deve escolher um perfil para disfarcar
+falta de cobertura. Nao foi criado corte geral por numero de blinds no HU.
+
+4. O caminho preflop legado nao foi substituido por esta entrega. Sua guarda
+deep de nos nao-validados e seu raise_done por mao continuam sendo lacunas do
+operador antigo, especialmente para reaumentos. A correcao raise->all-in foi
+aplicada a esse contrato, mas isso nao resolve todos os ranges preflop.
+
+5. Medir latencia total de captura/leitura/decisao/movimento com mesas reais.
+O historico exige observacao fora da vez e pode revelar gaps com polling lento.
+Os tempos de testes Linux nao comprovam administrar 6/12/16 mesas no notebook.
+
+6. Conferir as etiquetas Fold em frames reais do mesmo layout. O leitor novo
+so aceita a palavra positiva em dois modos de OCR; os testes de sequencia
+usam cenas controladas. O caso 8h->3h no tema de cores segue sem reproducao/
+correcao demonstrada e continua registrado como pendencia visual.
+
+GUIA DE OPERACAO:
+docs/OPERACAO_HU_SOFTWARE_20261115.txt
+
+O codigo do lote, seus testes e a documentacao estao prontos para revisao na
+branch separada. A aprovacao operacional no PPPoker requer a evidencia Windows
+descrita acima; ela nao foi substituida pelo resultado de laboratorio.

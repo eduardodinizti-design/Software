@@ -1,0 +1,13 @@
+{
+  "schema": "software.hu-executor-check.v1",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "python": "3.12.14",
+  "report_path": "/workspace/work/software-hu-operational-20261115/docs/software-hu-operational-20261115/lab/resultado.json",
+  "status": "PASS",
+  "scope": "LINUX_OR_WINDOWS_SYNTHETIC_INTEGRATION",
+  "tests_run": 49,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "pppoker_windows_validated": false
+}

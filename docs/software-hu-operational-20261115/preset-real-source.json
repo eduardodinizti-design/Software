@@ -1,0 +1,89 @@
+{
+  "source": "tests/fixtures/raise_panel/karekas-raise-panel-2x-2.5x-3x-4x.png",
+  "sha256": "f74c93047e829d679b0814d5c19a1ab5124bea871a52b603c1c163416daa13ca",
+  "shape": [
+    1326,
+    753,
+    3
+  ],
+  "independent_real_images": 1,
+  "transforms": 0,
+  "windows_validated": false,
+  "reading": {
+    "status": "EXPERIMENTAL_RAISE_PANEL",
+    "presets": [
+      {
+        "box": [
+          18,
+          1242,
+          122,
+          70
+        ],
+        "label": "2x",
+        "mult": 2.0,
+        "basis": "multiplier"
+      },
+      {
+        "box": [
+          152,
+          1242,
+          122,
+          70
+        ],
+        "label": "2.5x",
+        "mult": 2.5,
+        "basis": "multiplier",
+        "source": "same_frame_x_glyph_and_numeric_ocr_consensus"
+      },
+      {
+        "box": [
+          286,
+          1242,
+          123,
+          70
+        ],
+        "label": "3x",
+        "mult": 3.0,
+        "basis": "multiplier"
+      },
+      {
+        "box": [
+          421,
+          1242,
+          122,
+          70
+        ],
+        "label": "4x",
+        "mult": 4.0,
+        "basis": "multiplier"
+      }
+    ],
+    "confirm": {
+      "box": [
+        555,
+        1242,
+        180,
+        70
+      ]
+    },
+    "selected": {
+      "status": "AMOUNT_CONFIRMED",
+      "confidence": "high",
+      "source": "ocr_consensus_7_6",
+      "semantics": "RAISE_TO_BB",
+      "raw": [
+        "2,0 BB",
+        "2,0 BB"
+      ],
+      "box": [
+        572,
+        564,
+        154,
+        80
+      ],
+      "value_bb": 2.0,
+      "quantum_bb": 0.1,
+      "unit": "BB"
+    }
+  }
+}

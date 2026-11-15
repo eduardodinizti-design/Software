@@ -71,6 +71,30 @@ class RealPanelTest(unittest.TestCase):
         mults = sorted(p['mult'] for p in r['presets'] if p['mult'] is not None)
         self.assertEqual(mults, [2.0, 2.5, 3.0, 4.0])
 
+    def test_selected_value_is_read_separately_from_preset_availability(self):
+        from raise_panel import read_raise_panel
+        r=read_raise_panel(self.cv2.imread(GAB))
+        self.assertEqual(r['selected']['status'],'AMOUNT_CONFIRMED')
+        self.assertEqual(r['selected']['value_bb'],2.)
+        self.assertEqual(r['selected']['unit'],'BB')
+        self.assertIn(2.5,[p['mult'] for p in r['presets']])
+
+
+class SelectedAmountCounterexamples(unittest.TestCase):
+    def test_percentage_and_multiplier_are_different_units(self):
+        from raise_panel import parse_preset,parse_selected_amount
+        self.assertEqual(parse_preset('50%')['basis'],'pot')
+        self.assertEqual(parse_preset('2.5x')['basis'],'multiplier')
+        self.assertIsNone(parse_selected_amount('2.5x'))
+        self.assertIsNone(parse_selected_amount('50%'))
+
+    def test_numeric_ocr_disagreement_is_not_accepted(self):
+        import numpy as np
+        from raise_panel import read_selected_amount
+        r=read_selected_amount(np.zeros((700,360,3),dtype=np.uint8),
+                               _ocr=lambda img,mode:'2.0 BB' if mode==7 else '3.0 BB')
+        self.assertEqual(r['status'],'AMOUNT_UNREADABLE')
+
 
 if __name__ == '__main__':
     unittest.main()

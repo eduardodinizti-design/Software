@@ -1,0 +1,16 @@
+HISTORICO CONFIRMADO NO LABORATORIO
+Snapshots sinteticos; esta mao NAO foi jogada no PPPoker.
+Hero BTN As 5s; vilao BB. Board inicial Kc 8s 3d. Pote 5,5 BB; stacks 22,5/22,5 BB.
+A chegada preflop tem testemunho sintetico separado de blinds/open/call; nao e importacao HRC.
+BB: check; contribuicao MODELO 0.0 BB; intervalo de exibicao [0.0, 0.05] BB.
+BTN: bet; contribuicao MODELO 2.75 BB; intervalo de exibicao [2.7, 2.8] BB.
+BB: call; contribuicao MODELO 2.75 BB; intervalo de exibicao [2.7, 2.8] BB.
+Carta publica confirmada: Ts
+BB: check; contribuicao MODELO 0.0 BB; intervalo de exibicao [0.0, 0.05] BB.
+BTN: bet; contribuicao MODELO 5.5 BB; intervalo de exibicao [5.45, 5.55] BB.
+BB: call; contribuicao MODELO 5.5 BB; intervalo de exibicao [5.45, 5.55] BB.
+Carta publica confirmada: 2h
+BB: check; contribuicao MODELO 0.0 BB; intervalo de exibicao [0.0, 0.05] BB.
+BTN: check; contribuicao MODELO 0.0 BB; intervalo de exibicao [0.0, 0.05] BB.
+Final: showdown, pote 22 BB; cadeia de hashes verificada.
+Precisao de exibicao 0,1 BB. Nao comprova lucro, ranges corretos ou cliques Windows.

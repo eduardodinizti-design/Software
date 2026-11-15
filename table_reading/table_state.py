@@ -170,7 +170,7 @@ def _detect_red_chips(crop):
     return chips
 
 
-def read_bets(crop):
+def read_bets(crop, *, diagnostics=False):
     """Bets on the felt, found by their red chip and the amount beside it,
     attributed to the nearest seat (approximate). The pot chip is skipped by its
     'Pot' label. Observation only; a seat with no chip simply has no bet, and the
@@ -184,6 +184,7 @@ def read_bets(crop):
     avatars = [avatar_box(w, h, s) for s, v in occ.items() if v.get('occupied')]
     occupied_seats = [s for s, v in occ.items() if v.get('occupied')] or list(SEAT_ANCHORS)
     best = {}   # seat -> (dist2, bet_dict): UMA aposta por assento (chip mais perto dele)
+    unresolved = []
     for cx, cy, cw, ch in _detect_red_chips(crop):
         if any(ax0 <= cx <= ax1 and ay0 <= cy <= ay1 for (ax0, ay0, ax1, ay1) in avatars):
             continue   # chip sobre avatar ocupado = falso-positivo, não é aposta
@@ -207,6 +208,7 @@ def read_bets(crop):
         ry0, ry1 = max(0, cy - int(0.02 * h)), min(h, cy + int(0.02 * h))
         region = crop[ry0:ry1, rx0:rx1]
         if region.size == 0:
+            unresolved.append(dict(chip=[cx, cy], reason='EMPTY_AMOUNT_REGION'))
             continue
         g = cv2.cvtColor(region, cv2.COLOR_BGR2GRAY)
         up = cv2.resize(g, None, fx=4, fy=4, interpolation=cv2.INTER_CUBIC)
@@ -214,6 +216,7 @@ def read_bets(crop):
         raw = _ocr(th, '--psm 7 -c tessedit_char_whitelist=0123456789.,B ')
         value, conf = parse_amount(raw)
         if value is None:
+            unresolved.append(dict(chip=[cx, cy], reason='AMOUNT_UNREADABLE', raw=raw))
             continue
         # Atribui ao assento OCUPADO mais próximo (não a um vazio) e mantém UMA aposta
         # por assento: a do chip mais PERTO do jogador (o chip real fica junto dele;
@@ -222,10 +225,38 @@ def read_bets(crop):
         d2 = (SEAT_ANCHORS[seat][0] * w - cx) ** 2 + (SEAT_ANCHORS[seat][1] * h - cy) ** 2
         if seat not in best or d2 < best[seat][0]:
             best[seat] = (d2, dict(seat=seat, bet_bb=value, confidence=conf, source='chip', chip=[cx, cy], raw=raw))
-    return [b for _, b in best.values()]
+    bets = [b for _, b in best.values()]
+    if diagnostics:
+        return dict(bets=bets, bets_complete=not unresolved and all(b['confidence']=='high' for b in bets),
+                    unresolved=unresolved, scope='DETECTED_CHIPS_ONLY_NOT_PROOF_OF_NO_UNDETECTED_BET')
+    return bets
 
 
 _BREAK_CLOCK = re.compile(r'(\d{1,2})\s*[:.\-]\s*(\d{2})')
+
+
+def read_fold_tags(crop, seats):
+    """Positive Fold label only; absence never means a live player.
+
+    Experimental blue-layout ROI above the avatar. The history collector still
+    requires independent frames. No inference from a missing card or an avatar.
+    """
+    h, w = crop.shape[:2]
+    out = {}
+    for seat in seats:
+        fx, fy = SEAT_ANCHORS[seat]
+        x0, x1 = max(0,int((fx-.12)*w)), min(w,int((fx+.12)*w))
+        y0, y1 = max(0,int((fy-.155)*h)), min(h,int((fy-.09)*h))
+        band = crop[y0:y1,x0:x1]
+        if not band.size:
+            continue
+        gray = cv2.cvtColor(band,cv2.COLOR_BGR2GRAY)
+        gray = cv2.resize(gray,None,fx=3,fy=3,interpolation=cv2.INTER_CUBIC)
+        texts = [_ocr(gray, '--psm %d' % p).strip().casefold() for p in (7,6)]
+        if texts == ['fold','fold']:
+            out[seat] = dict(in_hand=False, in_hand_confidence='high',
+                             in_hand_source='explicit_fold_two_ocr_modes', fold_raw=texts)
+    return out
 
 
 def read_break_state(crop):
@@ -277,6 +308,8 @@ def read_table_state(crop):
     dealer = find_dealer_seat(crop)
     occupied = [s for s in SEAT_ANCHORS if seats[s]['occupied']]
     positions = derive_positions(dealer['seat'], occupied) if dealer['seat'] else {}
+    bet_read = read_bets(crop, diagnostics=True)
     return dict(experimental=True, scope='BLUE_LAYOUT_PASSIVE_READING', source='ocr',
                 seats=seats, pot=read_pot(crop), dealer=dealer, positions=positions,
-                to_call=read_to_call(crop), bets=read_bets(crop))
+                to_call=read_to_call(crop), bets=bet_read['bets'], bets_complete=bet_read['bets_complete'],
+                bet_diagnostics=bet_read, display_quantum_bb=.1)

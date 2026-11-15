@@ -22,7 +22,7 @@ Garantias centrais (segurança funcional §12):
 - **Resultado desconhecido ≠ sucesso**: sem verificação do efeito, termina em
   UNKNOWN_RESULT e NÃO repete o clique automaticamente.
 
-NUNCA aponte para o PPPoker nesta fase: use um app de teste.
+O verificador Windows usa uma janela propria; a validacao PPPoker e separada.
 """
 import threading
 import time
@@ -35,7 +35,7 @@ STATES = ('AWAITING_INTENT', 'VALIDATING', 'MOVING', 'REVALIDATING',
 
 # Cursor compartilhado do Windows: um único lock de processo serializa as
 # trajetórias. NÃO executar trajetórias concorrentes para mesas diferentes.
-_CURSOR_LOCK = threading.Lock()
+_CURSOR_LOCK = threading.RLock()
 
 
 @dataclass
