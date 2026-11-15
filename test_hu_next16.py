@@ -1,6 +1,8 @@
 """New-board identity, lossless delivery and honest precision labels for a batch."""
 import copy
+from contextlib import redirect_stdout
 import hashlib
+import io
 import json
 import os
 from pathlib import Path
@@ -9,11 +11,15 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from strategy.batch_archive import (checked_batch_plan,make_batch_plan,make_catalog,
+from strategy.batch_archive import (BATCH_TAG,checked_batch_plan,make_batch_plan,make_catalog,
                                     split_archive,verify_remote_parts)
 from strategy.batch_jobs import canonical_flop
 from strategy.state_contract import StrategyError,digest
 from tools.run_hu_reference_pilot import post_progress_status
+from strategy.batch_download import check_bundle,receive_archive,load_catalog,download_batch,PLAN_SHA256
+from strategy.range_catalog import ComboRange
+from strategy.batch_jobs import atomic_json,case_id
+from strategy.texassolver_backend import file_hash
 
 HERE=Path(__file__).parent
 PLAN=HERE/'docs/software-hu-next16-20261115/plan.json'
@@ -111,6 +117,123 @@ class ProgressTests(unittest.TestCase):
         with patch.dict(os.environ,env),patch('tools.run_hu_reference_pilot.subprocess.run',
                 side_effect=subprocess.TimeoutExpired('gh',30)):
             post_progress_status(dict(stage=dict(stage='SOLVING'),last_native_metric=dict(iteration=50)))
+
+
+class BatchDownloadTests(unittest.TestCase):
+    def setUp(self):
+        self.plan=checked_batch_plan(PLAN)
+        self.manifest=dict(tag=self.plan['tag'],archive_bytes=6,archive_sha256=hashlib.sha256(b'abcdef').hexdigest(),
+            parts=[dict(name='p1.zip.part001',bytes=2,sha256=hashlib.sha256(b'ab').hexdigest()),
+                   dict(name='p1.zip.part002',bytes=4,sha256=hashlib.sha256(b'cdef').hexdigest())])
+
+    def metadata(self):
+        rows=[]
+        for c in self.plan['cases']:
+            m=example_manifest(self.plan,c)
+            m.update(copy.deepcopy(self.manifest),file_sha256='1'*64,policy_sha256='2'*64,policy_file_bytes=100)
+            rows.append(m)
+        return make_catalog(self.plan,rows)
+
+    def test_consumer_reassembles_the_exact_zip_without_duplicate_part_files(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            with patch('strategy.batch_download.fetch',side_effect=[io.BytesIO(b'ab'),io.BytesIO(b'cdef')]):
+                r=receive_archive(self.manifest,Path(tmp)/'model.zip')
+            self.assertEqual((Path(tmp)/'model.zip').read_bytes(),b'abcdef')
+            self.assertEqual(r['sha256'],self.manifest['archive_sha256'])
+            self.assertEqual(len(list(Path(tmp).iterdir())),1)
+
+    def test_corrupt_part_is_retained_for_diagnosis_and_not_accepted(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            with patch('strategy.batch_download.fetch',return_value=io.BytesIO(b'xy')):
+                with self.assertRaisesRegex(StrategyError,'PART_CHECKSUM'):receive_archive(self.manifest,Path(tmp)/'model.zip')
+            self.assertEqual((Path(tmp)/'model.zip').read_bytes(),b'xy')
+
+    def test_whole_archive_checksum_is_checked_in_addition_to_parts(self):
+        m=copy.deepcopy(self.manifest);m['archive_sha256']='0'*64
+        with tempfile.TemporaryDirectory() as tmp,patch('strategy.batch_download.fetch',side_effect=[io.BytesIO(b'ab'),io.BytesIO(b'cdef')]):
+            with self.assertRaisesRegex(StrategyError,'FULL_ARCHIVE_CHECKSUM'):receive_archive(m,Path(tmp)/'model.zip')
+
+    def test_malformed_or_duplicate_part_names_are_rejected(self):
+        for name in ('../escape','a\\b','https://example/a'):
+            m=copy.deepcopy(self.manifest);m['parts'][0]['name']=name
+            with self.assertRaisesRegex(StrategyError,'PART_MANIFEST'):check_bundle(m)
+        m=copy.deepcopy(self.manifest);m['parts'][1]['name']=m['parts'][0]['name']
+        with self.assertRaisesRegex(StrategyError,'PART_MANIFEST'):check_bundle(m)
+
+    def test_catalog_is_bound_to_the_published_plan_and_all_sixteen_precision_checks(self):
+        self.assertEqual(self.plan['plan_sha256'],PLAN_SHA256)
+        release=dict(assets=[dict(name='batch-catalog-123.json',state='uploaded',id=10)])
+        with patch('strategy.batch_download.read_json',side_effect=[release,self.metadata(),self.plan]):
+            c,name=load_catalog();self.assertEqual((len(c['cases']),name),(16,'batch-catalog-123.json'))
+        changed=self.metadata();changed['cases'][0]['board']=changed['cases'][1]['board']
+        with patch('strategy.batch_download.read_json',side_effect=[release,changed,self.plan]):
+            with self.assertRaises(StrategyError):load_catalog()
+        changed=self.metadata();changed['cases'][0]['global_gap_bb']=99
+        with patch('strategy.batch_download.read_json',side_effect=[release,changed,self.plan]):
+            with self.assertRaisesRegex(StrategyError,'TARGET_LABEL'):load_catalog()
+
+    def test_existing_local_folder_is_preserved_before_any_network_request(self):
+        with tempfile.TemporaryDirectory() as tmp,patch('strategy.batch_download.load_catalog',side_effect=AssertionError('no network')):
+            p=Path(tmp)/'keep.txt';p.write_text('keep')
+            with self.assertRaisesRegex(StrategyError,'MUST_BE_NEW'):download_batch(tmp)
+            self.assertEqual(p.read_text(),'keep')
+
+    def test_resume_cannot_claim_an_existing_unmanaged_folder(self):
+        with tempfile.TemporaryDirectory() as tmp,patch('strategy.batch_download.load_catalog',return_value=(self.metadata(),'batch-catalog-123.json')):
+            p=Path(tmp)/'keep.txt';p.write_text('keep')
+            with self.assertRaisesRegex(StrategyError,'MANAGED_BATCH'):download_batch(tmp,include_pilot=False,resume=True)
+            self.assertEqual(p.read_text(),'keep')
+
+
+@unittest.skipUnless(os.environ.get('HU_STREAM_TEST_BINARY') and os.environ.get('HU_STREAM_TEST_RESOURCES'),
+                     'Optional separately built native backend required')
+class NativeBatchTransferTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temp=tempfile.TemporaryDirectory();cls.addClassCleanup(cls.temp.cleanup);cls.root=Path(cls.temp.name)
+        g=json.loads(GAME.read_text());g['root']['stacks']=[1,1]  # Int inputs must survive normalized float state.
+        g['ranges']=[ComboRange.from_classes({'QQ':1},'native-transfer-control-only').to_dict(),
+                     ComboRange.from_classes({'JJ':1},'native-transfer-control-only').to_dict()]
+        atomic_json(cls.root/'game.json',g)
+        from tools.run_hu_reference_pilot import main as pilot
+        with redirect_stdout(io.StringIO()):
+            pilot(['--game',str(cls.root/'game.json'),'--output',str(cls.root/'study'),
+                '--binary',os.environ['HU_STREAM_TEST_BINARY'],'--resources',os.environ['HU_STREAM_TEST_RESOURCES'],
+                '--iterations','51','--threads','2','--memory-mb','2048'])
+        r=json.loads((cls.root/'study/delivery/result.json').read_text())
+        archive=cls.root/'study/delivery/btn-bb-As7d2c-nvt-reference.zip'
+        bundle=split_archive(archive,cls.root/'parts','control-only',part_bytes=1024**2)
+        m=dict(ordinal=1,case_id=case_id(r['board']),board=r['board'],tag=BATCH_TAG,
+            policy_sha256=r['policy_sha256'],file_sha256=r['file_sha256'],policy_file_bytes=r['policy_file_bytes'],
+            native_target_met=r['native_target_met'],**bundle)
+        if not m['native_target_met']:raise AssertionError('Small transfer control did not converge')
+        cls.catalog=dict(plan_sha256='NATIVE_CONTROL_ONLY_NOT_A_REAL_NVT_STUDY',cases=[m],context=g['context'],
+            root_template=g['root'],_original_plan=dict(game=g))
+
+    def install(self,dest,*,resume=False):
+        def fetch_part(url):return (self.root/'parts'/url.rsplit('/',1)[-1]).open('rb')
+        with (patch('strategy.batch_download.load_catalog',return_value=(self.catalog,'control-only.json')),
+                patch('strategy.batch_download.fetch',side_effect=fetch_part),redirect_stdout(io.StringIO())):
+            return download_batch(dest,ordinals=[1],include_pilot=False,resume=resume)
+
+    def test_complete_native_model_is_transferred_queried_and_reused_without_redownload(self):
+        dest=self.root/'fresh';receipt=self.install(dest)
+        self.assertEqual((receipt['status'],receipt['total_models']),('PASS',1))
+        self.assertEqual(set(receipt['policies'][0]['lookup_validation']['probes']),{'flop','turn','river'})
+        self.assertTrue(receipt['temporary_transfers_removed']);self.assertFalse(receipt['pppoker_windows_validated'])
+        with (patch('strategy.batch_download.load_catalog',return_value=(self.catalog,'control-only.json')),
+                patch('strategy.batch_download.fetch',side_effect=AssertionError('must reuse existing policy')),
+                redirect_stdout(io.StringIO())):
+            resumed=download_batch(dest,ordinals=[1],include_pilot=False,resume=True)
+        self.assertEqual(resumed['policies'][0]['file_sha256'],receipt['policies'][0]['file_sha256'])
+
+    def test_resume_recovers_a_policy_promoted_before_index_publication(self):
+        dest=self.root/'interrupted';receipt=self.install(dest)
+        index=dest/'bank/library.json';old=json.loads(index.read_text());path=dest/'bank'/old['entries'][0]['path']
+        before=file_hash(path);old['entries']=[];atomic_json(index,old)
+        resumed=self.install(dest,resume=True)
+        self.assertEqual(resumed['status'],'PASS');self.assertEqual(file_hash(path),before)
+        self.assertEqual(resumed['total_models'],receipt['total_models'])
 
 
 if __name__=='__main__':unittest.main()
