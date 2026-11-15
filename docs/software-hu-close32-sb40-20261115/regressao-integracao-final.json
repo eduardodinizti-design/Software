@@ -1,0 +1,25 @@
+{
+  "elapsed_seconds": 73.40943323000101,
+  "errors": 0,
+  "failures": 0,
+  "modules": [
+    "test_hu_campaign",
+    "test_hu_campaign_delivery",
+    "test_hu_campaign_download",
+    "test_hu_policy_json",
+    "test_hu_blind_war",
+    "test_hu_reference",
+    "test_hu_batches",
+    "test_hu_next16",
+    "test_hu_policy_engine",
+    "test_hu_operational"
+  ],
+  "native_stream_tests_enabled": true,
+  "passed": 211,
+  "pppoker_windows_validated": false,
+  "python": "3.12.14",
+  "skipped": [],
+  "status": "PASS",
+  "tested_code_commit": "225f4c841ce184e647e4852608b61d46c25e5f67",
+  "tests_run": 211
+}
