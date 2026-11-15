@@ -33,6 +33,42 @@ def example_manifest(plan,case):
         coverage=dict(structurally_complete=True))
 
 
+class WindowsEvidenceTests(unittest.TestCase):
+    def setUp(self):
+        from tools.finalize_hu_next16 import checked_windows_results
+        self.check=checked_windows_results;self.plan=checked_batch_plan(PLAN);self.native=[];self.rows=[]
+        for case in self.plan['cases']:
+            c=example_manifest(self.plan,case)
+            c.update(file_sha256='1'*64,policy_sha256='2'*64,
+                independent_river=dict(runout=['Ts','2h'],joint_private_deals=4,nash_conv_bb=.03))
+            self.native.append(c)
+            self.rows.append(dict(ordinal=c['ordinal'],status='PASS',platform='Windows-SYNTHETIC-UNIT-CONTROL',
+                board=c['board'],file_sha256=c['file_sha256'],policy_sha256=c['policy_sha256'],archive_sha256=c['archive_sha256'],
+                native_target_met=True,global_native_gap_bb=c['global_gap_bb'],coverage=c['coverage'],
+                source_lookup=dict(probes=dict(flop={},turn={},river={})),exact_suit_alias=dict(probes=dict(flop={},turn={},river={})),
+                independent_river=dict(c['independent_river'],exact_enumeration=True),pppoker_windows_validated=False,input_devices_used=False))
+        self.catalog=dict(cases=self.native)
+
+    def test_every_windows_proof_must_match_the_published_policy(self):
+        self.assertEqual(len(self.check(self.catalog,self.rows)),16)
+        self.rows[0]['file_sha256']='0'*64
+        with self.assertRaisesRegex(StrategyError,'DOES_NOT_MATCH'):self.check(self.catalog,self.rows)
+
+    def test_missing_duplicate_and_linux_proofs_cannot_be_counted_as_sixteen_windows_models(self):
+        with self.assertRaisesRegex(StrategyError,'SIXTEEN_DISTINCT'):self.check(self.catalog,self.rows[:-1])
+        with self.assertRaisesRegex(StrategyError,'SIXTEEN_DISTINCT'):self.check(self.catalog,self.rows[:-1]+[self.rows[0]])
+        self.rows[0]['platform']='Linux'
+        with self.assertRaisesRegex(StrategyError,'DOES_NOT_MATCH'):self.check(self.catalog,self.rows)
+
+    def test_windows_river_must_reproduce_the_independent_linux_calculation(self):
+        self.rows[0]['independent_river']['nash_conv_bb']+=.001
+        with self.assertRaisesRegex(StrategyError,'RIVER_DIFFERS'):self.check(self.catalog,self.rows)
+
+    def test_lab_evidence_cannot_claim_a_real_pppoker_session(self):
+        self.rows[0]['pppoker_windows_validated']=True
+        with self.assertRaisesRegex(StrategyError,'DOES_NOT_MATCH'):self.check(self.catalog,self.rows)
+
+
 class Next16PlanTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):cls.plan=checked_batch_plan(PLAN)
@@ -221,6 +257,13 @@ class NativeBatchTransferTests(unittest.TestCase):
         self.assertEqual((receipt['status'],receipt['total_models']),('PASS',1))
         self.assertEqual(set(receipt['policies'][0]['lookup_validation']['probes']),{'flop','turn','river'})
         self.assertTrue(receipt['temporary_transfers_removed']);self.assertFalse(receipt['pppoker_windows_validated'])
+        from tools.verify_hu_next16_download import verify_suit_queries
+        from strategy.policy_library import PolicyLibrary
+        library=PolicyLibrary(receipt['library']);source=library.open(receipt['policies'][0]['board'])
+        try:verified=verify_suit_queries(library,source,receipt['policies'][0])
+        finally:source.close()
+        self.assertEqual(set(verified['probes']),{'flop','turn','river'})
+        self.assertFalse(verified['new_solve'])
         with (patch('strategy.batch_download.load_catalog',return_value=(self.catalog,'control-only.json')),
                 patch('strategy.batch_download.fetch',side_effect=AssertionError('must reuse existing policy')),
                 redirect_stdout(io.StringIO())):
