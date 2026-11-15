@@ -52,7 +52,8 @@ def progress(bank):
             if lines:out['last_native_metric']=json.loads(lines[-1])
         except (FileNotFoundError,json.JSONDecodeError):pass
         export=attempt/'native/strategy.jsonl.gz'
-        if export.exists():out['native_export_gzip_bytes']=export.stat().st_size
+        try:out['native_export_gzip_bytes']=export.stat().st_size
+        except FileNotFoundError:pass  # a successful worker may already have cleaned its export
     return out
 
 

@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from strategy.batch_jobs import atomic_json,canonical_flop,make_plan
 from strategy.campaign import close32_plan,checked_campaign_plan,model_identity
@@ -63,6 +64,32 @@ class CampaignTests(unittest.TestCase):
             path=Path(tmp)/'sb.json';atomic_json(path,g)
             p=make_plan(path,boards=[g['root']['board']])
         self.assertEqual((p['game']['root']['oop'],p['game']['context']['dealt_players']),(0,9))
+
+    def test_progress_tolerates_the_export_removed_during_successful_cleanup(self):
+        from tools.run_hu_reference_pilot import progress
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);export=root/'temporary/attempt/native/strategy.jsonl.gz'
+            export.parent.mkdir(parents=True);export.write_bytes(b'owned native temporary')
+            original=Path.stat;calls=0
+            def disappearing(path,*args,**kwargs):
+                nonlocal calls
+                if path==export:
+                    calls+=1
+                    if calls==2:export.unlink()
+                return original(path,*args,**kwargs)
+            with patch.object(Path,'stat',disappearing):progress(root)
+
+    def test_progress_ignores_only_missing_files_and_preserves_other_io_errors(self):
+        from tools.run_hu_reference_pilot import progress
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);export=root/'temporary/attempt/native/strategy.jsonl.gz';export.parent.mkdir(parents=True)
+            original=Path.stat
+            def failed(path,*args,**kwargs):
+                if path==export:raise PermissionError('diagnostic permission failure must remain visible')
+                return original(path,*args,**kwargs)
+            progress(root)  # an already removed export is a normal end-of-worker state
+            with patch.object(Path,'stat',failed):
+                with self.assertRaises(PermissionError):progress(root)
 
 
 if __name__=='__main__':unittest.main()
