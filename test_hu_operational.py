@@ -35,10 +35,10 @@ class Clock:
     def sleep(self,seconds): self.now+=seconds
 
 
-def make_test_policy(root=None, recommended=None):
+def make_test_policy(root=None, recommended=None, context=None):
     """Small exact legal tree, invented frequencies; never a solved strategy."""
     root = root or BettingState(FLOP,5.5,(22.5,22.5),actor=1,oop=1)
-    ctx = GameContext(('BTN','BB'),arrival_id='SYNTHETIC_OPERATIONAL_TEST')
+    ctx = context or GameContext(('BTN','BB'),arrival_id='SYNTHETIC_OPERATIONAL_TEST')
     ranges = (ComboRange((('As5s',1.),),'synthetic-hero'),
               ComboRange((('AhKd',1.),),'synthetic-villain'))
     menu = BetMenu((.5,),2,True)

@@ -79,6 +79,7 @@ def main(argv=None):
     p.add_argument('--work-disk-mb',type=int,default=10240)
     p.add_argument('--timeout-seconds',type=int,default=7200)
     p.add_argument('--asset-name',default='btn-bb-As7d2c-nvt-reference.zip')
+    p.add_argument('--profile-settings',help='Explicit arrival/ante settings JSON; does not change the solved policy')
     args=p.parse_args(argv)
     if Path(args.asset_name).name!=args.asset_name or not args.asset_name.endswith('.zip'):p.error('Safe ZIP asset name required')
     output=Path(args.output).resolve()
@@ -89,6 +90,12 @@ def main(argv=None):
     plan=make_plan(args.game,boards=[game['root']['board']],iterations=args.iterations,
         accuracy_pct=args.accuracy_pct,threads=args.threads,memory_mb=args.memory_mb,
         timeout_seconds=args.timeout_seconds,work_disk_mb=args.work_disk_mb,batch_size=1)
+    if args.profile_settings:
+        from strategy.operational_profile import OperationalProfile
+        from strategy.state_contract import digest
+        settings=json.loads(Path(args.profile_settings).read_text())
+        OperationalProfile('profile-configuration-check',**settings)
+        plan.pop('plan_sha256');plan['profile_settings']=settings;plan['plan_sha256']=digest(plan)
     atomic_json(output/'plan.json',plan)
     command=[sys.executable,'-m','strategy.batch_jobs','run','--plan',str(output/'plan.json'),
         '--output',str(bank),'--binary',str(Path(args.binary).resolve()),'--resources',str(Path(args.resources).resolve())]

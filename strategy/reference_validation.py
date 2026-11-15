@@ -35,7 +35,7 @@ def three_street_line(policy,runout):
     cards(tuple(policy.root.board)+tuple(runout),(5,))
     line=LinePolicy(policy);scenes=[line.state]
     for street in range(3):
-        for kind in ('check','bet','call'):
+        for kind in (('bet','call') if policy.root.oop==0 else ('check','bet','call')):
             choices=[a for a in policy.actions(line.state) if a.kind==kind]
             if not choices:raise StrategyError('REFERENCE_MODEL_HAS_NO_ORDINARY_'+kind.upper())
             line.observe(choices[0])
@@ -47,15 +47,16 @@ def three_street_line(policy,runout):
     return scenes,pair[0],line.trace
 
 
-def synthetic_reading(state,hero,hand_id,*,payouts=None):
+def synthetic_reading(state,hero,hand_id,*,payouts=None,positions=None):
     """Scalar lab snapshots. No OCR, pixels or input devices participate."""
-    stacks={'hero':state.stacks[0],'villain':state.stacks[1],**{k:30. for k in SEATS if k not in ('hero','villain')}}
+    positions=SEATS if positions is None else positions
+    stacks={'hero':state.stacks[0],'villain':state.stacks[1],**{k:30. for k in positions if k not in ('hero','villain')}}
     if payouts:
         for seat,value in zip(('hero','villain'),payouts):stacks[seat]+=value
     seats={k:dict(occupied=True,stack_bb=round(v,1),confidence='high') for k,v in stacks.items()}
     for k in seats:
         if k not in ('hero','villain'):seats[k].update(in_hand=False,in_hand_confidence='high')
-    ts=dict(positions=dict(SEATS),seats=seats,pot=dict(pot_bb=0. if payouts else round(state.pot_bb,1),confidence='high'),
+    ts=dict(positions=dict(positions),seats=seats,pot=dict(pot_bb=0. if payouts else round(state.pot_bb,1),confidence='high'),
         bets=[dict(seat=seat,bet_bb=round(state.committed[i],1),confidence='high')
               for i,seat in enumerate(('hero','villain')) if state.committed[i]>0],bets_complete=True,
         to_call=dict(to_call_bb=round(state.call_cost_bb,1),confidence='high'))
@@ -68,18 +69,23 @@ def synthetic_reading(state,hero,hand_id,*,payouts=None):
         context=dict(mode='chip_ev',stage='mid')),buttons
 
 
-def verify_reference_hand(policy,output,*,runout=('Ts','2h'),library=None):
+def verify_reference_hand(policy,output,*,runout=('Ts','2h'),library=None,profile_settings=None):
     output=Path(output)
     if output.exists():raise StrategyError('REFERENCE_VALIDATION_OUTPUT_MUST_BE_NEW')
-    if (policy.context.positions!=('BTN','BB') or policy.context.dealt_players!=9
-            or len(policy.root.board)!=3 or policy.root.oop!=1):
-        raise StrategyError('REFERENCE_VALIDATION_REQUIRES_NINE_HANDED_BTN_BB_FLOP')
+    if (policy.context.positions not in (('BTN','BB'),('SB','BB')) or policy.context.dealt_players!=9
+            or len(policy.root.board)!=3 or policy.root.oop!=policy.context.oop_player):
+        raise StrategyError('REFERENCE_VALIDATION_REQUIRES_NINE_HANDED_BTN_OR_SB_VS_BB_FLOP')
+    if policy.context.positions==('BTN','BB'):positions=SEATS
+    else:
+        positions=dict(hero='SB',villain='BB',**{'s'+str(i+1):p for i,p in enumerate(
+            ('UTG','UTG+1','UTG+2','LJ','HJ','CO','BTN'))})
     scenes,hands,posterior_trace=three_street_line(policy,tuple(runout))
     output.mkdir(parents=True)
     with ExitStack() as resources:
         journal=HandJournal(output/'hand-history.sqlite3');resources.callback(journal.close)
-        profile=OperationalProfile(policy.fingerprint)  # keep the actual preflop-witness requirement
-        history=(LibraryHistory(library,journal) if library else ConfirmedHistory(policy,profile,journal))
+        settings=(library.data.get('profile_settings',{}) if library and profile_settings is None else profile_settings or {})
+        profile=OperationalProfile(policy.fingerprint,**settings)  # actual preflop witness remains required
+        history=(LibraryHistory(library,journal,profile_settings=settings) if library else ConfirmedHistory(policy,profile,journal))
         if library:resources.callback(history.close)
         observer=history.observer if library else PolicyObserver(policy,profile)
         history.preflop_manifest=[dict(source='USER_APPROVED_NVT_REFERENCE',sha256=r.fingerprint) for r in policy.ranges]
@@ -104,17 +110,20 @@ def verify_reference_hand(policy,output,*,runout=('Ts','2h'),library=None):
             return outcome
 
         # Blinds, observed open and final call conserve the configured starting pot.
-        recipe=profile.recipe(policy);baseline,buttons=synthetic_reading(policy.root,hands[0],hand_id)
+        recipe=profile.recipe(policy);baseline,buttons=synthetic_reading(policy.root,hands[0],hand_id,positions=positions)
         baseline['board']['cards']=[];ts=baseline['table_state'];ts['pot']['pot_bb']=recipe['forced_pot_bb']
-        ts['bets']=[dict(seat='small',bet_bb=.5,confidence='high'),dict(seat='villain',bet_bb=1.,confidence='high')]
+        posted={s:recipe['posts'].get(p,0.) for s,p in positions.items()}
+        ts['bets']=[dict(seat=s,bet_bb=v,confidence='high') for s,v in posted.items() if v]
         for seat in ts['seats']:
             ts['seats'][seat].pop('in_hand',None);ts['seats'][seat].pop('in_hand_confidence',None)
-        ts['seats']['hero']['stack_bb']=policy.root.stacks[0]+recipe['open_to_bb']
-        ts['seats']['villain']['stack_bb']=policy.root.stacks[1]+recipe['open_to_bb']-1
+        roles=('hero','villain')
+        for i,seat in enumerate(roles):ts['seats'][seat]['stack_bb']=policy.root.stacks[i]+recipe['open_to_bb']-posted[seat]
         observe(baseline,buttons)
-        opened=copy.deepcopy(baseline);opened['table_state']['seats']['hero']['stack_bb']=policy.root.stacks[0]
-        opened['table_state']['pot']['pot_bb']+=recipe['open_to_bb']
-        opened['table_state']['bets'].append(dict(seat='hero',bet_bb=recipe['open_to_bb'],confidence='high'))
+        opener=roles[profile.preflop_aggressor]
+        opened=copy.deepcopy(baseline);opened['table_state']['seats'][opener]['stack_bb']=policy.root.stacks[profile.preflop_aggressor]
+        opened['table_state']['pot']['pot_bb']+=recipe['open_to_bb']-posted[opener]
+        opened['table_state']['bets']=[b for b in opened['table_state']['bets'] if b['seat']!=opener]
+        opened['table_state']['bets'].append(dict(seat=opener,bet_bb=recipe['open_to_bb'],confidence='high'))
         observe(opened,buttons)
 
         scores=[eval7([parse_card(c) for c in h+scenes[-1].board]) for h in hands]
@@ -122,7 +131,7 @@ def verify_reference_hand(policy,output,*,runout=('Ts','2h'),library=None):
         for expected in scenes:
             payouts=tuple(expected.pot_bb*x for x in shares) if expected.terminal else None
             for _ in range(profile.confirmations):
-                result,buttons=synthetic_reading(expected,hands[0],hand_id,payouts=payouts)
+                result,buttons=synthetic_reading(expected,hands[0],hand_id,payouts=payouts,positions=positions)
                 outcome=observe(result,buttons)
             if outcome['status']!='CONFIRMED':raise StrategyError('REFERENCE_HISTORY_NOT_CONFIRMED:'+str(outcome))
             actual=history.current(table_id)['state']
@@ -143,11 +152,13 @@ def verify_reference_hand(policy,output,*,runout=('Ts','2h'),library=None):
                 decisions.append(advice)
         hand=journal.export_hand(table_id,hand_id)
         counts={kind:sum(e['payload'].get('event_type')==kind for e in hand['events']) for kind in ('action','board')}
-        if not hand['chain_valid'] or counts!={'action':9,'board':2}:
-            raise StrategyError('REFERENCE_HAND_IS_NOT_NINE_ACTIONS_AND_TWO_REVEALS')
+        expected_actions=6 if policy.root.oop==0 else 9
+        if not hand['chain_valid'] or counts!={'action':expected_actions,'board':2}:
+            raise StrategyError('REFERENCE_HAND_ACTIONS_OR_REVEALS_DO_NOT_MATCH_POSITIONAL_LINE')
         if {d['street'] for d in decisions}!={'FLOP','TURN','RIVER'}:
             raise StrategyError('REFERENCE_DECISIONS_NOT_CONFIRMED_ON_THREE_STREETS')
         summary=dict(status='PASS',scope=SCOPE,policy_sha256=policy.fingerprint,quality=policy.quality,
+            positions=list(policy.context.positions),operational_profile_settings=settings,
             complete_to_showdown=True,event_counts=counts,decisions=len(decisions),
             private_hands_known_in_lab=[list(h) for h in hands],board=list(scenes[-1].board),
             preflop_witness=history.current(table_id)['witness'],journal_chain_valid=True,

@@ -208,6 +208,7 @@ def publish_index(folder,db,plan):
     index=dict(schema='software.hu-policy-library.v1',plan_sha256=plan['plan_sha256'],
         context=plan['game']['context'],root_template=plan['game']['root'],entries=entries,
         complete_flops=len(entries),planned_flops=len(plan['boards']),max_simultaneous_workers=1)
+    if plan.get('profile_settings'):index['profile_settings']=plan['profile_settings']
     atomic_json(folder/'library.json',index)
     counts=dict(db.execute('SELECT state,count(*) FROM jobs GROUP BY state'))
     atomic_json(folder/'progress.json',dict(plan_sha256=plan['plan_sha256'],counts=counts,

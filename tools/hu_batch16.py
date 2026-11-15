@@ -81,10 +81,14 @@ def run_case(args,plan):
     from run_hu_reference_pilot import main as pilot
     try:
         asset=plan.get('archive_filename','btn-bb-As7d2c-nvt-reference.zip')
+        extra=[]
+        if plan.get('profile_settings'):
+            atomic_json(root/'profile-settings.json',plan['profile_settings'])
+            extra=['--profile-settings',str(root/'profile-settings.json')]
         pilot(['--game',str(root/'game.json'),'--output',str(root/'study'),'--binary',args.binary,
             '--resources',args.resources,'--iterations',str(s['iterations']),'--threads',str(s['threads']),
             '--accuracy-pct',str(s['accuracy_pct']),'--memory-mb',str(s['memory_mb']),
-            '--work-disk-mb',str(s['work_disk_mb']),'--timeout-seconds',str(s['timeout_seconds']),'--asset-name',asset])
+            '--work-disk-mb',str(s['work_disk_mb']),'--timeout-seconds',str(s['timeout_seconds']),'--asset-name',asset]+extra)
         bank=root/'study/bank';delivery=root/'study/delivery'
         result=json.loads((delivery/'result.json').read_text());archive=delivery/asset
         status(case,'pending','Complete tree verified; reviewing conditional river')
