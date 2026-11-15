@@ -95,9 +95,10 @@ def _slider_of(found=True):
 
 
 def _seq(world, inp, target=2.5, bot_control=None, hand='H1', read_hand=None,
-         read_slider=None):
+         read_slider=None, explicit_all_in=False):
     return RaiseSequencer(capture=_capture_of(world), window_rect=WIN, input_adapter=inp,
                           target_mult=target, bot_control=bot_control, max_tables=6,
+                          explicit_all_in=explicit_all_in,
                           sleep=lambda s: None, read_actions=_ra_of(world),
                           read_panel=_rp_of(world), detect=_detect, hand=hand,
                           read_hand=read_hand or (lambda crop: {'hand_id': 'H1'}),
@@ -128,7 +129,7 @@ class RaiseSequencerTest(unittest.TestCase):
         # Cliques: ABRIR + (drag da barra) + CONFIRMAR = 3 ações.
         world = World()
         inp = WInput(world)
-        out = _seq(world, inp, target=25.0, read_slider=_slider_of(found=True)).run()
+        out = _seq(world, inp, target=25.0, read_slider=_slider_of(found=True), explicit_all_in=True).run()
         self.assertTrue(out['ok'])
         self.assertEqual(out['preset'], 'ALL_IN')
         self.assertTrue(out['confirmed'])
@@ -142,7 +143,7 @@ class RaiseSequencerTest(unittest.TestCase):
         # silêncio deixando o painel aberto); 1 clique (só o abrir), sem drag.
         world = World()
         inp = WInput(world)
-        out = _seq(world, inp, target=25.0, read_slider=_slider_of(found=False)).run()
+        out = _seq(world, inp, target=25.0, read_slider=_slider_of(found=False), explicit_all_in=True).run()
         self.assertFalse(out['ok'])
         self.assertTrue(out['unknown'])
         self.assertEqual(out['reason'], 'ALLIN_SLIDER_CANCELADO')

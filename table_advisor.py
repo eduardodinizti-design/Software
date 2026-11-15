@@ -105,7 +105,9 @@ def _postflop_in_context(advisor, tracker, state, hero, board, *, mode, stage, t
 
 def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table_key='default',
                  villain_range=None, hero_override=None, tracker=None, bounty_bb=None,
-                 enable_hud=False, read_cache=None, postflop_policy=None):
+                 enable_hud=False, read_cache=None, postflop_policy=None,
+                 history=None, buttons_result=None, sample_id=None, captured_at=None,
+                 observation_only=False, observation_source='UNSPECIFIED_PASSIVE_SOURCE'):
     """Read the table and attach an exploratory recommendation. The tournament
     phase chooses chip EV vs ICM unless mode/stage are forced. Pure read; the
     caller wraps it in an ocr_frame so one snapshot reuses OCR.
@@ -137,6 +139,11 @@ def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table
     # override vem da memória temporal por-slot ([[hero_card_memory]]).
     if hero is None and hero_override and len(hero_override) == 2:
         hero = list(hero_override)
+    if hero is None and history is not None:
+        known = history.current(table_key)
+        fresh_hand_key = (hand or {}).get('hand_id') or (hand or {}).get('hand_number')
+        if known and fresh_hand_key is not None and str(fresh_hand_key)==known['hand_id'] and known.get('hero'):
+            hero = list(known['hero'])  # immutable cards, confirmed same hand; slots remain marked unread
     board = read_board(crop, hero_cards=hero or [None, None])
     tourney = read_tournament(crop)
     auto_mode, auto_stage = tournament_context(tourney)
@@ -178,6 +185,19 @@ def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table
     board_present_unread = (board_status in ('BOARD_INCOMPLETE', 'BOARD_DUPLICATE_REJECTED')
                             or (board_status == 'BOARD_PARTIAL_OR_OBSTRUCTED'
                                 and board_reason != 'FIRST_CARD_ANCHOR_MISSING'))
+    if history is not None:
+        from table_reading.table_state import read_fold_tags
+        occupied = [s for s,v in state.get('seats',{}).items() if v.get('occupied')]
+        for seat, evidence in read_fold_tags(crop, occupied).items():
+            state['seats'][seat].update(evidence)
+        history.observe(dict(hand=hand, hero_cards=hero, board=board, table_state=state,
+                             observation_source=observation_source,
+                             context=dict(mode=use_mode, stage=use_stage)),
+                        table_id=table_key, buttons=buttons_result, sample_id=sample_id,
+                        captured_at=captured_at)
+        tracked = history.current(table_key)
+        if tracked and tracked.get('state') is not None and tracked['state'].board and not board.get('cards'):
+            board_present_unread = True
     policy_advice = None
     if board.get('cards') and hero is not None and postflop_policy is not None:
         hkey = (hand or {}).get('hand_id') or (hand or {}).get('hand_number')
@@ -185,7 +205,11 @@ def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table
             table_key=table_key, hand_key=hkey, table_state=state, hero_cards=hero,
             board=board['cards'], mode=use_mode, stage=use_stage)
     policy_hit = policy_advice is not None and policy_advice.get('status') == 'ADVICE'
-    if policy_hit:
+    if observation_only:
+        advice = dict(status='OBSERVING', reason='WAITING_FOR_HERO_TURN',
+                      phase='postflop' if board.get('cards') or board_present_unread else 'preflop',
+                      exploratory=True, execution_allowed=False)
+    elif policy_hit:
         advice = policy_advice
     elif board.get('cards'):
         if hero is None:
@@ -195,7 +219,8 @@ def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table
             advice = advise_postflop(state, hero, board['cards'], street=board.get('street'),
                                      mode=use_mode, stage=use_stage, villain_range=villain_range)
     elif board_present_unread:
-        advice = dict(status='ABSTAIN', reason='BOARD_PRESENT_BUT_UNREADABLE', exploratory=True, execution_allowed=False)
+        advice = dict(status='ABSTAIN', reason='BOARD_PRESENT_BUT_UNREADABLE', phase='postflop',
+                      exploratory=True, execution_allowed=False)
     elif hero is None:
         advice = dict(status='ABSTAIN', reason='HERO_CARDS_UNKNOWN', exploratory=True, execution_allowed=False)
     else:
@@ -212,7 +237,7 @@ def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table
         hkey = (hand or {}).get('hand_id') or (hand or {}).get('hand_number')
         has_board = bool(board.get('cards'))
         tracker.update(table_key=table_key, hand_key=hkey, table_state=state, has_board=has_board)
-        if (has_board and hero is not None and not policy_hit
+        if (has_board and hero is not None and not policy_hit and not observation_only
                 and isinstance(advice, dict) and advice.get('phase') == 'postflop'):
             advice = _postflop_in_context(advisor, tracker, state, hero, board,
                                           mode=use_mode, stage=use_stage, table_key=table_key)

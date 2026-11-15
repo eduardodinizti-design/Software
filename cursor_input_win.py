@@ -17,9 +17,11 @@ alvo e NÃO valida mesa — isso é do coordenador.
 - win32 é carregado preguiçosamente (lazy): o módulo importa no lab Linux; o
   backend real só é construído quando usado sem um backend injetado (testes).
 
-NUNCA aponte este adaptador para o PPPoker nesta fase. Use um app de teste.
+Valide primeiro com VERIFICAR_EXECUTOR_HU.bat, na janela propria de teste.
+O contrato operacional e as provas do efeito pertencem ao executor chamador.
 """
 import time
+import re
 
 MOUSEEVENTF_MOVE = 0x0001
 MOUSEEVENTF_LEFTDOWN = 0x0002
@@ -48,7 +50,13 @@ def _build_real_backend():
                     ('time', wintypes.DWORD), ('dwExtraInfo', ULONG_PTR)]
 
     class _U(ctypes.Union):
-        _fields_ = [('mi', MOUSEINPUT)]
+        pass
+
+    class KEYBDINPUT(ctypes.Structure):
+        _fields_ = [('wVk', wintypes.WORD), ('wScan', wintypes.WORD),
+                    ('dwFlags', wintypes.DWORD), ('time', wintypes.DWORD), ('dwExtraInfo', ULONG_PTR)]
+
+    _U._fields_ = [('mi', MOUSEINPUT), ('ki', KEYBDINPUT)]
 
     class INPUT(ctypes.Structure):
         _fields_ = [('type', wintypes.DWORD), ('u', _U)]
@@ -58,16 +66,31 @@ def _build_real_backend():
     user32.GetSystemMetrics.argtypes = (ctypes.c_int,)
     user32.GetSystemMetrics.restype = ctypes.c_int
     user32.GetCursorPos.argtypes = (ctypes.POINTER(wintypes.POINT),)
+    user32.SetThreadDpiAwarenessContext.argtypes = (ctypes.c_void_p,)
+    user32.SetThreadDpiAwarenessContext.restype = ctypes.c_void_p
+    user32.GetForegroundWindow.restype = wintypes.HWND
+    user32.SetForegroundWindow.argtypes = (wintypes.HWND,)
+    user32.GetAncestor.argtypes = (wintypes.HWND, wintypes.UINT)
+    user32.GetAncestor.restype = wintypes.HWND
+
+    def physical_call(fn):
+        previous = user32.SetThreadDpiAwarenessContext(ctypes.c_void_p(-4))
+        if not previous:
+            raise CursorInputError('INPUT_DPI_CONTEXT_UNAVAILABLE')
+        try:
+            return fn()
+        finally:
+            user32.SetThreadDpiAwarenessContext(previous)
 
     class _Real:
         def virtual_bounds(self):
             # SM_XVIRTUALSCREEN=76,77,78,79 (x,y,cx,cy do desktop virtual)
-            return (user32.GetSystemMetrics(76), user32.GetSystemMetrics(77),
-                    user32.GetSystemMetrics(78), user32.GetSystemMetrics(79))
+            return physical_call(lambda: (user32.GetSystemMetrics(76), user32.GetSystemMetrics(77),
+                    user32.GetSystemMetrics(78), user32.GetSystemMetrics(79)))
 
         def get_cursor_pos(self):
             p = wintypes.POINT()
-            if not user32.GetCursorPos(ctypes.byref(p)):
+            if not physical_call(lambda: user32.GetCursorPos(ctypes.byref(p))):
                 raise CursorInputError('GetCursorPos falhou')
             return (p.x, p.y)
 
@@ -79,8 +102,22 @@ def _build_real_backend():
                 if abs_xy is not None and (flags & MOUSEEVENTF_MOVE):
                     mi.dx, mi.dy = abs_xy
                 arr[i] = INPUT(0, _U(mi))   # type 0 = INPUT_MOUSE
-            sent = user32.SendInput(n, arr, ctypes.sizeof(INPUT))
+            sent = physical_call(lambda: user32.SendInput(n, arr, ctypes.sizeof(INPUT)))
             return int(sent)
+
+        def is_foreground(self, hwnd):
+            root = user32.GetAncestor(hwnd, 2) or hwnd
+            return user32.GetForegroundWindow() == root
+
+        def activate(self, hwnd):
+            user32.SetForegroundWindow(user32.GetAncestor(hwnd, 2) or hwnd)
+            return self.is_foreground(hwnd)
+
+        def keyboard(self, events):
+            arr = (INPUT * len(events))()
+            for i, (vk, scan, flags) in enumerate(events):
+                arr[i] = INPUT(1, _U(ki=KEYBDINPUT(vk, scan, flags, 0, 0)))
+            return int(physical_call(lambda: user32.SendInput(len(events), arr, ctypes.sizeof(INPUT))))
 
     return _Real()
 
@@ -107,6 +144,40 @@ class WindowsCursorInput:
 
     def cursor_pos(self):
         return self.backend.get_cursor_pos()
+
+    def is_foreground(self, hwnd):
+        return self.backend.is_foreground(hwnd)
+
+    def activate_window(self, hwnd):
+        return self.backend.activate(hwnd)
+
+    def write_amount(self, text, *, cancel_check=None):
+        """Numeric BB field only. Ctrl is released even if SelectAll fails."""
+        if not re.fullmatch(r'\d+(?:[.,]\d+)?', text or '') or len(text) > 20:
+            raise CursorInputError('INVALID_NUMERIC_ENTRY')
+        accepted, requested, ctrl_attempted = 0, 0, False
+        try:
+            if cancel_check and cancel_check():
+                return dict(ok=False, reason='CANCELLED_BEFORE_TYPING', accepted=0)
+            events = [(0x11, 0, 0), (0x41, 0, 0), (0x41, 0, 2), (0x11, 0, 2)]
+            requested += 4
+            ctrl_attempted = True
+            n = self.backend.keyboard(events)
+            accepted += n
+            if n != 4:
+                return dict(ok=False, reason='SELECT_ALL_NOT_ACCEPTED', accepted=accepted)
+            for ch in text:
+                if cancel_check and cancel_check():
+                    return dict(ok=False, reason='CANCELLED_DURING_TYPING', accepted=accepted)
+                requested += 2
+                n = self.backend.keyboard([(0, ord(ch), 4), (0, ord(ch), 6)])
+                accepted += n
+                if n != 2:
+                    return dict(ok=False, reason='TEXT_INPUT_NOT_ACCEPTED', accepted=accepted)
+            return dict(ok=True, accepted=accepted, requested=requested)
+        finally:
+            if ctrl_attempted:
+                self.backend.keyboard([(0x11, 0, 2)])
 
     def normalize_abs(self, x, y, bounds=None):
         """(nx, ny) em 0..65535 sobre o desktop virtual. Coords negativas OK."""

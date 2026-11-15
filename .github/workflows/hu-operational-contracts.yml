@@ -1,0 +1,45 @@
+name: HU operational contracts and owned Windows executor
+
+on:
+  push:
+    branches: [feat/hu-operational-integration-20261115]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  windows-owned:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    env:
+      PYTHONUTF8: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies for controlled tests
+        run: python -m pip install numpy==2.2.6 opencv-python==4.11.0.86 psutil==6.1.1 pytesseract==0.3.13
+      - name: Run contracts and native GDI on an owned Tk window
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force runtime/hu/ci | Out-Null
+          python -m unittest test_hu_operational test_cursor test_window_capture_engine test_window_capture_audit test_capture_windows_native test_raise_plan test_raise_sequencer -v *> runtime/hu/ci/contracts.txt
+          $code = $LASTEXITCODE
+          Get-Content runtime/hu/ci/contracts.txt
+          exit $code
+      - name: Exercise real SendInput only in our owned window
+        shell: pwsh
+        run: |
+          python verificar_executor_hu.py --windows-owned --output runtime/hu/ci/owned *> runtime/hu/ci/owned-console.txt
+          $code = $LASTEXITCODE
+          Get-Content runtime/hu/ci/owned-console.txt
+          exit $code
+      - name: Save evidence (owned window, not PPPoker)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hu-windows-owned-evidence
+          path: runtime/hu/ci/
+          retention-days: 14

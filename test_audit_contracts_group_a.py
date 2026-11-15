@@ -69,9 +69,8 @@ Hero: calls 10
 
 
 class GroupAContractTests(unittest.TestCase):
-    """Contratos do Grupo A. expectedFailure até a Entrega A/C corrigir o código de hoje."""
+    """Regressoes de contratos antes violados no Grupo A."""
 
-    @unittest.expectedFailure
     def test_raise_above_menu_is_not_all_in(self):
         # A4: alvo 6x com presets até 4x NÃO deve virar SHOVE (all-in) sem intenção
         # ALL_IN — "acima do maior preset" não prova all-in (falta o passo do slider).

@@ -23,12 +23,12 @@ class PlanRaiseTests(unittest.TestCase):
         self.assertEqual(p['expected_mult'], 2.5)
 
     def test_shove_acima_do_maior_preset(self):
-        p = plan_raise(25.0, PRESETS)           # >> 4x -> shove (barra disponível)
+        p = plan_raise(25.0, PRESETS, explicit_all_in=True)
         self.assertEqual(p['kind'], 'SHOVE')
         self.assertEqual(p['over'], 21.0)
 
     def test_shove_sem_slider_vira_abstain(self):
-        p = plan_raise(25.0, PRESETS, slider_available=False)
+        p = plan_raise(25.0, PRESETS, slider_available=False, explicit_all_in=True)
         self.assertEqual(p['kind'], 'ABSTAIN')
         self.assertEqual(p['reason'], 'SHOVE_SEM_SLIDER')
 

@@ -1,0 +1,8 @@
+{
+  "refs/heads/feat/hu-policy-engine-20261115": "82395c1d66de2ec7090504b8fdf9d26e5a7fc785",
+  "refs/heads/fix/audit-a1-a2-safety-gates": "e51718ce26858de42c73e1313dc5ac12e4c61d73",
+  "refs/heads/main": "205dbc7ffbfb5f103dc342f4dfce407a3a27915c",
+  "new_branch": "feat/hu-operational-integration-20261115",
+  "base_commit": "82395c1d66de2ec7090504b8fdf9d26e5a7fc785",
+  "workspace_isolated": true
+}

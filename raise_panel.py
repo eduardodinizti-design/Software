@@ -22,9 +22,115 @@ from table_reading.ocr_runtime import image_to_string
 _MULT = re.compile(r'(\d+(?:[.,]\d+)?)\s*[xX×]')
 
 
+def parse_preset(text):
+    text = (text or '').strip().replace(' ', '').replace(',', '.').casefold()
+    mult = parse_multiplier(text)
+    if mult is not None:
+        return dict(basis='multiplier', mult=mult)
+    if text in ('pot', 'pote'):
+        return dict(basis='pot', fraction=1.0)
+    if text in ('allin', 'all-in', 'shove'):
+        return dict(basis='all_in')
+    fraction = re.fullmatch(r'(\d+)/(\d+)', text)
+    if fraction and int(fraction[2]):
+        return dict(basis='pot', fraction=int(fraction[1]) / int(fraction[2]))
+    percent = re.fullmatch(r'(\d+(?:\.\d+)?)%', text)
+    if percent:
+        return dict(basis='pot', fraction=float(percent[1]) / 100)
+    return {}
+
+
+def _white_ink(region):
+    hsv = cv2.cvtColor(region, cv2.COLOR_BGR2HSV)
+    return np.uint8((hsv[:, :, 1] < 85) & (hsv[:, :, 2] > 165)) * 255
+
+
+def _last_glyph(ink):
+    n, _, stats, _ = cv2.connectedComponentsWithStats(ink)
+    components = [tuple(int(v) for v in row) for row in stats[1:] if row[4] >= 4]
+    if not components:
+        return None
+    x, y, w, h, _ = max(components, key=lambda v: v[0] + v[2])
+    body_height = max(v[3] for v in components)
+    if not .75 <= w / h <= 1.3 or h < .45 * body_height:
+        return None
+    glyph = cv2.resize(ink[y:y+h, x:x+w], (24, 24), interpolation=cv2.INTER_NEAREST) > 0
+    return x, glyph
+
+
+def _recover_multiplier(region, donors):
+    """OCR '%' versus the actual x glyph: verify x against this frame's donors.
+
+    Never reinterpret percent as multiplier based on the number or slot.
+    Require glyph similarity AND two independent numeric OCR modes.
+    """
+    ink = _white_ink(region)
+    last = _last_glyph(ink)
+    if last is None or not donors:
+        return None
+    x, glyph = last
+    similarities = [float((glyph & other).sum()) / max(1, int((glyph | other).sum())) for other in donors]
+    if max(similarities) < .80:
+        return None
+    gray = cv2.cvtColor(region, cv2.COLOR_BGR2GRAY)
+    up = cv2.resize(gray, None, fx=3, fy=3, interpolation=cv2.INTER_CUBIC)
+    _, clean = cv2.threshold(up, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    values = []
+    for mode in (7, 6):
+        raw = image_to_string(clean, config='--psm %d' % mode).strip().replace(' ', '')
+        number = re.fullmatch(r'(\d+(?:[.,]\d+)?)[%xX×]+', raw)
+        if not number:
+            return None
+        values.append(float(number[1].replace(',', '.')))
+    return values[0] if values[0] == values[1] else None
+
+
+def parse_selected_amount(text):
+    # A trailing vertical caret can be OCR'd as I/l; no other label is ignored.
+    m = re.fullmatch(r'\s*(\d+(?:[.,]\d+)?)\s*BB\s*[|Il]?\s*', text or '', re.I)
+    if not m:
+        return None
+    digits = m[1].replace(',', '.')
+    decimals = len(digits.split('.')[1]) if '.' in digits else 0
+    return dict(value_bb=float(digits), quantum_bb=10 ** -decimals, unit='BB')
+
+
+def read_selected_amount(crop, *, amount_box=(.76, .425, .205, .06), _ocr=None):
+    if not isinstance(crop, np.ndarray) or crop.ndim != 3:
+        return dict(status='AMOUNT_UNREADABLE')
+    h, w = crop.shape[:2]
+    x, y, bw, bh = amount_box
+    box = [round(x*w), round(y*h), round(bw*w), round(bh*h)]
+    px, py, pw, ph = box
+    region = crop[py:py+ph, px:px+pw]
+    if region.size == 0:
+        return dict(status='AMOUNT_UNREADABLE')
+    hsv = cv2.cvtColor(region, cv2.COLOR_BGR2HSV)
+    white = (hsv[:, :, 1] < 85) & (hsv[:, :, 2] > 165)
+    yellow = (hsv[:, :, 0] > 18) & (hsv[:, :, 0] < 40) & (hsv[:, :, 1] > 90) & (hsv[:, :, 2] > 150)
+    ink = np.uint8(white | yellow)*255
+    n, _, components, _ = cv2.connectedComponentsWithStats(ink)
+    bodies = [row for row in components[1:] if row[4] >= 8
+              and row[3] < .9*ink.shape[0] and row[2] < .8*ink.shape[1]]
+    if bodies:
+        max_height = max(row[3] for row in bodies)
+        text = [row for row in bodies if row[3] >= .55*max_height]
+        top = max(0, min(row[1] for row in text) - 3)
+        bottom = min(ink.shape[0], max(row[1]+row[3] for row in text) + 3)
+        ink = ink[top:bottom]
+    clean = cv2.resize(255 - ink, None, fx=3, fy=3, interpolation=cv2.INTER_NEAREST)
+    clean = cv2.copyMakeBorder(clean, 12, 12, 12, 12, cv2.BORDER_CONSTANT, value=255)
+    raw = [(_ocr(clean, mode) if _ocr else image_to_string(clean, config='--psm %d' % mode)).strip() for mode in (7, 6)]
+    values = [parse_selected_amount(r) for r in raw]
+    if values[0] is None or values[0] != values[1]:
+        return dict(status='AMOUNT_UNREADABLE', raw=raw, box=box)
+    return dict(status='AMOUNT_CONFIRMED', confidence='high', source='ocr_consensus_7_6',
+                semantics='RAISE_TO_BB', raw=raw, box=box, **values[0])
+
+
 def parse_multiplier(text):
     """Multiplicador do rótulo ('2.5x' -> 2.5), ou None."""
-    m = _MULT.search((text or '').replace(' ', ''))
+    m = _MULT.fullmatch((text or '').strip().replace(' ', ''))
     if not m:
         return None
     try:
@@ -61,7 +167,7 @@ def read_raise_panel(crop, *, _ocr=None):
                       if st[i, 2] > 0.07 * w and st[i, 3] > 0.25 * band.shape[0])
 
     ocr = _ocr or (lambda img: ' '.join(image_to_string(img, config='--psm 7').split()))
-    presets = []
+    presets, regions = [], []
     for (x, y, bw, bh) in boxes_of(green):
         roi = band[y + 6:y + bh - 6, x + 6:x + bw - 6]
         label = None
@@ -70,8 +176,23 @@ def read_raise_panel(crop, *, _ocr=None):
             up = cv2.resize(g, None, fx=3, fy=3, interpolation=cv2.INTER_CUBIC)
             _, th = cv2.threshold(up, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
             label = ocr(th)
-        presets.append(dict(box=[x, y + oy, bw, bh], label=label,
-                            mult=parse_multiplier(label)))
+        preset = dict(box=[x, y + oy, bw, bh], label=label, mult=parse_multiplier(label))
+        preset.update(parse_preset(label))
+        presets.append(preset)
+        regions.append(roi)
+    if _ocr is None:
+        donors = []
+        for preset, region in zip(presets, regions):
+            if preset.get('mult') is not None and region.size:
+                last = _last_glyph(_white_ink(region))
+                if last is not None:
+                    donors.append(last[1])
+        for preset, region in zip(presets, regions):
+            if preset.get('mult') is None and region.size:
+                recovered = _recover_multiplier(region, donors)
+                if recovered is not None:
+                    preset.update(mult=recovered, basis='multiplier', label='%sx' % recovered,
+                                  source='same_frame_x_glyph_and_numeric_ocr_consensus')
     conf_boxes = boxes_of(yellow)
     confirm = (dict(box=[conf_boxes[0][0], conf_boxes[0][1] + oy,
                          conf_boxes[0][2], conf_boxes[0][3]]) if conf_boxes else None)
@@ -80,6 +201,7 @@ def read_raise_panel(crop, *, _ocr=None):
         result['status'] = 'EXPERIMENTAL_RAISE_PANEL'
     result['presets'] = presets
     result['confirm'] = confirm
+    result['selected'] = read_selected_amount(crop) if _ocr is None and confirm else None
     return result
 
 

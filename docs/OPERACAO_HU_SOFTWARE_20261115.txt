@@ -1,0 +1,160 @@
+SOFTWARE ORIGINAL — INTEGRACAO HU E VERIFICACAO NO WINDOWS
+Entrega de 15/11/2026
+Branch: feat/hu-operational-integration-20261115
+
+1. O QUE BAIXAR E PRESERVAR
+
+Baixe o checkout COMPLETO desta branch, em uma pasta nova. O trabalho esta no
+Software original; nao e uma atualizacao do Clone privado. Preserve a pasta,
+ambiente Python, ranges, calibracoes e logs da instalacao antiga.
+
+ZIP:
+https://github.com/eduardodinizti-design/Software/archive/refs/heads/feat/hu-operational-integration-20261115.zip
+
+Nao copie somente operar_mesa.py: ele depende dos leitores e dos novos modulos.
+O pacote NVT usado no notebook continua sendo o seu arquivo local. Esta entrega
+nao presume qual arquivo --ranges/--deep voce carregou nem o substitui.
+
+2. AMBIENTE
+
+Windows 10 Pro, Python 3.12 de 64 bits, dependencias de requirements.txt e
+Tesseract English para leitura do PPPoker. A Intel HD 620 serve a captura; o
+executor nao exige GPU dedicada. O desempenho com 6 mesas ainda precisa ser
+medido no seu i7/8 GB/1366x768. Este teste nao comprova essa capacidade.
+
+Se o Python anterior ja funciona, voce pode usa-lo pelo caminho completo.
+Para criar um ambiente separado nesta NOVA pasta, no terminal dela:
+
+py -3.12 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+
+3. PRIMEIRO TESTE — JANELA PROPRIA, SEM ACIONAR O PPPOKER
+
+Encerre outros executores do bot para eles nao disputarem o cursor.
+Abra VERIFICAR_EXECUTOR_HU.bat com duplo clique. Ele usa .venv, se existir;
+caso contrario usa py -3.12. Nao depende de Node, navegador ou painel web.
+
+O verificador primeiro captura uma janela de teste com GDI. Depois abre uma
+janela propria e testa CHECK, CALL, FOLD, BET, RAISE e ALL-IN com SendInput real.
+As frequencias e situacoes dessa janela sao sinteticas: servem para testar o
+transporte e o registro. O valor selecionado e lido do widget, sem OCR.
+
+Durante o teste, deixe o cursor concluir os movimentos. Ctrl+Alt+P pausa,
+Ctrl+Alt+D desabilita; fechar a janela encerra o teste. A janela de teste inicia
+RUNNING porque foi explicitamente aberta para verificar os cliques nela.
+
+O resultado aparecera em:
+runtime\hu\verificacao-AAAAmmddTHHMMSSZ\resultado.json
+
+O programa cria runtime automaticamente nesta pasta nova. Tambem grava
+captura-janela-propria.txt, um banco SQLite e as maos da janela propria.
+PASS exige captura nativa e seis casos DONE com efeito observado. FAIL inclui
+o motivo, as etapas e a evidencia de entrada. Nao renomeie FAIL para aprovado.
+O campo pppoker_windows_validated permanece false: a janela nao e o PPPoker.
+
+4. SEGUNDO TESTE — OBSERVAR O PPPOKER SEM CLIQUES
+
+Abra sua mesa MTT NLH e deixe-a visivel, sem minimizar ou cobrir o cliente.
+Liste as janelas atuais:
+
+.\.venv\Scripts\python.exe testar_windows.py --listar
+
+Use o HWND mostrado para a janela que contem a mesa. O exemplo abaixo usa um
+HWND ficticio e um caminho de ranges de exemplo; substitua pelos seus valores.
+
+.\.venv\Scripts\python.exe verificar_executor_hu.py --observe-pppoker 0x123456 --ranges "C:\Ranges\nvt-ranges-validados.json" --policy "docs\software-hu-engine-20261115\policy-flop-btn-bb-fixed.json.gz" --profile "docs\software-hu-operational-20261115\perfil-btn-bb-referencia.json" --frames 120 --interval 0.5
+
+Acrescente --deep "CAMINHO_REAL\nvt-ranges-deep.json" se esse for o pacote
+adicional que voce utiliza. A identidade dos arquivos fica registrada.
+
+O detector separa o lobby pelos badges de buy-in. Com uma mesa encontrada, o
+recorte e escolhido automaticamente. Havendo mais de uma, o erro lista as
+chaves: use --crop-key CHAVE para selecionar o recorte pretendido.
+Isso seleciona a regiao de captura; nao cria alternativas de modalidade.
+
+Este comando nao importa nem chama o adaptador de gameplay. Registra cartas,
+board, lacunas, estados confirmados e maos em JSON/SQLite. Nenhuma imagem e
+gravada continuamente. O log imprime o diretorio absoluto do resultado.
+
+5. ENTENDER A COBERTURA ANTES DE ARMAR
+
+A politica de exemplo e uma REFERENCIA de um estado especifico:
+BTN vs BB, chip EV, fase mid, 9 jogadores originalmente distribuidos;
+flop As 7d 2c, pote 5,5 BB e stacks restantes de 22,5/22,5 BB.
+Perfil: open 2,5 BB, sem ante, SB morto de 0,5 BB, pote incluindo apostas.
+A exportacao de ranges completos dessa politica cobre somente o flop.
+
+Ela nao transforma todos os boards/stacks do PPPoker nesse estado. Uma mesa
+8-max, outro flop, ante, stack, modo PKO/ICM ou tamanho fora da arvore precisa
+de um modelo correspondente. Esses casos produzem diagnostico de cobertura.
+A politica pequena de turn/river da entrega anterior e um subgame 2x2 de
+laboratorio; nao a utilize como ranges completos de uma populacao real.
+
+O historico confirma a chegada por leituras separadas dos blinds, open e flop,
+conservacao de fichas e duas capturas independentes. Comece a observar ANTES da
+mao. Entrar somente no flop pode deixar HISTORY_PREFLOP_ARRIVAL_NOT_CONFIRMED.
+O coletor aceita uma unica sequencia legal compativel com as leituras. Mais de
+uma sequencia gera HISTORY_AMBIGUOUS_LEGAL_PATHS; nao escolhe a mais conveniente.
+
+6. EXECUTOR DO NOVO MOTOR
+
+Para uma politica compativel com a mesa e apos verificar o transporte:
+
+.\.venv\Scripts\python.exe operar_mesa.py --hwnd 0x123456 --ranges "C:\Ranges\nvt-ranges-validados.json" --postflop-policy "docs\software-hu-engine-20261115\policy-flop-btn-bb-fixed.json.gz" --hu-profile "docs\software-hu-operational-20261115\perfil-btn-bb-referencia.json" --execute-postflop --overlay --intervalo 0.25 --max-tables 1
+
+Esse comando e DRY-RUN: imprime o plano sem enviar input. Para enviar input,
+acrescente --arm. Comeca PAUSADO: Ctrl+Alt+R retoma, Ctrl+Alt+P pausa e
+Ctrl+Alt+D desabilita. Ctrl+C encerra. --auto-arm tambem existe, mas nao e
+necessario para o verificador e nao aparece no exemplo acima.
+
+Sem --execute-postflop o caminho HU permanece de observacao. --arm tambem
+ativa o executor preflop legado: ele nao se torna novo por carregar a politica
+HU. O verificador passivo do item 4 e o caminho para observar sem gameplay.
+
+Nao combine --antecipar com o coletor HU. Nesta entrega essa opcao reutiliza
+snapshots; o historico HU exige capturas independentes e as acoes entre ruas.
+Ler fora da vez do hero agora faz parte do modo HU; o calculo heuristico pesado
+e dispensado nessas observacoes. Presets 1/3, 1/2, 2/3 e pote sao reconhecidos
+quando seus rotulos existem. Todo preset precisa de readback do valor antes
+da confirmacao. Sem preset compativel, o HU tenta o campo numerico e confere
+a unidade BB, a semantica raise-to e o valor relido; nao arrasta para all-in
+por uma decisao ter ultrapassado o maior preset.
+
+7. HISTORICO E EXPORTACAO
+
+Diario padrao: runtime\hu\hand-history.sqlite3. O caminho absoluto aparece no
+startup. Nele ficam testemunho preflop, modelo publico, acoes, board, leituras
+que sustentam a confirmacao, fontes, candidatos de decisao e resultado do input.
+Ha retencao de 10.000 maos encerradas; imagens nao fazem parte deste diario.
+
+Para listar as ultimas maos:
+.\.venv\Scripts\python.exe exportar_mao_hu.py
+
+Para exportar, use os valores de table e hand mostrados pela listagem:
+.\.venv\Scripts\python.exe exportar_mao_hu.py --table "TABLE_REAL" --hand "HAND_REAL" --output "runtime\hu\mao-exportada.json"
+
+Se usar o banco do verificador passivo, acrescente --journal "CAMINHO\observacao.sqlite3".
+A exportacao verifica a cadeia de hashes e inclui completeness, lacunas e
+execution_claims. O formato e JSON proprio; nao e uma promessa de importacao
+nativa pelo Hand2Note.
+
+DONE significa efeito observado. UNKNOWN_RESULT significa que houve input
+possivel, mas faltou prova do efeito: nao repete automaticamente apos reinicio.
+CANCELLED_BEFORE_INPUT permite tentar novamente com uma leitura atual, pois
+nenhum clique do fluxo foi enviado. Um ACK do Windows ou o simples sumico da
+linha de botoes nao certifica sozinho uma acao. CHECK/FOLD precisam do historico
+confirmado; acoes que comprometem fichas tambem podem ter a propria contribuicao
+confirmada por duas leituras de stack/pote, sem inventar a resposta do vilao.
+
+8. MATERIAL A CONFERIR NO TESTE REAL
+
+Confira resultado.json e os arquivos de mao/observacao do mesmo diretorio.
+No PPPoker, a aprovacao exige cartas/posicoes corretas, chegada HU observada,
+politica compativel, quantia final correta, efeito confirmado e pausa funcionando.
+O teste deve incluir seu DPI e a resolucao 1366x768. Selecao/entrada de valor no
+painel e o ID oculto exigem conferir o lease curto com cartas/board frescos.
+
+Persistem como trabalho separado: catalogo amplo de modelos e ranges de chegada
+ligados aos seus exports HRC, PKO/ICM, multiway e medicao de latencia simultanea.
+O caso visual 8h lido como 3h no mesmo tema de cores continua sem correcao
+demonstrada. Nao foi alterado por esta integracao.

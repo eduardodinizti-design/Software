@@ -1,0 +1,22 @@
+{
+  "policy_sha256": "f77e72b0202b8a9c7bacd47735f1a65b91b9a47477d0094f8cc0b413421df11c",
+  "quantum_bb": 0.1,
+  "confirmations": 2,
+  "max_snapshot_age_s": 3.0,
+  "max_path_actions": 4,
+  "max_search_nodes": 512,
+  "ante_pot_bb": 0.0,
+  "preflop_aggressor": 0,
+  "require_preflop_witness": true,
+  "amount_box": [
+    0.76,
+    0.425,
+    0.205,
+    0.06
+  ],
+  "amount_decimals": 3,
+  "decimal_separator": ",",
+  "max_size_error_bb": 0.05,
+  "pot_includes_bets": true,
+  "name": "blue-portrait-bb-reference-v1"
+}
