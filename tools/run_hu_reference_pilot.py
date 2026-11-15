@@ -55,6 +55,18 @@ def progress(bank):
     return out
 
 
+def report_worker_failure(output,bank):
+    paths=[output/'driver.txt',*sorted((bank/'temporary').glob('*/worker.log'))[:3]]
+    records=[]
+    for path in paths:
+        try:
+            with path.open('rb') as source:
+                source.seek(0,2);source.seek(max(0,source.tell()-5000));tail=source.read().decode(errors='replace')
+            records.append(dict(path=str(path.relative_to(output)),tail=tail))
+        except FileNotFoundError:pass
+    notice(dict(event='WORKER_FAILED',diagnostics=records))
+
+
 def main(argv=None):
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--binary',required=True);p.add_argument('--resources',required=True)
@@ -92,7 +104,9 @@ def main(argv=None):
         except BaseException:
             from strategy.batch_jobs import terminate_tree
             terminate_tree(worker);raise
-    if worker.returncode:raise SystemExit('Pilot failed; reports and diagnostics retained at '+str(output))
+    if worker.returncode:
+        report_worker_failure(output,bank)
+        raise SystemExit('Pilot failed; reports and diagnostics retained at '+str(output))
     index=json.loads((bank/'library.json').read_text())
     if len(index['entries'])!=1:raise SystemExit('Expected exactly one complete policy')
     entry=index['entries'][0];report=json.loads((bank/'reports'/(entry['case_id']+'.json')).read_text())

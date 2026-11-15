@@ -1,0 +1,89 @@
+name: HU next16 recover one full policy
+on:
+  push:
+    branches: [feat/hu-next16-20261115]
+    paths: [.github/workflows/hu-next16-retry.yml]
+  workflow_dispatch:
+    inputs:
+      ordinal:
+        description: Published plan ordinal to recover
+        type: number
+        default: 15
+      catalog_only:
+        description: Publish a new checked catalog without recalculating
+        type: boolean
+        default: false
+permissions:
+  contents: write
+  statuses: write
+concurrency:
+  group: hu-next16-retry-${{ inputs.ordinal || 15 }}
+  cancel-in-progress: false
+env:
+  PLAN: docs/software-hu-next16-20261115/plan.json
+  PYTHONUNBUFFERED: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  OMP_NUM_THREADS: '4'
+jobs:
+  recover:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install numpy==2.2.6
+      - name: Build the unchanged native solver separately
+        if: inputs.catalog_only != true
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libfmt-dev zlib1g-dev
+          python -m pip install opencv-python-headless==4.11.0.86 psutil==6.1.1 pytesseract==0.3.13
+          git clone https://github.com/bupticybee/TexasSolver.git "$RUNNER_TEMP/TexasSolver"
+          git -C "$RUNNER_TEMP/TexasSolver" checkout 02c8021ee1307c18aa1e76b772c6ae1451601bc6
+          python tools/build_texassolver_console.py --source "$RUNNER_TEMP/TexasSolver" --fmt-include /usr/include --out "$RUNNER_TEMP/hu-native/solver-stream" --stream-export
+      - name: Reproduce the fixed journal race and verify native closure and cleanup
+        if: inputs.catalog_only != true
+        run: |
+          HU_STREAM_TEST_BINARY="$RUNNER_TEMP/hu-native/solver-stream" HU_STREAM_TEST_RESOURCES="$RUNNER_TEMP/TexasSolver/resources" python -m unittest test_hu_batches.QueueFailureTests test_hu_batches.NativeEndToEndTests -q
+      - name: Recover only the requested policy and preserve completed cases
+        if: inputs.catalog_only != true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HU_GITHUB_RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: python tools/hu_batch16.py case --plan "$PLAN" --ordinal "${{ inputs.ordinal || 15 }}" --binary "$RUNNER_TEMP/hu-native/solver-stream" --resources "$RUNNER_TEMP/TexasSolver/resources" --output runtime/hu-next16-retry-case
+      - name: Publish a new catalog without replacing the original partial evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python tools/hu_batch16.py catalog --plan "$PLAN" --output runtime/hu-next16-retry-catalog
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: hu-next16-retry-${{ inputs.ordinal || 15 }}-evidence-a${{ github.run_attempt }}
+          path: |
+            runtime/hu-next16-retry-case/**/*.json
+            runtime/hu-next16-retry-case/**/*.txt
+            runtime/hu-next16-retry-case/**/*.log
+            runtime/hu-next16-retry-catalog/*
+          retention-days: 14
+      - name: Select a completed bank or native export for recovery after failure
+        id: recovery
+        if: failure()
+        run: |
+          python - <<'PY'
+          import os,pathlib
+          root=pathlib.Path('runtime/hu-next16-retry-case/study')
+          choices=('delivery/parts/*','delivery/*.zip','bank/policies/*.sqlite','bank/temporary/*/native/strategy.jsonl.gz')
+          for pattern in choices:
+              if any(root.glob(pattern)):
+                  with open(os.environ['GITHUB_OUTPUT'],'a') as out:out.write('path='+str(root/pattern)+'\n')
+                  break
+          PY
+      - uses: actions/upload-artifact@v4
+        if: failure() && steps.recovery.outputs.path != ''
+        with:
+          name: hu-next16-retry-${{ inputs.ordinal || 15 }}-recovery-a${{ github.run_attempt }}
+          path: ${{ steps.recovery.outputs.path }}
+          compression-level: 0
+          retention-days: 14
