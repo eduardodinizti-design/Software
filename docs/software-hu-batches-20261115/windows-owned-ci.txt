@@ -146,7 +146,7 @@
 2026-11-15T17:57:05.7181379Z Downloading pillow-13.0.0-cp312-cp312-win_amd64.whl (7.3 MB)
 2026-11-15T17:57:05.8034337Z    ---------------------------------------- 7.3/7.3 MB 89.9 MB/s  0:00:00
 2026-11-15T17:57:06.1341312Z Installing collected packages: psutil, Pillow, numpy, pytesseract, opencv-python
-2026-11-15T17:57:11.1283210Z 
+2026-11-15T17:57:11.1283210Z
 2026-11-15T17:57:11.1299716Z Successfully installed Pillow-13.0.0 numpy-2.2.6 opencv-python-4.11.0.86 psutil-6.1.1 pytesseract-0.3.13
 2026-11-15T17:57:11.3009974Z ##[group]Run New-Item -ItemType Directory -Force runtime/hu/ci | Out-Null
 2026-11-15T17:57:11.3010484Z [36;1mNew-Item -ItemType Directory -Force runtime/hu/ci | Out-Null[0m
@@ -400,10 +400,10 @@
 2026-11-15T17:57:44.7240918Z test_paused_does_not_click (test_raise_sequencer.RaiseSequencerTest.test_paused_does_not_click) ... ok
 2026-11-15T17:57:44.7241774Z test_read_failure_in_verify_is_not_confirmed (test_raise_sequencer.RaiseSequencerTest.test_read_failure_in_verify_is_not_confirmed) ... ok
 2026-11-15T17:57:44.7242488Z test_unknown_hand_aborts_no_click (test_raise_sequencer.RaiseSequencerTest.test_unknown_hand_aborts_no_click) ... ok
-2026-11-15T17:57:44.7242803Z 
+2026-11-15T17:57:44.7242803Z
 2026-11-15T17:57:44.7242930Z ----------------------------------------------------------------------
 2026-11-15T17:57:44.7243182Z Ran 223 tests in 32.241s
-2026-11-15T17:57:44.7243298Z 
+2026-11-15T17:57:44.7243298Z
 2026-11-15T17:57:44.7243359Z OK (skipped=3)
 2026-11-15T17:57:44.7579113Z ##[group]Run python verificar_executor_hu.py --windows-owned --output runtime/hu/ci/owned *> runtime/hu/ci/owned-console.txt
 2026-11-15T17:57:44.7579909Z [36;1mpython verificar_executor_hu.py --windows-owned --output runtime/hu/ci/owned *> runtime/hu/ci/owned-console.txt[0m
@@ -1406,4 +1406,3 @@
 2026-11-15T17:57:53.8631418Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
 2026-11-15T17:57:54.3519118Z Cleaning up orphan processes
 2026-11-15T17:57:54.3751209Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
-
