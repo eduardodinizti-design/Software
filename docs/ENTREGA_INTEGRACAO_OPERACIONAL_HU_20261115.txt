@@ -118,14 +118,14 @@ conta como duas provas monetarias.
 
 EVIDENCIAS E TESTES
 
-Regressao selecionada: 475 testes, 472 aprovados, 0 falhas, 0 erros, 3 pulados.
+Regressao selecionada: 478 testes, 475 aprovados, 0 falhas, 0 erros, 3 pulados.
 Dois testes de OCR do lobby nao tinham o crop especifico esperado; o terceiro
 exige Windows para capturar uma janela Tk nativa. Nao foram contados como
 validacao real. Modulos, motivos e log completo:
 docs/software-hu-operational-20261115/regressao.json
 docs/software-hu-operational-20261115/regressao.txt
 
-46 testes novos de integracao operacional cobrem entrada por leituras, chegada
+49 testes novos de integracao operacional cobrem entrada por leituras, chegada
 preflop, multiplas ruas, recuperacao apos reinicio, concorrencia entre claims,
 historia incompleta, apostas fora da arvore, valor errado, pausa, foco,
 intervencao, mudanca de mao/processo/geometria e ACK sem efeito.
@@ -169,7 +169,24 @@ e da validacao no notebook: mesmo um PASS nao certifica PPPoker/Unity, o Windows
 10 do usuario, seu DPI ou sua resolucao. O proximo passo no notebook e executar
 o BAT e conferir o JSON e a observacao real.
 
-Execucoes da workflow:
+O teste nativo tambem foi executado em Windows Server 2025 do GitHub, Python
+3.12.10: captura GDI aprovada e CHECK, CALL, FOLD, BET, RAISE e ALL-IN em DONE,
+com callbacks reais da janela propria. As quantias relidas foram 5,000 BB no
+BET, 15,000 BB no RAISE e 30,000 BB no ALL-IN. Nao houve PPPoker nesse runner.
+
+A primeira execucao revelou dois testes que apagavam a pasta temporaria antes
+de fechar o SQLite (WinError 32). A ordem de fechamento foi corrigida. Depois,
+o teste revelou ativacao de foco e atualizacao de texto assincronas: o backend
+agora aguarda ate 400 ms pelo foco realmente observado; o executor aguarda ate
+1 s pela quantia relida, dentro do prazo global, sem repetir input. O confirmar
+continua exigindo valor correto em outra revalidacao na chegada. Ha regressao
+para foco recusado e para atraso do campo sem redigitar a quantia.
+
+Evidencia nativa: docs/software-hu-operational-20261115/windows-ci/resultado.json
+Execucao aprovada, referente ao codigo de producao 2fe52ba:
+https://github.com/eduardodinizti-design/Software/actions/runs/43736745803
+
+Execucoes seguintes e artefatos da workflow:
 https://github.com/eduardodinizti-design/Software/actions/workflows/hu-operational-contracts.yml
 
 LIMITES E PENDENCIAS CONCRETAS

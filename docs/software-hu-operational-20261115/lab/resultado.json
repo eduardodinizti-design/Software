@@ -5,7 +5,7 @@
   "report_path": "/workspace/work/software-hu-operational-20261115/docs/software-hu-operational-20261115/lab/resultado.json",
   "status": "PASS",
   "scope": "LINUX_OR_WINDOWS_SYNTHETIC_INTEGRATION",
-  "tests_run": 46,
+  "tests_run": 49,
   "failures": 0,
   "errors": 0,
   "skipped": 0,

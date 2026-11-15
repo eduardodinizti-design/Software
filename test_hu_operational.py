@@ -380,6 +380,21 @@ class ExecutorTests(unittest.TestCase):
         self.assertIn('HU_SELECTED_AMOUNT_DIFFERS',out['reason'])
         self.assertFalse(w.sent);self.assertEqual(len(w.clicks),2)
 
+    def test_delayed_numeric_gui_update_is_read_again_without_retyping(self):
+        ex,w,_=self.rig('bet');original=w.scene;pending={};entries=[]
+        def typed(text,cancel_check=None):
+            entries.append(text);pending.update(target=float(text.replace(',','.')),reads=3)
+            return dict(ok=True)
+        def read(**kw):
+            if pending and w.panel:
+                pending['reads']-=1
+                if pending['reads']<=0:w.selected=pending['target']
+            return original(**kw)
+        w.write_amount=typed;ex.read=read
+        out=ex.execute(w.scene())
+        self.assertEqual(out['state'],'DONE',out)
+        self.assertEqual(len(entries),1);self.assertEqual(len(w.clicks),3)
+
     def test_paused_does_not_send_input(self):
         ex,w,bot=self.rig('bet');bot.running=False
         self.assertEqual(ex.execute(w.scene())['state'],'CANCELLED_BEFORE_INPUT')

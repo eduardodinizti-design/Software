@@ -1,4 +1,5 @@
 test_check_call_fold_bet_raise_and_allin_confirm_effect (test_hu_operational.ExecutorTests.test_check_call_fold_bet_raise_and_allin_confirm_effect) ... ok
+test_delayed_numeric_gui_update_is_read_again_without_retyping (test_hu_operational.ExecutorTests.test_delayed_numeric_gui_update_is_read_again_without_retyping) ... ok
 test_dry_run_does_not_focus_move_type_or_click (test_hu_operational.ExecutorTests.test_dry_run_does_not_focus_move_type_or_click) ... ok
 test_duplicate_effect_capture_cannot_confirm_money_twice (test_hu_operational.ExecutorTests.test_duplicate_effect_capture_cannot_confirm_money_twice) ... ok
 test_external_advice_cannot_replace_policy_selection (test_hu_operational.ExecutorTests.test_external_advice_cannot_replace_policy_selection) ... ok
@@ -36,6 +37,8 @@ test_export_detects_tampering_and_id_collision (test_hu_operational.JournalTests
 test_export_includes_unknown_input_instead_of_calling_the_hand_complete (test_hu_operational.JournalTests.test_export_includes_unknown_input_instead_of_calling_the_hand_complete) ... ok
 test_restart_does_not_repeat_unknown_input (test_hu_operational.JournalTests.test_restart_does_not_repeat_unknown_input) ... ok
 test_two_connections_only_one_retry_claim (test_hu_operational.JournalTests.test_two_connections_only_one_retry_claim) ... ok
+test_activation_request_without_real_foreground_never_authorizes_input (test_hu_operational.KeyboardEntryTests.test_activation_request_without_real_foreground_never_authorizes_input) ... ok
+test_async_foreground_activation_waits_for_observed_focus (test_hu_operational.KeyboardEntryTests.test_async_foreground_activation_waits_for_observed_focus) ... ok
 test_cancel_before_typing_sends_no_keyboard_input (test_hu_operational.KeyboardEntryTests.test_cancel_before_typing_sends_no_keyboard_input) ... ok
 test_non_numeric_text_does_not_reach_keyboard (test_hu_operational.KeyboardEntryTests.test_non_numeric_text_does_not_reach_keyboard) ... ok
 test_numeric_entry_uses_unicode_and_does_not_press_enter (test_hu_operational.KeyboardEntryTests.test_numeric_entry_uses_unicode_and_does_not_press_enter) ... ok
@@ -475,6 +478,6 @@ test_standalone_routes_to_engine (test_window_capture_audit.IntegrationContracts
 test_capture_client_pixels_and_resize (test_capture_windows_native.NativeGDISmoke.test_capture_client_pixels_and_resize) ... skipped 'Native Windows required'
 
 ----------------------------------------------------------------------
-Ran 475 tests in 21.097s
+Ran 478 tests in 21.286s
 
 OK (skipped=3)

@@ -1,7 +1,7 @@
 {
   "status": "PASS",
-  "tests_run": 475,
-  "passed": 472,
+  "tests_run": 478,
+  "passed": 475,
   "failures": 0,
   "errors": 0,
   "skipped": [
@@ -18,7 +18,7 @@
       "reason": "Native Windows required"
     }
   ],
-  "elapsed_s": 21.303287081000235,
+  "elapsed_s": 21.475385941999775,
   "modules": [
     "test_hu_operational",
     "test_hu_policy_engine",
