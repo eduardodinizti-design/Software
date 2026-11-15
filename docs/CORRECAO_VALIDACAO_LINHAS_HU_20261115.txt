@@ -1,0 +1,45 @@
+SOFTWARE ORIGINAL — VALIDAR A LINHA DA POLITICA
+
+FALHA REPRODUZIDA
+
+O verificador de mao completa exigia bet/call em todas as ruas. Uma politica
+de check valido era rejeitada com OFF_POLICY_ZERO_REACH_ACTION_REQUIRES_ARRIVAL_MODEL.
+O problema era a linha de teste imposta, nao a falta de uma estrategia no
+arquivo. Reproducao antes da correcao: verify_reference_hand aplicado a
+make_test_policy(recommended='check'), fixture sintetica do laboratorio.
+
+O teste tambem verificava o tipo bet sem exigir que o ID e o size selecionados
+fossem exatamente os da acao executada no historico sintetico.
+
+CORRECAO
+
+O verificador procura uma linha suportada de tres ruas combinando bet/check.
+O oponente segue checks/calls declarados e com suporte posterior positivo.
+A identidade da mao e escolhida para que as selecoes mistas reais de choose()
+correspondam aos IDs completos das acoes, incluindo o valor da aposta.
+
+O historico precisa chegar ao showdown e conter exatamente as acoes dessa
+linha e as duas cartas reveladas. BTN pode ter 6 a 9 acoes no teste; SB pode
+ter 6. Os tres tipos/IDs escolhidos pelo hero ficam no resultado, em
+declared_hero_actions_by_street. A contagem deixou de exigir sempre 9 para BTN.
+
+Tambem sao comparados o tipo recomendado, a semantica ADDITIONAL_BB e o
+size efetivamente selecionado, alem de todas as frequencias e sizes candidatos.
+Uma recomendacao com size adulterado nao recebe PASS.
+
+REGRESSOES
+
+- Politica sintetica de check/check/check confirmada nas tres ruas.
+- Politica sintetica check/bet/check confirmada com 7 acoes e duas revelacoes.
+- Size selecionado adulterado rejeitado.
+- Linha de tres apostas anterior continua valida quando a politica a suporta.
+- Teste nativo de stacks assimetricos SB40 continua alinhado ao river independente.
+
+29 testes de referencia, blind war e fechamento passaram com backend nativo.
+Os testes de dados Windows foram reiniciados com esse verificador antes do
+download dos novos bancos. Os calculos nativos e arquivos ja publicados foram
+preservados. O relatorio final vincula os resultados ao novo run Windows.
+
+Esse e um teste de cobertura com leituras sinteticas. A escolha de uma mao
+que exercita a linha nao e uma amostragem imparcial de jogo nem estimativa de EV.
+As politicas do solver permanecem vinculadas aos seus hashes originais.
