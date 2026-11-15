@@ -24,6 +24,19 @@ A integracao opcional de politica HU, diario SQLite e executor esta descrita em
 `VERIFICAR_EXECUTOR_HU.bat` testa captura e input numa janela propria no Windows.
 Essa verificacao e separada da validacao real de leitura/cliques no PPPoker.
 
+## Referencia NVT completa e portatil
+
+Na branch `feat/hu-converged-pilot-20261115` (PR #12),
+`VERIFICAR_REFERENCIA_NVT.bat` baixa o banco completo, confere os hashes e
+confirma uma mao sintetica usando as frequencias armazenadas. O banco fica
+em disco e e consultado por `--postflop-library`; naipes equivalentes exigem
+uma bijecao que preserve os dois ranges.
+
+As instrucoes para o notebook e para testar input em uma janela propria estao
+em [ORIENTACOES_NVT_WINDOWS_20261115.txt](docs/ORIENTACOES_NVT_WINDOWS_20261115.txt).
+O modelo e uma referencia especifica BTN/BB; precisao nativa, verificacao
+independente do river e validacao no PPPoker sao resultados distintos.
+
 ## Estrutura preservada
 
 - `table_reading/`: detector, leitores e templates.

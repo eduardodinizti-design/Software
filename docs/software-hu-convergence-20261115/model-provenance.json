@@ -1,0 +1,77 @@
+{
+  "context": {
+    "arrival_id": "public-NVT-356340d-25bb-illustrative-2.5-open-no-ante",
+    "dealt_players": 9,
+    "mode": "chip_ev",
+    "positions": [
+      "BTN",
+      "BB"
+    ],
+    "pot_type": "single_raised",
+    "stage": "mid",
+    "tournament_format": "regular"
+  },
+  "direct_hrc_export_certified": false,
+  "menu": {
+    "fractions": [
+      0.3333333333333333
+    ],
+    "include_all_in": true,
+    "max_raises": 2
+  },
+  "ranges": [
+    {
+      "combos_after_flop": 587,
+      "position": "BTN",
+      "prior_combos": 660,
+      "prior_weight": 573.058,
+      "sha256": "3a635d6b3b6e83567b0f6735ab598da4b3ed466cf218749b8d1e920a169f70ff",
+      "source_id": "e684dfc91f5d30d6f459bf79b986b0e17279d88d9dbaf325473bd59d5990f326"
+    },
+    {
+      "combos_after_flop": 941,
+      "position": "BB",
+      "prior_combos": 1040,
+      "prior_weight": 760.34,
+      "sha256": "678f32b5a9ea0c88d4d8c159072b9a127b53bc18602725f522f02eb6ba54aac5",
+      "source_id": "4cf4dcf6a0646f6e85ba3d1dd18c301d680291ae41f47cd63276ce4553b04511"
+    }
+  ],
+  "reference_only": true,
+  "root": {
+    "acted": [
+      false,
+      false
+    ],
+    "actor": 1,
+    "board": [
+      "As",
+      "7d",
+      "2c"
+    ],
+    "committed": [
+      0.0,
+      0.0
+    ],
+    "history": [],
+    "last_full_raise_bb": 1.0,
+    "min_bet_bb": 1.0,
+    "needs_cards": 0,
+    "oop": 1,
+    "pot_bb": 5.5,
+    "raise_rights": [
+      true,
+      true
+    ],
+    "raises": 0,
+    "stacks": [
+      22.5,
+      22.5
+    ],
+    "terminal": "",
+    "winner": -1
+  },
+  "source_game": "docs/software-hu-engine-20261115/game-flop-btn-bb.json",
+  "source_game_sha256": "5e8304b8fc45ffe952006b40a85c95a88517b1c742aec8e22573855655837ea0",
+  "user_authorization": "Use os ranges NVT dispon\u00edveis como refer\u00eancia"
+}

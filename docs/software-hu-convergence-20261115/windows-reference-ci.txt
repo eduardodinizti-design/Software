@@ -1,0 +1,2293 @@
+﻿2026-11-15T19:30:03.3412482Z Current runner version: '2.338.2'
+2026-11-15T19:30:03.3439673Z ##[group]Runner Image Provisioner
+2026-11-15T19:30:03.3440673Z Hosted Compute Agent
+2026-11-15T19:30:03.3442244Z Version: 20261103.629
+2026-11-15T19:30:03.3443331Z Commit: 15dbd9ccb5dbf34fae002b6ed1a2670f52df37bc
+2026-11-15T19:30:03.3444364Z Build Date: 2026-11-03T17:26:59Z
+2026-11-15T19:30:03.3445022Z Worker ID: {76a5a82a-a78f-414b-a242-9c9b4bd60490}
+2026-11-15T19:30:03.3445589Z Region: centralus
+2026-11-15T19:30:03.3446088Z Cloud: Azure
+2026-11-15T19:30:03.3446514Z ##[endgroup]
+2026-11-15T19:30:03.3448093Z ##[group]Operating System
+2026-11-15T19:30:03.3448666Z Microsoft Windows Server 2025
+2026-11-15T19:30:03.3449204Z 10.0.26100
+2026-11-15T19:30:03.3449785Z Datacenter
+2026-11-15T19:30:03.3450248Z ##[endgroup]
+2026-11-15T19:30:03.3450916Z ##[group]Runner Image
+2026-11-15T19:30:03.3451714Z Image: windows-2025-vs2026
+2026-11-15T19:30:03.3452317Z Version: 20261103.298.1
+2026-11-15T19:30:03.3454161Z Included Software: https://github.com/actions/runner-images/blob/win25-vs2026/20261103.298/images/windows/Windows2025-VS2026-Readme.md
+2026-11-15T19:30:03.3456125Z Image Release: https://github.com/actions/runner-images/releases/tag/win25-vs2026%2F20261103.298
+2026-11-15T19:30:03.3457428Z ##[endgroup]
+2026-11-15T19:30:03.3458816Z ##[group]GITHUB_TOKEN Permissions
+2026-11-15T19:30:03.3461380Z Contents: write
+2026-11-15T19:30:03.3461962Z Metadata: read
+2026-11-15T19:30:03.3462432Z ##[endgroup]
+2026-11-15T19:30:03.3464388Z Secret source: Actions
+2026-11-15T19:30:03.3465469Z Cache mode: write
+2026-11-15T19:30:03.3466236Z Prepare workflow directory
+2026-11-15T19:30:03.3787990Z Prepare all required actions
+2026-11-15T19:30:03.3832142Z Getting action download info
+2026-11-15T19:30:03.6296769Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-11-15T19:30:03.7287258Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+2026-11-15T19:30:03.8508984Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-11-15T19:30:04.1236958Z Complete job name: downloaded-reference
+2026-11-15T19:30:04.2542486Z ##[group]Run actions/checkout@v4
+2026-11-15T19:30:04.2543745Z with:
+2026-11-15T19:30:04.2544148Z   persist-credentials: false
+2026-11-15T19:30:04.2544686Z   repository: eduardodinizti-design/Software
+2026-11-15T19:30:04.2548040Z   token: ***
+2026-11-15T19:30:04.2548434Z   ssh-strict: true
+2026-11-15T19:30:04.2548827Z   ssh-user: git
+2026-11-15T19:30:04.2549215Z   clean: true
+2026-11-15T19:30:04.2549631Z   sparse-checkout-cone-mode: true
+2026-11-15T19:30:04.2550120Z   fetch-depth: 1
+2026-11-15T19:30:04.2550543Z   fetch-tags: false
+2026-11-15T19:30:04.2551069Z   show-progress: true
+2026-11-15T19:30:04.2551487Z   lfs: false
+2026-11-15T19:30:04.2551921Z   submodules: false
+2026-11-15T19:30:04.2552419Z   set-safe-directory: true
+2026-11-15T19:30:04.2553041Z   allow-unsafe-pr-checkout: false
+2026-11-15T19:30:04.2554483Z env:
+2026-11-15T19:30:04.2555052Z   PYTHONUTF8: 1
+2026-11-15T19:30:04.2555617Z   OPENBLAS_NUM_THREADS: 1
+2026-11-15T19:30:04.2556357Z ##[endgroup]
+2026-11-15T19:30:04.3900211Z Syncing repository: eduardodinizti-design/Software
+2026-11-15T19:30:04.3903404Z ##[group]Getting Git version info
+2026-11-15T19:30:04.3904389Z Working directory is 'D:\a\Software\Software'
+2026-11-15T19:30:04.4505092Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-11-15T19:30:04.7443190Z git version 2.56.0.windows.4
+2026-11-15T19:30:04.7490988Z ##[endgroup]
+2026-11-15T19:30:04.7510669Z Temporarily overriding HOME='D:\a\_temp\ce9ef9a3-d6c9-4332-9483-0425417e0739' before making global git config changes
+2026-11-15T19:30:04.7511830Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-15T19:30:04.7519863Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\Software\Software
+2026-11-15T19:30:04.8102170Z Deleting the contents of 'D:\a\Software\Software'
+2026-11-15T19:30:04.8107887Z ##[group]Initializing the repository
+2026-11-15T19:30:04.8116557Z [command]"C:\Program Files\Git\bin\git.exe" init D:\a\Software\Software
+2026-11-15T19:30:04.8955288Z Initialized empty Git repository in D:/a/Software/Software/.git/
+2026-11-15T19:30:04.9003637Z [command]"C:\Program Files\Git\bin\git.exe" remote add origin https://github.com/eduardodinizti-design/Software
+2026-11-15T19:30:04.9660942Z ##[endgroup]
+2026-11-15T19:30:04.9662405Z ##[group]Disabling automatic garbage collection
+2026-11-15T19:30:04.9668889Z [command]"C:\Program Files\Git\bin\git.exe" config --local gc.auto 0
+2026-11-15T19:30:04.9998904Z ##[endgroup]
+2026-11-15T19:30:05.0000324Z ##[group]Setting up auth
+2026-11-15T19:30:05.0009074Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-11-15T19:30:05.0340287Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-11-15T19:30:06.3230767Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-15T19:30:06.3622304Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-11-15T19:30:06.8445102Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-15T19:30:06.8771298Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-11-15T19:30:07.3840188Z [command]"C:\Program Files\Git\bin\git.exe" config --local http.https://github.com/.extraheader "AUTHORIZATION: basic ***"
+2026-11-15T19:30:07.4212472Z ##[endgroup]
+2026-11-15T19:30:07.4213569Z ##[group]Fetching the repository
+2026-11-15T19:30:07.4225946Z [command]"C:\Program Files\Git\bin\git.exe" -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +b44eeee373fcc7f1444a2a990ebf232aeb1d68ea:refs/remotes/origin/feat/hu-converged-pilot-20261115
+2026-11-15T19:30:10.9456859Z From https://github.com/eduardodinizti-design/Software
+2026-11-15T19:30:10.9457783Z  * [new ref]         b44eeee373fcc7f1444a2a990ebf232aeb1d68ea -> origin/feat/hu-converged-pilot-20261115
+2026-11-15T19:30:10.9499831Z ##[endgroup]
+2026-11-15T19:30:10.9500780Z ##[group]Determining the checkout info
+2026-11-15T19:30:10.9502022Z ##[endgroup]
+2026-11-15T19:30:10.9509824Z [command]"C:\Program Files\Git\bin\git.exe" sparse-checkout disable
+2026-11-15T19:30:10.9985359Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all extensions.worktreeConfig
+2026-11-15T19:30:11.0311008Z ##[group]Checking out the ref
+2026-11-15T19:30:11.0318509Z [command]"C:\Program Files\Git\bin\git.exe" checkout --progress --force -B feat/hu-converged-pilot-20261115 refs/remotes/origin/feat/hu-converged-pilot-20261115
+2026-11-15T19:30:12.1052755Z Updating files:  30% (451/1502)
+2026-11-15T19:30:12.1111236Z Updating files:  31% (466/1502)
+2026-11-15T19:30:12.1227377Z Updating files:  32% (481/1502)
+2026-11-15T19:30:12.1243595Z Updating files:  33% (496/1502)
+2026-11-15T19:30:12.1608247Z Updating files:  34% (511/1502)
+2026-11-15T19:30:12.1813498Z Updating files:  35% (526/1502)
+2026-11-15T19:30:12.1907389Z Updating files:  36% (541/1502)
+2026-11-15T19:30:12.1937545Z Updating files:  37% (556/1502)
+2026-11-15T19:30:12.1966886Z Updating files:  38% (571/1502)
+2026-11-15T19:30:12.2028439Z Updating files:  39% (586/1502)
+2026-11-15T19:30:12.2085281Z Updating files:  40% (601/1502)
+2026-11-15T19:30:12.2148369Z Updating files:  41% (616/1502)
+2026-11-15T19:30:12.2214462Z Updating files:  42% (631/1502)
+2026-11-15T19:30:12.2288443Z Updating files:  43% (646/1502)
+2026-11-15T19:30:12.2421730Z Updating files:  44% (661/1502)
+2026-11-15T19:30:12.2650062Z Updating files:  45% (676/1502)
+2026-11-15T19:30:12.2691064Z Updating files:  46% (691/1502)
+2026-11-15T19:30:12.2715478Z Updating files:  47% (706/1502)
+2026-11-15T19:30:12.2869347Z Updating files:  48% (721/1502)
+2026-11-15T19:30:12.2891921Z Updating files:  49% (736/1502)
+2026-11-15T19:30:12.3058376Z Updating files:  50% (751/1502)
+2026-11-15T19:30:12.3177570Z Updating files:  51% (767/1502)
+2026-11-15T19:30:12.3352194Z Updating files:  52% (782/1502)
+2026-11-15T19:30:12.3529335Z Updating files:  53% (797/1502)
+2026-11-15T19:30:12.3585282Z Updating files:  54% (812/1502)
+2026-11-15T19:30:12.3636116Z Updating files:  55% (827/1502)
+2026-11-15T19:30:12.3686253Z Updating files:  56% (842/1502)
+2026-11-15T19:30:12.3750271Z Updating files:  57% (857/1502)
+2026-11-15T19:30:12.3799898Z Updating files:  58% (872/1502)
+2026-11-15T19:30:12.3856125Z Updating files:  59% (887/1502)
+2026-11-15T19:30:12.3905992Z Updating files:  60% (902/1502)
+2026-11-15T19:30:12.3961249Z Updating files:  61% (917/1502)
+2026-11-15T19:30:12.4026232Z Updating files:  62% (932/1502)
+2026-11-15T19:30:12.4091057Z Updating files:  63% (947/1502)
+2026-11-15T19:30:12.4162781Z Updating files:  64% (962/1502)
+2026-11-15T19:30:12.4251955Z Updating files:  65% (977/1502)
+2026-11-15T19:30:12.4305157Z Updating files:  66% (992/1502)
+2026-11-15T19:30:12.4365775Z Updating files:  67% (1007/1502)
+2026-11-15T19:30:12.4422107Z Updating files:  68% (1022/1502)
+2026-11-15T19:30:12.4476394Z Updating files:  69% (1037/1502)
+2026-11-15T19:30:12.4531153Z Updating files:  70% (1052/1502)
+2026-11-15T19:30:12.4585792Z Updating files:  71% (1067/1502)
+2026-11-15T19:30:12.4641153Z Updating files:  72% (1082/1502)
+2026-11-15T19:30:12.4693226Z Updating files:  73% (1097/1502)
+2026-11-15T19:30:12.4773678Z Updating files:  74% (1112/1502)
+2026-11-15T19:30:12.4826558Z Updating files:  75% (1127/1502)
+2026-11-15T19:30:12.4876156Z Updating files:  76% (1142/1502)
+2026-11-15T19:30:12.4910621Z Updating files:  77% (1157/1502)
+2026-11-15T19:30:12.4935160Z Updating files:  78% (1172/1502)
+2026-11-15T19:30:12.4962268Z Updating files:  79% (1187/1502)
+2026-11-15T19:30:12.4985533Z Updating files:  80% (1202/1502)
+2026-11-15T19:30:12.5011626Z Updating files:  81% (1217/1502)
+2026-11-15T19:30:12.5030370Z Updating files:  82% (1232/1502)
+2026-11-15T19:30:12.5044872Z Updating files:  83% (1247/1502)
+2026-11-15T19:30:12.5059547Z Updating files:  84% (1262/1502)
+2026-11-15T19:30:12.5074053Z Updating files:  85% (1277/1502)
+2026-11-15T19:30:12.5089036Z Updating files:  86% (1292/1502)
+2026-11-15T19:30:12.5103932Z Updating files:  87% (1307/1502)
+2026-11-15T19:30:12.5118805Z Updating files:  88% (1322/1502)
+2026-11-15T19:30:12.5143483Z Updating files:  89% (1337/1502)
+2026-11-15T19:30:12.5165205Z Updating files:  90% (1352/1502)
+2026-11-15T19:30:12.5189752Z Updating files:  91% (1367/1502)
+2026-11-15T19:30:12.5215978Z Updating files:  92% (1382/1502)
+2026-11-15T19:30:12.5239827Z Updating files:  93% (1397/1502)
+2026-11-15T19:30:12.5266299Z Updating files:  94% (1412/1502)
+2026-11-15T19:30:12.5291386Z Updating files:  95% (1427/1502)
+2026-11-15T19:30:12.6151480Z Updating files:  96% (1442/1502)
+2026-11-15T19:30:12.6345140Z Updating files:  97% (1457/1502)
+2026-11-15T19:30:12.6375552Z Updating files:  98% (1472/1502)
+2026-11-15T19:30:12.6397662Z Updating files:  99% (1487/1502)
+2026-11-15T19:30:12.6400988Z Updating files: 100% (1502/1502)
+2026-11-15T19:30:12.6401593Z Updating files: 100% (1502/1502), done.
+2026-11-15T19:30:12.6522557Z Switched to a new branch 'feat/hu-converged-pilot-20261115'
+2026-11-15T19:30:12.6615914Z branch 'feat/hu-converged-pilot-20261115' set up to track 'origin/feat/hu-converged-pilot-20261115'.
+2026-11-15T19:30:12.6797453Z ##[endgroup]
+2026-11-15T19:30:12.7234539Z [command]"C:\Program Files\Git\bin\git.exe" log -1 --format=%H
+2026-11-15T19:30:12.7535916Z b44eeee373fcc7f1444a2a990ebf232aeb1d68ea
+2026-11-15T19:30:12.7576862Z ##[group]Removing auth
+2026-11-15T19:30:12.7583959Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-11-15T19:30:12.7912817Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-11-15T19:30:13.3034440Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-15T19:30:13.3382024Z http.https://github.com/.extraheader
+2026-11-15T19:30:13.3422794Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all http.https://github.com/.extraheader
+2026-11-15T19:30:13.3762893Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-11-15T19:30:13.8701647Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-15T19:30:13.9030182Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-11-15T19:30:14.3764649Z ##[endgroup]
+2026-11-15T19:30:14.4142003Z ##[group]Run actions/setup-python@v5
+2026-11-15T19:30:14.4142453Z with:
+2026-11-15T19:30:14.4142710Z   python-version: 3.12
+2026-11-15T19:30:14.4142985Z   check-latest: false
+2026-11-15T19:30:14.4145044Z   token: ***
+2026-11-15T19:30:14.4145352Z   update-environment: true
+2026-11-15T19:30:14.4145640Z   allow-prereleases: false
+2026-11-15T19:30:14.4145934Z   freethreaded: false
+2026-11-15T19:30:14.4146197Z env:
+2026-11-15T19:30:14.4146423Z   PYTHONUTF8: 1
+2026-11-15T19:30:14.4146669Z   OPENBLAS_NUM_THREADS: 1
+2026-11-15T19:30:14.4146928Z ##[endgroup]
+2026-11-15T19:30:14.5525965Z ##[group]Installed versions
+2026-11-15T19:30:14.5697802Z (node:8404) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-11-15T19:30:14.5698717Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-11-15T19:30:14.5701211Z Successfully set up CPython (3.12.10)
+2026-11-15T19:30:14.5702026Z ##[endgroup]
+2026-11-15T19:30:14.5974778Z ##[group]Run python -m pip install numpy==2.2.6 opencv-python==4.11.0.86 psutil==6.1.1 pytesseract==0.3.13
+2026-11-15T19:30:14.5975601Z [36;1mpython -m pip install numpy==2.2.6 opencv-python==4.11.0.86 psutil==6.1.1 pytesseract==0.3.13[0m
+2026-11-15T19:30:14.6476050Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-11-15T19:30:14.6476479Z env:
+2026-11-15T19:30:14.6476798Z   PYTHONUTF8: 1
+2026-11-15T19:30:14.6477123Z   OPENBLAS_NUM_THREADS: 1
+2026-11-15T19:30:14.6477500Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-15T19:30:14.6478002Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.10\x64/lib/pkgconfig
+2026-11-15T19:30:14.6478565Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-15T19:30:14.6479017Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-15T19:30:14.6479440Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-15T19:30:14.6479882Z ##[endgroup]
+2026-11-15T19:30:19.3712411Z Collecting numpy==2.2.6
+2026-11-15T19:30:19.5597177Z   Downloading numpy-2.2.6-cp312-cp312-win_amd64.whl.metadata (60 kB)
+2026-11-15T19:30:19.7049614Z Collecting opencv-python==4.11.0.86
+2026-11-15T19:30:19.7187426Z   Downloading opencv_python-4.11.0.86-cp37-abi3-win_amd64.whl.metadata (20 kB)
+2026-11-15T19:30:19.8109244Z Collecting psutil==6.1.1
+2026-11-15T19:30:19.8234830Z   Downloading psutil-6.1.1-cp37-abi3-win_amd64.whl.metadata (23 kB)
+2026-11-15T19:30:19.8732101Z Collecting pytesseract==0.3.13
+2026-11-15T19:30:19.8847594Z   Downloading pytesseract-0.3.13-py3-none-any.whl.metadata (11 kB)
+2026-11-15T19:30:19.9034671Z Requirement already satisfied: packaging>=21.3 in C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\site-packages (from pytesseract==0.3.13) (26.3)
+2026-11-15T19:30:20.0714812Z Collecting Pillow>=8.0.0 (from pytesseract==0.3.13)
+2026-11-15T19:30:20.0843875Z   Downloading pillow-13.0.0-cp312-cp312-win_amd64.whl.metadata (9.3 kB)
+2026-11-15T19:30:20.1240696Z Downloading numpy-2.2.6-cp312-cp312-win_amd64.whl (12.6 MB)
+2026-11-15T19:30:20.3443061Z    ---------------------------------------- 12.6/12.6 MB 66.1 MB/s  0:00:00
+2026-11-15T19:30:20.3601784Z Downloading opencv_python-4.11.0.86-cp37-abi3-win_amd64.whl (39.5 MB)
+2026-11-15T19:30:20.8509702Z    ---------------------------------------- 39.5/39.5 MB 78.5 MB/s  0:00:00
+2026-11-15T19:30:20.8624146Z Downloading psutil-6.1.1-cp37-abi3-win_amd64.whl (254 kB)
+2026-11-15T19:30:20.8868887Z Downloading pytesseract-0.3.13-py3-none-any.whl (14 kB)
+2026-11-15T19:30:20.9154900Z Downloading pillow-13.0.0-cp312-cp312-win_amd64.whl (7.3 MB)
+2026-11-15T19:30:20.9802050Z    ---------------------------------------- 7.3/7.3 MB 113.1 MB/s  0:00:00
+2026-11-15T19:30:21.3506942Z Installing collected packages: psutil, Pillow, numpy, pytesseract, opencv-python
+2026-11-15T19:30:26.6356061Z
+2026-11-15T19:30:26.6372889Z Successfully installed Pillow-13.0.0 numpy-2.2.6 opencv-python-4.11.0.86 psutil-6.1.1 pytesseract-0.3.13
+2026-11-15T19:30:26.8265353Z ##[group]Run New-Item -ItemType Directory -Force runtime/hu-reference-ci | Out-Null
+2026-11-15T19:30:26.8266077Z [36;1mNew-Item -ItemType Directory -Force runtime/hu-reference-ci | Out-Null[0m
+2026-11-15T19:30:26.8267034Z [36;1mpython -m unittest test_hu_reference test_hu_batches test_hu_policy_engine test_hu_operational test_cursor test_window_capture_engine test_window_capture_audit test_capture_windows_native test_raise_plan test_raise_sequencer -v *> runtime/hu-reference-ci/contracts.txt[0m
+2026-11-15T19:30:26.8267890Z [36;1m$code = $LASTEXITCODE[0m
+2026-11-15T19:30:26.8268294Z [36;1mGet-Content runtime/hu-reference-ci/contracts.txt[0m
+2026-11-15T19:30:26.8268671Z [36;1mif ($code -ne 0) {[0m
+2026-11-15T19:30:26.8269051Z [36;1m  $detail = Get-Content -Raw runtime/hu-reference-ci/contracts.txt[0m
+2026-11-15T19:30:26.8269504Z [36;1m  $detail = $detail.Substring([Math]::Max(0, $detail.Length - 3500))[0m
+2026-11-15T19:30:26.8270087Z [36;1m  $detail = $detail.Replace('%', '%25').Replace("`r", '%0D').Replace("`n", '%0A')[0m
+2026-11-15T19:30:26.8270548Z [36;1m  Write-Output "::error title=Reference Windows contracts::$detail"[0m
+2026-11-15T19:30:26.8270892Z [36;1m}[0m
+2026-11-15T19:30:26.8271140Z [36;1mexit $code[0m
+2026-11-15T19:30:26.8339847Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-11-15T19:30:26.8340296Z env:
+2026-11-15T19:30:26.8340591Z   PYTHONUTF8: 1
+2026-11-15T19:30:26.8340946Z   OPENBLAS_NUM_THREADS: 1
+2026-11-15T19:30:26.8341340Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-15T19:30:26.8341876Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.10\x64/lib/pkgconfig
+2026-11-15T19:30:26.8342350Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-15T19:30:26.8342783Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-15T19:30:26.8343254Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-15T19:30:26.8343631Z ##[endgroup]
+2026-11-15T19:31:01.1925522Z test_asymmetric_priors_cannot_be_relabelled_as_symmetric (test_hu_reference.ExactSuitRoutingTests.test_asymmetric_priors_cannot_be_relabelled_as_symmetric) ... ok
+2026-11-15T19:31:01.1927494Z test_library_routes_an_exact_suit_equivalent_without_an_additional_solve (test_hu_reference.ExactSuitRoutingTests.test_library_routes_an_exact_suit_equivalent_without_an_additional_solve) ... ok
+2026-11-15T19:31:01.1929402Z test_renamed_combos_keep_the_exact_source_frequencies_and_sizes (test_hu_reference.ExactSuitRoutingTests.test_renamed_combos_keep_the_exact_source_frequencies_and_sizes) ... ok
+2026-11-15T19:31:01.1932046Z test_turn_and_river_history_are_renamed_and_reversible (test_hu_reference.ExactSuitRoutingTests.test_turn_and_river_history_are_renamed_and_reversible) ... ok
+2026-11-15T19:31:01.1933776Z test_best_response_cannot_see_whether_opponent_has_value_or_a_bluff (test_hu_reference.IndependentRiverTests.test_best_response_cannot_see_whether_opponent_has_value_or_a_bluff) ... ok
+2026-11-15T19:31:01.1935202Z test_budget_exhaustion_does_not_return_a_partial_exact_result (test_hu_reference.IndependentRiverTests.test_budget_exhaustion_does_not_return_a_partial_exact_result) ... ok
+2026-11-15T19:31:01.1936732Z test_invalid_strategy_is_not_silently_normalized_for_validation (test_hu_reference.IndependentRiverTests.test_invalid_strategy_is_not_silently_normalized_for_validation) ... ok
+2026-11-15T19:31:01.1938340Z test_vectorized_full_tree_matches_independent_scalar_enumeration_with_weighted_blockers (test_hu_reference.IndependentRiverTests.test_vectorized_full_tree_matches_independent_scalar_enumeration_with_weighted_blockers) ... ok
+2026-11-15T19:31:01.1940067Z test_actual_observer_selects_three_streets_and_journal_confirms_showdown (test_hu_reference.ReferenceHandTests.test_actual_observer_selects_three_streets_and_journal_confirms_showdown) ... ok
+2026-11-15T19:31:01.1943728Z test_altered_observer_frequency_cannot_be_reported_as_query_equivalent (test_hu_reference.ReferenceHandTests.test_altered_observer_frequency_cannot_be_reported_as_query_equivalent) ... ok
+2026-11-15T19:31:01.1945053Z test_existing_local_work_is_not_overwritten (test_hu_reference.ReferenceHandTests.test_existing_local_work_is_not_overwritten) ... ok
+2026-11-15T19:31:01.1946393Z test_corrupt_download_is_retained_for_diagnosis_and_never_published (test_hu_reference.ReferenceTransferTests.test_corrupt_download_is_retained_for_diagnosis_and_never_published) ... ok
+2026-11-15T19:31:01.1947793Z test_existing_user_bank_is_not_overwritten_or_downloaded_again (test_hu_reference.ReferenceTransferTests.test_existing_user_bank_is_not_overwritten_or_downloaded_again) ... ok
+2026-11-15T19:31:01.1948820Z Banco salvo em: C:\Users\runneradmin\AppData\Local\Temp\tmpcst7y6q9\download\bank
+2026-11-15T19:31:01.1949447Z Alvo de precisao nativo atingido: SIM
+2026-11-15T19:31:01.1949923Z Resultado: C:\Users\runneradmin\AppData\Local\Temp\tmpcst7y6q9\download\download-receipt.json
+2026-11-15T19:31:01.1951239Z test_full_download_checks_archive_and_policy_then_removes_only_its_archive (test_hu_reference.ReferenceTransferTests.test_full_download_checks_archive_and_policy_then_removes_only_its_archive) ... ok
+2026-11-15T19:31:01.1952631Z test_zip_parent_traversal_is_rejected_before_extraction (test_hu_reference.ReferenceTransferTests.test_zip_parent_traversal_is_rejected_before_extraction) ... ok
+2026-11-15T19:31:01.1954075Z test_zip_symlink_is_rejected_before_extraction (test_hu_reference.ReferenceTransferTests.test_zip_symlink_is_rejected_before_extraction) ... ok
+2026-11-15T19:31:01.1955425Z test_batch_size_has_no_environment_cap_of_sixteen (test_hu_batches.BatchPlanTests.test_batch_size_has_no_environment_cap_of_sixteen) ... ok
+2026-11-15T19:31:01.1956618Z test_changed_plan_cannot_resume_old_checkpoints (test_hu_batches.BatchPlanTests.test_changed_plan_cannot_resume_old_checkpoints) ... ok
+2026-11-15T19:31:01.1957747Z test_cleanup_cannot_escape_managed_attempts (test_hu_batches.BatchPlanTests.test_cleanup_cannot_escape_managed_attempts) ... ok
+2026-11-15T19:31:01.1958795Z test_cleanup_requires_the_matching_plan_marker (test_hu_batches.BatchPlanTests.test_cleanup_requires_the_matching_plan_marker) ... ok
+2026-11-15T19:31:01.1959971Z test_existing_user_folder_is_not_claimed_as_temporary_storage (test_hu_batches.BatchPlanTests.test_existing_user_folder_is_not_claimed_as_temporary_storage) ... ok
+2026-11-15T19:31:01.1961299Z test_flop_suit_permutations_are_not_counted_as_new_studies (test_hu_batches.BatchPlanTests.test_flop_suit_permutations_are_not_counted_as_new_studies) ... ok
+2026-11-15T19:31:01.1962605Z test_hundred_suit_distinct_boards_and_seven_groups (test_hu_batches.BatchPlanTests.test_hundred_suit_distinct_boards_and_seven_groups) ... ok
+2026-11-15T19:31:01.1964322Z test_thread_budget_is_explicit_and_does_not_change_the_game (test_hu_batches.BatchPlanTests.test_thread_budget_is_explicit_and_does_not_change_the_game) ... ok
+2026-11-15T19:31:01.1965807Z test_untouched_source_ranges_and_sizes_are_preserved (test_hu_batches.BatchPlanTests.test_untouched_source_ranges_and_sizes_are_preserved) ... ok
+2026-11-15T19:31:01.1967081Z test_existing_artifact_is_never_overwritten (test_hu_batches.DiskPolicyTests.test_existing_artifact_is_never_overwritten) ... ok
+2026-11-15T19:31:01.1968452Z test_flop_only_export_cannot_pass_full_street_validation (test_hu_batches.DiskPolicyTests.test_flop_only_export_cannot_pass_full_street_validation) ... ok
+2026-11-15T19:31:01.1969638Z test_full_turn_river_policy_is_query_equivalent_and_lazily_cached (test_hu_batches.DiskPolicyTests.test_full_turn_river_policy_is_query_equivalent_and_lazily_cached) ... ok
+2026-11-15T19:31:01.1971044Z test_incomplete_river_cannot_be_marked_complete (test_hu_batches.DiskPolicyTests.test_incomplete_river_cannot_be_marked_complete) ... ok
+2026-11-15T19:31:01.1972311Z test_matrix_disagreeing_with_validated_frequencies_is_rejected (test_hu_batches.DiskPolicyTests.test_matrix_disagreeing_with_validated_frequencies_is_rejected) ... ok
+2026-11-15T19:31:01.1974318Z test_node_tampering_is_detected_before_advice (test_hu_batches.DiskPolicyTests.test_node_tampering_is_detected_before_advice) ... ok
+2026-11-15T19:31:01.1975416Z test_probabilities_are_not_silently_rounded_to_float32 (test_hu_batches.DiskPolicyTests.test_probabilities_are_not_silently_rounded_to_float32) ... ok
+2026-11-15T19:31:01.1976616Z test_capacity_counts_retained_policies_separately_from_reusable_working_space (test_hu_batches.LibraryTests.test_capacity_counts_retained_policies_separately_from_reusable_working_space) ... ok
+2026-11-15T19:31:01.1978022Z test_changed_policy_file_cannot_pass_the_archived_checksum (test_hu_batches.LibraryTests.test_changed_policy_file_cannot_pass_the_archived_checksum) ... ok
+2026-11-15T19:31:01.1979383Z test_library_rejects_duplicate_boards_instead_of_picking_a_random_model (test_hu_batches.LibraryTests.test_library_rejects_duplicate_boards_instead_of_picking_a_random_model) ... ok
+2026-11-15T19:31:01.1980621Z test_lookup_routes_to_the_exact_board_and_rejects_an_unknown_board (test_hu_batches.LibraryTests.test_lookup_routes_to_the_exact_board_and_rejects_an_unknown_board) ... ok
+2026-11-15T19:31:01.1981673Z test_runtime_generates_advice_and_resets_at_the_next_hand (test_hu_batches.LibraryTests.test_runtime_generates_advice_and_resets_at_the_next_hand) ... ok
+2026-11-15T19:31:01.1982936Z test_startup_preparation_avoids_hashing_a_large_file_again_at_decision_time (test_hu_batches.LibraryTests.test_startup_preparation_avoids_hashing_a_large_file_again_at_decision_time) ... ok
+2026-11-15T19:31:01.1984479Z test_stream_matches_nested_export_of_the_same_solve_including_suit_isomorphism (test_hu_batches.NativeEndToEndTests.test_stream_matches_nested_export_of_the_same_solve_including_suit_isomorphism) ... skipped 'Optional separately built native backend required'
+2026-11-15T19:31:01.1986622Z test_two_real_workers_advance_batches_cleanup_and_resume_without_recalculation (test_hu_batches.NativeEndToEndTests.test_two_real_workers_advance_batches_cleanup_and_resume_without_recalculation) ... skipped 'Optional separately built native backend required'
+2026-11-15T19:31:01.1987852Z {"event": "START", "flop": 1, "total": 2, "batch": 1, "board": ["As", "7d", "2c"]}
+2026-11-15T19:31:01.1990492Z {"event": "FAILED", "flop": 1, "reason": "WORKER_FAILED_SEE_PRESERVED_LOG", "attempt": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\tmpsmg33rui\\bank\\temporary\\0fa9d9ebbf6ad9c01085-8f193b06f4b1459aa5385bfb7efa3df3"}
+2026-11-15T19:31:01.1991642Z {"event": "START", "flop": 2, "total": 2, "batch": 1, "board": ["Kd", "8h", "3c"]}
+2026-11-15T19:31:01.1992794Z {"event": "FAILED", "flop": 2, "reason": "WORKER_FAILED_SEE_PRESERVED_LOG", "attempt": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\tmpsmg33rui\\bank\\temporary\\16f70fa6bf40e2c3f918-2ba4c65b04d34a7da24c78f677ccba59"}
+2026-11-15T19:31:01.1994202Z {"event": "STOPPED", "counts": {"FAILED": 2}}
+2026-11-15T19:31:01.1995093Z test_failed_job_preserves_evidence_and_continues_to_the_next (test_hu_batches.QueueFailureTests.test_failed_job_preserves_evidence_and_continues_to_the_next) ... ok
+2026-11-15T19:31:01.1995996Z {"event": "START", "flop": 1, "total": 2, "batch": 1, "board": ["As", "7d", "2c"]}
+2026-11-15T19:31:01.1996816Z {"event": "FAILED", "flop": 1, "reason": "WORKER_FAILED_SEE_PRESERVED_LOG", "attempt": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\tmp6ekfw46v\\bank\\temporary\\0fa9d9ebbf6ad9c01085-3789a95ed78540f39e16ee8813c49c71"}
+2026-11-15T19:31:01.1997771Z {"event": "STOPPED", "counts": {"FAILED": 1, "PENDING": 1}}
+2026-11-15T19:31:01.1998632Z test_max_cases_limits_failed_attempts_too (test_hu_batches.QueueFailureTests.test_max_cases_limits_failed_attempts_too) ... ok
+2026-11-15T19:31:01.1999812Z test_one_driver_at_a_time (test_hu_batches.QueueFailureTests.test_one_driver_at_a_time) ... skipped 'Windows byte-lock contract is checked natively'
+2026-11-15T19:31:01.2001109Z test_stream_record_from_another_schema_is_rejected (test_hu_batches.StreamCounterexamples.test_stream_record_from_another_schema_is_rejected) ... ok
+2026-11-15T19:31:01.2002814Z test_stream_without_final_root_is_not_a_complete_policy (test_hu_batches.StreamCounterexamples.test_stream_without_final_root_is_not_a_complete_policy) ... ok
+2026-11-15T19:31:01.2004124Z test_all_in_runs_to_river_without_more_bets (test_hu_policy_engine.BettingEconomicsTests.test_all_in_runs_to_river_without_more_bets) ... ok
+2026-11-15T19:31:01.2005259Z test_check_illegal_when_facing_price (test_hu_policy_engine.BettingEconomicsTests.test_check_illegal_when_facing_price) ... ok
+2026-11-15T19:31:01.2006321Z test_check_raise_is_in_a_menu_with_two_aggressions (test_hu_policy_engine.BettingEconomicsTests.test_check_raise_is_in_a_menu_with_two_aggressions) ... ok
+2026-11-15T19:31:01.2007392Z test_flop_turn_river_pot_and_stack_arithmetic (test_hu_policy_engine.BettingEconomicsTests.test_flop_turn_river_pot_and_stack_arithmetic) ... ok
+2026-11-15T19:31:01.2008196Z test_full_raise_reopens_action (test_hu_policy_engine.BettingEconomicsTests.test_full_raise_reopens_action) ... ok
+2026-11-15T19:31:01.2009711Z test_ip_check_ends_street_but_oop_check_does_not (test_hu_policy_engine.BettingEconomicsTests.test_ip_check_ends_street_but_oop_check_does_not) ... ok
+2026-11-15T19:31:01.2010703Z test_no_arbitrary_deep_stack_cutoff (test_hu_policy_engine.BettingEconomicsTests.test_no_arbitrary_deep_stack_cutoff) ... ok
+2026-11-15T19:31:01.2011888Z test_normal_bet_does_not_turn_into_all_in_when_size_is_absent (test_hu_policy_engine.BettingEconomicsTests.test_normal_bet_does_not_turn_into_all_in_when_size_is_absent) ... ok
+2026-11-15T19:31:01.2012935Z test_pot_raise_menu_uses_pot_after_call (test_hu_policy_engine.BettingEconomicsTests.test_pot_raise_menu_uses_pot_after_call) ... ok
+2026-11-15T19:31:01.2013904Z test_raise_amount_is_additional_not_raise_to (test_hu_policy_engine.BettingEconomicsTests.test_raise_amount_is_additional_not_raise_to) ... ok
+2026-11-15T19:31:01.2014965Z test_short_all_in_does_not_reopen_raise (test_hu_policy_engine.BettingEconomicsTests.test_short_all_in_does_not_reopen_raise) ... ok
+2026-11-15T19:31:01.2016351Z test_unmatched_overbet_is_refunded_when_short_stack_calls (test_hu_policy_engine.BettingEconomicsTests.test_unmatched_overbet_is_refunded_when_short_stack_calls) ... ok
+2026-11-15T19:31:01.2017530Z test_best_response_cannot_fold_only_against_hidden_value_hands (test_hu_policy_engine.FixedPolicyEconomicTests.test_best_response_cannot_fold_only_against_hidden_value_hands) ... ok
+2026-11-15T19:31:01.2018876Z test_exact_turn_evaluation_integrates_all_runouts_before_action_selection (test_hu_policy_engine.FixedPolicyEconomicTests.test_exact_turn_evaluation_integrates_all_runouts_before_action_selection) ... ok
+2026-11-15T19:31:01.2020633Z test_oop_check_value_includes_ip_bet_instead_of_free_showdown (test_hu_policy_engine.FixedPolicyEconomicTests.test_oop_check_value_includes_ip_bet_instead_of_free_showdown) ... ok
+2026-11-15T19:31:01.2021829Z test_positive_river_bluff_loses_to_check_with_showdown_value (test_hu_policy_engine.FixedPolicyEconomicTests.test_positive_river_bluff_loses_to_check_with_showdown_value) ... ok
+2026-11-15T19:31:01.2022955Z test_royal_board_call_keeps_tie_value (test_hu_policy_engine.FixedPolicyEconomicTests.test_royal_board_call_keeps_tie_value) ... ok
+2026-11-15T19:31:01.2024581Z test_turn_call_cannot_use_the_unrevealed_river_to_avoid_losing_calls (test_hu_policy_engine.FixedPolicyEconomicTests.test_turn_call_cannot_use_the_unrevealed_river_to_avoid_losing_calls) ... ok
+2026-11-15T19:31:01.2026183Z test_board_conditioning_is_not_mistaken_for_a_symmetric_prior (test_hu_policy_engine.NativeAdapterContracts.test_board_conditioning_is_not_mistaken_for_a_symmetric_prior) ... ok
+2026-11-15T19:31:01.2027644Z test_native_cannot_solve_an_ip_state_as_an_oop_root (test_hu_policy_engine.NativeAdapterContracts.test_native_cannot_solve_an_ip_state_as_an_oop_root) ... ok
+2026-11-15T19:31:01.2029050Z test_native_illegal_raise_is_rejected_instead_of_filtered_and_renormalized (test_hu_policy_engine.NativeAdapterContracts.test_native_illegal_raise_is_rejected_instead_of_filtered_and_renormalized) ... ok
+2026-11-15T19:31:01.2030539Z test_native_money_scale_and_last_measured_iteration_are_explicit (test_hu_policy_engine.NativeAdapterContracts.test_native_money_scale_and_last_measured_iteration_are_explicit) ... ok
+2026-11-15T19:31:01.2032039Z test_native_parser_cutoff_does_not_drop_rare_combos (test_hu_policy_engine.NativeAdapterContracts.test_native_parser_cutoff_does_not_drop_rare_combos) ... ok
+2026-11-15T19:31:01.2033389Z test_native_rounded_size_is_preserved_instead_of_replaced_by_nominal_fraction (test_hu_policy_engine.NativeAdapterContracts.test_native_rounded_size_is_preserved_instead_of_replaced_by_nominal_fraction) ... ok
+2026-11-15T19:31:01.2034961Z test_only_complete_suit_symmetric_classes_allow_isomorphism (test_hu_policy_engine.NativeAdapterContracts.test_only_complete_suit_symmetric_classes_allow_isomorphism) ... ok
+2026-11-15T19:31:01.2036395Z test_action_outside_tree_does_not_corrupt_range_or_state (test_hu_policy_engine.SolverAndPolicyTests.test_action_outside_tree_does_not_corrupt_range_or_state) ... ok
+2026-11-15T19:31:01.2037752Z test_compiled_output_has_two_size_ids_when_both_are_legal (test_hu_policy_engine.SolverAndPolicyTests.test_compiled_output_has_two_size_ids_when_both_are_legal) ... ok
+2026-11-15T19:31:01.2039151Z test_compressed_atomic_roundtrip_preserves_policy_identity (test_hu_policy_engine.SolverAndPolicyTests.test_compressed_atomic_roundtrip_preserves_policy_identity) ... ok
+2026-11-15T19:31:01.2040257Z test_final_policy_evs_are_evaluated_separately_from_training (test_hu_policy_engine.SolverAndPolicyTests.test_final_policy_evs_are_evaluated_separately_from_training) ... ok
+2026-11-15T19:31:01.2041501Z test_flop_card_order_is_equivalent_but_turn_suit_is_not (test_hu_policy_engine.SolverAndPolicyTests.test_flop_card_order_is_equivalent_but_turn_suit_is_not) ... ok
+2026-11-15T19:31:01.2042717Z test_flop_traversal_reaches_turn_and_river_without_future_features (test_hu_policy_engine.SolverAndPolicyTests.test_flop_traversal_reaches_turn_and_river_without_future_features) ... ok
+2026-11-15T19:31:01.2044451Z test_full_turn_river_subgame_matches_native_per_player_values_after_chance_fix (test_hu_policy_engine.SolverAndPolicyTests.test_full_turn_river_subgame_matches_native_per_player_values_after_chance_fix) ... ok
+2026-11-15T19:31:01.2046094Z test_independent_counterexample_detects_native_chance_bug_even_when_sum_gap_is_zero (test_hu_policy_engine.SolverAndPolicyTests.test_independent_counterexample_detects_native_chance_bug_even_when_sum_gap_is_zero) ... ok
+2026-11-15T19:31:01.2047559Z test_local_exact_response_avoids_negative_bluff_without_claiming_a_new_equilibrium (test_hu_policy_engine.SolverAndPolicyTests.test_local_exact_response_avoids_negative_bluff_without_claiming_a_new_equilibrium) ... ok
+2026-11-15T19:31:01.2050079Z test_local_response_does_not_maximize_unknown_or_monte_carlo_ev (test_hu_policy_engine.SolverAndPolicyTests.test_local_response_does_not_maximize_unknown_or_monte_carlo_ev) ... ok
+2026-11-15T19:31:01.2051660Z test_observed_bet_updates_hero_range_and_call_updates_villain_range (test_hu_policy_engine.SolverAndPolicyTests.test_observed_bet_updates_hero_range_and_call_updates_villain_range) ... ok
+2026-11-15T19:31:01.2053120Z test_observer_missing_timeline_is_visible_and_does_not_fabricate_context (test_hu_policy_engine.SolverAndPolicyTests.test_observer_missing_timeline_is_visible_and_does_not_fabricate_context) ... ok
+2026-11-15T19:31:01.2054331Z test_observer_rechecks_hand_money_source_and_cards (test_hu_policy_engine.SolverAndPolicyTests.test_observer_rechecks_hand_money_source_and_cards) ... ok
+2026-11-15T19:31:01.2055470Z test_off_policy_combo_is_not_an_automatic_fold (test_hu_policy_engine.SolverAndPolicyTests.test_off_policy_combo_is_not_an_automatic_fold) ... ok
+2026-11-15T19:31:01.2056704Z test_policy_cannot_smuggle_a_different_size_or_probability (test_hu_policy_engine.SolverAndPolicyTests.test_policy_cannot_smuggle_a_different_size_or_probability) ... ok
+2026-11-15T19:31:01.2058396Z test_position_context_change_cannot_reuse_policy (test_hu_policy_engine.SolverAndPolicyTests.test_position_context_change_cannot_reuse_policy) ... ok
+2026-11-15T19:31:01.2059616Z test_same_hand_on_new_frames_preserves_mix_selection (test_hu_policy_engine.SolverAndPolicyTests.test_same_hand_on_new_frames_preserves_mix_selection) ... ok
+2026-11-15T19:31:01.2060972Z test_stack_change_is_a_miss_not_nearest_neighbor (test_hu_policy_engine.SolverAndPolicyTests.test_stack_change_is_a_miss_not_nearest_neighbor) ... ok
+2026-11-15T19:31:01.2062174Z test_training_budget_does_not_claim_convergence_or_an_incomplete_iteration (test_hu_policy_engine.SolverAndPolicyTests.test_training_budget_does_not_claim_convergence_or_an_incomplete_iteration) ... ok
+2026-11-15T19:31:01.2063672Z test_training_reduces_independent_imperfect_information_best_response_gap (test_hu_policy_engine.SolverAndPolicyTests.test_training_reduces_independent_imperfect_information_best_response_gap) ... ok
+2026-11-15T19:31:01.2065108Z test_169_classes_expand_without_dividing_weights (test_hu_policy_engine.StateAndRangeTests.test_169_classes_expand_without_dividing_weights) ... ok
+2026-11-15T19:31:01.2066293Z test_blockers_remove_whole_combos_and_renormalize (test_hu_policy_engine.StateAndRangeTests.test_blockers_remove_whole_combos_and_renormalize) ... ok
+2026-11-15T19:31:01.2067573Z test_heads_up_button_small_blind_is_ip (test_hu_policy_engine.StateAndRangeTests.test_heads_up_button_small_blind_is_ip) ... ok
+2026-11-15T19:31:01.2068775Z test_hero_board_collision_is_not_a_strategy (test_hu_policy_engine.StateAndRangeTests.test_hero_board_collision_is_not_a_strategy) ... ok
+2026-11-15T19:31:01.2070110Z test_impossible_joint_ranges_are_not_sampled_forever (test_hu_policy_engine.StateAndRangeTests.test_impossible_joint_ranges_are_not_sampled_forever) ... ok
+2026-11-15T19:31:01.2071001Z test_ip_turn_requires_an_observed_check (test_hu_policy_engine.StateAndRangeTests.test_ip_turn_requires_an_observed_check) ... ok
+2026-11-15T19:31:01.2071861Z test_joint_sampling_preserves_the_collision_conditioned_product (test_hu_policy_engine.StateAndRangeTests.test_joint_sampling_preserves_the_collision_conditioned_product) ... ok
+2026-11-15T19:31:01.2072809Z test_malformed_classes_and_extra_players_are_rejected (test_hu_policy_engine.StateAndRangeTests.test_malformed_classes_and_extra_players_are_rejected) ... ok
+2026-11-15T19:31:01.2073619Z test_nonfinite_or_negative_money_rejected (test_hu_policy_engine.StateAndRangeTests.test_nonfinite_or_negative_money_rejected) ... ok
+2026-11-15T19:31:01.2074359Z test_pko_icm_are_not_silently_chip_ev (test_hu_policy_engine.StateAndRangeTests.test_pko_icm_are_not_silently_chip_ev) ... ok
+2026-11-15T19:31:01.2075310Z test_positions_are_part_of_the_game_and_postflop_order (test_hu_policy_engine.StateAndRangeTests.test_positions_are_part_of_the_game_and_postflop_order) ... ok
+2026-11-15T19:31:01.2076189Z test_range_distribution_fingerprint_changes_on_priors (test_hu_policy_engine.StateAndRangeTests.test_range_distribution_fingerprint_changes_on_priors) ... ok
+2026-11-15T19:31:01.2077101Z test_weighted_bayes_retains_slowplays_and_requires_a_model (test_hu_policy_engine.StateAndRangeTests.test_weighted_bayes_retains_slowplays_and_requires_a_model) ... ok
+2026-11-15T19:31:01.2077982Z test_check_call_fold_bet_raise_and_allin_confirm_effect (test_hu_operational.ExecutorTests.test_check_call_fold_bet_raise_and_allin_confirm_effect) ... ok
+2026-11-15T19:31:01.2078875Z test_delayed_numeric_gui_update_is_read_again_without_retyping (test_hu_operational.ExecutorTests.test_delayed_numeric_gui_update_is_read_again_without_retyping) ... ok
+2026-11-15T19:31:01.2079753Z test_dry_run_does_not_focus_move_type_or_click (test_hu_operational.ExecutorTests.test_dry_run_does_not_focus_move_type_or_click) ... ok
+2026-11-15T19:31:01.2080543Z test_duplicate_effect_capture_cannot_confirm_money_twice (test_hu_operational.ExecutorTests.test_duplicate_effect_capture_cannot_confirm_money_twice) ... ok
+2026-11-15T19:31:01.2081537Z test_external_advice_cannot_replace_policy_selection (test_hu_operational.ExecutorTests.test_external_advice_cannot_replace_policy_selection) ... ok
+2026-11-15T19:31:01.2082301Z test_focus_loss_during_movement_cancels (test_hu_operational.ExecutorTests.test_focus_loss_during_movement_cancels) ... ok
+2026-11-15T19:31:01.2082997Z test_geometry_changed_before_mouse_down (test_hu_operational.ExecutorTests.test_geometry_changed_before_mouse_down) ... ok
+2026-11-15T19:31:01.2083781Z test_hidden_panel_id_requires_fresh_cards_and_same_board (test_hu_operational.ExecutorTests.test_hidden_panel_id_requires_fresh_cards_and_same_board) ... ok
+2026-11-15T19:31:01.2084980Z test_journal_input_claim_precedes_the_actual_callback (test_hu_operational.ExecutorTests.test_journal_input_claim_precedes_the_actual_callback) ... ok
+2026-11-15T19:31:01.2085807Z test_model_may_allow_another_call_on_another_street (test_hu_operational.ExecutorTests.test_model_may_allow_another_call_on_another_street) ... ok
+2026-11-15T19:31:01.2086664Z test_natural_movement_interruption_preserves_manual_control (test_hu_operational.ExecutorTests.test_natural_movement_interruption_preserves_manual_control) ... ok
+2026-11-15T19:31:01.2087445Z test_new_hand_at_arrival_is_rejected (test_hu_operational.ExecutorTests.test_new_hand_at_arrival_is_rejected) ... ok
+2026-11-15T19:31:01.2088281Z test_pause_during_durable_reservation_is_checked_again_before_mouse_down (test_hu_operational.ExecutorTests.test_pause_during_durable_reservation_is_checked_again_before_mouse_down) ... ok
+2026-11-15T19:31:01.2089149Z test_paused_does_not_send_input (test_hu_operational.ExecutorTests.test_paused_does_not_send_input) ... ok
+2026-11-15T19:31:01.2090794Z test_physical_coordinates_include_client_origin_and_crop_not_window_chrome (test_hu_operational.ExecutorTests.test_physical_coordinates_include_client_origin_and_crop_not_window_chrome) ... ok
+2026-11-15T19:31:01.2091992Z test_sendinput_acknowledgement_is_not_an_observed_action (test_hu_operational.ExecutorTests.test_sendinput_acknowledgement_is_not_an_observed_action) ... ok
+2026-11-15T19:31:01.2093625Z test_two_fresh_money_observations_confirm_own_action_even_if_opponent_model_is_missing (test_hu_operational.ExecutorTests.test_two_fresh_money_observations_confirm_own_action_even_if_opponent_model_is_missing) ... ok
+2026-11-15T19:31:01.2094602Z test_wrong_selected_amount_never_confirms_bet (test_hu_operational.ExecutorTests.test_wrong_selected_amount_never_confirms_bet) ... ok
+2026-11-15T19:31:01.2095439Z test_corrupted_cards_and_multiway_pot_not_matched_to_hu (test_hu_operational.HistoryTests.test_corrupted_cards_and_multiway_pot_not_matched_to_hu) ... ok
+2026-11-15T19:31:01.2096452Z test_hidden_hand_id_is_pending_without_crashing_or_reusing_strategy (test_hu_operational.HistoryTests.test_hidden_hand_id_is_pending_without_crashing_or_reusing_strategy) ... ok
+2026-11-15T19:31:01.2097400Z test_missing_intermediate_action_can_be_confirmed_only_when_unique (test_hu_operational.HistoryTests.test_missing_intermediate_action_can_be_confirmed_only_when_unique) ... ok
+2026-11-15T19:31:01.2098430Z test_multi_street_history_reconstructs_bet_call_and_real_next_card (test_hu_operational.HistoryTests.test_multi_street_history_reconstructs_bet_call_and_real_next_card) ... ok
+2026-11-15T19:31:01.2099441Z test_needs_two_real_capture_ids_and_produces_strategy_state_without_injection (test_hu_operational.HistoryTests.test_needs_two_real_capture_ids_and_produces_strategy_state_without_injection) ... ok
+2026-11-15T19:31:01.2100356Z test_new_hand_does_not_inherit_an_old_timeline (test_hu_operational.HistoryTests.test_new_hand_does_not_inherit_an_old_timeline) ... ok
+2026-11-15T19:31:01.2101176Z test_off_tree_bet_is_saved_without_inventing_a_response_range (test_hu_operational.HistoryTests.test_off_tree_bet_is_saved_without_inventing_a_response_range) ... ok
+2026-11-15T19:31:01.2102047Z test_other_live_player_stack_change_invalidates_hu_assumption (test_hu_operational.HistoryTests.test_other_live_player_stack_change_invalidates_hu_assumption) ... ok
+2026-11-15T19:31:01.2103048Z test_outside_short_allin_cannot_be_discarded_as_a_fold (test_hu_operational.HistoryTests.test_outside_short_allin_cannot_be_discarded_as_a_fold) ... ok
+2026-11-15T19:31:01.2103890Z test_repeated_pixels_from_same_capture_do_not_count_twice (test_hu_operational.HistoryTests.test_repeated_pixels_from_same_capture_do_not_count_twice) ... ok
+2026-11-15T19:31:01.2104799Z test_restart_recovers_confirmed_public_state_and_posterior (test_hu_operational.HistoryTests.test_restart_recovers_confirmed_public_state_and_posterior) ... ok
+2026-11-15T19:31:01.2105926Z test_restart_with_different_profile_cannot_trust_old_arrival (test_hu_operational.HistoryTests.test_restart_with_different_profile_cannot_trust_old_arrival) ... ok
+2026-11-15T19:31:01.2106817Z test_root_requires_observed_preflop_not_just_position_and_money (test_hu_operational.HistoryTests.test_root_requires_observed_preflop_not_just_position_and_money) ... ok
+2026-11-15T19:31:01.2107772Z test_showdown_payout_does_not_explain_arbitrary_missed_bets (test_hu_operational.HistoryTests.test_showdown_payout_does_not_explain_arbitrary_missed_bets) ... ok
+2026-11-15T19:31:01.2108559Z test_stale_and_future_snapshot_not_used (test_hu_operational.HistoryTests.test_stale_and_future_snapshot_not_used) ... ok
+2026-11-15T19:31:01.2109290Z test_unchanged_scene_does_not_oscillate_pending (test_hu_operational.HistoryTests.test_unchanged_scene_does_not_oscillate_pending) ... ok
+2026-11-15T19:31:01.2110252Z test_unknown_ocr_is_not_a_zero_price (test_hu_operational.HistoryTests.test_unknown_ocr_is_not_a_zero_price) ... ok
+2026-11-15T19:31:01.2110948Z test_export_detects_tampering_and_id_collision (test_hu_operational.JournalTests.test_export_detects_tampering_and_id_collision) ... ok
+2026-11-15T19:31:01.2111897Z test_export_includes_unknown_input_instead_of_calling_the_hand_complete (test_hu_operational.JournalTests.test_export_includes_unknown_input_instead_of_calling_the_hand_complete) ... ok
+2026-11-15T19:31:01.2112779Z test_restart_does_not_repeat_unknown_input (test_hu_operational.JournalTests.test_restart_does_not_repeat_unknown_input) ... ok
+2026-11-15T19:31:01.2113489Z test_two_connections_only_one_retry_claim (test_hu_operational.JournalTests.test_two_connections_only_one_retry_claim) ... ok
+2026-11-15T19:31:01.2114378Z test_activation_request_without_real_foreground_never_authorizes_input (test_hu_operational.KeyboardEntryTests.test_activation_request_without_real_foreground_never_authorizes_input) ... ok
+2026-11-15T19:31:01.2115342Z test_async_foreground_activation_waits_for_observed_focus (test_hu_operational.KeyboardEntryTests.test_async_foreground_activation_waits_for_observed_focus) ... ok
+2026-11-15T19:31:01.2116351Z test_cancel_before_typing_sends_no_keyboard_input (test_hu_operational.KeyboardEntryTests.test_cancel_before_typing_sends_no_keyboard_input) ... ok
+2026-11-15T19:31:01.2117144Z test_non_numeric_text_does_not_reach_keyboard (test_hu_operational.KeyboardEntryTests.test_non_numeric_text_does_not_reach_keyboard) ... ok
+2026-11-15T19:31:01.2118008Z test_numeric_entry_uses_unicode_and_does_not_press_enter (test_hu_operational.KeyboardEntryTests.test_numeric_entry_uses_unicode_and_does_not_press_enter) ... ok
+2026-11-15T19:31:01.2118920Z test_partial_select_all_never_types_the_amount_and_releases_ctrl (test_hu_operational.KeyboardEntryTests.test_partial_select_all_never_types_the_amount_and_releases_ctrl) ... ok
+2026-11-15T19:31:01.2119881Z test_advisor_produces_timeline_without_an_external_strategy_state (test_hu_operational.LiveIntegrationTests.test_advisor_produces_timeline_without_an_external_strategy_state) ... ok
+2026-11-15T19:31:01.2120976Z test_live_supplier_skips_lobby_and_keeps_only_a_bounded_panel_crop_lease (test_hu_operational.LiveIntegrationTests.test_live_supplier_skips_lobby_and_keeps_only_a_bounded_panel_crop_lease) ... ok
+2026-11-15T19:31:01.2121932Z test_private_card_memory_is_bound_to_a_fresh_same_hand_id (test_hu_operational.LiveIntegrationTests.test_private_card_memory_is_bound_to_a_fresh_same_hand_id) ... ok
+2026-11-15T19:31:01.2122969Z test_runtime_uses_process_creation_time_and_physical_client_geometry (test_hu_operational.LiveIntegrationTests.test_runtime_uses_process_creation_time_and_physical_client_geometry) ... ok
+2026-11-15T19:31:01.2123784Z test_fit_recovers_coefficients (test_cursor.CalibrationTest.test_fit_recovers_coefficients) ... ok
+2026-11-15T19:31:01.2124398Z test_insufficient_samples_not_measured (test_cursor.CalibrationTest.test_insufficient_samples_not_measured) ... ok
+2026-11-15T19:31:01.2125078Z test_no_variance_not_measured (test_cursor.CalibrationTest.test_no_variance_not_measured) ... ok
+2026-11-15T19:31:01.2125604Z test_recorder_bounded (test_cursor.CalibrationTest.test_recorder_bounded) ... ok
+2026-11-15T19:31:01.2126205Z test_arrival_revalidation_fail_no_click (test_cursor.ControllerTest.test_arrival_revalidation_fail_no_click) ... ok
+2026-11-15T19:31:01.2126871Z test_cancel_on_user_intervention_no_click (test_cursor.ControllerTest.test_cancel_on_user_intervention_no_click) ... ok
+2026-11-15T19:31:01.2127521Z test_concurrent_same_intent_clicks_once (test_cursor.ControllerTest.test_concurrent_same_intent_clicks_once) ... ok
+2026-11-15T19:31:01.2128169Z test_cursor_not_at_target_no_click (test_cursor.ControllerTest.test_cursor_not_at_target_no_click) ... ok
+2026-11-15T19:31:01.2128894Z test_cursor_pos_unavailable_cancels_without_assuming (test_cursor.ControllerTest.test_cursor_pos_unavailable_cancels_without_assuming) ... ok
+2026-11-15T19:31:01.2129613Z test_down_not_accepted_is_unknown (test_cursor.ControllerTest.test_down_not_accepted_is_unknown) ... ok
+2026-11-15T19:31:01.2130689Z test_effect_unconfirmed_is_unknown (test_cursor.ControllerTest.test_effect_unconfirmed_is_unknown) ... ok
+2026-11-15T19:31:01.2131269Z test_expired_intent_no_click (test_cursor.ControllerTest.test_expired_intent_no_click) ... ok
+2026-11-15T19:31:01.2131857Z test_happy_path_single_click_done (test_cursor.ControllerTest.test_happy_path_single_click_done) ... ok
+2026-11-15T19:31:01.2132500Z test_identity_change_on_arrival_no_click (test_cursor.ControllerTest.test_identity_change_on_arrival_no_click) ... ok
+2026-11-15T19:31:01.2133165Z test_intent_not_clicked_twice (test_cursor.ControllerTest.test_intent_not_clicked_twice) ... ok
+2026-11-15T19:31:01.2133765Z test_invalid_target_geometry_no_click (test_cursor.ControllerTest.test_invalid_target_geometry_no_click) ... ok
+2026-11-15T19:31:01.2134370Z test_move_not_accepted_is_unknown (test_cursor.ControllerTest.test_move_not_accepted_is_unknown) ... ok
+2026-11-15T19:31:01.2135001Z test_no_verifier_unknown_after_click (test_cursor.ControllerTest.test_no_verifier_unknown_after_click) ... ok
+2026-11-15T19:31:01.2135638Z test_not_armed_refuses (test_cursor.ControllerTest.test_not_armed_refuses) ... ok
+2026-11-15T19:31:01.2136188Z test_release_unconfirmed_is_unknown (test_cursor.ControllerTest.test_release_unconfirmed_is_unknown) ... ok
+2026-11-15T19:31:01.2136865Z test_serialization_busy_lock_no_click (test_cursor.ControllerTest.test_serialization_busy_lock_no_click) ... ok
+2026-11-15T19:31:01.2137490Z test_target_moved_on_arrival_no_click (test_cursor.ControllerTest.test_target_moved_on_arrival_no_click) ... ok
+2026-11-15T19:31:01.2138088Z test_curved_path_has_curvature (test_cursor.EvalTest.test_curved_path_has_curvature) ... ok
+2026-11-15T19:31:01.2138687Z test_make_trials_deterministic_and_bounded (test_cursor.EvalTest.test_make_trials_deterministic_and_bounded) ... ok
+2026-11-15T19:31:01.2139271Z test_overshoot_and_reversal (test_cursor.EvalTest.test_overshoot_and_reversal) ... ok
+2026-11-15T19:31:01.2139774Z test_straight_path_metrics (test_cursor.EvalTest.test_straight_path_metrics) ... ok
+2026-11-15T19:31:01.2140208Z test_summarize (test_cursor.EvalTest.test_summarize) ... ok
+2026-11-15T19:31:01.2140726Z test_too_few_points_abstains (test_cursor.EvalTest.test_too_few_points_abstains) ... ok
+2026-11-15T19:31:01.2141319Z test_click_once_down_then_up_released (test_cursor.InputAdapterTest.test_click_once_down_then_up_released) ... ok
+2026-11-15T19:31:01.2142436Z test_click_release_guaranteed_on_error (test_cursor.InputAdapterTest.test_click_release_guaranteed_on_error) ... ok
+2026-11-15T19:31:01.2143117Z test_move_reports_accepted (test_cursor.InputAdapterTest.test_move_reports_accepted) ... ok
+2026-11-15T19:31:01.2143692Z test_normalize_abs_virtual_desktop (test_cursor.InputAdapterTest.test_normalize_abs_virtual_desktop) ... ok
+2026-11-15T19:31:01.2144370Z test_release_unconfirmed_when_up_rejected (test_cursor.InputAdapterTest.test_release_unconfirmed_when_up_rejected) ... ok
+2026-11-15T19:31:01.2145021Z test_move_measures_and_restores (test_cursor.SendCheckTest.test_move_measures_and_restores) ... ok
+2026-11-15T19:31:01.2145629Z test_fitts_duration_formula_and_floor (test_cursor.TrajectoryTest.test_fitts_duration_formula_and_floor) ... ok
+2026-11-15T19:31:01.2146236Z test_generator_calibration_flag (test_cursor.TrajectoryTest.test_generator_calibration_flag) ... ok
+2026-11-15T19:31:01.2147096Z test_min_jerk_endpoints_and_mid (test_cursor.TrajectoryTest.test_min_jerk_endpoints_and_mid) ... ok
+2026-11-15T19:31:01.2148053Z test_min_jerk_zero_velocity_at_ends (test_cursor.TrajectoryTest.test_min_jerk_zero_velocity_at_ends) ... ok
+2026-11-15T19:31:01.2148626Z test_monotonic_progress (test_cursor.TrajectoryTest.test_monotonic_progress) ... ok
+2026-11-15T19:31:01.2149164Z test_plan_positions_and_done (test_cursor.TrajectoryTest.test_plan_positions_and_done) ... ok
+2026-11-15T19:31:01.2149702Z test_safe_point_center (test_cursor.TrajectoryTest.test_safe_point_center) ... ok
+2026-11-15T19:31:01.2150221Z test_sample_includes_endpoints (test_cursor.TrajectoryTest.test_sample_includes_endpoints) ... ok
+2026-11-15T19:31:01.2150899Z test_virtual_desktop_negative_coords (test_cursor.TrajectoryTest.test_virtual_desktop_negative_coords) ... ok
+2026-11-15T19:31:01.2151601Z test_ambiguous_and_explicit_selection (test_window_capture_engine.CaptureContracts.test_ambiguous_and_explicit_selection) ... ok
+2026-11-15T19:31:01.2152290Z test_blank_frame_not_success (test_window_capture_engine.CaptureContracts.test_blank_frame_not_success) ... ok
+2026-11-15T19:31:01.2153083Z test_client_dimensions_negative_origin_and_title_not_required (test_window_capture_engine.CaptureContracts.test_client_dimensions_negative_origin_and_title_not_required) ... ok
+2026-11-15T19:31:01.2153908Z test_dpi_failure_prevents_capture (test_window_capture_engine.CaptureContracts.test_dpi_failure_prevents_capture) ... ok
+2026-11-15T19:31:01.2154670Z test_explicit_invalid_does_not_select_other (test_window_capture_engine.CaptureContracts.test_explicit_invalid_does_not_select_other) ... ok
+2026-11-15T19:31:01.2155537Z test_identity_and_geometry_changes (test_window_capture_engine.CaptureContracts.test_identity_and_geometry_changes) ... ok
+2026-11-15T19:31:01.2156253Z test_large_unity_surface_not_rejected (test_window_capture_engine.CaptureContracts.test_large_unity_surface_not_rejected) ... ok
+2026-11-15T19:31:01.2156903Z test_minimized (test_window_capture_engine.CaptureContracts.test_minimized) ... ok
+2026-11-15T19:31:01.2157421Z test_query_failure (test_window_capture_engine.CaptureContracts.test_query_failure) ... ok
+2026-11-15T19:31:01.2158016Z test_unauthorized_process (test_window_capture_engine.CaptureContracts.test_unauthorized_process) ... ok
+2026-11-15T19:31:01.2158797Z test_bitblt_exception_restores_bitmap_and_frees_all (test_window_capture_engine.GDIContracts.test_bitblt_exception_restores_bitmap_and_frees_all) ... ok
+2026-11-15T19:31:01.2159565Z test_cleanup_failure_blocks_return (test_window_capture_engine.GDIContracts.test_cleanup_failure_blocks_return) ... ok
+2026-11-15T19:31:01.2160361Z test_native_process_query_exception_does_not_default_name (test_window_capture_engine.GDIContracts.test_native_process_query_exception_does_not_default_name) ... ok
+2026-11-15T19:31:01.2161131Z test_partial_acquisition_failure (test_window_capture_engine.GDIContracts.test_partial_acquisition_failure) ... ok
+2026-11-15T19:31:01.2161963Z test_success_uses_client_dc_and_releases_only_owned_dc (test_window_capture_engine.GDIContracts.test_success_uses_client_dc_and_releases_only_owned_dc) ... ok
+2026-11-15T19:31:01.2162815Z test_diagnostic_forwards_selected_hwnd (test_window_capture_audit.IntegrationContracts.test_diagnostic_forwards_selected_hwnd) ... ok
+2026-11-15T19:31:01.2163631Z test_diagnostic_saves_linux_failure_without_image (test_window_capture_audit.IntegrationContracts.test_diagnostic_saves_linux_failure_without_image) ... ok
+2026-11-15T19:31:01.2164398Z test_observer_routes_to_engine (test_window_capture_audit.IntegrationContracts.test_observer_routes_to_engine) ... ok
+2026-11-15T19:31:01.2165069Z test_standalone_routes_to_engine (test_window_capture_audit.IntegrationContracts.test_standalone_routes_to_engine) ... ok
+2026-11-15T19:31:01.2165833Z test_capture_client_pixels_and_resize (test_capture_windows_native.NativeGDISmoke.test_capture_client_pixels_and_resize) ... ok
+2026-11-15T19:31:01.2166509Z test_entrada_malformada_nao_quebra (test_raise_plan.PlanRaiseTests.test_entrada_malformada_nao_quebra) ... ok
+2026-11-15T19:31:01.2167187Z test_intermediario_sem_preset_abstem (test_raise_plan.PlanRaiseTests.test_intermediario_sem_preset_abstem) ... ok
+2026-11-15T19:31:01.2167975Z test_lista_vazia (test_raise_plan.PlanRaiseTests.test_lista_vazia) ... ok
+2026-11-15T19:31:01.2168494Z test_preset_dentro_da_tolerancia (test_raise_plan.PlanRaiseTests.test_preset_dentro_da_tolerancia) ... ok
+2026-11-15T19:31:01.2169095Z test_preset_mais_proximo (test_raise_plan.PlanRaiseTests.test_preset_mais_proximo) ... ok
+2026-11-15T19:31:01.2169582Z test_sem_alvo (test_raise_plan.PlanRaiseTests.test_sem_alvo) ... ok
+2026-11-15T19:31:01.2170047Z test_sem_preset_legivel (test_raise_plan.PlanRaiseTests.test_sem_preset_legivel) ... ok
+2026-11-15T19:31:01.2170626Z test_shove_acima_do_maior_preset (test_raise_plan.PlanRaiseTests.test_shove_acima_do_maior_preset) ... ok
+2026-11-15T19:31:01.2171250Z test_shove_sem_slider_vira_abstain (test_raise_plan.PlanRaiseTests.test_shove_sem_slider_vira_abstain) ... ok
+2026-11-15T19:31:01.2171900Z test_barra_quando_painel_none (test_raise_plan.VerifySelectedPresetTests.test_barra_quando_painel_none) ... ok
+2026-11-15T19:31:01.2172579Z test_barra_quando_painel_sem_preset (test_raise_plan.VerifySelectedPresetTests.test_barra_quando_painel_sem_preset) ... ok
+2026-11-15T19:31:01.2173256Z test_barra_quando_preset_sumiu (test_raise_plan.VerifySelectedPresetTests.test_barra_quando_preset_sumiu) ... ok
+2026-11-15T19:31:01.2174202Z test_ok_quando_preset_esperado_presente (test_raise_plan.VerifySelectedPresetTests.test_ok_quando_preset_esperado_presente) ... ok
+2026-11-15T19:31:01.2175256Z test_sem_alvo_esperado (test_raise_plan.VerifySelectedPresetTests.test_sem_alvo_esperado) ... ok
+2026-11-15T19:31:01.2176538Z test_geometry_change_between_steps_aborts (test_raise_sequencer.RaiseSequencerTest.test_geometry_change_between_steps_aborts) ... ok
+2026-11-15T19:31:01.2177652Z test_hand_mismatch_aborts_no_click (test_raise_sequencer.RaiseSequencerTest.test_hand_mismatch_aborts_no_click) ... ok
+2026-11-15T19:31:01.2178565Z test_happy_path_three_clicks (test_raise_sequencer.RaiseSequencerTest.test_happy_path_three_clicks) ... ok
+2026-11-15T19:31:01.2179497Z test_large_target_allin_via_slider (test_raise_sequencer.RaiseSequencerTest.test_large_target_allin_via_slider) ... ok
+2026-11-15T19:31:01.2180560Z test_large_target_shove_without_slider_is_unknown (test_raise_sequencer.RaiseSequencerTest.test_large_target_shove_without_slider_is_unknown) ... ok
+2026-11-15T19:31:01.2181748Z test_maps_3bet_multiplier_to_nearest_preset (test_raise_sequencer.RaiseSequencerTest.test_maps_3bet_multiplier_to_nearest_preset) ... ok
+2026-11-15T19:31:01.2182781Z test_not_hero_turn_aborts_no_click (test_raise_sequencer.RaiseSequencerTest.test_not_hero_turn_aborts_no_click) ... ok
+2026-11-15T19:31:01.2183798Z test_panel_not_open_is_unknown_after_one_click (test_raise_sequencer.RaiseSequencerTest.test_panel_not_open_is_unknown_after_one_click) ... ok
+2026-11-15T19:31:01.2185071Z test_paused_does_not_click (test_raise_sequencer.RaiseSequencerTest.test_paused_does_not_click) ... ok
+2026-11-15T19:31:01.2186097Z test_read_failure_in_verify_is_not_confirmed (test_raise_sequencer.RaiseSequencerTest.test_read_failure_in_verify_is_not_confirmed) ... ok
+2026-11-15T19:31:01.2187178Z test_unknown_hand_aborts_no_click (test_raise_sequencer.RaiseSequencerTest.test_unknown_hand_aborts_no_click) ... ok
+2026-11-15T19:31:01.2188093Z
+2026-11-15T19:31:01.2188361Z ----------------------------------------------------------------------
+2026-11-15T19:31:01.2188861Z Ran 240 tests in 32.438s
+2026-11-15T19:31:01.2189075Z
+2026-11-15T19:31:01.2189261Z OK (skipped=3)
+2026-11-15T19:31:01.2528161Z ##[group]Run python tools/wait_hu_reference_release.py --seconds 3000
+2026-11-15T19:31:01.2528791Z [36;1mpython tools/wait_hu_reference_release.py --seconds 3000[0m
+2026-11-15T19:31:01.2586592Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-11-15T19:31:01.2587098Z env:
+2026-11-15T19:31:01.2587406Z   PYTHONUTF8: 1
+2026-11-15T19:31:01.2587696Z   OPENBLAS_NUM_THREADS: 1
+2026-11-15T19:31:01.2588107Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-15T19:31:01.2588595Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.10\x64/lib/pkgconfig
+2026-11-15T19:31:01.2589039Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-15T19:31:01.2589505Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-15T19:31:01.2589944Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-15T19:31:01.2592161Z   GH_TOKEN: ***
+2026-11-15T19:31:01.2592407Z ##[endgroup]
+2026-11-15T19:31:04.8409609Z Waiting for the complete reference release; existing calculations are preserved.
+2026-11-15T19:31:35.2029740Z Waiting for the complete reference release; existing calculations are preserved.
+2026-11-15T19:32:05.5973068Z Waiting for the complete reference release; existing calculations are preserved.
+2026-11-15T19:32:35.9399953Z Waiting for the complete reference release; existing calculations are preserved.
+2026-11-15T19:33:06.3329046Z Waiting for the complete reference release; existing calculations are preserved.
+2026-11-15T19:33:36.6967056Z Waiting for the complete reference release; existing calculations are preserved.
+2026-11-15T19:34:07.0961133Z Waiting for the complete reference release; existing calculations are preserved.
+2026-11-15T19:34:37.4204077Z Waiting for the complete reference release; existing calculations are preserved.
+2026-11-15T19:35:07.9057924Z Waiting for the complete reference release; existing calculations are preserved.
+2026-11-15T19:35:38.3054977Z Waiting for the complete reference release; existing calculations are preserved.
+2026-11-15T19:36:08.6892811Z Complete reference ZIP and manifest are uploaded.
+2026-11-15T19:36:08.8113277Z ##[group]Run python -m strategy.reference_download --verify --output runtime/hu-reference-ci/download
+2026-11-15T19:36:08.8114093Z [36;1mpython -m strategy.reference_download --verify --output runtime/hu-reference-ci/download[0m
+2026-11-15T19:36:08.8179114Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-11-15T19:36:08.8179531Z env:
+2026-11-15T19:36:08.8179796Z   PYTHONUTF8: 1
+2026-11-15T19:36:08.8180076Z   OPENBLAS_NUM_THREADS: 1
+2026-11-15T19:36:08.8180410Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-15T19:36:08.8180896Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.10\x64/lib/pkgconfig
+2026-11-15T19:36:08.8181397Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-15T19:36:08.8181843Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-15T19:36:08.8182292Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-15T19:36:08.8182761Z ##[endgroup]
+2026-11-15T19:36:13.0891965Z Download: 128 / 1929 MiB
+2026-11-15T19:36:16.1990436Z Download: 256 / 1929 MiB
+2026-11-15T19:36:19.0959024Z Download: 384 / 1929 MiB
+2026-11-15T19:36:22.2506023Z Download: 512 / 1929 MiB
+2026-11-15T19:36:25.2308548Z Download: 640 / 1929 MiB
+2026-11-15T19:36:28.3651924Z Download: 768 / 1929 MiB
+2026-11-15T19:36:31.8450615Z Download: 896 / 1929 MiB
+2026-11-15T19:36:34.7654910Z Download: 1024 / 1929 MiB
+2026-11-15T19:36:37.5851279Z Download: 1152 / 1929 MiB
+2026-11-15T19:36:40.6962240Z Download: 1280 / 1929 MiB
+2026-11-15T19:36:43.8326208Z Download: 1408 / 1929 MiB
+2026-11-15T19:36:46.9488885Z Download: 1536 / 1929 MiB
+2026-11-15T19:36:50.1882950Z Download: 1664 / 1929 MiB
+2026-11-15T19:36:53.1734076Z Download: 1792 / 1929 MiB
+2026-11-15T19:36:56.1237750Z Download: 1920 / 1929 MiB
+2026-11-15T19:37:13.9357703Z Banco salvo em: D:\a\Software\Software\runtime\hu-reference-ci\download\bank
+2026-11-15T19:37:13.9358431Z Alvo de precisao nativo atingido: SIM
+2026-11-15T19:37:14.0432813Z Resultado: D:\a\Software\Software\runtime\hu-reference-ci\download\download-receipt.json
+2026-11-15T19:37:14.0587208Z ##[group]Run python -m strategy.reference_validation --library runtime/hu-reference-ci/download/bank/library.json --flop Ah 7c 2s --output runtime/hu-reference-ci/alias-validation
+2026-11-15T19:37:14.0588382Z [36;1mpython -m strategy.reference_validation --library runtime/hu-reference-ci/download/bank/library.json --flop Ah 7c 2s --output runtime/hu-reference-ci/alias-validation[0m
+2026-11-15T19:37:14.0652729Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-11-15T19:37:14.0653119Z env:
+2026-11-15T19:37:14.0653364Z   PYTHONUTF8: 1
+2026-11-15T19:37:14.0653647Z   OPENBLAS_NUM_THREADS: 1
+2026-11-15T19:37:14.0653994Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-15T19:37:14.0654516Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.10\x64/lib/pkgconfig
+2026-11-15T19:37:14.0654967Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-15T19:37:14.0655488Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-15T19:37:14.0655926Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-15T19:37:14.0656255Z ##[endgroup]
+2026-11-15T19:37:17.6935757Z {
+2026-11-15T19:37:17.6936617Z   "status": "PASS",
+2026-11-15T19:37:17.6937300Z   "policy_sha256": "e037f4881cbc95831c08ea9ab85305d4e727492842846dbe8b3761c68adc1f29",
+2026-11-15T19:37:17.6938045Z   "scope": "STORED_POLICY_WITH_SYNTHETIC_READINGS_NOT_A_PLAYED_PPPOKER_HAND",
+2026-11-15T19:37:17.6938883Z   "output": "D:\\a\\Software\\Software\\runtime\\hu-reference-ci\\alias-validation"
+2026-11-15T19:37:17.6939436Z }
+2026-11-15T19:37:17.8211937Z ##[group]Run python -m strategy.river_validation --library runtime/hu-reference-ci/download/bank/library.json --output runtime/hu-reference-ci/river-exact.json
+2026-11-15T19:37:17.8214263Z [36;1mpython -m strategy.river_validation --library runtime/hu-reference-ci/download/bank/library.json --output runtime/hu-reference-ci/river-exact.json[0m
+2026-11-15T19:37:17.8273088Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-11-15T19:37:17.8273518Z env:
+2026-11-15T19:37:17.8273882Z   PYTHONUTF8: 1
+2026-11-15T19:37:17.8274176Z   OPENBLAS_NUM_THREADS: 1
+2026-11-15T19:37:17.8274565Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-15T19:37:17.8275120Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.10\x64/lib/pkgconfig
+2026-11-15T19:37:17.8275660Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-15T19:37:17.8276126Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-15T19:37:17.8276763Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-15T19:37:17.8277136Z ##[endgroup]
+2026-11-15T19:37:21.2787144Z {
+2026-11-15T19:37:21.2787957Z   "method": "exact_river_frozen_profile_evs_and_information_set_best_responses",
+2026-11-15T19:37:21.2788604Z   "scope": "CONDITIONAL_RIVER_PRIORS_AND_DECLARED_MENU_NOT_FULL_FLOP_GTO_CERTIFICATION",
+2026-11-15T19:37:21.2789086Z   "joint_private_deals": 439058,
+2026-11-15T19:37:21.2789464Z   "nash_conv_bb": 0.025621133249669775,
+2026-11-15T19:37:21.2789990Z   "source_policy_sha256": "70b17cc7e89c5d2da9eb490718e698e492d25e9bbff9c9dfd190b4de5022e6a3",
+2026-11-15T19:37:21.2790505Z   "elapsed_seconds": 0.3429999999999609
+2026-11-15T19:37:21.2790842Z }
+2026-11-15T19:37:21.3927637Z ##[group]Run python verificar_executor_hu.py --windows-owned --reference-library runtime/hu-reference-ci/download/bank/library.json --output runtime/hu-reference-ci/owned
+2026-11-15T19:37:21.3928740Z [36;1mpython verificar_executor_hu.py --windows-owned --reference-library runtime/hu-reference-ci/download/bank/library.json --output runtime/hu-reference-ci/owned[0m
+2026-11-15T19:37:21.3987315Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-11-15T19:37:21.3987750Z env:
+2026-11-15T19:37:21.3988009Z   PYTHONUTF8: 1
+2026-11-15T19:37:21.3988263Z   OPENBLAS_NUM_THREADS: 1
+2026-11-15T19:37:21.3988641Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-15T19:37:21.3989170Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.10\x64/lib/pkgconfig
+2026-11-15T19:37:21.3989624Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-15T19:37:21.3990404Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-15T19:37:21.3990828Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-15T19:37:21.3991192Z ##[endgroup]
+2026-11-15T19:37:38.0431308Z {
+2026-11-15T19:37:38.0433488Z   "schema": "software.hu-executor-check.v1",
+2026-11-15T19:37:38.0434966Z   "platform": "Windows-2025Server-10.0.26100-SP0",
+2026-11-15T19:37:38.0436238Z   "python": "3.12.10",
+2026-11-15T19:37:38.0436816Z   "report_path": "D:\\a\\Software\\Software\\runtime\\hu-reference-ci\\owned\\resultado.json",
+2026-11-15T19:37:38.0437559Z   "status": "PASS",
+2026-11-15T19:37:38.0437985Z   "scope": "WINDOWS_GDI_AND_SENDINPUT_OWNED_TK_ONLY",
+2026-11-15T19:37:38.0438545Z   "cases": [
+2026-11-15T19:37:38.0438859Z     {
+2026-11-15T19:37:38.0439154Z       "kind": "check",
+2026-11-15T19:37:38.0439520Z       "result": {
+2026-11-15T19:37:38.0439879Z         "state": "DONE",
+2026-11-15T19:37:38.0440293Z         "acted": true,
+2026-11-15T19:37:38.0440679Z         "confirmed": true,
+2026-11-15T19:37:38.0441114Z         "dry_run": false,
+2026-11-15T19:37:38.0441480Z         "plan": {
+2026-11-15T19:37:38.0441828Z           "action": "check",
+2026-11-15T19:37:38.0442241Z           "additional_bb": 0.0,
+2026-11-15T19:37:38.0442631Z           "raise_to_bb": 0.0,
+2026-11-15T19:37:38.0443279Z           "decision_id": "fecce407376ad4f7d72bb2c6dae6dad20adaceb30107da133947391788c65d93",
+2026-11-15T19:37:38.0443954Z           "authority": "COMPILED_HU_REFERENCE",
+2026-11-15T19:37:38.0444737Z           "strategy_certified_for_windows": false,
+2026-11-15T19:37:38.0445191Z           "basis_capture_id": "2",
+2026-11-15T19:37:38.0445839Z           "model_state_sha256": "5ee48c8e2c62d2c65f791cbd1a1eef0c8c1ef33e88bd6fec17fe27c1441592d5",
+2026-11-15T19:37:38.0446684Z           "profile_sha256": "890bed336e1472496a88470384e8b6e35415297d66bb06b9ca5cf63e865d4398"
+2026-11-15T19:37:38.0447332Z         },
+2026-11-15T19:37:38.0447634Z         "stages": [
+2026-11-15T19:37:38.0448306Z           {
+2026-11-15T19:37:38.0449264Z             "step": "ACTION",
+2026-11-15T19:37:38.0449989Z             "state": "DONE",
+2026-11-15T19:37:38.0450505Z             "reasons": [],
+2026-11-15T19:37:38.0451018Z             "elapsed_ms": 452.99999999997453,
+2026-11-15T19:37:38.0451820Z             "validations": [
+2026-11-15T19:37:38.0452213Z               {
+2026-11-15T19:37:38.0452590Z                 "sample_id": "4",
+2026-11-15T19:37:38.0452984Z                 "captured_at": 738.187,
+2026-11-15T19:37:38.0453497Z                 "identity_evidence": "FRESH_ID_AND_CONFIRMED_PUBLIC_STATE",
+2026-11-15T19:37:38.0453998Z                 "selected_amount": null
+2026-11-15T19:37:38.0454410Z               },
+2026-11-15T19:37:38.0454729Z               {
+2026-11-15T19:37:38.0455045Z                 "sample_id": "5",
+2026-11-15T19:37:38.0455449Z                 "captured_at": 738.515,
+2026-11-15T19:37:38.0455944Z                 "identity_evidence": "FRESH_ID_AND_CONFIRMED_PUBLIC_STATE",
+2026-11-15T19:37:38.0458337Z                 "selected_amount": null
+2026-11-15T19:37:38.0458875Z               }
+2026-11-15T19:37:38.0459117Z             ],
+2026-11-15T19:37:38.0459386Z             "controller_log": [
+2026-11-15T19:37:38.0459658Z               {
+2026-11-15T19:37:38.0459912Z                 "state": "CLICKING",
+2026-11-15T19:37:38.0460198Z                 "click": {
+2026-11-15T19:37:38.0460445Z                   "moved": {
+2026-11-15T19:37:38.0460738Z                     "requested": 1,
+2026-11-15T19:37:38.0461032Z                     "accepted": 1,
+2026-11-15T19:37:38.0461346Z                     "norm": [
+2026-11-15T19:37:38.0461613Z                       25497,
+2026-11-15T19:37:38.0461854Z                       39389
+2026-11-15T19:37:38.0462133Z                     ]
+2026-11-15T19:37:38.0462374Z                   },
+2026-11-15T19:37:38.0462628Z                   "down_accepted": 1,
+2026-11-15T19:37:38.0462937Z                   "up_accepted": 1,
+2026-11-15T19:37:38.0463218Z                   "released": true
+2026-11-15T19:37:38.0463494Z                 }
+2026-11-15T19:37:38.0463806Z               },
+2026-11-15T19:37:38.0464026Z               {
+2026-11-15T19:37:38.0464284Z                 "state": "DONE",
+2026-11-15T19:37:38.0464557Z                 "reasons": []
+2026-11-15T19:37:38.0464812Z               }
+2026-11-15T19:37:38.0465044Z             ]
+2026-11-15T19:37:38.0465260Z           }
+2026-11-15T19:37:38.0465505Z         ],
+2026-11-15T19:37:38.0465741Z         "evidence": [
+2026-11-15T19:37:38.0465974Z           {
+2026-11-15T19:37:38.0466284Z             "kind": "CONFIRMED_HISTORY_TRANSITION",
+2026-11-15T19:37:38.0466579Z             "sample_id": "7",
+2026-11-15T19:37:38.0466865Z             "revision": 2,
+2026-11-15T19:37:38.0467134Z             "public_history": [
+2026-11-15T19:37:38.0467395Z               "1:check:0",
+2026-11-15T19:37:38.0467663Z               "0:check:0"
+2026-11-15T19:37:38.0467913Z             ]
+2026-11-15T19:37:38.0468140Z           }
+2026-11-15T19:37:38.0468361Z         ]
+2026-11-15T19:37:38.0468575Z       },
+2026-11-15T19:37:38.0468857Z       "callbacks": [
+2026-11-15T19:37:38.0469096Z         "CHECK"
+2026-11-15T19:37:38.0469678Z       ],
+2026-11-15T19:37:38.0470026Z       "selected_text": ""
+2026-11-15T19:37:38.0470271Z     },
+2026-11-15T19:37:38.0470520Z     {
+2026-11-15T19:37:38.0470758Z       "kind": "call",
+2026-11-15T19:37:38.0471001Z       "result": {
+2026-11-15T19:37:38.0471257Z         "state": "DONE",
+2026-11-15T19:37:38.0472003Z         "acted": true,
+2026-11-15T19:37:38.0472424Z         "confirmed": true,
+2026-11-15T19:37:38.0472817Z         "dry_run": false,
+2026-11-15T19:37:38.0473056Z         "plan": {
+2026-11-15T19:37:38.0473313Z           "action": "call",
+2026-11-15T19:37:38.0473576Z           "additional_bb": 5.0,
+2026-11-15T19:37:38.0473849Z           "raise_to_bb": 5.0,
+2026-11-15T19:37:38.0474241Z           "decision_id": "1ac25eb10ce7b4975c220113c0558d0143fe69936794edf0ed2106371759ce19",
+2026-11-15T19:37:38.0474654Z           "authority": "COMPILED_HU_REFERENCE",
+2026-11-15T19:37:38.0474999Z           "strategy_certified_for_windows": false,
+2026-11-15T19:37:38.0475343Z           "basis_capture_id": "2",
+2026-11-15T19:37:38.0475758Z           "model_state_sha256": "3ee4acc72bb6b50ec7cc5c02a96c43dcb3d07e0e65064795d46c5b63425932dd",
+2026-11-15T19:37:38.0476301Z           "profile_sha256": "ac3ef0d0bc303ca43e996648aa5ded166759df0b6c877cf37d780e4206b80458"
+2026-11-15T19:37:38.0476694Z         },
+2026-11-15T19:37:38.0476933Z         "stages": [
+2026-11-15T19:37:38.0477167Z           {
+2026-11-15T19:37:38.0477389Z             "step": "ACTION",
+2026-11-15T19:37:38.0477665Z             "state": "DONE",
+2026-11-15T19:37:38.0477922Z             "reasons": [],
+2026-11-15T19:37:38.0478223Z             "elapsed_ms": 250.0,
+2026-11-15T19:37:38.0478496Z             "validations": [
+2026-11-15T19:37:38.0478739Z               {
+2026-11-15T19:37:38.0478991Z                 "sample_id": "4",
+2026-11-15T19:37:38.0479268Z                 "captured_at": 738.656,
+2026-11-15T19:37:38.0480218Z                 "identity_evidence": "FRESH_ID_AND_CONFIRMED_PUBLIC_STATE",
+2026-11-15T19:37:38.0480590Z                 "selected_amount": null
+2026-11-15T19:37:38.0480859Z               },
+2026-11-15T19:37:38.0481111Z               {
+2026-11-15T19:37:38.0481404Z                 "sample_id": "5",
+2026-11-15T19:37:38.0481689Z                 "captured_at": 738.781,
+2026-11-15T19:37:38.0482242Z                 "identity_evidence": "FRESH_ID_AND_CONFIRMED_PUBLIC_STATE",
+2026-11-15T19:37:38.0482826Z                 "selected_amount": null
+2026-11-15T19:37:38.0483122Z               }
+2026-11-15T19:37:38.0483354Z             ],
+2026-11-15T19:37:38.0483596Z             "controller_log": [
+2026-11-15T19:37:38.0483870Z               {
+2026-11-15T19:37:38.0484117Z                 "state": "CLICKING",
+2026-11-15T19:37:38.0484435Z                 "click": {
+2026-11-15T19:37:38.0484696Z                   "moved": {
+2026-11-15T19:37:38.0484958Z                     "requested": 1,
+2026-11-15T19:37:38.0485259Z                     "accepted": 1,
+2026-11-15T19:37:38.0485536Z                     "norm": [
+2026-11-15T19:37:38.0485805Z                       25497,
+2026-11-15T19:37:38.0500867Z                       39389
+2026-11-15T19:37:38.0501421Z                     ]
+2026-11-15T19:37:38.0501872Z                   },
+2026-11-15T19:37:38.0502296Z                   "down_accepted": 1,
+2026-11-15T19:37:38.0502866Z                   "up_accepted": 1,
+2026-11-15T19:37:38.0503343Z                   "released": true
+2026-11-15T19:37:38.0503758Z                 }
+2026-11-15T19:37:38.0504142Z               },
+2026-11-15T19:37:38.0504504Z               {
+2026-11-15T19:37:38.0504877Z                 "state": "DONE",
+2026-11-15T19:37:38.0505325Z                 "reasons": []
+2026-11-15T19:37:38.0505709Z               }
+2026-11-15T19:37:38.0506043Z             ]
+2026-11-15T19:37:38.0506439Z           }
+2026-11-15T19:37:38.0506757Z         ],
+2026-11-15T19:37:38.0507117Z         "evidence": [
+2026-11-15T19:37:38.0507482Z           {
+2026-11-15T19:37:38.0507875Z             "kind": "CONFIRMED_HISTORY_TRANSITION",
+2026-11-15T19:37:38.0508722Z             "sample_id": "7",
+2026-11-15T19:37:38.0509147Z             "revision": 2,
+2026-11-15T19:37:38.0509589Z             "public_history": [
+2026-11-15T19:37:38.0509972Z               "1:bet:5",
+2026-11-15T19:37:38.0510310Z               "0:call:5"
+2026-11-15T19:37:38.0511018Z             ]
+2026-11-15T19:37:38.0511313Z           }
+2026-11-15T19:37:38.0511634Z         ]
+2026-11-15T19:37:38.0511920Z       },
+2026-11-15T19:37:38.0512213Z       "callbacks": [
+2026-11-15T19:37:38.0512555Z         "CALL"
+2026-11-15T19:37:38.0512854Z       ],
+2026-11-15T19:37:38.0519549Z       "selected_text": ""
+2026-11-15T19:37:38.0519969Z     },
+2026-11-15T19:37:38.0520266Z     {
+2026-11-15T19:37:38.0520605Z       "kind": "fold",
+2026-11-15T19:37:38.0521001Z       "result": {
+2026-11-15T19:37:38.0521348Z         "state": "DONE",
+2026-11-15T19:37:38.0521730Z         "acted": true,
+2026-11-15T19:37:38.0522073Z         "confirmed": true,
+2026-11-15T19:37:38.0522469Z         "dry_run": false,
+2026-11-15T19:37:38.0522830Z         "plan": {
+2026-11-15T19:37:38.0523160Z           "action": "fold",
+2026-11-15T19:37:38.0523566Z           "additional_bb": 0.0,
+2026-11-15T19:37:38.0523963Z           "raise_to_bb": 0.0,
+2026-11-15T19:37:38.0524626Z           "decision_id": "16dab695305b90e7e047b40c9f2a53c2c86559caecbbc4b5084ec9f77d465795",
+2026-11-15T19:37:38.0525306Z           "authority": "COMPILED_HU_REFERENCE",
+2026-11-15T19:37:38.0525796Z           "strategy_certified_for_windows": false,
+2026-11-15T19:37:38.0526270Z           "basis_capture_id": "2",
+2026-11-15T19:37:38.0526911Z           "model_state_sha256": "3ee4acc72bb6b50ec7cc5c02a96c43dcb3d07e0e65064795d46c5b63425932dd",
+2026-11-15T19:37:38.0527999Z           "profile_sha256": "dfbfa5275cad45856a699840584a48e18371829caa17ed61f45e3254ef3a28ae"
+2026-11-15T19:37:38.0528643Z         },
+2026-11-15T19:37:38.0529215Z         "stages": [
+2026-11-15T19:37:38.0529637Z           {
+2026-11-15T19:37:38.0529965Z             "step": "ACTION",
+2026-11-15T19:37:38.0530359Z             "state": "DONE",
+2026-11-15T19:37:38.0530743Z             "reasons": [],
+2026-11-15T19:37:38.0531278Z             "elapsed_ms": 484.99999999989996,
+2026-11-15T19:37:38.0531963Z             "validations": [
+2026-11-15T19:37:38.0532722Z               {
+2026-11-15T19:37:38.0533085Z                 "sample_id": "4",
+2026-11-15T19:37:38.0533520Z                 "captured_at": 738.921,
+2026-11-15T19:37:38.0534042Z                 "identity_evidence": "FRESH_ID_AND_CONFIRMED_PUBLIC_STATE",
+2026-11-15T19:37:38.0534627Z                 "selected_amount": null
+2026-11-15T19:37:38.0535024Z               },
+2026-11-15T19:37:38.0535331Z               {
+2026-11-15T19:37:38.0535675Z                 "sample_id": "5",
+2026-11-15T19:37:38.0536065Z                 "captured_at": 739.281,
+2026-11-15T19:37:38.0536581Z                 "identity_evidence": "FRESH_ID_AND_CONFIRMED_PUBLIC_STATE",
+2026-11-15T19:37:38.0537102Z                 "selected_amount": null
+2026-11-15T19:37:38.0537476Z               }
+2026-11-15T19:37:38.0537814Z             ],
+2026-11-15T19:37:38.0538184Z             "controller_log": [
+2026-11-15T19:37:38.0538561Z               {
+2026-11-15T19:37:38.0538895Z                 "state": "CLICKING",
+2026-11-15T19:37:38.0539294Z                 "click": {
+2026-11-15T19:37:38.0539675Z                   "moved": {
+2026-11-15T19:37:38.0540138Z                     "requested": 1,
+2026-11-15T19:37:38.0540525Z                     "accepted": 1,
+2026-11-15T19:37:38.0540930Z                     "norm": [
+2026-11-15T19:37:38.0541303Z                       12684,
+2026-11-15T19:37:38.0541709Z                       39389
+2026-11-15T19:37:38.0542060Z                     ]
+2026-11-15T19:37:38.0542380Z                   },
+2026-11-15T19:37:38.0542748Z                   "down_accepted": 1,
+2026-11-15T19:37:38.0543157Z                   "up_accepted": 1,
+2026-11-15T19:37:38.0543562Z                   "released": true
+2026-11-15T19:37:38.0543937Z                 }
+2026-11-15T19:37:38.0544235Z               },
+2026-11-15T19:37:38.0544567Z               {
+2026-11-15T19:37:38.0544966Z                 "state": "DONE",
+2026-11-15T19:37:38.0545405Z                 "reasons": []
+2026-11-15T19:37:38.0545766Z               }
+2026-11-15T19:37:38.0546251Z             ]
+2026-11-15T19:37:38.0546590Z           }
+2026-11-15T19:37:38.0546894Z         ],
+2026-11-15T19:37:38.0547197Z         "evidence": [
+2026-11-15T19:37:38.0547545Z           {
+2026-11-15T19:37:38.0548165Z             "kind": "CONFIRMED_HISTORY_TRANSITION",
+2026-11-15T19:37:38.0548619Z             "sample_id": "7",
+2026-11-15T19:37:38.0548999Z             "revision": 2,
+2026-11-15T19:37:38.0549408Z             "public_history": [
+2026-11-15T19:37:38.0549798Z               "1:bet:5",
+2026-11-15T19:37:38.0550143Z               "0:fold:0"
+2026-11-15T19:37:38.0550494Z             ]
+2026-11-15T19:37:38.0550800Z           }
+2026-11-15T19:37:38.0551077Z         ]
+2026-11-15T19:37:38.0551394Z       },
+2026-11-15T19:37:38.0551697Z       "callbacks": [
+2026-11-15T19:37:38.0552018Z         "FOLD"
+2026-11-15T19:37:38.0552341Z       ],
+2026-11-15T19:37:38.0552682Z       "selected_text": ""
+2026-11-15T19:37:38.0553054Z     },
+2026-11-15T19:37:38.0553351Z     {
+2026-11-15T19:37:38.0553647Z       "kind": "bet",
+2026-11-15T19:37:38.0553996Z       "result": {
+2026-11-15T19:37:38.0554328Z         "state": "DONE",
+2026-11-15T19:37:38.0554797Z         "acted": true,
+2026-11-15T19:37:38.0555148Z         "confirmed": true,
+2026-11-15T19:37:38.0555497Z         "dry_run": false,
+2026-11-15T19:37:38.0555876Z         "plan": {
+2026-11-15T19:37:38.0556248Z           "action": "bet",
+2026-11-15T19:37:38.0556623Z           "additional_bb": 5.0,
+2026-11-15T19:37:38.0556997Z           "raise_to_bb": 5.0,
+2026-11-15T19:37:38.0557683Z           "decision_id": "e76d7e007943c74360098558600b4e5839bc10e24e22f0c3775a7098ab5d9b73",
+2026-11-15T19:37:38.0558560Z           "authority": "COMPILED_HU_REFERENCE",
+2026-11-15T19:37:38.0559032Z           "strategy_certified_for_windows": false,
+2026-11-15T19:37:38.0559486Z           "basis_capture_id": "2",
+2026-11-15T19:37:38.0560118Z           "model_state_sha256": "5ee48c8e2c62d2c65f791cbd1a1eef0c8c1ef33e88bd6fec17fe27c1441592d5",
+2026-11-15T19:37:38.0561029Z           "profile_sha256": "124644abb99d7f6cf5fca06fa29f3acb91ab6c5ed8ea82d564ef618a0ab7d226"
+2026-11-15T19:37:38.0561660Z         },
+2026-11-15T19:37:38.0561968Z         "stages": [
+2026-11-15T19:37:38.0562294Z           {
+2026-11-15T19:37:38.0562615Z             "step": "OPEN",
+2026-11-15T19:37:38.0562960Z             "state": "DONE",
+2026-11-15T19:37:38.0563421Z             "reasons": [],
+2026-11-15T19:37:38.0563790Z             "elapsed_ms": 546.9999999999118,
+2026-11-15T19:37:38.0564193Z             "validations": [
+2026-11-15T19:37:38.0564603Z               {
+2026-11-15T19:37:38.0564917Z                 "sample_id": "4",
+2026-11-15T19:37:38.0565332Z                 "captured_at": 739.421,
+2026-11-15T19:37:38.0565837Z                 "identity_evidence": "FRESH_ID_AND_CONFIRMED_PUBLIC_STATE",
+2026-11-15T19:37:38.0566368Z                 "selected_amount": null
+2026-11-15T19:37:38.0566770Z               },
+2026-11-15T19:37:38.0567081Z               {
+2026-11-15T19:37:38.0567419Z                 "sample_id": "5",
+2026-11-15T19:37:38.0567800Z                 "captured_at": 739.89,
+2026-11-15T19:37:38.0568570Z                 "identity_evidence": "FRESH_ID_AND_CONFIRMED_PUBLIC_STATE",
+2026-11-15T19:37:38.0569128Z                 "selected_amount": null
+2026-11-15T19:37:38.0569518Z               }
+2026-11-15T19:37:38.0569836Z             ],
+2026-11-15T19:37:38.0570161Z             "controller_log": [
+2026-11-15T19:37:38.0570499Z               {
+2026-11-15T19:37:38.0570848Z                 "state": "CLICKING",
+2026-11-15T19:37:38.0571237Z                 "click": {
+2026-11-15T19:37:38.0571576Z                   "moved": {
+2026-11-15T19:37:38.0572012Z                     "requested": 1,
+2026-11-15T19:37:38.0572396Z                     "accepted": 1,
+2026-11-15T19:37:38.0572797Z                     "norm": [
+2026-11-15T19:37:38.0573159Z                       40871,
+2026-11-15T19:37:38.0573510Z                       39389
+2026-11-15T19:37:38.0573873Z                     ]
+2026-11-15T19:37:38.0574351Z                   },
+2026-11-15T19:37:38.0574713Z                   "down_accepted": 1,
+2026-11-15T19:37:38.0575127Z                   "up_accepted": 1,
+2026-11-15T19:37:38.0575515Z                   "released": true
+2026-11-15T19:37:38.0575958Z                 }
+2026-11-15T19:37:38.0576269Z               },
+2026-11-15T19:37:38.0576589Z               {
+2026-11-15T19:37:38.0576916Z                 "state": "DONE",
+2026-11-15T19:37:38.0577270Z                 "reasons": []
+2026-11-15T19:37:38.0577652Z               }
+2026-11-15T19:37:38.0577964Z             ]
+2026-11-15T19:37:38.0578257Z           },
+2026-11-15T19:37:38.0578580Z           {
+2026-11-15T19:37:38.0578908Z             "step": "AMOUNT_FIELD",
+2026-11-15T19:37:38.0579355Z             "state": "DONE",
+2026-11-15T19:37:38.0579717Z             "reasons": [],
+2026-11-15T19:37:38.0580079Z             "elapsed_ms": 407.0000000000391,
+2026-11-15T19:37:38.0580518Z             "validations": [
+2026-11-15T19:37:38.0580874Z               {
+2026-11-15T19:37:38.0581206Z                 "sample_id": "8",
+2026-11-15T19:37:38.0581602Z                 "captured_at": 739.968,
+2026-11-15T19:37:38.0582013Z                 "identity_evidence": "FRESH_ID",
+2026-11-15T19:37:38.0582474Z                 "selected_amount": {
+2026-11-15T19:37:38.0582944Z                   "status": "AMOUNT_CONFIRMED",
+2026-11-15T19:37:38.0583378Z                   "value_bb": 1.0,
+2026-11-15T19:37:38.0583771Z                   "quantum_bb": 0.001,
+2026-11-15T19:37:38.0584146Z                   "box": [
+2026-11-15T19:37:38.0585259Z                     430,
+2026-11-15T19:37:38.0585616Z                     170,
+2026-11-15T19:37:38.0585947Z                     180,
+2026-11-15T19:37:38.0586307Z                     40
+2026-11-15T19:37:38.0586742Z                   ],
+2026-11-15T19:37:38.0587133Z                   "unit": "BB",
+2026-11-15T19:37:38.0587524Z                   "semantics": "RAISE_TO_BB"
+2026-11-15T19:37:38.0587942Z                 }
+2026-11-15T19:37:38.0588546Z               },
+2026-11-15T19:37:38.0588867Z               {
+2026-11-15T19:37:38.0589208Z                 "sample_id": "9",
+2026-11-15T19:37:38.0589606Z                 "captured_at": 740.312,
+2026-11-15T19:37:38.0590027Z                 "identity_evidence": "FRESH_ID",
+2026-11-15T19:37:38.0590480Z                 "selected_amount": {
+2026-11-15T19:37:38.0590888Z                   "status": "AMOUNT_CONFIRMED",
+2026-11-15T19:37:38.0591368Z                   "value_bb": 1.0,
+2026-11-15T19:37:38.0591757Z                   "quantum_bb": 0.001,
+2026-11-15T19:37:38.0592133Z                   "box": [
+2026-11-15T19:37:38.0592504Z                     430,
+2026-11-15T19:37:38.0592839Z                     170,
+2026-11-15T19:37:38.0593168Z                     180,
+2026-11-15T19:37:38.0593516Z                     40
+2026-11-15T19:37:38.0593840Z                   ],
+2026-11-15T19:37:38.0594184Z                   "unit": "BB",
+2026-11-15T19:37:38.0594619Z                   "semantics": "RAISE_TO_BB"
+2026-11-15T19:37:38.0595010Z                 }
+2026-11-15T19:37:38.0595342Z               }
+2026-11-15T19:37:38.0595653Z             ],
+2026-11-15T19:37:38.0595980Z             "controller_log": [
+2026-11-15T19:37:38.0596343Z               {
+2026-11-15T19:37:38.0596654Z                 "state": "CLICKING",
+2026-11-15T19:37:38.0597066Z                 "click": {
+2026-11-15T19:37:38.0597412Z                   "moved": {
+2026-11-15T19:37:38.0597767Z                     "requested": 1,
+2026-11-15T19:37:38.0598216Z                     "accepted": 1,
+2026-11-15T19:37:38.0598578Z                     "norm": [
+2026-11-15T19:37:38.0598963Z                       38949,
+2026-11-15T19:37:38.0599306Z                       24864
+2026-11-15T19:37:38.0599643Z                     ]
+2026-11-15T19:37:38.0599990Z                   },
+2026-11-15T19:37:38.0600330Z                   "down_accepted": 1,
+2026-11-15T19:37:38.0600738Z                   "up_accepted": 1,
+2026-11-15T19:37:38.0601274Z                   "released": true
+2026-11-15T19:37:38.0601685Z                 }
+2026-11-15T19:37:38.0602018Z               },
+2026-11-15T19:37:38.0602330Z               {
+2026-11-15T19:37:38.0602667Z                 "state": "DONE",
+2026-11-15T19:37:38.0603036Z                 "reasons": []
+2026-11-15T19:37:38.0603367Z               }
+2026-11-15T19:37:38.0603695Z             ]
+2026-11-15T19:37:38.0603998Z           },
+2026-11-15T19:37:38.0604291Z           {
+2026-11-15T19:37:38.0604636Z             "step": "CONFIRM",
+2026-11-15T19:37:38.0605039Z             "state": "DONE",
+2026-11-15T19:37:38.0605425Z             "reasons": [],
+2026-11-15T19:37:38.0605795Z             "elapsed_ms": 453.0000000000882,
+2026-11-15T19:37:38.0606201Z             "validations": [
+2026-11-15T19:37:38.0606571Z               {
+2026-11-15T19:37:38.0606896Z                 "sample_id": "12",
+2026-11-15T19:37:38.0607298Z                 "captured_at": 740.406,
+2026-11-15T19:37:38.0607717Z                 "identity_evidence": "FRESH_ID",
+2026-11-15T19:37:38.0608137Z                 "selected_amount": {
+2026-11-15T19:37:38.0608873Z                   "status": "AMOUNT_CONFIRMED",
+2026-11-15T19:37:38.0609310Z                   "value_bb": 5.0,
+2026-11-15T19:37:38.0609706Z                   "quantum_bb": 0.001,
+2026-11-15T19:37:38.0610175Z                   "box": [
+2026-11-15T19:37:38.0610505Z                     430,
+2026-11-15T19:37:38.0610868Z                     170,
+2026-11-15T19:37:38.0611215Z                     180,
+2026-11-15T19:37:38.0611537Z                     40
+2026-11-15T19:37:38.0611998Z                   ],
+2026-11-15T19:37:38.0612340Z                   "unit": "BB",
+2026-11-15T19:37:38.0612786Z                   "semantics": "RAISE_TO_BB"
+2026-11-15T19:37:38.0613182Z                 }
+2026-11-15T19:37:38.0613489Z               },
+2026-11-15T19:37:38.0613814Z               {
+2026-11-15T19:37:38.0614140Z                 "sample_id": "13",
+2026-11-15T19:37:38.0614538Z                 "captured_at": 740.75,
+2026-11-15T19:37:38.0614962Z                 "identity_evidence": "FRESH_ID",
+2026-11-15T19:37:38.0615375Z                 "selected_amount": {
+2026-11-15T19:37:38.0615816Z                   "status": "AMOUNT_CONFIRMED",
+2026-11-15T19:37:38.0616283Z                   "value_bb": 5.0,
+2026-11-15T19:37:38.0616677Z                   "quantum_bb": 0.001,
+2026-11-15T19:37:38.0617060Z                   "box": [
+2026-11-15T19:37:38.0617387Z                     430,
+2026-11-15T19:37:38.0617750Z                     170,
+2026-11-15T19:37:38.0618086Z                     180,
+2026-11-15T19:37:38.0618410Z                     40
+2026-11-15T19:37:38.0618752Z                   ],
+2026-11-15T19:37:38.0619082Z                   "unit": "BB",
+2026-11-15T19:37:38.0619522Z                   "semantics": "RAISE_TO_BB"
+2026-11-15T19:37:38.0619922Z                 }
+2026-11-15T19:37:38.0620425Z               }
+2026-11-15T19:37:38.0824966Z             ],
+2026-11-15T19:37:38.0825354Z             "controller_log": [
+2026-11-15T19:37:38.0825761Z               {
+2026-11-15T19:37:38.0826064Z                 "state": "CLICKING",
+2026-11-15T19:37:38.0826480Z                 "click": {
+2026-11-15T19:37:38.0826764Z                   "moved": {
+2026-11-15T19:37:38.0827035Z                     "requested": 1,
+2026-11-15T19:37:38.0827397Z                     "accepted": 1,
+2026-11-15T19:37:38.0828134Z                     "norm": [
+2026-11-15T19:37:38.0829162Z                       40871,
+2026-11-15T19:37:38.0829680Z                       39389
+2026-11-15T19:37:38.0830405Z                     ]
+2026-11-15T19:37:38.0830717Z                   },
+2026-11-15T19:37:38.0831081Z                   "down_accepted": 1,
+2026-11-15T19:37:38.0831466Z                   "up_accepted": 1,
+2026-11-15T19:37:38.0831828Z                   "released": true
+2026-11-15T19:37:38.0832157Z                 }
+2026-11-15T19:37:38.0832447Z               },
+2026-11-15T19:37:38.0832727Z               {
+2026-11-15T19:37:38.0833251Z                 "state": "DONE",
+2026-11-15T19:37:38.0833583Z                 "reasons": []
+2026-11-15T19:37:38.0833866Z               }
+2026-11-15T19:37:38.0834171Z             ]
+2026-11-15T19:37:38.0834525Z           }
+2026-11-15T19:37:38.0835577Z         ],
+2026-11-15T19:37:38.0835902Z         "evidence": [
+2026-11-15T19:37:38.0836232Z           {
+2026-11-15T19:37:38.0836570Z             "kind": "STACK_DROP_AND_POT_GROWTH",
+2026-11-15T19:37:38.0836975Z             "sample_id": "14",
+2026-11-15T19:37:38.0837328Z             "observed_hero_cost_interval_bb": [
+2026-11-15T19:37:38.0837724Z               4.9,
+2026-11-15T19:37:38.0838022Z               5.1
+2026-11-15T19:37:38.0838290Z             ],
+2026-11-15T19:37:38.0838612Z             "observed_pot_growth_bb": 5.0,
+2026-11-15T19:37:38.0839068Z             "full_opponent_sequence_confirmed": false
+2026-11-15T19:37:38.0839492Z           },
+2026-11-15T19:37:38.0839781Z           {
+2026-11-15T19:37:38.0840099Z             "kind": "CONFIRMED_HISTORY_TRANSITION",
+2026-11-15T19:37:38.0840546Z             "sample_id": "15",
+2026-11-15T19:37:38.0840903Z             "revision": 2,
+2026-11-15T19:37:38.0841207Z             "public_history": [
+2026-11-15T19:37:38.0841499Z               "1:check:0",
+2026-11-15T19:37:38.0841778Z               "0:bet:5"
+2026-11-15T19:37:38.0842067Z             ]
+2026-11-15T19:37:38.0842317Z           }
+2026-11-15T19:37:38.0842591Z         ]
+2026-11-15T19:37:38.0842832Z       },
+2026-11-15T19:37:38.0843385Z       "callbacks": [
+2026-11-15T19:37:38.0843621Z         "BET",
+2026-11-15T19:37:38.0843995Z         "CONFIRM"
+2026-11-15T19:37:38.0844200Z       ],
+2026-11-15T19:37:38.0844404Z       "selected_text": "5,000"
+2026-11-15T19:37:38.0844647Z     },
+2026-11-15T19:37:38.0844878Z     {
+2026-11-15T19:37:38.0845138Z       "kind": "raise",
+2026-11-15T19:37:38.0845425Z       "result": {
+2026-11-15T19:37:38.0845680Z         "state": "DONE",
+2026-11-15T19:37:38.0845990Z         "acted": true,
+2026-11-15T19:37:38.0846290Z         "confirmed": true,
+2026-11-15T19:37:38.0846584Z         "dry_run": false,
+2026-11-15T19:37:38.0846906Z         "plan": {
+2026-11-15T19:37:38.0847225Z           "action": "raise",
+2026-11-15T19:37:38.0847588Z           "additional_bb": 15.0,
+2026-11-15T19:37:38.0847894Z           "raise_to_bb": 15.0,
+2026-11-15T19:37:38.0848371Z           "decision_id": "ea963775bb4d230ef3c6fc87cb3071e656bea2bbdd1f04e6c521a1e7e0a53596",
+2026-11-15T19:37:38.0848906Z           "authority": "COMPILED_HU_REFERENCE",
+2026-11-15T19:37:38.0849269Z           "strategy_certified_for_windows": false,
+2026-11-15T19:37:38.0849609Z           "basis_capture_id": "2",
+2026-11-15T19:37:38.0850132Z           "model_state_sha256": "3ee4acc72bb6b50ec7cc5c02a96c43dcb3d07e0e65064795d46c5b63425932dd",
+2026-11-15T19:37:38.0850887Z           "profile_sha256": "e8f6577ebf1b63468e5d19196c23b214949da4045fc1b8e8a7b080e27c7343c0"
+2026-11-15T19:37:38.0851390Z         },
+2026-11-15T19:37:38.0851636Z         "stages": [
+2026-11-15T19:37:38.0851905Z           {
+2026-11-15T19:37:38.0852157Z             "step": "OPEN",
+2026-11-15T19:37:38.0852475Z             "state": "DONE",
+2026-11-15T19:37:38.0852776Z             "reasons": [],
+2026-11-15T19:37:38.0853117Z             "elapsed_ms": 217.9999999999609,
+2026-11-15T19:37:38.0853457Z             "validations": [
+2026-11-15T19:37:38.0853762Z               {
+2026-11-15T19:37:38.0854047Z                 "sample_id": "4",
+2026-11-15T19:37:38.0854371Z                 "captured_at": 740.875,
+2026-11-15T19:37:38.0854831Z                 "identity_evidence": "FRESH_ID_AND_CONFIRMED_PUBLIC_STATE",
+2026-11-15T19:37:38.0855257Z                 "selected_amount": null
+2026-11-15T19:37:38.0855536Z               },
+2026-11-15T19:37:38.0855742Z               {
+2026-11-15T19:37:38.0855998Z                 "sample_id": "5",
+2026-11-15T19:37:38.0856340Z                 "captured_at": 741.0,
+2026-11-15T19:37:38.0856802Z                 "identity_evidence": "FRESH_ID_AND_CONFIRMED_PUBLIC_STATE",
+2026-11-15T19:37:38.0857406Z                 "selected_amount": null
+2026-11-15T19:37:38.0857740Z               }
+2026-11-15T19:37:38.0857989Z             ],
+2026-11-15T19:37:38.0858253Z             "controller_log": [
+2026-11-15T19:37:38.0858509Z               {
+2026-11-15T19:37:38.0858760Z                 "state": "CLICKING",
+2026-11-15T19:37:38.0859032Z                 "click": {
+2026-11-15T19:37:38.0859283Z                   "moved": {
+2026-11-15T19:37:38.0859548Z                     "requested": 1,
+2026-11-15T19:37:38.0859849Z                     "accepted": 1,
+2026-11-15T19:37:38.0860126Z                     "norm": [
+2026-11-15T19:37:38.0860404Z                       40871,
+2026-11-15T19:37:38.0860646Z                       39389
+2026-11-15T19:37:38.0860890Z                     ]
+2026-11-15T19:37:38.0861102Z                   },
+2026-11-15T19:37:38.0861355Z                   "down_accepted": 1,
+2026-11-15T19:37:38.0861701Z                   "up_accepted": 1,
+2026-11-15T19:37:38.0862073Z                   "released": true
+2026-11-15T19:37:38.0862409Z                 }
+2026-11-15T19:37:38.0862694Z               },
+2026-11-15T19:37:38.0862960Z               {
+2026-11-15T19:37:38.0863201Z                 "state": "DONE",
+2026-11-15T19:37:38.0863747Z                 "reasons": []
+2026-11-15T19:37:38.0863991Z               }
+2026-11-15T19:37:38.0864185Z             ]
+2026-11-15T19:37:38.0864363Z           },
+2026-11-15T19:37:38.0864562Z           {
+2026-11-15T19:37:38.0864769Z             "step": "AMOUNT_FIELD",
+2026-11-15T19:37:38.0865203Z             "state": "DONE",
+2026-11-15T19:37:38.0865460Z             "reasons": [],
+2026-11-15T19:37:38.0865756Z             "elapsed_ms": 422.00000000002547,
+2026-11-15T19:37:38.0866058Z             "validations": [
+2026-11-15T19:37:38.0866294Z               {
+2026-11-15T19:37:38.0866505Z                 "sample_id": "8",
+2026-11-15T19:37:38.0866788Z                 "captured_at": 741.093,
+2026-11-15T19:37:38.0867080Z                 "identity_evidence": "FRESH_ID",
+2026-11-15T19:37:38.0867385Z                 "selected_amount": {
+2026-11-15T19:37:38.0867702Z                   "status": "AMOUNT_CONFIRMED",
+2026-11-15T19:37:38.0868016Z                   "value_bb": 1.0,
+2026-11-15T19:37:38.0868286Z                   "quantum_bb": 0.001,
+2026-11-15T19:37:38.0868558Z                   "box": [
+2026-11-15T19:37:38.0868791Z                     430,
+2026-11-15T19:37:38.0869017Z                     170,
+2026-11-15T19:37:38.0869245Z                     180,
+2026-11-15T19:37:38.0869448Z                     40
+2026-11-15T19:37:38.0869657Z                   ],
+2026-11-15T19:37:38.0869872Z                   "unit": "BB",
+2026-11-15T19:37:38.0870169Z                   "semantics": "RAISE_TO_BB"
+2026-11-15T19:37:38.0870435Z                 }
+2026-11-15T19:37:38.0870653Z               },
+2026-11-15T19:37:38.0870855Z               {
+2026-11-15T19:37:38.0871064Z                 "sample_id": "9",
+2026-11-15T19:37:38.0871348Z                 "captured_at": 741.437,
+2026-11-15T19:37:38.0871641Z                 "identity_evidence": "FRESH_ID",
+2026-11-15T19:37:38.0871933Z                 "selected_amount": {
+2026-11-15T19:37:38.0872228Z                   "status": "AMOUNT_CONFIRMED",
+2026-11-15T19:37:38.0872522Z                   "value_bb": 1.0,
+2026-11-15T19:37:38.0872790Z                   "quantum_bb": 0.001,
+2026-11-15T19:37:38.0873088Z                   "box": [
+2026-11-15T19:37:38.0873310Z                     430,
+2026-11-15T19:37:38.0873534Z                     170,
+2026-11-15T19:37:38.0873734Z                     180,
+2026-11-15T19:37:38.0873963Z                     40
+2026-11-15T19:37:38.0874174Z                   ],
+2026-11-15T19:37:38.0874401Z                   "unit": "BB",
+2026-11-15T19:37:38.0874676Z                   "semantics": "RAISE_TO_BB"
+2026-11-15T19:37:38.0874945Z                 }
+2026-11-15T19:37:38.0875135Z               }
+2026-11-15T19:37:38.0875324Z             ],
+2026-11-15T19:37:38.0875671Z             "controller_log": [
+2026-11-15T19:37:38.0875913Z               {
+2026-11-15T19:37:38.0876114Z                 "state": "CLICKING",
+2026-11-15T19:37:38.0876436Z                 "click": {
+2026-11-15T19:37:38.0876682Z                   "moved": {
+2026-11-15T19:37:38.0876954Z                     "requested": 1,
+2026-11-15T19:37:38.0877216Z                     "accepted": 1,
+2026-11-15T19:37:38.0877460Z                     "norm": [
+2026-11-15T19:37:38.0877697Z                       38949,
+2026-11-15T19:37:38.0877987Z                       24864
+2026-11-15T19:37:38.0878251Z                     ]
+2026-11-15T19:37:38.0878466Z                   },
+2026-11-15T19:37:38.0878694Z                   "down_accepted": 1,
+2026-11-15T19:37:38.0878974Z                   "up_accepted": 1,
+2026-11-15T19:37:38.0879290Z                   "released": true
+2026-11-15T19:37:38.0879546Z                 }
+2026-11-15T19:37:38.0879750Z               },
+2026-11-15T19:37:38.0879962Z               {
+2026-11-15T19:37:38.0880171Z                 "state": "DONE",
+2026-11-15T19:37:38.0880483Z                 "reasons": []
+2026-11-15T19:37:38.0880836Z               }
+2026-11-15T19:37:38.0881037Z             ]
+2026-11-15T19:37:38.0881242Z           },
+2026-11-15T19:37:38.0881445Z           {
+2026-11-15T19:37:38.0881662Z             "step": "CONFIRM",
+2026-11-15T19:37:38.0882000Z             "state": "DONE",
+2026-11-15T19:37:38.0882346Z             "reasons": [],
+2026-11-15T19:37:38.0882704Z             "elapsed_ms": 453.0000000000882,
+2026-11-15T19:37:38.0883090Z             "validations": [
+2026-11-15T19:37:38.0884356Z               {
+2026-11-15T19:37:38.0884565Z                 "sample_id": "12",
+2026-11-15T19:37:38.0884847Z                 "captured_at": 741.531,
+2026-11-15T19:37:38.0885161Z                 "identity_evidence": "FRESH_ID",
+2026-11-15T19:37:38.0885430Z                 "selected_amount": {
+2026-11-15T19:37:38.0885646Z                   "status": "AMOUNT_CONFIRMED",
+2026-11-15T19:37:38.0885866Z                   "value_bb": 15.0,
+2026-11-15T19:37:38.0886053Z                   "quantum_bb": 0.001,
+2026-11-15T19:37:38.0886231Z                   "box": [
+2026-11-15T19:37:38.0886389Z                     430,
+2026-11-15T19:37:38.0886544Z                     170,
+2026-11-15T19:37:38.0886712Z                     180,
+2026-11-15T19:37:38.0886874Z                     40
+2026-11-15T19:37:38.0887024Z                   ],
+2026-11-15T19:37:38.0887175Z                   "unit": "BB",
+2026-11-15T19:37:38.0887363Z                   "semantics": "RAISE_TO_BB"
+2026-11-15T19:37:38.0887563Z                 }
+2026-11-15T19:37:38.0887701Z               },
+2026-11-15T19:37:38.0887830Z               {
+2026-11-15T19:37:38.0887971Z                 "sample_id": "13",
+2026-11-15T19:37:38.0888154Z                 "captured_at": 741.875,
+2026-11-15T19:37:38.0888352Z                 "identity_evidence": "FRESH_ID",
+2026-11-15T19:37:38.0888556Z                 "selected_amount": {
+2026-11-15T19:37:38.0888758Z                   "status": "AMOUNT_CONFIRMED",
+2026-11-15T19:37:38.0888955Z                   "value_bb": 15.0,
+2026-11-15T19:37:38.0889217Z                   "quantum_bb": 0.001,
+2026-11-15T19:37:38.0889470Z                   "box": [
+2026-11-15T19:37:38.0889722Z                     430,
+2026-11-15T19:37:38.0889874Z                     170,
+2026-11-15T19:37:38.0890019Z                     180,
+2026-11-15T19:37:38.0890164Z                     40
+2026-11-15T19:37:38.0890312Z                   ],
+2026-11-15T19:37:38.0890459Z                   "unit": "BB",
+2026-11-15T19:37:38.0890639Z                   "semantics": "RAISE_TO_BB"
+2026-11-15T19:37:38.0890813Z                 }
+2026-11-15T19:37:38.0890938Z               }
+2026-11-15T19:37:38.0891061Z             ],
+2026-11-15T19:37:38.0891193Z             "controller_log": [
+2026-11-15T19:37:38.0891357Z               {
+2026-11-15T19:37:38.0891493Z                 "state": "CLICKING",
+2026-11-15T19:37:38.0891660Z                 "click": {
+2026-11-15T19:37:38.0891952Z                   "moved": {
+2026-11-15T19:37:38.0892123Z                     "requested": 1,
+2026-11-15T19:37:38.0892292Z                     "accepted": 1,
+2026-11-15T19:37:38.0892457Z                     "norm": [
+2026-11-15T19:37:38.0892618Z                       40871,
+2026-11-15T19:37:38.0892773Z                       39389
+2026-11-15T19:37:38.0892924Z                     ]
+2026-11-15T19:37:38.0893069Z                   },
+2026-11-15T19:37:38.0893223Z                   "down_accepted": 1,
+2026-11-15T19:37:38.0893416Z                   "up_accepted": 1,
+2026-11-15T19:37:38.0893596Z                   "released": true
+2026-11-15T19:37:38.0893766Z                 }
+2026-11-15T19:37:38.0893910Z               },
+2026-11-15T19:37:38.0894043Z               {
+2026-11-15T19:37:38.0894189Z                 "state": "DONE",
+2026-11-15T19:37:38.0894360Z                 "reasons": []
+2026-11-15T19:37:38.0894520Z               }
+2026-11-15T19:37:38.0894654Z             ]
+2026-11-15T19:37:38.0894797Z           }
+2026-11-15T19:37:38.0894925Z         ],
+2026-11-15T19:37:38.0895054Z         "evidence": [
+2026-11-15T19:37:38.0895210Z           {
+2026-11-15T19:37:38.0895367Z             "kind": "STACK_DROP_AND_POT_GROWTH",
+2026-11-15T19:37:38.0895570Z             "sample_id": "14",
+2026-11-15T19:37:38.0895756Z             "observed_hero_cost_interval_bb": [
+2026-11-15T19:37:38.0895946Z               14.9,
+2026-11-15T19:37:38.0896084Z               15.1
+2026-11-15T19:37:38.0896216Z             ],
+2026-11-15T19:37:38.0896455Z             "observed_pot_growth_bb": 15.0,
+2026-11-15T19:37:38.0896694Z             "full_opponent_sequence_confirmed": false
+2026-11-15T19:37:38.0896903Z           },
+2026-11-15T19:37:38.0897038Z           {
+2026-11-15T19:37:38.0897211Z             "kind": "CONFIRMED_HISTORY_TRANSITION",
+2026-11-15T19:37:38.0897431Z             "sample_id": "15",
+2026-11-15T19:37:38.0897604Z             "revision": 2,
+2026-11-15T19:37:38.0897776Z             "public_history": [
+2026-11-15T19:37:38.0897959Z               "1:bet:5",
+2026-11-15T19:37:38.0898118Z               "0:raise:15"
+2026-11-15T19:37:38.0898265Z             ]
+2026-11-15T19:37:38.0898398Z           }
+2026-11-15T19:37:38.0898584Z         ]
+2026-11-15T19:37:38.0898716Z       },
+2026-11-15T19:37:38.0898846Z       "callbacks": [
+2026-11-15T19:37:38.0898995Z         "RAISE",
+2026-11-15T19:37:38.0899129Z         "CONFIRM"
+2026-11-15T19:37:38.0899273Z       ],
+2026-11-15T19:37:38.0899412Z       "selected_text": "15,000"
+2026-11-15T19:37:38.0899583Z     },
+2026-11-15T19:37:38.0899715Z     {
+2026-11-15T19:37:38.0899851Z       "kind": "all_in",
+2026-11-15T19:37:38.0900003Z       "result": {
+2026-11-15T19:37:38.0900154Z         "state": "DONE",
+2026-11-15T19:37:38.0900319Z         "acted": true,
+2026-11-15T19:37:38.0900480Z         "confirmed": true,
+2026-11-15T19:37:38.0900641Z         "dry_run": false,
+2026-11-15T19:37:38.0900804Z         "plan": {
+2026-11-15T19:37:38.0900955Z           "action": "all_in",
+2026-11-15T19:37:38.0901139Z           "additional_bb": 30.0,
+2026-11-15T19:37:38.0901316Z           "raise_to_bb": 30.0,
+2026-11-15T19:37:38.0901607Z           "decision_id": "bd46d67c65607948f2130a01b0ba42643242d1fa84d46a547514c4ac18de21a4",
+2026-11-15T19:37:38.0901936Z           "authority": "COMPILED_HU_REFERENCE",
+2026-11-15T19:37:38.0902161Z           "strategy_certified_for_windows": false,
+2026-11-15T19:37:38.0902383Z           "basis_capture_id": "2",
+2026-11-15T19:37:38.0902707Z           "model_state_sha256": "5ee48c8e2c62d2c65f791cbd1a1eef0c8c1ef33e88bd6fec17fe27c1441592d5",
+2026-11-15T19:37:38.0903159Z           "profile_sha256": "1e893964455551d770462f15df1f7c63ab5e1e039e7b4f444b55437605714ab0"
+2026-11-15T19:37:38.0903461Z         },
+2026-11-15T19:37:38.0903947Z         "stages": [
+2026-11-15T19:37:38.0904106Z           {
+2026-11-15T19:37:38.0904255Z             "step": "OPEN",
+2026-11-15T19:37:38.0904435Z             "state": "DONE",
+2026-11-15T19:37:38.0904727Z             "reasons": [],
+2026-11-15T19:37:38.0904905Z             "elapsed_ms": 202.99999999997453,
+2026-11-15T19:37:38.0905115Z             "validations": [
+2026-11-15T19:37:38.0905273Z               {
+2026-11-15T19:37:38.0905432Z                 "sample_id": "4",
+2026-11-15T19:37:38.0905619Z                 "captured_at": 742.0,
+2026-11-15T19:37:38.0905881Z                 "identity_evidence": "FRESH_ID_AND_CONFIRMED_PUBLIC_STATE",
+2026-11-15T19:37:38.0906140Z                 "selected_amount": null
+2026-11-15T19:37:38.0906319Z               },
+2026-11-15T19:37:38.0906459Z               {
+2026-11-15T19:37:38.0906604Z                 "sample_id": "5",
+2026-11-15T19:37:38.0906782Z                 "captured_at": 742.125,
+2026-11-15T19:37:38.0907039Z                 "identity_evidence": "FRESH_ID_AND_CONFIRMED_PUBLIC_STATE",
+2026-11-15T19:37:38.0907291Z                 "selected_amount": null
+2026-11-15T19:37:38.0907469Z               }
+2026-11-15T19:37:38.0907606Z             ],
+2026-11-15T19:37:38.0907752Z             "controller_log": [
+2026-11-15T19:37:38.0907913Z               {
+2026-11-15T19:37:38.0908059Z                 "state": "CLICKING",
+2026-11-15T19:37:38.0908242Z                 "click": {
+2026-11-15T19:37:38.0908403Z                   "moved": {
+2026-11-15T19:37:38.0908573Z                     "requested": 1,
+2026-11-15T19:37:38.0908765Z                     "accepted": 1,
+2026-11-15T19:37:38.0908945Z                     "norm": [
+2026-11-15T19:37:38.0909124Z                       40871,
+2026-11-15T19:37:38.0909285Z                       39389
+2026-11-15T19:37:38.0909530Z                     ]
+2026-11-15T19:37:38.0909681Z                   },
+2026-11-15T19:37:38.0909841Z                   "down_accepted": 1,
+2026-11-15T19:37:38.0910029Z                   "up_accepted": 1,
+2026-11-15T19:37:38.0910220Z                   "released": true
+2026-11-15T19:37:38.0910395Z                 }
+2026-11-15T19:37:38.0910531Z               },
+2026-11-15T19:37:38.0910663Z               {
+2026-11-15T19:37:38.0910813Z                 "state": "DONE",
+2026-11-15T19:37:38.0910997Z                 "reasons": []
+2026-11-15T19:37:38.0911154Z               }
+2026-11-15T19:37:38.0911287Z             ]
+2026-11-15T19:37:38.0911424Z           },
+2026-11-15T19:37:38.0911557Z           {
+2026-11-15T19:37:38.0911701Z             "step": "AMOUNT_FIELD",
+2026-11-15T19:37:38.0911879Z             "state": "DONE",
+2026-11-15T19:37:38.0912044Z             "reasons": [],
+2026-11-15T19:37:38.0912216Z             "elapsed_ms": 422.00000000002547,
+2026-11-15T19:37:38.0912410Z             "validations": [
+2026-11-15T19:37:38.0912562Z               {
+2026-11-15T19:37:38.0912720Z                 "sample_id": "8",
+2026-11-15T19:37:38.0912898Z                 "captured_at": 742.203,
+2026-11-15T19:37:38.0913098Z                 "identity_evidence": "FRESH_ID",
+2026-11-15T19:37:38.0913304Z                 "selected_amount": {
+2026-11-15T19:37:38.0913501Z                   "status": "AMOUNT_CONFIRMED",
+2026-11-15T19:37:38.0913708Z                   "value_bb": 1.0,
+2026-11-15T19:37:38.0913893Z                   "quantum_bb": 0.001,
+2026-11-15T19:37:38.0914073Z                   "box": [
+2026-11-15T19:37:38.0914230Z                     430,
+2026-11-15T19:37:38.0914387Z                     170,
+2026-11-15T19:37:38.0914552Z                     180,
+2026-11-15T19:37:38.0914702Z                     40
+2026-11-15T19:37:38.0914847Z                   ],
+2026-11-15T19:37:38.0914994Z                   "unit": "BB",
+2026-11-15T19:37:38.0915181Z                   "semantics": "RAISE_TO_BB"
+2026-11-15T19:37:38.0915363Z                 }
+2026-11-15T19:37:38.0915502Z               },
+2026-11-15T19:37:38.0915630Z               {
+2026-11-15T19:37:38.0915768Z                 "sample_id": "9",
+2026-11-15T19:37:38.0915945Z                 "captured_at": 742.546,
+2026-11-15T19:37:38.0916146Z                 "identity_evidence": "FRESH_ID",
+2026-11-15T19:37:38.0916356Z                 "selected_amount": {
+2026-11-15T19:37:38.0916644Z                   "status": "AMOUNT_CONFIRMED",
+2026-11-15T19:37:38.0916850Z                   "value_bb": 1.0,
+2026-11-15T19:37:38.0917040Z                   "quantum_bb": 0.001,
+2026-11-15T19:37:38.0917224Z                   "box": [
+2026-11-15T19:37:38.0917381Z                     430,
+2026-11-15T19:37:38.0917536Z                     170,
+2026-11-15T19:37:38.0917684Z                     180,
+2026-11-15T19:37:38.0917837Z                     40
+2026-11-15T19:37:38.0917991Z                   ],
+2026-11-15T19:37:38.0918156Z                   "unit": "BB",
+2026-11-15T19:37:38.0918340Z                   "semantics": "RAISE_TO_BB"
+2026-11-15T19:37:38.0918530Z                 }
+2026-11-15T19:37:38.0918658Z               }
+2026-11-15T19:37:38.0918786Z             ],
+2026-11-15T19:37:38.0918934Z             "controller_log": [
+2026-11-15T19:37:38.0919094Z               {
+2026-11-15T19:37:38.0919237Z                 "state": "CLICKING",
+2026-11-15T19:37:38.0919414Z                 "click": {
+2026-11-15T19:37:38.0919573Z                   "moved": {
+2026-11-15T19:37:38.0919736Z                     "requested": 1,
+2026-11-15T19:37:38.0919926Z                     "accepted": 1,
+2026-11-15T19:37:38.0920097Z                     "norm": [
+2026-11-15T19:37:38.0920265Z                       38949,
+2026-11-15T19:37:38.0920424Z                       24864
+2026-11-15T19:37:38.0920580Z                     ]
+2026-11-15T19:37:38.0920726Z                   },
+2026-11-15T19:37:38.0920883Z                   "down_accepted": 1,
+2026-11-15T19:37:38.0921155Z                   "up_accepted": 1,
+2026-11-15T19:37:38.0921346Z                   "released": true
+2026-11-15T19:37:38.0921512Z                 }
+2026-11-15T19:37:38.0921650Z               },
+2026-11-15T19:37:38.0921798Z               {
+2026-11-15T19:37:38.0921947Z                 "state": "DONE",
+2026-11-15T19:37:38.0922123Z                 "reasons": []
+2026-11-15T19:37:38.0922289Z               }
+2026-11-15T19:37:38.0922426Z             ]
+2026-11-15T19:37:38.0922559Z           },
+2026-11-15T19:37:38.0922689Z           {
+2026-11-15T19:37:38.0922826Z             "step": "CONFIRM",
+2026-11-15T19:37:38.0922998Z             "state": "DONE",
+2026-11-15T19:37:38.0923162Z             "reasons": [],
+2026-11-15T19:37:38.0923342Z             "elapsed_ms": 453.0000000000882,
+2026-11-15T19:37:38.0923550Z             "validations": [
+2026-11-15T19:37:38.0923715Z               {
+2026-11-15T19:37:38.0924197Z                 "sample_id": "12",
+2026-11-15T19:37:38.0924389Z                 "captured_at": 742.656,
+2026-11-15T19:37:38.0924595Z                 "identity_evidence": "FRESH_ID",
+2026-11-15T19:37:38.0924802Z                 "selected_amount": {
+2026-11-15T19:37:38.0925000Z                   "status": "AMOUNT_CONFIRMED",
+2026-11-15T19:37:38.0925206Z                   "value_bb": 30.0,
+2026-11-15T19:37:38.0925386Z                   "quantum_bb": 0.001,
+2026-11-15T19:37:38.0925558Z                   "box": [
+2026-11-15T19:37:38.0925724Z                     430,
+2026-11-15T19:37:38.0925871Z                     170,
+2026-11-15T19:37:38.0926017Z                     180,
+2026-11-15T19:37:38.0926165Z                     40
+2026-11-15T19:37:38.0926309Z                   ],
+2026-11-15T19:37:38.0926454Z                   "unit": "BB",
+2026-11-15T19:37:38.0926632Z                   "semantics": "RAISE_TO_BB"
+2026-11-15T19:37:38.0926815Z                 }
+2026-11-15T19:37:38.0926952Z               },
+2026-11-15T19:37:38.0927079Z               {
+2026-11-15T19:37:38.0927219Z                 "sample_id": "13",
+2026-11-15T19:37:38.0927418Z                 "captured_at": 743.0,
+2026-11-15T19:37:38.0927612Z                 "identity_evidence": "FRESH_ID",
+2026-11-15T19:37:38.0927814Z                 "selected_amount": {
+2026-11-15T19:37:38.0928004Z                   "status": "AMOUNT_CONFIRMED",
+2026-11-15T19:37:38.0928205Z                   "value_bb": 30.0,
+2026-11-15T19:37:38.0928383Z                   "quantum_bb": 0.001,
+2026-11-15T19:37:38.0928666Z                   "box": [
+2026-11-15T19:37:38.0928828Z                     430,
+2026-11-15T19:37:38.0928986Z                     170,
+2026-11-15T19:37:38.0929141Z                     180,
+2026-11-15T19:37:38.0929313Z                     40
+2026-11-15T19:37:38.0929462Z                   ],
+2026-11-15T19:37:38.0929614Z                   "unit": "BB",
+2026-11-15T19:37:38.0929800Z                   "semantics": "RAISE_TO_BB"
+2026-11-15T19:37:38.0929985Z                 }
+2026-11-15T19:37:38.0930124Z               }
+2026-11-15T19:37:38.0930263Z             ],
+2026-11-15T19:37:38.0930405Z             "controller_log": [
+2026-11-15T19:37:38.0930567Z               {
+2026-11-15T19:37:38.0930711Z                 "state": "CLICKING",
+2026-11-15T19:37:38.0930888Z                 "click": {
+2026-11-15T19:37:38.0931054Z                   "moved": {
+2026-11-15T19:37:38.0931216Z                     "requested": 1,
+2026-11-15T19:37:38.0931391Z                     "accepted": 1,
+2026-11-15T19:37:38.0931566Z                     "norm": [
+2026-11-15T19:37:38.0931721Z                       40871,
+2026-11-15T19:37:38.0931877Z                       39389
+2026-11-15T19:37:38.0932034Z                     ]
+2026-11-15T19:37:38.0932176Z                   },
+2026-11-15T19:37:38.0932332Z                   "down_accepted": 1,
+2026-11-15T19:37:38.0932559Z                   "up_accepted": 1,
+2026-11-15T19:37:38.0932749Z                   "released": true
+2026-11-15T19:37:38.0932923Z                 }
+2026-11-15T19:37:38.0933064Z               },
+2026-11-15T19:37:38.0933275Z               {
+2026-11-15T19:37:38.0933423Z                 "state": "DONE",
+2026-11-15T19:37:38.0933599Z                 "reasons": []
+2026-11-15T19:37:38.0933755Z               }
+2026-11-15T19:37:38.0933881Z             ]
+2026-11-15T19:37:38.0934019Z           }
+2026-11-15T19:37:38.0934150Z         ],
+2026-11-15T19:37:38.0934291Z         "evidence": [
+2026-11-15T19:37:38.0934436Z           {
+2026-11-15T19:37:38.0934605Z             "kind": "STACK_DROP_AND_POT_GROWTH",
+2026-11-15T19:37:38.0934813Z             "sample_id": "14",
+2026-11-15T19:37:38.0935000Z             "observed_hero_cost_interval_bb": [
+2026-11-15T19:37:38.0935196Z               29.9,
+2026-11-15T19:37:38.0935340Z               30.1
+2026-11-15T19:37:38.0935476Z             ],
+2026-11-15T19:37:38.0935629Z             "observed_pot_growth_bb": 30.0,
+2026-11-15T19:37:38.0935858Z             "full_opponent_sequence_confirmed": false
+2026-11-15T19:37:38.0936065Z           },
+2026-11-15T19:37:38.0936193Z           {
+2026-11-15T19:37:38.0936353Z             "kind": "CONFIRMED_HISTORY_TRANSITION",
+2026-11-15T19:37:38.0936574Z             "sample_id": "15",
+2026-11-15T19:37:38.0936740Z             "revision": 2,
+2026-11-15T19:37:38.0936913Z             "public_history": [
+2026-11-15T19:37:38.0937082Z               "1:check:0",
+2026-11-15T19:37:38.0937253Z               "0:all_in:30"
+2026-11-15T19:37:38.0937410Z             ]
+2026-11-15T19:37:38.0937543Z           }
+2026-11-15T19:37:38.0937672Z         ]
+2026-11-15T19:37:38.0937804Z       },
+2026-11-15T19:37:38.0937934Z       "callbacks": [
+2026-11-15T19:37:38.0938082Z         "BET",
+2026-11-15T19:37:38.0938226Z         "CONFIRM"
+2026-11-15T19:37:38.0938368Z       ],
+2026-11-15T19:37:38.0938505Z       "selected_text": "30,000"
+2026-11-15T19:37:38.0938670Z     }
+2026-11-15T19:37:38.0938798Z   ],
+2026-11-15T19:37:38.0938946Z   "native_owned_capture": "PASS",
+2026-11-15T19:37:38.0939149Z   "pppoker_windows_validated": false,
+2026-11-15T19:37:38.0939341Z   "reference_hand": {
+2026-11-15T19:37:38.0939497Z     "status": "PASS",
+2026-11-15T19:37:38.0939783Z     "policy_sha256": "70b17cc7e89c5d2da9eb490718e698e492d25e9bbff9c9dfd190b4de5022e6a3",
+2026-11-15T19:37:38.0940102Z     "native_target_met": true,
+2026-11-15T19:37:38.0940302Z     "complete_to_showdown": true,
+2026-11-15T19:37:38.0940478Z     "event_counts": {
+2026-11-15T19:37:38.0940622Z       "action": 9,
+2026-11-15T19:37:38.0940850Z       "board": 2,
+2026-11-15T19:37:38.0941000Z       "execution_confirmed": 3
+2026-11-15T19:37:38.0941162Z     },
+2026-11-15T19:37:38.0941291Z     "steps": [
+2026-11-15T19:37:38.0941434Z       {
+2026-11-15T19:37:38.0941580Z         "street": "FLOP",
+2026-11-15T19:37:38.0941896Z         "result": {
+2026-11-15T19:37:38.0942050Z           "state": "DONE",
+2026-11-15T19:37:38.0942227Z           "acted": true,
+2026-11-15T19:37:38.0942390Z           "confirmed": true,
+2026-11-15T19:37:38.0942559Z           "dry_run": false,
+2026-11-15T19:37:38.0942728Z           "plan": {
+2026-11-15T19:37:38.0942891Z             "action": "bet",
+2026-11-15T19:37:38.0943071Z             "additional_bb": 1.833,
+2026-11-15T19:37:38.0943268Z             "raise_to_bb": 1.833,
+2026-11-15T19:37:38.0943571Z             "decision_id": "65d8dea4f6c427b324655c78fe0f6036f65851329c889ec4e8b6a02aaae1ecba",
+2026-11-15T19:37:38.0943908Z             "authority": "COMPILED_HU_REFERENCE",
+2026-11-15T19:37:38.0944556Z             "strategy_certified_for_windows": false,
+2026-11-15T19:37:38.0944797Z             "basis_capture_id": "4",
+2026-11-15T19:37:38.0945118Z             "model_state_sha256": "07da817ae1866d321482d7c85c1ce1c78a35a85e1146ea6fc591da7581e78a59",
+2026-11-15T19:37:38.0945565Z             "profile_sha256": "72f77aa5a0936ad06ec9527013b8bc41ae0d8bf331121455e8fbba0995c88f96"
+2026-11-15T19:37:38.0945884Z           },
+2026-11-15T19:37:38.0946020Z           "stages": [
+2026-11-15T19:37:38.0946164Z             {
+2026-11-15T19:37:38.0946304Z               "step": "OPEN",
+2026-11-15T19:37:38.0946573Z               "state": "DONE",
+2026-11-15T19:37:38.0946748Z               "reasons": [],
+2026-11-15T19:37:38.0946933Z               "elapsed_ms": 202.99999999997453,
+2026-11-15T19:37:38.0947146Z               "validations": [
+2026-11-15T19:37:38.0947306Z                 {
+2026-11-15T19:37:38.0947456Z                   "sample_id": "6",
+2026-11-15T19:37:38.0947650Z                   "captured_at": 745.812,
+2026-11-15T19:37:38.0947912Z                   "identity_evidence": "FRESH_ID_AND_CONFIRMED_PUBLIC_STATE",
+2026-11-15T19:37:38.0948176Z                   "selected_amount": null
+2026-11-15T19:37:38.0948357Z                 },
+2026-11-15T19:37:38.0948495Z                 {
+2026-11-15T19:37:38.0948641Z                   "sample_id": "7",
+2026-11-15T19:37:38.0948823Z                   "captured_at": 745.937,
+2026-11-15T19:37:38.0949082Z                   "identity_evidence": "FRESH_ID_AND_CONFIRMED_PUBLIC_STATE",
+2026-11-15T19:37:38.0949339Z                   "selected_amount": null
+2026-11-15T19:37:38.0949521Z                 }
+2026-11-15T19:37:38.0949659Z               ],
+2026-11-15T19:37:38.0949809Z               "controller_log": [
+2026-11-15T19:37:38.0949980Z                 {
+2026-11-15T19:37:38.0950130Z                   "state": "CLICKING",
+2026-11-15T19:37:38.0950316Z                   "click": {
+2026-11-15T19:37:38.0950477Z                     "moved": {
+2026-11-15T19:37:38.0950653Z                       "requested": 1,
+2026-11-15T19:37:38.0950852Z                       "accepted": 1,
+2026-11-15T19:37:38.0951028Z                       "norm": [
+2026-11-15T19:37:38.0951197Z                         40871,
+2026-11-15T19:37:38.0951360Z                         39389
+2026-11-15T19:37:38.0951522Z                       ]
+2026-11-15T19:37:38.0951669Z                     },
+2026-11-15T19:37:38.0951832Z                     "down_accepted": 1,
+2026-11-15T19:37:38.0952027Z                     "up_accepted": 1,
+2026-11-15T19:37:38.0952212Z                     "released": true
+2026-11-15T19:37:38.0952385Z                   }
+2026-11-15T19:37:38.0952519Z                 },
+2026-11-15T19:37:38.0952659Z                 {
+2026-11-15T19:37:38.0952796Z                   "state": "DONE",
+2026-11-15T19:37:38.0952974Z                   "reasons": []
+2026-11-15T19:37:38.0953133Z                 }
+2026-11-15T19:37:38.0953269Z               ]
+2026-11-15T19:37:38.0953402Z             },
+2026-11-15T19:37:38.0953620Z             {
+2026-11-15T19:37:38.0953765Z               "step": "PRESET",
+2026-11-15T19:37:38.0953942Z               "state": "DONE",
+2026-11-15T19:37:38.0954111Z               "reasons": [],
+2026-11-15T19:37:38.0954282Z               "elapsed_ms": 500.0,
+2026-11-15T19:37:38.0954470Z               "validations": [
+2026-11-15T19:37:38.0954628Z                 {
+2026-11-15T19:37:38.0954778Z                   "sample_id": "10",
+2026-11-15T19:37:38.0954971Z                   "captured_at": 746.015,
+2026-11-15T19:37:38.0955181Z                   "identity_evidence": "FRESH_ID",
+2026-11-15T19:37:38.0955395Z                   "selected_amount": {
+2026-11-15T19:37:38.0955598Z                     "status": "AMOUNT_CONFIRMED",
+2026-11-15T19:37:38.0955806Z                     "value_bb": 1.0,
+2026-11-15T19:37:38.0955989Z                     "quantum_bb": 0.001,
+2026-11-15T19:37:38.0956172Z                     "box": [
+2026-11-15T19:37:38.0956336Z                       430,
+2026-11-15T19:37:38.0956492Z                       170,
+2026-11-15T19:37:38.0956638Z                       180,
+2026-11-15T19:37:38.0956792Z                       40
+2026-11-15T19:37:38.0956945Z                     ],
+2026-11-15T19:37:38.0957097Z                     "unit": "BB",
+2026-11-15T19:37:38.0957287Z                     "semantics": "RAISE_TO_BB"
+2026-11-15T19:37:38.0957474Z                   }
+2026-11-15T19:37:38.0957612Z                 },
+2026-11-15T19:37:38.0957747Z                 {
+2026-11-15T19:37:38.0957905Z                   "sample_id": "11",
+2026-11-15T19:37:38.0958157Z                   "captured_at": 746.421,
+2026-11-15T19:37:38.0958369Z                   "identity_evidence": "FRESH_ID",
+2026-11-15T19:37:38.0958580Z                   "selected_amount": {
+2026-11-15T19:37:38.0958779Z                     "status": "AMOUNT_CONFIRMED",
+2026-11-15T19:37:38.0958981Z                     "value_bb": 1.0,
+2026-11-15T19:37:38.0959164Z                     "quantum_bb": 0.001,
+2026-11-15T19:37:38.0959348Z                     "box": [
+2026-11-15T19:37:38.0959509Z                       430,
+2026-11-15T19:37:38.0959670Z                       170,
+2026-11-15T19:37:38.0959836Z                       180,
+2026-11-15T19:37:38.0959994Z                       40
+2026-11-15T19:37:38.0960145Z                     ],
+2026-11-15T19:37:38.0960297Z                     "unit": "BB",
+2026-11-15T19:37:38.0960484Z                     "semantics": "RAISE_TO_BB"
+2026-11-15T19:37:38.0960674Z                   }
+2026-11-15T19:37:38.0960808Z                 }
+2026-11-15T19:37:38.0960944Z               ],
+2026-11-15T19:37:38.0961091Z               "controller_log": [
+2026-11-15T19:37:38.0961257Z                 {
+2026-11-15T19:37:38.0961405Z                   "state": "CLICKING",
+2026-11-15T19:37:38.0961915Z                   "click": {
+2026-11-15T19:37:38.0962197Z                     "moved": {
+2026-11-15T19:37:38.0962999Z                       "requested": 1,
+2026-11-15T19:37:38.0963439Z                       "accepted": 1,
+2026-11-15T19:37:38.0963658Z                       "norm": [
+2026-11-15T19:37:38.0963866Z                         26137,
+2026-11-15T19:37:38.0964067Z                         24864
+2026-11-15T19:37:38.0964274Z                       ]
+2026-11-15T19:37:38.0964468Z                     },
+2026-11-15T19:37:38.0964651Z                     "down_accepted": 1,
+2026-11-15T19:37:38.0964906Z                     "up_accepted": 1,
+2026-11-15T19:37:38.0965137Z                     "released": true
+2026-11-15T19:37:38.0965341Z                   }
+2026-11-15T19:37:38.0965520Z                 },
+2026-11-15T19:37:38.0965678Z                 {
+2026-11-15T19:37:38.0965863Z                   "state": "DONE",
+2026-11-15T19:37:38.0966073Z                   "reasons": []
+2026-11-15T19:37:38.0966511Z                 }
+2026-11-15T19:37:38.0967303Z               ]
+2026-11-15T19:37:38.0967608Z             },
+2026-11-15T19:37:38.0967774Z             {
+2026-11-15T19:37:38.0967960Z               "step": "CONFIRM",
+2026-11-15T19:37:38.0969353Z               "state": "DONE",
+2026-11-15T19:37:38.0969571Z               "reasons": [],
+2026-11-15T19:37:38.0969814Z               "elapsed_ms": 531.0000000000628,
+2026-11-15T19:37:38.0970044Z               "validations": [
+2026-11-15T19:37:38.0970219Z                 {
+2026-11-15T19:37:38.0970375Z                   "sample_id": "13",
+2026-11-15T19:37:38.0970569Z                   "captured_at": 746.515,
+2026-11-15T19:37:38.0970787Z                   "identity_evidence": "FRESH_ID",
+2026-11-15T19:37:38.0970999Z                   "selected_amount": {
+2026-11-15T19:37:38.0971211Z                     "status": "AMOUNT_CONFIRMED",
+2026-11-15T19:37:38.0971435Z                     "value_bb": 1.833,
+2026-11-15T19:37:38.0971618Z                     "quantum_bb": 0.001,
+2026-11-15T19:37:38.0971800Z                     "box": [
+2026-11-15T19:37:38.0971966Z                       430,
+2026-11-15T19:37:38.0972123Z                       170,
+2026-11-15T19:37:38.0972277Z                       180,
+2026-11-15T19:37:38.0972431Z                       40
+2026-11-15T19:37:38.0972585Z                     ],
+2026-11-15T19:37:38.0972746Z                     "unit": "BB",
+2026-11-15T19:37:38.0972936Z                     "semantics": "RAISE_TO_BB"
+2026-11-15T19:37:38.0973136Z                   }
+2026-11-15T19:37:38.0973277Z                 },
+2026-11-15T19:37:38.0973416Z                 {
+2026-11-15T19:37:38.0973566Z                   "sample_id": "14",
+2026-11-15T19:37:38.0973762Z                   "captured_at": 746.921,
+2026-11-15T19:37:38.0974055Z                   "identity_evidence": "FRESH_ID",
+2026-11-15T19:37:38.0974318Z                   "selected_amount": {
+2026-11-15T19:37:38.0974522Z                     "status": "AMOUNT_CONFIRMED",
+2026-11-15T19:37:38.0974731Z                     "value_bb": 1.833,
+2026-11-15T19:37:38.0974917Z                     "quantum_bb": 0.001,
+2026-11-15T19:37:38.0975119Z                     "box": [
+2026-11-15T19:37:38.0975288Z                       430,
+2026-11-15T19:37:38.0975445Z                       170,
+2026-11-15T19:37:38.0975600Z                       180,
+2026-11-15T19:37:38.0975759Z                       40
+2026-11-15T19:37:38.0975916Z                     ],
+2026-11-15T19:37:38.0976074Z                     "unit": "BB",
+2026-11-15T19:37:38.0976306Z                     "semantics": "RAISE_TO_BB"
+2026-11-15T19:37:38.0976495Z                   }
+2026-11-15T19:37:38.0976634Z                 }
+2026-11-15T19:37:38.0976771Z               ],
+2026-11-15T19:37:38.0976932Z               "controller_log": [
+2026-11-15T19:37:38.0977107Z                 {
+2026-11-15T19:37:38.0977257Z                   "state": "CLICKING",
+2026-11-15T19:37:38.0977443Z                   "click": {
+2026-11-15T19:37:38.0977607Z                     "moved": {
+2026-11-15T19:37:38.0977849Z                       "requested": 1,
+2026-11-15T19:37:38.0978044Z                       "accepted": 1,
+2026-11-15T19:37:38.0978236Z                       "norm": [
+2026-11-15T19:37:38.0978415Z                         40871,
+2026-11-15T19:37:38.0978588Z                         39389
+2026-11-15T19:37:38.0978760Z                       ]
+2026-11-15T19:37:38.0978939Z                     },
+2026-11-15T19:37:38.0979106Z                     "down_accepted": 1,
+2026-11-15T19:37:38.0979310Z                     "up_accepted": 1,
+2026-11-15T19:37:38.0979494Z                     "released": true
+2026-11-15T19:37:38.0979671Z                   }
+2026-11-15T19:37:38.0979814Z                 },
+2026-11-15T19:37:38.0979946Z                 {
+2026-11-15T19:37:38.0980101Z                   "state": "DONE",
+2026-11-15T19:37:38.0980281Z                   "reasons": []
+2026-11-15T19:37:38.0980443Z                 }
+2026-11-15T19:37:38.0980583Z               ]
+2026-11-15T19:37:38.0980735Z             }
+2026-11-15T19:37:38.0980873Z           ],
+2026-11-15T19:37:38.0981016Z           "evidence": [
+2026-11-15T19:37:38.0981169Z             {
+2026-11-15T19:37:38.0981429Z               "kind": "STACK_DROP_AND_POT_GROWTH",
+2026-11-15T19:37:38.0982003Z               "sample_id": "15",
+2026-11-15T19:37:38.0982210Z               "observed_hero_cost_interval_bb": [
+2026-11-15T19:37:38.0982412Z                 1.7000000000000006,
+2026-11-15T19:37:38.0982593Z                 1.9000000000000008
+2026-11-15T19:37:38.0982763Z               ],
+2026-11-15T19:37:38.0982957Z               "observed_pot_growth_bb": 1.7999999999999998,
+2026-11-15T19:37:38.0983214Z               "full_opponent_sequence_confirmed": false
+2026-11-15T19:37:38.0983420Z             },
+2026-11-15T19:37:38.0983556Z             {
+2026-11-15T19:37:38.0983727Z               "kind": "CONFIRMED_HISTORY_TRANSITION",
+2026-11-15T19:37:38.0983941Z               "sample_id": "16",
+2026-11-15T19:37:38.0984115Z               "revision": 3,
+2026-11-15T19:37:38.0984288Z               "public_history": [
+2026-11-15T19:37:38.0984463Z                 "1:check:0",
+2026-11-15T19:37:38.0984628Z                 "0:bet:1.833"
+2026-11-15T19:37:38.0984797Z               ]
+2026-11-15T19:37:38.0984941Z             }
+2026-11-15T19:37:38.0985074Z           ]
+2026-11-15T19:37:38.0985207Z         }
+2026-11-15T19:37:38.0985336Z       },
+2026-11-15T19:37:38.0985469Z       {
+2026-11-15T19:37:38.0985616Z         "street": "TURN",
+2026-11-15T19:37:38.0985772Z         "result": {
+2026-11-15T19:37:38.0985924Z           "state": "DONE",
+2026-11-15T19:37:38.0986091Z           "acted": true,
+2026-11-15T19:37:38.0986256Z           "confirmed": true,
+2026-11-15T19:37:38.0986422Z           "dry_run": false,
+2026-11-15T19:37:38.0987367Z           "plan": {
+2026-11-15T19:37:38.0987523Z             "action": "bet",
+2026-11-15T19:37:38.0987699Z             "additional_bb": 3.055,
+2026-11-15T19:37:38.0987886Z             "raise_to_bb": 3.055,
+2026-11-15T19:37:38.0988196Z             "decision_id": "cd9cc955b440f30aa1e300aa53c3fd817c3f6e47e0314360517c360300fa9525",
+2026-11-15T19:37:38.0988540Z             "authority": "COMPILED_HU_REFERENCE",
+2026-11-15T19:37:38.0988773Z             "strategy_certified_for_windows": false,
+2026-11-15T19:37:38.0988989Z             "basis_capture_id": "20",
+2026-11-15T19:37:38.0989310Z             "model_state_sha256": "02307f2425986db7220aae49154b271fa1f5a5d2585cb5d4061c88c2d886db6b",
+2026-11-15T19:37:38.0989758Z             "profile_sha256": "72f77aa5a0936ad06ec9527013b8bc41ae0d8bf331121455e8fbba0995c88f96"
+2026-11-15T19:37:38.0990060Z           },
+2026-11-15T19:37:38.0990200Z           "stages": [
+2026-11-15T19:37:38.0990347Z             {
+2026-11-15T19:37:38.0990495Z               "step": "OPEN",
+2026-11-15T19:37:38.0990665Z               "state": "DONE",
+2026-11-15T19:37:38.0990832Z               "reasons": [],
+2026-11-15T19:37:38.0991014Z               "elapsed_ms": 187.00000000001182,
+2026-11-15T19:37:38.0991212Z               "validations": [
+2026-11-15T19:37:38.0991368Z                 {
+2026-11-15T19:37:38.0991521Z                   "sample_id": "22",
+2026-11-15T19:37:38.0991721Z                   "captured_at": 747.078,
+2026-11-15T19:37:38.0991981Z                   "identity_evidence": "FRESH_ID_AND_CONFIRMED_PUBLIC_STATE",
+2026-11-15T19:37:38.0992243Z                   "selected_amount": null
+2026-11-15T19:37:38.0992422Z                 },
+2026-11-15T19:37:38.0992559Z                 {
+2026-11-15T19:37:38.0992705Z                   "sample_id": "23",
+2026-11-15T19:37:38.0992888Z                   "captured_at": 747.203,
+2026-11-15T19:37:38.0993131Z                   "identity_evidence": "FRESH_ID_AND_CONFIRMED_PUBLIC_STATE",
+2026-11-15T19:37:38.0993386Z                   "selected_amount": null
+2026-11-15T19:37:38.0993572Z                 }
+2026-11-15T19:37:38.0993711Z               ],
+2026-11-15T19:37:38.0993866Z               "controller_log": [
+2026-11-15T19:37:38.0994031Z                 {
+2026-11-15T19:37:38.0994181Z                   "state": "CLICKING",
+2026-11-15T19:37:38.0994362Z                   "click": {
+2026-11-15T19:37:38.0994530Z                     "moved": {
+2026-11-15T19:37:38.0994800Z                       "requested": 1,
+2026-11-15T19:37:38.0994994Z                       "accepted": 1,
+2026-11-15T19:37:38.0995178Z                       "norm": [
+2026-11-15T19:37:38.0995349Z                         40871,
+2026-11-15T19:37:38.0995529Z                         39389
+2026-11-15T19:37:38.0995692Z                       ]
+2026-11-15T19:37:38.0995846Z                     },
+2026-11-15T19:37:38.0996012Z                     "down_accepted": 1,
+2026-11-15T19:37:38.0996306Z                     "up_accepted": 1,
+2026-11-15T19:37:38.0996495Z                     "released": true
+2026-11-15T19:37:38.0996671Z                   }
+2026-11-15T19:37:38.0996813Z                 },
+2026-11-15T19:37:38.0996950Z                 {
+2026-11-15T19:37:38.0997099Z                   "state": "DONE",
+2026-11-15T19:37:38.0997290Z                   "reasons": []
+2026-11-15T19:37:38.0997456Z                 }
+2026-11-15T19:37:38.0997592Z               ]
+2026-11-15T19:37:38.0997727Z             },
+2026-11-15T19:37:38.0997914Z             {
+2026-11-15T19:37:38.0998065Z               "step": "PRESET",
+2026-11-15T19:37:38.0998241Z               "state": "DONE",
+2026-11-15T19:37:38.0998408Z               "reasons": [],
+2026-11-15T19:37:38.0998583Z               "elapsed_ms": 906.0000000000628,
+2026-11-15T19:37:38.0998777Z               "validations": [
+2026-11-15T19:37:38.0998933Z                 {
+2026-11-15T19:37:38.0999094Z                   "sample_id": "26",
+2026-11-15T19:37:38.0999282Z                   "captured_at": 747.265,
+2026-11-15T19:37:38.0999564Z                   "identity_evidence": "FRESH_ID",
+2026-11-15T19:37:38.0999785Z                   "selected_amount": {
+2026-11-15T19:37:38.0999991Z                     "status": "AMOUNT_CONFIRMED",
+2026-11-15T19:37:38.1000198Z                     "value_bb": 1.0,
+2026-11-15T19:37:38.1000381Z                     "quantum_bb": 0.001,
+2026-11-15T19:37:38.1000571Z                     "box": [
+2026-11-15T19:37:38.1000744Z                       430,
+2026-11-15T19:37:38.1000908Z                       170,
+2026-11-15T19:37:38.1001082Z                       180,
+2026-11-15T19:37:38.1001237Z                       40
+2026-11-15T19:37:38.1001392Z                     ],
+2026-11-15T19:37:38.1001549Z                     "unit": "BB",
+2026-11-15T19:37:38.1002038Z                     "semantics": "RAISE_TO_BB"
+2026-11-15T19:37:38.1002296Z                   }
+2026-11-15T19:37:38.1002443Z                 },
+2026-11-15T19:37:38.1002589Z                 {
+2026-11-15T19:37:38.1002748Z                   "sample_id": "27",
+2026-11-15T19:37:38.1002950Z                   "captured_at": 747.671,
+2026-11-15T19:37:38.1003170Z                   "identity_evidence": "FRESH_ID",
+2026-11-15T19:37:38.1003388Z                   "selected_amount": {
+2026-11-15T19:37:38.1003588Z                     "status": "AMOUNT_CONFIRMED",
+2026-11-15T19:37:38.1003792Z                     "value_bb": 1.0,
+2026-11-15T19:37:38.1003977Z                     "quantum_bb": 0.001,
+2026-11-15T19:37:38.1004167Z                     "box": [
+2026-11-15T19:37:38.1004326Z                       430,
+2026-11-15T19:37:38.1004477Z                       170,
+2026-11-15T19:37:38.1004630Z                       180,
+2026-11-15T19:37:38.1004781Z                       40
+2026-11-15T19:37:38.1004938Z                     ],
+2026-11-15T19:37:38.1005105Z                     "unit": "BB",
+2026-11-15T19:37:38.1005293Z                     "semantics": "RAISE_TO_BB"
+2026-11-15T19:37:38.1005480Z                   }
+2026-11-15T19:37:38.1005621Z                 }
+2026-11-15T19:37:38.1005762Z               ],
+2026-11-15T19:37:38.1005908Z               "controller_log": [
+2026-11-15T19:37:38.1006077Z                 {
+2026-11-15T19:37:38.1006224Z                   "state": "CLICKING",
+2026-11-15T19:37:38.1006403Z                   "click": {
+2026-11-15T19:37:38.1006568Z                     "moved": {
+2026-11-15T19:37:38.1006745Z                       "requested": 1,
+2026-11-15T19:37:38.1007052Z                       "accepted": 1,
+2026-11-15T19:37:38.1007236Z                       "norm": [
+2026-11-15T19:37:38.1007406Z                         26137,
+2026-11-15T19:37:38.1007576Z                         24864
+2026-11-15T19:37:38.1007745Z                       ]
+2026-11-15T19:37:38.1007893Z                     },
+2026-11-15T19:37:38.1008064Z                     "down_accepted": 1,
+2026-11-15T19:37:38.1008265Z                     "up_accepted": 1,
+2026-11-15T19:37:38.1008454Z                     "released": true
+2026-11-15T19:37:38.1008634Z                   }
+2026-11-15T19:37:38.1008786Z                 },
+2026-11-15T19:37:38.1008927Z                 {
+2026-11-15T19:37:38.1009069Z                   "state": "DONE",
+2026-11-15T19:37:38.1009250Z                   "reasons": []
+2026-11-15T19:37:38.1009409Z                 }
+2026-11-15T19:37:38.1009544Z               ]
+2026-11-15T19:37:38.1009675Z             },
+2026-11-15T19:37:38.1009806Z             {
+2026-11-15T19:37:38.1009950Z               "step": "CONFIRM",
+2026-11-15T19:37:38.1010124Z               "state": "DONE",
+2026-11-15T19:37:38.1010294Z               "reasons": [],
+2026-11-15T19:37:38.1010487Z               "elapsed_ms": 531.9999999999254,
+2026-11-15T19:37:38.1010680Z               "validations": [
+2026-11-15T19:37:38.1010840Z                 {
+2026-11-15T19:37:38.1010983Z                   "sample_id": "29",
+2026-11-15T19:37:38.1011169Z                   "captured_at": 748.171,
+2026-11-15T19:37:38.1011373Z                   "identity_evidence": "FRESH_ID",
+2026-11-15T19:37:38.1011654Z                   "selected_amount": {
+2026-11-15T19:37:38.1011861Z                     "status": "AMOUNT_CONFIRMED",
+2026-11-15T19:37:38.1012066Z                     "value_bb": 3.055,
+2026-11-15T19:37:38.1012250Z                     "quantum_bb": 0.001,
+2026-11-15T19:37:38.1012445Z                     "box": [
+2026-11-15T19:37:38.1012609Z                       430,
+2026-11-15T19:37:38.1012775Z                       170,
+2026-11-15T19:37:38.1012932Z                       180,
+2026-11-15T19:37:38.1013089Z                       40
+2026-11-15T19:37:38.1013247Z                     ],
+2026-11-15T19:37:38.1013401Z                     "unit": "BB",
+2026-11-15T19:37:38.1013588Z                     "semantics": "RAISE_TO_BB"
+2026-11-15T19:37:38.1013770Z                   }
+2026-11-15T19:37:38.1013909Z                 },
+2026-11-15T19:37:38.1014045Z                 {
+2026-11-15T19:37:38.1014209Z                   "sample_id": "30",
+2026-11-15T19:37:38.1014396Z                   "captured_at": 748.578,
+2026-11-15T19:37:38.1014602Z                   "identity_evidence": "FRESH_ID",
+2026-11-15T19:37:38.1014806Z                   "selected_amount": {
+2026-11-15T19:37:38.1015002Z                     "status": "AMOUNT_CONFIRMED",
+2026-11-15T19:37:38.1015201Z                     "value_bb": 3.055,
+2026-11-15T19:37:38.1015387Z                     "quantum_bb": 0.001,
+2026-11-15T19:37:38.1015569Z                     "box": [
+2026-11-15T19:37:38.1015734Z                       430,
+2026-11-15T19:37:38.1015892Z                       170,
+2026-11-15T19:37:38.1016055Z                       180,
+2026-11-15T19:37:38.1016212Z                       40
+2026-11-15T19:37:38.1016361Z                     ],
+2026-11-15T19:37:38.1016516Z                     "unit": "BB",
+2026-11-15T19:37:38.1016703Z                     "semantics": "RAISE_TO_BB"
+2026-11-15T19:37:38.1016894Z                   }
+2026-11-15T19:37:38.1017032Z                 }
+2026-11-15T19:37:38.1017169Z               ],
+2026-11-15T19:37:38.1017324Z               "controller_log": [
+2026-11-15T19:37:38.1017493Z                 {
+2026-11-15T19:37:38.1017641Z                   "state": "CLICKING",
+2026-11-15T19:37:38.1017834Z                   "click": {
+2026-11-15T19:37:38.1017995Z                     "moved": {
+2026-11-15T19:37:38.1018168Z                       "requested": 1,
+2026-11-15T19:37:38.1018348Z                       "accepted": 1,
+2026-11-15T19:37:38.1018627Z                       "norm": [
+2026-11-15T19:37:38.1018795Z                         40871,
+2026-11-15T19:37:38.1018966Z                         39389
+2026-11-15T19:37:38.1019134Z                       ]
+2026-11-15T19:37:38.1019285Z                     },
+2026-11-15T19:37:38.1019449Z                     "down_accepted": 1,
+2026-11-15T19:37:38.1019656Z                     "up_accepted": 1,
+2026-11-15T19:37:38.1019841Z                     "released": true
+2026-11-15T19:37:38.1020013Z                   }
+2026-11-15T19:37:38.1020157Z                 },
+2026-11-15T19:37:38.1020296Z                 {
+2026-11-15T19:37:38.1020443Z                   "state": "DONE",
+2026-11-15T19:37:38.1020622Z                   "reasons": []
+2026-11-15T19:37:38.1020780Z                 }
+2026-11-15T19:37:38.1020922Z               ]
+2026-11-15T19:37:38.1021060Z             }
+2026-11-15T19:37:38.1021197Z           ],
+2026-11-15T19:37:38.1021346Z           "evidence": [
+2026-11-15T19:37:38.1021501Z             {
+2026-11-15T19:37:38.1021664Z               "kind": "STACK_DROP_AND_POT_GROWTH",
+2026-11-15T19:37:38.1021871Z               "sample_id": "31",
+2026-11-15T19:37:38.1022382Z               "observed_hero_cost_interval_bb": [
+2026-11-15T19:37:38.1022590Z                 2.999999999999998,
+2026-11-15T19:37:38.1022766Z                 3.199999999999998
+2026-11-15T19:37:38.1022930Z               ],
+2026-11-15T19:37:38.1023099Z               "observed_pot_growth_bb": 3.0,
+2026-11-15T19:37:38.1023327Z               "full_opponent_sequence_confirmed": false
+2026-11-15T19:37:38.1023632Z             },
+2026-11-15T19:37:38.1023772Z             {
+2026-11-15T19:37:38.1023951Z               "kind": "CONFIRMED_HISTORY_TRANSITION",
+2026-11-15T19:37:38.1024176Z               "sample_id": "32",
+2026-11-15T19:37:38.1024367Z               "revision": 6,
+2026-11-15T19:37:38.1024551Z               "public_history": [
+2026-11-15T19:37:38.1024735Z                 "1:check:0",
+2026-11-15T19:37:38.1024908Z                 "0:bet:1.833",
+2026-11-15T19:37:38.1025083Z                 "1:call:1.833",
+2026-11-15T19:37:38.1025262Z                 "BOARD:Ts",
+2026-11-15T19:37:38.1025425Z                 "1:check:0",
+2026-11-15T19:37:38.1025601Z                 "0:bet:3.055"
+2026-11-15T19:37:38.1025760Z               ]
+2026-11-15T19:37:38.1025897Z             }
+2026-11-15T19:37:38.1026033Z           ]
+2026-11-15T19:37:38.1026160Z         }
+2026-11-15T19:37:38.1026286Z       },
+2026-11-15T19:37:38.1026409Z       {
+2026-11-15T19:37:38.1026541Z         "street": "RIVER",
+2026-11-15T19:37:38.1026701Z         "result": {
+2026-11-15T19:37:38.1026844Z           "state": "DONE",
+2026-11-15T19:37:38.1027003Z           "acted": true,
+2026-11-15T19:37:38.1027165Z           "confirmed": true,
+2026-11-15T19:37:38.1027342Z           "dry_run": false,
+2026-11-15T19:37:38.1027505Z           "plan": {
+2026-11-15T19:37:38.1027651Z             "action": "bet",
+2026-11-15T19:37:38.1027820Z             "additional_bb": 5.092,
+2026-11-15T19:37:38.1028017Z             "raise_to_bb": 5.092,
+2026-11-15T19:37:38.1028319Z             "decision_id": "9613f4e6466a8cc4edbd7a2d957d87f4712a877248c12f20257c61222b2fce4f",
+2026-11-15T19:37:38.1028657Z             "authority": "COMPILED_HU_REFERENCE",
+2026-11-15T19:37:38.1028885Z             "strategy_certified_for_windows": false,
+2026-11-15T19:37:38.1029097Z             "basis_capture_id": "36",
+2026-11-15T19:37:38.1029432Z             "model_state_sha256": "fb1821c169f8ea944ab54ff57e80a224fb8df1fef6ab52c412c508f3e3f1e6b3",
+2026-11-15T19:37:38.1029885Z             "profile_sha256": "72f77aa5a0936ad06ec9527013b8bc41ae0d8bf331121455e8fbba0995c88f96"
+2026-11-15T19:37:38.1030193Z           },
+2026-11-15T19:37:38.1030330Z           "stages": [
+2026-11-15T19:37:38.1030480Z             {
+2026-11-15T19:37:38.1030627Z               "step": "OPEN",
+2026-11-15T19:37:38.1030799Z               "state": "DONE",
+2026-11-15T19:37:38.1030968Z               "reasons": [],
+2026-11-15T19:37:38.1031231Z               "elapsed_ms": 202.99999999997453,
+2026-11-15T19:37:38.1031435Z               "validations": [
+2026-11-15T19:37:38.1031605Z                 {
+2026-11-15T19:37:38.1031762Z                   "sample_id": "38",
+2026-11-15T19:37:38.1031960Z                   "captured_at": 748.734,
+2026-11-15T19:37:38.1032222Z                   "identity_evidence": "FRESH_ID_AND_CONFIRMED_PUBLIC_STATE",
+2026-11-15T19:37:38.1032494Z                   "selected_amount": null
+2026-11-15T19:37:38.1032676Z                 },
+2026-11-15T19:37:38.1032839Z                 {
+2026-11-15T19:37:38.1033011Z                   "sample_id": "39",
+2026-11-15T19:37:38.1033215Z                   "captured_at": 748.859,
+2026-11-15T19:37:38.1033480Z                   "identity_evidence": "FRESH_ID_AND_CONFIRMED_PUBLIC_STATE",
+2026-11-15T19:37:38.1033772Z                   "selected_amount": null
+2026-11-15T19:37:38.1033966Z                 }
+2026-11-15T19:37:38.1034121Z               ],
+2026-11-15T19:37:38.1034293Z               "controller_log": [
+2026-11-15T19:37:38.1034478Z                 {
+2026-11-15T19:37:38.1034649Z                   "state": "CLICKING",
+2026-11-15T19:37:38.1034840Z                   "click": {
+2026-11-15T19:37:38.1035002Z                     "moved": {
+2026-11-15T19:37:38.1035186Z                       "requested": 1,
+2026-11-15T19:37:38.1035389Z                       "accepted": 1,
+2026-11-15T19:37:38.1035596Z                       "norm": [
+2026-11-15T19:37:38.1035778Z                         40871,
+2026-11-15T19:37:38.1035957Z                         39389
+2026-11-15T19:37:38.1036216Z                       ]
+2026-11-15T19:37:38.1036382Z                     },
+2026-11-15T19:37:38.1036561Z                     "down_accepted": 1,
+2026-11-15T19:37:38.1036772Z                     "up_accepted": 1,
+2026-11-15T19:37:38.1036975Z                     "released": true
+2026-11-15T19:37:38.1037165Z                   }
+2026-11-15T19:37:38.1037325Z                 },
+2026-11-15T19:37:38.1037485Z                 {
+2026-11-15T19:37:38.1037666Z                   "state": "DONE",
+2026-11-15T19:37:38.1037861Z                   "reasons": []
+2026-11-15T19:37:38.1038035Z                 }
+2026-11-15T19:37:38.1038187Z               ]
+2026-11-15T19:37:38.1038336Z             },
+2026-11-15T19:37:38.1038488Z             {
+2026-11-15T19:37:38.1038653Z               "step": "PRESET",
+2026-11-15T19:37:38.1038834Z               "state": "DONE",
+2026-11-15T19:37:38.1039022Z               "reasons": [],
+2026-11-15T19:37:38.1039217Z               "elapsed_ms": 484.0000000000373,
+2026-11-15T19:37:38.1039431Z               "validations": [
+2026-11-15T19:37:38.1039615Z                 {
+2026-11-15T19:37:38.1039776Z                   "sample_id": "42",
+2026-11-15T19:37:38.1039983Z                   "captured_at": 748.937,
+2026-11-15T19:37:38.1040203Z                   "identity_evidence": "FRESH_ID",
+2026-11-15T19:37:38.1040430Z                   "selected_amount": {
+2026-11-15T19:37:38.1040661Z                     "status": "AMOUNT_CONFIRMED",
+2026-11-15T19:37:38.1040882Z                     "value_bb": 1.0,
+2026-11-15T19:37:38.1041082Z                     "quantum_bb": 0.001,
+2026-11-15T19:37:38.1041289Z                     "box": [
+2026-11-15T19:37:38.1041370Z                       430,
+2026-11-15T19:37:38.1041432Z                       170,
+2026-11-15T19:37:38.1041506Z                       180,
+2026-11-15T19:37:38.1041581Z                       40
+2026-11-15T19:37:38.1041640Z                     ],
+2026-11-15T19:37:38.1041723Z                     "unit": "BB",
+2026-11-15T19:37:38.1041805Z                     "semantics": "RAISE_TO_BB"
+2026-11-15T19:37:38.1041881Z                   }
+2026-11-15T19:37:38.1041935Z                 },
+2026-11-15T19:37:38.1042006Z                 {
+2026-11-15T19:37:38.1042091Z                   "sample_id": "43",
+2026-11-15T19:37:38.1042418Z                   "captured_at": 749.343,
+2026-11-15T19:37:38.1042546Z                   "identity_evidence": "FRESH_ID",
+2026-11-15T19:37:38.1042723Z                   "selected_amount": {
+2026-11-15T19:37:38.1042818Z                     "status": "AMOUNT_CONFIRMED",
+2026-11-15T19:37:38.1042883Z                     "value_bb": 1.0,
+2026-11-15T19:37:38.1042966Z                     "quantum_bb": 0.001,
+2026-11-15T19:37:38.1043043Z                     "box": [
+2026-11-15T19:37:38.1043103Z                       430,
+2026-11-15T19:37:38.1043178Z                       170,
+2026-11-15T19:37:38.1043236Z                       180,
+2026-11-15T19:37:38.1043308Z                       40
+2026-11-15T19:37:38.1043369Z                     ],
+2026-11-15T19:37:38.1043454Z                     "unit": "BB",
+2026-11-15T19:37:38.1043532Z                     "semantics": "RAISE_TO_BB"
+2026-11-15T19:37:38.1043604Z                   }
+2026-11-15T19:37:38.1043677Z                 }
+2026-11-15T19:37:38.1043731Z               ],
+2026-11-15T19:37:38.1043815Z               "controller_log": [
+2026-11-15T19:37:38.1043868Z                 {
+2026-11-15T19:37:38.1043956Z                   "state": "CLICKING",
+2026-11-15T19:37:38.1044017Z                   "click": {
+2026-11-15T19:37:38.1044090Z                     "moved": {
+2026-11-15T19:37:38.1044216Z                       "requested": 1,
+2026-11-15T19:37:38.1044283Z                       "accepted": 1,
+2026-11-15T19:37:38.1044352Z                       "norm": [
+2026-11-15T19:37:38.1044410Z                         26137,
+2026-11-15T19:37:38.1044482Z                         24864
+2026-11-15T19:37:38.1044542Z                       ]
+2026-11-15T19:37:38.1044681Z                     },
+2026-11-15T19:37:38.1044749Z                     "down_accepted": 1,
+2026-11-15T19:37:38.1044835Z                     "up_accepted": 1,
+2026-11-15T19:37:38.1044914Z                     "released": true
+2026-11-15T19:37:38.1044972Z                   }
+2026-11-15T19:37:38.1045042Z                 },
+2026-11-15T19:37:38.1045096Z                 {
+2026-11-15T19:37:38.1045176Z                   "state": "DONE",
+2026-11-15T19:37:38.1045240Z                   "reasons": []
+2026-11-15T19:37:38.1045308Z                 }
+2026-11-15T19:37:38.1045377Z               ]
+2026-11-15T19:37:38.1045431Z             },
+2026-11-15T19:37:38.1045501Z             {
+2026-11-15T19:37:38.1045569Z               "step": "CONFIRM",
+2026-11-15T19:37:38.1045649Z               "state": "DONE",
+2026-11-15T19:37:38.1045714Z               "reasons": [],
+2026-11-15T19:37:38.1045806Z               "elapsed_ms": 531.9999999999254,
+2026-11-15T19:37:38.1045872Z               "validations": [
+2026-11-15T19:37:38.1045946Z                 {
+2026-11-15T19:37:38.1046021Z                   "sample_id": "45",
+2026-11-15T19:37:38.1046085Z                   "captured_at": 749.421,
+2026-11-15T19:37:38.1046171Z                   "identity_evidence": "FRESH_ID",
+2026-11-15T19:37:38.1046240Z                   "selected_amount": {
+2026-11-15T19:37:38.1046333Z                     "status": "AMOUNT_CONFIRMED",
+2026-11-15T19:37:38.1046403Z                     "value_bb": 5.092,
+2026-11-15T19:37:38.1046484Z                     "quantum_bb": 0.001,
+2026-11-15T19:37:38.1046555Z                     "box": [
+2026-11-15T19:37:38.1046614Z                       430,
+2026-11-15T19:37:38.1046684Z                       170,
+2026-11-15T19:37:38.1046737Z                       180,
+2026-11-15T19:37:38.1046808Z                       40
+2026-11-15T19:37:38.1046865Z                     ],
+2026-11-15T19:37:38.1046948Z                     "unit": "BB",
+2026-11-15T19:37:38.1047042Z                     "semantics": "RAISE_TO_BB"
+2026-11-15T19:37:38.1047099Z                   }
+2026-11-15T19:37:38.1047177Z                 },
+2026-11-15T19:37:38.1047234Z                 {
+2026-11-15T19:37:38.1047319Z                   "sample_id": "46",
+2026-11-15T19:37:38.1047389Z                   "captured_at": 749.828,
+2026-11-15T19:37:38.1047490Z                   "identity_evidence": "FRESH_ID",
+2026-11-15T19:37:38.1047560Z                   "selected_amount": {
+2026-11-15T19:37:38.1047727Z                     "status": "AMOUNT_CONFIRMED",
+2026-11-15T19:37:38.1047807Z                     "value_bb": 5.092,
+2026-11-15T19:37:38.1047874Z                     "quantum_bb": 0.001,
+2026-11-15T19:37:38.1047949Z                     "box": [
+2026-11-15T19:37:38.1048013Z                       430,
+2026-11-15T19:37:38.1048086Z                       170,
+2026-11-15T19:37:38.1048143Z                       180,
+2026-11-15T19:37:38.1048216Z                       40
+2026-11-15T19:37:38.1048288Z                     ],
+2026-11-15T19:37:38.1048354Z                     "unit": "BB",
+2026-11-15T19:37:38.1048446Z                     "semantics": "RAISE_TO_BB"
+2026-11-15T19:37:38.1048503Z                   }
+2026-11-15T19:37:38.1048565Z                 }
+2026-11-15T19:37:38.1048619Z               ],
+2026-11-15T19:37:38.1048702Z               "controller_log": [
+2026-11-15T19:37:38.1048757Z                 {
+2026-11-15T19:37:38.1048844Z                   "state": "CLICKING",
+2026-11-15T19:37:38.1048916Z                   "click": {
+2026-11-15T19:37:38.1048980Z                     "moved": {
+2026-11-15T19:37:38.1049060Z                       "requested": 1,
+2026-11-15T19:37:38.1049119Z                       "accepted": 1,
+2026-11-15T19:37:38.1049184Z                       "norm": [
+2026-11-15T19:37:38.1049240Z                         40871,
+2026-11-15T19:37:38.1049305Z                         39389
+2026-11-15T19:37:38.1049367Z                       ]
+2026-11-15T19:37:38.1049423Z                     },
+2026-11-15T19:37:38.1049572Z                     "down_accepted": 1,
+2026-11-15T19:37:38.1049642Z                     "up_accepted": 1,
+2026-11-15T19:37:38.1049723Z                     "released": true
+2026-11-15T19:37:38.1049777Z                   }
+2026-11-15T19:37:38.1049849Z                 },
+2026-11-15T19:37:38.1049904Z                 {
+2026-11-15T19:37:38.1049980Z                   "state": "DONE",
+2026-11-15T19:37:38.1050059Z                   "reasons": []
+2026-11-15T19:37:38.1050117Z                 }
+2026-11-15T19:37:38.1050185Z               ]
+2026-11-15T19:37:38.1050241Z             }
+2026-11-15T19:37:38.1050309Z           ],
+2026-11-15T19:37:38.1050370Z           "evidence": [
+2026-11-15T19:37:38.1050441Z             {
+2026-11-15T19:37:38.1050540Z               "kind": "STACK_DROP_AND_POT_GROWTH",
+2026-11-15T19:37:38.1050608Z               "sample_id": "47",
+2026-11-15T19:37:38.1050705Z               "observed_hero_cost_interval_bb": [
+2026-11-15T19:37:38.1050773Z                 5.000000000000002,
+2026-11-15T19:37:38.1050848Z                 5.200000000000001
+2026-11-15T19:37:38.1050897Z               ],
+2026-11-15T19:37:38.1051007Z               "observed_pot_growth_bb": 5.099999999999998,
+2026-11-15T19:37:38.1051106Z               "full_opponent_sequence_confirmed": false
+2026-11-15T19:37:38.1051178Z             },
+2026-11-15T19:37:38.1051246Z             {
+2026-11-15T19:37:38.1051335Z               "kind": "CONFIRMED_HISTORY_TRANSITION",
+2026-11-15T19:37:38.1051415Z               "sample_id": "48",
+2026-11-15T19:37:38.1051479Z               "revision": 9,
+2026-11-15T19:37:38.1051560Z               "public_history": [
+2026-11-15T19:37:38.1051621Z                 "1:check:0",
+2026-11-15T19:37:38.1051689Z                 "0:bet:1.833",
+2026-11-15T19:37:38.1051755Z                 "1:call:1.833",
+2026-11-15T19:37:38.1051813Z                 "BOARD:Ts",
+2026-11-15T19:37:38.1051885Z                 "1:check:0",
+2026-11-15T19:37:38.1051941Z                 "0:bet:3.055",
+2026-11-15T19:37:38.1052018Z                 "1:call:3.055",
+2026-11-15T19:37:38.1052084Z                 "BOARD:2h",
+2026-11-15T19:37:38.1052161Z                 "1:check:0",
+2026-11-15T19:37:38.1052238Z                 "0:bet:5.092"
+2026-11-15T19:37:38.1052292Z               ]
+2026-11-15T19:37:38.1052360Z             }
+2026-11-15T19:37:38.1052418Z           ]
+2026-11-15T19:37:38.1052479Z         }
+2026-11-15T19:37:38.1052535Z       }
+2026-11-15T19:37:38.1053212Z     ],
+2026-11-15T19:37:38.1053291Z     "callbacks": [
+2026-11-15T19:37:38.1053383Z       "BET",
+2026-11-15T19:37:38.1053491Z       "PRESET_THIRD",
+2026-11-15T19:37:38.1053581Z       "CONFIRM",
+2026-11-15T19:37:38.1053671Z       "BET",
+2026-11-15T19:37:38.1053764Z       "PRESET_THIRD",
+2026-11-15T19:37:38.1053871Z       "CONFIRM",
+2026-11-15T19:37:38.1053951Z       "BET",
+2026-11-15T19:37:38.1054062Z       "PRESET_THIRD",
+2026-11-15T19:37:38.1054143Z       "CONFIRM"
+2026-11-15T19:37:38.1054245Z     ],
+2026-11-15T19:37:38.1054353Z     "pot_presets_used": 3,
+2026-11-15T19:37:38.1054532Z     "scope": "STORED_NVT_POLICY_REAL_SENDINPUT_OWNED_TK_SYNTHETIC_GAME_STATE",
+2026-11-15T19:37:38.1054631Z     "pppoker_windows_validated": false
+2026-11-15T19:37:38.1054683Z   },
+2026-11-15T19:37:38.1055020Z   "limitation": "Widget values are read directly. This does not validate PPPoker capture, card OCR, panel geometry or strategy."
+2026-11-15T19:37:38.1055109Z }
+2026-11-15T19:37:38.1781575Z ##[group]Run python tools/collect_hu_reference_evidence.py --root runtime/hu-reference-ci --run-id "43752745519" --run-url "https://github.com/eduardodinizti-design/Software/actions/runs/43752745519"
+2026-11-15T19:37:38.1782238Z [36;1mpython tools/collect_hu_reference_evidence.py --root runtime/hu-reference-ci --run-id "43752745519" --run-url "https://github.com/eduardodinizti-design/Software/actions/runs/43752745519"[0m
+2026-11-15T19:37:38.1782533Z [36;1m$files = @(Get-ChildItem runtime/hu-reference-ci/delivery/*.json | ForEach-Object { $_.FullName })[0m
+2026-11-15T19:37:38.1782791Z [36;1mgh release upload hu-btn-bb-nvt-reference-20261115 --repo "eduardodinizti-design/Software" @files[0m
+2026-11-15T19:37:38.1840365Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-11-15T19:37:38.1840453Z env:
+2026-11-15T19:37:38.1840596Z   PYTHONUTF8: 1
+2026-11-15T19:37:38.1840673Z   OPENBLAS_NUM_THREADS: 1
+2026-11-15T19:37:38.1840880Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-15T19:37:38.1841073Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.10\x64/lib/pkgconfig
+2026-11-15T19:37:38.1841252Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-15T19:37:38.1841425Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-15T19:37:38.1841565Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-15T19:37:38.1843718Z   GH_TOKEN: ***
+2026-11-15T19:37:38.1843835Z ##[endgroup]
+2026-11-15T19:37:38.5760656Z ##[notice]{"status":"PASS","platform":"Windows-2025Server-10.0.26100-SP0","source_commit":"b44eeee373fcc7f1444a2a990ebf232aeb1d68ea","run_url":"https://github.com/eduardodinizti-design/Software/actions/runs/43752745519","policy_sha256":"70b17cc7e89c5d2da9eb490718e698e492d25e9bbff9c9dfd190b4de5022e6a3","native_target_met":true,"contract_tests":{"tests_run":240,"passed":237,"skipped":3},"downloaded_policy_hand":{"source":"ACTUAL_PUBLISHED_NVT_SOLVER_POLICY","scope":"STORED_POLICY_WITH_SYNTHETIC_READINGS_NOT_A_PLAYED_PPPOKER_HAND","event_counts":{"action":9,"board":2},"decisions":3,"chain_valid":true,"library_routing_tested":true,"selected_actions_match":true,"input_devices_used":false,"scenario_sampling":"COVERAGE_DRIVEN_TRIPLE_BARREL_NOT_UNBIASED_PLAY_OR_EV_ESTIMATION"},"independent_river":{"method":"exact_river_frozen_profile_evs_and_information_set_best_responses","scope":"CONDITIONAL_RIVER_PRIORS_AND_DECLARED_MENU_NOT_FULL_FLOP_GTO_CERTIFICATION","joint_private_deals":439058,"nash_conv_bb":0.025621133249669775,"elapsed_seconds":0.3429999999999609,"policy_modified":false},"exact_suit_routing":{"status":"PASS","source_policy_sha256":"70b17cc7e89c5d2da9eb490718e698e492d25e9bbff9c9dfd190b4de5022e6a3","derived_policy_sha256":"e037f4881cbc95831c08ea9ab85305d4e727492842846dbe8b3761c68adc1f29","board":["Ah","7c","2s","Th","2d"],"complete_to_showdown":true},"native_executor":{"scope":"WINDOWS_GDI_AND_SENDINPUT_OWNED_TK_ONLY","capture":"PASS","cases":[{"kind":"check","state":"DONE","callbacks":["CHECK"]},{"kind":"call","state":"DONE","callbacks":["CALL"]},{"kind":"fold","state":"DONE","callbacks":["FOLD"]},{"kind":"bet","state":"DONE","callbacks":["BET","CONFIRM"]},{"kind":"raise","state":"DONE","callbacks":["RAISE","CONFIRM"]},{"kind":"all_in","state":"DONE","callbacks":["BET","CONFIRM"]}],"generic_case_policies":"SYNTHETIC_CONTROLLED_TEST_POLICIES","reference_hand":{"scope":"STORED_NVT_POLICY_REAL_SENDINPUT_OWNED_TK_SYNTHETIC_GAME_STATE","status":"PASS","policy_sha256":"70b17cc7e89c5d2da9eb490718e698e492d25e9bbff9c9dfd190b4de5022e6a3","event_counts":{"action":9,"board":2,"execution_confirmed":3},"complete_to_showdown":true,"callbacks":["BET","PRESET_THIRD","CONFIRM","BET","PRESET_THIRD","CONFIRM","BET","PRESET_THIRD","CONFIRM"],"pot_presets_used":3,"steps":[{"street":"FLOP","state":"DONE","confirmed":true},{"street":"TURN","state":"DONE","confirmed":true},{"street":"RIVER","state":"DONE","confirmed":true}]}},"pppoker_windows_validated":false,"user_notebook_validated":false}
+2026-11-15T19:37:39.8624091Z ##[group]Run actions/upload-artifact@v4
+2026-11-15T19:37:39.8624459Z with:
+2026-11-15T19:37:39.8624722Z   name: hu-downloaded-reference-windows
+2026-11-15T19:37:39.8625937Z   path: runtime/hu-reference-ci/contracts.txt
+runtime/hu-reference-ci/river-exact.json
+runtime/hu-reference-ci/alias-validation/*.json
+runtime/hu-reference-ci/delivery/*.json
+runtime/hu-reference-ci/owned/*.json
+runtime/hu-reference-ci/owned/*.txt
+runtime/hu-reference-ci/download/download-receipt.json
+runtime/hu-reference-ci/download/verification/*.json
+
+2026-11-15T19:37:39.8626994Z   retention-days: 14
+2026-11-15T19:37:39.8627237Z   if-no-files-found: warn
+2026-11-15T19:37:39.8627476Z   compression-level: 6
+2026-11-15T19:37:39.8627706Z   overwrite: false
+2026-11-15T19:37:39.8627937Z   include-hidden-files: false
+2026-11-15T19:37:39.8628176Z env:
+2026-11-15T19:37:39.8628411Z   PYTHONUTF8: 1
+2026-11-15T19:37:39.8628633Z   OPENBLAS_NUM_THREADS: 1
+2026-11-15T19:37:39.8628989Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-15T19:37:39.8629416Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.10\x64/lib/pkgconfig
+2026-11-15T19:37:39.8629817Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-15T19:37:39.8630191Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-15T19:37:39.8630567Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-15T19:37:39.8630877Z ##[endgroup]
+2026-11-15T19:37:40.0282817Z (node:816) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-11-15T19:37:40.0283409Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-11-15T19:37:40.0452319Z Multiple search paths detected. Calculating the least common ancestor of all paths
+2026-11-15T19:37:40.0455862Z The least common ancestor is D:\a\Software\Software\runtime\hu-reference-ci. This will be the root directory of the artifact
+2026-11-15T19:37:40.0456458Z With the provided path, there will be 27 files uploaded
+2026-11-15T19:37:40.0459459Z Artifact name is valid!
+2026-11-15T19:37:40.0460452Z Root directory input is valid!
+2026-11-15T19:37:40.3698590Z Beginning upload of artifact content to blob storage
+2026-11-15T19:37:40.4396790Z (node:816) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-11-15T19:37:40.7069647Z Uploaded bytes 188528
+2026-11-15T19:37:40.7512350Z Finished uploading artifact content to blob storage!
+2026-11-15T19:37:40.7513417Z SHA256 digest of uploaded artifact zip is e8fc8d2d63fbc5057848202dac58f8c97e40b42530140a9b63d76fd86373beb5
+2026-11-15T19:37:40.7516002Z Finalizing artifact upload
+2026-11-15T19:37:41.0895454Z Artifact hu-downloaded-reference-windows.zip successfully finalized. Artifact ID 14177411577
+2026-11-15T19:37:41.0896551Z Artifact hu-downloaded-reference-windows has been successfully uploaded! Final size is 188528 bytes. Artifact ID is 14177411577
+2026-11-15T19:37:41.0907422Z Artifact download URL: https://github.com/eduardodinizti-design/Software/actions/runs/43752745519/artifacts/14177411577
+2026-11-15T19:37:41.1260924Z Post job cleanup.
+2026-11-15T19:37:41.2707818Z (node:8152) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-11-15T19:37:41.2708801Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-11-15T19:37:41.2993830Z Post job cleanup.
+2026-11-15T19:37:41.4731986Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-11-15T19:37:41.5044949Z git version 2.56.0.windows.4
+2026-11-15T19:37:41.5110236Z Temporarily overriding HOME='D:\a\_temp\b1eedeb4-d317-4b44-8c4f-d886b4375894' before making global git config changes
+2026-11-15T19:37:41.5111241Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-15T19:37:41.5121012Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\Software\Software
+2026-11-15T19:37:41.5477812Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-11-15T19:37:41.5823991Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-11-15T19:37:42.1313725Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-15T19:37:42.1654717Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-11-15T19:37:42.6642645Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-15T19:37:42.6969191Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-11-15T19:37:43.1867938Z Cleaning up orphan processes
+2026-11-15T19:37:43.2483576Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
