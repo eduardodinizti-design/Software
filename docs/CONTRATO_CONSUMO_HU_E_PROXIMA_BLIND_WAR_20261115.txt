@@ -1,0 +1,117 @@
+SOFTWARE ORIGINAL — ORIENTACAO PARA O AGENTE QUE VAI CONSUMIR AS SOLUCOES
+
+Codigo completo: https://github.com/eduardodinizti-design/Software/tree/feat/hu-close32-sb40-20261115
+Revisao: https://github.com/eduardodinizti-design/Software/pull/14
+Guia: docs/GUIA_32_FLOPS_E_BLIND_WAR_40BB_20261115.txt
+
+ARQUIVOS QUE DEVEM SER CONSUMIDOS
+
+O ZIP de codigo nao contem dezenas de GB de politicas. Os dados estao nas
+Releases e sao instalados por strategy.campaign_download. Cada biblioteca
+possui library.json, policies/*.sqlite e reports/*.json. O indice nao e um
+resumo estrategico: ele aponta para as arvores completas no disco.
+
+Use --family btn32 para os 32 modelos BTN x BB de 25 BB; use --family sb40
+para o piloto SB x BB de 40 BB. O instalador confere partes, ZIP integral,
+SQLite, identidade da politica, priors, menu e consultas nas tres ruas.
+
+NAO TROCAR AS FAMILIAS
+
+BTN: nove jogadores originalmente, hero BTN, oponente BB; BB age primeiro
+no pos-flop. Open 2,5 BB, sem ante, pote 5,5 BB e stacks 22,5/22,5 BB.
+SB40: nove jogadores originalmente, os outros sete foldaram, hero SB,
+oponente BB; SB age primeiro no pos-flop. Open 2 BB, BBA 1 BB, pote 5 BB e
+stacks 38/37 BB a partir de 40 BB antes das postagens.
+
+Dois jogadores ativos nao significa dealt_players=2. Isso inverteria a
+posicao do SB no modelo de um torneio originalmente HU. Use o contexto
+do jogo e do banco. Nao junte modelos de chegadas diferentes em uma
+library.json que so indexa o flop. Esta entrega usa bibliotecas separadas.
+
+INTEGRACAO JA EXISTENTE NO SOFTWARE
+
+operar_mesa.py recebe --postflop-library e cria PolicyLibrary/LibraryHistory.
+LibraryHistory.prepare verifica os arquivos antes das decisoes; a mesma
+instancia permanece na sessao. Nao reabra/revalide um banco de varios GB a
+cada frame. Cada mesa mantem sua propria vista SQLite e seu historico.
+
+ConfirmedHistory observa o pre-flop e exige conservacao do pote/stacks para
+vincular o flop ao modelo. Acoes e novas cartas confirmadas atualizam a
+linha e os ranges condicionais. PolicyObserver confere a identidade da
+mao, participantes, posicoes, board, dinheiro e hashes antes de choose().
+
+Nao resete o range inicial no turn ou no river. As respostas observadas
+alteram os ranges de chegada a cada no. Nao transforme uma captura isolada
+em uma sequencia de acoes imaginada. Os testes novos percorrem uma mao
+completa ate showdown, com diario encadeado e comparacao das frequencias
+e sizes efetivamente consultados.
+
+JSON E VALORES MONETARIOS
+
+strategy.policy_json.query recebe um request com context, state,
+hero_cards, table_id e hand_id. Os requests e responses de flop, turn e
+river ficam publicados nos ZIPs *-json-history.zip de cada validacao.
+Esse caminho e um verificador de dados; nao envia cliques.
+
+Action.amount_bb, candidates.additional_bb e sizing.size_bb representam
+contribuicao ADICIONAL em BB. Um raise-to inclui o que ja estava apostado
+pelo jogador. Nao confundir adicional, total da aposta e fracao do pote.
+A selecao mista e estavel por mao/estado/politica: nao sorteie novamente a
+mesma decisao a cada frame.
+
+O menu estudado permite bet 1/3, raise 100% do pote e all-in, com duas
+agressoes por rua. Use os valores efetivos do no. Para usar um preset do
+PPPoker, confirme que ele produz o size da politica na precisao observada.
+Uma opcao diferente na interface nao constitui uma estrategia estudada.
+
+O export opcional strategy.policy_json export produz JSONL gzip com o
+modelo completo e TODOS os nos. verify_export compara cada no com o banco,
+inclusive probabilidades e sizes, e verifica contagem/rodape/hash. O bot
+normal usa SQLite indexado; nao carregue um JSON gigante na RAM de 8 GB.
+
+O QUE CONVERGENCIA PROVA
+
+Os ranges NVT sao a referencia autorizada. A solucao convergiu para esses
+priors e para esse menu. Isso nao prova que o range pre-flop de entrada e
+otimo, nem valida o rotulo HRC do exportador. Alterar o arquivo de ranges
+pre-flop exige recalcular as politicas e trocar sua identidade.
+
+Os logs de convergencia e os parametros ficam em reports/*-diagnostics nos
+ZIPs de politica. Sao checkpoints a cada 10 iteracoes e a estrategia final;
+nao ha snapshots CFR completos para retomar cada iteracao. O gap global e
+informado pelo solver. Um river condicional por flop recebe enumeracao
+independente; ele nao certifica o gap global de todos os runouts.
+
+As politicas completas nao contêm EV independente para cada acao de cada
+no: ev_bb pode ser null. Nao apresente um numero estimado como EV do solver.
+As frequencias continuam consultaveis e sao as usadas pelo decisor.
+
+PROXIMO RAMO: SB LIMP x BB CHECK, 40 BB
+
+Este ramo nao esta resolvido pelo piloto SB open. Faltam os priors da
+entrada limp/check no upload regular de 40 BB. Solicitar/calcular no HRC:
+frequencia de limp do SB por classe/combinacao e frequencia de check do BB
+contra esse limp, com ante, stacks e tamanhos de raise explicitados. O
+complemento do range de raise NAO e automaticamente o range de limp.
+
+Com o mesmo BBA de 1 BB e 40 BB antes das postagens, a chegada correta ao
+flop limpado e: pote 3 BB, SB 39 BB, BB 38 BB, ator inicial SB, dealt_players
+9 e pot_type=limped. Usar uma familia/arrival_id e hashes proprios.
+
+Para operar esse ramo e necessario ampliar OperationalProfile.recipe e
+ConfirmedHistory para testemunhar a completada do SB e o check do BB,
+mantendo a conservacao monetaria e exclusao dos outros sete jogadores.
+O teste deve falhar se houver raise oculto, terceiro jogador ou ante errado;
+deve confirmar a linha completa e repetir as consultas flop/turn/river.
+Depois calcular e publicar novas politicas, sem reutilizar as do pote raised.
+
+3-bet pots, outros sizes e stacks tambem precisam de entradas proprias.
+Nao marcar esta frente como coberta apenas porque um HU SRP foi resolvido.
+
+VALIDACAO REAL
+
+Os receipts desta entrega validam dados e leituras sinteticas, incluindo
+runner Windows do GitHub. Nao sao historicos jogados no PPPoker do usuario.
+O historico, a leitura e o efeito real do clique no notebook ainda precisam
+ser confirmados. O caso 8h -> 3h continua pendente no mesmo tema de cartas.
+Nao houve reducao de limiares OCR neste lote.
