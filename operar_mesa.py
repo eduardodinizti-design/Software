@@ -229,6 +229,8 @@ def main(argv=None):
                    help='Forca a fase do torneio (sobrepoe a deteccao)')
     p.add_argument('--hud', action='store_true',
                    help='Le o HUD VIP (8 stats por vilao) p/ exploit no pos-flop')
+    p.add_argument('--postflop-policy', default=None,
+                   help='Consulta HU compilada em observacao; requer estado/historico confirmado')
     p.add_argument('--arm', action='store_true', help='Usa o cursor REAL (ainda gated)')
     p.add_argument('--overlay', action='store_true',
                    help='Faixa de status SEMPRE-NO-TOPO (feedback visível: ARMADO/PAUSADO + ações)')
@@ -241,6 +243,14 @@ def main(argv=None):
                         'frames da MESMA vez do hero, pulando o cerebro (~330ms) em revisitas. '
                         'Nunca antecipa call/raise. Default off.')
     args = p.parse_args(argv)
+
+    policy_observer = None
+    if args.postflop_policy:
+        from strategy.policy_observer import PolicyObserver
+        from strategy.policy_store import CompiledPolicy
+        policy_observer = PolicyObserver(CompiledPolicy.load(args.postflop_policy))
+        print('[HU] politica %s | observacao; contexto ausente sera registrado' %
+              policy_observer.policy.fingerprint[:16], flush=True)
 
     import os
     configure_ocr()
@@ -443,6 +453,7 @@ def main(argv=None):
                             result = advise_table(crop, advisor, stabilizer=stabilizer,
                                                   table_key=tkey, hero_override=override,
                                                   tracker=aggr_tracker, bounty_bb=args.bounty_bb,
+                                                  postflop_policy=policy_observer,
                                                   mode=args.mode, stage=args.stage, enable_hud=args.hud,
                                                   read_cache=read_cache)
                     except Exception as e:                 # noqa: BLE001
@@ -479,6 +490,8 @@ def main(argv=None):
                 hid = hkey
                 adv = result.get('advice') or {}
                 if adv.get('phase') == 'postflop':
+                    if adv.get('hu_policy_diagnostic'):
+                        print('[HU] %s' % adv['hu_policy_diagnostic'].get('reason'), flush=True)
                     # Pós-flop é SÓ conselho exploratório. O operador armado joga
                     # pré-flop apenas e NUNCA executa pós-flop (sem clique, sem
                     # sequência de aumento) até ser validado à parte.
@@ -504,7 +517,7 @@ def main(argv=None):
                     _bets = [(_p.get(b.get('seat')), b.get('bet_bb')) for b in (_ts.get('bets') or [])]
                     print('[%03d] CEREBRO m%s hero=%s pos=%s to_call=%s bets=%s | spot=%s node=%s val=%s eq=%s req=%s -> %s %s' % (
                         n, tkey_local, result.get('hero_cards'), _p.get('hero'),
-                        _ts.get('to_call_bb'), _bets, adv.get('spot'), adv.get('node_id'),
+                        (_ts.get('to_call') or {}).get('to_call_bb'), _bets, adv.get('spot'), adv.get('node_id'),
                         adv.get('validated'), adv.get('equity'),
                         adv.get('required_equity_icm') or adv.get('required_equity'),
                         adv.get('status'), adv.get('recommended') or adv.get('reason') or ''), flush=True)

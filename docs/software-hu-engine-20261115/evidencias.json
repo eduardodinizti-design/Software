@@ -1,0 +1,891 @@
+{
+  "repository": "eduardodinizti-design/Software",
+  "scope": "original Software, no Clone changes; engine lab/replay/observer integration, no live input",
+  "base_commit": "bf86e4ec4ab435aa36d540259aa634bf2e5b095a",
+  "coverage": {
+    "unique_flops": 16,
+    "development_flops": 12,
+    "heldout_flops": 4,
+    "range_comparisons": 32,
+    "new_monte_carlo_deals": 640000,
+    "previous_monte_carlo_deals": 160000,
+    "planned_roots_252_are_not_solved": true
+  },
+  "tests": {
+    "targeted_total": 339,
+    "ordinary_passes": 336,
+    "skipped": 2,
+    "expected_failures": 1,
+    "new_engine_tests": 58,
+    "preset_fixture_separate_result": "FAIL: 2.5 preset missing; pre-existing; reproduced",
+    "windows_pppoker": false
+  },
+  "benchmark": {
+    "environment": "Linux lab; not the notebook or PPPoker Windows",
+    "work": "normalize immutable state + validate context + lookup + stable mix + explanation; no capture/OCR/input",
+    "iterations": 5000,
+    "policy_nodes": 1642,
+    "load_and_validate_ms": 188.98493699998653,
+    "p50_ms": 0.092697,
+    "p95_ms": 0.146977,
+    "max_ms": 0.437728,
+    "target_p95_ms": 10,
+    "target_met": true
+  },
+  "policies": [
+    {
+      "file": "chance-after.json.gz",
+      "policy_sha256": "ad5f478b03114429883f53c26f8839250e26122ec5915820d04d35db5c241d7c",
+      "board": [
+        "As",
+        "7d",
+        "2c",
+        "Ts"
+      ],
+      "private_combos": [
+        1,
+        1
+      ],
+      "quality": {
+        "action_ev_available": true,
+        "actual_sizes": "native_rounding_to_one_unit_then_legality_checked",
+        "converged": true,
+        "export_depth_in_streets": 2,
+        "exported_depth_is_not_full_tree_coverage": false,
+        "gap_scope": "native_full_tree_declared_menu_and_ranges",
+        "global_gap_bb": 0.0,
+        "iterations": 11,
+        "method": "texassolver_discounted_cfr",
+        "native_last_best_response_centered_bb": [
+          5.000001,
+          -5.000001
+        ],
+        "native_metric_independently_verified": true,
+        "provenance": {
+          "binary_sha256": "894027ca19e6e9128ca4ebe94d15f71f7a9d7c734f56db413a6e329e9ab61ed3",
+          "binary_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6",
+          "build_source_patch": "add set_raise_limit; HU chance denominator excludes all four private cards in CFR and BR; original checkout unchanged",
+          "command_sha256": "4b4e560040bf960c1d2362514ae3f9019fe9af8fc876bcfe834195e9d515c0d4",
+          "evaluator_dictionary_sha256": "13e0f4bd3cb99388caec49b36f98b98b70ae30407cbd740d880db65ed4db5e7b",
+          "generated_chance_sources_sha256": {
+            "BestResponse.cpp": "975c436f6bf1ff04a15b513e9683d5744e4812995bff19e9e47ecfd6f05b79ac",
+            "PCfrSolver.cpp": "7b8c2bbf6ee4ccc3df683635949a1277fcdbf7610c8aa4f71016447753e8f16f"
+          },
+          "generated_console_sha256": "14938c8824fde6953041b624fcfda94f1bf02b815a53de4f449b8a5d51235105",
+          "hu_chance_denominator_cards": 4,
+          "license": "AGPL-3.0; backend installed separately",
+          "repository": "https://github.com/bupticybee/TexasSolver",
+          "tested_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6"
+        },
+        "public_nodes": 90,
+        "raw_export_sha256": "abc6501173c5b69e6a03004d49cad1a97aaec97f46b4e805ac8f34afe7bb658f",
+        "settings": {
+          "dump_rounds": 2,
+          "ip_range_common_scale": 1.0,
+          "iterations": 11,
+          "memory_budget_mb": 1024,
+          "memory_limit_enforced": true,
+          "native_raise_limit": 2,
+          "oop_range_common_scale": 1.0,
+          "python_menu_raise_limit_not_used": false,
+          "raise_fractions": [
+            1.0
+          ],
+          "root_effective_stack_bb": 1.0,
+          "suit_isomorphism": false,
+          "suit_symmetry_verified_on_both_priors": true,
+          "target_exploitability_pct_pot": 0.1,
+          "threads": 1,
+          "units_per_bb": 1000
+        },
+        "solve_seconds": 3.887589406999723,
+        "solver_reported_target_met": true,
+        "windows_validated": false,
+        "zero_reach_chance_branches_omitted": 8
+      },
+      "gap": {
+        "best_response_centered_bb": [
+          5.000000000000001,
+          -5.000000000000001
+        ],
+        "difference_from_native_bb": 0.0,
+        "exploitability_bb": 0.0,
+        "joint_deals": 1,
+        "joint_deals_including_ordered_runouts": 44,
+        "joint_private_deals": 1,
+        "max_per_player_br_difference_bb": 9.999999992515995e-07,
+        "method": "exact_information_set_best_response_turn",
+        "nash_conv_bb": 0.0,
+        "scope": "declared_turn_menu_ranges_and_future_streets_only"
+      },
+      "evaluation": {
+        "deals": 44,
+        "matched_information_sets": 90,
+        "mc_ci95_bb": null,
+        "mc_stderr_bb": null,
+        "method": "exact_joint_deals_and_ordered_runouts",
+        "root_ev_player0_bb": 10.0,
+        "seed": null
+      }
+    },
+    {
+      "file": "chance-before.json.gz",
+      "policy_sha256": "06feaf6af1a49190f4dfa800847d0343dd65c6cd8e0d2f2be6d286f6ad334a90",
+      "board": [
+        "As",
+        "7d",
+        "2c",
+        "Ts"
+      ],
+      "private_combos": [
+        1,
+        1
+      ],
+      "quality": {
+        "action_ev_available": true,
+        "actual_sizes": "native_rounding_to_one_unit_then_legality_checked",
+        "converged": false,
+        "export_depth_in_streets": 2,
+        "exported_depth_is_not_full_tree_coverage": false,
+        "gap_scope": "native_full_tree_declared_menu_and_ranges",
+        "global_gap_bb": 0.0,
+        "iterations": 11,
+        "method": "texassolver_discounted_cfr",
+        "native_last_best_response_centered_bb": [
+          4.7826084,
+          -4.7826084
+        ],
+        "native_metric_independently_verified": false,
+        "provenance": {
+          "binary_sha256": "42c609c0d250a68e82f6086f984132fb92705e4ec7c9ca3c7a33ef4f278b463a",
+          "binary_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6",
+          "build_source_patch": "add set_raise_limit console command; original checkout unchanged",
+          "command_sha256": "4b4e560040bf960c1d2362514ae3f9019fe9af8fc876bcfe834195e9d515c0d4",
+          "evaluator_dictionary_sha256": "13e0f4bd3cb99388caec49b36f98b98b70ae30407cbd740d880db65ed4db5e7b",
+          "generated_chance_sources_sha256": null,
+          "generated_console_sha256": "14938c8824fde6953041b624fcfda94f1bf02b815a53de4f449b8a5d51235105",
+          "hu_chance_denominator_cards": null,
+          "license": "AGPL-3.0; backend installed separately",
+          "repository": "https://github.com/bupticybee/TexasSolver",
+          "tested_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6"
+        },
+        "public_nodes": 90,
+        "raw_export_sha256": "abc6501173c5b69e6a03004d49cad1a97aaec97f46b4e805ac8f34afe7bb658f",
+        "settings": {
+          "dump_rounds": 2,
+          "ip_range_common_scale": 1.0,
+          "iterations": 11,
+          "memory_budget_mb": 1024,
+          "memory_limit_enforced": true,
+          "native_raise_limit": 2,
+          "oop_range_common_scale": 1.0,
+          "python_menu_raise_limit_not_used": false,
+          "raise_fractions": [
+            1.0
+          ],
+          "root_effective_stack_bb": 1.0,
+          "suit_isomorphism": false,
+          "suit_symmetry_verified_on_both_priors": true,
+          "target_exploitability_pct_pot": 0.1,
+          "threads": 1,
+          "units_per_bb": 1000
+        },
+        "solve_seconds": 3.8395612879999135,
+        "solver_reported_target_met": true,
+        "windows_validated": false,
+        "zero_reach_chance_branches_omitted": 8
+      },
+      "gap": {
+        "best_response_centered_bb": [
+          5.000000000000001,
+          -5.000000000000001
+        ],
+        "difference_from_native_bb": 0.0,
+        "exploitability_bb": 0.0,
+        "joint_deals": 1,
+        "joint_deals_including_ordered_runouts": 44,
+        "joint_private_deals": 1,
+        "max_per_player_br_difference_bb": 0.2173916000000009,
+        "method": "exact_information_set_best_response_turn",
+        "nash_conv_bb": 0.0,
+        "scope": "declared_turn_menu_ranges_and_future_streets_only"
+      },
+      "evaluation": {
+        "deals": 44,
+        "matched_information_sets": 90,
+        "mc_ci95_bb": null,
+        "mc_stderr_bb": null,
+        "method": "exact_joint_deals_and_ordered_runouts",
+        "root_ev_player0_bb": 10.0,
+        "seed": null
+      }
+    },
+    {
+      "file": "policy-flop-btn-bb-fixed.json.gz",
+      "policy_sha256": "f77e72b0202b8a9c7bacd47735f1a65b91b9a47477d0094f8cc0b413421df11c",
+      "board": [
+        "As",
+        "7d",
+        "2c"
+      ],
+      "private_combos": [
+        587,
+        941
+      ],
+      "quality": {
+        "action_ev_available": false,
+        "actual_sizes": "native_rounding_to_one_unit_then_legality_checked",
+        "converged": false,
+        "export_depth_in_streets": 1,
+        "exported_depth_is_not_full_tree_coverage": true,
+        "gap_scope": "native_full_tree_declared_menu_and_ranges",
+        "global_gap_bb": 0.21889196276664735,
+        "iterations": 51,
+        "method": "texassolver_discounted_cfr",
+        "native_last_best_response_centered_bb": [
+          1.9345343,
+          -1.7156423
+        ],
+        "native_metric_independently_verified": false,
+        "provenance": {
+          "binary_sha256": "894027ca19e6e9128ca4ebe94d15f71f7a9d7c734f56db413a6e329e9ab61ed3",
+          "binary_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6",
+          "build_source_patch": "add set_raise_limit; HU chance denominator excludes all four private cards in CFR and BR; original checkout unchanged",
+          "command_sha256": "9f93b0b332bf20500338f04b1634e4b4f9cb9bc30cd69258159b816de2e12306",
+          "evaluator_dictionary_sha256": "13e0f4bd3cb99388caec49b36f98b98b70ae30407cbd740d880db65ed4db5e7b",
+          "generated_chance_sources_sha256": {
+            "BestResponse.cpp": "975c436f6bf1ff04a15b513e9683d5744e4812995bff19e9e47ecfd6f05b79ac",
+            "PCfrSolver.cpp": "7b8c2bbf6ee4ccc3df683635949a1277fcdbf7610c8aa4f71016447753e8f16f"
+          },
+          "generated_console_sha256": "14938c8824fde6953041b624fcfda94f1bf02b815a53de4f449b8a5d51235105",
+          "hu_chance_denominator_cards": 4,
+          "license": "AGPL-3.0; backend installed separately",
+          "repository": "https://github.com/bupticybee/TexasSolver",
+          "tested_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6"
+        },
+        "public_nodes": 10,
+        "raw_export_sha256": "a4686b5917d4ab2341717ee31cb210fcb91432d27e8789d92b063b6f9540d4e5",
+        "settings": {
+          "dump_rounds": 1,
+          "ip_range_common_scale": 1.0,
+          "iterations": 51,
+          "memory_budget_mb": 8192,
+          "memory_limit_enforced": true,
+          "native_raise_limit": 2,
+          "oop_range_common_scale": 1.0,
+          "python_menu_raise_limit_not_used": false,
+          "raise_fractions": [
+            1.0
+          ],
+          "root_effective_stack_bb": 22.5,
+          "suit_isomorphism": true,
+          "suit_symmetry_verified_on_both_priors": true,
+          "target_exploitability_pct_pot": 1.0,
+          "threads": 2,
+          "units_per_bb": 1000
+        },
+        "solve_seconds": 418.53397557800054,
+        "windows_validated": false,
+        "zero_reach_chance_branches_omitted": 0
+      },
+      "gap": null,
+      "evaluation": null
+    },
+    {
+      "file": "policy-flop-btn-bb-native-51.json.gz",
+      "policy_sha256": "e3a3187cf6b87ccc6aa6c7425db5475a80a93743b711129685aaeaef307fd2d6",
+      "board": [
+        "As",
+        "7d",
+        "2c"
+      ],
+      "private_combos": [
+        587,
+        941
+      ],
+      "quality": {
+        "action_ev_available": false,
+        "actual_sizes": "native_rounding_to_one_unit_then_legality_checked",
+        "converged": false,
+        "export_depth_in_streets": 1,
+        "exported_depth_is_not_full_tree_coverage": true,
+        "gap_scope": "native_full_tree_declared_menu_and_ranges",
+        "global_gap_bb": 0.2604979157447815,
+        "iterations": 51,
+        "method": "texassolver_discounted_cfr",
+        "native_metric_independently_verified": false,
+        "provenance": {
+          "binary_sha256": "42c609c0d250a68e82f6086f984132fb92705e4ec7c9ca3c7a33ef4f278b463a",
+          "binary_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6",
+          "build_source_patch": "add set_raise_limit console command; original checkout unchanged",
+          "command_sha256": "9f93b0b332bf20500338f04b1634e4b4f9cb9bc30cd69258159b816de2e12306",
+          "evaluator_dictionary_sha256": "13e0f4bd3cb99388caec49b36f98b98b70ae30407cbd740d880db65ed4db5e7b",
+          "generated_console_sha256": "14938c8824fde6953041b624fcfda94f1bf02b815a53de4f449b8a5d51235105",
+          "license": "AGPL-3.0; backend installed separately",
+          "repository": "https://github.com/bupticybee/TexasSolver",
+          "tested_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6"
+        },
+        "public_nodes": 10,
+        "raw_export_sha256": "c7f8699fe2a3701b53170a08d270d37700fe2b4a72cdc55cdd90b52a8c4e0c62",
+        "settings": {
+          "dump_rounds": 1,
+          "ip_range_common_scale": 1.0,
+          "iterations": 51,
+          "memory_budget_mb": 8192,
+          "memory_limit_enforced": true,
+          "native_raise_limit": 2,
+          "oop_range_common_scale": 1.0,
+          "python_menu_raise_limit_not_used": false,
+          "raise_fractions": [
+            1.0
+          ],
+          "root_effective_stack_bb": 22.5,
+          "suit_isomorphism": true,
+          "suit_symmetry_verified_on_both_priors": true,
+          "target_exploitability_pct_pot": 1.0,
+          "threads": 2,
+          "units_per_bb": 1000
+        },
+        "solve_seconds": 418.2333315689998,
+        "windows_validated": false,
+        "zero_reach_chance_branches_omitted": 0
+      },
+      "gap": null,
+      "evaluation": null
+    },
+    {
+      "file": "policy-flop-btn-bb-native.json.gz",
+      "policy_sha256": "5288b6c656d3e817ae2ca3c35cae2609941d1914ad0400475733df47ca28747f",
+      "board": [
+        "As",
+        "7d",
+        "2c"
+      ],
+      "private_combos": [
+        587,
+        941
+      ],
+      "quality": {
+        "action_ev_available": false,
+        "actual_sizes": "native_rounding_to_one_unit_then_legality_checked",
+        "converged": false,
+        "export_depth_in_streets": 1,
+        "exported_depth_is_not_full_tree_coverage": true,
+        "gap_scope": "native_full_tree_declared_menu_and_ranges",
+        "global_gap_bb": 1.7498328971862793,
+        "iterations": 11,
+        "method": "texassolver_discounted_cfr",
+        "native_metric_independently_verified": false,
+        "provenance": {
+          "binary_sha256": "42c609c0d250a68e82f6086f984132fb92705e4ec7c9ca3c7a33ef4f278b463a",
+          "binary_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6",
+          "build_source_patch": "add set_raise_limit console command; original checkout unchanged",
+          "command_sha256": "ce300598091277e7c3010cfb3d098078bd7ef4481edf41020c8cfaa6e8db3754",
+          "evaluator_dictionary_sha256": "13e0f4bd3cb99388caec49b36f98b98b70ae30407cbd740d880db65ed4db5e7b",
+          "generated_console_sha256": "14938c8824fde6953041b624fcfda94f1bf02b815a53de4f449b8a5d51235105",
+          "license": "AGPL-3.0; backend installed separately",
+          "repository": "https://github.com/bupticybee/TexasSolver",
+          "tested_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6"
+        },
+        "public_nodes": 10,
+        "raw_export_sha256": "87613723a71826e8e39a65f162af6fdb04b04ecf9f4d1c6b232ea41ff551e15b",
+        "settings": {
+          "dump_rounds": 1,
+          "ip_range_common_scale": 1.0,
+          "iterations": 11,
+          "memory_budget_mb": 8192,
+          "memory_limit_enforced": true,
+          "native_raise_limit": 2,
+          "oop_range_common_scale": 1.0,
+          "python_menu_raise_limit_not_used": false,
+          "raise_fractions": [
+            1.0
+          ],
+          "root_effective_stack_bb": 22.5,
+          "suit_isomorphism": true,
+          "suit_symmetry_verified_on_both_priors": true,
+          "target_exploitability_pct_pot": 1.0,
+          "threads": 2,
+          "units_per_bb": 1000
+        },
+        "solve_seconds": 102.88553178199982,
+        "windows_validated": false,
+        "zero_reach_chance_branches_omitted": 0
+      },
+      "gap": null,
+      "evaluation": null
+    },
+    {
+      "file": "policy-river-native.json.gz",
+      "policy_sha256": "a81d5bcacf1ac13ee5f4f00b16569d3701abbb794518b4fde94b234512da39d9",
+      "board": [
+        "Kc",
+        "8s",
+        "3d",
+        "Ts",
+        "2h"
+      ],
+      "private_combos": [
+        3,
+        2
+      ],
+      "quality": {
+        "action_ev_available": true,
+        "actual_sizes": "native_rounding_to_one_unit_then_legality_checked",
+        "converged": false,
+        "export_depth_in_streets": 1,
+        "exported_depth_is_not_full_tree_coverage": false,
+        "gap_scope": "native_full_tree_declared_menu_and_ranges",
+        "global_gap_bb": 0.12520800530910492,
+        "iterations": 501,
+        "method": "texassolver_discounted_cfr",
+        "native_metric_independently_verified": true,
+        "provenance": {
+          "binary_sha256": "7cc7a0667343526ca11354516fc016cb3a9789fac927c47f0e1581626457f304",
+          "binary_source_commit": null,
+          "command_sha256": "bbd81d93e370ad4eb6829751d8366c36317f3ce05e915370b54b65f18a03ad1a",
+          "evaluator_dictionary_sha256": "13e0f4bd3cb99388caec49b36f98b98b70ae30407cbd740d880db65ed4db5e7b",
+          "license": "AGPL-3.0; backend installed separately",
+          "repository": "https://github.com/bupticybee/TexasSolver",
+          "tested_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6"
+        },
+        "public_nodes": 8,
+        "raw_export_sha256": "6b1c480745d1ddd0d27d244959a286ff5b95012f39bf10087e2429f12ccf2573",
+        "settings": {
+          "dump_rounds": 1,
+          "ip_range_common_scale": 1.0,
+          "iterations": 501,
+          "native_raise_limit": 4,
+          "oop_range_common_scale": 1.0,
+          "python_menu_raise_limit_not_used": true,
+          "root_effective_stack_bb": 50.0,
+          "suit_isomorphism": false,
+          "target_exploitability_pct_pot": 0.02,
+          "threads": 2,
+          "units_per_bb": 1000
+        },
+        "solve_seconds": 4.192578349000087,
+        "windows_validated": false,
+        "zero_reach_chance_branches_omitted": 0
+      },
+      "gap": {
+        "best_response_centered_bb": [
+          5.590831821610441,
+          -5.465624394924773
+        ],
+        "difference_from_native_bb": 5.78623437164083e-07,
+        "exploitability_bb": 0.06260371334283388,
+        "joint_deals": 6,
+        "method": "exact_information_set_best_response_river",
+        "nash_conv_bb": 0.12520742668566776,
+        "scope": "declared_river_menu_and_ranges_only"
+      },
+      "evaluation": {
+        "deals": 6,
+        "matched_information_sets": 20,
+        "method": "exact_river_enumeration",
+        "root_ev_player0_bb": 18.054405976447086,
+        "seed": null
+      }
+    },
+    {
+      "file": "policy-river-refined-native.json.gz",
+      "policy_sha256": "28cf6a5c058dc321795f31d07d90637dce10b21be5424aac09a12f77e5b5cb95",
+      "board": [
+        "Kc",
+        "8s",
+        "3d",
+        "Ts",
+        "2h"
+      ],
+      "private_combos": [
+        3,
+        2
+      ],
+      "quality": {
+        "action_ev_available": true,
+        "actual_sizes": "native_rounding_to_one_unit_then_legality_checked",
+        "converged": false,
+        "export_depth_in_streets": 1,
+        "exported_depth_is_not_full_tree_coverage": false,
+        "gap_scope": "native_full_tree_declared_menu_and_ranges",
+        "global_gap_bb": 0.1990092694759369,
+        "iterations": 10001,
+        "method": "texassolver_discounted_cfr",
+        "native_metric_independently_verified": true,
+        "provenance": {
+          "binary_sha256": "7cc7a0667343526ca11354516fc016cb3a9789fac927c47f0e1581626457f304",
+          "binary_source_commit": null,
+          "command_sha256": "42f477c451a933db28e49f26b968d4aa3f6cfafad8687187f9b2f7ee5c1107ec",
+          "evaluator_dictionary_sha256": "13e0f4bd3cb99388caec49b36f98b98b70ae30407cbd740d880db65ed4db5e7b",
+          "license": "AGPL-3.0; backend installed separately",
+          "repository": "https://github.com/bupticybee/TexasSolver",
+          "tested_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6"
+        },
+        "public_nodes": 8,
+        "raw_export_sha256": "fa04d39392462573fd5ca666703c2dcebd30ca266a74ff75473b89b2d01c67ef",
+        "settings": {
+          "dump_rounds": 1,
+          "ip_range_common_scale": 1.0,
+          "iterations": 10001,
+          "native_raise_limit": 4,
+          "oop_range_common_scale": 1.0,
+          "python_menu_raise_limit_not_used": true,
+          "root_effective_stack_bb": 50.0,
+          "suit_isomorphism": false,
+          "target_exploitability_pct_pot": 0.02,
+          "threads": 2,
+          "units_per_bb": 1000
+        },
+        "solve_seconds": 4.2781928110000536,
+        "windows_validated": false,
+        "zero_reach_chance_branches_omitted": 0
+      },
+      "gap": {
+        "best_response_centered_bb": [
+          5.609970820739317,
+          -5.410961310068767
+        ],
+        "difference_from_native_bb": 2.4119461361493677e-07,
+        "exploitability_bb": 0.09950475533527525,
+        "joint_deals": 6,
+        "method": "exact_information_set_best_response_river",
+        "nash_conv_bb": 0.1990095106705505,
+        "scope": "declared_river_menu_and_ranges_only"
+      },
+      "evaluation": {
+        "deals": 6,
+        "matched_information_sets": 12,
+        "method": "exact_river_enumeration",
+        "root_ev_player0_bb": 18.054846856030228,
+        "seed": null
+      }
+    },
+    {
+      "file": "policy-turn-conditional-fixed.json.gz",
+      "policy_sha256": "9bc2be9b656c09b058327301cf9b1e733ec969c565dc3c2aa38df4e8bb55e7ba",
+      "board": [
+        "As",
+        "7d",
+        "2c",
+        "Ts"
+      ],
+      "private_combos": [
+        2,
+        2
+      ],
+      "quality": {
+        "action_ev_available": true,
+        "actual_sizes": "native_rounding_to_one_unit_then_legality_checked",
+        "converged": true,
+        "export_depth_in_streets": 2,
+        "exported_depth_is_not_full_tree_coverage": false,
+        "gap_scope": "native_full_tree_declared_menu_and_ranges",
+        "global_gap_bb": 0.016550537325441837,
+        "iterations": 171,
+        "method": "texassolver_discounted_cfr",
+        "native_last_best_response_centered_bb": [
+          2.341605,
+          -2.3250544
+        ],
+        "native_metric_independently_verified": true,
+        "provenance": {
+          "binary_sha256": "894027ca19e6e9128ca4ebe94d15f71f7a9d7c734f56db413a6e329e9ab61ed3",
+          "binary_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6",
+          "build_source_patch": "add set_raise_limit; HU chance denominator excludes all four private cards in CFR and BR; original checkout unchanged",
+          "command_sha256": "ca10447e2e654eaad5651212dc86ac96f259c7bed6893ec84fd902082495e1fe",
+          "evaluator_dictionary_sha256": "13e0f4bd3cb99388caec49b36f98b98b70ae30407cbd740d880db65ed4db5e7b",
+          "generated_chance_sources_sha256": {
+            "BestResponse.cpp": "975c436f6bf1ff04a15b513e9683d5744e4812995bff19e9e47ecfd6f05b79ac",
+            "PCfrSolver.cpp": "7b8c2bbf6ee4ccc3df683635949a1277fcdbf7610c8aa4f71016447753e8f16f"
+          },
+          "generated_console_sha256": "14938c8824fde6953041b624fcfda94f1bf02b815a53de4f449b8a5d51235105",
+          "hu_chance_denominator_cards": 4,
+          "license": "AGPL-3.0; backend installed separately",
+          "repository": "https://github.com/bupticybee/TexasSolver",
+          "tested_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6"
+        },
+        "public_nodes": 1642,
+        "raw_export_sha256": "1100f854ee52cf4ab4bd7c8700cf9340eec69b2b23f60eb81a4e647dab7791c5",
+        "settings": {
+          "dump_rounds": 2,
+          "ip_range_common_scale": 1.0,
+          "iterations": 501,
+          "memory_budget_mb": 2048,
+          "memory_limit_enforced": true,
+          "native_raise_limit": 2,
+          "oop_range_common_scale": 1.0,
+          "python_menu_raise_limit_not_used": false,
+          "raise_fractions": [
+            1.0
+          ],
+          "root_effective_stack_bb": 20.667,
+          "suit_isomorphism": false,
+          "suit_symmetry_verified_on_both_priors": true,
+          "target_exploitability_pct_pot": 0.1,
+          "threads": 2,
+          "units_per_bb": 1000
+        },
+        "solve_seconds": 4.679247479999958,
+        "solver_reported_target_met": true,
+        "windows_validated": false,
+        "zero_reach_chance_branches_omitted": 20
+      },
+      "gap": {
+        "best_response_centered_bb": [
+          2.3416051174893515,
+          -2.325054485600858
+        ],
+        "difference_from_native_bb": 9.456305175709057e-08,
+        "exploitability_bb": 0.008275315944246797,
+        "joint_deals": 4,
+        "joint_deals_including_ordered_runouts": 176,
+        "joint_private_deals": 4,
+        "max_per_player_br_difference_bb": 1.1748935158095719e-07,
+        "method": "exact_information_set_best_response_turn",
+        "nash_conv_bb": 0.016550631888493594,
+        "scope": "declared_turn_menu_ranges_and_future_streets_only"
+      },
+      "evaluation": {
+        "deals": 176,
+        "matched_information_sets": 3122,
+        "mc_ci95_bb": null,
+        "mc_stderr_bb": null,
+        "method": "exact_joint_deals_and_ordered_runouts",
+        "root_ev_player0_bb": 6.922283867430228,
+        "seed": null
+      }
+    },
+    {
+      "file": "policy-turn-conditional-native.json.gz",
+      "policy_sha256": "f4882fdc2a8090bce4807e5083bba15620fc5c58575de078db5011fddf795718",
+      "board": [
+        "As",
+        "7d",
+        "2c",
+        "Ts"
+      ],
+      "private_combos": [
+        2,
+        2
+      ],
+      "quality": {
+        "action_ev_available": true,
+        "actual_sizes": "native_rounding_to_one_unit_then_legality_checked",
+        "converged": true,
+        "export_depth_in_streets": 2,
+        "exported_depth_is_not_full_tree_coverage": false,
+        "gap_scope": "native_full_tree_declared_menu_and_ranges",
+        "global_gap_bb": 0.017531982457637787,
+        "iterations": 101,
+        "method": "texassolver_discounted_cfr",
+        "native_metric_independently_verified": false,
+        "provenance": {
+          "binary_sha256": "42c609c0d250a68e82f6086f984132fb92705e4ec7c9ca3c7a33ef4f278b463a",
+          "binary_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6",
+          "build_source_patch": "add set_raise_limit console command; original checkout unchanged",
+          "command_sha256": "ca10447e2e654eaad5651212dc86ac96f259c7bed6893ec84fd902082495e1fe",
+          "evaluator_dictionary_sha256": "13e0f4bd3cb99388caec49b36f98b98b70ae30407cbd740d880db65ed4db5e7b",
+          "generated_console_sha256": "14938c8824fde6953041b624fcfda94f1bf02b815a53de4f449b8a5d51235105",
+          "license": "AGPL-3.0; backend installed separately",
+          "repository": "https://github.com/bupticybee/TexasSolver",
+          "tested_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6"
+        },
+        "public_nodes": 1642,
+        "raw_export_sha256": "f88afe3bc82839b9f15818d85bbc23c1f295888fc95818316a414ae7bce25920",
+        "settings": {
+          "dump_rounds": 2,
+          "ip_range_common_scale": 1.0,
+          "iterations": 501,
+          "memory_budget_mb": 2048,
+          "memory_limit_enforced": true,
+          "native_raise_limit": 2,
+          "oop_range_common_scale": 1.0,
+          "python_menu_raise_limit_not_used": false,
+          "raise_fractions": [
+            1.0
+          ],
+          "root_effective_stack_bb": 20.667,
+          "suit_isomorphism": false,
+          "suit_symmetry_verified_on_both_priors": true,
+          "target_exploitability_pct_pot": 0.1,
+          "threads": 2,
+          "units_per_bb": 1000
+        },
+        "solve_seconds": 4.299944896999932,
+        "windows_validated": false,
+        "zero_reach_chance_branches_omitted": 20
+      },
+      "gap": {
+        "best_response_centered_bb": [
+          2.42110424637143,
+          -2.314758585722211
+        ],
+        "difference_from_native_bb": 0.08881367819158123,
+        "exploitability_bb": 0.05317283032460951,
+        "joint_deals": 4,
+        "joint_deals_including_ordered_runouts": 176,
+        "joint_private_deals": 4,
+        "method": "exact_information_set_best_response_turn",
+        "nash_conv_bb": 0.10634566064921902,
+        "scope": "declared_turn_menu_ranges_and_future_streets_only"
+      },
+      "evaluation": {
+        "deals": 176,
+        "matched_information_sets": 3122,
+        "mc_ci95_bb": null,
+        "mc_stderr_bb": null,
+        "method": "exact_joint_deals_and_ordered_runouts",
+        "root_ev_player0_bb": 6.9239595770859825,
+        "seed": null
+      }
+    },
+    {
+      "file": "policy-turn-conditional-precision.json.gz",
+      "policy_sha256": "f6b9aee3056adc23bf64a55a0c589a6b94bf32171ae08f17a98584495d82f7f2",
+      "board": [
+        "As",
+        "7d",
+        "2c",
+        "Ts"
+      ],
+      "private_combos": [
+        2,
+        2
+      ],
+      "quality": {
+        "action_ev_available": true,
+        "actual_sizes": "native_rounding_to_one_unit_then_legality_checked",
+        "converged": false,
+        "export_depth_in_streets": 2,
+        "exported_depth_is_not_full_tree_coverage": false,
+        "gap_scope": "native_full_tree_declared_menu_and_ranges",
+        "global_gap_bb": 0.004674804350212216,
+        "iterations": 5001,
+        "method": "texassolver_discounted_cfr",
+        "native_last_best_response_centered_bb": [
+          2.3427852,
+          -2.3381104
+        ],
+        "native_metric_independently_verified": true,
+        "provenance": {
+          "binary_sha256": "894027ca19e6e9128ca4ebe94d15f71f7a9d7c734f56db413a6e329e9ab61ed3",
+          "binary_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6",
+          "build_source_patch": "add set_raise_limit; HU chance denominator excludes all four private cards in CFR and BR; original checkout unchanged",
+          "command_sha256": "909236c59851eaef37c0e812ab8cd7025e81010dce40a9994f0c5ee91a2d0a88",
+          "evaluator_dictionary_sha256": "13e0f4bd3cb99388caec49b36f98b98b70ae30407cbd740d880db65ed4db5e7b",
+          "generated_chance_sources_sha256": {
+            "BestResponse.cpp": "975c436f6bf1ff04a15b513e9683d5744e4812995bff19e9e47ecfd6f05b79ac",
+            "PCfrSolver.cpp": "7b8c2bbf6ee4ccc3df683635949a1277fcdbf7610c8aa4f71016447753e8f16f"
+          },
+          "generated_console_sha256": "14938c8824fde6953041b624fcfda94f1bf02b815a53de4f449b8a5d51235105",
+          "hu_chance_denominator_cards": 4,
+          "license": "AGPL-3.0; backend installed separately",
+          "repository": "https://github.com/bupticybee/TexasSolver",
+          "tested_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6"
+        },
+        "public_nodes": 1642,
+        "raw_export_sha256": "e76fd59075fea96b3f692fccafa954c0d38651a3c03924bf4b0f3d6a4a67e90f",
+        "settings": {
+          "dump_rounds": 2,
+          "ip_range_common_scale": 1.0,
+          "iterations": 5001,
+          "memory_budget_mb": 2048,
+          "memory_limit_enforced": true,
+          "native_raise_limit": 2,
+          "oop_range_common_scale": 1.0,
+          "python_menu_raise_limit_not_used": false,
+          "raise_fractions": [
+            1.0
+          ],
+          "root_effective_stack_bb": 20.667,
+          "suit_isomorphism": false,
+          "suit_symmetry_verified_on_both_priors": true,
+          "target_exploitability_pct_pot": 0.0001,
+          "threads": 2,
+          "units_per_bb": 1000
+        },
+        "solve_seconds": 9.930852866999885,
+        "solver_reported_target_met": false,
+        "windows_validated": false,
+        "zero_reach_chance_branches_omitted": 20
+      },
+      "gap": {
+        "best_response_centered_bb": [
+          2.342785134547175,
+          -2.3381103136625843
+        ],
+        "difference_from_native_bb": 1.6534378375135383e-08,
+        "exploitability_bb": 0.0023374104422952957,
+        "joint_deals": 4,
+        "joint_deals_including_ordered_runouts": 176,
+        "joint_private_deals": 4,
+        "max_per_player_br_difference_bb": 8.633741588326416e-08,
+        "method": "exact_information_set_best_response_turn",
+        "nash_conv_bb": 0.004674820884590591,
+        "scope": "declared_turn_menu_ranges_and_future_streets_only"
+      },
+      "evaluation": {
+        "deals": 176,
+        "matched_information_sets": 1325,
+        "mc_ci95_bb": null,
+        "mc_stderr_bb": null,
+        "method": "exact_joint_deals_and_ordered_runouts",
+        "root_ev_player0_bb": 6.923054098397483,
+        "seed": null
+      }
+    }
+  ],
+  "source_reference": {
+    "repository": "eduardodinizti-design/Software",
+    "commit": "8c7f585cabf0b53217c9001988de52c387fb5153",
+    "path": "strategy_sources/nvt-356340d/nvt-ranges-validados.json",
+    "public_snapshot_matched": true,
+    "sha256": "c8fc3f0716df16fdeb2cff509814e3ca3c1ec31c05d479da2122db3ec531fcdc",
+    "engine_commit": "356340d",
+    "generated_at": "2026-11-06T23:22:51.050Z",
+    "note": "Public historical NVT snapshot",
+    "limitations": "Not proof of the ranges loaded by Windows. Open size, antes and opponent response policies are not established by this export."
+  },
+  "known_remaining": [
+    "confirmed Windows postflop timeline producer",
+    "postflop executor and actual UI money ticks/presets",
+    "complete full-range continuations and independent precision/rare-node checks",
+    "PKO/ICM/multiway utilities and priors",
+    "pre-existing raise-above-menu SHOVE and 2.5-preset failures; unresolved same-theme 8h-to-3h"
+  ],
+  "artifacts_sha256": {
+    "docs/ENTREGA_MOTOR_HU_SOFTWARE_20261115.txt": "075a0c4b6ff49cbbe62432f088f992bbdf6455096f13fe40d42c2c879b4764df",
+    "docs/software-hu-engine-20261115/benchmark-consulta.json": "735acc560b6e451aa78090b1cdc7935daf9b723b11da218b17e6d9354de778f5",
+    "docs/software-hu-engine-20261115/boards-btn-bb.json": "df577325822a92bdbefbc0b4df3cf518e82aea69df9b2ce078496402fd996503",
+    "docs/software-hu-engine-20261115/boards-utg-bb.json": "c4b3cf49f9f13c240ce77f5aba090f906af4502362d0fba612d1463b3667eae2",
+    "docs/software-hu-engine-20261115/chance-after.json.gz": "cb4772381eb2e0a416eef3034205da8a7c3ef9ae8aa5e529403834b8f947c16c",
+    "docs/software-hu-engine-20261115/chance-before.json.gz": "57d0bd872dbd9e86d4778599519b40e8b6f6844b47bdc866d5055288258dde93",
+    "docs/software-hu-engine-20261115/decision-river-QsJs.json": "dc19be0239062eae324d954d02edbf78b61d29f8e15576088f032ed5414da7d1",
+    "docs/software-hu-engine-20261115/decision-river-exact-response-QsJs.json": "7e0a2cd7e707570e476be3da4c4374672dcc12490410889bd93821f5020cc337",
+    "docs/software-hu-engine-20261115/decision-turn-AhQh.json": "a7779571e59736c4a64038ea068ba0ceae1f83963b4a7dff03d3228ca5eb28c8",
+    "docs/software-hu-engine-20261115/decision-turn-QsJs.json": "7ec2170c74dcca897bcda768f0f051027d86480d8a25c2bd1acf81268afba562",
+    "docs/software-hu-engine-20261115/events-turn-river.json": "6bd289744ef3316578b58f00ec9443f9698434efff41d7ea7b44d40697ae9e91",
+    "docs/software-hu-engine-20261115/game-chance-counterexample.json": "e7b67ce967c3a9b609f56fe9b4cc9affcca14dc8d438c127e5f2c22f4d76ed67",
+    "docs/software-hu-engine-20261115/game-flop-btn-bb.json": "5e8304b8fc45ffe952006b40a85c95a88517b1c742aec8e22573855655837ea0",
+    "docs/software-hu-engine-20261115/game-river.json": "2a2ec9e4c7ea79607f42b0e46ad34d3ecf7754cb3c64dff9b1a4798f61ad9cd9",
+    "docs/software-hu-engine-20261115/game-turn-conditional-subset.json": "5b3502ab2f7ec80ea1deaf76e8e22972aaebdc5b7be751d971886db87b365305",
+    "docs/software-hu-engine-20261115/native-run-logs.json": "ed14c02fb114361a7d75ca20134d58a7cfd2cbfa1a916e7682fd58cdfbd69436",
+    "docs/software-hu-engine-20261115/policy-flop-btn-bb-fixed.json.gz": "066c4784f74b2698be66a6a6ea8163e5387490bf64dc5fa63bd45cdb486f92ad",
+    "docs/software-hu-engine-20261115/policy-flop-btn-bb-native-51.json.gz": "bd40d3bd915c0c3d5cdda0adec3ed0bd4456be320f6eb36f024b48e1a858d209",
+    "docs/software-hu-engine-20261115/policy-flop-btn-bb-native.json.gz": "f7a79a85e3ccd0bb7007fc45b68d1b3c5e26fb2d6e3e738bfd978e6af9959246",
+    "docs/software-hu-engine-20261115/policy-river-native.json.gz": "1f8f14c6672e333e1027dd1fe4e0788dcc7c7c70718df58655489240d006c569",
+    "docs/software-hu-engine-20261115/policy-river-refined-native.json.gz": "62c38a619ee7f54cee4a3575f21c9a55dfcddbdf03197ee0d738d81db9fd1715",
+    "docs/software-hu-engine-20261115/policy-runs.json": "28d3677ef22bf5df17196da35d960abcb724b98ece55254d95c831def653305c",
+    "docs/software-hu-engine-20261115/policy-turn-conditional-fixed.json.gz": "6fa9e9eda7f1d01c1c9f148e06d1e719661be73c0407e1b779734445fac73def",
+    "docs/software-hu-engine-20261115/policy-turn-conditional-native.json.gz": "8ce3e79175ec128b9be93c161b9ab8fbdbf81e7fd9e02d2626dcae547fbd6204",
+    "docs/software-hu-engine-20261115/policy-turn-conditional-precision.json.gz": "771d4a926fb408e1c0c394f4e3c138e72ecd9cf810934fc611f37e270a58298d",
+    "docs/software-hu-engine-20261115/preset-2.5-conhecido.txt": "4ae83d9ead623b9c72968f103d6537469b9526221d82b17743f8bcb3c07ce63a",
+    "docs/software-hu-engine-20261115/query-river-QsJs.json": "f232faa1b6ee7846da3705f89b45329e2631937b0e501ad8ee4f21c9409c68d8",
+    "docs/software-hu-engine-20261115/query-turn-AhQh.json": "6b901ebd402ba0b9101244b0f2a9939d5ae6aa00d8570b01a1b9b2a01ecb4e82",
+    "docs/software-hu-engine-20261115/query-turn-QsJs.json": "5f2468a083f11eff127ab7427ebf18037943397a25e700aee4b738c40dbac2d4",
+    "docs/software-hu-engine-20261115/regressao.txt": "930d009e8b6f5f1423c35d2212cb0ec5cae214a4b57ced01eab73d2e8bffec2d",
+    "docs/software-hu-engine-20261115/replay-turn-river.json": "e30914410117ade590f55e4be2b959d93f840ff59c7db335f0cc21dcd8436bd1",
+    "docs/software-hu-engine-20261115/trace-flop-bet-call-turn-Ts.json": "2f94de7c86b8cd6f8063f39d097c5c75447af4e745a253fc703c0bfb03aff95f"
+  }
+}

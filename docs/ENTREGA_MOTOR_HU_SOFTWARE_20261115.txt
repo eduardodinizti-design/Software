@@ -1,0 +1,276 @@
+ENTREGA DO MOTOR HU — SOFTWARE ORIGINAL — 15/11/2026
+
+1. RESPOSTA DIRETA E ESCOPO
+
+Antes desta entrega: três flops distintos, quatro confrontos de ranges e
+160.000 deals de showdown. Havia também um exemplo artificial de river.
+
+Nesta entrega: 16 flops distintos, 32 confrontos BTN/BB ou UTG/BB, 20.000
+deals por confronto: 640.000 NOVOS deals. O total desses estudos de equidade
+chega a 800.000, somando o lote anterior. Treinos CFR e enumerações exatas
+são contagens separadas. Um runout interno não vira um novo board validado.
+
+Foi implementado um motor HU funcional para laboratório, replay e consulta
+compilada. Há cálculo entre ruas, dois ranges, regras de aposta, exportação,
+avaliação independente e integração opcional ao observador do Software.
+O operador segue sem enviar cliques pós-flop nesta entrega. A main e a
+instalação em uso foram preservadas. Não houve validação PPPoker Windows.
+
+As 252 raízes propostas anteriormente continuam sendo a matriz de expansão.
+Não foram resolvidas 252 árvores nem 16 jogos completos com ranges completos.
+
+2. BOARDS EFETIVAMENTE ESTUDADOS
+
+Desenvolvimento (12):
+  As7d2c, Kd8h3c, AhKd7c, Qs8d3c, JsTd4c, 9s8s7d,
+  8c6d3s, 7s7h2d, KcKd5s, Qs7s2s, Jd9d4c, 5c4d3s.
+Separados previamente para avaliação (4):
+  Ac9h4d, KhJh6c, Td8d5s, 6h6s3c.
+
+Cada um foi comparado em BTN versus BB e UTG versus BB, usando os ranges
+respectivos. Os arquivos boards-btn-bb.json e boards-utg-bb.json registram
+semente, IC Monte Carlo, categorias, draws, massa de nuts atuais e cauda
+forte com uma referência comum. Esses estudos medem showdown sem apostas
+futuras; não demonstram qual c-bet maximiza EV.
+
+Fonte: snapshot público NVT 356340d do Software, commit de armazenamento
+8c7f585cabf0b53217c9001988de52c387fb5153, SHA256 do export original:
+c8fc3f0716df16fdeb2cff509814e3ca3c1ec31c05d479da2122db3ec531fcdc.
+Os quatro ranges completos e seus IDs estão na entrega de 14/11.
+O arquivo não comprova os ranges carregados no Windows nem estabelece aqui
+o size de open, antes e respostas pós-flop. Não foi executado o HRC Pro.
+
+3. O QUE ESTÁ IMPLEMENTADO
+
+strategy/state_contract.py
+  Estado imutável: posições, ordem OOP/IP, board, pote incluindo apostas,
+  stacks restantes, contribuições na rua, preço adicional, raise mínimo,
+  direitos de reabrir, identidade e histórico. IP só atua sem preço depois
+  de um check OOP confirmado. A ordem também trata o SB/button de mesa HU.
+
+strategy/range_catalog.py
+  Expande classes em combos físicos preservando pesos, aplica blockers,
+  gera hashes e amostra a distribuição conjunta sem viés de colisão.
+  Não divide frequências de AA/AKs/AKo por 6/4/12.
+
+strategy/line_policy.py
+  Condiciona o range de QUEM AGIU pela frequência da ação e conserva o outro.
+  Depois de bet/call, ambos foram atualizados; turn/river não reiniciam no
+  pré-flop. Check conserva traps quando a política lhes atribui check.
+  Ação com alcance zero exige outro modelo de chegada, sem fold inventado.
+
+strategy/action_tree.py
+  Check, fold, call, bets, raises e all-in explícito. Valores são contribuições
+  ADICIONAIS, com raise-to separado. All-in curto não reabre automaticamente;
+  dinheiro não pago é devolvido. Há conservação de fichas e runout sem apostas
+  quando alguém está all-in. Não existe corte estratégico por 100/200/5.000 BB.
+  O orçamento de raises do cálculo é declarado; a legalidade real é separada.
+
+strategy/ev_evaluator.py
+  CFR tabular com amostragem de chance e travessia das ações; política usa
+  cartas próprias e histórico público. Mão adversária e runout ficam no
+  ambiente de simulação. Avalia o perfil CONGELADO em execução independente.
+  Enumera exatamente pequenos jogos de river/turn/flop sob orçamento explícito.
+  A melhor resposta mantém um belief adversário inteiro antes de escolher;
+  não escolhe uma ação diferente para cada mão oculta ou river futuro.
+  Guarda alcance por information set; EV desconhecido continua ausente.
+
+strategy/texassolver_backend.py e tools/build_texassolver_console.py
+  Backend nativo opcional, offline, com fonte/binário/comandos/dicionário
+  identificados por hashes, limites de memória/tempo e logs por job novo.
+  Os sizes REAIS arredondados pelo backend são importados e legalmente
+  verificados. Uma aposta não vira jam por falta de preset.
+  Isomorfismo exige simetria de naipes dos DOIS priors. Pesos raros são
+  reescalados proporcionalmente para não sumirem no cutoff nativo de 0,005.
+
+strategy/policy_store.py, strategy_decision.py, decision_explanation.py
+  Arquivo JSON/gzip validado, consulta pelo estado/contexto/combinação,
+  mix estável por decisão, candidatos/EVs e explicação. Reordenar as três
+  cartas do flop é equivalência exata; trocar um naipe do turn não é.
+  Não há nearest-neighbor silencioso de stack, posição, board ou range.
+
+strategy/policy_observer.py, table_advisor.py e operar_mesa.py
+  Integração --postflop-policy, opcional e passiva. Um hit evita recalcular
+  a heurística antiga. Miss/contexto ausente mantém a leitura e exibe motivo.
+  O log pré-flop agora usa table_state['to_call']['to_call_bb']; a chave
+  anterior no nível raiz fazia um preço disponível aparecer como None.
+
+4. ERRO MATEMÁTICO REPRODUZIDO NO BACKEND NATIVO
+
+Referência: bupticybee/TexasSolver, commit
+02c8021ee1307c18aa1e76b772c6ae1451601bc6.
+
+Em PCfrSolver.cpp e BestResponse.cpp, o denominador das cartas futuras era
+52 - cartas públicas - 2. Em HU, condicionando as duas mãos privadas, são
+52 - cartas públicas - 4: no turn, 44 rivers legais por deal, não 46.
+
+Reprodução independente: board As7d2cTs, hero AhAd versus KhKd, pote 10 BB,
+apenas check/check. Hero vence TODOS os 44 rivers legais.
+  Valor esperado do pote: 10 BB.
+  Utilidades centradas corretas: +5/-5 BB.
+  Backend anterior: +4,7826084/-4,7826084 BB.
+  Backend corrigido: +5,000001/-5,000001 BB.
+
+A soma das duas melhores respostas era zero até no caso errado. Por isso
+validar somente o gap agregado teria deixado o erro passar. Agora também
+comparamos os valores individuais dos dois jogadores.
+
+A correção é aplicada em arquivos GERADOS na pasta de build. O checkout
+de referência não é alterado. O builder também expõe set_raise_limit, que
+o console original fixava em quatro agressões. Todos os patches têm hashes.
+Os arquivos chance-before/after.json.gz e game-chance-counterexample.json
+permitem inspecionar a reprodução. O modo --chance-private-cards 2 do
+builder reproduz a base anterior; o padrão 4 aplica a correção HU.
+
+5. ÁRVORES CALCULADAS E LIMITES DE CADA RESULTADO
+
+A) BTN/BB, As7d2c, ranges COMPLETOS de referência de 25 BB.
+   Geometria ilustrativa sem antes: open 2,5/call, pote 5,5, stacks 22,5.
+   Menu: bet 1/3, raise pote, all-in explícito, até duas agressões por rua.
+   O cálculo inclui turn e river; o export desta entrega guarda só o flop,
+   com dez nós públicos. Não fornece consulta de todos os turn/river.
+   Com chance corrigida e 51 iterações, gap nativo = 0,21889196 BB.
+   Meta configurada de exploração de 1% do pote NÃO foi atingida.
+   O gap desta árvore inteira ainda não foi conferido por outro avaliador.
+   Não classificar esta política como GTO convergida ou pronta para produção.
+
+B) Subgame de turn/river com duas mãos de cada lado, para validação exata.
+   Chegada: flop bet 1,833/call, turn Ts; pote 9,166, stacks 20,667.
+   Hero AhQh/QsJs; adversário Ad9d/8s7s; pesos no arquivo do jogo.
+   São 4 deals privados x 44 rivers = 176 deals completos enumerados.
+   Exporta turn E river, 1.642 nós públicos.
+   Com a correção, o gap do perfil em 171 iterações foi 0,01655063 BB na
+   conferência independente; diferença individual máxima ~0,00000012 BB.
+   Um refinamento de 5.001 iterações chegou a ~0,0046748 BB de gap, ainda
+   acima da meta mais rigorosa usada nessa execução.
+   Os pesos desse teste vêm de uma chegada congelada de baseline de 11
+   iterações e foram mantidos iguais no antes/depois para isolar a correção.
+   É um teste numérico condicional, não um range populacional de torneio.
+
+C) Rivers pequenos e exemplo de check versus blefe.
+   Há export/import, avaliação exata e comparação de melhores respostas.
+   No modelo artificial anterior, As5s ganha 15 BB passando e 8,3333 BB
+   blefando 2/3; 6c5c ganha zero passando e 8,3333 BB com o mesmo blefe.
+   Maior número de iterações isoladamente não certifica melhor resultado:
+   um teste de river passou de 0,1252 para 0,1990 BB de gap. Os dois estão
+   preservados como diagnóstico, sem declaração falsa de convergência.
+
+6. PRECISÃO GLOBAL, RAMOS RAROS E MELHOR LINHA
+
+Gap médio pequeno não garante precisão em cada ramo de alcance muito baixo.
+O avaliador registra esse alcance e calcula EV por ação/combinação.
+No replay forçado de uma linha rara, por exemplo, a política aproximada
+pode manter um blefe pior que check, apesar de baixo gap global.
+
+Há dois modos de consulta explícitos:
+  policy_mix: reproduz a política e seu mix estável, preservando o modelo.
+  exact_response: escolhe o maior EV enumerado contra a continuação congelada.
+    Exige EV EXATO; não maximiza uma estimativa Monte Carlo ruidosa. É uma
+    resposta local ao modelo, identificada como tal. O gap de uma nova
+    estratégia completa continua desconhecido e não herda o certificado
+    do perfil original. Esse modo serve à análise/revisão das linhas.
+
+O replay e o observador padrão usam policy_mix. Não foram misturadas
+frequências de jogos independentes para anunciar um único equilíbrio.
+
+7. COMO REPRODUZIR COM PYTHON, SEM PPPoker OU CLIQUES
+
+Na raiz do checkout Software, com Python 3.12 x64:
+
+  python -m unittest test_hu_policy_engine
+
+  python -m strategy.hu_engine query --policy docs/software-hu-engine-20261115/policy-turn-conditional-fixed.json.gz --state docs/software-hu-engine-20261115/query-turn-AhQh.json
+
+  python -m strategy.hu_engine query --policy docs/software-hu-engine-20261115/policy-turn-conditional-fixed.json.gz --state docs/software-hu-engine-20261115/query-river-QsJs.json --selection-mode exact_response
+
+  python -m strategy.hu_engine replay --policy docs/software-hu-engine-20261115/policy-turn-conditional-fixed.json.gz --events docs/software-hu-engine-20261115/events-turn-river.json
+
+  python -m strategy.hu_engine study --reference docs/software-cerebro-20261114/ranges-referencia.json --holdout --samples 20000 --out NOVA_PASTA/boards.json
+
+  python -m strategy.hu_engine train --game docs/software-hu-engine-20261115/game-river.json --iterations 20000 --evaluate 1000 --river-gap --out NOVA_PASTA/policy-python.json.gz
+
+Esses comandos do motor usam a biblioteca padrão e módulos próprios, sem
+instalar um solver nativo. Para o bot/leitores, valem as dependências já
+documentadas no Software. O comando train Python é um protótipo de laboratório
+com orçamento de nós; não é o backend recomendado para grandes matrizes.
+
+8. COMO REPRODUZIR O BACKEND NATIVO
+
+Dependência separada: TexasSolver (AGPL-3.0), fonte no commit acima; headers
+fmt 8.1.1, commit b6f4ceaed0a0a24ccf575fab6c56dd50ccf6f1a9 (MIT).
+O executável e o dicionário de avaliação não são distribuídos neste PR.
+O build abaixo foi testado em Linux com GCC/OpenMP, sem interface gráfica:
+
+  python tools/build_texassolver_console.py --source CAMINHO_TEXASSOLVER --fmt-include CAMINHO_FMT/include --out NOVA_PASTA/console_solver
+
+  python -m strategy.hu_engine native-train --game docs/software-hu-engine-20261115/game-turn-conditional-subset.json --binary NOVA_PASTA/console_solver --resources CAMINHO_TEXASSOLVER/resources --job-dir JOB_NOVO --out NOVA_PASTA/turn.json.gz --iterations 501 --dump-rounds 2 --memory-mb 2048 --verify-all-streets
+
+Não reutilizar um job-dir: os diagnósticos anteriores são preservados.
+No Linux o limite de espaço de endereçamento é aplicado e registrado. No
+Windows o adaptador não afirma que esse limite Linux esteja aplicado.
+O build/execução desse backend em Windows ainda precisa de validação.
+
+9. DESEMPENHO E RECURSOS
+
+benchmark-consulta.json contém 5.000 consultas com normalização, lookup,
+mix e explicação, excluindo captura/OCR/input. O p95 no laboratório ficou
+abaixo de 1 ms. Isso não mede seu notebook nem garante 6/12 mesas completas.
+
+Um cálculo inicial de flop com ranges completos chegou a ~15 GB RSS e foi
+interrompido antes de publicar política. Tentativas com limite de 4 GB
+terminaram em bad_alloc. O caso com orçamento de 8 GB e árvore declarada
+de duas agressões completou; 51 iterações levaram cerca de sete minutos.
+Esses limites são de CÁLCULO OFFLINE, sem proibir uma ação por stack.
+As políticas gzip entregues ocupam poucos MB; são carregadas uma vez.
+
+10. VALIDAÇÃO E FALHAS AINDA REPRODUZÍVEIS
+
+A regressão completa do lote e a contagem final estão em regressao.txt e
+evidencias.json: 339 executados, 336 aprovações normais, dois pulados e uma
+falha esperada. Inclui contratos do novo motor e testes existentes de
+advice, contexto pré-flop, operador, leitura de estado, aumentos, torneios,
+equidade e mão. Linux/mock não equivale a captura/input Win32/Unity real.
+
+Persistem dois problemas anteriores do Software:
+  - expectedFailure: raise acima do maior preset pode virar SHOVE indevido;
+  - teste com fixture de painel: leitor retorna 2/3/4 e perde o preset 2,5.
+A falha isolada foi novamente executada e está em preset-2.5-conhecido.txt.
+A leitura 8h->3h permanece pendente de reprodução na mesma skin colorida;
+nenhum limiar de leitura foi reduzido neste lote.
+
+11. PRÓXIMAS ENTREGAS CONCRETAS PARA OPERAÇÃO REAL
+
+P1 — Produtor de histórico confirmado no Windows.
+  O tracker atual guarda agressor/níveis pré-flop, não a timeline pós-flop.
+  Publicar table_state['strategy_state'] com o contrato de DecisionState:
+  context, betting, hero_cards, table_id, hand_id, revision e range_sha256.
+  Publicar active_seats confirmado; ocupação da mesa não prova quem está na mão.
+  Deduplicar eventos por mão/rua/ordem e manter contribuições/stacks conciliados.
+  Conferir o preço em to_call.to_call_bb, não pela chave antiga de log.
+  Ausência de OCR não prova fold/check. Capturas com lacuna precisam expor
+  essa lacuna. PolicyObserver confere identidade, cartas, posições, preço,
+  stacks, participantes e origem dos ranges antes de aceitar uma consulta.
+
+P2 — Unificar executor HU e valores executáveis.
+  Criar despacho pós-flop específico, com amount adicional versus raise-to.
+  Calibrar tick em fichas/BB e presets reais 1/3, 1/2, 2/3/pote no cliente.
+  Revalidar mão/board/vez/preço após espera do cursor e confirmar o efeito.
+  Resolver o preset 2,5 e o SHOVE indevido. O continue pós-flop atual e os
+  contratos de execução só podem ser substituídos junto com essa implementação.
+  O parâmetro --postflop-policy atual é de observação, inclusive com --arm.
+
+P3 — Cobertura e refinamento de políticas.
+  Completar a exportação/armazenamento das continuações de ranges completos;
+  conferir gaps com outro avaliador e avaliar precisão em ramos raros.
+  Fechar os 12 flops BTN/BB com priors/size/antes próprios e depois expandir
+  as famílias/25-50-100 BB. Não substituir priors ausentes por uma tabela curta.
+  Arredondamentos/novos sizes/novos boards mudam o nó; medir qualquer aproximação
+  ou recalcular, sem herdar certificação por proximidade.
+
+P4 — Torneio/economia e dados reais.
+  PKO/ICM/multiway exigem utilidade e ranges próprios; a API HU chip-EV os
+  distingue e não declara cobertura inexistente. Integrar exports reais HRC
+  identificados por versão/árvore e históricos Hand2Note com heroes corretos.
+  Separar treino/avaliação por mão/torneio/tempo. Resultado de uma mão não
+  prova qualidade da decisão. Revalidar no PPPoker Windows antes de concluir
+  sobre funcionamento autônomo, estabilidade de sessão ou lucratividade.

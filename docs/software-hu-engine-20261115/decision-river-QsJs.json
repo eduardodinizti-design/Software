@@ -1,0 +1,155 @@
+{
+  "action_id": "check:0",
+  "candidates": [
+    {
+      "action": "check",
+      "action_id": "check:0",
+      "additional_bb": 0.0,
+      "ev_bb": -1.7763568394002505e-15,
+      "frequency": 0.2562755290553171,
+      "raise_to_bb": null,
+      "selection_frequency": 0.2562755290553171
+    },
+    {
+      "action": "bet",
+      "action_id": "bet:5.092",
+      "additional_bb": 5.092,
+      "ev_bb": -3.563671920364838,
+      "frequency": 2.175199706336275e-08,
+      "raise_to_bb": null,
+      "selection_frequency": 2.175199706336275e-08
+    },
+    {
+      "action": "all_in",
+      "action_id": "all_in:17.612",
+      "additional_bb": 17.612,
+      "ev_bb": -0.1150265872188383,
+      "frequency": 0.7437244491926859,
+      "raise_to_bb": 17.612,
+      "selection_frequency": 0.7437244491926859
+    }
+  ],
+  "caveats": [
+    "HU_CHIP_EV_COMPILED_POLICY",
+    "LAB_POLICY_REQUIRES_WINDOWS_EXECUTION_VALIDATION"
+  ],
+  "combo": "JsQs",
+  "context": {
+    "arrival_id": "validation-only-2x2-subgame-after:5288b6c656d3e817ae2ca3c35cae2609941d1914ad0400475733df47ca28747f",
+    "dealt_players": 9,
+    "mode": "chip_ev",
+    "positions": [
+      "BTN",
+      "BB"
+    ],
+    "pot_type": "single_raised",
+    "stage": "mid",
+    "tournament_format": "regular"
+  },
+  "execution_allowed": false,
+  "explanation": {
+    "arrival_model": "validation-only-2x2-subgame-after:5288b6c656d3e817ae2ca3c35cae2609941d1914ad0400475733df47ca28747f",
+    "comparisons": [
+      "check 0.000 BB: mix 25.6%, EV -0.0000 BB",
+      "bet 5.092 BB: mix 0.0%, EV -3.5637 BB",
+      "all_in 17.612 BB: mix 74.4%, EV -0.1150 BB"
+    ],
+    "gap_bb": 0.016550537325441837,
+    "gap_scope": "native_full_tree_declared_menu_and_ranges",
+    "limitation": "Ausencia de EV nao significa EV zero; gap do modelo nao comprova lucro real.",
+    "method": "texassolver_discounted_cfr",
+    "public_history": [
+      "1:check:0",
+      "0:bet:1.833",
+      "1:call:1.833",
+      "BOARD:Ts",
+      "1:check:0",
+      "0:bet:3.055",
+      "1:call:3.055",
+      "BOARD:2h",
+      "1:check:0"
+    ],
+    "reason": "Frequencia do combo no no exato da politica; sorteio estavel por decisao.",
+    "selected_action": "check:0",
+    "situation": "BTN IP vs BB; RIVER As 7d 2c Ts 2h; pote 15.276 BB; stacks 17.612/17.612 BB"
+  },
+  "exploratory": true,
+  "node_id": "fb1821c169f8ea944ab54ff57e80a224fb8df1fef6ab52c412c508f3e3f1e6b3",
+  "phase": "postflop",
+  "policy_sha256": "9bc2be9b656c09b058327301cf9b1e733ec969c565dc3c2aa38df4e8bb55e7ba",
+  "quality": {
+    "action_ev_available": true,
+    "actual_sizes": "native_rounding_to_one_unit_then_legality_checked",
+    "converged": true,
+    "current_information_set_reach_probability": 1.1988388330202217e-05,
+    "export_depth_in_streets": 2,
+    "exported_depth_is_not_full_tree_coverage": false,
+    "gap_scope": "native_full_tree_declared_menu_and_ranges",
+    "global_gap_bb": 0.016550537325441837,
+    "iterations": 171,
+    "method": "texassolver_discounted_cfr",
+    "native_last_best_response_centered_bb": [
+      2.341605,
+      -2.3250544
+    ],
+    "native_metric_independently_verified": true,
+    "provenance": {
+      "binary_sha256": "894027ca19e6e9128ca4ebe94d15f71f7a9d7c734f56db413a6e329e9ab61ed3",
+      "binary_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6",
+      "build_source_patch": "add set_raise_limit; HU chance denominator excludes all four private cards in CFR and BR; original checkout unchanged",
+      "command_sha256": "ca10447e2e654eaad5651212dc86ac96f259c7bed6893ec84fd902082495e1fe",
+      "evaluator_dictionary_sha256": "13e0f4bd3cb99388caec49b36f98b98b70ae30407cbd740d880db65ed4db5e7b",
+      "generated_chance_sources_sha256": {
+        "BestResponse.cpp": "975c436f6bf1ff04a15b513e9683d5744e4812995bff19e9e47ecfd6f05b79ac",
+        "PCfrSolver.cpp": "7b8c2bbf6ee4ccc3df683635949a1277fcdbf7610c8aa4f71016447753e8f16f"
+      },
+      "generated_console_sha256": "14938c8824fde6953041b624fcfda94f1bf02b815a53de4f449b8a5d51235105",
+      "hu_chance_denominator_cards": 4,
+      "license": "AGPL-3.0; backend installed separately",
+      "repository": "https://github.com/bupticybee/TexasSolver",
+      "tested_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6"
+    },
+    "public_nodes": 1642,
+    "raw_export_sha256": "1100f854ee52cf4ab4bd7c8700cf9340eec69b2b23f60eb81a4e647dab7791c5",
+    "selected_profile_global_gap_bb": 0.016550537325441837,
+    "selection_mode": "policy_mix",
+    "settings": {
+      "dump_rounds": 2,
+      "ip_range_common_scale": 1.0,
+      "iterations": 501,
+      "memory_budget_mb": 2048,
+      "memory_limit_enforced": true,
+      "native_raise_limit": 2,
+      "oop_range_common_scale": 1.0,
+      "python_menu_raise_limit_not_used": false,
+      "raise_fractions": [
+        1.0
+      ],
+      "root_effective_stack_bb": 20.667,
+      "suit_isomorphism": false,
+      "suit_symmetry_verified_on_both_priors": true,
+      "target_exploitability_pct_pot": 0.1,
+      "threads": 2,
+      "units_per_bb": 1000
+    },
+    "solve_seconds": 4.679247479999958,
+    "solver_reported_target_met": true,
+    "windows_validated": false,
+    "zero_reach_chance_branches_omitted": 20
+  },
+  "range_sha256": [
+    "6b7efcfdfcc9c7eaf78004a31eeeca0b49d4df03f8ddb21b451a2cd686ac06c6",
+    "b05537b22659349c17f7b73f6d2755ebe8a17f8d3b464a5e774f76421fac1ebb"
+  ],
+  "recommended": "check",
+  "selection_id": "1ff8f2d5c92d8dc1a9a05e7d14d0b4513374f03fc7938bca2718ad2465e9c31b",
+  "sizing": {
+    "fraction_of_current_pot": null,
+    "heuristic": false,
+    "raise_to_bb": 0.0,
+    "semantics": "ADDITIONAL_BB",
+    "size_bb": 0.0
+  },
+  "status": "ADVICE",
+  "street": "RIVER"
+}

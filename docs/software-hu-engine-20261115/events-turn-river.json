@@ -1,0 +1,24 @@
+[
+  {
+    "type": "action",
+    "kind": "check"
+  },
+  {
+    "type": "action",
+    "kind": "bet",
+    "additional_bb": 3.055
+  },
+  {
+    "type": "action",
+    "kind": "call",
+    "additional_bb": 3.055
+  },
+  {
+    "type": "board",
+    "card": "2h"
+  },
+  {
+    "type": "action",
+    "kind": "check"
+  }
+]

@@ -1,1 +1,1 @@
-"""Contratos de estado e classificacao de cenario (Lote 2 do plano do cerebro)."""
+"""Estado, cenarios e motor HU offline com ranges, CFR, EV e politicas compiladas."""

@@ -1,0 +1,105 @@
+{
+  "public_ranges": [
+    {
+      "source_id": "8764845e0f1ba790b6ee3a58e057b7cfc2598e5e4c0599898b24459ea3936b78",
+      "weights": {
+        "AhQh": 0.0054593563782437985,
+        "JsQs": 0.004661409068048781
+      }
+    },
+    {
+      "source_id": "676393ce9ad818eeded9f7bad7db5f4eb67a3e7ffd0f159d0f4db57145367c0f",
+      "weights": {
+        "7s8s": 0.007648571697376316,
+        "9dAd": 0.019011654877253984
+      }
+    }
+  ],
+  "range_sha256": [
+    "ae4a4d074a2c03e6b177ce2c57f4700b161fb53fd3eacdca8cbfea8378f1a4b7",
+    "18fb1cc800569fcae380641e0aef6b5e70decb514a08346691c9db508cb45a2d"
+  ],
+  "state": {
+    "acted": [
+      false,
+      true
+    ],
+    "actor": 0,
+    "board": [
+      "As",
+      "7d",
+      "2c",
+      "Ts",
+      "2h"
+    ],
+    "committed": [
+      0.0,
+      0.0
+    ],
+    "history": [
+      "1:check:0",
+      "0:bet:1.833",
+      "1:call:1.833",
+      "BOARD:Ts",
+      "1:check:0",
+      "0:bet:3.055",
+      "1:call:3.055",
+      "BOARD:2h",
+      "1:check:0"
+    ],
+    "last_full_raise_bb": 1.0,
+    "min_bet_bb": 1.0,
+    "needs_cards": 0,
+    "oop": 1,
+    "pot_bb": 15.276,
+    "raise_rights": [
+      true,
+      true
+    ],
+    "raises": 0,
+    "stacks": [
+      17.612,
+      17.612
+    ],
+    "terminal": "",
+    "winner": -1
+  },
+  "trace": [
+    {
+      "action_id": "check:0",
+      "actor": 1,
+      "after_sha256": "22090b354f06d72cbbecacd1c9770762d7aeaba0f7f0a2567b9a15c9d1ade4ba",
+      "before_sha256": "b05537b22659349c17f7b73f6d2755ebe8a17f8d3b464a5e774f76421fac1ebb",
+      "mass_after": 0.15390502844954618,
+      "mass_before": 0.1539050729053673,
+      "node_id": "2db2c6f85c202e34197c7d74a3015bebf980d8ad62cc38aa42c62929d16df91a"
+    },
+    {
+      "action_id": "bet:3.055",
+      "actor": 0,
+      "after_sha256": "ae4a4d074a2c03e6b177ce2c57f4700b161fb53fd3eacdca8cbfea8378f1a4b7",
+      "before_sha256": "6b7efcfdfcc9c7eaf78004a31eeeca0b49d4df03f8ddb21b451a2cd686ac06c6",
+      "mass_after": 0.01012076544629258,
+      "mass_before": 1.5307865544434156,
+      "node_id": "02307f2425986db7220aae49154b271fa1f5a5d2585cb5d4061c88c2d886db6b"
+    },
+    {
+      "action_id": "call:3.055",
+      "actor": 1,
+      "after_sha256": "b4223059ca4a46443edbbebb9225e79d27ee15912022ab312e9e2aeafcdeaa2a",
+      "before_sha256": "22090b354f06d72cbbecacd1c9770762d7aeaba0f7f0a2567b9a15c9d1ade4ba",
+      "mass_after": 0.026660226908574766,
+      "mass_before": 0.15390502844954618,
+      "node_id": "b076622a76635d5b0d81fcbad589fcf14c64ca0d9ae8246e0cfd3c5f9f2f94bd"
+    },
+    {
+      "action_id": "check:0",
+      "actor": 1,
+      "after_sha256": "18fb1cc800569fcae380641e0aef6b5e70decb514a08346691c9db508cb45a2d",
+      "before_sha256": "b4223059ca4a46443edbbebb9225e79d27ee15912022ab312e9e2aeafcdeaa2a",
+      "mass_after": 0.0266602265746303,
+      "mass_before": 0.026660226908574766,
+      "node_id": "d6145c8a81926fb634eac56b8eb9f99ed40e991fce4f820c555eb6be8f1cae5e"
+    }
+  ]
+}
