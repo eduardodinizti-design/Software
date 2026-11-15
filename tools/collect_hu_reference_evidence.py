@@ -49,6 +49,7 @@ def main(argv=None):
             reference_hand=dict(scope=native_hand['scope'],status=native_hand['status'],
                 policy_sha256=native_hand['policy_sha256'],event_counts=native_hand['event_counts'],
                 complete_to_showdown=native_hand['complete_to_showdown'],callbacks=native_hand['callbacks'],
+                pot_presets_used=native_hand['pot_presets_used'],
                 steps=[dict(street=s['street'],state=s['result']['state'],confirmed=s['result']['confirmed']) for s in native_hand['steps']])),
         pppoker_windows_validated=False,user_notebook_validated=False)
     atomic_json(delivery/f'integracao-windows-referencia-{args.run_id}.json',summary)

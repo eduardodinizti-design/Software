@@ -120,16 +120,18 @@ def windows_owned(output,reference_library=None):
     status=tk.Label(root,text='Preparando...');status.place(x=20,y=95)
     buttons={name:tk.Button(root,text=name) for name in ('FOLD','CALL','CHECK','BET','RAISE')}
     entry=tk.Entry(root,font=('Arial',16));confirm=tk.Button(root,text='CONFIRMAR VALOR')
+    third=tk.Button(root,text='1/3 POTE')
     action_boxes={'FOLD':(20,330,180,60),'CALL':(220,330,180,60),'CHECK':(220,330,180,60),
                   'BET':(450,330,200,60),'RAISE':(450,330,200,60)}
-    field_box=(430,170,180,40);confirm_box=(450,330,200,60)
+    field_box=(430,170,180,40);confirm_box=(450,330,200,60);third_box=(240,170,160,40)
 
     def redraw():
         for b in buttons.values():b.place_forget()
-        entry.place_forget();confirm.place_forget()
+        entry.place_forget();confirm.place_forget();third.place_forget()
         if world.get('panel'):
             entry.place(x=field_box[0],y=field_box[1],width=field_box[2],height=field_box[3])
             confirm.place(x=confirm_box[0],y=confirm_box[1],width=confirm_box[2],height=confirm_box[3])
+            if world.get('reference'):third.place(x=third_box[0],y=third_box[1],width=third_box[2],height=third_box[3])
         elif world and not world['state'].terminal and world['state'].actor==0:
             names=('FOLD','CALL','RAISE') if world['state'].call_required_bb else ('FOLD','CHECK','BET')
             for name in names:
@@ -142,6 +144,9 @@ def windows_owned(output,reference_library=None):
             state=world['state']
             if name in ('BET','RAISE'):
                 world['panel']=True;entry.delete(0,'end');entry.insert(0,'1,000')
+            elif name=='PRESET_THIRD':
+                value=state.committed[0]+round(state.pot_bb/3,3)
+                entry.delete(0,'end');entry.insert(0,('%.3f'%value).replace('.',','))
             else:
                 if name=='CONFIRM':
                     paid=float(entry.get().replace(',','.'))-state.committed[0]
@@ -155,6 +160,7 @@ def windows_owned(output,reference_library=None):
             world['callback_error']=str(exc)
     for name,b in buttons.items():b.configure(command=lambda name=name:callback(name))
     confirm.configure(command=lambda:callback('CONFIRM'))
+    third.configure(command=lambda:callback('PRESET_THIRD'))
 
     def ui(fn):
         ready=threading.Event();value=[]
@@ -193,7 +199,9 @@ def windows_owned(output,reference_library=None):
         if world['panel']:
             try:selected=dict(status='AMOUNT_CONFIRMED',value_bb=float(entry.get().replace(',','.')),quantum_bb=.001,box=list(field_box),unit='BB',semantics='RAISE_TO_BB')
             except ValueError:selected=dict(status='AMOUNT_UNREADABLE')
-            s['panel']=dict(status='EXPERIMENTAL_RAISE_PANEL',presets=[],selected=selected,confirm=dict(box=list(confirm_box)))
+            s['panel']=dict(status='EXPERIMENTAL_RAISE_PANEL',
+                presets=[dict(basis='pot',fraction=1/3,box=list(third_box))] if world.get('reference') else [],
+                selected=selected,confirm=dict(box=list(confirm_box)))
         return s
 
     def run():
@@ -273,6 +281,7 @@ def windows_owned(output,reference_library=None):
                     reference_results.update(status='PASS',policy_sha256=thread_policy.fingerprint,
                         native_target_met=thread_policy.quality.get('converged',False),complete_to_showdown=complete,
                         event_counts=counts,steps=steps,callbacks=ui(lambda:list(world['callbacks'])),
+                        pot_presets_used=ui(lambda:world['callbacks'].count('PRESET_THIRD')),
                         scope='STORED_NVT_POLICY_REAL_SENDINPUT_OWNED_TK_SYNTHETIC_GAME_STATE',
                         pppoker_windows_validated=False)
                 finally:thread_policy.close()
