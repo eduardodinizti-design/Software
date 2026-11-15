@@ -232,6 +232,7 @@ def main(argv=None):
                    help='Le o HUD VIP (8 stats por vilao) p/ exploit no pos-flop')
     p.add_argument('--postflop-policy', default=None,
                    help='Politica HU compilada: observa continuamente e confirma historico')
+    p.add_argument('--postflop-library',help='library.json do banco de lotes: seleciona o flop observado')
     p.add_argument('--hu-profile', help='Perfil HU de precisao/chegada vinculado ao hash da politica')
     p.add_argument('--execute-postflop', action='store_true',
                    help='Liga executor HU; input exige tambem --arm e controle RUNNING')
@@ -251,11 +252,14 @@ def main(argv=None):
     args = p.parse_args(argv)
 
     policy_observer = history = journal = hu_profile = None
-    if args.execute_postflop and not args.postflop_policy:
-        p.error('--execute-postflop exige --postflop-policy')
-    if args.hu_profile and not args.postflop_policy:
-        p.error('--hu-profile exige --postflop-policy')
-    if args.antecipar and args.postflop_policy:
+    library_history=None
+    hu_enabled=bool(args.postflop_policy or args.postflop_library)
+    if args.postflop_policy and args.postflop_library:p.error('Use politica unica OU biblioteca')
+    if args.execute_postflop and not hu_enabled:
+        p.error('--execute-postflop exige --postflop-policy ou --postflop-library')
+    if args.hu_profile and not hu_enabled:
+        p.error('--hu-profile exige uma politica HU')
+    if args.antecipar and hu_enabled:
         p.error('--antecipar reutiliza frames; para historico HU use capturas independentes')
     if args.postflop_policy:
         from strategy.policy_observer import PolicyObserver
@@ -273,6 +277,15 @@ def main(argv=None):
         history = ConfirmedHistory(policy,hu_profile,journal)
         print('[HU] politica %s | executor=%s | diario=%s | autoridade=REFERENCIA, nao certificacao GTO/Windows' %
               (policy.fingerprint[:16],args.execute_postflop,journal.path),flush=True)
+    elif args.postflop_library:
+        from strategy.policy_library import PolicyLibrary,LibraryHistory
+        from hand_journal import HandJournal
+        if args.hu_profile:p.error('Biblioteca usa perfil por hash de politica; nao use perfil de outro flop')
+        journal=HandJournal(args.hand_journal)
+        library_history=LibraryHistory(PolicyLibrary(args.postflop_library),journal)
+        history=library_history;policy_observer=library_history.observer
+        print('[HU] biblioteca %s | %d flops validados | diario=%s' %
+              (args.postflop_library,len(library_history.library.entries),journal.path),flush=True)
 
     import os
     configure_ocr()
@@ -534,11 +547,12 @@ def main(argv=None):
                         from hu_executor import HUExecutor
                         from hu_runtime import LiveHUScenes,scene_from_result
                         initial = scene_from_result(result,br,meta,(x,y,bw,bh),tkey,sample_id,cap_ts)
+                        active_policy,active_profile=(library_history.binding(tkey,hid) if library_history else (policy_observer.policy,hu_profile))
                         supplier = LiveHUScenes(engine=engine,hwnd=hwnd,crop_key=tkey_local,
                             advisor=advisor,history=history,policy_observer=policy_observer,
-                            profile=hu_profile,stabilizer=stabilizer,mode=args.mode,stage=args.stage,
+                            profile=active_profile,stabilizer=stabilizer,mode=args.mode,stage=args.stage,
                             max_tables=args.max_tables).bind(initial)
-                        hu = HUExecutor(policy=policy_observer.policy,profile=hu_profile,journal=journal,
+                        hu = HUExecutor(policy=active_policy,profile=active_profile,journal=journal,
                             input_adapter=adapter,bot_control=control,scene_supplier=supplier,armed=args.arm)
                         out = hu.execute(initial)
                         print('[HU EXECUTOR] %s | confirmado=%s | %s' %
@@ -709,6 +723,7 @@ def main(argv=None):
     except KeyboardInterrupt:
         print('Encerrado pelo usuario.', flush=True)
     finally:
+        if library_history is not None:library_history.close()
         if journal is not None:
             journal.close()
         if listener:

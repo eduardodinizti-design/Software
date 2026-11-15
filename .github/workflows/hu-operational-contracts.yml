@@ -2,7 +2,7 @@ name: HU operational contracts and owned Windows executor
 
 on:
   push:
-    branches: [feat/hu-operational-integration-20261115]
+    branches: [feat/hu-operational-integration-20261115, feat/hu-resumable-batches-20261115]
   workflow_dispatch:
 
 permissions:
@@ -25,7 +25,7 @@ jobs:
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force runtime/hu/ci | Out-Null
-          python -m unittest test_hu_operational test_cursor test_window_capture_engine test_window_capture_audit test_capture_windows_native test_raise_plan test_raise_sequencer -v *> runtime/hu/ci/contracts.txt
+          python -m unittest test_hu_batches test_hu_policy_engine test_hu_operational test_cursor test_window_capture_engine test_window_capture_audit test_capture_windows_native test_raise_plan test_raise_sequencer -v *> runtime/hu/ci/contracts.txt
           $code = $LASTEXITCODE
           Get-Content runtime/hu/ci/contracts.txt
           if ($code -ne 0) {

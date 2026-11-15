@@ -16,6 +16,7 @@ def main():
     p.add_argument('--fmt-include', required=True)
     p.add_argument('--out', required=True)
     p.add_argument('--compiler', default='g++')
+    p.add_argument('--stream-export', action='store_true', help='Optional full-street gzip stream; requires zlib')
     p.add_argument('--chance-private-cards', type=int, choices=(2, 4), default=4,
                    help='4 correct HU; 2 reproduces the upstream counterexample in the lab')
     args = p.parse_args()
@@ -54,8 +55,13 @@ def main():
         changed.write_text(chance_text)
         sources = [str(changed) if x == str(original_chance) else x for x in sources]
         chance_patches[filename] = hashlib.sha256(chance_text.encode()).hexdigest()
+    stream_hashes = {}
+    if args.stream_export:
+        from native_stream_export import patch_stream_export
+        sources,patched,stream_hashes = patch_stream_export(root,out,sources,patched)
+        chance_patches['PCfrSolver.cpp'] = stream_hashes[out.name+'.PCfrSolver.cpp']
     command = [args.compiler, '-std=c++17', '-O2', '-fopenmp', '-DFMT_HEADER_ONLY',
-               '-I' + str(root / 'include'), '-I' + str(Path(args.fmt_include).resolve())] + sources + ['-o', str(out)]
+               '-I' + str(root / 'include'), '-I' + str(Path(args.fmt_include).resolve())] + sources + (['-lz'] if args.stream_export else []) + ['-o', str(out)]
     subprocess.run(command, check=True)
     sha = hashlib.sha256(out.read_bytes()).hexdigest()
     commit = subprocess.check_output(['git', '-C', str(root), 'rev-parse', 'HEAD'], text=True).strip()
@@ -63,6 +69,7 @@ def main():
     manifest = dict(source_repository='https://github.com/bupticybee/TexasSolver', source_commit=commit,
                     source_dirty=bool(dirty), binary_sha256=sha, command=command,
                     supports_set_raise_limit=True,
+                    supports_street_stream=args.stream_export, stream_generated_sha256=stream_hashes,
                     hu_chance_denominator_cards=args.chance_private_cards, generated_chance_sources_sha256=chance_patches,
                     generated_console_sha256=hashlib.sha256(patched.encode()).hexdigest(),
                     source_patch=('add set_raise_limit; HU chance denominator subtracts %d private cards in CFR and BR; original checkout unchanged' % args.chance_private_cards),

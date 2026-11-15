@@ -1,0 +1,52 @@
+{
+  "status": "PASS",
+  "tests_run": 506,
+  "passed": 503,
+  "failures": 0,
+  "errors": 0,
+  "skipped": [
+    {
+      "test": "test_read_grade_scale_invariant (test_lobby_runner.RealLobbyOCRTest.test_read_grade_scale_invariant)",
+      "reason": "crop de lobby real ausente"
+    },
+    {
+      "test": "test_reads_real_lobby_and_reaches_awaiting (test_lobby_runner.RealLobbyOCRTest.test_reads_real_lobby_and_reaches_awaiting)",
+      "reason": "crop de lobby real ausente"
+    },
+    {
+      "test": "test_capture_client_pixels_and_resize (test_capture_windows_native.NativeGDISmoke.test_capture_client_pixels_and_resize)",
+      "reason": "Native Windows required"
+    }
+  ],
+  "elapsed_seconds": 52.49840045900055,
+  "modules": [
+    "test_hu_operational",
+    "test_hu_policy_engine",
+    "test_table_advisor",
+    "test_preflop_context",
+    "test_operar_mesa",
+    "test_postflop_counterexamples",
+    "test_audit_contracts_group_a",
+    "test_table_state",
+    "test_action_scheduler",
+    "test_raise_panel",
+    "test_raise_plan",
+    "test_raise_sequencer",
+    "test_decision_contract",
+    "test_postflop_advisor",
+    "test_postflop_eval",
+    "test_lobby_runner",
+    "test_tournament_end",
+    "test_preflop_equity",
+    "test_hand_state",
+    "test_cursor",
+    "test_action_coordinator",
+    "test_window_capture_engine",
+    "test_window_capture_audit",
+    "test_capture_windows_native",
+    "test_hu_batches"
+  ],
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "native_stream_tests_enabled": true,
+  "pppoker_windows_validated": false
+}

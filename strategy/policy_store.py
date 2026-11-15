@@ -55,6 +55,9 @@ class CompiledPolicy:
 
     @classmethod
     def load(cls, path):
+        if str(path).endswith(('.sqlite','.db')):
+            from strategy.policy_disk import DiskPolicy
+            return DiskPolicy(path)
         opener = gzip.open if str(path).endswith('.gz') else open
         with opener(path, 'rt', encoding='utf-8') as f:
             return cls(json.load(f))
