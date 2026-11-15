@@ -1,5 +1,6 @@
 """Operational counterexamples. Synthetic scenes are not Windows validation."""
 from dataclasses import asdict, replace
+from contextlib import ExitStack
 import copy
 import json
 from pathlib import Path
@@ -77,23 +78,23 @@ def reading(s,*,hand='h1',hero=HERO,folded=(),payout=False):
 
 class JournalTests(unittest.TestCase):
     def test_restart_does_not_repeat_unknown_input(self):
-        with tempfile.TemporaryDirectory() as tmp:
+        with tempfile.TemporaryDirectory() as tmp, ExitStack() as resources:
             path=Path(tmp)/'nested'/'history.sqlite3'
             j=HandJournal(path)
             self.assertTrue(j.claim('t','h','d',{}))
             j.settle('d','INPUT_STARTED',{})
             j.close()
             j=HandJournal(path)
-            self.addCleanup(j.close)
+            resources.callback(j.close)
             self.assertFalse(j.claim('t','h','d',{}))
             j.settle('d','UNKNOWN_RESULT',{})
             self.assertFalse(j.claim('t','h','d',{}))
 
     def test_two_connections_only_one_retry_claim(self):
-        with tempfile.TemporaryDirectory() as tmp:
+        with tempfile.TemporaryDirectory() as tmp, ExitStack() as resources:
             path=Path(tmp)/'j.db'
             j1,j2=HandJournal(path),HandJournal(path)
-            self.addCleanup(j1.close);self.addCleanup(j2.close)
+            resources.callback(j1.close);resources.callback(j2.close)
             j1.claim('t','h','d',{});j1.settle('d','CANCELLED_BEFORE_INPUT',{})
             barrier=threading.Barrier(2);results=[]
             def claim(j):
