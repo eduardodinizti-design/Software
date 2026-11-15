@@ -1,0 +1,58 @@
+SOFTWARE ORIGINAL — 16 NOVOS FLOPS BTN x BB
+
+CONCLUIDO: 16/16 politicas completas, 16/16 no alvo nativo e 16/16 transferidas e consultadas no Windows.
+Incluindo o piloto A72 anterior, sao 17 modelos completos de referencia. Variantes de naipe nao contam como novos estudos.
+
+Nos publicos novos: 5,530,496
+Flop/turn/river: {'FLOP': 160, 'TURN': 36064, 'RIVER': 5494272}
+Dados SQLite novos: 32.48 GiB; ZIPs de transferencia: 26.91 GiB.
+A consulta usa cache limitado; as arvores completas permanecem no disco.
+
+FLOP | ITERACOES REAIS | GAP GLOBAL NATIVO (BB) | WINDOWS
+01. Kd 8h 3c | 131 | 0.053292970 | PASS
+02. Ah Kd 7c | 101 | 0.044806884 | PASS
+03. Qs 8d 3c | 111 | 0.054900879 | PASS
+04. Js Td 4c | 101 | 0.042350097 | PASS
+05. 9s 8s 7d | 111 | 0.045697206 | PASS
+06. 8c 6d 3s | 121 | 0.048941925 | PASS
+07. 7s 7h 2d | 141 | 0.051749574 | PASS
+08. Kc Kd 5s | 101 | 0.051506714 | PASS
+09. Qs 7s 2s | 131 | 0.050687684 | PASS
+10. Jd 9d 4c | 101 | 0.044370850 | PASS
+11. 5c 4d 3s | 111 | 0.053245324 | PASS
+12. 3c 4c 8c | 131 | 0.046376467 | PASS
+13. Jc Qc Tc | 121 | 0.051671023 | PASS
+14. 5c 9c Kc | 151 | 0.054034728 | PASS
+15. Jc Kc Qc | 151 | 0.047697142 | PASS
+16. 6c Jd Td | 91 | 0.052982545 | PASS
+
+O que foi salvo: acoes, frequencias por combinacao privada, sizes efetivos e respostas em todas as ruas.
+A arvore foi conferida em todas as acoes e continuacoes publicas fisicamente possiveis do modelo.
+O decisor do bot consultou os arquivos publicados em flop/turn/river: 48 consultas originais e 48 por bijecao exata de naipes.
+Os hashes das partes, dos ZIPs, dos bancos e das politicas foram conferidos. Os processos nativos foram encerrados.
+Os temporarios nativos foram removidos apos validacao; os bancos e o piloto anterior foram preservados.
+
+Modelo: BTN open 2,5 BB x BB call; stack inicial 25 BB, pote 5,5 BB, 22,5 BB restantes, sem ante.
+Priors NVT autorizados como referencia. Menu: bet 1/3, raise 100% do pote e all-in.
+Alvo nativo: exploitability <= 0,5% do pote. O gap global aqui e o do solver, sem certificacao independente completa.
+Um river condicional por flop foi enumerado de forma independente e repetido no Windows; os 16 resultados coincidiram.
+Isso nao estende a estrategia a outros ranks, stacks, sizes, multiway, ICM ou recompensas PKO.
+
+PARA INSTALAR
+Use o ZIP Software-HU-next16 disponibilizado nesta Release, extraia em pasta nova e execute BAIXAR_LOTE_NVT_16.bat.
+O instalador monta library.json com os 16 flops e o piloto anterior, em runtime/hu/nvt-next16-.../bank/.
+Informe ao Software: --postflop-library "CAMINHO/bank/library.json".
+O download nao liga o bot, nao inicia solver e nao aciona o mouse. Veja docs/GUIA_LOTE_NVT_16_20261115.txt.
+
+LIMITES E PENDENCIAS
+Windows significa transferencia e consulta de dados em executor Windows do GitHub; nao e uma sessao real no PPPoker do usuario.
+A leitura, o historico e a confirmacao dos cliques no notebook ainda exigem o teste real no cliente.
+O caso historico 8h -> 3h continua pendente de reproducao no mesmo tema. Nenhum threshold de leitura foi alterado neste lote.
+
+EVIDENCIAS
+https://github.com/eduardodinizti-design/Software/actions/runs/43765023157
+https://github.com/eduardodinizti-design/Software/releases/tag/hu-btn-bb-nvt-next16-20261115
+https://github.com/eduardodinizti-design/Software/tree/feat/hu-next16-20261115
+Plano SHA-256: 525df4dc2ac803e28f18adcef79ceb943df2264ffbe154397e21cd822fca7903
+Catalogo: batch-catalog-43764947533.json
+Codigo verificado: f9dcb83c4684541b2244e8bddd259ef6df23f46c

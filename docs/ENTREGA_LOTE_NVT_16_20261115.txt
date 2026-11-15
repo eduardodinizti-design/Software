@@ -1,0 +1,98 @@
+SOFTWARE ORIGINAL — ENTREGA DE MAIS 16 FLOPS BTN x BB
+
+RESULTADO CONCLUIDO
+16/16 politicas completas publicadas; 16/16 no alvo de precisao nativo;
+16/16 transferidas e consultadas no executor Windows do GitHub.
+O piloto A72 anterior foi preservado. O instalador reune os 16 novos e o piloto em uma biblioteca de 17 modelos.
+Nao houve treinamento de rede neural: o conhecimento e consultado nas politicas completas salvas.
+
+DADOS EFETIVAMENTE SALVOS
+5,530,496 nos publicos: flop=160, turn=36064, river=5494272.
+Acoes, frequencias por combinacao privada, sizes efetivos e respostas nas tres ruas.
+A cobertura verifica todas as acoes e continuacoes publicas fisicamente possiveis dentro do modelo declarado.
+SQLite dos 16 novos: 34878963712 bytes (32.48 GiB).
+ZIPs de transferencia: 28893889478 bytes (26.91 GiB).
+Os ZIPs estao divididos sem perdas em partes de ate 1 GiB. Nao e preciso extrair as partes manualmente.
+O bot consulta os bancos no disco com cache limitado. A RAM usada para calcular nao precisa continuar ocupada.
+Os processos de calculo encerraram e os temporarios nativos foram removidos apos a validacao. As politicas finais permanecem salvas.
+
+MODELO E PRECISAO
+BTN open 2,5 BB x BB call; stack inicial 25 BB; pote 5,5 BB; 22,5 BB restantes; sem ante.
+Chip-EV regular. Priors NVT disponiveis, autorizados pelo usuario como referencia.
+Nao e um export direto certificado do HRC Pro. O identificador e os hashes dos ranges estao no plano e nas politicas.
+Menu nativo: bet 1/3, raise 100% do pote e all-in, com duas agressoes por rua.
+Alvo nativo: exploitability de ate 0,5% do pote. Foram solicitadas ate 2.001 iteracoes, com parada antecipada.
+Iteracoes efetivamente utilizadas: 91 a 151 por flop.
+Gap global informado pelo solver: 0.042350097 a 0.054900879 BB.
+O indicador global e nativo; nao foi certificado de forma independente em toda a arvore do flop.
+Um river condicional por flop foi enumerado de forma independente e repetido no Windows. Os 16 resultados coincidiram.
+Os valores locais desse river nao sao o gap global do flop. EV por acao nao foi calculado para todos os nos do banco.
+
+OS 16 ESTUDOS NOVOS
+FLOP | ITERACOES | GAP GLOBAL NATIVO BB | CONSULTA WINDOWS
+01. Kd 8h 3c | 131 | 0.053292970 | PASS
+02. Ah Kd 7c | 101 | 0.044806884 | PASS
+03. Qs 8d 3c | 111 | 0.054900879 | PASS
+04. Js Td 4c | 101 | 0.042350097 | PASS
+05. 9s 8s 7d | 111 | 0.045697206 | PASS
+06. 8c 6d 3s | 121 | 0.048941925 | PASS
+07. 7s 7h 2d | 141 | 0.051749574 | PASS
+08. Kc Kd 5s | 101 | 0.051506714 | PASS
+09. Qs 7s 2s | 131 | 0.050687684 | PASS
+10. Jd 9d 4c | 101 | 0.044370850 | PASS
+11. 5c 4d 3s | 111 | 0.053245324 | PASS
+12. 3c 4c 8c | 131 | 0.046376467 | PASS
+13. Jc Qc Tc | 121 | 0.051671023 | PASS
+14. 5c 9c Kc | 151 | 0.054034728 | PASS
+15. Jc Kc Qc | 151 | 0.047697142 | PASS
+16. 6c Jd Td | 91 | 0.052982545 | PASS
+
+VALIDACAO E INTEGRIDADE
+Linux apos a correcao: 551 testes, 548 aprovados, 3 pulados, zero falhas/erros.
+Windows: 268 testes de contratos, 262 aprovados, 6 pulados, zero falhas/erros.
+Os pulados dependem de outro sistema operacional/backend ou de crops de lobby ausentes; estao discriminados nos logs.
+Os 16 bancos publicados foram baixados integralmente em maquinas Windows e tiveram seus hashes conferidos.
+48 consultas pelo decisor do bot nas ruas originais; mais 48 consultas sob bijecao exata de naipes.
+A troca de naipes so vale quando preserva os DOIS priors; nao e aproximacao por textura nem um novo estudo.
+As verificacoes do Windows sao de dados e contratos; nao houve clique no PPPoker do usuario.
+Uma biblioteca com o piloto real e o novo AK7 tambem completou duas maos com leituras simuladas e historico confirmado ate o showdown.
+Essas maos de laboratorio nao foram jogadas no PPPoker e nao contam como novos flops estudados.
+Conferencia final adicional: 75 arquivos de evidencia baixados, 32 partes remotas com digest/tamanho verificados, 16 identidades de politica iguais entre Linux e Windows.
+
+FALHA REPRODUZIDA E CORRIGIDA
+O caso 15 (Jc Kc Qc) da primeira tentativa foi interrompido na montagem por uma disputa entre o monitor de disco e o journal temporario do SQLite.
+O arquivo policy.sqlite-journal desaparecia entre is_file() e stat(). O FileNotFoundError encerrava o pai e depois o filho registrava BATCH_PARENT_EXITED.
+A falha foi reproduzida. folder_bytes agora ignora somente arquivos desaparecidos; erros de permissao continuam propagados.
+O caso 15 foi recalculado isoladamente e passou. Os outros quinze bancos foram reaproveitados e nenhuma precisao foi reduzida.
+Os diagnosticos originais, o catalogo parcial e as evidencias da recuperacao foram preservados.
+Explicacao e comandos de reproducao: docs/CORRECAO_MONITOR_SQLITE_20261115.txt.
+
+COMO USAR NO NOTEBOOK
+1. Baixe o ZIP de codigo abaixo e extraia em pasta nova, preservando sua instalacao anterior.
+https://github.com/eduardodinizti-design/Software/releases/download/hu-btn-bb-nvt-next16-20261115/Software-HU-next16-f9dcb83c-43765023157-a1.zip
+   Use este ZIP Software-HU-next16. O Source code.zip automatico da tag aponta para o produtor inicial e nao inclui todo o instalador novo.
+2. Com Python 3.12, execute BAIXAR_LOTE_NVT_16.bat. Ele baixa e verifica os bancos e cria runtime/hu/nvt-next16-.../bank/library.json.
+3. Informe esse caminho ao Software original com --postflop-library "CAMINHO/bank/library.json".
+   Essa opcao seleciona a biblioteca. O download nao ativa o bot nem move o mouse; as opcoes do executor sao configuradas no launcher do Software.
+4. Consulte docs/GUIA_LOTE_NVT_16_20261115.txt para instalar somente alguns flops ou retomar um download interrompido.
+   O instalador calcula o espaco necessario. Espere dezenas de GiB livres no disco; todos os modelos nao ficam residentes na RAM.
+
+LIMITES E PENDENCIAS CONCRETAS
+- A sessao real no PPPoker Windows 10 do notebook ainda precisa validar leitura, historico e confirmacao dos cliques.
+- O caso historico 8h -> 3h permanece pendente de reproducao no mesmo tema. Nenhum leitor ou threshold foi alterado neste lote.
+- Estes estudos nao cobrem outros stacks, antes, posicoes, 3-bet pots, multiway, ICM ou recompensas PKO. Isso exige novos modelos.
+- Novos ranges de chegada exigem recalculo das politicas; substituir um JSON pre-flop nao atualiza automaticamente o banco pos-flop.
+
+LINKS E PROVENIENCIA
+https://github.com/eduardodinizti-design/Software/tree/feat/hu-next16-20261115
+https://github.com/eduardodinizti-design/Software/pull/13
+https://github.com/eduardodinizti-design/Software/releases/tag/hu-btn-bb-nvt-next16-20261115
+Calculo original e falha preservada: https://github.com/eduardodinizti-design/Software/actions/runs/43757186506
+Recuperacao e catalogo completo: https://github.com/eduardodinizti-design/Software/actions/runs/43764947533
+Windows e entrega final: https://github.com/eduardodinizti-design/Software/actions/runs/43765023157
+ZIP de codigo SHA-256: e44269f218c184e6c5d5839bed2a9a8d37df1a9e5d0db313a507eecd44c09828
+Codigo do consumidor Windows/pacote: f9dcb83c4684541b2244e8bddd259ef6df23f46c
+Codigo da correcao: a849eaa6d6542121abe5a1aab0b1d26819804d82
+Plano SHA-256: 525df4dc2ac803e28f18adcef79ceb943df2264ffbe154397e21cd822fca7903
+Catalogo final: batch-catalog-43764947533.json
+Banco anterior preservado: https://github.com/eduardodinizti-design/Software/releases/tag/hu-btn-bb-nvt-reference-20261115
