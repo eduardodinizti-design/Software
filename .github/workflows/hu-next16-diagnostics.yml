@@ -1,0 +1,37 @@
+name: HU next16 failed-case diagnostics
+on:
+  push:
+    branches: [feat/hu-next16-20261115]
+    paths: [.github/workflows/hu-next16-diagnostics.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  case15-evidence:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - name: Read preserved worker diagnostics from the failed original case
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh run download 43757186506 --repo "$GITHUB_REPOSITORY" --name hu-next16-case-15-evidence --dir runtime/case15-failure
+          python - <<'PY'
+          import json,pathlib,zipfile
+          root=pathlib.Path('runtime/case15-failure');records=[]
+          for path in sorted(root.rglob('*')):
+              if not path.is_file():continue
+              if path.name in ('worker.log','driver.txt','progress.json','stage.json'):
+                  value=path.read_text(errors='replace')[-8000:]
+                  records.append(dict(path=str(path.relative_to(root)),tail=value))
+                  print(str(path.relative_to(root))+'\n'+value)
+          out=pathlib.Path('runtime/case15-initial-failure-summary-43757186506.json')
+          out.write_text(json.dumps(dict(source_run=43757186506,case=15,scope='PRESERVED_FAILURE_DIAGNOSTICS_NOT_A_LEARNED_POLICY',records=records),indent=2))
+          with zipfile.ZipFile('runtime/case15-initial-failure-evidence-43757186506.zip','w',compression=zipfile.ZIP_DEFLATED) as z:
+              for path in root.rglob('*'):
+                  if path.is_file():z.write(path,str(path.relative_to(root)))
+          PY
+          gh release upload hu-btn-bb-nvt-next16-20261115 --repo "$GITHUB_REPOSITORY" runtime/case15-initial-failure-summary-43757186506.json runtime/case15-initial-failure-evidence-43757186506.zip

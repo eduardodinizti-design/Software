@@ -1,0 +1,304 @@
+{
+  "archive_sha256": "4b36036dfcce896a4f2ec52c52f3779cc7c508abd1bb6f7ec8cc59f249d63153",
+  "board": [
+    "5c",
+    "9c",
+    "Kc"
+  ],
+  "coverage": {
+    "nodes_by_street": {
+      "FLOP": 10,
+      "RIVER": 343392,
+      "TURN": 2254
+    },
+    "public_nodes": 345656,
+    "structurally_complete": true
+  },
+  "exact_suit_alias": {
+    "board": [
+      "5d",
+      "9d",
+      "Kd"
+    ],
+    "derived_policy_sha256": "9d7fe7f25051f26f842e55f4053ff1d44bb15a8c135f9c1a3ad5504cc00f78f9",
+    "mapping": {
+      "c": "d",
+      "d": "c",
+      "h": "h",
+      "s": "s"
+    },
+    "new_solve": false,
+    "probes": {
+      "flop": {
+        "actions": [
+          {
+            "action": "check",
+            "action_id": "check:0",
+            "additional_bb": 0.0,
+            "ev_bb": null,
+            "frequency": 0.007120609690694339,
+            "raise_to_bb": null,
+            "selection_frequency": 0.007120609690694339
+          },
+          {
+            "action": "bet",
+            "action_id": "bet:1.833",
+            "additional_bb": 1.833,
+            "ev_bb": null,
+            "frequency": 0.992879382571426,
+            "raise_to_bb": null,
+            "selection_frequency": 0.992879382571426
+          },
+          {
+            "action": "all_in",
+            "action_id": "all_in:22.5",
+            "additional_bb": 22.5,
+            "ev_bb": null,
+            "frequency": 7.737879606866215e-09,
+            "raise_to_bb": 22.5,
+            "selection_frequency": 7.737879606866215e-09
+          }
+        ],
+        "hero_cards": [
+          "2d",
+          "Ad"
+        ],
+        "node_id": "0feee0bf86f49573de276526911a690cff9948784043b54fd9ad5fcdee389f70",
+        "query_status": "ADVICE"
+      },
+      "river": {
+        "actions": [
+          {
+            "action": "check",
+            "action_id": "check:0",
+            "additional_bb": 0.0,
+            "ev_bb": null,
+            "frequency": 0.0,
+            "raise_to_bb": null,
+            "selection_frequency": 0.0
+          },
+          {
+            "action": "bet",
+            "action_id": "bet:1.833",
+            "additional_bb": 1.833,
+            "ev_bb": null,
+            "frequency": 0.22566492519281917,
+            "raise_to_bb": null,
+            "selection_frequency": 0.22566492519281917
+          },
+          {
+            "action": "all_in",
+            "action_id": "all_in:22.5",
+            "additional_bb": 22.5,
+            "ev_bb": null,
+            "frequency": 0.7743350748071809,
+            "raise_to_bb": 22.5,
+            "selection_frequency": 0.7743350748071809
+          }
+        ],
+        "hero_cards": [
+          "2h",
+          "Ad"
+        ],
+        "node_id": "24ce2711fdc19843e61d70235ac54d3398eb52782b44d19a5973d77aac277788",
+        "query_status": "ADVICE"
+      },
+      "turn": {
+        "actions": [
+          {
+            "action": "check",
+            "action_id": "check:0",
+            "additional_bb": 0.0,
+            "ev_bb": null,
+            "frequency": 0.05689635735589078,
+            "raise_to_bb": null,
+            "selection_frequency": 0.05689635735589078
+          },
+          {
+            "action": "bet",
+            "action_id": "bet:1.833",
+            "additional_bb": 1.833,
+            "ev_bb": null,
+            "frequency": 0.9431034716544513,
+            "raise_to_bb": null,
+            "selection_frequency": 0.9431034716544513
+          },
+          {
+            "action": "all_in",
+            "action_id": "all_in:22.5",
+            "additional_bb": 22.5,
+            "ev_bb": null,
+            "frequency": 1.7098965795354895e-07,
+            "raise_to_bb": 22.5,
+            "selection_frequency": 1.7098965795354895e-07
+          }
+        ],
+        "hero_cards": [
+          "2c",
+          "Ad"
+        ],
+        "node_id": "951d8179f4c987092b9200b41fe8220fdcc7a4b20e0de079a128b3fc4b834f32",
+        "query_status": "ADVICE"
+      }
+    }
+  },
+  "file_sha256": "79ef5736b5f97f16624d3faac075b0fd5f37b56dd56f5fd337a7e23170107a75",
+  "global_native_gap_bb": 0.05403472751379013,
+  "independent_river": {
+    "exact_enumeration": true,
+    "joint_private_deals": 417858,
+    "nash_conv_bb": 0.024744412366008772,
+    "runout": [
+      "Ts",
+      "2h"
+    ],
+    "scope": "CONDITIONAL_RIVER_PRIORS_AND_DECLARED_MENU_NOT_FULL_FLOP_GTO_CERTIFICATION"
+  },
+  "input_devices_used": false,
+  "native_target_met": true,
+  "ordinal": 14,
+  "platform": "Windows-2025Server-10.0.26100-SP0",
+  "policy_sha256": "bf083ff15c61b751c5fd5a2883005ff409a01777283af4322f4d5fba48e964e4",
+  "pppoker_windows_validated": false,
+  "scope": "TRANSFERRED_FULL_POLICY_THREE_STREET_QUERY_EXACT_SUIT_ROUTING_AND_CONDITIONAL_RIVER",
+  "source_lookup": {
+    "policy_sha256": "bf083ff15c61b751c5fd5a2883005ff409a01777283af4322f4d5fba48e964e4",
+    "probes": {
+      "flop": {
+        "action": "bet",
+        "candidates": [
+          {
+            "action": "check",
+            "action_id": "check:0",
+            "additional_bb": 0.0,
+            "ev_bb": null,
+            "frequency": 0.007120609690694339,
+            "raise_to_bb": null,
+            "selection_frequency": 0.007120609690694339
+          },
+          {
+            "action": "bet",
+            "action_id": "bet:1.833",
+            "additional_bb": 1.833,
+            "ev_bb": null,
+            "frequency": 0.992879382571426,
+            "raise_to_bb": null,
+            "selection_frequency": 0.992879382571426
+          },
+          {
+            "action": "all_in",
+            "action_id": "all_in:22.5",
+            "additional_bb": 22.5,
+            "ev_bb": null,
+            "frequency": 7.737879606866215e-09,
+            "raise_to_bb": 22.5,
+            "selection_frequency": 7.737879606866215e-09
+          }
+        ],
+        "hero_cards": [
+          "2c",
+          "Ac"
+        ],
+        "node_id": "0feee0bf86f49573de276526911a690cff9948784043b54fd9ad5fcdee389f70",
+        "sizing": {
+          "fraction_of_current_pot": 0.3332727272727273,
+          "heuristic": false,
+          "raise_to_bb": 1.833,
+          "semantics": "ADDITIONAL_BB",
+          "size_bb": 1.833
+        }
+      },
+      "river": {
+        "action": "all_in",
+        "candidates": [
+          {
+            "action": "check",
+            "action_id": "check:0",
+            "additional_bb": 0.0,
+            "ev_bb": null,
+            "frequency": 0.0,
+            "raise_to_bb": null,
+            "selection_frequency": 0.0
+          },
+          {
+            "action": "bet",
+            "action_id": "bet:1.833",
+            "additional_bb": 1.833,
+            "ev_bb": null,
+            "frequency": 0.22566492519281917,
+            "raise_to_bb": null,
+            "selection_frequency": 0.22566492519281917
+          },
+          {
+            "action": "all_in",
+            "action_id": "all_in:22.5",
+            "additional_bb": 22.5,
+            "ev_bb": null,
+            "frequency": 0.7743350748071809,
+            "raise_to_bb": 22.5,
+            "selection_frequency": 0.7743350748071809
+          }
+        ],
+        "hero_cards": [
+          "2h",
+          "Ac"
+        ],
+        "node_id": "24ce2711fdc19843e61d70235ac54d3398eb52782b44d19a5973d77aac277788",
+        "sizing": {
+          "fraction_of_current_pot": null,
+          "heuristic": false,
+          "raise_to_bb": 22.5,
+          "semantics": "ADDITIONAL_BB",
+          "size_bb": 22.5
+        }
+      },
+      "turn": {
+        "action": "bet",
+        "candidates": [
+          {
+            "action": "check",
+            "action_id": "check:0",
+            "additional_bb": 0.0,
+            "ev_bb": null,
+            "frequency": 0.05689635735589078,
+            "raise_to_bb": null,
+            "selection_frequency": 0.05689635735589078
+          },
+          {
+            "action": "bet",
+            "action_id": "bet:1.833",
+            "additional_bb": 1.833,
+            "ev_bb": null,
+            "frequency": 0.9431034716544513,
+            "raise_to_bb": null,
+            "selection_frequency": 0.9431034716544513
+          },
+          {
+            "action": "all_in",
+            "action_id": "all_in:22.5",
+            "additional_bb": 22.5,
+            "ev_bb": null,
+            "frequency": 1.7098965795354895e-07,
+            "raise_to_bb": 22.5,
+            "selection_frequency": 1.7098965795354895e-07
+          }
+        ],
+        "hero_cards": [
+          "2d",
+          "Ac"
+        ],
+        "node_id": "951d8179f4c987092b9200b41fe8220fdcc7a4b20e0de079a128b3fc4b834f32",
+        "sizing": {
+          "fraction_of_current_pot": 0.3332727272727273,
+          "heuristic": false,
+          "raise_to_bb": 1.833,
+          "semantics": "ADDITIONAL_BB",
+          "size_bb": 1.833
+        }
+      }
+    },
+    "scope": "structural/lookup validation, not proof of GTO convergence or Windows input"
+  },
+  "status": "PASS",
+  "user_notebook_validated": false
+}

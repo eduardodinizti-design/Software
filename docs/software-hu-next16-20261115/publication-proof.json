@@ -1,0 +1,430 @@
+{
+  "assets": [
+    {
+      "bytes": 78342,
+      "name": "batch-catalog-43764947533.json",
+      "sha256": "a2261d347a4e62d3a2623c886d635c094c6c1d9004bd880d576efd3de2d0a969"
+    },
+    {
+      "bytes": 7857,
+      "name": "result-case-11-0f7a8e87c68e8615109a-3eee4879f478-1.json",
+      "sha256": "b8e9989233374b4fea4e83b3f09d7f8446fe1ce1b659337923bf66910f0074c6"
+    },
+    {
+      "bytes": 9180,
+      "name": "windows-case-06-43765023157-a1.json",
+      "sha256": "8c5e282f2ff7eb81afa291431b0b9c310cc6582d404ed1df992672728b50e164"
+    },
+    {
+      "bytes": 287679,
+      "name": "river-case-07-c8e62df87d0aa41b1671-dcf65b0b1afe-1.json",
+      "sha256": "d7f81c74cab843068ce4e50ed5afbdb898c22ba20e266ef71f4eb6fece50d8e5"
+    },
+    {
+      "bytes": 288307,
+      "name": "river-case-11-0f7a8e87c68e8615109a-3eee4879f478-1.json",
+      "sha256": "4cebdf02517e34402f453b53184bcf60d7e142c90688f68b7d6d465e3c43374d"
+    },
+    {
+      "bytes": 9205,
+      "name": "windows-case-14-43765023157-a1.json",
+      "sha256": "beccfe04ad874801d59a1c5ca2901300c486694d9b05bc798e5b88e25a713257"
+    },
+    {
+      "bytes": 4307,
+      "name": "manifest-case-03-f180b698ff23e975e75f-06d30c2d5c3c-1.json",
+      "sha256": "daa089c7211fab6609ee9e2011b1be3c07752c8111987563c86b77db00ccfb73"
+    },
+    {
+      "bytes": 260215,
+      "name": "river-case-08-41a262cdb330dca025dc-7d2b6b298961-1.json",
+      "sha256": "50e3f6e0b25706d3f826e14a2ed87092b4b3f4ac3ea1c831a136ea1d57e0a056"
+    },
+    {
+      "bytes": 271072,
+      "name": "river-case-05-4a6875fa648a626d4096-c1f80c523bb7-1.json",
+      "sha256": "68286f43b25ca406ebaebc19768b51ff20856449bbfebd72da6a4e9027250fa9"
+    },
+    {
+      "bytes": 9217,
+      "name": "windows-case-13-43765023157-a1.json",
+      "sha256": "8fd1edd79e1dee5506c6d4e3fbe2530c74a2d291d9e6ff197cfb701321ad19e3"
+    },
+    {
+      "bytes": 7809,
+      "name": "result-case-10-7d3943c2969cd0a0b2ab-ec393cc95177-1.json",
+      "sha256": "e0db656dbb302ea6474db14fa83afb34577d4d24c1557568d84bc8803a342fae"
+    },
+    {
+      "bytes": 7808,
+      "name": "result-case-14-898320894755db496d07-4b36036dfcce-1.json",
+      "sha256": "68487e5d0754811e2d912fb9fe27a262545db89546388c70358f09e3ace1fa19"
+    },
+    {
+      "bytes": 1243,
+      "name": "case15-initial-failure-summary-43757186506.json",
+      "sha256": "e02ceab2ef42bce5b3baafc3815932c70fc7f6fef95a6aba0793f9325ad80532"
+    },
+    {
+      "bytes": 9195,
+      "name": "windows-case-02-43765023157-a1.json",
+      "sha256": "f49637853fde1f846d0d2c241ac236a5c60f53fa26848674c8f33966709c0785"
+    },
+    {
+      "bytes": 4314,
+      "name": "manifest-case-09-e49a02555988f7501940-9fc3e361ff14-1.json",
+      "sha256": "6563ec6c46ecb1aa9d4db151e914c72ea701c862a77569b9297f81a095c67918"
+    },
+    {
+      "bytes": 267866,
+      "name": "river-case-16-11c4b8829c6d333cabc5-3449fc523b79-1.json",
+      "sha256": "7a58f21319c0f1a963acb5360b213065e1614845786846532ff85e078bacdf7d"
+    },
+    {
+      "bytes": 7871,
+      "name": "result-case-08-41a262cdb330dca025dc-7d2b6b298961-1.json",
+      "sha256": "39355927e8ca8d698bac353a60876acc71d516e45e88d0a5a640f189b1f36e56"
+    },
+    {
+      "bytes": 7814,
+      "name": "result-case-13-d70953e3a2cb539f805c-9ae132d7c66b-1.json",
+      "sha256": "f80e4c9fdbeeab76c96a1efc42eb8ca56156b64e87c7cb8bf31c3f2ad51602a3"
+    },
+    {
+      "bytes": 4312,
+      "name": "manifest-case-01-16f70fa6bf40e2c3f918-e7984e7469ed-1.json",
+      "sha256": "a387d3bf2ede25ec417ffd3ee5c182e498b20898a8a795db65ca89ff0f8c33ee"
+    },
+    {
+      "bytes": 41048,
+      "name": "windows-contracts-43760499794-a1.txt",
+      "sha256": "eb046b450b944a94b2e542d78e63972a01e044ac0ecebebf0381b2844042a635"
+    },
+    {
+      "bytes": 7804,
+      "name": "result-case-15-dbc92c50a55c062632c0-63e48dc92a30-1.json",
+      "sha256": "178693c3edb2edcb64d92f09f796544e13b9e48e479d2af408fe7180d52dcb2c"
+    },
+    {
+      "bytes": 44116,
+      "name": "plan.json",
+      "sha256": "e90826998d3ba65285049cfb5131d17af16f4f27624d9f7515d384fce3553527"
+    },
+    {
+      "bytes": 7804,
+      "name": "result-case-12-a192535b8ba008713f47-7050ac86ecf0-1.json",
+      "sha256": "2d309c1b0de96903fdbd29afe31d867e50ab32fbf09181a58ed57cf421db72b3"
+    },
+    {
+      "bytes": 4313,
+      "name": "manifest-case-08-41a262cdb330dca025dc-7d2b6b298961-1.json",
+      "sha256": "7a6999351de0c8bd16256ff040fcdca69e6b4d6ce12cd21a4441c5e7cda3133e"
+    },
+    {
+      "bytes": 4314,
+      "name": "manifest-case-15-dbc92c50a55c062632c0-63e48dc92a30-1.json",
+      "sha256": "df35a3788cac0cd40b71795c87d5c012320707ca967ed881fdab40ef90292759"
+    },
+    {
+      "bytes": 259493,
+      "name": "river-case-15-dbc92c50a55c062632c0-63e48dc92a30-1.json",
+      "sha256": "008a54b8dcb4ce0182f7b256aa9a8d219a8683a2ac2c68917a62c58f5a11695b"
+    },
+    {
+      "bytes": 1129,
+      "name": "RELATORIO_LOTE_16-43757186506.txt",
+      "sha256": "bf2cf9d73bf7ff3f2aa3ce8b85e4ee591d73c5ba678cc046b4828a201f9f4663"
+    },
+    {
+      "bytes": 9196,
+      "name": "windows-case-01-43765023157-a1.json",
+      "sha256": "996af84b4cf792f011968dd4089bb840d6e5d465d9308986357d4ca873a5de16"
+    },
+    {
+      "bytes": 7797,
+      "name": "result-case-02-dd345c634a36aab24e9d-c6574dc81f05-1.json",
+      "sha256": "20a646c3f078680c221bd81b1b5acbde16f6ce32d2dc8d9735bd95fd0535a30f"
+    },
+    {
+      "bytes": 9281,
+      "name": "windows-case-16-43765023157-a1.json",
+      "sha256": "9c64e33f91b90834c2bbbbbe9ad538691115e7a59b8f69d94c75be355d8a052d"
+    },
+    {
+      "bytes": 272406,
+      "name": "river-case-04-90359505a2fae28d0cdd-bd2a706b5e27-1.json",
+      "sha256": "58b27d71257e233a5369c95988a3821b77980edf9bf85144bb53f42e63ff317f"
+    },
+    {
+      "bytes": 41366,
+      "name": "windows-contracts-43765023157-a1.txt",
+      "sha256": "3b0fdac58532a5ec59407109d89ff39b46064e8a3cc19621affdd101ed783a1e"
+    },
+    {
+      "bytes": 3503,
+      "name": "RELATORIO_LOTE_16_WINDOWS-43765023157-a1.txt",
+      "sha256": "0914d13ed9ceb9163428ae431c8db0cb0fb4b6697574fcab6bfc653f8eb8e5f6"
+    },
+    {
+      "bytes": 7798,
+      "name": "result-case-04-90359505a2fae28d0cdd-bd2a706b5e27-1.json",
+      "sha256": "a4bc52e0b97ea07849001d7aac61545df38bd5a7a97e043f6dfb0ed3d0bbc265"
+    },
+    {
+      "bytes": 267833,
+      "name": "river-case-01-16f70fa6bf40e2c3f918-e7984e7469ed-1.json",
+      "sha256": "9d92c3be0bbe57cc15a0df7017159fe620feb6bb5111d1114d87d89abfa726a4"
+    },
+    {
+      "bytes": 4309,
+      "name": "manifest-case-11-0f7a8e87c68e8615109a-3eee4879f478-1.json",
+      "sha256": "25f1fc82c62176162202bb950814eae5f67b0c4f2f37474f1527b4292b56019f"
+    },
+    {
+      "bytes": 9192,
+      "name": "windows-case-05-43765023157-a1.json",
+      "sha256": "bf4684bb442820d174393be216c568e4c575cc02c60a2921c3d06659fb81daf6"
+    },
+    {
+      "bytes": 9232,
+      "name": "windows-case-07-43765023157-a1.json",
+      "sha256": "e13e0168befcfface8334d11338490a7738aceb95a9a00f6f9a7098250321609"
+    },
+    {
+      "bytes": 273511,
+      "name": "river-case-03-f180b698ff23e975e75f-06d30c2d5c3c-1.json",
+      "sha256": "65ed0dde36e844d35351aeea5b681fb5aeff4cc5ff49bbf099c19a5b3fd8acc7"
+    },
+    {
+      "bytes": 9198,
+      "name": "windows-case-15-43765023157-a1.json",
+      "sha256": "9ef074960949b833d73c12bc5c03609a0b41ec62d72f41fb1d8b4dada92ea7f9"
+    },
+    {
+      "bytes": 4308,
+      "name": "manifest-case-07-c8e62df87d0aa41b1671-dcf65b0b1afe-1.json",
+      "sha256": "5e2608f7f49b933e66648b61e3301a6e280388c25935b471c8f698ef12df933b"
+    },
+    {
+      "bytes": 9218,
+      "name": "windows-case-10-43765023157-a1.json",
+      "sha256": "cc355592a30ce51df4a889f5f1c81b1b4a3bbef0666c37684cc92fb40608e486"
+    },
+    {
+      "bytes": 7836,
+      "name": "result-case-16-11c4b8829c6d333cabc5-3449fc523b79-1.json",
+      "sha256": "81ef630d350a220e88f3a025309fff79fd870f110524c5efa105000dd5d9fcaa"
+    },
+    {
+      "bytes": 267,
+      "name": "source-download-manifest-43765023157-a1.json",
+      "sha256": "718ef660e1adb197c620cda3d1202d1ec051ece9fd6b6c5b5755304b4e59c8e2"
+    },
+    {
+      "bytes": 4313,
+      "name": "manifest-case-13-d70953e3a2cb539f805c-9ae132d7c66b-1.json",
+      "sha256": "e7165c4fdd39a89d508d30097e0ea706c4a16705499a83e25ce51e110a1ac2b7"
+    },
+    {
+      "bytes": 164518,
+      "name": "entrega-lote-16-43765023157-a1.json",
+      "sha256": "cd6e78945fb5d40ae8941a91153ec3486583974f588f9ca934cf396a7fde3369"
+    },
+    {
+      "bytes": 7780,
+      "name": "result-case-06-50d3ba27ef6e623a2fa1-28b6786d1515-1.json",
+      "sha256": "97933cb195d7e1e292444fb7a716eb0aff4fac213044468d03a211cc96e815f3"
+    },
+    {
+      "bytes": 4313,
+      "name": "manifest-case-14-898320894755db496d07-4b36036dfcce-1.json",
+      "sha256": "64b5c9beba93334703ec94755a00180827caca07d3f7f836a2855441085ffd5b"
+    },
+    {
+      "bytes": 9176,
+      "name": "windows-case-03-43765023157-a1.json",
+      "sha256": "3ae53f7b0179d1916ffb2b01591b9d4073d324103d778ae3adae7bb6b233a54e"
+    },
+    {
+      "bytes": 4312,
+      "name": "manifest-case-04-90359505a2fae28d0cdd-bd2a706b5e27-1.json",
+      "sha256": "26b7096cb91711a38035ad026c5ce5be10133685c862796d9f2ea65dce4c7e06"
+    },
+    {
+      "bytes": 4305,
+      "name": "manifest-case-02-dd345c634a36aab24e9d-c6574dc81f05-1.json",
+      "sha256": "27f57c1f83a5b9056237d0646201341f935a7223234053226e87389a5a883097"
+    },
+    {
+      "bytes": 4312,
+      "name": "manifest-case-06-50d3ba27ef6e623a2fa1-28b6786d1515-1.json",
+      "sha256": "f0f89c44156706cacfa6a5970137f4af85a68af3ab49812f09ef67e52f22543f"
+    },
+    {
+      "bytes": 264349,
+      "name": "river-case-13-d70953e3a2cb539f805c-9ae132d7c66b-1.json",
+      "sha256": "ba1e9ec7b5c05aa7753c17f5bb3d5968e0403c1e6e8abde28bf01d60fbfa6615"
+    },
+    {
+      "bytes": 283490,
+      "name": "river-case-12-a192535b8ba008713f47-7050ac86ecf0-1.json",
+      "sha256": "f8746c9b5907e7617c53a4f201abeb5ef26713bf09ea0385c92e735e92890b4d"
+    },
+    {
+      "bytes": 7790,
+      "name": "result-case-05-4a6875fa648a626d4096-c1f80c523bb7-1.json",
+      "sha256": "cc746b5d61859e8ebcbac8a13feefe656cabed7092865b28a3da14c2a89cfad9"
+    },
+    {
+      "bytes": 4309,
+      "name": "manifest-case-12-a192535b8ba008713f47-7050ac86ecf0-1.json",
+      "sha256": "3cd50a9c96e02a36b162646239aa18585ea9b97fd8c7599efc2f3520f490aa1b"
+    },
+    {
+      "bytes": 4309,
+      "name": "manifest-case-10-7d3943c2969cd0a0b2ab-ec393cc95177-1.json",
+      "sha256": "0facd887218f55f92fbd5f5b383daf67928178b1e9692f6042f6bebbdf1269f6"
+    },
+    {
+      "bytes": 9205,
+      "name": "windows-case-12-43765023157-a1.json",
+      "sha256": "2d9dd26381ffc836460c86b7eb4b926b1048aa1946817c4a0d109de89de04df9"
+    },
+    {
+      "bytes": 7773,
+      "name": "result-case-03-f180b698ff23e975e75f-06d30c2d5c3c-1.json",
+      "sha256": "39926e9cc1165b66e181a7a60bb96e7d163a0033e777a6e8c509c4ebca338b63"
+    },
+    {
+      "bytes": 7821,
+      "name": "result-case-09-e49a02555988f7501940-9fc3e361ff14-1.json",
+      "sha256": "69133c8a986cabafe051b3ab5ba05e2e4144f2697fe6ba1fbc0a170275df8f68"
+    },
+    {
+      "bytes": 277498,
+      "name": "river-case-06-50d3ba27ef6e623a2fa1-28b6786d1515-1.json",
+      "sha256": "a3e8d54a0dd7afbc3ec7757ac786b9477450d8343bc90981e1d649389e0d8b6b"
+    },
+    {
+      "bytes": 264344,
+      "name": "river-case-14-898320894755db496d07-4b36036dfcce-1.json",
+      "sha256": "a1deb2eb7f3c2b61d92a19eaf3d762ecc69c4c2f8d9297231204c39ce2e2cd14"
+    },
+    {
+      "bytes": 9298,
+      "name": "windows-case-11-43765023157-a1.json",
+      "sha256": "842773bc5e9270b3992266e431cf5df3d46506c3dddc0772bdf8323d6c850d5a"
+    },
+    {
+      "bytes": 272257,
+      "name": "river-case-10-7d3943c2969cd0a0b2ab-ec393cc95177-1.json",
+      "sha256": "012e010832719fa304e1e31f131b0c83e5cb463be368201939878a3d7e57ef67"
+    },
+    {
+      "bytes": 9200,
+      "name": "windows-case-04-43765023157-a1.json",
+      "sha256": "f024bc0218901d9a27086798cb01a2cd09ed8f87bffb220cea9eaaa46b4a0883"
+    },
+    {
+      "bytes": 7818,
+      "name": "result-case-07-c8e62df87d0aa41b1671-dcf65b0b1afe-1.json",
+      "sha256": "e569b6268e735679b3d7a84ff03918896f38c5d2b53218d26013b15763867529"
+    },
+    {
+      "bytes": 282354,
+      "name": "river-case-09-e49a02555988f7501940-9fc3e361ff14-1.json",
+      "sha256": "b59f874cb7d30e70c8422921e44c408d90502064b810745b0e14141aa0fa515c"
+    },
+    {
+      "bytes": 4311,
+      "name": "manifest-case-16-11c4b8829c6d333cabc5-3449fc523b79-1.json",
+      "sha256": "b90a1616abeec46287f899ad9458d3cbb2341ead44441f684f2ec9a01ee531d4"
+    },
+    {
+      "bytes": 9214,
+      "name": "windows-case-09-43765023157-a1.json",
+      "sha256": "3443f8c5bcf03552b7503fc323034fd870859235d2f8bacc37af0e0998f6e6ad"
+    },
+    {
+      "bytes": 4308,
+      "name": "manifest-case-05-4a6875fa648a626d4096-c1f80c523bb7-1.json",
+      "sha256": "23bd7096c186a1e151aa364309c60cb3c2be9ca77265471944e4ae9d33d7aff9"
+    },
+    {
+      "bytes": 256045,
+      "name": "river-case-02-dd345c634a36aab24e9d-c6574dc81f05-1.json",
+      "sha256": "839674c21b28827aeca78ea702701410f081a91bbd8106165e5f525b667e6a9c"
+    },
+    {
+      "bytes": 9313,
+      "name": "windows-case-08-43765023157-a1.json",
+      "sha256": "71821c646af17066948680eacf0d480cfa886fcd9c6a7465f4554b29b9e3e466"
+    },
+    {
+      "bytes": 1192,
+      "name": "RELATORIO_LOTE_16-43764947533.txt",
+      "sha256": "7e1eff99c59faf4def5caf9b1fbc12d4532e5fed47e45a57872761f56015a227"
+    },
+    {
+      "bytes": 7796,
+      "name": "result-case-01-16f70fa6bf40e2c3f918-e7984e7469ed-1.json",
+      "sha256": "ae75732f0dd3789e7b3d5bed50718517a7eb140d48fcc70fce91875c0caf877b"
+    },
+    {
+      "bytes": 73534,
+      "name": "batch-catalog-43757186506.json",
+      "sha256": "8ca012bc225259cd0c8a7cbb2a9432ba37c806d00346c79926155ba688e16533"
+    }
+  ],
+  "catalog_matches_reconstructed_manifests": true,
+  "downloaded_evidence_assets_checked": 75,
+  "native_policy_count": 16,
+  "pppoker_windows_validated": false,
+  "remote_parts_checked": 32,
+  "source_code_zip": {
+    "browser_download_url": "https://github.com/eduardodinizti-design/Software/releases/download/hu-btn-bb-nvt-next16-20261115/Software-HU-next16-f9dcb83c-43765023157-a1.zip",
+    "content_type": "application/zip",
+    "created_at": "2026-11-15T22:09:55Z",
+    "digest": "sha256:e44269f218c184e6c5d5839bed2a9a8d37df1a9e5d0db313a507eecd44c09828",
+    "download_count": 0,
+    "id": 752510382,
+    "label": "",
+    "name": "Software-HU-next16-f9dcb83c-43765023157-a1.zip",
+    "node_id": "RA_kwDOViImxc4s2mWu",
+    "size": 127358010,
+    "state": "uploaded",
+    "updated_at": "2026-11-15T22:09:58Z",
+    "uploader": {
+      "avatar_url": "https://avatars.githubusercontent.com/in/15368?v=4",
+      "events_url": "https://api.github.com/users/github-actions%5Bbot%5D/events{/privacy}",
+      "followers_url": "https://api.github.com/users/github-actions%5Bbot%5D/followers",
+      "following_url": "https://api.github.com/users/github-actions%5Bbot%5D/following{/other_user}",
+      "gists_url": "https://api.github.com/users/github-actions%5Bbot%5D/gists{/gist_id}",
+      "gravatar_id": "",
+      "html_url": "https://github.com/apps/github-actions",
+      "id": 41898282,
+      "login": "github-actions[bot]",
+      "node_id": "MDM6Qm90NDE4OTgyODI=",
+      "organizations_url": "https://api.github.com/users/github-actions%5Bbot%5D/orgs",
+      "received_events_url": "https://api.github.com/users/github-actions%5Bbot%5D/received_events",
+      "repos_url": "https://api.github.com/users/github-actions%5Bbot%5D/repos",
+      "site_admin": false,
+      "starred_url": "https://api.github.com/users/github-actions%5Bbot%5D/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/github-actions%5Bbot%5D/subscriptions",
+      "type": "Bot",
+      "url": "https://api.github.com/users/github-actions%5Bbot%5D",
+      "user_view_type": "public"
+    },
+    "url": "https://api.github.com/repos/eduardodinizti-design/Software/releases/assets/752510382"
+  },
+  "source_code_zip_download_verified": {
+    "bytes": 127358010,
+    "installer_present": true,
+    "journal_monitor_fix_present": true,
+    "report_present": true,
+    "sha256": "e44269f218c184e6c5d5839bed2a9a8d37df1a9e5d0db313a507eecd44c09828",
+    "status": "PASS"
+  },
+  "status": "PASS",
+  "windows_models_matching_native": 16
+}

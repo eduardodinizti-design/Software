@@ -1,0 +1,23 @@
+{
+  "source_run": 43757186506,
+  "case": 15,
+  "scope": "PRESERVED_FAILURE_DIAGNOSTICS_NOT_A_LEARNED_POLICY",
+  "records": [
+    {
+      "path": "study/bank/progress.json",
+      "tail": "{\n  \"batch_size\": 1,\n  \"batches\": 1,\n  \"counts\": {\n    \"RUNNING\": 1\n  },\n  \"plan_sha256\": \"0bce5d2ae71092e936bf9515443150643391a976961a59539e25fcfa5462d933\",\n  \"quality_counts\": {\n    \"native_target_met\": 0,\n    \"native_target_not_met\": 0\n  }\n}\n"
+    },
+    {
+      "path": "study/bank/temporary/dbc92c50a55c062632c0-3e781de40f13473dbf2a93d688078e45/stage.json",
+      "tail": "{\n  \"chunks\": 38144,\n  \"public_nodes\": 277264,\n  \"stage\": \"COMPACTING\"\n}\n"
+    },
+    {
+      "path": "study/bank/temporary/dbc92c50a55c062632c0-3e781de40f13473dbf2a93d688078e45/worker.log",
+      "tail": "HU_BATCH_ERROR: BATCH_PARENT_EXITED\n"
+    },
+    {
+      "path": "study/driver.txt",
+      "tail": "{\"event\": \"START\", \"flop\": 1, \"total\": 1, \"batch\": 1, \"board\": [\"Jc\", \"Kc\", \"Qc\"]}\nHU_BATCH_ERROR: [Errno 2] No such file or directory: '/home/runner/work/Software/Software/runtime/hu-next16-case/study/bank/temporary/dbc92c50a55c062632c0-3e781de40f13473dbf2a93d688078e45/policy.sqlite-journal'\n"
+    }
+  ]
+}

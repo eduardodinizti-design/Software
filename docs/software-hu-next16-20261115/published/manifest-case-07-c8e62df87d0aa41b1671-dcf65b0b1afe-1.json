@@ -1,0 +1,123 @@
+{
+  "archive_bytes": 1869417879,
+  "archive_sha256": "dcf65b0b1afeaf61c864c367dfcdf3ed01524cd5485f238f483a43013dff18c8",
+  "board": [
+    "7s",
+    "7h",
+    "2d"
+  ],
+  "case_id": "c8e62df87d0aa41b1671",
+  "coverage": {
+    "nodes_by_street": {
+      "FLOP": 10,
+      "RIVER": 343392,
+      "TURN": 2254
+    },
+    "public_nodes": 345656,
+    "structurally_complete": true,
+    "terminal_edges": 541364,
+    "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS"
+  },
+  "file_sha256": "cddd0e5594b1844d40ed1d7d3808cea59b7de55d619faa37031e05c39c144f43",
+  "global_gap_bb": 0.05174957364797592,
+  "independent_river": {
+    "joint_private_deals": 458844,
+    "nash_conv_bb": 0.012916994572511609,
+    "runout": [
+      "Ts",
+      "2h"
+    ],
+    "scope": "CONDITIONAL_RIVER_PRIORS_AND_DECLARED_MENU_NOT_FULL_FLOP_GTO_CERTIFICATION"
+  },
+  "iterations": 141,
+  "lookup_streets": [
+    "flop",
+    "river",
+    "turn"
+  ],
+  "measurements": {
+    "elapsed_seconds": 1943.196331945,
+    "peak_process_tree_rss_bytes": 4294000640,
+    "policy_file_bytes": 2241114112,
+    "source_export_gzip_bytes": 5302613101
+  },
+  "native_target_met": true,
+  "ordinal": 7,
+  "parts": [
+    {
+      "bytes": 1073741824,
+      "name": "case-07-c8e62df87d0aa41b1671-dcf65b0b1afe.zip.part001",
+      "sha256": "6b0df94ad2c13d7d9467db051b467405dfcc2046d113b9f4c33fd073a80658db"
+    },
+    {
+      "bytes": 795676055,
+      "name": "case-07-c8e62df87d0aa41b1671-dcf65b0b1afe.zip.part002",
+      "sha256": "f27e57c3faf8ee9c3747a45b1c4ebbfb07f00335484c8c69d1c931cf16002d09"
+    }
+  ],
+  "plan_sha256": "525df4dc2ac803e28f18adcef79ceb943df2264ffbe154397e21cd822fca7903",
+  "policy_file_bytes": 2241114112,
+  "policy_sha256": "c8b69ff49137c8fff25bbcae24c0f5d9f499d7a1ebe7d1911d4c07a70059b90c",
+  "quality": {
+    "action_ev_available": false,
+    "actual_sizes": "native_rounding_to_one_unit_then_legality_checked",
+    "converged": true,
+    "export_depth_in_streets": 3,
+    "exported_depth_is_not_full_tree_coverage": false,
+    "gap_scope": "native_full_tree_declared_menu_and_ranges",
+    "global_gap_bb": 0.05174957364797592,
+    "iterations": 141,
+    "method": "texassolver_discounted_cfr",
+    "native_metric_independently_verified": false,
+    "nodes_by_street": {
+      "FLOP": 10,
+      "RIVER": 343392,
+      "TURN": 2254
+    },
+    "provenance": {
+      "binary_sha256": "b2341618e15cf15ba242e2bf7b4cd2c760fc968ecfed24fd2c0cbd76a01af8ee",
+      "command_sha256": "48917a543acb498d995ab43a79be286ad0acc6cb820dceec552dcba9e9940dfb",
+      "evaluator_dictionary_sha256": "13e0f4bd3cb99388caec49b36f98b98b70ae30407cbd740d880db65ed4db5e7b",
+      "license": "AGPL-3.0 backend installed separately; not bundled with Software",
+      "repository": "https://github.com/bupticybee/TexasSolver",
+      "reused_export": false,
+      "stream_generated_sha256": {
+        "solver-stream.CommandLineTool.cpp": "ab5b0075bc925033a86b4b3f0934932894245a80e0b72e18bdd1c4b47e627a3c",
+        "solver-stream.PCfrSolver.cpp": "04e09c274aa302ffe765a76c1558c5617fa136add76178e2ac52b7716d357109",
+        "solver-stream.PokerSolver.cpp": "e704576c6982e476c97df32e08de3dba5b425daa96d8b682e86546c50e2b5a31"
+      },
+      "tested_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6"
+    },
+    "public_nodes": 345656,
+    "settings": {
+      "dump_rounds": 3,
+      "export_format": "street_jsonl_gzip",
+      "ip_range_common_scale": 1.0,
+      "iterations": 2001,
+      "memory_budget_mb": 10240,
+      "memory_limit_enforced": true,
+      "native_raise_limit": 2,
+      "oop_range_common_scale": 1.0,
+      "python_menu_raise_limit_not_used": false,
+      "raise_fractions": [
+        1.0
+      ],
+      "root_effective_stack_bb": 22.5,
+      "suit_isomorphism": true,
+      "suit_symmetry_verified_on_both_priors": true,
+      "target_exploitability_pct_pot": 0.5,
+      "threads": 4,
+      "units_per_bb": 1000
+    },
+    "stream_chunks": 49834,
+    "structurally_complete": true,
+    "terminal_edges": 541364,
+    "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS",
+    "windows_validated": false
+  },
+  "schema": "software.hu-batch-case.v1",
+  "source_commit": "f302ad2aefa861dc348c5bcfec93911e4eaa1f96",
+  "tag": "hu-btn-bb-nvt-next16-20261115",
+  "temporary_cleanup_verified": true,
+  "worker_exited": true
+}

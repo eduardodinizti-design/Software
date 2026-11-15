@@ -1,0 +1,60 @@
+SOFTWARE ORIGINAL — FALHA REPRODUZIDA NO MONITOR DE DISCO
+
+No calculo do flop 15 (Jc Kc Qc), a estrategia atingiu o alvo nativo em
+151 iteracoes. A montagem foi interrompida antes de existir uma politica
+completa publicavel. Esse caso nao foi contado como aprendido.
+
+CAUSA
+
+O monitor enumerava os arquivos de trabalho e executava is_file() seguido
+de stat() para somar seus tamanhos. O SQLite pode remover policy.sqlite-journal
+entre essas duas operacoes. O FileNotFoundError nao era tratado e encerrava
+o processo pai. O mecanismo de protecao do filho entao registrava
+BATCH_PARENT_EXITED. Nao foi uma falha de leitura de cartas ou de ranges.
+
+Evidencia: study/driver.txt registra [Errno 2] No such file or directory para
+policy.sqlite-journal; worker.log registra HU_BATCH_ERROR: BATCH_PARENT_EXITED.
+O erro foi reproduzido de forma deterministica removendo o journal entre
+a verificacao do arquivo e a leitura de seu tamanho.
+
+CORRECAO
+
+strategy/batch_jobs.py:folder_bytes agora ignora SOMENTE FileNotFoundError
+de arquivos que desapareceram durante a enumeracao. Um arquivo removido
+nao ocupa mais espaco. Erros de permissao continuam sendo propagados.
+Os limites de memoria/disco e todas as verificacoes das politicas continuam
+ativos; nenhuma precisao estrategica foi reduzida para concluir o lote.
+
+O controlador tambem passou a emitir caudas limitadas dos logs internos
+quando um worker falha. A rotina de recuperacao preserva partes, ZIP,
+politica completa ou export nativo em caso de nova falha.
+
+REPRODUZIR OS TESTES
+
+  python -m unittest test_hu_batches.QueueFailureTests -v
+
+Casos especificos:
+  test_disk_monitor_tolerates_a_sqlite_journal_deleted_before_stat
+  test_disk_monitor_does_not_hide_permission_errors
+
+Regressao apos a correcao: 551 testes, 548 aprovados, 3 pulados,
+zero falhas e zero erros no executor Linux. Os testes nativos reais
+de fechamento, consulta e limpeza estao incluidos.
+
+EVIDENCIAS E RECUPERACAO
+
+Codigo da correcao:
+https://github.com/eduardodinizti-design/Software/commit/a849eaa6d6542121abe5a1aab0b1d26819804d82
+
+Execucao original, com falha no caso 15:
+https://github.com/eduardodinizti-design/Software/actions/runs/43757186506
+
+Coleta dos diagnosticos preservados:
+https://github.com/eduardodinizti-design/Software/actions/runs/43764632807
+
+Recuperacao isolada:
+https://github.com/eduardodinizti-design/Software/actions/runs/43764947533
+
+Os arquivos case15-initial-failure-summary-43757186506.json e
+case15-initial-failure-evidence-43757186506.zip foram publicados na Release
+hu-btn-bb-nvt-next16-20261115. Os bancos ja concluidos foram preservados.

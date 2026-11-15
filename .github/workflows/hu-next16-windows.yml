@@ -1,0 +1,125 @@
+name: HU next 16 published policy banks on Windows
+on:
+  push:
+    branches: [feat/hu-next16-20261115]
+    paths: [.github/workflows/hu-next16-windows.yml]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: hu-next16-windows
+  cancel-in-progress: false
+
+env:
+  PYTHONUTF8: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  HU_BATCH_CATALOG_ASSET: batch-catalog-43764947533.json
+
+jobs:
+  await-published-data:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 200
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install numpy==2.2.6
+      - name: Wait for the complete immutable native catalog
+        run: python tools/wait_hu_next16_catalog.py --catalog-asset "$HU_BATCH_CATALOG_ASSET" --seconds 10800 --output runtime/hu-next16-readiness.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hu-next16-readiness-a${{ github.run_attempt }}
+          path: runtime/hu-next16-readiness.json
+          retention-days: 14
+  contracts:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Install data and controlled capture test dependencies
+        run: python -m pip install numpy==2.2.6 opencv-python==4.11.0.86 psutil==6.1.1 pytesseract==0.3.13
+      - name: Check transfer, strategy, capture and executor contracts
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force runtime/hu-next16-contracts | Out-Null
+          python -m unittest test_hu_next16 test_hu_reference test_hu_batches test_hu_policy_engine test_hu_operational test_cursor test_window_capture_engine test_window_capture_audit test_capture_windows_native test_raise_plan test_raise_sequencer -v *> runtime/hu-next16-contracts/contracts.txt
+          $code = $LASTEXITCODE
+          Get-Content runtime/hu-next16-contracts/contracts.txt -Tail 20
+          exit $code
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: hu-next16-windows-contracts-a${{ github.run_attempt }}
+          path: runtime/hu-next16-contracts/contracts.txt
+          retention-days: 14
+      - name: Preserve the Windows contract report in the data Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          Copy-Item runtime/hu-next16-contracts/contracts.txt runtime/hu-next16-contracts/windows-contracts-${{ github.run_id }}-a${{ github.run_attempt }}.txt
+          gh release upload hu-btn-bb-nvt-next16-20261115 --repo "$env:GITHUB_REPOSITORY" runtime/hu-next16-contracts/windows-contracts-${{ github.run_id }}-a${{ github.run_attempt }}.txt
+  transferred-policy:
+    needs: [contracts, await-published-data]
+    runs-on: windows-latest
+    timeout-minutes: 50
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        ordinal: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+    name: Windows full policy ${{ matrix.ordinal }} of 16
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Install data-only dependencies
+        run: python -m pip install numpy==2.2.6
+      - name: Download the actual published parts and verify the complete bank
+        run: python -m strategy.batch_download --new-only --ordinals ${{ matrix.ordinal }} --catalog-asset "$env:HU_BATCH_CATALOG_ASSET" --output runtime/hu-next16-windows/download
+      - name: Query all streets, verify exact suit routing and independently enumerate a conditional river
+        run: |
+          $caseLabel = "{0:D2}" -f [int]"${{ matrix.ordinal }}"
+          python tools/verify_hu_next16_download.py --require-windows --ordinal ${{ matrix.ordinal }} --receipt runtime/hu-next16-windows/download/download-receipt.json --output "runtime/hu-next16-windows/windows-case-${caseLabel}-${{ github.run_id }}-a${{ github.run_attempt }}.json"
+      - name: Publish small Windows evidence without changing solver policies
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $caseLabel = "{0:D2}" -f [int]"${{ matrix.ordinal }}"
+          gh release upload hu-btn-bb-nvt-next16-20261115 --repo "$env:GITHUB_REPOSITORY" "runtime/hu-next16-windows/windows-case-${caseLabel}-${{ github.run_id }}-a${{ github.run_attempt }}.json"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: hu-next16-windows-policy-${{ matrix.ordinal }}-a${{ github.run_attempt }}
+          path: |
+            runtime/hu-next16-windows/windows-case-*.json
+            runtime/hu-next16-windows/download/download-receipt.json
+          retention-days: 14
+  delivery:
+    needs: transferred-policy
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install numpy==2.2.6
+      - name: Verify all sixteen Windows receipts and publish the TXT, JSON and source ZIP
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python tools/finalize_hu_next16.py --output runtime/hu-next16-final --catalog-asset "$HU_BATCH_CATALOG_ASSET" --run-id "${{ github.run_id }}" --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: hu-next16-final-delivery-a${{ github.run_attempt }}
+          path: |
+            runtime/hu-next16-final/*.json
+            runtime/hu-next16-final/*.txt
+          retention-days: 14

@@ -1,0 +1,2054 @@
+{
+  "already_solved_board": [
+    "As",
+    "7d",
+    "2c"
+  ],
+  "cases": [
+    {
+      "archive_bytes": 1925406045,
+      "archive_sha256": "e7984e7469ed542b48e0fb76bb973df8d99d3015f2883d65a93e0f17132d6c11",
+      "board": [
+        "Kd",
+        "8h",
+        "3c"
+      ],
+      "case_id": "16f70fa6bf40e2c3f918",
+      "coverage": {
+        "nodes_by_street": {
+          "FLOP": 10,
+          "RIVER": 343392,
+          "TURN": 2254
+        },
+        "public_nodes": 345656,
+        "structurally_complete": true,
+        "terminal_edges": 541364,
+        "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS"
+      },
+      "file_sha256": "c0ef73a7b9b4689ac6a6b1c2378b70e5ecaed9db7abac9dd03c04b7eb9d8d9da",
+      "global_gap_bb": 0.05329296976327896,
+      "independent_river": {
+        "joint_private_deals": 428260,
+        "nash_conv_bb": 0.013048078739134494,
+        "runout": [
+          "Ts",
+          "2h"
+        ],
+        "scope": "CONDITIONAL_RIVER_PRIORS_AND_DECLARED_MENU_NOT_FULL_FLOP_GTO_CERTIFICATION"
+      },
+      "iterations": 131,
+      "lookup_streets": [
+        "flop",
+        "river",
+        "turn"
+      ],
+      "measurements": {
+        "elapsed_seconds": 3000.6428093600002,
+        "peak_process_tree_rss_bytes": 6517858304,
+        "policy_file_bytes": 2276405248,
+        "source_export_gzip_bytes": 5363077082
+      },
+      "native_target_met": true,
+      "ordinal": 1,
+      "parts": [
+        {
+          "bytes": 1073741824,
+          "name": "case-01-16f70fa6bf40e2c3f918-e7984e7469ed.zip.part001",
+          "sha256": "7afec7dee427b3370bbd8b9d63aa5b6316d011c7417dcc47081676831951d1b2"
+        },
+        {
+          "bytes": 851664221,
+          "name": "case-01-16f70fa6bf40e2c3f918-e7984e7469ed.zip.part002",
+          "sha256": "0eacae941545834922a72434950b9b16c3ea662629a5d07df166f8fef1502d15"
+        }
+      ],
+      "plan_sha256": "525df4dc2ac803e28f18adcef79ceb943df2264ffbe154397e21cd822fca7903",
+      "policy_file_bytes": 2276405248,
+      "policy_sha256": "0fadfe93d850b2642840cf66f0ac37479a935e1e15b4b38405d1e2f905daee59",
+      "quality": {
+        "action_ev_available": false,
+        "actual_sizes": "native_rounding_to_one_unit_then_legality_checked",
+        "converged": true,
+        "export_depth_in_streets": 3,
+        "exported_depth_is_not_full_tree_coverage": false,
+        "gap_scope": "native_full_tree_declared_menu_and_ranges",
+        "global_gap_bb": 0.05329296976327896,
+        "iterations": 131,
+        "method": "texassolver_discounted_cfr",
+        "native_metric_independently_verified": false,
+        "nodes_by_street": {
+          "FLOP": 10,
+          "RIVER": 343392,
+          "TURN": 2254
+        },
+        "provenance": {
+          "binary_sha256": "b2341618e15cf15ba242e2bf7b4cd2c760fc968ecfed24fd2c0cbd76a01af8ee",
+          "command_sha256": "9468668c62bae75e26edec7959fc0fd3b55a47fd043bd3f4216d724f9e2472cf",
+          "evaluator_dictionary_sha256": "13e0f4bd3cb99388caec49b36f98b98b70ae30407cbd740d880db65ed4db5e7b",
+          "license": "AGPL-3.0 backend installed separately; not bundled with Software",
+          "repository": "https://github.com/bupticybee/TexasSolver",
+          "reused_export": false,
+          "stream_generated_sha256": {
+            "solver-stream.CommandLineTool.cpp": "ab5b0075bc925033a86b4b3f0934932894245a80e0b72e18bdd1c4b47e627a3c",
+            "solver-stream.PCfrSolver.cpp": "04e09c274aa302ffe765a76c1558c5617fa136add76178e2ac52b7716d357109",
+            "solver-stream.PokerSolver.cpp": "e704576c6982e476c97df32e08de3dba5b425daa96d8b682e86546c50e2b5a31"
+          },
+          "tested_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6"
+        },
+        "public_nodes": 345656,
+        "settings": {
+          "dump_rounds": 3,
+          "export_format": "street_jsonl_gzip",
+          "ip_range_common_scale": 1.0,
+          "iterations": 2001,
+          "memory_budget_mb": 10240,
+          "memory_limit_enforced": true,
+          "native_raise_limit": 2,
+          "oop_range_common_scale": 1.0,
+          "python_menu_raise_limit_not_used": false,
+          "raise_fractions": [
+            1.0
+          ],
+          "root_effective_stack_bb": 22.5,
+          "suit_isomorphism": true,
+          "suit_symmetry_verified_on_both_priors": true,
+          "target_exploitability_pct_pot": 0.5,
+          "threads": 4,
+          "units_per_bb": 1000
+        },
+        "stream_chunks": 49834,
+        "structurally_complete": true,
+        "terminal_edges": 541364,
+        "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS",
+        "windows_validated": false
+      },
+      "schema": "software.hu-batch-case.v1",
+      "source_commit": "f302ad2aefa861dc348c5bcfec93911e4eaa1f96",
+      "tag": "hu-btn-bb-nvt-next16-20261115",
+      "temporary_cleanup_verified": true,
+      "worker_exited": true
+    },
+    {
+      "archive_bytes": 1922203555,
+      "archive_sha256": "c6574dc81f05865ca571f061d353f5ca45c33c04731edcbecf28c2950c5f63c1",
+      "board": [
+        "Ah",
+        "Kd",
+        "7c"
+      ],
+      "case_id": "dd345c634a36aab24e9d",
+      "coverage": {
+        "nodes_by_street": {
+          "FLOP": 10,
+          "RIVER": 343392,
+          "TURN": 2254
+        },
+        "public_nodes": 345656,
+        "structurally_complete": true,
+        "terminal_edges": 541364,
+        "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS"
+      },
+      "file_sha256": "9e57e2a7e96b7b927fa795d0de6beecb0df3e7f468cbe24f6f3850fc297c4486",
+      "global_gap_bb": 0.0448068842291832,
+      "independent_river": {
+        "joint_private_deals": 407956,
+        "nash_conv_bb": 0.019195703632035377,
+        "runout": [
+          "Ts",
+          "2h"
+        ],
+        "scope": "CONDITIONAL_RIVER_PRIORS_AND_DECLARED_MENU_NOT_FULL_FLOP_GTO_CERTIFICATION"
+      },
+      "iterations": 101,
+      "lookup_streets": [
+        "flop",
+        "river",
+        "turn"
+      ],
+      "measurements": {
+        "elapsed_seconds": 1836.83272983,
+        "peak_process_tree_rss_bytes": 6418083840,
+        "policy_file_bytes": 2275807232,
+        "source_export_gzip_bytes": 5288185967
+      },
+      "native_target_met": true,
+      "ordinal": 2,
+      "parts": [
+        {
+          "bytes": 1073741824,
+          "name": "case-02-dd345c634a36aab24e9d-c6574dc81f05.zip.part001",
+          "sha256": "3b1d0701edd3d3bb36f5142b674ed06db41a55df90884ba8424fe35a17f72de8"
+        },
+        {
+          "bytes": 848461731,
+          "name": "case-02-dd345c634a36aab24e9d-c6574dc81f05.zip.part002",
+          "sha256": "3885f37e0e7ff785f804dda145a04664113819486f1cd110dfa0932e6ae370b0"
+        }
+      ],
+      "plan_sha256": "525df4dc2ac803e28f18adcef79ceb943df2264ffbe154397e21cd822fca7903",
+      "policy_file_bytes": 2275807232,
+      "policy_sha256": "a9219f557d44e59b93a7f30c43dae2502ccf89e6118e75e2230cb57295c24bfa",
+      "quality": {
+        "action_ev_available": false,
+        "actual_sizes": "native_rounding_to_one_unit_then_legality_checked",
+        "converged": true,
+        "export_depth_in_streets": 3,
+        "exported_depth_is_not_full_tree_coverage": false,
+        "gap_scope": "native_full_tree_declared_menu_and_ranges",
+        "global_gap_bb": 0.0448068842291832,
+        "iterations": 101,
+        "method": "texassolver_discounted_cfr",
+        "native_metric_independently_verified": false,
+        "nodes_by_street": {
+          "FLOP": 10,
+          "RIVER": 343392,
+          "TURN": 2254
+        },
+        "provenance": {
+          "binary_sha256": "b2341618e15cf15ba242e2bf7b4cd2c760fc968ecfed24fd2c0cbd76a01af8ee",
+          "command_sha256": "214eb6af8d37707b3f6b80fafa9b2f9da803fbf10ba2bd8328ee2bda10719ad1",
+          "evaluator_dictionary_sha256": "13e0f4bd3cb99388caec49b36f98b98b70ae30407cbd740d880db65ed4db5e7b",
+          "license": "AGPL-3.0 backend installed separately; not bundled with Software",
+          "repository": "https://github.com/bupticybee/TexasSolver",
+          "reused_export": false,
+          "stream_generated_sha256": {
+            "solver-stream.CommandLineTool.cpp": "ab5b0075bc925033a86b4b3f0934932894245a80e0b72e18bdd1c4b47e627a3c",
+            "solver-stream.PCfrSolver.cpp": "04e09c274aa302ffe765a76c1558c5617fa136add76178e2ac52b7716d357109",
+            "solver-stream.PokerSolver.cpp": "e704576c6982e476c97df32e08de3dba5b425daa96d8b682e86546c50e2b5a31"
+          },
+          "tested_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6"
+        },
+        "public_nodes": 345656,
+        "settings": {
+          "dump_rounds": 3,
+          "export_format": "street_jsonl_gzip",
+          "ip_range_common_scale": 1.0,
+          "iterations": 2001,
+          "memory_budget_mb": 10240,
+          "memory_limit_enforced": true,
+          "native_raise_limit": 2,
+          "oop_range_common_scale": 1.0,
+          "python_menu_raise_limit_not_used": false,
+          "raise_fractions": [
+            1.0
+          ],
+          "root_effective_stack_bb": 22.5,
+          "suit_isomorphism": true,
+          "suit_symmetry_verified_on_both_priors": true,
+          "target_exploitability_pct_pot": 0.5,
+          "threads": 4,
+          "units_per_bb": 1000
+        },
+        "stream_chunks": 49834,
+        "structurally_complete": true,
+        "terminal_edges": 541364,
+        "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS",
+        "windows_validated": false
+      },
+      "schema": "software.hu-batch-case.v1",
+      "source_commit": "f302ad2aefa861dc348c5bcfec93911e4eaa1f96",
+      "tag": "hu-btn-bb-nvt-next16-20261115",
+      "temporary_cleanup_verified": true,
+      "worker_exited": true
+    },
+    {
+      "archive_bytes": 1943652939,
+      "archive_sha256": "06d30c2d5c3c421765a9a813ad3b268710e0779ea788e30223ed494080def480",
+      "board": [
+        "Qs",
+        "8d",
+        "3c"
+      ],
+      "case_id": "f180b698ff23e975e75f",
+      "coverage": {
+        "nodes_by_street": {
+          "FLOP": 10,
+          "RIVER": 343392,
+          "TURN": 2254
+        },
+        "public_nodes": 345656,
+        "structurally_complete": true,
+        "terminal_edges": 541364,
+        "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS"
+      },
+      "file_sha256": "a758943419d06a25b7d1f8c538d3985ea58d6493392ad1b2b1f41fbacc84c4fa",
+      "global_gap_bb": 0.05490087866783142,
+      "independent_river": {
+        "joint_private_deals": 434772,
+        "nash_conv_bb": 0.010911779543506972,
+        "runout": [
+          "Ts",
+          "2h"
+        ],
+        "scope": "CONDITIONAL_RIVER_PRIORS_AND_DECLARED_MENU_NOT_FULL_FLOP_GTO_CERTIFICATION"
+      },
+      "iterations": 111,
+      "lookup_streets": [
+        "flop",
+        "river",
+        "turn"
+      ],
+      "measurements": {
+        "elapsed_seconds": 2002.65732605,
+        "peak_process_tree_rss_bytes": 6541434880,
+        "policy_file_bytes": 2294161408,
+        "source_export_gzip_bytes": 5416023843
+      },
+      "native_target_met": true,
+      "ordinal": 3,
+      "parts": [
+        {
+          "bytes": 1073741824,
+          "name": "case-03-f180b698ff23e975e75f-06d30c2d5c3c.zip.part001",
+          "sha256": "105c12752777b664d227c260d19fe4d42449e5f1308b10f9ac821fd94bb86917"
+        },
+        {
+          "bytes": 869911115,
+          "name": "case-03-f180b698ff23e975e75f-06d30c2d5c3c.zip.part002",
+          "sha256": "1303f2b558d4afecb5db91e9750b0804c8714112c371de852f487d8ff3eace6c"
+        }
+      ],
+      "plan_sha256": "525df4dc2ac803e28f18adcef79ceb943df2264ffbe154397e21cd822fca7903",
+      "policy_file_bytes": 2294161408,
+      "policy_sha256": "bf9c5e5bb8b2d6993060a3b46e9e978251774afe231dc72884104288b4b53789",
+      "quality": {
+        "action_ev_available": false,
+        "actual_sizes": "native_rounding_to_one_unit_then_legality_checked",
+        "converged": true,
+        "export_depth_in_streets": 3,
+        "exported_depth_is_not_full_tree_coverage": false,
+        "gap_scope": "native_full_tree_declared_menu_and_ranges",
+        "global_gap_bb": 0.05490087866783142,
+        "iterations": 111,
+        "method": "texassolver_discounted_cfr",
+        "native_metric_independently_verified": false,
+        "nodes_by_street": {
+          "FLOP": 10,
+          "RIVER": 343392,
+          "TURN": 2254
+        },
+        "provenance": {
+          "binary_sha256": "b2341618e15cf15ba242e2bf7b4cd2c760fc968ecfed24fd2c0cbd76a01af8ee",
+          "command_sha256": "cfd12efec2a85dfa4bdc9d88d9631a710fd999e861b79cd8229dd750a4cf7a31",
+          "evaluator_dictionary_sha256": "13e0f4bd3cb99388caec49b36f98b98b70ae30407cbd740d880db65ed4db5e7b",
+          "license": "AGPL-3.0 backend installed separately; not bundled with Software",
+          "repository": "https://github.com/bupticybee/TexasSolver",
+          "reused_export": false,
+          "stream_generated_sha256": {
+            "solver-stream.CommandLineTool.cpp": "ab5b0075bc925033a86b4b3f0934932894245a80e0b72e18bdd1c4b47e627a3c",
+            "solver-stream.PCfrSolver.cpp": "04e09c274aa302ffe765a76c1558c5617fa136add76178e2ac52b7716d357109",
+            "solver-stream.PokerSolver.cpp": "e704576c6982e476c97df32e08de3dba5b425daa96d8b682e86546c50e2b5a31"
+          },
+          "tested_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6"
+        },
+        "public_nodes": 345656,
+        "settings": {
+          "dump_rounds": 3,
+          "export_format": "street_jsonl_gzip",
+          "ip_range_common_scale": 1.0,
+          "iterations": 2001,
+          "memory_budget_mb": 10240,
+          "memory_limit_enforced": true,
+          "native_raise_limit": 2,
+          "oop_range_common_scale": 1.0,
+          "python_menu_raise_limit_not_used": false,
+          "raise_fractions": [
+            1.0
+          ],
+          "root_effective_stack_bb": 22.5,
+          "suit_isomorphism": true,
+          "suit_symmetry_verified_on_both_priors": true,
+          "target_exploitability_pct_pot": 0.5,
+          "threads": 4,
+          "units_per_bb": 1000
+        },
+        "stream_chunks": 49834,
+        "structurally_complete": true,
+        "terminal_edges": 541364,
+        "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS",
+        "windows_validated": false
+      },
+      "schema": "software.hu-batch-case.v1",
+      "source_commit": "f302ad2aefa861dc348c5bcfec93911e4eaa1f96",
+      "tag": "hu-btn-bb-nvt-next16-20261115",
+      "temporary_cleanup_verified": true,
+      "worker_exited": true
+    },
+    {
+      "archive_bytes": 1925339121,
+      "archive_sha256": "bd2a706b5e27064ed38ef971aaa623d04b35adc1961034a1039f08afa56d6f65",
+      "board": [
+        "Js",
+        "Td",
+        "4c"
+      ],
+      "case_id": "90359505a2fae28d0cdd",
+      "coverage": {
+        "nodes_by_street": {
+          "FLOP": 10,
+          "RIVER": 343392,
+          "TURN": 2254
+        },
+        "public_nodes": 345656,
+        "structurally_complete": true,
+        "terminal_edges": 541364,
+        "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS"
+      },
+      "file_sha256": "9a348fa75a0463e66b784842b82549aac0151a9f49a132f2cadc498d0136086f",
+      "global_gap_bb": 0.04235009729862213,
+      "independent_river": {
+        "joint_private_deals": 429432,
+        "nash_conv_bb": 0.009504076050322885,
+        "runout": [
+          "Ts",
+          "2h"
+        ],
+        "scope": "CONDITIONAL_RIVER_PRIORS_AND_DECLARED_MENU_NOT_FULL_FLOP_GTO_CERTIFICATION"
+      },
+      "iterations": 101,
+      "lookup_streets": [
+        "flop",
+        "river",
+        "turn"
+      ],
+      "measurements": {
+        "elapsed_seconds": 1867.1669277459998,
+        "peak_process_tree_rss_bytes": 6508273664,
+        "policy_file_bytes": 2276581376,
+        "source_export_gzip_bytes": 5362285471
+      },
+      "native_target_met": true,
+      "ordinal": 4,
+      "parts": [
+        {
+          "bytes": 1073741824,
+          "name": "case-04-90359505a2fae28d0cdd-bd2a706b5e27.zip.part001",
+          "sha256": "0e9d31500331fd2ba4208aa0302099c300a09b0a81c47d669499344c83c62d58"
+        },
+        {
+          "bytes": 851597297,
+          "name": "case-04-90359505a2fae28d0cdd-bd2a706b5e27.zip.part002",
+          "sha256": "f4d61dd082bb119f321d5bf0b44cacf431f39257f7ecd59aaf6078985d4643f7"
+        }
+      ],
+      "plan_sha256": "525df4dc2ac803e28f18adcef79ceb943df2264ffbe154397e21cd822fca7903",
+      "policy_file_bytes": 2276581376,
+      "policy_sha256": "20068b6a25bb38bcb37c4d35c6d813a53aa89048a57bfdb1c4a756120299e960",
+      "quality": {
+        "action_ev_available": false,
+        "actual_sizes": "native_rounding_to_one_unit_then_legality_checked",
+        "converged": true,
+        "export_depth_in_streets": 3,
+        "exported_depth_is_not_full_tree_coverage": false,
+        "gap_scope": "native_full_tree_declared_menu_and_ranges",
+        "global_gap_bb": 0.04235009729862213,
+        "iterations": 101,
+        "method": "texassolver_discounted_cfr",
+        "native_metric_independently_verified": false,
+        "nodes_by_street": {
+          "FLOP": 10,
+          "RIVER": 343392,
+          "TURN": 2254
+        },
+        "provenance": {
+          "binary_sha256": "b2341618e15cf15ba242e2bf7b4cd2c760fc968ecfed24fd2c0cbd76a01af8ee",
+          "command_sha256": "3e7bdcd25f430c7568a7748e5bd36e43c5c0ca370f7db85dd2204227ff4aef2d",
+          "evaluator_dictionary_sha256": "13e0f4bd3cb99388caec49b36f98b98b70ae30407cbd740d880db65ed4db5e7b",
+          "license": "AGPL-3.0 backend installed separately; not bundled with Software",
+          "repository": "https://github.com/bupticybee/TexasSolver",
+          "reused_export": false,
+          "stream_generated_sha256": {
+            "solver-stream.CommandLineTool.cpp": "ab5b0075bc925033a86b4b3f0934932894245a80e0b72e18bdd1c4b47e627a3c",
+            "solver-stream.PCfrSolver.cpp": "04e09c274aa302ffe765a76c1558c5617fa136add76178e2ac52b7716d357109",
+            "solver-stream.PokerSolver.cpp": "e704576c6982e476c97df32e08de3dba5b425daa96d8b682e86546c50e2b5a31"
+          },
+          "tested_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6"
+        },
+        "public_nodes": 345656,
+        "settings": {
+          "dump_rounds": 3,
+          "export_format": "street_jsonl_gzip",
+          "ip_range_common_scale": 1.0,
+          "iterations": 2001,
+          "memory_budget_mb": 10240,
+          "memory_limit_enforced": true,
+          "native_raise_limit": 2,
+          "oop_range_common_scale": 1.0,
+          "python_menu_raise_limit_not_used": false,
+          "raise_fractions": [
+            1.0
+          ],
+          "root_effective_stack_bb": 22.5,
+          "suit_isomorphism": true,
+          "suit_symmetry_verified_on_both_priors": true,
+          "target_exploitability_pct_pot": 0.5,
+          "threads": 4,
+          "units_per_bb": 1000
+        },
+        "stream_chunks": 49834,
+        "structurally_complete": true,
+        "terminal_edges": 541364,
+        "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS",
+        "windows_validated": false
+      },
+      "schema": "software.hu-batch-case.v1",
+      "source_commit": "f302ad2aefa861dc348c5bcfec93911e4eaa1f96",
+      "tag": "hu-btn-bb-nvt-next16-20261115",
+      "temporary_cleanup_verified": true,
+      "worker_exited": true
+    },
+    {
+      "archive_bytes": 1806967535,
+      "archive_sha256": "c1f80c523bb756f23fdba05a2fd969f32733da876b134039c75aeb0db1eb79c3",
+      "board": [
+        "9s",
+        "8s",
+        "7d"
+      ],
+      "case_id": "4a6875fa648a626d4096",
+      "coverage": {
+        "nodes_by_street": {
+          "FLOP": 10,
+          "RIVER": 343392,
+          "TURN": 2254
+        },
+        "public_nodes": 345656,
+        "structurally_complete": true,
+        "terminal_edges": 541364,
+        "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS"
+      },
+      "file_sha256": "bacedbbc2d6cdea4ce85334a61bd706236a2d2fd26138d8528912d14b93a0f3b",
+      "global_gap_bb": 0.04569720596075058,
+      "independent_river": {
+        "joint_private_deals": 431181,
+        "nash_conv_bb": 0.025571416284465354,
+        "runout": [
+          "Ts",
+          "2h"
+        ],
+        "scope": "CONDITIONAL_RIVER_PRIORS_AND_DECLARED_MENU_NOT_FULL_FLOP_GTO_CERTIFICATION"
+      },
+      "iterations": 111,
+      "lookup_streets": [
+        "flop",
+        "river",
+        "turn"
+      ],
+      "measurements": {
+        "elapsed_seconds": 2539.184357635,
+        "peak_process_tree_rss_bytes": 4082016256,
+        "policy_file_bytes": 2167054336,
+        "source_export_gzip_bytes": 5141994610
+      },
+      "native_target_met": true,
+      "ordinal": 5,
+      "parts": [
+        {
+          "bytes": 1073741824,
+          "name": "case-05-4a6875fa648a626d4096-c1f80c523bb7.zip.part001",
+          "sha256": "24ad784171b9a25c8402139eb082a96aa314a5d00dcf9162e9ae4ab0a517a18a"
+        },
+        {
+          "bytes": 733225711,
+          "name": "case-05-4a6875fa648a626d4096-c1f80c523bb7.zip.part002",
+          "sha256": "6f5cd4e9aa62456e5c0cb8b5d90d3e5c97aaaa8a36d5875e159be7e427dd8c5f"
+        }
+      ],
+      "plan_sha256": "525df4dc2ac803e28f18adcef79ceb943df2264ffbe154397e21cd822fca7903",
+      "policy_file_bytes": 2167054336,
+      "policy_sha256": "6abe4b92c96a31de5027a7cceedb9763d03d77cc7c400d2ebe8455e8448771c4",
+      "quality": {
+        "action_ev_available": false,
+        "actual_sizes": "native_rounding_to_one_unit_then_legality_checked",
+        "converged": true,
+        "export_depth_in_streets": 3,
+        "exported_depth_is_not_full_tree_coverage": false,
+        "gap_scope": "native_full_tree_declared_menu_and_ranges",
+        "global_gap_bb": 0.04569720596075058,
+        "iterations": 111,
+        "method": "texassolver_discounted_cfr",
+        "native_metric_independently_verified": false,
+        "nodes_by_street": {
+          "FLOP": 10,
+          "RIVER": 343392,
+          "TURN": 2254
+        },
+        "provenance": {
+          "binary_sha256": "b2341618e15cf15ba242e2bf7b4cd2c760fc968ecfed24fd2c0cbd76a01af8ee",
+          "command_sha256": "2cb9468a40dd1816c89dec3643b9b96a44376580806eb922a5a5826bc2ea5cb1",
+          "evaluator_dictionary_sha256": "13e0f4bd3cb99388caec49b36f98b98b70ae30407cbd740d880db65ed4db5e7b",
+          "license": "AGPL-3.0 backend installed separately; not bundled with Software",
+          "repository": "https://github.com/bupticybee/TexasSolver",
+          "reused_export": false,
+          "stream_generated_sha256": {
+            "solver-stream.CommandLineTool.cpp": "ab5b0075bc925033a86b4b3f0934932894245a80e0b72e18bdd1c4b47e627a3c",
+            "solver-stream.PCfrSolver.cpp": "04e09c274aa302ffe765a76c1558c5617fa136add76178e2ac52b7716d357109",
+            "solver-stream.PokerSolver.cpp": "e704576c6982e476c97df32e08de3dba5b425daa96d8b682e86546c50e2b5a31"
+          },
+          "tested_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6"
+        },
+        "public_nodes": 345656,
+        "settings": {
+          "dump_rounds": 3,
+          "export_format": "street_jsonl_gzip",
+          "ip_range_common_scale": 1.0,
+          "iterations": 2001,
+          "memory_budget_mb": 10240,
+          "memory_limit_enforced": true,
+          "native_raise_limit": 2,
+          "oop_range_common_scale": 1.0,
+          "python_menu_raise_limit_not_used": false,
+          "raise_fractions": [
+            1.0
+          ],
+          "root_effective_stack_bb": 22.5,
+          "suit_isomorphism": true,
+          "suit_symmetry_verified_on_both_priors": true,
+          "target_exploitability_pct_pot": 0.5,
+          "threads": 4,
+          "units_per_bb": 1000
+        },
+        "stream_chunks": 49834,
+        "structurally_complete": true,
+        "terminal_edges": 541364,
+        "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS",
+        "windows_validated": false
+      },
+      "schema": "software.hu-batch-case.v1",
+      "source_commit": "f302ad2aefa861dc348c5bcfec93911e4eaa1f96",
+      "tag": "hu-btn-bb-nvt-next16-20261115",
+      "temporary_cleanup_verified": true,
+      "worker_exited": true
+    },
+    {
+      "archive_bytes": 1949470770,
+      "archive_sha256": "28b6786d15152cb27e0908575f573dccd8d2e2f62fef067f4de7190a70cbef3e",
+      "board": [
+        "8c",
+        "6d",
+        "3s"
+      ],
+      "case_id": "50d3ba27ef6e623a2fa1",
+      "coverage": {
+        "nodes_by_street": {
+          "FLOP": 10,
+          "RIVER": 343392,
+          "TURN": 2254
+        },
+        "public_nodes": 345656,
+        "structurally_complete": true,
+        "terminal_edges": 541364,
+        "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS"
+      },
+      "file_sha256": "1b6ec3a407697c8082c55cfae5bd499f63e63f15ccbd0c6ccedbdb1c722a4bc2",
+      "global_gap_bb": 0.04894192487001419,
+      "independent_river": {
+        "joint_private_deals": 440185,
+        "nash_conv_bb": 0.022417772236376088,
+        "runout": [
+          "Ts",
+          "2h"
+        ],
+        "scope": "CONDITIONAL_RIVER_PRIORS_AND_DECLARED_MENU_NOT_FULL_FLOP_GTO_CERTIFICATION"
+      },
+      "iterations": 121,
+      "lookup_streets": [
+        "flop",
+        "river",
+        "turn"
+      ],
+      "measurements": {
+        "elapsed_seconds": 1998.7326186400003,
+        "peak_process_tree_rss_bytes": 6588014592,
+        "policy_file_bytes": 2297102336,
+        "source_export_gzip_bytes": 5461264452
+      },
+      "native_target_met": true,
+      "ordinal": 6,
+      "parts": [
+        {
+          "bytes": 1073741824,
+          "name": "case-06-50d3ba27ef6e623a2fa1-28b6786d1515.zip.part001",
+          "sha256": "a41f43e943d70d7cc5f535c0b4571a7646bf08232baded95569f4b61cd34bdbd"
+        },
+        {
+          "bytes": 875728946,
+          "name": "case-06-50d3ba27ef6e623a2fa1-28b6786d1515.zip.part002",
+          "sha256": "5442ec0fce9ab98503e171a291cf7306925cb8cd0f1d544697c95fc1b0ffad02"
+        }
+      ],
+      "plan_sha256": "525df4dc2ac803e28f18adcef79ceb943df2264ffbe154397e21cd822fca7903",
+      "policy_file_bytes": 2297102336,
+      "policy_sha256": "8628f0cd8d95922a21e3651745dbddc3efc6874c33c45c55123900f1447730ca",
+      "quality": {
+        "action_ev_available": false,
+        "actual_sizes": "native_rounding_to_one_unit_then_legality_checked",
+        "converged": true,
+        "export_depth_in_streets": 3,
+        "exported_depth_is_not_full_tree_coverage": false,
+        "gap_scope": "native_full_tree_declared_menu_and_ranges",
+        "global_gap_bb": 0.04894192487001419,
+        "iterations": 121,
+        "method": "texassolver_discounted_cfr",
+        "native_metric_independently_verified": false,
+        "nodes_by_street": {
+          "FLOP": 10,
+          "RIVER": 343392,
+          "TURN": 2254
+        },
+        "provenance": {
+          "binary_sha256": "b2341618e15cf15ba242e2bf7b4cd2c760fc968ecfed24fd2c0cbd76a01af8ee",
+          "command_sha256": "e14b24023523c5c5255d12194865c7a50ac58e1c613a2b1e7d12186d3702b8a5",
+          "evaluator_dictionary_sha256": "13e0f4bd3cb99388caec49b36f98b98b70ae30407cbd740d880db65ed4db5e7b",
+          "license": "AGPL-3.0 backend installed separately; not bundled with Software",
+          "repository": "https://github.com/bupticybee/TexasSolver",
+          "reused_export": false,
+          "stream_generated_sha256": {
+            "solver-stream.CommandLineTool.cpp": "ab5b0075bc925033a86b4b3f0934932894245a80e0b72e18bdd1c4b47e627a3c",
+            "solver-stream.PCfrSolver.cpp": "04e09c274aa302ffe765a76c1558c5617fa136add76178e2ac52b7716d357109",
+            "solver-stream.PokerSolver.cpp": "e704576c6982e476c97df32e08de3dba5b425daa96d8b682e86546c50e2b5a31"
+          },
+          "tested_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6"
+        },
+        "public_nodes": 345656,
+        "settings": {
+          "dump_rounds": 3,
+          "export_format": "street_jsonl_gzip",
+          "ip_range_common_scale": 1.0,
+          "iterations": 2001,
+          "memory_budget_mb": 10240,
+          "memory_limit_enforced": true,
+          "native_raise_limit": 2,
+          "oop_range_common_scale": 1.0,
+          "python_menu_raise_limit_not_used": false,
+          "raise_fractions": [
+            1.0
+          ],
+          "root_effective_stack_bb": 22.5,
+          "suit_isomorphism": true,
+          "suit_symmetry_verified_on_both_priors": true,
+          "target_exploitability_pct_pot": 0.5,
+          "threads": 4,
+          "units_per_bb": 1000
+        },
+        "stream_chunks": 49834,
+        "structurally_complete": true,
+        "terminal_edges": 541364,
+        "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS",
+        "windows_validated": false
+      },
+      "schema": "software.hu-batch-case.v1",
+      "source_commit": "f302ad2aefa861dc348c5bcfec93911e4eaa1f96",
+      "tag": "hu-btn-bb-nvt-next16-20261115",
+      "temporary_cleanup_verified": true,
+      "worker_exited": true
+    },
+    {
+      "archive_bytes": 1869417879,
+      "archive_sha256": "dcf65b0b1afeaf61c864c367dfcdf3ed01524cd5485f238f483a43013dff18c8",
+      "board": [
+        "7s",
+        "7h",
+        "2d"
+      ],
+      "case_id": "c8e62df87d0aa41b1671",
+      "coverage": {
+        "nodes_by_street": {
+          "FLOP": 10,
+          "RIVER": 343392,
+          "TURN": 2254
+        },
+        "public_nodes": 345656,
+        "structurally_complete": true,
+        "terminal_edges": 541364,
+        "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS"
+      },
+      "file_sha256": "cddd0e5594b1844d40ed1d7d3808cea59b7de55d619faa37031e05c39c144f43",
+      "global_gap_bb": 0.05174957364797592,
+      "independent_river": {
+        "joint_private_deals": 458844,
+        "nash_conv_bb": 0.012916994572511609,
+        "runout": [
+          "Ts",
+          "2h"
+        ],
+        "scope": "CONDITIONAL_RIVER_PRIORS_AND_DECLARED_MENU_NOT_FULL_FLOP_GTO_CERTIFICATION"
+      },
+      "iterations": 141,
+      "lookup_streets": [
+        "flop",
+        "river",
+        "turn"
+      ],
+      "measurements": {
+        "elapsed_seconds": 1943.196331945,
+        "peak_process_tree_rss_bytes": 4294000640,
+        "policy_file_bytes": 2241114112,
+        "source_export_gzip_bytes": 5302613101
+      },
+      "native_target_met": true,
+      "ordinal": 7,
+      "parts": [
+        {
+          "bytes": 1073741824,
+          "name": "case-07-c8e62df87d0aa41b1671-dcf65b0b1afe.zip.part001",
+          "sha256": "6b0df94ad2c13d7d9467db051b467405dfcc2046d113b9f4c33fd073a80658db"
+        },
+        {
+          "bytes": 795676055,
+          "name": "case-07-c8e62df87d0aa41b1671-dcf65b0b1afe.zip.part002",
+          "sha256": "f27e57c3faf8ee9c3747a45b1c4ebbfb07f00335484c8c69d1c931cf16002d09"
+        }
+      ],
+      "plan_sha256": "525df4dc2ac803e28f18adcef79ceb943df2264ffbe154397e21cd822fca7903",
+      "policy_file_bytes": 2241114112,
+      "policy_sha256": "c8b69ff49137c8fff25bbcae24c0f5d9f499d7a1ebe7d1911d4c07a70059b90c",
+      "quality": {
+        "action_ev_available": false,
+        "actual_sizes": "native_rounding_to_one_unit_then_legality_checked",
+        "converged": true,
+        "export_depth_in_streets": 3,
+        "exported_depth_is_not_full_tree_coverage": false,
+        "gap_scope": "native_full_tree_declared_menu_and_ranges",
+        "global_gap_bb": 0.05174957364797592,
+        "iterations": 141,
+        "method": "texassolver_discounted_cfr",
+        "native_metric_independently_verified": false,
+        "nodes_by_street": {
+          "FLOP": 10,
+          "RIVER": 343392,
+          "TURN": 2254
+        },
+        "provenance": {
+          "binary_sha256": "b2341618e15cf15ba242e2bf7b4cd2c760fc968ecfed24fd2c0cbd76a01af8ee",
+          "command_sha256": "48917a543acb498d995ab43a79be286ad0acc6cb820dceec552dcba9e9940dfb",
+          "evaluator_dictionary_sha256": "13e0f4bd3cb99388caec49b36f98b98b70ae30407cbd740d880db65ed4db5e7b",
+          "license": "AGPL-3.0 backend installed separately; not bundled with Software",
+          "repository": "https://github.com/bupticybee/TexasSolver",
+          "reused_export": false,
+          "stream_generated_sha256": {
+            "solver-stream.CommandLineTool.cpp": "ab5b0075bc925033a86b4b3f0934932894245a80e0b72e18bdd1c4b47e627a3c",
+            "solver-stream.PCfrSolver.cpp": "04e09c274aa302ffe765a76c1558c5617fa136add76178e2ac52b7716d357109",
+            "solver-stream.PokerSolver.cpp": "e704576c6982e476c97df32e08de3dba5b425daa96d8b682e86546c50e2b5a31"
+          },
+          "tested_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6"
+        },
+        "public_nodes": 345656,
+        "settings": {
+          "dump_rounds": 3,
+          "export_format": "street_jsonl_gzip",
+          "ip_range_common_scale": 1.0,
+          "iterations": 2001,
+          "memory_budget_mb": 10240,
+          "memory_limit_enforced": true,
+          "native_raise_limit": 2,
+          "oop_range_common_scale": 1.0,
+          "python_menu_raise_limit_not_used": false,
+          "raise_fractions": [
+            1.0
+          ],
+          "root_effective_stack_bb": 22.5,
+          "suit_isomorphism": true,
+          "suit_symmetry_verified_on_both_priors": true,
+          "target_exploitability_pct_pot": 0.5,
+          "threads": 4,
+          "units_per_bb": 1000
+        },
+        "stream_chunks": 49834,
+        "structurally_complete": true,
+        "terminal_edges": 541364,
+        "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS",
+        "windows_validated": false
+      },
+      "schema": "software.hu-batch-case.v1",
+      "source_commit": "f302ad2aefa861dc348c5bcfec93911e4eaa1f96",
+      "tag": "hu-btn-bb-nvt-next16-20261115",
+      "temporary_cleanup_verified": true,
+      "worker_exited": true
+    },
+    {
+      "archive_bytes": 1903539819,
+      "archive_sha256": "7d2b6b2989612cd74035c9e1e82ce37d6ea3d017c75ddd366d742690913f962b",
+      "board": [
+        "Kc",
+        "Kd",
+        "5s"
+      ],
+      "case_id": "41a262cdb330dca025dc",
+      "coverage": {
+        "nodes_by_street": {
+          "FLOP": 10,
+          "RIVER": 343392,
+          "TURN": 2254
+        },
+        "public_nodes": 345656,
+        "structurally_complete": true,
+        "terminal_edges": 541364,
+        "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS"
+      },
+      "file_sha256": "ecbffab604552227f05aa46d60ce76d4c0463f8421c491d5700c43da6259b7e9",
+      "global_gap_bb": 0.051506713926792146,
+      "independent_river": {
+        "joint_private_deals": 405403,
+        "nash_conv_bb": 0.02169548048783236,
+        "runout": [
+          "Ts",
+          "2h"
+        ],
+        "scope": "CONDITIONAL_RIVER_PRIORS_AND_DECLARED_MENU_NOT_FULL_FLOP_GTO_CERTIFICATION"
+      },
+      "iterations": 101,
+      "lookup_streets": [
+        "flop",
+        "river",
+        "turn"
+      ],
+      "measurements": {
+        "elapsed_seconds": 2339.0176047510004,
+        "peak_process_tree_rss_bytes": 4068823040,
+        "policy_file_bytes": 2239651840,
+        "source_export_gzip_bytes": 5273923046
+      },
+      "native_target_met": true,
+      "ordinal": 8,
+      "parts": [
+        {
+          "bytes": 1073741824,
+          "name": "case-08-41a262cdb330dca025dc-7d2b6b298961.zip.part001",
+          "sha256": "1d67037f52533645b155d134910d0bc30234ed9a74800aa0e04d3a5568b8c009"
+        },
+        {
+          "bytes": 829797995,
+          "name": "case-08-41a262cdb330dca025dc-7d2b6b298961.zip.part002",
+          "sha256": "7a9a1942bb41f39351c1e04d13b496b457c18ffa636f05bc48b4592f73a977d1"
+        }
+      ],
+      "plan_sha256": "525df4dc2ac803e28f18adcef79ceb943df2264ffbe154397e21cd822fca7903",
+      "policy_file_bytes": 2239651840,
+      "policy_sha256": "c4a098ab7918714de447c5f8941997797727f936cc22f3608ebcaae35b0c389a",
+      "quality": {
+        "action_ev_available": false,
+        "actual_sizes": "native_rounding_to_one_unit_then_legality_checked",
+        "converged": true,
+        "export_depth_in_streets": 3,
+        "exported_depth_is_not_full_tree_coverage": false,
+        "gap_scope": "native_full_tree_declared_menu_and_ranges",
+        "global_gap_bb": 0.051506713926792146,
+        "iterations": 101,
+        "method": "texassolver_discounted_cfr",
+        "native_metric_independently_verified": false,
+        "nodes_by_street": {
+          "FLOP": 10,
+          "RIVER": 343392,
+          "TURN": 2254
+        },
+        "provenance": {
+          "binary_sha256": "b2341618e15cf15ba242e2bf7b4cd2c760fc968ecfed24fd2c0cbd76a01af8ee",
+          "command_sha256": "c7cb7401095550eb058a320f268f1975228aafe7609cfc467ba840bf6a9ab59c",
+          "evaluator_dictionary_sha256": "13e0f4bd3cb99388caec49b36f98b98b70ae30407cbd740d880db65ed4db5e7b",
+          "license": "AGPL-3.0 backend installed separately; not bundled with Software",
+          "repository": "https://github.com/bupticybee/TexasSolver",
+          "reused_export": false,
+          "stream_generated_sha256": {
+            "solver-stream.CommandLineTool.cpp": "ab5b0075bc925033a86b4b3f0934932894245a80e0b72e18bdd1c4b47e627a3c",
+            "solver-stream.PCfrSolver.cpp": "04e09c274aa302ffe765a76c1558c5617fa136add76178e2ac52b7716d357109",
+            "solver-stream.PokerSolver.cpp": "e704576c6982e476c97df32e08de3dba5b425daa96d8b682e86546c50e2b5a31"
+          },
+          "tested_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6"
+        },
+        "public_nodes": 345656,
+        "settings": {
+          "dump_rounds": 3,
+          "export_format": "street_jsonl_gzip",
+          "ip_range_common_scale": 1.0,
+          "iterations": 2001,
+          "memory_budget_mb": 10240,
+          "memory_limit_enforced": true,
+          "native_raise_limit": 2,
+          "oop_range_common_scale": 1.0,
+          "python_menu_raise_limit_not_used": false,
+          "raise_fractions": [
+            1.0
+          ],
+          "root_effective_stack_bb": 22.5,
+          "suit_isomorphism": true,
+          "suit_symmetry_verified_on_both_priors": true,
+          "target_exploitability_pct_pot": 0.5,
+          "threads": 4,
+          "units_per_bb": 1000
+        },
+        "stream_chunks": 49834,
+        "structurally_complete": true,
+        "terminal_edges": 541364,
+        "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS",
+        "windows_validated": false
+      },
+      "schema": "software.hu-batch-case.v1",
+      "source_commit": "f302ad2aefa861dc348c5bcfec93911e4eaa1f96",
+      "tag": "hu-btn-bb-nvt-next16-20261115",
+      "temporary_cleanup_verified": true,
+      "worker_exited": true
+    },
+    {
+      "archive_bytes": 1679464399,
+      "archive_sha256": "9fc3e361ff147fe601bf62c0429b0a4e6567841904a33ff58a7dcb02b4495499",
+      "board": [
+        "Qs",
+        "7s",
+        "2s"
+      ],
+      "case_id": "e49a02555988f7501940",
+      "coverage": {
+        "nodes_by_street": {
+          "FLOP": 10,
+          "RIVER": 343392,
+          "TURN": 2254
+        },
+        "public_nodes": 345656,
+        "structurally_complete": true,
+        "terminal_edges": 541364,
+        "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS"
+      },
+      "file_sha256": "babe5ac8f530470b5b66ad7055487a23e3389d2f13d3eb4f1cc211736b9c9225",
+      "global_gap_bb": 0.050687684416770934,
+      "independent_river": {
+        "joint_private_deals": 449529,
+        "nash_conv_bb": 0.026103464316315605,
+        "runout": [
+          "Ts",
+          "2h"
+        ],
+        "scope": "CONDITIONAL_RIVER_PRIORS_AND_DECLARED_MENU_NOT_FULL_FLOP_GTO_CERTIFICATION"
+      },
+      "iterations": 131,
+      "lookup_streets": [
+        "flop",
+        "river",
+        "turn"
+      ],
+      "measurements": {
+        "elapsed_seconds": 2329.1550539180002,
+        "peak_process_tree_rss_bytes": 2060488704,
+        "policy_file_bytes": 2067181568,
+        "source_export_gzip_bytes": 4897842205
+      },
+      "native_target_met": true,
+      "ordinal": 9,
+      "parts": [
+        {
+          "bytes": 1073741824,
+          "name": "case-09-e49a02555988f7501940-9fc3e361ff14.zip.part001",
+          "sha256": "cc83a2f0542604e7dcc5563bf6afbc9ca7e6c3d3960e8b8cca494d8223316c89"
+        },
+        {
+          "bytes": 605722575,
+          "name": "case-09-e49a02555988f7501940-9fc3e361ff14.zip.part002",
+          "sha256": "9cda726e5fd9bbba4bf294cbd1e83fc10161d72ca8f93609224216ee10eb1f5d"
+        }
+      ],
+      "plan_sha256": "525df4dc2ac803e28f18adcef79ceb943df2264ffbe154397e21cd822fca7903",
+      "policy_file_bytes": 2067181568,
+      "policy_sha256": "5d9aadbd4db2a42c25d7a9154605a45206823bcf50531fc321c6504e2900ef57",
+      "quality": {
+        "action_ev_available": false,
+        "actual_sizes": "native_rounding_to_one_unit_then_legality_checked",
+        "converged": true,
+        "export_depth_in_streets": 3,
+        "exported_depth_is_not_full_tree_coverage": false,
+        "gap_scope": "native_full_tree_declared_menu_and_ranges",
+        "global_gap_bb": 0.050687684416770934,
+        "iterations": 131,
+        "method": "texassolver_discounted_cfr",
+        "native_metric_independently_verified": false,
+        "nodes_by_street": {
+          "FLOP": 10,
+          "RIVER": 343392,
+          "TURN": 2254
+        },
+        "provenance": {
+          "binary_sha256": "b2341618e15cf15ba242e2bf7b4cd2c760fc968ecfed24fd2c0cbd76a01af8ee",
+          "command_sha256": "b735d5d6088b5f796c9d5a4e1573d25b3c351085806b7178092cfe91e0bb3a9c",
+          "evaluator_dictionary_sha256": "13e0f4bd3cb99388caec49b36f98b98b70ae30407cbd740d880db65ed4db5e7b",
+          "license": "AGPL-3.0 backend installed separately; not bundled with Software",
+          "repository": "https://github.com/bupticybee/TexasSolver",
+          "reused_export": false,
+          "stream_generated_sha256": {
+            "solver-stream.CommandLineTool.cpp": "ab5b0075bc925033a86b4b3f0934932894245a80e0b72e18bdd1c4b47e627a3c",
+            "solver-stream.PCfrSolver.cpp": "04e09c274aa302ffe765a76c1558c5617fa136add76178e2ac52b7716d357109",
+            "solver-stream.PokerSolver.cpp": "e704576c6982e476c97df32e08de3dba5b425daa96d8b682e86546c50e2b5a31"
+          },
+          "tested_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6"
+        },
+        "public_nodes": 345656,
+        "settings": {
+          "dump_rounds": 3,
+          "export_format": "street_jsonl_gzip",
+          "ip_range_common_scale": 1.0,
+          "iterations": 2001,
+          "memory_budget_mb": 10240,
+          "memory_limit_enforced": true,
+          "native_raise_limit": 2,
+          "oop_range_common_scale": 1.0,
+          "python_menu_raise_limit_not_used": false,
+          "raise_fractions": [
+            1.0
+          ],
+          "root_effective_stack_bb": 22.5,
+          "suit_isomorphism": true,
+          "suit_symmetry_verified_on_both_priors": true,
+          "target_exploitability_pct_pot": 0.5,
+          "threads": 4,
+          "units_per_bb": 1000
+        },
+        "stream_chunks": 49834,
+        "structurally_complete": true,
+        "terminal_edges": 541364,
+        "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS",
+        "windows_validated": false
+      },
+      "schema": "software.hu-batch-case.v1",
+      "source_commit": "f302ad2aefa861dc348c5bcfec93911e4eaa1f96",
+      "tag": "hu-btn-bb-nvt-next16-20261115",
+      "temporary_cleanup_verified": true,
+      "worker_exited": true
+    },
+    {
+      "archive_bytes": 1849735010,
+      "archive_sha256": "ec393cc95177689f4f5c2f95b9c7b983fe1740283b5780b95f1986ca944241bd",
+      "board": [
+        "Jd",
+        "9d",
+        "4c"
+      ],
+      "case_id": "7d3943c2969cd0a0b2ab",
+      "coverage": {
+        "nodes_by_street": {
+          "FLOP": 10,
+          "RIVER": 343392,
+          "TURN": 2254
+        },
+        "public_nodes": 345656,
+        "structurally_complete": true,
+        "terminal_edges": 541364,
+        "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS"
+      },
+      "file_sha256": "5609d679b84ddd1ca7251d692657cf2ee5d95584536810a0cb29b27ec9e42a28",
+      "global_gap_bb": 0.04437085002660751,
+      "independent_river": {
+        "joint_private_deals": 432808,
+        "nash_conv_bb": 0.021167125967644917,
+        "runout": [
+          "Ts",
+          "2h"
+        ],
+        "scope": "CONDITIONAL_RIVER_PRIORS_AND_DECLARED_MENU_NOT_FULL_FLOP_GTO_CERTIFICATION"
+      },
+      "iterations": 101,
+      "lookup_streets": [
+        "flop",
+        "river",
+        "turn"
+      ],
+      "measurements": {
+        "elapsed_seconds": 2429.789266237,
+        "peak_process_tree_rss_bytes": 4078297088,
+        "policy_file_bytes": 2211061760,
+        "source_export_gzip_bytes": 5236653195
+      },
+      "native_target_met": true,
+      "ordinal": 10,
+      "parts": [
+        {
+          "bytes": 1073741824,
+          "name": "case-10-7d3943c2969cd0a0b2ab-ec393cc95177.zip.part001",
+          "sha256": "3b15a539f12a7d7cbf1e0cfc91c3c26ed0915dda9c299b7d56376f06fb28ba41"
+        },
+        {
+          "bytes": 775993186,
+          "name": "case-10-7d3943c2969cd0a0b2ab-ec393cc95177.zip.part002",
+          "sha256": "634ca414cc24f5aa87a95a193f135ff0418060cdacaa0613892fc7d9115f507b"
+        }
+      ],
+      "plan_sha256": "525df4dc2ac803e28f18adcef79ceb943df2264ffbe154397e21cd822fca7903",
+      "policy_file_bytes": 2211061760,
+      "policy_sha256": "76faf8d7001ffa1d0746f2376925ee2d5cde5af26308b7c716075d60a57453d1",
+      "quality": {
+        "action_ev_available": false,
+        "actual_sizes": "native_rounding_to_one_unit_then_legality_checked",
+        "converged": true,
+        "export_depth_in_streets": 3,
+        "exported_depth_is_not_full_tree_coverage": false,
+        "gap_scope": "native_full_tree_declared_menu_and_ranges",
+        "global_gap_bb": 0.04437085002660751,
+        "iterations": 101,
+        "method": "texassolver_discounted_cfr",
+        "native_metric_independently_verified": false,
+        "nodes_by_street": {
+          "FLOP": 10,
+          "RIVER": 343392,
+          "TURN": 2254
+        },
+        "provenance": {
+          "binary_sha256": "b2341618e15cf15ba242e2bf7b4cd2c760fc968ecfed24fd2c0cbd76a01af8ee",
+          "command_sha256": "645377678938374f6fd389ee01af1b531fd95dfce766869cf9cdd53472193c3a",
+          "evaluator_dictionary_sha256": "13e0f4bd3cb99388caec49b36f98b98b70ae30407cbd740d880db65ed4db5e7b",
+          "license": "AGPL-3.0 backend installed separately; not bundled with Software",
+          "repository": "https://github.com/bupticybee/TexasSolver",
+          "reused_export": false,
+          "stream_generated_sha256": {
+            "solver-stream.CommandLineTool.cpp": "ab5b0075bc925033a86b4b3f0934932894245a80e0b72e18bdd1c4b47e627a3c",
+            "solver-stream.PCfrSolver.cpp": "04e09c274aa302ffe765a76c1558c5617fa136add76178e2ac52b7716d357109",
+            "solver-stream.PokerSolver.cpp": "e704576c6982e476c97df32e08de3dba5b425daa96d8b682e86546c50e2b5a31"
+          },
+          "tested_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6"
+        },
+        "public_nodes": 345656,
+        "settings": {
+          "dump_rounds": 3,
+          "export_format": "street_jsonl_gzip",
+          "ip_range_common_scale": 1.0,
+          "iterations": 2001,
+          "memory_budget_mb": 10240,
+          "memory_limit_enforced": true,
+          "native_raise_limit": 2,
+          "oop_range_common_scale": 1.0,
+          "python_menu_raise_limit_not_used": false,
+          "raise_fractions": [
+            1.0
+          ],
+          "root_effective_stack_bb": 22.5,
+          "suit_isomorphism": true,
+          "suit_symmetry_verified_on_both_priors": true,
+          "target_exploitability_pct_pot": 0.5,
+          "threads": 4,
+          "units_per_bb": 1000
+        },
+        "stream_chunks": 49834,
+        "structurally_complete": true,
+        "terminal_edges": 541364,
+        "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS",
+        "windows_validated": false
+      },
+      "schema": "software.hu-batch-case.v1",
+      "source_commit": "f302ad2aefa861dc348c5bcfec93911e4eaa1f96",
+      "tag": "hu-btn-bb-nvt-next16-20261115",
+      "temporary_cleanup_verified": true,
+      "worker_exited": true
+    },
+    {
+      "archive_bytes": 1947414461,
+      "archive_sha256": "3eee4879f4788bf5559a337a21fe4409f3eec5bfe12892e14e730dc0b54442f7",
+      "board": [
+        "5c",
+        "4d",
+        "3s"
+      ],
+      "case_id": "0f7a8e87c68e8615109a",
+      "coverage": {
+        "nodes_by_street": {
+          "FLOP": 10,
+          "RIVER": 343392,
+          "TURN": 2254
+        },
+        "public_nodes": 345656,
+        "structurally_complete": true,
+        "terminal_edges": 541364,
+        "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS"
+      },
+      "file_sha256": "d957426afe8b21bc343bcbc52f7960f44d0ec4f8bd86c4ef944365f0690cdcde",
+      "global_gap_bb": 0.05324532359838486,
+      "independent_river": {
+        "joint_private_deals": 454829,
+        "nash_conv_bb": 0.029070269416501038,
+        "runout": [
+          "Ts",
+          "2h"
+        ],
+        "scope": "CONDITIONAL_RIVER_PRIORS_AND_DECLARED_MENU_NOT_FULL_FLOP_GTO_CERTIFICATION"
+      },
+      "iterations": 111,
+      "lookup_streets": [
+        "flop",
+        "river",
+        "turn"
+      ],
+      "measurements": {
+        "elapsed_seconds": 2767.381586745,
+        "peak_process_tree_rss_bytes": 6687559680,
+        "policy_file_bytes": 2297085952,
+        "source_export_gzip_bytes": 5486243717
+      },
+      "native_target_met": true,
+      "ordinal": 11,
+      "parts": [
+        {
+          "bytes": 1073741824,
+          "name": "case-11-0f7a8e87c68e8615109a-3eee4879f478.zip.part001",
+          "sha256": "6703d692c0c42e4de5f0c06b18e5552dfc3bd3d2de2059809edfe095c85866f6"
+        },
+        {
+          "bytes": 873672637,
+          "name": "case-11-0f7a8e87c68e8615109a-3eee4879f478.zip.part002",
+          "sha256": "45e42bdbe9ef3a7eb85b522866a559878c3c7ae89eb608ce78e3a4d52a138a5f"
+        }
+      ],
+      "plan_sha256": "525df4dc2ac803e28f18adcef79ceb943df2264ffbe154397e21cd822fca7903",
+      "policy_file_bytes": 2297085952,
+      "policy_sha256": "cd76bfefd66e785d12d55fedc1f61647ba1502408cfd98f46d0d28ef601b7ff0",
+      "quality": {
+        "action_ev_available": false,
+        "actual_sizes": "native_rounding_to_one_unit_then_legality_checked",
+        "converged": true,
+        "export_depth_in_streets": 3,
+        "exported_depth_is_not_full_tree_coverage": false,
+        "gap_scope": "native_full_tree_declared_menu_and_ranges",
+        "global_gap_bb": 0.05324532359838486,
+        "iterations": 111,
+        "method": "texassolver_discounted_cfr",
+        "native_metric_independently_verified": false,
+        "nodes_by_street": {
+          "FLOP": 10,
+          "RIVER": 343392,
+          "TURN": 2254
+        },
+        "provenance": {
+          "binary_sha256": "b2341618e15cf15ba242e2bf7b4cd2c760fc968ecfed24fd2c0cbd76a01af8ee",
+          "command_sha256": "146509ba40fc3d7df8527c99dcf144ba9522a3720ec70f277a5551182483ae9a",
+          "evaluator_dictionary_sha256": "13e0f4bd3cb99388caec49b36f98b98b70ae30407cbd740d880db65ed4db5e7b",
+          "license": "AGPL-3.0 backend installed separately; not bundled with Software",
+          "repository": "https://github.com/bupticybee/TexasSolver",
+          "reused_export": false,
+          "stream_generated_sha256": {
+            "solver-stream.CommandLineTool.cpp": "ab5b0075bc925033a86b4b3f0934932894245a80e0b72e18bdd1c4b47e627a3c",
+            "solver-stream.PCfrSolver.cpp": "04e09c274aa302ffe765a76c1558c5617fa136add76178e2ac52b7716d357109",
+            "solver-stream.PokerSolver.cpp": "e704576c6982e476c97df32e08de3dba5b425daa96d8b682e86546c50e2b5a31"
+          },
+          "tested_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6"
+        },
+        "public_nodes": 345656,
+        "settings": {
+          "dump_rounds": 3,
+          "export_format": "street_jsonl_gzip",
+          "ip_range_common_scale": 1.0,
+          "iterations": 2001,
+          "memory_budget_mb": 10240,
+          "memory_limit_enforced": true,
+          "native_raise_limit": 2,
+          "oop_range_common_scale": 1.0,
+          "python_menu_raise_limit_not_used": false,
+          "raise_fractions": [
+            1.0
+          ],
+          "root_effective_stack_bb": 22.5,
+          "suit_isomorphism": true,
+          "suit_symmetry_verified_on_both_priors": true,
+          "target_exploitability_pct_pot": 0.5,
+          "threads": 4,
+          "units_per_bb": 1000
+        },
+        "stream_chunks": 49834,
+        "structurally_complete": true,
+        "terminal_edges": 541364,
+        "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS",
+        "windows_validated": false
+      },
+      "schema": "software.hu-batch-case.v1",
+      "source_commit": "f302ad2aefa861dc348c5bcfec93911e4eaa1f96",
+      "tag": "hu-btn-bb-nvt-next16-20261115",
+      "temporary_cleanup_verified": true,
+      "worker_exited": true
+    },
+    {
+      "archive_bytes": 1667724976,
+      "archive_sha256": "7050ac86ecf0bcef17b9005124f4bd62ef2ee4f9fb57b513bc5c812e4cbb19e3",
+      "board": [
+        "3c",
+        "4c",
+        "8c"
+      ],
+      "case_id": "a192535b8ba008713f47",
+      "coverage": {
+        "nodes_by_street": {
+          "FLOP": 10,
+          "RIVER": 343392,
+          "TURN": 2254
+        },
+        "public_nodes": 345656,
+        "structurally_complete": true,
+        "terminal_edges": 541364,
+        "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS"
+      },
+      "file_sha256": "0e5c0ec5cbc43502bce523977dff1bd3dd06eca4b7aec51ce9e8da95118da415",
+      "global_gap_bb": 0.04637646704912186,
+      "independent_river": {
+        "joint_private_deals": 451348,
+        "nash_conv_bb": 0.011618768315737604,
+        "runout": [
+          "Ts",
+          "2h"
+        ],
+        "scope": "CONDITIONAL_RIVER_PRIORS_AND_DECLARED_MENU_NOT_FULL_FLOP_GTO_CERTIFICATION"
+      },
+      "iterations": 131,
+      "lookup_streets": [
+        "flop",
+        "river",
+        "turn"
+      ],
+      "measurements": {
+        "elapsed_seconds": 1600.363789188,
+        "peak_process_tree_rss_bytes": 2063261696,
+        "policy_file_bytes": 2085261312,
+        "source_export_gzip_bytes": 4971768534
+      },
+      "native_target_met": true,
+      "ordinal": 12,
+      "parts": [
+        {
+          "bytes": 1073741824,
+          "name": "case-12-a192535b8ba008713f47-7050ac86ecf0.zip.part001",
+          "sha256": "e30f12ab9fc63a5ec600de0a9dd83826f167366169e30bed6832f8a11e14f46b"
+        },
+        {
+          "bytes": 593983152,
+          "name": "case-12-a192535b8ba008713f47-7050ac86ecf0.zip.part002",
+          "sha256": "f10a0eac54eaa5e9757c57330aee27dad777b37b81486fd15a440311ceba4a9e"
+        }
+      ],
+      "plan_sha256": "525df4dc2ac803e28f18adcef79ceb943df2264ffbe154397e21cd822fca7903",
+      "policy_file_bytes": 2085261312,
+      "policy_sha256": "bee77e3c2b66d332ec9e049e78b8ce74abdb8beb88ae77fd20e355837e9be5da",
+      "quality": {
+        "action_ev_available": false,
+        "actual_sizes": "native_rounding_to_one_unit_then_legality_checked",
+        "converged": true,
+        "export_depth_in_streets": 3,
+        "exported_depth_is_not_full_tree_coverage": false,
+        "gap_scope": "native_full_tree_declared_menu_and_ranges",
+        "global_gap_bb": 0.04637646704912186,
+        "iterations": 131,
+        "method": "texassolver_discounted_cfr",
+        "native_metric_independently_verified": false,
+        "nodes_by_street": {
+          "FLOP": 10,
+          "RIVER": 343392,
+          "TURN": 2254
+        },
+        "provenance": {
+          "binary_sha256": "b2341618e15cf15ba242e2bf7b4cd2c760fc968ecfed24fd2c0cbd76a01af8ee",
+          "command_sha256": "d673e9905b4ec55c152ff26a7ed37dc5894d9cfc4f1b8331d24087adb56b98d0",
+          "evaluator_dictionary_sha256": "13e0f4bd3cb99388caec49b36f98b98b70ae30407cbd740d880db65ed4db5e7b",
+          "license": "AGPL-3.0 backend installed separately; not bundled with Software",
+          "repository": "https://github.com/bupticybee/TexasSolver",
+          "reused_export": false,
+          "stream_generated_sha256": {
+            "solver-stream.CommandLineTool.cpp": "ab5b0075bc925033a86b4b3f0934932894245a80e0b72e18bdd1c4b47e627a3c",
+            "solver-stream.PCfrSolver.cpp": "04e09c274aa302ffe765a76c1558c5617fa136add76178e2ac52b7716d357109",
+            "solver-stream.PokerSolver.cpp": "e704576c6982e476c97df32e08de3dba5b425daa96d8b682e86546c50e2b5a31"
+          },
+          "tested_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6"
+        },
+        "public_nodes": 345656,
+        "settings": {
+          "dump_rounds": 3,
+          "export_format": "street_jsonl_gzip",
+          "ip_range_common_scale": 1.0,
+          "iterations": 2001,
+          "memory_budget_mb": 10240,
+          "memory_limit_enforced": true,
+          "native_raise_limit": 2,
+          "oop_range_common_scale": 1.0,
+          "python_menu_raise_limit_not_used": false,
+          "raise_fractions": [
+            1.0
+          ],
+          "root_effective_stack_bb": 22.5,
+          "suit_isomorphism": true,
+          "suit_symmetry_verified_on_both_priors": true,
+          "target_exploitability_pct_pot": 0.5,
+          "threads": 4,
+          "units_per_bb": 1000
+        },
+        "stream_chunks": 49834,
+        "structurally_complete": true,
+        "terminal_edges": 541364,
+        "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS",
+        "windows_validated": false
+      },
+      "schema": "software.hu-batch-case.v1",
+      "source_commit": "f302ad2aefa861dc348c5bcfec93911e4eaa1f96",
+      "tag": "hu-btn-bb-nvt-next16-20261115",
+      "temporary_cleanup_verified": true,
+      "worker_exited": true
+    },
+    {
+      "archive_bytes": 1584036879,
+      "archive_sha256": "9ae132d7c66b5b027cf7dd4dfcea4f84ce3667312bbca4ef9246da4c14b6c538",
+      "board": [
+        "Jc",
+        "Qc",
+        "Tc"
+      ],
+      "case_id": "d70953e3a2cb539f805c",
+      "coverage": {
+        "nodes_by_street": {
+          "FLOP": 10,
+          "RIVER": 343392,
+          "TURN": 2254
+        },
+        "public_nodes": 345656,
+        "structurally_complete": true,
+        "terminal_edges": 541364,
+        "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS"
+      },
+      "file_sha256": "f6ddf410f0b4baf79b3214a7c80fd84153af0b3335dd42203888ade96de79817",
+      "global_gap_bb": 0.05167102336883545,
+      "independent_river": {
+        "joint_private_deals": 414359,
+        "nash_conv_bb": 0.015314238018599102,
+        "runout": [
+          "Ts",
+          "2h"
+        ],
+        "scope": "CONDITIONAL_RIVER_PRIORS_AND_DECLARED_MENU_NOT_FULL_FLOP_GTO_CERTIFICATION"
+      },
+      "iterations": 121,
+      "lookup_streets": [
+        "flop",
+        "river",
+        "turn"
+      ],
+      "measurements": {
+        "elapsed_seconds": 1548.9439544320003,
+        "peak_process_tree_rss_bytes": 2004877312,
+        "policy_file_bytes": 1997856768,
+        "source_export_gzip_bytes": 4726057815
+      },
+      "native_target_met": true,
+      "ordinal": 13,
+      "parts": [
+        {
+          "bytes": 1073741824,
+          "name": "case-13-d70953e3a2cb539f805c-9ae132d7c66b.zip.part001",
+          "sha256": "c2da646be2727e06b46ee1eece4c9da17f89ad4f4983256d7a26a927ccab18b1"
+        },
+        {
+          "bytes": 510295055,
+          "name": "case-13-d70953e3a2cb539f805c-9ae132d7c66b.zip.part002",
+          "sha256": "c97e6aacb60fabd94b207a065b78d25b53c5f16d551ccf78d5a535da8a35c904"
+        }
+      ],
+      "plan_sha256": "525df4dc2ac803e28f18adcef79ceb943df2264ffbe154397e21cd822fca7903",
+      "policy_file_bytes": 1997856768,
+      "policy_sha256": "662b69bdfe3bae3333cc2c58662896432bd4a59eb89d22e9f57ff4d176afcc3d",
+      "quality": {
+        "action_ev_available": false,
+        "actual_sizes": "native_rounding_to_one_unit_then_legality_checked",
+        "converged": true,
+        "export_depth_in_streets": 3,
+        "exported_depth_is_not_full_tree_coverage": false,
+        "gap_scope": "native_full_tree_declared_menu_and_ranges",
+        "global_gap_bb": 0.05167102336883545,
+        "iterations": 121,
+        "method": "texassolver_discounted_cfr",
+        "native_metric_independently_verified": false,
+        "nodes_by_street": {
+          "FLOP": 10,
+          "RIVER": 343392,
+          "TURN": 2254
+        },
+        "provenance": {
+          "binary_sha256": "b2341618e15cf15ba242e2bf7b4cd2c760fc968ecfed24fd2c0cbd76a01af8ee",
+          "command_sha256": "739fb73ca5d7c1f7f611df94b82f123cc61ac10e87c4dc612b5e9395707d2b4e",
+          "evaluator_dictionary_sha256": "13e0f4bd3cb99388caec49b36f98b98b70ae30407cbd740d880db65ed4db5e7b",
+          "license": "AGPL-3.0 backend installed separately; not bundled with Software",
+          "repository": "https://github.com/bupticybee/TexasSolver",
+          "reused_export": false,
+          "stream_generated_sha256": {
+            "solver-stream.CommandLineTool.cpp": "ab5b0075bc925033a86b4b3f0934932894245a80e0b72e18bdd1c4b47e627a3c",
+            "solver-stream.PCfrSolver.cpp": "04e09c274aa302ffe765a76c1558c5617fa136add76178e2ac52b7716d357109",
+            "solver-stream.PokerSolver.cpp": "e704576c6982e476c97df32e08de3dba5b425daa96d8b682e86546c50e2b5a31"
+          },
+          "tested_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6"
+        },
+        "public_nodes": 345656,
+        "settings": {
+          "dump_rounds": 3,
+          "export_format": "street_jsonl_gzip",
+          "ip_range_common_scale": 1.0,
+          "iterations": 2001,
+          "memory_budget_mb": 10240,
+          "memory_limit_enforced": true,
+          "native_raise_limit": 2,
+          "oop_range_common_scale": 1.0,
+          "python_menu_raise_limit_not_used": false,
+          "raise_fractions": [
+            1.0
+          ],
+          "root_effective_stack_bb": 22.5,
+          "suit_isomorphism": true,
+          "suit_symmetry_verified_on_both_priors": true,
+          "target_exploitability_pct_pot": 0.5,
+          "threads": 4,
+          "units_per_bb": 1000
+        },
+        "stream_chunks": 49834,
+        "structurally_complete": true,
+        "terminal_edges": 541364,
+        "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS",
+        "windows_validated": false
+      },
+      "schema": "software.hu-batch-case.v1",
+      "source_commit": "f302ad2aefa861dc348c5bcfec93911e4eaa1f96",
+      "tag": "hu-btn-bb-nvt-next16-20261115",
+      "temporary_cleanup_verified": true,
+      "worker_exited": true
+    },
+    {
+      "archive_bytes": 1580253174,
+      "archive_sha256": "4b36036dfcce896a4f2ec52c52f3779cc7c508abd1bb6f7ec8cc59f249d63153",
+      "board": [
+        "5c",
+        "9c",
+        "Kc"
+      ],
+      "case_id": "898320894755db496d07",
+      "coverage": {
+        "nodes_by_street": {
+          "FLOP": 10,
+          "RIVER": 343392,
+          "TURN": 2254
+        },
+        "public_nodes": 345656,
+        "structurally_complete": true,
+        "terminal_edges": 541364,
+        "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS"
+      },
+      "file_sha256": "79ef5736b5f97f16624d3faac075b0fd5f37b56dd56f5fd337a7e23170107a75",
+      "global_gap_bb": 0.05403472751379013,
+      "independent_river": {
+        "joint_private_deals": 417858,
+        "nash_conv_bb": 0.024744412366008772,
+        "runout": [
+          "Ts",
+          "2h"
+        ],
+        "scope": "CONDITIONAL_RIVER_PRIORS_AND_DECLARED_MENU_NOT_FULL_FLOP_GTO_CERTIFICATION"
+      },
+      "iterations": 151,
+      "lookup_streets": [
+        "flop",
+        "river",
+        "turn"
+      ],
+      "measurements": {
+        "elapsed_seconds": 1655.0257613889999,
+        "peak_process_tree_rss_bytes": 2010804224,
+        "policy_file_bytes": 2000035840,
+        "source_export_gzip_bytes": 4696085199
+      },
+      "native_target_met": true,
+      "ordinal": 14,
+      "parts": [
+        {
+          "bytes": 1073741824,
+          "name": "case-14-898320894755db496d07-4b36036dfcce.zip.part001",
+          "sha256": "22befe5831190f23d372af01cce144654db8e5693087e2444ca79b1f2eec6462"
+        },
+        {
+          "bytes": 506511350,
+          "name": "case-14-898320894755db496d07-4b36036dfcce.zip.part002",
+          "sha256": "6a8ed9c7b99ac5bcf2e09510a0e89e93573b865b5e9f55c2e901783127bf7d2a"
+        }
+      ],
+      "plan_sha256": "525df4dc2ac803e28f18adcef79ceb943df2264ffbe154397e21cd822fca7903",
+      "policy_file_bytes": 2000035840,
+      "policy_sha256": "bf083ff15c61b751c5fd5a2883005ff409a01777283af4322f4d5fba48e964e4",
+      "quality": {
+        "action_ev_available": false,
+        "actual_sizes": "native_rounding_to_one_unit_then_legality_checked",
+        "converged": true,
+        "export_depth_in_streets": 3,
+        "exported_depth_is_not_full_tree_coverage": false,
+        "gap_scope": "native_full_tree_declared_menu_and_ranges",
+        "global_gap_bb": 0.05403472751379013,
+        "iterations": 151,
+        "method": "texassolver_discounted_cfr",
+        "native_metric_independently_verified": false,
+        "nodes_by_street": {
+          "FLOP": 10,
+          "RIVER": 343392,
+          "TURN": 2254
+        },
+        "provenance": {
+          "binary_sha256": "b2341618e15cf15ba242e2bf7b4cd2c760fc968ecfed24fd2c0cbd76a01af8ee",
+          "command_sha256": "ef590d998a1ff6f7384b7944b58830eae1b3e40efbccad093aba882a030a8e89",
+          "evaluator_dictionary_sha256": "13e0f4bd3cb99388caec49b36f98b98b70ae30407cbd740d880db65ed4db5e7b",
+          "license": "AGPL-3.0 backend installed separately; not bundled with Software",
+          "repository": "https://github.com/bupticybee/TexasSolver",
+          "reused_export": false,
+          "stream_generated_sha256": {
+            "solver-stream.CommandLineTool.cpp": "ab5b0075bc925033a86b4b3f0934932894245a80e0b72e18bdd1c4b47e627a3c",
+            "solver-stream.PCfrSolver.cpp": "04e09c274aa302ffe765a76c1558c5617fa136add76178e2ac52b7716d357109",
+            "solver-stream.PokerSolver.cpp": "e704576c6982e476c97df32e08de3dba5b425daa96d8b682e86546c50e2b5a31"
+          },
+          "tested_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6"
+        },
+        "public_nodes": 345656,
+        "settings": {
+          "dump_rounds": 3,
+          "export_format": "street_jsonl_gzip",
+          "ip_range_common_scale": 1.0,
+          "iterations": 2001,
+          "memory_budget_mb": 10240,
+          "memory_limit_enforced": true,
+          "native_raise_limit": 2,
+          "oop_range_common_scale": 1.0,
+          "python_menu_raise_limit_not_used": false,
+          "raise_fractions": [
+            1.0
+          ],
+          "root_effective_stack_bb": 22.5,
+          "suit_isomorphism": true,
+          "suit_symmetry_verified_on_both_priors": true,
+          "target_exploitability_pct_pot": 0.5,
+          "threads": 4,
+          "units_per_bb": 1000
+        },
+        "stream_chunks": 49834,
+        "structurally_complete": true,
+        "terminal_edges": 541364,
+        "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS",
+        "windows_validated": false
+      },
+      "schema": "software.hu-batch-case.v1",
+      "source_commit": "f302ad2aefa861dc348c5bcfec93911e4eaa1f96",
+      "tag": "hu-btn-bb-nvt-next16-20261115",
+      "temporary_cleanup_verified": true,
+      "worker_exited": true
+    },
+    {
+      "archive_bytes": 1542724921,
+      "archive_sha256": "63e48dc92a3067372945598f7149b8ba51371131a4a0e6766aea812905da8875",
+      "board": [
+        "Jc",
+        "Kc",
+        "Qc"
+      ],
+      "case_id": "dbc92c50a55c062632c0",
+      "coverage": {
+        "nodes_by_street": {
+          "FLOP": 10,
+          "RIVER": 343392,
+          "TURN": 2254
+        },
+        "public_nodes": 345656,
+        "structurally_complete": true,
+        "terminal_edges": 541364,
+        "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS"
+      },
+      "file_sha256": "9d4465afe9cde25990773d8d6597d84181b5459f800506b8abeeba2ebbeb59ef",
+      "global_gap_bb": 0.04769714176654816,
+      "independent_river": {
+        "joint_private_deals": 405341,
+        "nash_conv_bb": 0.0070063103865811716,
+        "runout": [
+          "Ts",
+          "2h"
+        ],
+        "scope": "CONDITIONAL_RIVER_PRIORS_AND_DECLARED_MENU_NOT_FULL_FLOP_GTO_CERTIFICATION"
+      },
+      "iterations": 151,
+      "lookup_streets": [
+        "flop",
+        "river",
+        "turn"
+      ],
+      "measurements": {
+        "elapsed_seconds": 1288.4031078110002,
+        "peak_process_tree_rss_bytes": 1987895296,
+        "policy_file_bytes": 1959817216,
+        "source_export_gzip_bytes": 4589705013
+      },
+      "native_target_met": true,
+      "ordinal": 15,
+      "parts": [
+        {
+          "bytes": 1073741824,
+          "name": "case-15-dbc92c50a55c062632c0-63e48dc92a30.zip.part001",
+          "sha256": "4a55cd88ced90133bc70e53b6622e76768e6df33f9db5cacb9b89c956994d01b"
+        },
+        {
+          "bytes": 468983097,
+          "name": "case-15-dbc92c50a55c062632c0-63e48dc92a30.zip.part002",
+          "sha256": "38305e2218315624e9114dc67e3d1ba27540f97ba9724c9e105cd6a1e6d79498"
+        }
+      ],
+      "plan_sha256": "525df4dc2ac803e28f18adcef79ceb943df2264ffbe154397e21cd822fca7903",
+      "policy_file_bytes": 1959817216,
+      "policy_sha256": "62f427fca1620b43fe3bfd14371bb630cb8084647616ae93209f80a026321fba",
+      "quality": {
+        "action_ev_available": false,
+        "actual_sizes": "native_rounding_to_one_unit_then_legality_checked",
+        "converged": true,
+        "export_depth_in_streets": 3,
+        "exported_depth_is_not_full_tree_coverage": false,
+        "gap_scope": "native_full_tree_declared_menu_and_ranges",
+        "global_gap_bb": 0.04769714176654816,
+        "iterations": 151,
+        "method": "texassolver_discounted_cfr",
+        "native_metric_independently_verified": false,
+        "nodes_by_street": {
+          "FLOP": 10,
+          "RIVER": 343392,
+          "TURN": 2254
+        },
+        "provenance": {
+          "binary_sha256": "b2341618e15cf15ba242e2bf7b4cd2c760fc968ecfed24fd2c0cbd76a01af8ee",
+          "command_sha256": "f57489ea14b1e0e6893fb9da606116dda33d64674a7cfa604651fe67ee5c738b",
+          "evaluator_dictionary_sha256": "13e0f4bd3cb99388caec49b36f98b98b70ae30407cbd740d880db65ed4db5e7b",
+          "license": "AGPL-3.0 backend installed separately; not bundled with Software",
+          "repository": "https://github.com/bupticybee/TexasSolver",
+          "reused_export": false,
+          "stream_generated_sha256": {
+            "solver-stream.CommandLineTool.cpp": "ab5b0075bc925033a86b4b3f0934932894245a80e0b72e18bdd1c4b47e627a3c",
+            "solver-stream.PCfrSolver.cpp": "04e09c274aa302ffe765a76c1558c5617fa136add76178e2ac52b7716d357109",
+            "solver-stream.PokerSolver.cpp": "e704576c6982e476c97df32e08de3dba5b425daa96d8b682e86546c50e2b5a31"
+          },
+          "tested_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6"
+        },
+        "public_nodes": 345656,
+        "settings": {
+          "dump_rounds": 3,
+          "export_format": "street_jsonl_gzip",
+          "ip_range_common_scale": 1.0,
+          "iterations": 2001,
+          "memory_budget_mb": 10240,
+          "memory_limit_enforced": true,
+          "native_raise_limit": 2,
+          "oop_range_common_scale": 1.0,
+          "python_menu_raise_limit_not_used": false,
+          "raise_fractions": [
+            1.0
+          ],
+          "root_effective_stack_bb": 22.5,
+          "suit_isomorphism": true,
+          "suit_symmetry_verified_on_both_priors": true,
+          "target_exploitability_pct_pot": 0.5,
+          "threads": 4,
+          "units_per_bb": 1000
+        },
+        "stream_chunks": 49834,
+        "structurally_complete": true,
+        "terminal_edges": 541364,
+        "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS",
+        "windows_validated": false
+      },
+      "schema": "software.hu-batch-case.v1",
+      "source_commit": "a849eaa6d6542121abe5a1aab0b1d26819804d82",
+      "tag": "hu-btn-bb-nvt-next16-20261115",
+      "temporary_cleanup_verified": true,
+      "worker_exited": true
+    },
+    {
+      "archive_bytes": 1796537995,
+      "archive_sha256": "3449fc523b79ff001ade41fc1ecec4dc962c578d5145b2aeef54471da1bf7a23",
+      "board": [
+        "6c",
+        "Jd",
+        "Td"
+      ],
+      "case_id": "11c4b8829c6d333cabc5",
+      "coverage": {
+        "nodes_by_street": {
+          "FLOP": 10,
+          "RIVER": 343392,
+          "TURN": 2254
+        },
+        "public_nodes": 345656,
+        "structurally_complete": true,
+        "terminal_edges": 541364,
+        "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS"
+      },
+      "file_sha256": "b83eb7ad594feee5b9df76eb9763801dc53475688661e8836d9f89cddc7b7b64",
+      "global_gap_bb": 0.05298254519701004,
+      "independent_river": {
+        "joint_private_deals": 422807,
+        "nash_conv_bb": 0.004706575201771868,
+        "runout": [
+          "Ts",
+          "2h"
+        ],
+        "scope": "CONDITIONAL_RIVER_PRIORS_AND_DECLARED_MENU_NOT_FULL_FLOP_GTO_CERTIFICATION"
+      },
+      "iterations": 91,
+      "lookup_streets": [
+        "flop",
+        "river",
+        "turn"
+      ],
+      "measurements": {
+        "elapsed_seconds": 1697.4954909580001,
+        "peak_process_tree_rss_bytes": 4036870144,
+        "policy_file_bytes": 2192785408,
+        "source_export_gzip_bytes": 5175487161
+      },
+      "native_target_met": true,
+      "ordinal": 16,
+      "parts": [
+        {
+          "bytes": 1073741824,
+          "name": "case-16-11c4b8829c6d333cabc5-3449fc523b79.zip.part001",
+          "sha256": "db38b10d7b86083e7a0e1d3b16f39f92353330fd7e39c535e7a6f4604b744f36"
+        },
+        {
+          "bytes": 722796171,
+          "name": "case-16-11c4b8829c6d333cabc5-3449fc523b79.zip.part002",
+          "sha256": "e104f899b6b5325def8d3cfa14dcb81b5eb7cd084bc1024288af09da400d3e02"
+        }
+      ],
+      "plan_sha256": "525df4dc2ac803e28f18adcef79ceb943df2264ffbe154397e21cd822fca7903",
+      "policy_file_bytes": 2192785408,
+      "policy_sha256": "0009a1e51c5c6aad776da38fc4edd12eefa3af75e89ebac3c9ef89cf8ffe9486",
+      "quality": {
+        "action_ev_available": false,
+        "actual_sizes": "native_rounding_to_one_unit_then_legality_checked",
+        "converged": true,
+        "export_depth_in_streets": 3,
+        "exported_depth_is_not_full_tree_coverage": false,
+        "gap_scope": "native_full_tree_declared_menu_and_ranges",
+        "global_gap_bb": 0.05298254519701004,
+        "iterations": 91,
+        "method": "texassolver_discounted_cfr",
+        "native_metric_independently_verified": false,
+        "nodes_by_street": {
+          "FLOP": 10,
+          "RIVER": 343392,
+          "TURN": 2254
+        },
+        "provenance": {
+          "binary_sha256": "b2341618e15cf15ba242e2bf7b4cd2c760fc968ecfed24fd2c0cbd76a01af8ee",
+          "command_sha256": "bd25089fb95680dca7570d7de31a36aa3732e59d5576780f8d68cc9db8a0e989",
+          "evaluator_dictionary_sha256": "13e0f4bd3cb99388caec49b36f98b98b70ae30407cbd740d880db65ed4db5e7b",
+          "license": "AGPL-3.0 backend installed separately; not bundled with Software",
+          "repository": "https://github.com/bupticybee/TexasSolver",
+          "reused_export": false,
+          "stream_generated_sha256": {
+            "solver-stream.CommandLineTool.cpp": "ab5b0075bc925033a86b4b3f0934932894245a80e0b72e18bdd1c4b47e627a3c",
+            "solver-stream.PCfrSolver.cpp": "04e09c274aa302ffe765a76c1558c5617fa136add76178e2ac52b7716d357109",
+            "solver-stream.PokerSolver.cpp": "e704576c6982e476c97df32e08de3dba5b425daa96d8b682e86546c50e2b5a31"
+          },
+          "tested_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6"
+        },
+        "public_nodes": 345656,
+        "settings": {
+          "dump_rounds": 3,
+          "export_format": "street_jsonl_gzip",
+          "ip_range_common_scale": 1.0,
+          "iterations": 2001,
+          "memory_budget_mb": 10240,
+          "memory_limit_enforced": true,
+          "native_raise_limit": 2,
+          "oop_range_common_scale": 1.0,
+          "python_menu_raise_limit_not_used": false,
+          "raise_fractions": [
+            1.0
+          ],
+          "root_effective_stack_bb": 22.5,
+          "suit_isomorphism": true,
+          "suit_symmetry_verified_on_both_priors": true,
+          "target_exploitability_pct_pot": 0.5,
+          "threads": 4,
+          "units_per_bb": 1000
+        },
+        "stream_chunks": 49834,
+        "structurally_complete": true,
+        "terminal_edges": 541364,
+        "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS",
+        "windows_validated": false
+      },
+      "schema": "software.hu-batch-case.v1",
+      "source_commit": "f302ad2aefa861dc348c5bcfec93911e4eaa1f96",
+      "tag": "hu-btn-bb-nvt-next16-20261115",
+      "temporary_cleanup_verified": true,
+      "worker_exited": true
+    }
+  ],
+  "context": {
+    "arrival_id": "public-NVT-356340d-25bb-illustrative-2.5-open-no-ante",
+    "dealt_players": 9,
+    "mode": "chip_ev",
+    "positions": [
+      "BTN",
+      "BB"
+    ],
+    "pot_type": "single_raised",
+    "stage": "mid",
+    "tournament_format": "regular"
+  },
+  "native_target_met_flops": 16,
+  "pilot_tag": "hu-btn-bb-nvt-reference-20261115",
+  "plan_sha256": "525df4dc2ac803e28f18adcef79ceb943df2264ffbe154397e21cd822fca7903",
+  "planned_new_flops": 16,
+  "pppoker_windows_validated": false,
+  "preserved_holdout_flops": [
+    [
+      "Ac",
+      "9h",
+      "4d"
+    ],
+    [
+      "Kh",
+      "Jh",
+      "6c"
+    ],
+    [
+      "Td",
+      "8d",
+      "5s"
+    ],
+    [
+      "6h",
+      "6s",
+      "3c"
+    ]
+  ],
+  "published_new_flops": 16,
+  "root_template": {
+    "acted": [
+      false,
+      false
+    ],
+    "actor": 1,
+    "board": [
+      "As",
+      "7d",
+      "2c"
+    ],
+    "committed": [
+      0.0,
+      0.0
+    ],
+    "history": [],
+    "last_full_raise_bb": 1.0,
+    "min_bet_bb": 1.0,
+    "needs_cards": 0,
+    "oop": 1,
+    "pot_bb": 5.5,
+    "raise_rights": [
+      true,
+      true
+    ],
+    "raises": 0,
+    "stacks": [
+      22.5,
+      22.5
+    ],
+    "terminal": "",
+    "winner": -1
+  },
+  "schema": "software.hu-batch-catalog.v1",
+  "source_ranges": "USER_APPROVED_NVT_REFERENCE",
+  "status": "COMPLETE",
+  "tag": "hu-btn-bb-nvt-next16-20261115"
+}

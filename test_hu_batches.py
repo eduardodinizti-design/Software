@@ -15,7 +15,7 @@ from unittest.mock import patch
 
 from strategy.action_tree import Action,apply_action
 from strategy.batch_jobs import (atomic_json,canonical_flop,catalogue_flops,make_plan,checked_plan,
-                                open_queue,queue_lock,cleanup_attempt,publish_index,run_queue,storage_capacity)
+                                open_queue,queue_lock,cleanup_attempt,publish_index,run_queue,storage_capacity,folder_bytes)
 from strategy.policy_disk import PolicyWriter,DiskPolicy,stored_node,decoded_node
 from strategy.policy_store import CompiledPolicy
 from strategy.policy_library import PolicyLibrary,LibraryHistory
@@ -250,6 +250,27 @@ class LibraryTests(unittest.TestCase):
 
 
 class QueueFailureTests(unittest.TestCase):
+    def test_disk_monitor_tolerates_a_sqlite_journal_deleted_before_stat(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);journal=root/'policy.sqlite-journal';journal.write_bytes(b'transient')
+            (root/'policy.sqlite').write_bytes(b'persist')
+            original=Path.stat;reads=[0]
+            def race(path,*args,**kwargs):
+                if path==journal and kwargs.get('follow_symlinks',True):
+                    reads[0]+=1
+                    if reads[0]==2:journal.unlink()
+                return original(path,*args,**kwargs)
+            with patch.object(Path,'stat',race):self.assertEqual(folder_bytes(root),7)
+            self.assertFalse(journal.exists())
+
+    def test_disk_monitor_does_not_hide_permission_errors(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);target=root/'policy.sqlite';target.write_bytes(b'persist');original=Path.stat
+            def denied(path,*args,**kwargs):
+                if path==target:raise PermissionError('control-denied')
+                return original(path,*args,**kwargs)
+            with patch.object(Path,'stat',denied),self.assertRaises(PermissionError):folder_bytes(root)
+
     def make_environment(self,tmp):
         root=Path(tmp);binary=root/'binary';binary.write_bytes(b'control-plane-only')
         resources=root/'resources';(resources/'compairer').mkdir(parents=True)

@@ -1,0 +1,23 @@
+LOTE NVT — 16 NOVOS FLOPS
+Estado: COMPLETE
+Politicas completas publicadas: 16/16
+Alvo nativo atingido: 16/16
+
+01. Kd 8h 3c | iteracoes=131 | gap=0.053292970 BB | alvo=True
+02. Ah Kd 7c | iteracoes=101 | gap=0.044806884 BB | alvo=True
+03. Qs 8d 3c | iteracoes=111 | gap=0.054900879 BB | alvo=True
+04. Js Td 4c | iteracoes=101 | gap=0.042350097 BB | alvo=True
+05. 9s 8s 7d | iteracoes=111 | gap=0.045697206 BB | alvo=True
+06. 8c 6d 3s | iteracoes=121 | gap=0.048941925 BB | alvo=True
+07. 7s 7h 2d | iteracoes=141 | gap=0.051749574 BB | alvo=True
+08. Kc Kd 5s | iteracoes=101 | gap=0.051506714 BB | alvo=True
+09. Qs 7s 2s | iteracoes=131 | gap=0.050687684 BB | alvo=True
+10. Jd 9d 4c | iteracoes=101 | gap=0.044370850 BB | alvo=True
+11. 5c 4d 3s | iteracoes=111 | gap=0.053245324 BB | alvo=True
+12. 3c 4c 8c | iteracoes=131 | gap=0.046376467 BB | alvo=True
+13. Jc Qc Tc | iteracoes=121 | gap=0.051671023 BB | alvo=True
+14. 5c 9c Kc | iteracoes=151 | gap=0.054034728 BB | alvo=True
+15. Jc Kc Qc | iteracoes=151 | gap=0.047697142 BB | alvo=True
+16. 6c Jd Td | iteracoes=91 | gap=0.052982545 BB | alvo=True
+
+NVT de referencia; precisao nativa nao e certificacao GTO independente ou PPPoker real.

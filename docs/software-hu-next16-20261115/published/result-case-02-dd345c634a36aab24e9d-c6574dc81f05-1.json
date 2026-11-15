@@ -1,0 +1,231 @@
+{
+  "board": [
+    "Ah",
+    "Kd",
+    "7c"
+  ],
+  "coverage": {
+    "nodes_by_street": {
+      "FLOP": 10,
+      "RIVER": 343392,
+      "TURN": 2254
+    },
+    "public_nodes": 345656,
+    "structurally_complete": true,
+    "terminal_edges": 541364,
+    "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS"
+  },
+  "created_at": "2026-11-15T20:50:21.691332+00:00",
+  "elapsed_seconds": 1836.83272983,
+  "file_sha256": "9e57e2a7e96b7b927fa795d0de6beecb0df3e7f468cbe24f6f3850fc297c4486",
+  "global_gap_bb": 0.0448068842291832,
+  "iterations": 101,
+  "lookup_validation": {
+    "policy_sha256": "a9219f557d44e59b93a7f30c43dae2502ccf89e6118e75e2230cb57295c24bfa",
+    "probes": {
+      "flop": {
+        "action": "bet",
+        "candidates": [
+          {
+            "action": "check",
+            "action_id": "check:0",
+            "additional_bb": 0.0,
+            "ev_bb": null,
+            "frequency": 0.011107655830736179,
+            "raise_to_bb": null,
+            "selection_frequency": 0.011107655830736179
+          },
+          {
+            "action": "bet",
+            "action_id": "bet:1.833",
+            "additional_bb": 1.833,
+            "ev_bb": null,
+            "frequency": 0.9874348335817653,
+            "raise_to_bb": null,
+            "selection_frequency": 0.9874348335817653
+          },
+          {
+            "action": "all_in",
+            "action_id": "all_in:22.5",
+            "additional_bb": 22.5,
+            "ev_bb": null,
+            "frequency": 0.00145751058749851,
+            "raise_to_bb": 22.5,
+            "selection_frequency": 0.00145751058749851
+          }
+        ],
+        "hero_cards": [
+          "2c",
+          "Ac"
+        ],
+        "node_id": "f34c0d1f86a10ffcf4877ae848181a729b30ab52b4e510eec463b035f0921010",
+        "sizing": {
+          "fraction_of_current_pot": 0.3332727272727273,
+          "heuristic": false,
+          "raise_to_bb": 1.833,
+          "semantics": "ADDITIONAL_BB",
+          "size_bb": 1.833
+        }
+      },
+      "river": {
+        "action": "all_in",
+        "candidates": [
+          {
+            "action": "check",
+            "action_id": "check:0",
+            "additional_bb": 0.0,
+            "ev_bb": null,
+            "frequency": 0.0,
+            "raise_to_bb": null,
+            "selection_frequency": 0.0
+          },
+          {
+            "action": "bet",
+            "action_id": "bet:1.833",
+            "additional_bb": 1.833,
+            "ev_bb": null,
+            "frequency": 0.21421601835858903,
+            "raise_to_bb": null,
+            "selection_frequency": 0.21421601835858903
+          },
+          {
+            "action": "all_in",
+            "action_id": "all_in:22.5",
+            "additional_bb": 22.5,
+            "ev_bb": null,
+            "frequency": 0.785783981641411,
+            "raise_to_bb": 22.5,
+            "selection_frequency": 0.785783981641411
+          }
+        ],
+        "hero_cards": [
+          "2h",
+          "Ac"
+        ],
+        "node_id": "c46cb7d99ee0b4f4fa6bf55cc791ab1ba7dedd0c4ff6911378ddc8f53bbfc20a",
+        "sizing": {
+          "fraction_of_current_pot": null,
+          "heuristic": false,
+          "raise_to_bb": 22.5,
+          "semantics": "ADDITIONAL_BB",
+          "size_bb": 22.5
+        }
+      },
+      "turn": {
+        "action": "bet",
+        "candidates": [
+          {
+            "action": "check",
+            "action_id": "check:0",
+            "additional_bb": 0.0,
+            "ev_bb": null,
+            "frequency": 0.013723673141681615,
+            "raise_to_bb": null,
+            "selection_frequency": 0.013723673141681615
+          },
+          {
+            "action": "bet",
+            "action_id": "bet:1.833",
+            "additional_bb": 1.833,
+            "ev_bb": null,
+            "frequency": 0.9860852174584503,
+            "raise_to_bb": null,
+            "selection_frequency": 0.9860852174584503
+          },
+          {
+            "action": "all_in",
+            "action_id": "all_in:22.5",
+            "additional_bb": 22.5,
+            "ev_bb": null,
+            "frequency": 0.0001911093998680395,
+            "raise_to_bb": 22.5,
+            "selection_frequency": 0.0001911093998680395
+          }
+        ],
+        "hero_cards": [
+          "2d",
+          "Ac"
+        ],
+        "node_id": "fe0c18b90b16be42b1f8ee7f24b57b6f07b7e5e71dbfcd8dfef0e2459ecd9b9d",
+        "sizing": {
+          "fraction_of_current_pot": 0.3332727272727273,
+          "heuristic": false,
+          "raise_to_bb": 1.833,
+          "semantics": "ADDITIONAL_BB",
+          "size_bb": 1.833
+        }
+      }
+    },
+    "scope": "structural/lookup validation, not proof of GTO convergence or Windows input"
+  },
+  "native_target_met": true,
+  "peak_process_tree_rss_bytes": 6418083840,
+  "policy_file_bytes": 2275807232,
+  "policy_sha256": "a9219f557d44e59b93a7f30c43dae2502ccf89e6118e75e2230cb57295c24bfa",
+  "pppoker_windows_validated": false,
+  "prior_ranges_confirmed_as": "User approved available NVT ranges as reference; no direct HRC export certification",
+  "quality": {
+    "action_ev_available": false,
+    "actual_sizes": "native_rounding_to_one_unit_then_legality_checked",
+    "converged": true,
+    "export_depth_in_streets": 3,
+    "exported_depth_is_not_full_tree_coverage": false,
+    "gap_scope": "native_full_tree_declared_menu_and_ranges",
+    "global_gap_bb": 0.0448068842291832,
+    "iterations": 101,
+    "method": "texassolver_discounted_cfr",
+    "native_metric_independently_verified": false,
+    "nodes_by_street": {
+      "FLOP": 10,
+      "RIVER": 343392,
+      "TURN": 2254
+    },
+    "provenance": {
+      "binary_sha256": "b2341618e15cf15ba242e2bf7b4cd2c760fc968ecfed24fd2c0cbd76a01af8ee",
+      "command_sha256": "214eb6af8d37707b3f6b80fafa9b2f9da803fbf10ba2bd8328ee2bda10719ad1",
+      "evaluator_dictionary_sha256": "13e0f4bd3cb99388caec49b36f98b98b70ae30407cbd740d880db65ed4db5e7b",
+      "license": "AGPL-3.0 backend installed separately; not bundled with Software",
+      "repository": "https://github.com/bupticybee/TexasSolver",
+      "reused_export": false,
+      "stream_generated_sha256": {
+        "solver-stream.CommandLineTool.cpp": "ab5b0075bc925033a86b4b3f0934932894245a80e0b72e18bdd1c4b47e627a3c",
+        "solver-stream.PCfrSolver.cpp": "04e09c274aa302ffe765a76c1558c5617fa136add76178e2ac52b7716d357109",
+        "solver-stream.PokerSolver.cpp": "e704576c6982e476c97df32e08de3dba5b425daa96d8b682e86546c50e2b5a31"
+      },
+      "tested_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6"
+    },
+    "public_nodes": 345656,
+    "settings": {
+      "dump_rounds": 3,
+      "export_format": "street_jsonl_gzip",
+      "ip_range_common_scale": 1.0,
+      "iterations": 2001,
+      "memory_budget_mb": 10240,
+      "memory_limit_enforced": true,
+      "native_raise_limit": 2,
+      "oop_range_common_scale": 1.0,
+      "python_menu_raise_limit_not_used": false,
+      "raise_fractions": [
+        1.0
+      ],
+      "root_effective_stack_bb": 22.5,
+      "suit_isomorphism": true,
+      "suit_symmetry_verified_on_both_priors": true,
+      "target_exploitability_pct_pot": 0.5,
+      "threads": 4,
+      "units_per_bb": 1000
+    },
+    "stream_chunks": 49834,
+    "structurally_complete": true,
+    "terminal_edges": 541364,
+    "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS",
+    "windows_validated": false
+  },
+  "schema": "software.hu-reference-delivery.v1",
+  "scope": "NVT_REFERENCE_FULL_TREE_NATIVE_REPORTED_PRECISION_NOT_INDEPENDENT_GTO_OR_PPPOKER_VALIDATION",
+  "source_commit": "f302ad2aefa861dc348c5bcfec93911e4eaa1f96",
+  "source_export_gzip_bytes": 5288185967,
+  "source_game_sha256": "9226e67443e8fe5bdb53b8c28feab27651e1266f3984bd7b5c09fbb2254343e2",
+  "temporary_cleanup_verified": true,
+  "worker_exited": true
+}

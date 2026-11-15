@@ -1,0 +1,105 @@
+SOFTWARE ORIGINAL — MAIS 16 FLOPS BTN x BB
+
+Este lote pertence ao repositorio eduardodinizti-design/Software. Nao e o Clone.
+Branch: feat/hu-next16-20261115
+Codigo: https://github.com/eduardodinizti-design/Software/tree/feat/hu-next16-20261115
+Revisao: https://github.com/eduardodinizti-design/Software/pull/13
+Dados: https://github.com/eduardodinizti-design/Software/releases/tag/hu-btn-bb-nvt-next16-20261115
+
+O QUE O BOT RECEBE
+
+Cada flop gera uma politica completa: acoes legais, frequencias por combinacao
+privada, valores de aposta e respostas nos nos de flop, turn e river. A arvore
+inclui as continuacoes publicas fisicamente possiveis do modelo. Nao e apenas
+um resumo de textura ou uma recomendacao unica de c-bet.
+
+O Software consulta o arquivo SQLite correspondente ao flop e ao historico
+confirmado. Isso permite usar o estudo sem recalcular a estrategia durante a
+acao. Nao ocorre treinamento automatico de rede neural. Os arquivos de politica
+sao o conhecimento que precisa permanecer salvo.
+
+MODELO ESTUDADO
+
+BTN open x BB call, chip-EV regular, 25 BB antes do open de 2,5 BB, sem ante,
+pote de 5,5 BB e 22,5 BB restantes para cada jogador no flop. Priors NVT
+disponiveis, autorizados pelo usuario como referencia. Nao sao apresentados
+como um export direto e certificado do HRC Pro.
+
+As politicas ficam vinculadas aos hashes desses ranges de chegada. Trocar
+um JSON pre-flop no notebook nao recalcula os bancos ja estudados: novos
+ranges de chegada exigem novas politicas e uma nova identificacao do modelo.
+
+Menu nativo: bet de 1/3 do pote, raise de 100% do pote e all-in; o export
+registra os valores efetivos e as frequencias, com limite nativo de duas
+agressoes por rua. Isso nao cria estrategias para
+outros sizes, stacks, multiway, ICM ou recompensas PKO. A substituicao de naipes
+so e permitida quando uma bijecao exata preserva os DOIS ranges de chegada.
+
+INSTALAR NO WINDOWS
+
+1. Obtenha o codigo da branch indicada acima e extraia em pasta nova.
+   Preserve a instalacao anterior. Use o Python 3.12 e as dependencias do
+   Software que ja foram instaladas para o bot original.
+
+2. Execute BAIXAR_LOTE_NVT_16.bat. Ele baixa os 16 modelos novos e o piloto
+   A72 anterior para um banco unico de 17 flops. Precisa de internet e de
+   dezenas de GB livres no DISCO. O instalador estima a necessidade real a
+   partir dos tamanhos publicados antes de baixar os bancos.
+
+3. Aguarde a mensagem "Banco pronto". O caminho termina em
+   runtime\hu\nvt-next16-...\bank\library.json.
+   O recibo download-receipt.json deve apresentar status PASS e uma consulta
+   aprovada em flop, turn e river para cada modelo instalado.
+
+4. Informe esse library.json ao Software com o argumento:
+   --postflop-library "CAMINHO_COMPLETO\bank\library.json"
+   Esse argumento seleciona a biblioteca; as demais opcoes de observacao e
+   execucao continuam sendo as do launcher do Software original.
+   O download nao liga o bot nem aciona o mouse.
+
+DOWNLOAD MENOR OU RETOMADA
+
+Para instalar apenas o flop 1, sem baixar o piloto, use no terminal da pasta:
+  .venv\Scripts\python.exe -m strategy.batch_download --new-only --ordinals 1 --output runtime\hu\teste-flop-1
+
+Para escolher varios flops, informe por exemplo --ordinals 1 2 3.
+Para retomar uma transferencia interrompida, repita EXATAMENTE a selecao e a
+pasta e acrescente --resume. A retomada aceita somente uma pasta marcada
+como pertencente a esse download; nao se apropria de arquivos de outra
+instalacao. Os modelos ja completos sao conferidos e reaproveitados.
+
+MEMORIA, TEMPORARIOS E INTEGRIDADE
+
+O calculo usa um processo por maquina e ate oito maquinas isoladas no GitHub.
+O bot consulta os bancos no disco, com cache limitado de nos; nao carrega
+todas as arvores na RAM do notebook de 8 GB.
+
+Cada transferencia verifica SHA-256 de todas as partes do ZIP, do ZIP unido,
+do SQLite e da identidade da politica. Depois confere o contexto, os ranges,
+o menu e uma decisao real do banco em cada uma das tres ruas.
+
+O arquivo de politica e seu indice precisam permanecer salvos. O ZIP de
+transferencia e os temporarios pertencentes ao instalador sao removidos
+somente apos publicacao e verificacao do modelo. Em caso de falha, os
+diagnosticos e arquivos incompletos sao preservados para investigacao.
+O piloto anterior e os trabalhos locais antigos nao sao apagados.
+
+COMO CONFERIR O RESULTADO DO LOTE
+
+plan.json identifica os 16 flops novos. manifest-case-*.json identifica cada
+politica completa e seus hashes. batch-catalog-<execucao>.json e o TXT de
+resultado informam a quantidade realmente concluida e a precisao obtida.
+Somente status COMPLETE e 16/16 no alvo nativo significam lote concluido.
+
+O alvo e exploitability nativa de ate 0,5% do pote, com no maximo 2.001
+iteracoes solicitadas e parada antecipada quando o solver atinge o alvo.
+O indicador global e do proprio solver, nao uma certificacao GTO independente.
+Tambem e calculado um diagnostico independente e exato em UM river condicional
+por flop; isso nao certifica o gap global de toda a arvore do flop.
+
+Os testes de transferencia no Windows verificam os bancos publicados e a
+consulta pelo decisor. Eles nao equivalem a uma sessao real no PPPoker.
+Leitura real, sincronizacao da mao e confirmacao de cliques no cliente do
+usuario continuam exigindo validacao no notebook. O caso historico 8h -> 3h
+permanece pendente de reproducao no mesmo tema; nenhum leitor foi alterado
+neste lote para esconder essa pendencia.

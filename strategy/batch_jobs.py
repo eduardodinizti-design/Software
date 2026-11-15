@@ -136,7 +136,16 @@ def open_queue(folder,plan,binary,resources):
     return folder,db
 
 
-def folder_bytes(folder):return sum(p.stat().st_size for p in Path(folder).rglob('*') if p.is_file() and not p.is_symlink())
+def folder_bytes(folder):
+    total=0
+    for path in Path(folder).rglob('*'):
+        try:
+            if path.is_file() and not path.is_symlink():total+=path.stat().st_size
+        except FileNotFoundError:
+            # SQLite removes its journal between enumeration and stat. A vanished
+            # file occupies no space; this must not kill the calculating child.
+            continue
+    return total
 
 
 def storage_capacity(policy_reference,destination,*,count=100,work_disk_mb=8192,safety_factor=1.25):
