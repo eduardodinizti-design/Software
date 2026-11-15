@@ -97,7 +97,8 @@ def receive_archive(manifest,destination):
     """Stream parts directly into one ZIP; never keep parts plus another copy."""
     check_bundle(manifest);destination=Path(destination)
     if destination.exists():raise StrategyError('BATCH_ARCHIVE_DESTINATION_MUST_BE_NEW')
-    if manifest['tag'] not in (BATCH_TAG,PILOT_TAG):raise StrategyError('UNKNOWN_REFERENCE_RELEASE')
+    if manifest['tag'] not in (BATCH_TAG,PILOT_TAG,'hu-btn-bb-nvt-complete32-20261115','hu-sb-bb40-nvt-pilot-20261115'):
+        raise StrategyError('UNKNOWN_REFERENCE_RELEASE')
     whole=hashlib.sha256();received=0
     with destination.open('xb') as out:
         for part in manifest['parts']:
@@ -149,12 +150,17 @@ def check_bank(bank,manifest,catalog):
 
 
 def download_batch(output,*,ordinals=None,include_pilot=True,catalog_asset=None,resume=False):
+    if Path(output).exists() and not resume:raise StrategyError('BATCH_OUTPUT_MUST_BE_NEW_OR_EXPLICIT_MANAGED_RESUME')
+    catalog,asset=load_catalog(catalog_asset)
+    return install_catalog(output,catalog,asset,ordinals=ordinals,include_pilot=include_pilot,resume=resume)
+
+
+def install_catalog(output,catalog,asset,*,ordinals=None,include_pilot=False,resume=False):
     output=Path(output).resolve()
     if output.exists() and not resume:raise StrategyError('BATCH_OUTPUT_MUST_BE_NEW_OR_EXPLICIT_MANAGED_RESUME')
-    catalog,asset=load_catalog(catalog_asset)
-    numbers=sorted(set(range(1,17) if ordinals is None else ordinals))
-    if not numbers or any(type(n) is not int or n not in range(1,17) for n in numbers):
-        raise StrategyError('BATCH_ORDINALS_MUST_BE_WITHIN_1_TO_16')
+    maximum=len(catalog['cases']);numbers=sorted(set(range(1,maximum+1) if ordinals is None else ordinals))
+    if not numbers or any(type(n) is not int or n not in range(1,maximum+1) for n in numbers):
+        raise StrategyError('BATCH_ORDINALS_MUST_BE_WITHIN_1_TO_'+str(maximum))
     cases=[c for c in catalog['cases'] if c['ordinal'] in numbers]
     if include_pilot:cases=[pilot_manifest()]+cases
     owner=dict(schema='software.hu-batch-download.v1',plan_sha256=catalog['plan_sha256'],
@@ -170,6 +176,8 @@ def download_batch(output,*,ordinals=None,include_pilot=True,catalog_asset=None,
     index=json.loads(index_path.read_text()) if index_path.exists() else dict(
         schema='software.hu-policy-library.v1',entries=[],context=catalog['context'],
         root_template=catalog['root_template'],plan_sha256=catalog['plan_sha256'])
+    settings=catalog.get('profile_settings',{})
+    if settings:index['profile_settings']=settings
     existing={e['case_id']:e for e in index['entries']};pending=[m for m in cases if m['case_id'] not in existing]
     if set(existing)-{m['case_id'] for m in cases}:raise StrategyError('RESUMED_BANK_HAS_UNEXPECTED_POLICIES')
     estimate=sum(m.get('policy_file_bytes') or m['archive_bytes']*2 for m in pending)

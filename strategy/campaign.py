@@ -54,7 +54,11 @@ def close32_plan(game,catalog,pilot_result):
 
 
 def checked_campaign_plan(path):
-    p=json.loads(Path(path).read_text());body=dict(p);claimed=body.pop('plan_sha256',None)
+    return validate_campaign_plan(json.loads(Path(path).read_text()))
+
+
+def validate_campaign_plan(p):
+    body=dict(p);claimed=body.pop('plan_sha256',None)
     if p.get('schema')!='software.hu-campaign-plan.v1' or digest(body)!=claimed:
         raise StrategyError('CAMPAIGN_PLAN_HASH_MISMATCH')
     if not re.fullmatch(r'hu-[a-z0-9-]+',p.get('tag','')):raise StrategyError('SAFE_CAMPAIGN_TAG_REQUIRED')
