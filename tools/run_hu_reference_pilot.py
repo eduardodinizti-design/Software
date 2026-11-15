@@ -118,6 +118,12 @@ def main(argv=None):
     if worker.returncode:
         report_worker_failure(output,bank)
         raise SystemExit('Pilot failed; reports and diagnostics retained at '+str(output))
+    return package_study(output,args.game,args.asset_name,time.monotonic()-started)
+
+
+def package_study(output,game_path,asset_name,elapsed_seconds):
+    output=Path(output);bank=output/'bank';delivery=output/'delivery';delivery.mkdir(exist_ok=True)
+    game=json.loads(Path(game_path).read_text())
     index=json.loads((bank/'library.json').read_text())
     if len(index['entries'])!=1:raise SystemExit('Expected exactly one complete policy')
     entry=index['entries'][0];report=json.loads((bank/'reports'/(entry['case_id']+'.json')).read_text())
@@ -130,12 +136,13 @@ def main(argv=None):
         board=entry['board'],quality=entry['quality'],coverage=report['coverage'],
         lookup_validation=report['lookup_validation'],
         native_target_met=bool(entry['quality'].get('converged')),iterations=entry['quality'].get('iterations'),
-        global_gap_bb=entry['quality'].get('global_gap_bb'),source_game_sha256=file_hash(args.game),
+        global_gap_bb=entry['quality'].get('global_gap_bb'),source_game_sha256=file_hash(game_path),
         prior_ranges_confirmed_as='User approved available NVT ranges as reference; no direct HRC export certification',
-        elapsed_seconds=time.monotonic()-started,temporary_cleanup_verified=True,worker_exited=True,
+        elapsed_seconds=elapsed_seconds,temporary_cleanup_verified=True,worker_exited=True,
         policy_file_bytes=report['policy_file_bytes'],source_export_gzip_bytes=report['source_export_gzip_bytes'],
         peak_process_tree_rss_bytes=report['peak_process_tree_rss_bytes'],
         pppoker_windows_validated=False,source_commit=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip())
+    if report.get('recovery'):summary['recovery']=report['recovery']
     atomic_json(delivery/'result.json',summary)
     readme=('REFERENCIA NVT '+ ' x '.join(game['context']['positions'])+' — banco completo de flop/turn/river.\n'
         'Precisao nativa atingida: '+str(summary['native_target_met'])+'\n'
@@ -144,7 +151,7 @@ def main(argv=None):
         'Extraia em pasta nova. Consulte pelo Software com --postflop-library library.json.\n'
         'Modelo exato: '+json.dumps(dict(context=game['context'],root=game['root'],menu=game['menu']))+'\n')
     (delivery/'LEIA_PRIMEIRO.txt').write_text(readme,encoding='utf-8')
-    archive=delivery/args.asset_name
+    archive=delivery/asset_name
     with zipfile.ZipFile(archive,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=1,allowZip64=True) as z:
         for folder in ('policies','reports'):
             for path in sorted((bank/folder).rglob('*')):

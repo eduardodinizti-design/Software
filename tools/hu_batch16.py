@@ -85,12 +85,21 @@ def run_case(args,plan):
         if plan.get('profile_settings'):
             atomic_json(root/'profile-settings.json',plan['profile_settings'])
             extra=['--profile-settings',str(root/'profile-settings.json')]
-        pilot(['--game',str(root/'game.json'),'--output',str(root/'study'),'--binary',args.binary,
+        if getattr(args,'ready_study',None):
+            study=Path(args.ready_study).resolve();marker=json.loads((study/'recovered-study.json').read_text())
+            if marker.get('campaign_plan_sha256')!=plan['plan_sha256']:raise SystemExit('Recovered study belongs to a different campaign')
+        else:
+            pilot(['--game',str(root/'game.json'),'--output',str(root/'study'),'--binary',args.binary,
             '--resources',args.resources,'--iterations',str(s['iterations']),'--threads',str(s['threads']),
             '--accuracy-pct',str(s['accuracy_pct']),'--memory-mb',str(s['memory_mb']),
             '--work-disk-mb',str(s['work_disk_mb']),'--timeout-seconds',str(s['timeout_seconds']),'--asset-name',asset]+extra)
-        bank=root/'study/bank';delivery=root/'study/delivery'
+            study=root/'study'
+        bank=study/'bank';delivery=study/'delivery'
         result=json.loads((delivery/'result.json').read_text());archive=delivery/asset
+        if getattr(args,'ready_study',None):
+            from strategy.batch_download import check_bank
+            manifest=dict(board=case['board'],file_sha256=result['file_sha256'],policy_sha256=result['policy_sha256'],policy_file_bytes=result['policy_file_bytes'])
+            check_bank(bank,manifest,dict(context=game['context'],root_template=game['root'],_original_plan=plan))
         status(case,'pending','Complete tree verified; reviewing conditional river')
         lib=PolicyLibrary(bank/'library.json');policy=lib.open(case['board'])
         try:
@@ -118,6 +127,7 @@ def run_case(args,plan):
                 joint_private_deals=river['joint_private_deals'],runout=runout,scope=river['scope']),
             source_commit=os.environ['GITHUB_SHA'],worker_exited=result['worker_exited'],
             temporary_cleanup_verified=result['temporary_cleanup_verified'],**bundle)
+        if result.get('recovery'):manifest['recovery']=result['recovery']
         for _ in range(6):
             try:verify_remote_parts(manifest,release()['assets']);break
             except ValueError:time.sleep(5)
@@ -163,6 +173,7 @@ def main(argv=None):
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('cmd',choices=('init','case','catalog'))
     p.add_argument('--plan',required=True);p.add_argument('--ordinal',type=int);p.add_argument('--binary')
     p.add_argument('--resources');p.add_argument('--output',default='runtime/hu-next16')
+    p.add_argument('--ready-study',help='Previously recovered, complete checked study; no native solve is started')
     args=p.parse_args(argv)
     raw=json.loads(Path(args.plan).read_text())
     if raw.get('schema')=='software.hu-campaign-plan.v1':
@@ -173,7 +184,8 @@ def main(argv=None):
     BATCH_TAG=plan['tag']
     if args.cmd=='init':initialize(plan,Path(args.plan));return 0
     if args.cmd=='catalog':return catalog(plan,args.output)
-    if args.ordinal not in range(1,len(plan['cases'])+1) or not args.binary or not args.resources:p.error('Case requires a planned ordinal, binary and resources')
+    if args.ordinal not in range(1,len(plan['cases'])+1) or (not args.ready_study and (not args.binary or not args.resources)):
+        p.error('Case requires a planned ordinal and a native solver or recovered complete study')
     return run_case(args,plan)
 
 

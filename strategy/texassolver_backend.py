@@ -119,11 +119,20 @@ def native_action(text, state, scale):
         action = Action('call', state.call_cost_bb)
     elif kind in ('bet', 'raise') and len(words) == 2:
         amount = float(words[1]) / scale
+        # The native solver uses the EFFECTIVE stack. A covering player's
+        # native all-in can leave an inert excess in our physical stack. It
+        # must become a full-stack shove: a short non-all-in raise is illegal.
+        # _end_round returns the unmatched excess when the opponent calls.
+        opponent=1-state.actor
+        cap=state.stacks[opponent]+state.committed[opponent]-state.committed[state.actor]
+        if cap<state.stacks[state.actor]-1e-7 and abs(amount-cap)<1e-7:
+            amount=state.stacks[state.actor]
         action = Action('all_in' if abs(amount - state.stacks[state.actor]) < 1e-7 else kind, amount)
     else:
         raise StrategyError('UNKNOWN_NATIVE_ACTION:' + text)
     if not is_legal(state, action):
-        raise StrategyError('NATIVE_ACTION_ILLEGAL_IN_DECLARED_POKER_STATE:' + text)
+        raise StrategyError('NATIVE_ACTION_ILLEGAL_IN_DECLARED_POKER_STATE:' + text+
+            ';STATE='+json.dumps(state.to_dict(),sort_keys=True))
     return action
 
 

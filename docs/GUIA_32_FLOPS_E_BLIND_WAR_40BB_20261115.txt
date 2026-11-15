@@ -44,6 +44,11 @@ permanecer salvos. O ambiente antigo e arquivos locais nao sao apagados.
 INSTALAR EM PASTA NOVA NO WINDOWS
 
 1. Obtenha o codigo da branch acima ou o ZIP de codigo da Release final.
+   Na Release, escolha o arquivo Software-btn32-...zip ou Software-sb40-...zip
+   identificado no manifesto de download. Cada um contem o codigo e os dois
+   instaladores BAT. O "Source code" automatico do GitHub corresponde ao
+   commit inicial do produtor dos dados; o pacote identificado no relatorio
+   contem a integracao final verificada.
    Extraia em pasta nova, preservando a instalacao antiga. Este e o Software
    original; nao use um launcher do Clone.
 2. Use Python 3.12 x64 e as dependencias do Software. Se ainda nao estiverem
@@ -68,6 +73,10 @@ ou, para testar exclusivamente a blind war:
   --postflop-library "CAMINHO_COMPLETO\runtime\hu\sb40\bank\library.json"
 
 As demais opcoes de observacao/execucao sao as do Software original.
+Inicie a observacao antes de uma nova mao: o perfil precisa observar blinds,
+open e chegada ao flop para confirmar o historico. Acompanhe o campo
+confirmed_history e a identidade da politica nos logs. O teste sintetico
+publicado nao substitui essa confirmacao na tela real do notebook.
 Esta entrega nao instala um seletor automatico entre familias. BTN 25 BB e
 SB 40 BB sao bibliotecas separadas; o mesmo flop nao autoriza trocar uma
 pela outra. O perfil do banco SB40 carrega o ante explicitamente.

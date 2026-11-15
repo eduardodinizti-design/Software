@@ -14,7 +14,7 @@ from strategy.policy_store import CompiledPolicy
 from strategy.range_catalog import ComboRange,combo_key
 from strategy.reference_validation import verify_reference_hand
 from strategy.state_contract import BettingState,GameContext,StrategyError
-from strategy.texassolver_backend import solve
+from strategy.texassolver_backend import solve,native_action
 from test_hu_operational import make_test_policy,FLOP
 
 HERE=Path(__file__).parent
@@ -68,6 +68,27 @@ class BlindWarTests(unittest.TestCase):
             self.assertEqual(result['preflop_witness']['recipe']['forced_pot_bb'],2.5)
             self.assertEqual(result['preflop_witness']['recipe']['open_to_bb'],2.)
             self.assertFalse(result['pppoker_windows_validated'])
+
+    def test_native_effective_short_shove_becomes_a_legal_covering_all_in(self):
+        from strategy.action_tree import Action,apply_action,is_legal
+        state=BettingState(FLOP+('Ts','2h'),15.,(19.665,8.665),committed=(0.,10.),actor=0,oop=0,
+            last_full_raise_bb=10.,raises=1,acted=(False,True),raise_rights=(True,False))
+        self.assertFalse(is_legal(state,Action('raise',18.665)))
+        action=native_action('RAISE 18665.000000',state,1000)
+        self.assertEqual(action,Action('all_in',19.665));self.assertTrue(is_legal(state,action))
+        called=apply_action(state,action);called=apply_action(called,Action('call',called.call_cost_bb))
+        self.assertEqual(called.terminal,'showdown');self.assertAlmostEqual(called.stacks[0],1.)
+        self.assertAlmostEqual(called.pot_bb+sum(called.stacks),state.pot_bb+sum(state.stacks))
+        with self.assertRaisesRegex(StrategyError,'NATIVE_ACTION_ILLEGAL'):
+            native_action('RAISE 18664.000000',state,1000)
+
+    def test_ordinary_bets_remain_ordinary_and_symmetric_shoves_keep_the_same_size(self):
+        from strategy.action_tree import Action
+        state=BettingState(FLOP,5.,(38.,37.),actor=0,oop=0)
+        self.assertEqual(native_action('BET 1000',state,1000),Action('bet',1.))
+        self.assertEqual(native_action('BET 37000',state,1000),Action('all_in',38.))
+        symmetric=replace(state,stacks=(37.,37.))
+        self.assertEqual(native_action('BET 37000',symmetric,1000),Action('all_in',37.))
 
     @unittest.skipUnless(os.environ.get('HU_STREAM_TEST_BINARY'),'separately installed native binary required')
     def test_native_asymmetric_effective_stacks_match_independent_river_best_response(self):
