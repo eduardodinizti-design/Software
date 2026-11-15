@@ -171,10 +171,16 @@ proprios, em vez de aplicar um solve BTN/BB regular como se fosse universal.
 Codigo e plano:
 https://github.com/eduardodinizti-design/Software/tree/feat/hu-resumable-batches-20261115
 
-Politica completa de referencia e indice, ZIP para extrair em nova pasta:
-https://github.com/eduardodinizti-design/Software/releases/tag/hu-batch-lab-20261115
-O ZIP e explicitamente de laboratorio, 11 iteracoes, nao convergido.
-Hashes do arquivo e da politica: docs/software-hu-batches-20261115/download-manifest.json.
+Politica completa de referencia e indice foram salvos e empacotados em ZIP
+de 1,81 GB, com leitura integral do ZIP conferida por SHA-256. O upload para
+uploads.github.com foi BLOQUEADO pelo tunel deste executor: HTTP 403.
+NAO HA ZIP DISPONIVEL PARA DOWNLOAD NA RELEASE nesta entrega. O SQLite de
+2,12 GB e o ZIP foram preservados no workspace; codigo, plano, frequencias
+das consultas e evidencias pequenas estao publicados no GitHub.
+Pagina de status: https://github.com/eduardodinizti-design/Software/releases/tag/hu-batch-lab-20261115
+Hashes e estado do upload: docs/software-hu-batches-20261115/download-manifest.json.
+O outro agente pode integrar/reproduzir pelo codigo, mas ainda precisa
+receber o SQLite ou recalcular o modelo para consultar toda esta arvore.
 
 Evidencias versionadas em docs/software-hu-batches-20261115/:
   plan-100.json: os 100 flops, priors, menu e orcamentos;
@@ -205,5 +211,6 @@ PENDENCIAS CONCRETAS
   4) Implementar transferencia exata de naipes e outras familias (stacks,
      posicoes, potes, ICM/PKO) antes de alegar cobertura universal.
   5) Receber o teste real Windows/PPPoker e concluir validacao operacional.
+  6) Transferir o ZIP/SQLite completo: upload da Release bloqueado por HTTP 403.
 
 A main, as branches anteriores e o trabalho local foram preservados.

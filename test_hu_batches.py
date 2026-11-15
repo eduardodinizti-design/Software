@@ -1,5 +1,5 @@
 """Batch correctness, full-tree closure and byte-for-byte policy semantics."""
-from contextlib import ExitStack
+from contextlib import ExitStack,closing
 from dataclasses import replace
 import copy
 import gzip
@@ -155,7 +155,8 @@ class DiskPolicyTests(unittest.TestCase):
     def test_node_tampering_is_detected_before_advice(self):
         with tempfile.TemporaryDirectory() as tmp,ExitStack() as resources:
             path=Path(tmp)/'p.sqlite';disk_copy(self.turn,path)
-            with sqlite3.connect(path) as db:db.execute('UPDATE nodes SET payload=? WHERE key=?',(b'corrupt',self.turn.root.key()))
+            with closing(sqlite3.connect(path)) as db,db:
+                db.execute('UPDATE nodes SET payload=? WHERE key=?',(b'corrupt',self.turn.root.key()))
             disk=DiskPolicy(path);resources.callback(disk.close)
             with self.assertRaises(Exception):disk.nodes[self.turn.root.key()]
 
@@ -330,7 +331,7 @@ class NativeEndToEndTests(unittest.TestCase):
             # publication. Resume must verify it and clean only its owned attempt.
             cid=index['entries'][0]['case_id'];attempt=root/'bank/temporary'/'interrupted-publication';attempt.mkdir()
             atomic_json(attempt/'owned-by-batch.json',dict(plan_sha256=plan['plan_sha256']))
-            with sqlite3.connect(root/'bank/progress.sqlite3') as db:
+            with closing(sqlite3.connect(root/'bank/progress.sqlite3')) as db,db:
                 db.execute("UPDATE jobs SET state='VALIDATED',attempt=? WHERE id=?",(str(attempt),cid))
             (root/'bank/library.json').unlink()
             with patch('strategy.batch_jobs.subprocess.Popen',side_effect=AssertionError('validated job must not retrain')):

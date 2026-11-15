@@ -1,0 +1,9 @@
+{
+  "scope": "100 repeated warm node queries on full population-range stored policy, not Windows total decision latency",
+  "query_count": 100,
+  "median_ms": 0.03219249992980622,
+  "max_ms": 0.1250850000360515,
+  "cache_limit_nodes": 8,
+  "not_full_bot_cycle": true,
+  "pppoker_windows_validated": false
+}

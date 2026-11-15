@@ -1,7 +1,7 @@
 """Resumable BTN/BB flop queue. One worker/process tree at a time; no gameplay."""
 import argparse
 from collections import Counter,defaultdict
-from contextlib import contextmanager
+from contextlib import contextmanager,closing
 from dataclasses import replace
 import itertools
 import json
@@ -392,7 +392,7 @@ def main(argv=None):
         return 1 if result.get('FAILED') else 0
     if args.cmd=='status':
         folder=Path(args.output).resolve();result=json.loads((folder/'progress.json').read_text())
-        with sqlite3.connect((folder/'progress.sqlite3').as_uri()+'?mode=ro',uri=True) as db:
+        with closing(sqlite3.connect((folder/'progress.sqlite3').as_uri()+'?mode=ro',uri=True)) as db:
             result['active']=[dict(case_id=cid,board=json.loads(board),stage=json.loads((Path(attempt)/'stage.json').read_text()) if (Path(attempt)/'stage.json').exists() else 'STARTING')
                               for cid,board,attempt in db.execute("SELECT id,board,attempt FROM jobs WHERE state='RUNNING'")]
         print(json.dumps(result,indent=2));return 0
@@ -400,7 +400,7 @@ def main(argv=None):
         print(json.dumps(storage_capacity(args.policy_reference,args.destination,count=args.count,
             work_disk_mb=args.work_disk_mb,safety_factor=args.safety_factor),indent=2));return 0
     folder=Path(args.output).resolve()
-    with queue_lock(folder),sqlite3.connect(folder/'progress.sqlite3') as db:
+    with queue_lock(folder),closing(sqlite3.connect(folder/'progress.sqlite3')) as db,db:
         db.execute("UPDATE jobs SET state='PENDING' WHERE state='FAILED'")
     return 0
 
