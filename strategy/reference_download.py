@@ -17,7 +17,6 @@ import zipfile
 from strategy.batch_jobs import atomic_json
 from strategy.policy_library import PolicyLibrary
 from strategy.state_contract import StrategyError
-from strategy.texassolver_backend import file_hash
 
 REPOSITORY='eduardodinizti-design/Software'
 TAG='hu-btn-bb-nvt-reference-20261115'
@@ -98,6 +97,7 @@ def download_reference(output,*,verify=False):
     archive.unlink();receipt['download_archive_removed']=True
     atomic_json(output/'download-receipt.json',receipt)
     print('Banco salvo em: '+str(bank),flush=True)
+    print('Alvo de precisao nativo atingido: '+('SIM' if receipt['native_target_met'] else 'NAO'),flush=True)
     print('Resultado: '+str(output/'download-receipt.json'),flush=True)
     return receipt
 
