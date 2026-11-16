@@ -1,0 +1,109 @@
+name: HU SB40 full Windows transfers and seventeen-model delivery
+on:
+  push:
+    branches: [feat/hu-sb40-next16-20261116]
+    paths: [.github/workflows/hu-sb40-next16-windows.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ github.token }}
+  PYTHONUTF8: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  NATIVE_RUN: '43783594940'
+  CATALOG: batch-catalog-43783594940.json
+  TAG: hu-sb-bb40-nvt-next16-20261116
+jobs:
+  checked-catalog:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install numpy==2.2.6
+      - run: python tools/wait_hu_campaign.py --tag "$TAG" --catalog-asset "$CATALOG" --seconds 120 --output runtime/checked-catalog.json
+  contracts:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install numpy==2.2.6 opencv-python==4.11.0.86 psutil==6.1.1 pytesseract==0.3.13
+      - shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force runtime/hu-sb40-contracts | Out-Null
+          python -m unittest test_hu_sb40_next16 test_hu_campaign test_hu_blind_war test_hu_campaign_download test_hu_campaign_delivery test_hu_policy_json test_hu_next16 test_hu_reference test_hu_batches test_hu_policy_engine test_hu_operational test_cursor test_window_capture_engine test_window_capture_audit test_capture_windows_native test_raise_plan test_raise_sequencer -v *> runtime/hu-sb40-contracts/contracts.txt
+          $code = $LASTEXITCODE
+          Get-Content runtime/hu-sb40-contracts/contracts.txt -Tail 15
+          exit $code
+      - run: |
+          Copy-Item runtime/hu-sb40-contracts/contracts.txt runtime/windows-contracts-sb40-next16-${{ github.run_id }}-a${{ github.run_attempt }}.txt
+          gh release upload "$env:TAG" --repo "$env:GITHUB_REPOSITORY" runtime/windows-contracts-sb40-next16-${{ github.run_id }}-a${{ github.run_attempt }}.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: hu-sb40-next16-windows-contracts-a${{ github.run_attempt }}
+          path: runtime/hu-sb40-contracts/contracts.txt
+          retention-days: 14
+  actual-data:
+    needs: [contracts, checked-catalog]
+    runs-on: windows-latest
+    timeout-minutes: 80
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        ordinal: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+    name: Windows complete SB40 new policy ${{ matrix.ordinal }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install numpy==2.2.6
+      - id: reuse
+        name: Preserve previously passed Windows transfers with their original workflow IDs
+        run: python tools/reuse_hu_windows_proof.py --family sb40-next16 --ordinal ${{ matrix.ordinal }} --catalog-asset "$env:CATALOG" --output runtime/reused-proof.json
+      - if: steps.reuse.outputs.reused != 'true'
+        name: Download the whole actual bank and confirm three-street JSON and showdown history
+        run: python tools/validate_hu_campaign_windows.py --family sb40-next16 --ordinal ${{ matrix.ordinal }} --catalog-asset "$env:CATALOG" --output runtime/hu-sb40-proof
+      - if: steps.reuse.outputs.reused != 'true'
+        name: Publish actual JSON requests, decisions and the confirmed synthetic hand
+        run: |
+          $label = "{0:D2}" -f [int]"${{ matrix.ordinal }}"
+          Copy-Item runtime/hu-sb40-proof/windows-proof.json "runtime/windows-sb40-next16-case-${label}-${{ github.run_id }}-a${{ github.run_attempt }}.json"
+          Compress-Archive -Path runtime/hu-sb40-proof/windows-proof,runtime/hu-sb40-proof/request-*.json,runtime/hu-sb40-proof/response-*.json -DestinationPath "runtime/windows-sb40-next16-case-${label}-${{ github.run_id }}-a${{ github.run_attempt }}-json-history.zip"
+          gh release upload "$env:TAG" --repo "$env:GITHUB_REPOSITORY" "runtime/windows-sb40-next16-case-${label}-${{ github.run_id }}-a${{ github.run_attempt }}.json" "runtime/windows-sb40-next16-case-${label}-${{ github.run_id }}-a${{ github.run_attempt }}-json-history.zip"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: hu-sb40-next16-windows-${{ matrix.ordinal }}-a${{ github.run_attempt }}
+          path: |
+            runtime/reused-proof.json
+            runtime/hu-sb40-proof/windows-proof.json
+            runtime/hu-sb40-proof/windows-proof/*.json
+            runtime/hu-sb40-proof/request-*.json
+            runtime/hu-sb40-proof/response-*.json
+          retention-days: 14
+  deliver:
+    needs: [actual-data, contracts]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install numpy==2.2.6
+      - run: python tools/finalize_hu_sb40_next16.py --catalog-asset "$CATALOG" --native-run "$NATIVE_RUN" --output runtime/hu-sb40-next16-final
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: hu-sb40-next16-final-a${{ github.run_attempt }}
+          path: |
+            runtime/hu-sb40-next16-final/*.json
+            runtime/hu-sb40-next16-final/*.txt
+          retention-days: 14
