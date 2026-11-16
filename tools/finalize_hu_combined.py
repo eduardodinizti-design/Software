@@ -66,6 +66,15 @@ def main(argv=None):
             or linux.get('native_stream_tests_enabled') is not True):
         raise StrategyError('NATIVE_ENABLED_FINAL_LINUX_REGRESSION_REQUIRED')
     source_commit=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+    bcase=sb['inventory'][0]
+    rivers=[json.loads(path.read_text()) for path in published.glob('river-case-01-*.json')]
+    rivers=[value for value in rivers if value.get('source_policy_sha256')==bcase['policy_sha256']]
+    if len(rivers)!=1:raise StrategyError('ONE_INDEPENDENT_RIVER_OF_THE_EXACT_SB_POLICY_REQUIRED')
+    sb_river=rivers[0]
+    if (not sb_river.get('exact_enumeration')
+            or abs(sb_river['nash_conv_bb']-bcase['independent_river']['nash_conv_bb'])>1e-12
+            or abs(sb_river['nash_conv_bb']-2*sb_river['exploitability_bb'])>1e-12):
+        raise StrategyError('SB_INDEPENDENT_PRECISION_SCOPE_OR_VALUE_DIFFERS')
     summary=dict(schema='software.hu-32-and-sb40-combined-delivery.v1',status='PASS',
         btn_bb25_complete_distinct_flops=32,sb_bb40_full_reference_pilot_flops=1,
         new_windows_policy_transfers=16,new_confirmed_synthetic_hands=16,
@@ -75,10 +84,14 @@ def main(argv=None):
         linux_reference_regression=linux,source_commit=source_commit,
         btn_summary=btn_file.name,sb_summary=sb_file.name,
         source_ranges='USER_APPROVED_NVT_REFERENCE_NOT_DIRECT_HRC_CERTIFICATION',
+        native_target_metric='EXPLOITABILITY_PERCENT_OF_ROOT_POT',native_target_pct=.5,
+        global_gap_bb_definition='NASH_CONV_TWICE_EXPLOITABILITY',
+        sb_independent_conditional_river=dict(nash_conv_bb=sb_river['nash_conv_bb'],
+            exploitability_bb=sb_river['exploitability_bb'],pot_bb=sb_river['root']['pot_bb'],
+            scope=sb_river['scope']),
         native_global_gap_independently_certified=False,pppoker_windows_validated=False,user_notebook_validated=False,
         source_workflows=dict(btn_windows=args.btn_run,sb_windows=args.sb_run))
     atomic_json(output/f'consolidado-32-sb40-{stamp}.json',summary)
-    bcase=sb['inventory'][0]
     lines=['SOFTWARE ORIGINAL — 32 FLOPS BTN x BB E PILOTO BLIND WAR 40 BB','',
         'CONCLUIDO: 32 flops distintos BTN x BB de 25 BB com arvores completas, publicados e consultaveis.',
         'CONCLUIDO: 1 flop completo SB x BB de 40 BB, As 7d 2c, com respostas de flop, turn e river.',
@@ -86,6 +99,10 @@ def main(argv=None):
         f"BTN: {btn['total_public_nodes']:,} estados publicos, {btn['total_policy_file_bytes']/1024**3:.2f} GiB de politicas SQLite.",
         f"SB40: {sb['total_public_nodes']:,} estados publicos, {sb['total_policy_file_bytes']/1024**3:.2f} GiB de politica SQLite.",
         f"SB40: {bcase['iterations']} iteracoes reais; gap global NATIVO {bcase['global_gap_bb']:.9f} BB.",
+        'O criterio nativo e exploitability <= 0,5% do pote. O campo global_gap_bb e NashConv, o dobro da exploitability.',
+        f"SB40 global: exploitability nativa {bcase['global_gap_bb']/2:.9f} BB; NashConv {bcase['global_gap_bb']:.9f} BB.",
+        f"River condicional SB40: NashConv {sb_river['nash_conv_bb']:.9f} BB; exploitability {sb_river['exploitability_bb']:.9f} BB, pote {sb_river['root']['pot_bb']:.3f} BB.",
+        'Essa medicao independente e condicional a uma linha/runout; nao e a metrica global nem garante a mesma precisao em todos os nos.',
         'Os 15 modelos novos que completam 32 e o piloto SB40 foram baixados integralmente em runners Windows.',
         'Foram conferidos partes, ZIPs, SQLite, identidades, ranges, menu e consultas nas tres ruas.',
         '16 maos sinteticas completas ate showdown; 48 consultas JSON e 48 consultas com bijecao exata de naipes.',
@@ -132,7 +149,7 @@ def main(argv=None):
         'SB limp x BB check de 40 BB: faltam os ranges proprios no upload. O complemento do range de raise nao foi usado como limp.',
         'Esse ramo precisa de perfil de chegada limpado: pote 3 BB, SB 39 BB e BB 38 BB com BBA 1 BB, mais testemunho de limp/check.',
         '3-bet pots, outros sizes/stacks, multiway, ICM e PKO precisam de modelos proprios.',
-        'Gap nativo <= 0,5% do pote nao certifica por metodo independente o gap global; um river condicional por modelo foi enumerado independentemente.',
+        'Exploitability nativa <= 0,5% do pote nao certifica independentemente o NashConv global; um river condicional por modelo foi enumerado independentemente.',
         'EV independente por acao nao esta salvo em todos os nos; ev_bb pode ser null.',
         'Leitura, sincronizacao, efeito real do clique e desempenho com varias mesas ainda precisam de validacao no PPPoker Windows do notebook.',
         'Em uma mao real empatada cujo pote final nao foi capturado, a confirmacao completa do historico pode continuar ambigua.',
@@ -153,6 +170,13 @@ def main(argv=None):
     for tag in (CLOSE32_TAG,SB40_TAG):
         for path in (report,source,manifest,evidence,output/f'consolidado-32-sb40-{stamp}.json'):
             subprocess.run(['gh','release','upload',tag,'--repo',REPOSITORY,str(path)],check=True)
+        notes=output/'canonical-release-notes.txt'
+        notes.write_text('32 modelos completos BTN x BB de 25 BB e um piloto completo SB x BB de 40 BB.\n\n'
+            f'Relatorio consolidado atual: {report.name}\nCodigo verificado: {source.name}\n\n'
+            'Precisao: o alvo de 0,5% do pote e exploitability NATIVA; global_gap_bb e NashConv (2x).\n'
+            'Esta entrega esclarece esse rotulo do relatorio consolidado anterior, sem alterar politicas/calculos.\n'
+            'NVT de referencia. Arvores completas dentro do menu declarado; nao houve validacao real no PPPoker.\n')
+        subprocess.run(['gh','release','edit',tag,'--repo',REPOSITORY,'--notes-file',str(notes)],check=True)
     print(json.dumps(dict(status='PASS',report=report.name,source=source.name,models='32 BTN25 plus 1 SB40')));return 0
 
 

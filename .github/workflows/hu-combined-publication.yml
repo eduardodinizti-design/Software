@@ -1,4 +1,4 @@
-name: HU complete32 plus recovered SB40 consolidated publication with final regression
+name: HU complete32 plus recovered SB40 checked handoff with precise convergence labels
 on:
   push:
     branches: [feat/hu-close32-sb40-20261115]

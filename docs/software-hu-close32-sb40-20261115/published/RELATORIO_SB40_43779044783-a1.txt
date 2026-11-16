@@ -1,0 +1,38 @@
+SOFTWARE ORIGINAL — PILOTO BLIND WAR SB x BB 40 BB CONCLUIDO
+
+Modelos completos distintos nesta familia: 1.
+Novos modelos calculados e transferidos no Windows: 1/1 PASS.
+Historicos confirmados ate showdown neste lote: 1; consultas JSON: 3.
+Nos publicos: 439,736; flop/turn/river: {'FLOP': 10, 'TURN': 2254, 'RIVER': 437472}.
+Politicas finais no disco: 3.62 GiB.
+
+Salvos: acoes, frequencias de cada combinacao privada, sizes efetivos e respostas nas tres ruas.
+Arvore completa dentro do menu declarado: bet 1/3, raise de 100% do pote e all-in; duas agressoes por rua.
+Logs de parametros e checkpoints de convergencia estao dentro dos ZIPs de cada politica.
+Processos nativos encerrados e temporarios removidos apos verificacao. Bancos finais preservados.
+
+MODELOS NOVOS | ITERACOES REAIS | GAP GLOBAL NATIVO (BB) | WINDOWS/JSON/HISTORICO
+01. As 7d 2c | 171 | 0.047462067 | PASS
+
+INSTALAR
+Extraia o ZIP de codigo em pasta nova. Preserve a instalacao antiga.
+Execute BAIXAR_BLIND_WAR_40BB.bat.
+O indice library.json e lido com --postflop-library. Veja docs/GUIA_32_FLOPS_E_BLIND_WAR_40BB_20261115.txt.
+Os bancos ficam no disco, com cache limitado. Nao e preciso manter todas as arvores na RAM.
+
+LIMITACOES
+BTN 25 BB e SB40 sao familias distintas. Esta entrega nao faz troca automatica entre bibliotecas.
+Ranges NVT autorizados como referencia; nao sao um export HRC Pro certificado independentemente.
+SB40 usa SB open 2 BB, BB call, BBA de 1 BB e 40 BB antes das postagens.
+Nao foram encontrados ranges proprios SB limp x BB check no upload. Esse ramo continua pendente.
+Alvo nativo <= 0,5% do pote; precisao nativa nao certifica o gap global por metodo independente.
+Um river condicional por modelo foi enumerado independentemente e conferido no Windows.
+Os testes usam leituras sinteticas no Windows do GitHub, sem PPPoker nem acionamento de dispositivos.
+O notebook do usuario ainda precisa validar leitura, historico e clique real; 8h -> 3h segue pendente.
+Outros stacks, ranks, sizes, multiway, ICM e PKO nao foram resolvidos por este lote.
+
+https://github.com/eduardodinizti-design/Software/releases/tag/hu-sb-bb40-nvt-pilot-20261115
+https://github.com/eduardodinizti-design/Software/actions/runs/43779044783
+https://github.com/eduardodinizti-design/Software/pull/14
+Codigo: fa04c6e828d092a9aaee30b9746d4a11beac760c
+Plano: b6c55d124bcb8a334c2d79a2017f66cf43046100f297318093b3c1c51f200756

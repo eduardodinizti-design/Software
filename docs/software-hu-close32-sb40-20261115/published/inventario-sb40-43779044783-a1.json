@@ -1,0 +1,171 @@
+{
+  "context": {
+    "arrival_id": "NVT-40bb-before-posts-SB-open2-BB-call-BBA1-c3fafb3921e6",
+    "dealt_players": 9,
+    "mode": "chip_ev",
+    "positions": [
+      "SB",
+      "BB"
+    ],
+    "pot_type": "single_raised",
+    "stage": "mid",
+    "tournament_format": "regular"
+  },
+  "models": [
+    {
+      "archive_bytes": 3479865064,
+      "archive_sha256": "f135ba03d69830b0851d4644775746f971f5563956249e3af0db883c05bb5e91",
+      "board": [
+        "As",
+        "7d",
+        "2c"
+      ],
+      "case_id": "0fa9d9ebbf6ad9c01085",
+      "coverage": {
+        "nodes_by_street": {
+          "FLOP": 10,
+          "RIVER": 437472,
+          "TURN": 2254
+        },
+        "public_nodes": 439736,
+        "structurally_complete": true,
+        "terminal_edges": 729524,
+        "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS"
+      },
+      "file_sha256": "3dcd9d540c1f90e1a5798a9865daef7508ff87305414f3dbb1c3ef08cd233381",
+      "global_gap_bb": 0.04746206700801849,
+      "independent_river": {
+        "joint_private_deals": 907368,
+        "nash_conv_bb": 0.22922848746552502,
+        "runout": [
+          "Ts",
+          "2h"
+        ],
+        "scope": "CONDITIONAL_RIVER_PRIORS_AND_DECLARED_MENU_NOT_FULL_FLOP_GTO_CERTIFICATION"
+      },
+      "iterations": 171,
+      "lookup_streets": [
+        "flop",
+        "river",
+        "turn"
+      ],
+      "measurements": {
+        "elapsed_seconds": 1125.9372185030002,
+        "peak_process_tree_rss_bytes": 40804352,
+        "policy_file_bytes": 3886010368,
+        "source_export_gzip_bytes": 10004375529
+      },
+      "native_target_met": true,
+      "ordinal": 1,
+      "parts": [
+        {
+          "bytes": 1073741824,
+          "name": "case-01-0fa9d9ebbf6ad9c01085-f135ba03d698.zip.part001",
+          "sha256": "9cba735e23d4fa40a2a5d1b47d8199ecf47da462028781591822f532a158d307"
+        },
+        {
+          "bytes": 1073741824,
+          "name": "case-01-0fa9d9ebbf6ad9c01085-f135ba03d698.zip.part002",
+          "sha256": "676047dd421f6944d1b78f6d51eff84a3117dd65729957fda9e28e29d48bc7d4"
+        },
+        {
+          "bytes": 1073741824,
+          "name": "case-01-0fa9d9ebbf6ad9c01085-f135ba03d698.zip.part003",
+          "sha256": "288c8d82f01947cda6095045c2032e762d9c772119fbb3b5789e08049cedf69b"
+        },
+        {
+          "bytes": 258639592,
+          "name": "case-01-0fa9d9ebbf6ad9c01085-f135ba03d698.zip.part004",
+          "sha256": "a862314496d0abf231e5533b276ae32ce33bdbd7fe9d3f76b3c2393d71b674b5"
+        }
+      ],
+      "plan_sha256": "b6c55d124bcb8a334c2d79a2017f66cf43046100f297318093b3c1c51f200756",
+      "policy_file_bytes": 3886010368,
+      "policy_sha256": "960e92733625e07faea48a3b480a3f6e83cfc185ee7c23737fe55a0317cc870e",
+      "quality": {
+        "action_ev_available": false,
+        "actual_sizes": "native_rounding_to_one_unit_then_legality_checked",
+        "converged": true,
+        "effective_covering_shoves_translated_to_physical_all_in": true,
+        "export_depth_in_streets": 3,
+        "exported_depth_is_not_full_tree_coverage": false,
+        "gap_scope": "native_full_tree_declared_menu_and_ranges",
+        "global_gap_bb": 0.04746206700801849,
+        "iterations": 171,
+        "method": "texassolver_discounted_cfr",
+        "native_metric_independently_verified": false,
+        "nodes_by_street": {
+          "FLOP": 10,
+          "RIVER": 437472,
+          "TURN": 2254
+        },
+        "provenance": {
+          "binary_identity_note": "Original executable hash was not retained in failure artifacts; no substitute hash is claimed.",
+          "binary_sha256": null,
+          "command_sha256": "e2b480ad962a6bc8a947124e43c30838e1deb5cf36ca85cd09ed660a6c03b633",
+          "decoder_fix": "EFFECTIVE_COVERING_SHOVE_TO_PHYSICAL_ALL_IN_WITH_UNCALLED_REFUND",
+          "decoder_repository_commit": "689035dd8666c5a2a30575e054c904b2db0267fe",
+          "hu_chance_denominator_cards": 4,
+          "license": "AGPL-3.0; native source installed separately",
+          "native_export_sha256": "f892ef6626964be36b5238665613d1efae8ee9aedc7745c9986e0ebf49144cf6",
+          "repository": "https://github.com/bupticybee/TexasSolver",
+          "reused_export": true,
+          "source_artifact_id": 14186865931,
+          "source_artifact_zip_sha256": "67cfb02929707347af4489caa20d60db49576d73e87e8db6387c5e5088427b18",
+          "tested_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6",
+          "training_repository_commit": "be854b58c4f678d5776f4b43b8e0dadc2086543f",
+          "training_workflow_run": 43769679234
+        },
+        "public_nodes": 439736,
+        "settings": {
+          "dump_rounds": 3,
+          "export_format": "street_jsonl_gzip",
+          "ip_range_common_scale": 1.0,
+          "iterations": 2001,
+          "memory_budget_mb": 12288,
+          "memory_limit_enforced": false,
+          "native_raise_limit": 2,
+          "oop_range_common_scale": 1.0,
+          "python_menu_raise_limit_not_used": false,
+          "raise_fractions": [
+            1.0
+          ],
+          "recovery_converter_memory_limit_enforced": true,
+          "root_effective_stack_bb": 37.0,
+          "suit_isomorphism": true,
+          "suit_symmetry_verified_on_both_priors": true,
+          "target_exploitability_pct_pot": 0.5,
+          "threads": 4,
+          "units_per_bb": 1000
+        },
+        "stream_chunks": 49834,
+        "structurally_complete": true,
+        "terminal_edges": 729524,
+        "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS",
+        "windows_validated": false
+      },
+      "recovery": {
+        "measured_peak_rss_scope": "RECOVERY_CONVERTER_ONLY; original native peak RSS was not retained",
+        "native_solve_repeated": false,
+        "original_training_binary_hash_retained": false,
+        "raw_export_sha256": "f892ef6626964be36b5238665613d1efae8ee9aedc7745c9986e0ebf49144cf6",
+        "source_iterations": 171,
+        "source_raw_artifact": 14186865931,
+        "source_run": 43769679234,
+        "worker_exited": true
+      },
+      "schema": "software.hu-batch-case.v1",
+      "source_commit": "689035dd8666c5a2a30575e054c904b2db0267fe",
+      "tag": "hu-sb-bb40-nvt-pilot-20261115",
+      "temporary_cleanup_verified": true,
+      "worker_exited": true
+    }
+  ],
+  "profile_settings": {
+    "ante_pot_bb": 1.0,
+    "name": "SB-BB40-BBA1-open2-reference-v1",
+    "preflop_aggressor": 0
+  },
+  "schema": "software.hu-complete-model-inventory.v1",
+  "status": "COMPLETE"
+}
