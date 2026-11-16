@@ -17,6 +17,7 @@ from strategy.policy_library import PolicyLibrary
 from strategy.river_validation import review_reference_river
 from strategy.range_catalog import DECK
 from strategy.texassolver_backend import file_hash
+from strategy.campaign_resources import checked_resource_profile,effective_settings
 
 
 def gh(*args,body=None):
@@ -76,7 +77,8 @@ def run_case(args,plan):
     root=Path(args.output).resolve()
     if root.exists():raise SystemExit('Use a new case output directory to preserve previous work')
     root.mkdir(parents=True);game=dict(plan['game']);game['root']=dict(game['root'],board=case['board'])
-    atomic_json(root/'game.json',game);s=plan['settings']
+    atomic_json(root/'game.json',game);execution=getattr(args,'execution_profile_data',None)
+    s=effective_settings(plan,execution)
     os.environ['HU_GITHUB_STATUS_CONTEXT']=f"{os.environ.get('HU_GITHUB_STATUS_PREFIX','hu-next16')}/{case['ordinal']:02d}"
     from run_hu_reference_pilot import main as pilot
     try:
@@ -128,6 +130,9 @@ def run_case(args,plan):
             source_commit=os.environ['GITHUB_SHA'],worker_exited=result['worker_exited'],
             temporary_cleanup_verified=result['temporary_cleanup_verified'],**bundle)
         if result.get('recovery'):manifest['recovery']=result['recovery']
+        if execution:
+            manifest['resource_profile']=execution
+            manifest['effective_execution_settings']=s
         for _ in range(6):
             try:verify_remote_parts(manifest,release()['assets']);break
             except ValueError:time.sleep(5)
@@ -146,6 +151,20 @@ def run_case(args,plan):
         return 0 if manifest['native_target_met'] else 1
     except BaseException:
         status(case,'failure','Case failed; preserved diagnostics or archive, see job');raise
+
+
+def check_existing(args,plan):
+    case=next(c for c in plan['cases'] if c['ordinal']==args.ordinal)
+    matches=[m for m in remote_manifests(plan) if m['case_id']==case['case_id'] and m['native_target_met']]
+    for manifest in matches:make_catalog(plan,[manifest])
+    reused=bool(matches)
+    if os.environ.get('GITHUB_OUTPUT'):
+        with open(os.environ['GITHUB_OUTPUT'],'a') as out:out.write('reused='+str(reused).lower()+'\n')
+    if reused:status(case,'success','Previously published complete policy and remote hashes reused; no CFR repeated')
+    value=dict(reused=reused,ordinal=args.ordinal)
+    atomic_json(args.output,value)
+    print(json.dumps(value))
+    return 0
 
 
 def catalog(plan,output):
@@ -170,10 +189,11 @@ def catalog(plan,output):
 
 
 def main(argv=None):
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('cmd',choices=('init','case','catalog'))
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('cmd',choices=('init','case','catalog','check'))
     p.add_argument('--plan',required=True);p.add_argument('--ordinal',type=int);p.add_argument('--binary')
     p.add_argument('--resources');p.add_argument('--output',default='runtime/hu-next16')
     p.add_argument('--ready-study',help='Previously recovered, complete checked study; no native solve is started')
+    p.add_argument('--execution-profile',help='Hashed resource-only retry; cannot change ranges, menu or strategic solver settings')
     args=p.parse_args(argv)
     raw=json.loads(Path(args.plan).read_text())
     if raw.get('schema')=='software.hu-campaign-plan.v1':
@@ -182,8 +202,23 @@ def main(argv=None):
     else:plan=checked_batch_plan(args.plan)
     global BATCH_TAG
     BATCH_TAG=plan['tag']
-    if args.cmd=='init':initialize(plan,Path(args.plan));return 0
+    args.execution_profile_data=None
+    if args.execution_profile:
+        args.execution_profile_data=checked_resource_profile(json.loads(Path(args.execution_profile).read_text()),plan)
+    if args.cmd=='init':
+        initialize(plan,Path(args.plan))
+        if args.execution_profile_data:
+            path=Path(args.execution_profile)
+            old=next((a for a in release()['assets'] if a['name']==path.name and a['state']=='uploaded'),None)
+            if old:
+                with urllib.request.urlopen(old['browser_download_url'],timeout=60) as response:value=json.load(response)
+                if value!=args.execution_profile_data:raise SystemExit('Existing resource profile is different; preserve it')
+            else:subprocess.run(['gh','release','upload',BATCH_TAG,'--repo',REPOSITORY,str(path)],check=True)
+        return 0
     if args.cmd=='catalog':return catalog(plan,args.output)
+    if args.cmd=='check':
+        if args.ordinal not in range(1,len(plan['cases'])+1):p.error('Check requires a planned ordinal')
+        return check_existing(args,plan)
     if args.ordinal not in range(1,len(plan['cases'])+1) or (not args.ready_study and (not args.binary or not args.resources)):
         p.error('Case requires a planned ordinal and a native solver or recovered complete study')
     return run_case(args,plan)

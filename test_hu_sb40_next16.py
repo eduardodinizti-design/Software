@@ -3,12 +3,15 @@ import copy
 import json
 from pathlib import Path
 import unittest
+from unittest.mock import patch
 
 from strategy.batch_jobs import canonical_flop
 from strategy.campaign import validate_campaign_plan
-from strategy.campaign_download import PLANS,combine_sb40_seventeen
+from strategy.campaign_download import PLANS,combine_sb40_seventeen,load_family
 from strategy.blind_war import SB40_NEXT16_TAG
 from strategy.state_contract import StrategyError
+from strategy.campaign_resources import resource_profile,effective_settings,checked_resource_profile
+from strategy.batch_archive import make_catalog
 from tools.prepare_hu_sb40_next16 import prepare
 
 ROOT=Path(__file__).parent
@@ -70,6 +73,47 @@ class SB40Next16Tests(unittest.TestCase):
         with self.assertRaisesRegex(StrategyError,'PILOT_IDENTITY_CHANGED'):combine_sb40_seventeen(new,pilot)
         new,pilot=self.catalogs();new['cases'][0]['board']=pilot['cases'][0]['board']
         with self.assertRaisesRegex(StrategyError,'SUIT_DISTINCT'):combine_sb40_seventeen(new,pilot)
+
+    def test_new_family_installs_seventeen_by_default_but_new_only_selects_the_new_sixteen(self):
+        new,pilot=self.catalogs()
+        with patch('strategy.campaign_download.load_campaign',side_effect=[(new,'new.json'),(pilot,'old.json')]):
+            combined,name=load_family('sb40-next16')
+        self.assertEqual((len(combined['cases']),name),(17,'new.json'))
+        with patch('strategy.campaign_download.load_campaign',return_value=(new,'new.json')) as load:
+            only,_=load_family('sb40-next16',new_only=True)
+        self.assertEqual(len(only['cases']),16);load.assert_called_once()
+
+    def test_existing_single_pilot_family_remains_available_without_an_upgrade(self):
+        _,pilot=self.catalogs()
+        with patch('strategy.campaign_download.load_campaign',return_value=(pilot,'old.json')) as load:
+            original,_=load_family('sb40')
+        self.assertEqual(len(original['cases']),1);self.assertEqual(load.call_args.args[0],pilot['tag'])
+
+    def test_resource_retry_increases_memory_without_mutating_the_study_or_accuracy(self):
+        before=copy.deepcopy(self.plan)
+        profile=resource_profile(self.plan,{'memory_mb':12288},'Observed native bad_alloc at 10 GiB')
+        settings=effective_settings(self.plan,profile)
+        self.assertEqual(settings['memory_mb'],12288)
+        for key in ('accuracy_pct','iterations','threads'):self.assertEqual(settings[key],self.plan['settings'][key])
+        self.assertEqual(self.plan,before)
+
+    def test_resource_profile_cannot_relax_accuracy_change_iterations_or_claim_another_plan(self):
+        for key,value in (('accuracy_pct',1),('iterations',9001),('threads',8),('memory_mb',8192)):
+            with self.subTest(key=key),self.assertRaisesRegex(StrategyError,'NO_STRATEGY_OVERRIDES'):
+                resource_profile(self.plan,{key:value},'invalid')
+        p=resource_profile(self.plan,{'memory_mb':12288},'observed allocation failure')
+        p['overrides']['memory_mb']=14336
+        with self.assertRaisesRegex(StrategyError,'HASH_OR_CAMPAIGN'):checked_resource_profile(p,self.plan)
+
+    def test_catalog_rejects_a_resource_profile_that_disagrees_with_the_actual_policy_budget(self):
+        p=resource_profile(self.plan,{'memory_mb':12288},'observed allocation failure')
+        case=copy.deepcopy(self.pilot['cases'][0]);case.update(self.plan['cases'][0])
+        case.update(plan_sha256=self.plan['plan_sha256'],tag=SB40_NEXT16_TAG,resource_profile=p,
+            effective_execution_settings=effective_settings(self.plan,p))
+        case['quality']['settings']['memory_budget_mb']=12288
+        self.assertEqual(make_catalog(self.plan,[case])['published_new_flops'],1)
+        case['quality']['settings']['memory_budget_mb']=10240
+        with self.assertRaisesRegex(StrategyError,'ACTUAL_POLICY_BUDGET'):make_catalog(self.plan,[case])
 
 
 if __name__=='__main__':unittest.main()

@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "tests_run": 225,
+  "passed": 225,
+  "errors": 0,
+  "failures": 0,
+  "skipped": [],
+  "elapsed_seconds": 74.70600855899829,
+  "tested_code_parent_commit": "897d30154442bb5ba50c36b940c12fcb14530439",
+  "native_stream_tests_enabled": true,
+  "pppoker_windows_validated": false
+}

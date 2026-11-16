@@ -1,0 +1,16 @@
+{
+  "artifact_id": 14188684724,
+  "artifact_sha256": "57d2244c4aea348b22b05f7d5bcb864074c5ec400bbc576f5e914c36d68e0881",
+  "board": [
+    "8c",
+    "6d",
+    "3s"
+  ],
+  "case_ordinal": 6,
+  "native_solver_tail": "\nUsing 4 threads\nIter: 0\nplayer 0 exploitability 5705.5835\nterminate called after throwing an instance of 'std::bad_alloc'\n  what():  std::bad_alloc\n",
+  "native_workflow_run": 43782350189,
+  "original_memory_mb": 10240,
+  "resource_profile_sha256": "3998d6b30f093f694addd7c3920972ce4c23b301a57bc5e8e8642525599810e0",
+  "retry_memory_mb": 12288,
+  "strategy_inputs_changed": false
+}

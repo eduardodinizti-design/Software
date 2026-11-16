@@ -81,6 +81,13 @@ def make_catalog(plan,manifests):
         bound=2*plan['game']['root']['pot_bb']*plan['settings']['accuracy_pct']/100
         if any(m['native_target_met'] and (type(m['global_gap_bb']) not in (float,int) or not 0<=m['global_gap_bb']<=bound+1e-9) for m in candidates):
             raise StrategyError('NATIVE_TARGET_LABEL_DISAGREES_WITH_REPORTED_GAP')
+        for manifest in candidates:
+            if manifest.get('resource_profile'):
+                from strategy.campaign_resources import effective_settings
+                settings=effective_settings(plan,manifest['resource_profile'])
+                if (manifest.get('effective_execution_settings')!=settings
+                        or manifest.get('quality',{}).get('settings',{}).get('memory_budget_mb')!=settings['memory_mb']):
+                    raise StrategyError('RESOURCE_RETRY_DIFFERS_FROM_ACTUAL_POLICY_BUDGET')
         if candidates:
             candidates.sort(key=lambda m:(not m['native_target_met'],m['global_gap_bb'] if m['global_gap_bb'] is not None else float('inf'),m['archive_sha256']))
             entries.append(candidates[0])
