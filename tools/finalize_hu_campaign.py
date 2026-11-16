@@ -18,6 +18,23 @@ from strategy.state_contract import StrategyError
 from strategy.texassolver_backend import file_hash
 
 
+def prior_pilot_statistics(pilot, size_proof):
+    """Fill the old pilot's omitted raw size from its independently hashed file."""
+    size=pilot.get('policy_file_bytes')
+    if size is None:
+        if (size_proof.get('schema')!='software.hu-prior-pilot-size-proof.v1'
+                or size_proof.get('source_release')!=PILOT_TAG
+                or size_proof.get('method')!='STAT_OF_RETAINED_FULL_PILOT_SQLITE_AFTER_MATCHING_ITS_PUBLISHED_SHA256'
+                or any(size_proof.get(k)!=pilot.get(k) or not pilot.get(k)
+                    for k in ('file_sha256','policy_sha256'))
+                or size_proof.get('source_iterations')!=pilot.get('iterations')):
+            raise StrategyError('PRIOR_PILOT_RAW_SIZE_PROOF_DIFFERS_FROM_PUBLISHED_POLICY')
+        size=size_proof.get('policy_file_bytes')
+    if type(size) is not int or size<=0:
+        raise StrategyError('PRIOR_PILOT_RAW_SIZE_MUST_BE_POSITIVE_BYTES')
+    return dict({k:pilot[k] for k in ('coverage','iterations','global_gap_bb')},policy_file_bytes=size)
+
+
 def checked_results(catalog,rows):
     count=len(catalog['cases']);expected={c['ordinal']:c for c in catalog['cases']}
     if len(rows)!=count or {r['ordinal'] for r in rows}!=set(expected):raise StrategyError('EVERY_CAMPAIGN_WINDOWS_MODEL_REQUIRED')
@@ -75,8 +92,9 @@ def main(argv=None):
     rows=checked_results(catalog,rows);native=catalog['cases'];inventory=[dict(c) for c in full['cases']]
     if args.family=='btn32':
         pilot=read_json(ASSET_BASE+PILOT_TAG+'/result.json')
+        size_proof=json.loads(Path('docs/software-hu-close32-sb40-20261115/pilot-size-proof.json').read_text())
         for row in inventory:
-            if row['tag']==PILOT_TAG:row.update({k:pilot[k] for k in ('coverage','iterations','global_gap_bb','policy_file_bytes')})
+            if row['tag']==PILOT_TAG:row.update(prior_pilot_statistics(pilot,size_proof))
         prior=json.loads(Path('docs/software-hu-next16-20261115/published/entrega-lote-16-43765023157-a1.json').read_text())
         pilot_windows=json.loads(Path('docs/software-hu-convergence-20261115/published/integracao-windows-referencia-43752745519.json').read_text(encoding='utf-8-sig'))
         if (prior.get('status')!='PASS' or prior.get('windows_download_and_query_pass')!=16

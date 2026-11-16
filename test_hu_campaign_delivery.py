@@ -2,11 +2,30 @@
 import copy
 import unittest
 
-from tools.finalize_hu_campaign import checked_results
+from tools.finalize_hu_campaign import checked_results,prior_pilot_statistics
+from strategy.batch_archive import PILOT_TAG
 from strategy.state_contract import StrategyError
 
 
 class CampaignDeliveryTests(unittest.TestCase):
+    def test_legacy_pilot_size_requires_the_exact_published_policy_hashes(self):
+        pilot=dict(coverage={'public_nodes':345656},iterations=91,global_gap_bb=.046,
+            file_sha256='a'*64,policy_sha256='b'*64)
+        proof=dict(schema='software.hu-prior-pilot-size-proof.v1',source_release=PILOT_TAG,
+            method='STAT_OF_RETAINED_FULL_PILOT_SQLITE_AFTER_MATCHING_ITS_PUBLISHED_SHA256',
+            file_sha256=pilot['file_sha256'],policy_sha256=pilot['policy_sha256'],source_iterations=91,
+            policy_file_bytes=2383261696)
+        self.assertEqual(prior_pilot_statistics(pilot,proof)['policy_file_bytes'],2383261696)
+        for field,value in (('file_sha256','c'*64),('policy_sha256','c'*64),('source_iterations',81),
+                ('policy_file_bytes',0),('policy_file_bytes',True)):
+            with self.subTest(field=field,value=value),self.assertRaises(StrategyError):
+                prior_pilot_statistics(pilot,dict(proof,**{field:value}))
+        self.assertNotIn('policy_file_bytes',pilot)
+
+    def test_current_pilot_raw_size_is_preserved_without_requiring_legacy_proof(self):
+        pilot=dict(coverage={'public_nodes':2},iterations=3,global_gap_bb=.04,policy_file_bytes=8192)
+        self.assertEqual(prior_pilot_statistics(pilot,{}),pilot)
+
     def example(self,sb=False):
         case=dict(ordinal=1,board=['As','7d','2c'],policy_sha256='a'*64,file_sha256='b'*64,
             archive_sha256='c'*64,global_gap_bb=.04,

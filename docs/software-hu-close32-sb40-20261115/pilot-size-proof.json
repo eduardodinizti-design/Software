@@ -1,0 +1,10 @@
+{
+  "file_sha256": "74c5b5a5ff1c2455aacf2f1a21a38d1efc4d561ed35494b9b6e4e5570d8903db",
+  "method": "STAT_OF_RETAINED_FULL_PILOT_SQLITE_AFTER_MATCHING_ITS_PUBLISHED_SHA256",
+  "policy_file_bytes": 2383261696,
+  "policy_sha256": "70b17cc7e89c5d2da9eb490718e698e492d25e9bbff9c9dfd190b4de5022e6a3",
+  "pppoker_windows_validated": false,
+  "schema": "software.hu-prior-pilot-size-proof.v1",
+  "source_iterations": 91,
+  "source_release": "hu-btn-bb-nvt-reference-20261115"
+}
