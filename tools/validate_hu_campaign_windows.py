@@ -17,7 +17,7 @@ from verify_hu_next16_download import verify_delivery
 
 
 def main(argv=None):
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--family',required=True,choices=('btn32','sb40'))
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--family',required=True,choices=('btn32','sb40','sb40-next16'))
     p.add_argument('--ordinal',required=True,type=int);p.add_argument('--catalog-asset',required=True)
     p.add_argument('--output',required=True);args=p.parse_args(argv)
     if platform.system()!='Windows':raise StrategyError('NATIVE_WINDOWS_REQUIRED')

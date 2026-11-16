@@ -12,6 +12,7 @@ from strategy.texassolver_backend import file_hash
 OPEN_ID='chip_ev|mid|40|open_raise|SB||-'
 CALL_ID='chip_ev|mid|40|vs_open|BB|SB|-'
 SB40_TAG='hu-sb-bb40-nvt-pilot-20261115'
+SB40_NEXT16_TAG='hu-sb-bb40-nvt-next16-20261116'
 
 
 def extract_reference(path):
