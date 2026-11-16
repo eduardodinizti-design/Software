@@ -17,53 +17,71 @@ OPEN = 2.0           # tamanho do open
 TB = 6.0             # tamanho do 3bet
 
 
-def _seats(mapping, hero_stk, other_stk=40):
-    seats = {}
-    for seat, pos in mapping.items():
-        seats[seat] = dict(stack_bb=(hero_stk if seat == 'hero' else other_stk), occupied=True)
-    return seats
+# Perfis de spread (do engine, = preflop_advisor._SPREADS): distribuição de stacks
+# na mesa. ICM/PKO têm ranges POR spread; p/ infer_spread classificar é preciso >=5
+# assentos com stack seguindo o perfil.
+SPREADS = {'iguais': (25,) * 9,
+           'curtos_fim': (35, 35, 30, 30, 25, 20, 15, 15, 20),
+           'curtos_ini': (15, 15, 20, 20, 25, 30, 35, 35, 30)}
 
 
-def st_first_in(hero_pos, hero_stk):
-    # hero e o primeiro a agir voluntariamente (ninguem abriu antes)
-    mp = {'hero': hero_pos}
-    return dict(positions=mp, seats=_seats(mp, hero_stk), bets=[])
+def _table(hero_pos, hero_stk, spread, bets_by_pos):
+    """Mesa de 9 assentos: hero no bucket de teste, os outros seguindo o PERFIL do
+    spread (escalado p/ a posição do hero bater hero_stk), p/ infer_spread acertar.
+    Assentos keyados por POSIÇÃO (o hero por 'hero'). bets_by_pos: [(pos, bb), ...]."""
+    prof = SPREADS.get(spread) or SPREADS['iguais']
+    hidx = POS.index(hero_pos)
+    scale = hero_stk / prof[hidx] if prof[hidx] else 1.0
+    positions = {'hero': hero_pos}
+    seats = {'hero': dict(stack_bb=hero_stk, occupied=True)}
+    for i, pos in enumerate(POS):
+        if pos == hero_pos:
+            continue
+        positions[pos] = pos
+        seats[pos] = dict(stack_bb=round(prof[i] * scale, 1), occupied=True)
+    bets = [dict(seat=('hero' if p == hero_pos else p), bet_bb=bb) for p, bb in bets_by_pos]
+    return dict(positions=positions, seats=seats, bets=bets)
 
 
-def st_vs_open(hero_pos, opener_pos, hero_stk):
-    mp = {'hero': hero_pos, 'op': opener_pos}
-    return dict(positions=mp, seats=_seats(mp, hero_stk),
-                bets=[dict(seat='op', bet_bb=OPEN)])
+def st_first_in(hero_pos, hero_stk, spread='iguais'):
+    return _table(hero_pos, hero_stk, spread, [])
 
 
-def st_squeeze(hero_pos, opener_pos, caller_pos, hero_stk):
-    mp = {'hero': hero_pos, 'op': opener_pos, 'cl': caller_pos}
-    return dict(positions=mp, seats=_seats(mp, hero_stk),
-                bets=[dict(seat='op', bet_bb=OPEN), dict(seat='cl', bet_bb=OPEN)])
+def st_vs_open(hero_pos, opener_pos, hero_stk, spread='iguais'):
+    return _table(hero_pos, hero_stk, spread, [(opener_pos, OPEN)])
 
 
-def st_vs_3bet(hero_pos, tb_pos, hero_stk):
-    # hero abriu 2bb, vilao 3betou p/ 6bb. pot/to_call como o leitor ao vivo fornece.
-    mp = {'hero': hero_pos, 'tb': tb_pos}
-    return dict(positions=mp, seats=_seats(mp, hero_stk),
-                bets=[dict(seat='hero', bet_bb=OPEN), dict(seat='tb', bet_bb=TB)],
-                pot=dict(pot_bb=OPEN + TB + 1.5), to_call=dict(to_call_bb=TB - OPEN))
+def st_squeeze(hero_pos, opener_pos, caller_pos, hero_stk, spread='iguais'):
+    return _table(hero_pos, hero_stk, spread, [(opener_pos, OPEN), (caller_pos, OPEN)])
 
 
-def st_vs_limp(hero_stk):
-    mp = {'hero': 'BB', 'sb': 'SB'}
-    return dict(positions=mp, seats=_seats(mp, hero_stk),
-                bets=[dict(seat='sb', bet_bb=1.0)])
+def st_squeeze2(hero_pos, opener_pos, c1, c2, hero_stk, spread='iguais'):
+    return _table(hero_pos, hero_stk, spread,
+                  [(opener_pos, OPEN), (c1, OPEN), (c2, OPEN)])
 
 
-def _covered(adv, r):
-    """Uma situacao esta COBERTA se, para TODA a mesa, existe decisao validada —
-    aqui testamos com mao premium (AA) e lixo (72o): ambos devem dar ADVICE validado
-    (jam/fold), nunca ABSTAIN nem validated=False."""
+def st_vs_3bet(hero_pos, tb_pos, hero_stk, spread='iguais'):
+    t = _table(hero_pos, hero_stk, spread, [(hero_pos, OPEN), (tb_pos, TB)])
+    t['pot'] = dict(pot_bb=OPEN + TB + 1.5)
+    t['to_call'] = dict(to_call_bb=TB - OPEN)
+    return t
+
+
+def st_vs_limp(hero_stk, spread='iguais'):
+    return _table('BB', hero_stk, spread, [('SB', 1.0)])
+
+
+def _covered(adv, r, mode='chip_ev', stage='mid', bounty=None):
+    """Uma situacao esta COBERTA se, para TODA a mesa, ha decisao EXECUTAVEL: ADVICE
+    validado, OU OUT_OF_RANGE (fold), OU call_off_* (margem), OU piso fold/check
+    nao-validado. So uma COMITADA (raise/call/all_in) nao-validada e buraco."""
     ok = True
     reasons = set()
+    kw = dict(mode=mode, stage=stage)
+    if bounty is not None:
+        kw['bounty_bb'] = bounty
     for cards in (['Ad', 'Ac'], ['7c', '2d'], ['Kd', 'Qs'], ['9h', '8h']):
-        res = adv.advise_from_reading(r, cards, mode='chip_ev')
+        res = adv.advise_from_reading(r, cards, **kw)
         if not isinstance(res, dict):
             ok = False; reasons.add('NO_RESULT'); continue
         status = res.get('status')
@@ -89,69 +107,103 @@ def hi(pos):
     return POS.index(pos)
 
 
-def enumerate_situations():
+def enumerate_situations(spread='iguais'):
     sits = []
     for stk in STACKS:
         # FIRST IN: hero abre de cada posicao (menos BB, que nao abre)
         for hp in POS:
             if hp == 'BB':
                 continue
-            sits.append(('first_in', hp, stk, st_first_in(hp, stk)))
+            sits.append(('first_in', hp, stk, st_first_in(hp, stk, spread)))
         # VS OPEN: opener antes do hero
         for hp in POS:
             for op in POS:
                 if hi(op) < hi(hp) and op not in ('SB', 'BB'):
-                    sits.append(('vs_open', '%s_vs_%s' % (hp, op), stk, st_vs_open(hp, op, stk)))
+                    sits.append(('vs_open', '%s_vs_%s' % (hp, op), stk, st_vs_open(hp, op, stk, spread)))
         # SQUEEZE: opener + 1 caller antes do hero
         for hp in ('HJ', 'CO', 'BTN', 'SB', 'BB'):
             for op in POS:
                 for cl in POS:
                     if hi(op) < hi(cl) < hi(hp) and op not in ('SB', 'BB') and cl not in ('SB', 'BB'):
                         sits.append(('squeeze', '%s_vs_%s+%s' % (hp, op, cl), stk,
-                                     st_squeeze(hp, op, cl, stk)))
+                                     st_squeeze(hp, op, cl, stk, spread)))
                         break   # 1 exemplo de caller por (hp,op) basta p/ cobertura
                 else:
                     continue
                 break
+        # SQUEEZE MULTIWAY (opener + 2 callers): só p/ posições tardias.
+        for hp in ('BTN', 'SB', 'BB'):
+            if hi('UTG') < hi('UTG+1') < hi('UTG+2') < hi(hp):
+                sits.append(('squeeze_mw', '%s_vs_UTG+2c' % hp, stk,
+                             st_squeeze2(hp, 'UTG', 'UTG+1', 'UTG+2', stk, spread)))
         # VS 3BET: hero abriu, vilao 3betou
         for hp in POS[:-2]:
             for tb in POS:
                 if hi(tb) > hi(hp):
-                    sits.append(('vs_3bet', '%s_3b_by_%s' % (hp, tb), stk, st_vs_3bet(hp, tb, stk)))
+                    sits.append(('vs_3bet', '%s_3b_by_%s' % (hp, tb), stk, st_vs_3bet(hp, tb, stk, spread)))
                     break
         # VS LIMP: BB vs SB limp
-        sits.append(('vs_limp', 'BB_vs_SB', stk, st_vs_limp(stk)))
+        sits.append(('vs_limp', 'BB_vs_SB', stk, st_vs_limp(stk, spread)))
     return sits
+
+
+# Todos os (modo, stage, bounty) que o cérebro serve. ICM/PKO usam stages; PKO tem bounty.
+MODES = [('chip_ev', 'mid', None),
+         ('icm', 'pre_itm', None), ('icm', 'bubble', None), ('icm', 'ft', None),
+         ('pko', 'mid', 10.0),
+         ('pko_icm', 'pre_itm', 10.0), ('pko_icm', 'bubble', 10.0), ('pko_icm', 'ft', 10.0)]
+CATS = ('first_in', 'vs_open', 'squeeze', 'squeeze_mw', 'vs_3bet', 'vs_limp')
+
+
+# Spreads a testar por modo: chip_ev/pko ignoram spread (iguais); ICM/PKO-ICM têm
+# ranges POR spread -> testa os três.
+def _spreads_for(mode):
+    return ('iguais', 'curtos_ini', 'curtos_fim') if mode in ('icm', 'pko_icm') else ('iguais',)
+
+
+def audit(adv, modes=MODES):
+    """(covered, total, by_cat_cov, by_cat, gaps) sobre TODOS os modos E spreads."""
+    covered = 0
+    total = 0
+    gaps = collections.defaultdict(list)
+    by_cat = collections.Counter()
+    by_cat_cov = collections.Counter()
+    bymode = collections.Counter()
+    bymode_cov = collections.Counter()
+    for mode, stage, bounty in modes:
+        for spread in _spreads_for(mode):
+            for cat, label, stk, state in enumerate_situations(spread):
+                total += 1
+                by_cat[cat] += 1
+                bymode[(mode, stage)] += 1
+                ok, reasons = _covered(adv, state, mode=mode, stage=stage, bounty=bounty)
+                if ok:
+                    covered += 1; by_cat_cov[cat] += 1; bymode_cov[(mode, stage)] += 1
+                else:
+                    for rsn in reasons:
+                        gaps[(cat, rsn)].append('%s/%s/%s %s@%dbb' % (mode, stage, spread, label, stk))
+    audit.bymode = bymode
+    audit.bymode_cov = bymode_cov
+    return covered, total, by_cat_cov, by_cat, gaps
 
 
 def main(argv=None):
     pack = (argv or sys.argv[1:] or [r'C:\Meus Projetos\Aplicativos\nvt-ranges-validados.json'])[0]
     adv = PreflopAdvisor.from_file(pack)
-    sits = enumerate_situations()
-    total = len(sits)
-    covered = 0
-    gaps = collections.defaultdict(list)       # (categoria, reason) -> [labels]
-    by_cat = collections.Counter()
-    by_cat_cov = collections.Counter()
-    for cat, label, stk, state in sits:
-        by_cat[cat] += 1
-        ok, reasons = _covered(adv, state)
-        if ok:
-            covered += 1; by_cat_cov[cat] += 1
-        else:
-            for rsn in reasons:
-                gaps[(cat, rsn)].append('%s@%dbb' % (label, stk))
-    print('=' * 70)
-    print('COBERTURA PRE-FLOP AO VIVO: %d/%d situacoes = %.1f%%' % (covered, total, 100.0 * covered / total))
-    print('=' * 70)
+    covered, total, by_cat_cov, by_cat, gaps = audit(adv)
+    print('=' * 72)
+    print('COBERTURA PRE-FLOP AO VIVO (TODOS OS MODOS: chip_ev/icm/pko/pko_icm):')
+    print('  %d/%d situacoes = %.1f%%' % (covered, total, 100.0 * covered / total))
+    print('=' * 72)
     print('Por categoria (cobertas/total):')
-    for cat in ('first_in', 'vs_open', 'squeeze', 'vs_3bet', 'vs_limp'):
-        print('  %-10s %d/%d' % (cat, by_cat_cov[cat], by_cat[cat]))
+    for cat in CATS:
+        if by_cat[cat]:
+            print('  %-11s %d/%d' % (cat, by_cat_cov[cat], by_cat[cat]))
     print()
     print('BURACOS por (categoria, motivo):')
     for (cat, rsn), labels in sorted(gaps.items(), key=lambda kv: -len(kv[1])):
-        ex = ', '.join(sorted(set(labels))[:6])
-        print('  [%-9s] %-34s x%-3d  ex: %s' % (cat, rsn, len(labels), ex))
+        ex = ', '.join(sorted(set(labels))[:5])
+        print('  [%-10s] %-30s x%-4d ex: %s' % (cat, rsn, len(labels), ex))
     return 0
 
 

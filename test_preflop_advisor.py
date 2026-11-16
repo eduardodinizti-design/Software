@@ -518,15 +518,16 @@ class VsLimpTests(unittest.TestCase):
         self.assertEqual(r['status'], 'ABSTAIN')
         self.assertEqual(r['reason'], 'NO_VALIDATED_NODE_FOR_CONTEXT')
 
-    def test_vs_limp_borrows_nearest_stack(self):
-        # vs_limp só existe a 25bb; a 30bb (acima da zona de shove) a camada
-        # heurística empresta o de 25bb (flagged) em vez de abster.
+    def test_vs_limp_usa_range_25bb_noutros_stacks(self):
+        # vs_limp só existe a 25bb. A batalha BB vs limp do SB é estável -> usa a
+        # range de 25bb (que É validada) em qualquer stack, com caveat de aproximacao,
+        # em vez de abster/borrar não-validado. Sempre dá decisao executável.
         a = PreflopAdvisor(pack_vs_limp(['AKs'], stack=25))
         r = a.advise_from_reading(self._sb_limp(hero_stack=30.0), ['As', 'Ks'],
                                   mode='chip_ev', stage='mid')
         self.assertEqual(r['status'], 'ADVICE')
-        self.assertFalse(r['validated'])
-        self.assertTrue(any('STACK_BORROWED' in c for c in r['caveats']))
+        self.assertTrue(r['validated'])                 # a range de 25bb é validada
+        self.assertTrue(any('VS_LIMP_RANGE25BB_APROX' in c for c in r['caveats']))
 
 
 class FirstInTests(unittest.TestCase):

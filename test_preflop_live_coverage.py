@@ -44,10 +44,20 @@ class PreflopLiveCoverage(unittest.TestCase):
         c, t = self._cov('squeeze')
         self.assertGreaterEqual(c, 35)              # squeeze <=25bb via 3bet_shove; deep 30-40 e gap de range
 
-    def test_overall_floor(self):
+    def test_overall_floor_chip_ev(self):
         cov = sum(self.by_cat_cov.values())
         tot = sum(self.by_cat.values())
-        self.assertGreaterEqual(cov / tot, 0.96)    # piso global 96% (restante = gaps de range reais)
+        self.assertGreaterEqual(cov / tot, 0.96)    # chip_ev: piso 96% (restante = gaps de range)
+
+    def test_overall_floor_todos_os_modos_e_spreads(self):
+        # Conjunto COMPLETO (chip_ev/icm/pko/pko_icm x spreads iguais/curtos_ini/
+        # curtos_fim x multiway). Piso HONESTO. chip_ev ~97%; ICM/PKO menores por
+        # ESPARSIDADE DE RANGE (buckets 15/25/35/100 na fonte vs 20/30/40 do bucketing
+        # global = mismatch) + pares/spreads não solvados. Fecha alinhando bucket +
+        # ingerindo mais ranges, não fabricando. (Medir spreads baixou o número honesto
+        # de 79% -> ~55%: o 79% só testava 'iguais' e SUBESTIMAVA os gaps.)
+        cov, tot, _bcc, _bc, _gaps = aud.audit(self.adv)
+        self.assertGreaterEqual(cov / tot, 0.53)
 
     def test_squeeze_aqo_jam_is_validated(self):
         # O BUG REAL (15/11): AQo SB squeeze curto DEVE jamar validado, nunca call/abster.

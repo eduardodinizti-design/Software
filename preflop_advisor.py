@@ -781,10 +781,13 @@ class PreflopAdvisor:
                         # viram piso seguro (não auto-executa). Assim premium NUNCA larga
                         # (sem fold de AA no squeeze) e não se blefa-squeeze multiway.
                         _rec = result.get('recommended')
-                        _mix = result.get('mix') or {}
-                        _pure_value = (_rec in ('raise', 'all_in')
-                                       and float(_mix.get(_rec, 0) or 0) >= 0.9)
-                        if _pure_value:
+                        _freq = 0.0
+                        for _it in (result.get('mix') or []):
+                            if isinstance(_it, dict) and _it.get('action') == _rec:
+                                _freq = float(_it.get('frequency') or 0.0)
+                                break
+                        _aggr = _rec in ('three_bet', 'raise', 'all_in', 'bet', 'four_bet')
+                        if _aggr and _freq >= 0.9:
                             result.setdefault('caveats', []).append('SQUEEZE_VALOR_PURO')
                         else:
                             result['validated'] = False
@@ -798,15 +801,18 @@ class PreflopAdvisor:
             if (base['hero_position'] == 'BB' and _sb_limped(table_state)
                     and sizing.count_limpers(table_state) == 0):
                 result = self.advise(spot='vs_limp', vs=(), **base, **kwargs)
-                if (isinstance(result, dict) and result.get('status') == 'ABSTAIN'
-                        and result.get('reason') == 'NO_VALIDATED_NODE_FOR_CONTEXT'):
-                    # vs_limp só tem nó em 25bb. A batalha BB vs limp do SB é estável o
-                    # suficiente p/ usar a range de 25bb nos outros stacks (aproximacao
-                    # rotulada) em vez de abster -> sempre dá decisao (iso/check/fold).
+                _rr = result if isinstance(result, dict) else {}
+                # vs_limp só tem nó em 25bb. A batalha BB vs limp do SB é estável o
+                # suficiente p/ usar a range de 25bb em QUALQUER stack (aproximacao
+                # rotulada) sempre que o stack real não deu decisao validada (abstém OU
+                # borra não-validado) -> sempre uma decisao (iso/check/fold), nunca buraco.
+                if _rr.get('status') != 'ADVICE' or _rr.get('validated') is not True:
                     r25 = self.advise(spot='vs_limp', vs=(), **dict(base, stack_bb=25), **kwargs)
                     if isinstance(r25, dict) and r25.get('status') in ('ADVICE', 'OUT_OF_RANGE'):
                         r25.setdefault('caveats', []).append('VS_LIMP_RANGE25BB_APROX')
                         result = r25
+                    elif _rr.get('status') != 'ABSTAIN':
+                        pass                              # mantém o borrow (já é uma decisao)
                     else:
                         result = self.advise_first_in(**base, **kwargs)
                 elif isinstance(result, dict):
