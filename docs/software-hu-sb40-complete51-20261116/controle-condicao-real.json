@@ -1,0 +1,10 @@
+{
+  "schema": "software.hu-sb40-51-real-prerequisite-negative-control.v1",
+  "status": "PASS",
+  "parent34_not_yet_complete": true,
+  "new_cfr_started": false,
+  "output_folder_created": false,
+  "expected_exit_nonzero": true,
+  "reason": "strategy.state_contract.StrategyError: VERIFIED_34_PREREQUISITE_WAIT_TIMEOUT_NO_NEW_CFR_STARTED",
+  "scope": "ACTUAL_GITHUB_PARENT_METADATA_READ_NO_SOLVER_NO_INPUT_DEVICES"
+}

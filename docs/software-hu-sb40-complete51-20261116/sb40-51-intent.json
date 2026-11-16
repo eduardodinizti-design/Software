@@ -1,0 +1,381 @@
+{
+  "cases": [
+    {
+      "board": [
+        "2c",
+        "3c",
+        "Tc"
+      ],
+      "case_id": "d70acad53593030ce4a5",
+      "ordinal": 1
+    },
+    {
+      "board": [
+        "9c",
+        "Qc",
+        "Tc"
+      ],
+      "case_id": "5984add9315aacb56670",
+      "ordinal": 2
+    },
+    {
+      "board": [
+        "4c",
+        "6c",
+        "Kc"
+      ],
+      "case_id": "558611d053cf4ccdfec0",
+      "ordinal": 3
+    },
+    {
+      "board": [
+        "Kc",
+        "Qc",
+        "Tc"
+      ],
+      "case_id": "44de9a08819f0fef2d92",
+      "ordinal": 4
+    },
+    {
+      "board": [
+        "2c",
+        "6c",
+        "9d"
+      ],
+      "case_id": "0d527a4b30d4bef7b50f",
+      "ordinal": 5
+    },
+    {
+      "board": [
+        "9c",
+        "Jd",
+        "Qd"
+      ],
+      "case_id": "18ca51b592543e374ece",
+      "ordinal": 6
+    },
+    {
+      "board": [
+        "3c",
+        "Ad",
+        "Qd"
+      ],
+      "case_id": "99be1cdf15c766869e5c",
+      "ordinal": 7
+    },
+    {
+      "board": [
+        "Ac",
+        "Jd",
+        "Qc"
+      ],
+      "case_id": "c63241e894da72ce854d",
+      "ordinal": 8
+    },
+    {
+      "board": [
+        "2c",
+        "7d",
+        "Qh"
+      ],
+      "case_id": "73952495ae3ac4e740d9",
+      "ordinal": 9
+    },
+    {
+      "board": [
+        "9c",
+        "Qd",
+        "Th"
+      ],
+      "case_id": "986e52432455b596f237",
+      "ordinal": 10
+    },
+    {
+      "board": [
+        "5c",
+        "8d",
+        "Ah"
+      ],
+      "case_id": "455b949e5d946bec281a",
+      "ordinal": 11
+    },
+    {
+      "board": [
+        "9c",
+        "Kd",
+        "Qh"
+      ],
+      "case_id": "9867d53575bba1453f73",
+      "ordinal": 12
+    },
+    {
+      "board": [
+        "3c",
+        "3d",
+        "8c"
+      ],
+      "case_id": "6b9fde7ce620eb8ab854",
+      "ordinal": 13
+    },
+    {
+      "board": [
+        "6c",
+        "6d",
+        "8c"
+      ],
+      "case_id": "f6d8c718aae1fdc9aa31",
+      "ordinal": 14
+    },
+    {
+      "board": [
+        "2c",
+        "Kc",
+        "Kd"
+      ],
+      "case_id": "611aa65227fed1cc2196",
+      "ordinal": 15
+    },
+    {
+      "board": [
+        "Ac",
+        "Qc",
+        "Qd"
+      ],
+      "case_id": "b35d455fce0108cc2fa2",
+      "ordinal": 16
+    },
+    {
+      "board": [
+        "2c",
+        "2d",
+        "8h"
+      ],
+      "case_id": "5c7339758b9a661aefab",
+      "ordinal": 17
+    }
+  ],
+  "intent_sha256": "3f0dd847adab654bc793a22530207b8db68d9b51adc48330843a6327b314b747",
+  "max_parallel_hosts": 8,
+  "model_sha256": "31e6da6303ed20facf9a5700942cdd1ddec0a251ef8ffbd4889ee048ef88e2f5",
+  "new_models": 17,
+  "parent_catalog_asset": "batch-catalog-43799276504.json",
+  "parent_native_run": "43799276504",
+  "parent_plan_sha256": "f070d2c0289dd6eef328e48da8fbecd001c6bf483380e987a7208ea730b63d67",
+  "parent_tag": "hu-sb-bb40-nvt-complete34-20261116",
+  "parent_windows_run": "43800302038",
+  "policy_ids_created_only_after_actual_parent_completion": true,
+  "pppoker_windows_validated": false,
+  "preserved_holdout_flops": [
+    [
+      "Ac",
+      "9h",
+      "4d"
+    ],
+    [
+      "Kh",
+      "Jh",
+      "6c"
+    ],
+    [
+      "Td",
+      "8d",
+      "5s"
+    ],
+    [
+      "6h",
+      "6s",
+      "3c"
+    ]
+  ],
+  "previous_and_in_progress_boards": [
+    [
+      "As",
+      "7d",
+      "2c"
+    ],
+    [
+      "Kd",
+      "8h",
+      "3c"
+    ],
+    [
+      "Ah",
+      "Kd",
+      "7c"
+    ],
+    [
+      "Qs",
+      "8d",
+      "3c"
+    ],
+    [
+      "Js",
+      "Td",
+      "4c"
+    ],
+    [
+      "9s",
+      "8s",
+      "7d"
+    ],
+    [
+      "8c",
+      "6d",
+      "3s"
+    ],
+    [
+      "7s",
+      "7h",
+      "2d"
+    ],
+    [
+      "Kc",
+      "Kd",
+      "5s"
+    ],
+    [
+      "Qs",
+      "7s",
+      "2s"
+    ],
+    [
+      "Jd",
+      "9d",
+      "4c"
+    ],
+    [
+      "5c",
+      "4d",
+      "3s"
+    ],
+    [
+      "3c",
+      "4c",
+      "8c"
+    ],
+    [
+      "Jc",
+      "Qc",
+      "Tc"
+    ],
+    [
+      "5c",
+      "9c",
+      "Kc"
+    ],
+    [
+      "Jc",
+      "Kc",
+      "Qc"
+    ],
+    [
+      "6c",
+      "Jd",
+      "Td"
+    ],
+    [
+      "9c",
+      "Jc",
+      "Qd"
+    ],
+    [
+      "4c",
+      "8c",
+      "Kd"
+    ],
+    [
+      "Jc",
+      "Kd",
+      "Qc"
+    ],
+    [
+      "7c",
+      "8d",
+      "Qh"
+    ],
+    [
+      "7c",
+      "8d",
+      "Jh"
+    ],
+    [
+      "4c",
+      "Ad",
+      "Jh"
+    ],
+    [
+      "Ac",
+      "Jd",
+      "Th"
+    ],
+    [
+      "3c",
+      "3d",
+      "Qc"
+    ],
+    [
+      "5c",
+      "5d",
+      "7c"
+    ],
+    [
+      "4c",
+      "4d",
+      "Ac"
+    ],
+    [
+      "Ac",
+      "Tc",
+      "Td"
+    ],
+    [
+      "6c",
+      "Jd",
+      "Jh"
+    ],
+    [
+      "Jc",
+      "Qd",
+      "Qh"
+    ],
+    [
+      "3c",
+      "3d",
+      "Kh"
+    ],
+    [
+      "Jc",
+      "Jd",
+      "Kh"
+    ],
+    [
+      "9c",
+      "9d",
+      "9h"
+    ],
+    [
+      "Kc",
+      "Kd",
+      "Kh"
+    ]
+  ],
+  "profile_settings": {
+    "ante_pot_bb": 1.0,
+    "name": "SB-BB40-BBA1-open2-reference-v1",
+    "preflop_aggressor": 0
+  },
+  "required_previous_models": 34,
+  "schema": "software.hu-sb40-51-intent.v1",
+  "settings": {
+    "accuracy_pct": 0.5,
+    "iterations": 2001,
+    "memory_mb": 12288,
+    "threads": 4,
+    "timeout_seconds": 18000,
+    "work_disk_mb": 30720
+  },
+  "status": "WAITING_FOR_COMPLETE_SAVED_WINDOWS_VERIFIED_34",
+  "tag": "hu-sb-bb40-nvt-complete51-20261116",
+  "target_total_models": 51,
+  "workers_per_host": 1
+}

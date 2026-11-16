@@ -1,0 +1,233 @@
+name: HU SB40 conditional third batch and full Windows delivery of 51 models
+on:
+  push:
+    branches: [feat/hu-sb40-complete51-20261116]
+    paths: [.github/workflows/hu-sb40-complete51.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+  statuses: write
+  actions: read
+concurrency:
+  group: hu-sb40-complete51-20261116
+  cancel-in-progress: false
+env:
+  TAG: hu-sb-bb40-nvt-complete51-20261116
+  PLAN: runtime/inputs/sb40-complete51-plan.json
+  CHECKPOINT: runtime/inputs/checkpoint-primeiros34.json
+  GH_TOKEN: ${{ github.token }}
+  PYTHONUTF8: '1'
+  PYTHONUNBUFFERED: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  HU_GITHUB_STATUS_PREFIX: hu-sb40-complete51
+  HU_GITHUB_RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+jobs:
+  initialize:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 350
+    outputs:
+      plan_sha256: ${{ steps.prepare.outputs.plan_sha256 }}
+      artifact: ${{ steps.meta.outputs.artifact }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install numpy==2.2.6
+      - id: meta
+        run: echo "artifact=sb40-51-checked-inputs-a${{ github.run_attempt }}" >> "$GITHUB_OUTPUT"
+      - id: prepare
+        name: Wait for all 34 saved Windows-verified models before freezing or publishing the new study
+        run: python tools/prepare_hu_sb40_complete51.py init --output runtime/inputs --wait-seconds 19800 --publish
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ${{ steps.meta.outputs.artifact }}
+          path: runtime/inputs/*.json
+          retention-days: 30
+  calculate:
+    needs: initialize
+    runs-on: ubuntu-24.04
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        ordinal: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
+    name: Third SB40 full-tree model ${{ matrix.ordinal }} of seventeen
+    env:
+      OMP_NUM_THREADS: '4'
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install numpy==2.2.6
+      - uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.initialize.outputs.artifact }}
+          path: runtime/inputs
+      - name: Recheck the exact late-frozen plan and the preserved 34 before allocating a solver
+        run: python tools/prepare_hu_sb40_complete51.py verify --plan "$PLAN" --checkpoint "$CHECKPOINT" --expected-plan-sha "${{ needs.initialize.outputs.plan_sha256 }}"
+      - id: reuse
+        name: Reuse previously saved complete results without repeating CFR
+        run: python tools/hu_batch16.py check --plan "$PLAN" --ordinal ${{ matrix.ordinal }} --output runtime/reused-native.json
+      - if: steps.reuse.outputs.reused != 'true'
+        name: Reserve storage only on this new disposable GitHub-hosted VM
+        run: |
+          test "${{ runner.environment }}" = github-hosted
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
+          df -h "$GITHUB_WORKSPACE"
+      - if: steps.reuse.outputs.reused != 'true'
+        name: Build the pinned separate solver with its complete streaming exporter
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libfmt-dev zlib1g-dev
+          python -m pip install opencv-python-headless==4.11.0.86 psutil==6.1.1 pytesseract==0.3.13
+          git clone https://github.com/bupticybee/TexasSolver.git "$RUNNER_TEMP/TexasSolver"
+          git -C "$RUNNER_TEMP/TexasSolver" checkout 02c8021ee1307c18aa1e76b772c6ae1451601bc6
+          python tools/build_texassolver_console.py --source "$RUNNER_TEMP/TexasSolver" --fmt-include /usr/include --out "$RUNNER_TEMP/hu-native/solver-stream" --stream-export
+          cp "$RUNNER_TEMP/hu-native/solver-stream.manifest.json" runtime/native-build.json
+      - if: steps.reuse.outputs.reused != 'true'
+        name: Check conditional gating, the immutable game and asymmetric native stacks
+        run: |
+          HU_STREAM_TEST_BINARY="$RUNNER_TEMP/hu-native/solver-stream" HU_STREAM_TEST_RESOURCES="$RUNNER_TEMP/TexasSolver/resources" python -m unittest test_hu_sb40_complete51 test_hu_sb40_complete34 test_hu_sb40_next16 test_hu_blind_war test_hu_campaign_download -q
+      - if: steps.reuse.outputs.reused != 'true'
+        name: Calculate and preserve complete three-street actions, frequencies, sizes and replies
+        run: python tools/hu_batch16.py case --plan "$PLAN" --ordinal ${{ matrix.ordinal }} --binary "$RUNNER_TEMP/hu-native/solver-stream" --resources "$RUNNER_TEMP/TexasSolver/resources" --output runtime/hu-sb40-51-case
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sb40-51-native-${{ matrix.ordinal }}-a${{ github.run_attempt }}
+          path: |
+            runtime/reused-native.json
+            runtime/native-build.json
+            runtime/hu-sb40-51-case/**/*.json
+            runtime/hu-sb40-51-case/**/*.txt
+            runtime/hu-sb40-51-case/**/*.log
+          retention-days: 30
+      - name: Preserve native output if later conversion or publication fails
+        id: recovery
+        if: failure()
+        run: |
+          python - <<'PY'
+          import os,pathlib
+          root=pathlib.Path('runtime/hu-sb40-51-case/study')
+          for pattern in ('delivery/parts/*','delivery/*.zip','bank/policies/*.sqlite','bank/temporary/*/native/strategy.jsonl.gz'):
+              if any(root.glob(pattern)):
+                  with open(os.environ['GITHUB_OUTPUT'],'a') as out:out.write('path='+str(root/pattern)+'\n')
+                  break
+          PY
+      - uses: actions/upload-artifact@v4
+        if: failure() && steps.recovery.outputs.path != ''
+        with:
+          name: sb40-51-recovery-${{ matrix.ordinal }}-a${{ github.run_attempt }}
+          path: ${{ steps.recovery.outputs.path }}
+          compression-level: 0
+          retention-days: 30
+  catalog:
+    needs: [initialize, calculate]
+    if: always() && needs.initialize.result == 'success'
+    runs-on: ubuntu-24.04
+    outputs:
+      catalog_asset: ${{ steps.publish.outputs.catalog_asset }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install numpy==2.2.6
+      - uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.initialize.outputs.artifact }}
+          path: runtime/inputs
+      - id: publish
+        run: python tools/hu_batch16.py catalog --plan "$PLAN" --output runtime/hu-sb40-51-catalog
+  contracts:
+    needs: initialize
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install numpy==2.2.6 opencv-python==4.11.0.86 psutil==6.1.1 pytesseract==0.3.13
+      - shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force runtime/hu-sb40-51-contracts | Out-Null
+          python -m unittest test_hu_sb40_complete51 test_hu_sb40_delivery34 test_hu_sb40_complete34 test_hu_sb40_next16 test_hu_campaign test_hu_blind_war test_hu_campaign_download test_hu_campaign_delivery test_hu_policy_json test_hu_next16 test_hu_reference test_hu_batches test_hu_policy_engine test_hu_operational test_cursor test_window_capture_engine test_window_capture_audit test_capture_windows_native test_raise_plan test_raise_sequencer -v *> runtime/hu-sb40-51-contracts/contracts.txt
+          $code = $LASTEXITCODE
+          Get-Content runtime/hu-sb40-51-contracts/contracts.txt -Tail 15
+          exit $code
+      - run: |
+          Copy-Item runtime/hu-sb40-51-contracts/contracts.txt runtime/windows-contracts-sb40-51-${{ github.run_id }}-a${{ github.run_attempt }}.txt
+          gh release upload "$env:TAG" --repo "$env:GITHUB_REPOSITORY" runtime/windows-contracts-sb40-51-${{ github.run_id }}-a${{ github.run_attempt }}.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sb40-51-windows-contracts-a${{ github.run_attempt }}
+          path: runtime/hu-sb40-51-contracts/contracts.txt
+          retention-days: 30
+  actual-data:
+    needs: [catalog, contracts]
+    runs-on: windows-latest
+    timeout-minutes: 80
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        ordinal: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
+    name: Windows third SB40 complete policy ${{ matrix.ordinal }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install numpy==2.2.6
+      - id: reuse
+        run: python tools/reuse_hu_windows_proof.py --family sb40-51 --ordinal ${{ matrix.ordinal }} --catalog-asset "${{ needs.catalog.outputs.catalog_asset }}" --output runtime/reused-proof.json
+      - if: steps.reuse.outputs.reused != 'true'
+        run: python tools/validate_hu_campaign_windows.py --family sb40-51 --ordinal ${{ matrix.ordinal }} --catalog-asset "${{ needs.catalog.outputs.catalog_asset }}" --output runtime/hu-sb40-51-proof
+      - if: steps.reuse.outputs.reused != 'true'
+        run: |
+          $label = "{0:D2}" -f [int]"${{ matrix.ordinal }}"
+          Copy-Item runtime/hu-sb40-51-proof/windows-proof.json "runtime/windows-sb40-51-case-${label}-${{ github.run_id }}-a${{ github.run_attempt }}.json"
+          Compress-Archive -Path runtime/hu-sb40-51-proof/windows-proof,runtime/hu-sb40-51-proof/request-*.json,runtime/hu-sb40-51-proof/response-*.json -DestinationPath "runtime/windows-sb40-51-case-${label}-${{ github.run_id }}-a${{ github.run_attempt }}-json-history.zip"
+          gh release upload "$env:TAG" --repo "$env:GITHUB_REPOSITORY" "runtime/windows-sb40-51-case-${label}-${{ github.run_id }}-a${{ github.run_attempt }}.json" "runtime/windows-sb40-51-case-${label}-${{ github.run_id }}-a${{ github.run_attempt }}-json-history.zip"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sb40-51-windows-${{ matrix.ordinal }}-a${{ github.run_attempt }}
+          path: |
+            runtime/reused-proof.json
+            runtime/hu-sb40-51-proof/windows-proof.json
+            runtime/hu-sb40-51-proof/windows-proof/*.json
+            runtime/hu-sb40-51-proof/request-*.json
+            runtime/hu-sb40-51-proof/response-*.json
+          retention-days: 30
+  deliver:
+    needs: [catalog, actual-data, contracts]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install numpy==2.2.6
+      - run: python tools/finalize_hu_sb40_complete51.py --catalog-asset "${{ needs.catalog.outputs.catalog_asset }}" --native-run "${{ github.run_id }}" --output runtime/hu-sb40-51-final
+      - run: python tools/verify_hu_sb40_complete51_publication.py --run "${{ github.run_id }}" --catalog-asset "${{ needs.catalog.outputs.catalog_asset }}" --output runtime/hu-sb40-51-publication-check
+      - run: |
+          cp runtime/hu-sb40-51-publication-check/publicacao-final-verificada.json runtime/publicacao-final-verificada-sb40-51-${{ github.run_id }}-a${{ github.run_attempt }}.json
+          gh release upload "$TAG" --repo "$GITHUB_REPOSITORY" runtime/publicacao-final-verificada-sb40-51-${{ github.run_id }}-a${{ github.run_attempt }}.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sb40-51-final-publication-a${{ github.run_attempt }}
+          path: |
+            runtime/hu-sb40-51-final/*.json
+            runtime/hu-sb40-51-final/*.txt
+            runtime/hu-sb40-51-publication-check/*.json
+            runtime/hu-sb40-51-publication-check/*.txt
+          retention-days: 30

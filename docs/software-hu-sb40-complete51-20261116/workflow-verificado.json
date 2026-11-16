@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "workflow_sha256": "c1d381e6e18fcefb21997420346caf546a8aee9ec8e33400ec0c196f85f7eb2a",
+  "max_parallel_hosts": 8,
+  "cases": 17,
+  "heavy_calculations_require_checked_34": true,
+  "windows_also_requires_checked_34": true,
+  "catalogs_bound_to_actual_attempt_outputs": true,
+  "previous_active_jobs_not_cancelled": true
+}
