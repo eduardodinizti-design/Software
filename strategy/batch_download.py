@@ -3,6 +3,9 @@
 The archive is data only. This module never uses the mouse or starts a solver.
 """
 import argparse
+import copy
+from contextlib import contextmanager
+from contextvars import ContextVar
 from datetime import datetime,timezone
 import hashlib
 import json
@@ -27,7 +30,32 @@ PLAN_SHA256='525df4dc2ac803e28f18adcef79ceb943df2264ffbe154397e21cd822fca7903'
 ASSET_BASE=f'https://github.com/{REPOSITORY}/releases/download/'
 
 
+_JSON_SNAPSHOT=ContextVar('hu_metadata_snapshot',default=None)
+
+
+@contextmanager
+def metadata_snapshot():
+    """One bounded ancestry read; no cache survives the enclosing operation."""
+    if _JSON_SNAPSHOT.get() is not None:
+        yield
+        return
+    token=_JSON_SNAPSHOT.set(dict(values={},bytes=0))
+    try:yield
+    finally:_JSON_SNAPSHOT.reset(token)
+
+
 def read_json(url,limit=4*1024**2):
+    cache=_JSON_SNAPSHOT.get();key=(url,limit)
+    if cache is not None and key in cache['values']:return copy.deepcopy(cache['values'][key])
+    value=_read_json_uncached(url,limit)
+    if cache is not None and len(cache['values'])<128:
+        size=len(json.dumps(value,separators=(',',':')).encode())
+        if cache['bytes']+size<=64*1024**2:
+            cache['values'][key]=copy.deepcopy(value);cache['bytes']+=size
+    return value
+
+
+def _read_json_uncached(url,limit=4*1024**2):
     parsed=urlsplit(url);token=os.environ.get('GH_TOKEN') or os.environ.get('GITHUB_TOKEN')
     if token and parsed.scheme=='https' and parsed.netloc=='api.github.com':
         request=urllib.request.Request(url,headers={'User-Agent':'Software-HU-metadata/1',
@@ -112,7 +140,8 @@ def receive_archive(manifest,destination):
     """Stream parts directly into one ZIP; never keep parts plus another copy."""
     check_bundle(manifest);destination=Path(destination)
     if destination.exists():raise StrategyError('BATCH_ARCHIVE_DESTINATION_MUST_BE_NEW')
-    if manifest['tag'] not in (BATCH_TAG,PILOT_TAG,'hu-btn-bb-nvt-complete32-20261115','hu-sb-bb40-nvt-pilot-20261115','hu-sb-bb40-nvt-next16-20261116','hu-sb-bb40-nvt-complete34-20261116','hu-sb-bb40-nvt-complete51-20261116'):
+    from strategy.blind_war import SB40_SERIES_TAGS
+    if manifest['tag'] not in (BATCH_TAG,PILOT_TAG,'hu-btn-bb-nvt-complete32-20261115','hu-sb-bb40-nvt-pilot-20261115','hu-sb-bb40-nvt-next16-20261116','hu-sb-bb40-nvt-complete34-20261116','hu-sb-bb40-nvt-complete51-20261116',*SB40_SERIES_TAGS.values()):
         raise StrategyError('UNKNOWN_REFERENCE_RELEASE')
     whole=hashlib.sha256();received=0
     with destination.open('xb') as out:

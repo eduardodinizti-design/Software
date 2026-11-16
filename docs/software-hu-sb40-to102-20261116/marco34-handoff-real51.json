@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "previous_complete_models": 34,
+  "next_target": 51,
+  "new_models": 17,
+  "actual_parent_checkpoint_matches_next_batch": true,
+  "checkpoint_sha256": "eea3dffbfba52e6238727e0d5e8e8a0fa619895642b5927789454953c961e5b7",
+  "next_plan_sha256": "84f680713589542ea53729bf9a8759132c6a832955a6624d67825a7544ae04af",
+  "parent_native_catalog": "batch-catalog-43799276504.json",
+  "parent_windows_workflow": "43800302038",
+  "next_workflow": "43807544505",
+  "pppoker_windows_validated": false
+}

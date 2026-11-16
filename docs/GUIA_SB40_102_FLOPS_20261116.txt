@@ -1,0 +1,104 @@
+SOFTWARE ORIGINAL — CONTINUACAO SB x BB 40 BB ATE 102 FLOPS
+
+Escopo: Software original, eduardodinizti-design/Software. Nao e Clone.
+Meta da familia SB40: 17 -> 34 -> 51 -> 68 -> 85 -> 102 flops distintos.
+Os 32 modelos BTN25 ficam separados e preservados.
+
+COMO A FILA FUNCIONA
+
+O workflow hu-sb40-to102.yml executa tres lotes novos de 17, em sequencia.
+O primeiro aguarda a entrega completa dos 51 do workflow 43807544505.
+Os seguintes dependem da entrega anterior neste mesmo workflow: 68 e 85.
+Nao aguardam o termino do controlador inteiro, o que causaria dependencia
+circular; exigem o job de entrega correto, na tentativa correspondente,
+com sucesso e recibo publico conferido.
+
+Antes de cada solve, o sistema confere: quantidade, boards distintos,
+SHA-256 das partes salvas, codigo, plano, consultas e historicos Windows,
+ZIP de codigo, manifesto e checkpoint de todas as geracoes anteriores.
+So entao congela o plano com as identidades REAIS das politicas anteriores.
+Os arquivos sb40-68/85/102-intent.json apenas reservam boards e parametros.
+Eles NAO sao politicas calculadas e NAO criam hashes ficticios de politicas.
+
+Em cada lote: calcular 17 arvores completas dentro do menu; salvar em
+partes no GitHub Releases; encerrar workers e remover somente temporarios
+proprios depois da preservacao; baixar e ler os 17 bancos completos em
+runners Windows; consultar flop, turn e river; conferir bijecoes de naipes
+e historicos sinteticos; publicar relatorio, inventario e ZIP de codigo;
+baixar novamente os entregaveis e conferir SHA-256 e CRC antes de avancar.
+
+Resultados completos ja salvos podem ser reutilizados em nova tentativa.
+Catalogos e recibos incluem run ID e tentativa. Nao se substitui um
+catalogo de tentativa anterior por outro conteudo com o mesmo nome.
+Falha de um lote impede iniciar os lotes seguintes; nao elimina os dados
+concluidos. Arquivos de recuperacao ficam preservados quando disponiveis.
+
+JOGO PRESERVADO
+
+Nove jogadores originalmente: sete folds, SB open para 2 BB, BB call.
+BBA de 1 BB; stacks de 40 BB antes dos posts. Flop com pote 5 BB,
+SB com 38 BB e BB com 37 BB. Hero SB fora de posicao.
+Os ranges NVT autorizados continuam identicos. Nao e export HRC confirmado.
+Menu: bet 1/3, raise de 100% do pote, all-in, duas agressoes por rua.
+Backend TexasSolver fixado em 02c8021ee1307c18aa1e76b772c6ae1451601bc6.
+Parametros: ate 2001 iteracoes, alvo nativo de exploitability <= 0,5% do
+pote, quatro threads, 12 GiB por worker e 30 GiB de disco de trabalho.
+No maximo oito hosts GitHub isolados; um solver por host. O notebook nao
+repete os solves. global_gap_bb e NashConv, o dobro da exploitability.
+
+SALVAMENTO E CONSULTA
+
+Cada banco conserva acoes, frequencias por combinacao privada, sizes e
+respostas em flop, turn e river, dentro do menu. A consulta acompanha o
+historico e condiciona os ranges. Um resumo medio do flop nao substitui
+essas politicas completas. Os logs preservam checkpoints de convergencia;
+nao sao snapshots retomaveis dos regrets de TODAS as iteracoes CFR.
+Um river condicional por modelo recebe enumeracao independente. O alvo
+global nao certifica igual precisao em todo no. EV por acao pode ser null.
+
+INSTALAR SOMENTE QUANDO A RESPECTIVA ENTREGA ESTIVER COMPLETA
+
+1. Baixe o ZIP Software-SB40-68, Software-SB40-85 ou Software-SB40-102 da
+   entrega correspondente. Extraia em pasta NOVA; preserve a instalacao.
+2. Use Python 3.12 x64 e requirements.txt conforme o Software original.
+3. Execute o BAT correspondente:
+   BAIXAR_BLIND_WAR_40BB_68.bat
+   BAIXAR_BLIND_WAR_40BB_85.bat
+   BAIXAR_BLIND_WAR_40BB_102.bat
+4. O indice final fica em runtime\hu\sb40-N\bank\library.json, com N
+   igual a 68, 85 ou 102. O BAT apenas instala dados; nao ativa o bot.
+5. Configure --postflop-library com esse indice e inicie a observacao
+   antes dos blinds. Prepare PolicyLibrary uma vez por sessao.
+
+SQLite consulta o disco com cache limitado. Os bancos completos podem
+exigir centenas de GB de DISCO: confira os tamanhos REAIS da entrega e
+reserve ainda um ZIP temporario. O instalador verifica espaco livre.
+O uso de RAM do notebook e o tempo de resposta precisam de medicao real.
+
+Para baixar so os 17 novos, em pasta independente, por exemplo:
+  .venv\Scripts\python.exe -m strategy.campaign_download --family sb40-102 --new-only --output runtime\hu\sb40-lote102 --resume
+
+Para fixar um catalogo publicado, acrescente --catalog-asset com o nome
+batch-catalog-RUN-aTENTATIVA.json mostrado no relatorio correspondente.
+Os planos sao recalculados a partir dos recibos EXATOS dos pais, mantendo
+tag, source_ordinal, policy_sha256 e file_sha256 de cada banco anterior.
+O leitor de metadados reutiliza apenas uma leitura limitada por operacao;
+uma nova operacao consulta o GitHub novamente, sem cache persistente.
+
+LIMITES QUE CONTINUAM EXPLICITOS
+
+102 modelos referem-se a 102 flops distintos desta configuracao SB40,
+sem contar aliases de naipes como modelos. Outros flops nao ficam
+resolvidos por semelhanca visual. Os holdouts seguem fora dos estudos.
+Hero BB, limp/check, outros stacks/antes/sizes, 3-bet pots, multiway,
+ICM e PKO exigem trabalhos proprios. Nao ha roteamento BTN25/SB40 automatico.
+Nao se alteraram leitores OCR, limites de confianca nem cliques.
+Windows aqui e teste de arquivos reais e historicos sinteticos em runners;
+nao comprova operacao real no PPPoker Windows do notebook. Leitura,
+sincronizacao, historico, efeito dos cliques e latencia continuam pendentes.
+O caso 8h -> 3h segue pendente no mesmo tema; nenhum limiar foi reduzido.
+
+RELEASES RESERVADAS — EXISTIRAO APOS A CONDICAO DE INICIO
+https://github.com/eduardodinizti-design/Software/releases/tag/hu-sb-bb40-nvt-complete68-20261116
+https://github.com/eduardodinizti-design/Software/releases/tag/hu-sb-bb40-nvt-complete85-20261116
+https://github.com/eduardodinizti-design/Software/releases/tag/hu-sb-bb40-nvt-complete102-20261116

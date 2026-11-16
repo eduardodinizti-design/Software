@@ -1,0 +1,86 @@
+SOFTWARE ORIGINAL — SB x BB 40 BB: 102 FLOPS COMPLETOS
+
+17 novos flops completos, 85 anteriores preservados: total 102.
+Politicas completas dentro do menu: acoes, frequencias privadas, sizes e respostas nas tres ruas.
+Estados publicos: 44,853,072; SQLite: 352.64 GiB.
+Plano: 576a6d45bfb8996eedcd7236d6286725af2ef75e8979fff93f3992b5eba1a50e; checkpoint anterior: 82efb472d8e014caf75f248bd39b7a5503d41056d1fa6f3ce716743d0504580f
+
+JOGO E ALCANCE
+Nove jogadores originalmente: sete folds, SB open 2 BB, BB call, BBA 1 BB.
+Stacks 40 BB antes dos posts; flop: pote 5 BB, SB 38 BB e BB 37 BB. Hero SB fora de posicao.
+Ranges NVT autorizados como referencia, sem certificacao direta HRC Pro.
+Menu preservado: bet 1/3, raise 100% do pote, all-in, duas agressoes por rua.
+Alvo nativo de exploitability <= 0,5% do pote; global_gap_bb e NashConv (o dobro).
+Um river condicional por modelo recebe enumeracao independente; nao certifica todos os nos.
+Logs de convergencia e politicas finais nao sao snapshots resumiveis dos regrets de cada iteracao.
+EV independente por acao pode ser null. Arvore completa significa o menu declarado.
+TexasSolver upstream 02c8021ee1307c18aa1e76b772c6ae1451601bc6; patches/binario identificados nos reports.
+12 GiB por worker; oito hosts isolados no maximo; um solve por host.
+
+VERIFICACOES
+17 bancos novos integralmente baixados e lidos no Windows do GitHub; 17 historicos sinteticos.
+51 consultas JSON das tres ruas e 51 consultas por bijecao exata de naipes.
+Frequencias e sizes conferidos com os bancos e ZIPs publicados de historicos.
+Contratos Windows: 368 testes, 7 pulados; motivos no log.
+Linux com controles nativos: 280/280 PASS.
+85 bancos anteriores mantem provas de leitura Windows e SHA-256 atuais.
+Workers encerrados; apenas temporarios proprios removidos depois de preservar as politicas.
+Nenhuma sessao PPPoker real e alegada. Nenhum mouse, teclado ou leitor OCR foi alterado.
+
+NOVOS FLOPS | ITERACOES | NASHCONV GLOBAL BB | NASHCONV RIVER CONDICIONAL BB
+01. 2c 3d Th | 171 | 0.045262805 | 0.024854281
+02. 5c 6d 7h | 131 | 0.047990036 | 0.034371750
+03. 9c Ad Kh | 251 | 0.046127075 | 0.032437285
+04. Jc Kd Qh | 141 | 0.045676792 | 0.085654701
+05. 3c 8c 8d | 251 | 0.045434660 | 0.021311766
+06. 4c 4d 6c | 241 | 0.044993636 | 0.022565193
+07. 2c 2d Ac | 241 | 0.047666994 | 0.020883933
+08. Ac Ad Qc | 191 | 0.045937681 | 0.042244828
+09. 3c Qd Qh | 191 | 0.046886563 | 0.024973929
+10. 3c 3d 6h | 211 | 0.046170148 | 0.017545928
+11. 3c Ad Ah | 181 | 0.047902283 | 0.043190328
+12. Ac Qd Qh | 191 | 0.046295473 | 0.022606882
+13. Qc Qd Qh | 161 | 0.047708619 | 0.045945358
+14. 5c 8c Qc | 191 | 0.044817469 | 0.024563205
+15. 2c 4c 6c | 151 | 0.046955422 | 0.023055276
+16. 5c 6c Kc | 191 | 0.044699889 | 0.014154783
+17. Jc Kc Tc | 191 | 0.044388977 | 0.018988032
+
+FREQUENCIAS MEDIAS NO INICIO DO FLOP
+Ponderadas pelos dois ranges e blockers; cada mao consulta sua mistura. Amounts sao adicionais em BB.
+2c 3d Th | check:0=72.07%; bet:1.667=27.93%; all_in:38=0.00%
+5c 6d 7h | check:0=75.04%; bet:1.667=24.96%; all_in:38=0.00%
+9c Ad Kh | check:0=29.62%; bet:1.667=70.38%; all_in:38=0.00%
+Jc Kd Qh | check:0=45.97%; bet:1.667=54.03%; all_in:38=0.00%
+3c 8c 8d | check:0=60.97%; bet:1.667=39.03%; all_in:38=0.00%
+4c 4d 6c | check:0=69.75%; bet:1.667=30.25%; all_in:38=0.00%
+2c 2d Ac | check:0=82.29%; bet:1.667=17.71%; all_in:38=0.00%
+Ac Ad Qc | check:0=15.86%; bet:1.667=84.14%; all_in:38=0.00%
+3c Qd Qh | check:0=22.08%; bet:1.667=77.92%; all_in:38=0.00%
+3c 3d 6h | check:0=74.55%; bet:1.667=25.45%; all_in:38=0.00%
+3c Ad Ah | check:0=8.23%; bet:1.667=91.77%; all_in:38=0.00%
+Ac Qd Qh | check:0=11.65%; bet:1.667=88.35%; all_in:38=0.00%
+Qc Qd Qh | check:0=17.33%; bet:1.667=82.67%; all_in:38=0.00%
+5c 8c Qc | check:0=71.93%; bet:1.667=28.06%; all_in:38=0.00%
+2c 4c 6c | check:0=53.39%; bet:1.667=46.61%; all_in:38=0.00%
+5c 6c Kc | check:0=59.98%; bet:1.667=40.02%; all_in:38=0.00%
+Jc Kc Tc | check:0=53.72%; bet:1.667=46.28%; all_in:38=0.00%
+
+INSTALACAO
+Extraia Software-SB40-102 em pasta nova. Python 3.12 x64 e requirements.txt.
+Execute BAIXAR_BLIND_WAR_40BB_102.bat; indice runtime/hu/sb40-102/bank/library.json.
+O BAT instala dados; nao inicia o bot. Os bancos anteriores e BTN25 permanecem separados.
+Use --postflop-library com esse indice no Software original e observe antes dos blinds.
+Prepare PolicyLibrary uma vez; SQLite usa disco e cache limitado. Confira espaco livre.
+Para so os 17 novos, use --family sb40-102 --new-only em pasta nova.
+JSONL opcional; consultas normais usam SQLite preservando frequencias e sizes.
+
+PENDENCIAS
+Hero BB, limp/check, outros stacks/antes/sizes, 3-bet pots, multiway, ICM e PKO exigem estudos proprios.
+Nao ha roteamento automatico BTN25/SB40. Semelhanca visual nao substitui o board exato.
+Leitura, sincronizacao, historico, efeito dos cliques e latencia real no notebook PPPoker pendentes.
+8h -> 3h segue pendente no mesmo tema; nenhum limiar OCR foi reduzido.
+
+https://github.com/eduardodinizti-design/Software/releases/tag/hu-sb-bb40-nvt-complete102-20261116
+https://github.com/eduardodinizti-design/Software/actions/runs/43810403786
+Codigo: e5a1e5e751ca25cd19d912de9782ce53c4aa5dea

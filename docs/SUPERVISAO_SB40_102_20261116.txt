@@ -1,0 +1,52 @@
+SOFTWARE ORIGINAL — SUPERVISAO CONTINUA ATE 102 FLOPS SB40
+
+A sequencia de calculo continua: 17 -> 34 -> 51 -> 68 -> 85 -> 102.
+Cada lote novo tem 17 flops distintos. O seguinte depende da entrega
+completa do anterior: politicas salvas, consultas Windows, historicos
+sinteticos, hashes, ZIP de codigo e recibo de publicacao conferidos.
+
+Acrescentada supervisao independente em hu-sb40-supervisor.yml.
+Ela acompanha os runs existentes, sem cancelar ou duplicar os solves.
+As esperas dos workflows tem limite de horas no GitHub. Se uma espera
+expirar, o supervisor confere o predecessor completo e reexecuta somente
+o job de espera conhecido e seus dependentes. Resultados completos ja
+salvos sao reutilizados pelos instaladores e runners existentes.
+
+O supervisor confere repo, run ID, branch, workflow, commit, nome do job,
+nome da etapa e motivo do erro. Nao transforma falhas de solver, banco
+parcial ou teste reprovado em uma retomada generica. Erros reais mantem
+seus motivos para diagnostico. Um cancelamento explicito e preservado.
+Problemas temporarios da API sao tentados novamente sem criar solves.
+
+As janelas de supervisao sao encadeadas: ate oito janelas de 330 minutos,
+com checkpoint entre elas, sem depender de manter este terminal aberto.
+Ao verificar os 102, as demais janelas sao dispensadas. Uma execucao
+verde sem o recibo real da entrega de 102 nao conta como conclusao.
+O checkpoint informa done=true somente depois da verificacao final.
+
+Permissoes do workflow: actions:write para retomar os jobs conhecidos;
+contents:write para publicar o recibo final no release dos 102.
+Nenhuma credencial pessoal foi colocada nos scripts ou no GitHub.
+
+Permanecem fixos os ranges NVT de referencia, SB open 2 BB x BB call,
+40 BB antes dos posts, BBA 1 BB, pote flop 5 BB, SB 38 e BB 37 BB.
+O menu e a precisao nativa permanecem os mesmos. Nao ha novos solves
+locais nem alteracao dos leitores, dos cliques ou dos limiares OCR.
+
+Windows aqui refere-se a arquivos completos e historicos sinteticos
+nos runners do GitHub. Operacao real no PPPoker do notebook continua
+pendente; 8h -> 3h continua pendente no mesmo tema.
+
+Codigo: tools/supervise_hu_sb40.py
+Testes: test_hu_sb40_supervisor.py
+Fila: https://github.com/eduardodinizti-design/Software/actions/runs/43810403786
+PR: https://github.com/eduardodinizti-design/Software/pull/18
+
+ATIVACAO CONFERIDA
+2026-11-16T02:41:35.828258-03:00
+Supervisor: https://github.com/eduardodinizti-design/Software/actions/runs/43811702623
+Fonte: 927644b7da5538e4867b9442a7f37a3bee2df7a0
+Classificador de retomada aprovado no proprio GitHub Actions.
+15/15 testes novos aprovados; regressao nativa anterior 280/280 preservada.
+Verificacao condicional periodica ativada para manter acompanhamento ate os102.
+A meta continua em andamento; este recibo NAO afirma102 concluidos.

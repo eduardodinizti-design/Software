@@ -1,0 +1,28 @@
+{
+  "status": "PASS",
+  "targets": [
+    68,
+    85,
+    102
+  ],
+  "jobs": 18,
+  "new_native_models": 51,
+  "new_actual_windows_file_validations": 51,
+  "max_parallel_hosts_per_stage": 8,
+  "all_needs_references_declared": true,
+  "no_circular_workflow_dependency": true,
+  "cross_stage_dependencies": [
+    "delivery51 external -> initialize68",
+    "deliver68 -> initialize85",
+    "deliver85 -> initialize102"
+  ],
+  "full_history_zip_step_present": true,
+  "source_zip_roundtrip_step_present": true,
+  "pppoker_windows_validated": false,
+  "actionlint": {
+    "status": "PASS",
+    "version": "1.7.7",
+    "binary_archive_sha256": "023070a287cd8cccd71515fedc843f1985bf96c436b7effaecce67290e7e0757",
+    "workflow_sha256": "2648f6d463f0e03c9f83e03c6f2bdaf4ddfe73ec7f05555dc22583a94ba12f83"
+  }
+}

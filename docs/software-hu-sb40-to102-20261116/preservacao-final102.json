@@ -1,0 +1,28 @@
+{
+  "status": "PASS",
+  "main_current_sha": "205dbc7ffbfb5f103dc342f4dfce407a3a27915c",
+  "main_not_merged": true,
+  "prior_worktrees": [
+    {
+      "path": "/workspace/work/software-hu-sb40-next16-20261116",
+      "head": "f4c00fb38fcb319e1d3e5bf4cc0e65251a56248f",
+      "status": ""
+    },
+    {
+      "path": "/workspace/work/software-hu-sb40-complete34-20261116",
+      "head": "6c864c66b9086d775701692b234b64ccf1a13735",
+      "status": ""
+    },
+    {
+      "path": "/workspace/work/software-hu-sb40-complete51-20261116",
+      "head": "aa798698545618497ac24381613bd16b8a2a31ea",
+      "status": ""
+    },
+    {
+      "path": "/workspace/work/software-hu-close32-sb40-20261115",
+      "head": "9886db5b719acb51bc3537942e9b642937260dd4",
+      "status": ""
+    }
+  ],
+  "tested_code_unchanged": true
+}

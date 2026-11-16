@@ -1,0 +1,634 @@
+{
+  "schema": "software.hu-sb40-series-intent.v1",
+  "status": "WAITING_FOR_COMPLETE_SAVED_WINDOWS_VERIFIED_PARENT",
+  "tag": "hu-sb-bb40-nvt-complete102-20261116",
+  "parent_tag": "hu-sb-bb40-nvt-complete85-20261116",
+  "parent_intent_sha256": "fa7a2a98cab653fad16058d3757abee110bdf016821136601ff99e70623fbe93",
+  "required_previous_models": 85,
+  "new_models": 17,
+  "target_total_models": 102,
+  "model_sha256": "31e6da6303ed20facf9a5700942cdd1ddec0a251ef8ffbd4889ee048ef88e2f5",
+  "profile_settings": {
+    "ante_pot_bb": 1.0,
+    "name": "SB-BB40-BBA1-open2-reference-v1",
+    "preflop_aggressor": 0
+  },
+  "settings": {
+    "accuracy_pct": 0.5,
+    "iterations": 2001,
+    "memory_mb": 12288,
+    "threads": 4,
+    "timeout_seconds": 18000,
+    "work_disk_mb": 30720
+  },
+  "preserved_holdout_flops": [
+    [
+      "Ac",
+      "9h",
+      "4d"
+    ],
+    [
+      "Kh",
+      "Jh",
+      "6c"
+    ],
+    [
+      "Td",
+      "8d",
+      "5s"
+    ],
+    [
+      "6h",
+      "6s",
+      "3c"
+    ]
+  ],
+  "previous_and_in_progress_boards": [
+    [
+      "As",
+      "7d",
+      "2c"
+    ],
+    [
+      "Kd",
+      "8h",
+      "3c"
+    ],
+    [
+      "Ah",
+      "Kd",
+      "7c"
+    ],
+    [
+      "Qs",
+      "8d",
+      "3c"
+    ],
+    [
+      "Js",
+      "Td",
+      "4c"
+    ],
+    [
+      "9s",
+      "8s",
+      "7d"
+    ],
+    [
+      "8c",
+      "6d",
+      "3s"
+    ],
+    [
+      "7s",
+      "7h",
+      "2d"
+    ],
+    [
+      "Kc",
+      "Kd",
+      "5s"
+    ],
+    [
+      "Qs",
+      "7s",
+      "2s"
+    ],
+    [
+      "Jd",
+      "9d",
+      "4c"
+    ],
+    [
+      "5c",
+      "4d",
+      "3s"
+    ],
+    [
+      "3c",
+      "4c",
+      "8c"
+    ],
+    [
+      "Jc",
+      "Qc",
+      "Tc"
+    ],
+    [
+      "5c",
+      "9c",
+      "Kc"
+    ],
+    [
+      "Jc",
+      "Kc",
+      "Qc"
+    ],
+    [
+      "6c",
+      "Jd",
+      "Td"
+    ],
+    [
+      "9c",
+      "Jc",
+      "Qd"
+    ],
+    [
+      "4c",
+      "8c",
+      "Kd"
+    ],
+    [
+      "Jc",
+      "Kd",
+      "Qc"
+    ],
+    [
+      "7c",
+      "8d",
+      "Qh"
+    ],
+    [
+      "7c",
+      "8d",
+      "Jh"
+    ],
+    [
+      "4c",
+      "Ad",
+      "Jh"
+    ],
+    [
+      "Ac",
+      "Jd",
+      "Th"
+    ],
+    [
+      "3c",
+      "3d",
+      "Qc"
+    ],
+    [
+      "5c",
+      "5d",
+      "7c"
+    ],
+    [
+      "4c",
+      "4d",
+      "Ac"
+    ],
+    [
+      "Ac",
+      "Tc",
+      "Td"
+    ],
+    [
+      "6c",
+      "Jd",
+      "Jh"
+    ],
+    [
+      "Jc",
+      "Qd",
+      "Qh"
+    ],
+    [
+      "3c",
+      "3d",
+      "Kh"
+    ],
+    [
+      "Jc",
+      "Jd",
+      "Kh"
+    ],
+    [
+      "9c",
+      "9d",
+      "9h"
+    ],
+    [
+      "Kc",
+      "Kd",
+      "Kh"
+    ],
+    [
+      "2c",
+      "3c",
+      "Tc"
+    ],
+    [
+      "9c",
+      "Qc",
+      "Tc"
+    ],
+    [
+      "4c",
+      "6c",
+      "Kc"
+    ],
+    [
+      "Kc",
+      "Qc",
+      "Tc"
+    ],
+    [
+      "2c",
+      "6c",
+      "9d"
+    ],
+    [
+      "9c",
+      "Jd",
+      "Qd"
+    ],
+    [
+      "3c",
+      "Ad",
+      "Qd"
+    ],
+    [
+      "Ac",
+      "Jd",
+      "Qc"
+    ],
+    [
+      "2c",
+      "7d",
+      "Qh"
+    ],
+    [
+      "9c",
+      "Qd",
+      "Th"
+    ],
+    [
+      "5c",
+      "8d",
+      "Ah"
+    ],
+    [
+      "9c",
+      "Kd",
+      "Qh"
+    ],
+    [
+      "3c",
+      "3d",
+      "8c"
+    ],
+    [
+      "6c",
+      "6d",
+      "8c"
+    ],
+    [
+      "2c",
+      "Kc",
+      "Kd"
+    ],
+    [
+      "Ac",
+      "Qc",
+      "Qd"
+    ],
+    [
+      "2c",
+      "2d",
+      "8h"
+    ],
+    [
+      "8c",
+      "8d",
+      "Jh"
+    ],
+    [
+      "4c",
+      "Kd",
+      "Kh"
+    ],
+    [
+      "Ac",
+      "Ad",
+      "Th"
+    ],
+    [
+      "Tc",
+      "Td",
+      "Th"
+    ],
+    [
+      "Ac",
+      "Ad",
+      "Ah"
+    ],
+    [
+      "3c",
+      "8c",
+      "Jc"
+    ],
+    [
+      "3c",
+      "4c",
+      "5c"
+    ],
+    [
+      "8c",
+      "9c",
+      "Kc"
+    ],
+    [
+      "9c",
+      "Jc",
+      "Kc"
+    ],
+    [
+      "3c",
+      "6c",
+      "Jd"
+    ],
+    [
+      "2c",
+      "5d",
+      "6c"
+    ],
+    [
+      "2c",
+      "3d",
+      "Kd"
+    ],
+    [
+      "9c",
+      "Jd",
+      "Kc"
+    ],
+    [
+      "3c",
+      "4d",
+      "9h"
+    ],
+    [
+      "8c",
+      "Jd",
+      "Qh"
+    ],
+    [
+      "8c",
+      "Ad",
+      "Qh"
+    ],
+    [
+      "Ac",
+      "Kd",
+      "Qh"
+    ],
+    [
+      "2c",
+      "7c",
+      "7d"
+    ],
+    [
+      "3c",
+      "3d",
+      "6c"
+    ],
+    [
+      "9c",
+      "Ac",
+      "Ad"
+    ],
+    [
+      "Kc",
+      "Qc",
+      "Qd"
+    ],
+    [
+      "4c",
+      "4d",
+      "Qh"
+    ],
+    [
+      "2c",
+      "5d",
+      "5h"
+    ],
+    [
+      "5c",
+      "Ad",
+      "Ah"
+    ],
+    [
+      "Jc",
+      "Kd",
+      "Kh"
+    ],
+    [
+      "6c",
+      "6d",
+      "6h"
+    ],
+    [
+      "4c",
+      "Jc",
+      "Qc"
+    ],
+    [
+      "7c",
+      "Jc",
+      "Tc"
+    ],
+    [
+      "2c",
+      "9c",
+      "Kc"
+    ],
+    [
+      "9c",
+      "Kc",
+      "Qc"
+    ],
+    [
+      "2c",
+      "5d",
+      "8d"
+    ],
+    [
+      "2c",
+      "4c",
+      "5d"
+    ],
+    [
+      "2c",
+      "6d",
+      "Kd"
+    ],
+    [
+      "Ac",
+      "Kd",
+      "Td"
+    ]
+  ],
+  "cases": [
+    {
+      "ordinal": 1,
+      "board": [
+        "2c",
+        "3d",
+        "Th"
+      ],
+      "case_id": "2edca7887397042b3ae1"
+    },
+    {
+      "ordinal": 2,
+      "board": [
+        "5c",
+        "6d",
+        "7h"
+      ],
+      "case_id": "3852335ce2b3898a4395"
+    },
+    {
+      "ordinal": 3,
+      "board": [
+        "9c",
+        "Ad",
+        "Kh"
+      ],
+      "case_id": "727982cb98d9603ed787"
+    },
+    {
+      "ordinal": 4,
+      "board": [
+        "Jc",
+        "Kd",
+        "Qh"
+      ],
+      "case_id": "453b65e0bcfe2a8678d0"
+    },
+    {
+      "ordinal": 5,
+      "board": [
+        "3c",
+        "8c",
+        "8d"
+      ],
+      "case_id": "b67356ed92a7c1987bfd"
+    },
+    {
+      "ordinal": 6,
+      "board": [
+        "4c",
+        "4d",
+        "6c"
+      ],
+      "case_id": "0fecae94129e409b7f98"
+    },
+    {
+      "ordinal": 7,
+      "board": [
+        "2c",
+        "2d",
+        "Ac"
+      ],
+      "case_id": "a9e81821be3942ae5e40"
+    },
+    {
+      "ordinal": 8,
+      "board": [
+        "Ac",
+        "Ad",
+        "Qc"
+      ],
+      "case_id": "b24c915ef208d0a3533a"
+    },
+    {
+      "ordinal": 9,
+      "board": [
+        "3c",
+        "Qd",
+        "Qh"
+      ],
+      "case_id": "4c90639a07b766e6f121"
+    },
+    {
+      "ordinal": 10,
+      "board": [
+        "3c",
+        "3d",
+        "6h"
+      ],
+      "case_id": "46809576bda4d5eb8fa6"
+    },
+    {
+      "ordinal": 11,
+      "board": [
+        "3c",
+        "Ad",
+        "Ah"
+      ],
+      "case_id": "ccc6c8a415543dc50a0b"
+    },
+    {
+      "ordinal": 12,
+      "board": [
+        "Ac",
+        "Qd",
+        "Qh"
+      ],
+      "case_id": "f632e75e305ec39e78ee"
+    },
+    {
+      "ordinal": 13,
+      "board": [
+        "Qc",
+        "Qd",
+        "Qh"
+      ],
+      "case_id": "5851fcaacef3737ab806"
+    },
+    {
+      "ordinal": 14,
+      "board": [
+        "5c",
+        "8c",
+        "Qc"
+      ],
+      "case_id": "6e7217e24c3691fee714"
+    },
+    {
+      "ordinal": 15,
+      "board": [
+        "2c",
+        "4c",
+        "6c"
+      ],
+      "case_id": "cc076520740deb5afd72"
+    },
+    {
+      "ordinal": 16,
+      "board": [
+        "5c",
+        "6c",
+        "Kc"
+      ],
+      "case_id": "dcaf2ad079d479e208c6"
+    },
+    {
+      "ordinal": 17,
+      "board": [
+        "Jc",
+        "Kc",
+        "Tc"
+      ],
+      "case_id": "de6f69b4ad8bdd037d82"
+    }
+  ],
+  "max_parallel_hosts": 8,
+  "workers_per_host": 1,
+  "catalog_protocol": "run-attempt-v1",
+  "policy_ids_created_only_after_actual_parent_completion": true,
+  "pppoker_windows_validated": false,
+  "intent_sha256": "b4b0429c488efd09408b458842563136e1caabb7c0fd27d13ff8de5664b01b74"
+}

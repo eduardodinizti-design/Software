@@ -1,0 +1,489 @@
+{
+  "all_policy_bytes_redownloaded_in_this_check": false,
+  "complete_models": 51,
+  "complete_prior_models_preserved": 34,
+  "embedded_report_sha256": "b584ca435cd443d79e71521e86d7f7d973efcd526fce19a32e31270d3aa0a81f",
+  "metadata_hashes": [
+    {
+      "bytes": 1885159,
+      "name": "entrega-sb40-51-43807544505-a1.json",
+      "sha256": "94db4c75a9b09046efeeba47e9f31ff2bfc1a39dad9a7427794385f0bb7f78cd",
+      "tag": "hu-sb-bb40-nvt-complete51-20261116"
+    },
+    {
+      "bytes": 274587,
+      "name": "inventario-sb40-51-43807544505-a1.json",
+      "sha256": "fdc4b46dd0ec0a760cf75c2caa1bdb22b952a37a1abc1398e5309d1cc376b5a2",
+      "tag": "hu-sb-bb40-nvt-complete51-20261116"
+    },
+    {
+      "bytes": 6450,
+      "name": "SB40_51_FLOPS_43807544505-a1.txt",
+      "sha256": "b584ca435cd443d79e71521e86d7f7d973efcd526fce19a32e31270d3aa0a81f",
+      "tag": "hu-sb-bb40-nvt-complete51-20261116"
+    },
+    {
+      "bytes": 265,
+      "name": "source-manifest-sb40-51-43807544505-a1.json",
+      "sha256": "e93299799fb71f9c0d7dbfd8c657f2b5823e16a278b26c6adeb549a6c0679543",
+      "tag": "hu-sb-bb40-nvt-complete51-20261116"
+    },
+    {
+      "bytes": 801595,
+      "name": "evidencias-sb40-51-43807544505-a1.zip",
+      "sha256": "c38e5133df31e7ab4cdb850d43eafc24d2df7875dd6daeb40a4b639adbb6f6e5",
+      "tag": "hu-sb-bb40-nvt-complete51-20261116"
+    }
+  ],
+  "native_catalog_asset": "batch-catalog-43807544505-a1.json",
+  "new_confirmed_json_histories": 17,
+  "new_exact_suit_street_queries": 51,
+  "new_json_street_queries": 51,
+  "new_models": 17,
+  "pppoker_windows_validated": false,
+  "published_histories_checked": [
+    {
+      "declared_hero_actions_by_street": [
+        {
+          "action_id": "bet:1.667",
+          "street": "FLOP"
+        },
+        {
+          "action_id": "bet:2.778",
+          "street": "TURN"
+        },
+        {
+          "action_id": "bet:4.63",
+          "street": "RIVER"
+        }
+      ],
+      "event_counts": {
+        "action": 6,
+        "board": 2
+      },
+      "journal_chain_reported_valid": true,
+      "json_streets": 3,
+      "policy_sha256": "7ab37b8c90fdb6f0149f91722e3d919dbd852bf33c035f1afdad1715bbe2ad9d",
+      "pppoker_windows_validated": false,
+      "status": "PASS"
+    },
+    {
+      "declared_hero_actions_by_street": [
+        {
+          "action_id": "bet:1.667",
+          "street": "FLOP"
+        },
+        {
+          "action_id": "bet:2.778",
+          "street": "TURN"
+        },
+        {
+          "action_id": "bet:4.63",
+          "street": "RIVER"
+        }
+      ],
+      "event_counts": {
+        "action": 6,
+        "board": 2
+      },
+      "journal_chain_reported_valid": true,
+      "json_streets": 3,
+      "policy_sha256": "5d6f2e976c6608a6a24e5fa6e72732072d2880aa462cc830f3c3418800b78ca2",
+      "pppoker_windows_validated": false,
+      "status": "PASS"
+    },
+    {
+      "declared_hero_actions_by_street": [
+        {
+          "action_id": "bet:1.667",
+          "street": "FLOP"
+        },
+        {
+          "action_id": "bet:2.778",
+          "street": "TURN"
+        },
+        {
+          "action_id": "bet:4.63",
+          "street": "RIVER"
+        }
+      ],
+      "event_counts": {
+        "action": 6,
+        "board": 2
+      },
+      "journal_chain_reported_valid": true,
+      "json_streets": 3,
+      "policy_sha256": "0406e7c6058d2501790c6e70e4bd5d91c5b06cb8ee7cc462e573432a939773d0",
+      "pppoker_windows_validated": false,
+      "status": "PASS"
+    },
+    {
+      "declared_hero_actions_by_street": [
+        {
+          "action_id": "bet:1.667",
+          "street": "FLOP"
+        },
+        {
+          "action_id": "bet:2.778",
+          "street": "TURN"
+        },
+        {
+          "action_id": "bet:4.63",
+          "street": "RIVER"
+        }
+      ],
+      "event_counts": {
+        "action": 6,
+        "board": 2
+      },
+      "journal_chain_reported_valid": true,
+      "json_streets": 3,
+      "policy_sha256": "b27b5c62bf1dc3d56700dbb0104f37c392b4b1ddeb7b8ecc8439161c0f1cdbb4",
+      "pppoker_windows_validated": false,
+      "status": "PASS"
+    },
+    {
+      "declared_hero_actions_by_street": [
+        {
+          "action_id": "bet:1.667",
+          "street": "FLOP"
+        },
+        {
+          "action_id": "bet:2.778",
+          "street": "TURN"
+        },
+        {
+          "action_id": "bet:4.63",
+          "street": "RIVER"
+        }
+      ],
+      "event_counts": {
+        "action": 6,
+        "board": 2
+      },
+      "journal_chain_reported_valid": true,
+      "json_streets": 3,
+      "policy_sha256": "acc2f3d71c66dd59ad99f70469df0f8b49d4383dc750ce32d3e150d05b9a3254",
+      "pppoker_windows_validated": false,
+      "status": "PASS"
+    },
+    {
+      "declared_hero_actions_by_street": [
+        {
+          "action_id": "bet:1.667",
+          "street": "FLOP"
+        },
+        {
+          "action_id": "bet:2.778",
+          "street": "TURN"
+        },
+        {
+          "action_id": "bet:4.63",
+          "street": "RIVER"
+        }
+      ],
+      "event_counts": {
+        "action": 6,
+        "board": 2
+      },
+      "journal_chain_reported_valid": true,
+      "json_streets": 3,
+      "policy_sha256": "315b52f006af23bd18044370703164ed528aabdc64bcf54cb73b052e96e70d7d",
+      "pppoker_windows_validated": false,
+      "status": "PASS"
+    },
+    {
+      "declared_hero_actions_by_street": [
+        {
+          "action_id": "bet:1.667",
+          "street": "FLOP"
+        },
+        {
+          "action_id": "bet:2.778",
+          "street": "TURN"
+        },
+        {
+          "action_id": "bet:4.63",
+          "street": "RIVER"
+        }
+      ],
+      "event_counts": {
+        "action": 6,
+        "board": 2
+      },
+      "journal_chain_reported_valid": true,
+      "json_streets": 3,
+      "policy_sha256": "1a187d8474da2462d3cf4c305d182549e8ecca30a7507533fe5e766efa80b432",
+      "pppoker_windows_validated": false,
+      "status": "PASS"
+    },
+    {
+      "declared_hero_actions_by_street": [
+        {
+          "action_id": "bet:1.667",
+          "street": "FLOP"
+        },
+        {
+          "action_id": "bet:2.778",
+          "street": "TURN"
+        },
+        {
+          "action_id": "bet:4.63",
+          "street": "RIVER"
+        }
+      ],
+      "event_counts": {
+        "action": 6,
+        "board": 2
+      },
+      "journal_chain_reported_valid": true,
+      "json_streets": 3,
+      "policy_sha256": "582099cdff3fa5b83411ec27c930096e1983de52dc859e189c0507012e744ae2",
+      "pppoker_windows_validated": false,
+      "status": "PASS"
+    },
+    {
+      "declared_hero_actions_by_street": [
+        {
+          "action_id": "bet:1.667",
+          "street": "FLOP"
+        },
+        {
+          "action_id": "bet:2.778",
+          "street": "TURN"
+        },
+        {
+          "action_id": "bet:4.63",
+          "street": "RIVER"
+        }
+      ],
+      "event_counts": {
+        "action": 6,
+        "board": 2
+      },
+      "journal_chain_reported_valid": true,
+      "json_streets": 3,
+      "policy_sha256": "a6a4a0da0e2d38f1eb97fab0f90acf6a1736ae74a4fe4bc63e9b2f507fb7e130",
+      "pppoker_windows_validated": false,
+      "status": "PASS"
+    },
+    {
+      "declared_hero_actions_by_street": [
+        {
+          "action_id": "bet:1.667",
+          "street": "FLOP"
+        },
+        {
+          "action_id": "bet:2.778",
+          "street": "TURN"
+        },
+        {
+          "action_id": "bet:4.63",
+          "street": "RIVER"
+        }
+      ],
+      "event_counts": {
+        "action": 6,
+        "board": 2
+      },
+      "journal_chain_reported_valid": true,
+      "json_streets": 3,
+      "policy_sha256": "0895ff366071c8467b674d2addabd9309b782922448c24c7a3ef8894e2efd1b7",
+      "pppoker_windows_validated": false,
+      "status": "PASS"
+    },
+    {
+      "declared_hero_actions_by_street": [
+        {
+          "action_id": "bet:1.667",
+          "street": "FLOP"
+        },
+        {
+          "action_id": "bet:2.778",
+          "street": "TURN"
+        },
+        {
+          "action_id": "bet:4.63",
+          "street": "RIVER"
+        }
+      ],
+      "event_counts": {
+        "action": 6,
+        "board": 2
+      },
+      "journal_chain_reported_valid": true,
+      "json_streets": 3,
+      "policy_sha256": "871b372e034dca6b2d0053cfd671512327462bfbdc6fc9b96d9574b2139fa9df",
+      "pppoker_windows_validated": false,
+      "status": "PASS"
+    },
+    {
+      "declared_hero_actions_by_street": [
+        {
+          "action_id": "bet:1.667",
+          "street": "FLOP"
+        },
+        {
+          "action_id": "bet:2.778",
+          "street": "TURN"
+        },
+        {
+          "action_id": "bet:4.63",
+          "street": "RIVER"
+        }
+      ],
+      "event_counts": {
+        "action": 6,
+        "board": 2
+      },
+      "journal_chain_reported_valid": true,
+      "json_streets": 3,
+      "policy_sha256": "06b8bd5684cbee2e45a4589c3267de52e3c550c3ab889b5481833759646daeec",
+      "pppoker_windows_validated": false,
+      "status": "PASS"
+    },
+    {
+      "declared_hero_actions_by_street": [
+        {
+          "action_id": "bet:1.667",
+          "street": "FLOP"
+        },
+        {
+          "action_id": "bet:2.778",
+          "street": "TURN"
+        },
+        {
+          "action_id": "bet:4.63",
+          "street": "RIVER"
+        }
+      ],
+      "event_counts": {
+        "action": 6,
+        "board": 2
+      },
+      "journal_chain_reported_valid": true,
+      "json_streets": 3,
+      "policy_sha256": "1f179468c8bcdb5bf36a42e5386c63fa983a77000bf71b4f2cb4aa3dbd4d1d46",
+      "pppoker_windows_validated": false,
+      "status": "PASS"
+    },
+    {
+      "declared_hero_actions_by_street": [
+        {
+          "action_id": "bet:1.667",
+          "street": "FLOP"
+        },
+        {
+          "action_id": "bet:2.778",
+          "street": "TURN"
+        },
+        {
+          "action_id": "bet:4.63",
+          "street": "RIVER"
+        }
+      ],
+      "event_counts": {
+        "action": 6,
+        "board": 2
+      },
+      "journal_chain_reported_valid": true,
+      "json_streets": 3,
+      "policy_sha256": "70c077678d058f3cb1f30c3fb0f1be48dc334307bb36bdd81de365a1f5801210",
+      "pppoker_windows_validated": false,
+      "status": "PASS"
+    },
+    {
+      "declared_hero_actions_by_street": [
+        {
+          "action_id": "bet:1.667",
+          "street": "FLOP"
+        },
+        {
+          "action_id": "bet:2.778",
+          "street": "TURN"
+        },
+        {
+          "action_id": "bet:4.63",
+          "street": "RIVER"
+        }
+      ],
+      "event_counts": {
+        "action": 6,
+        "board": 2
+      },
+      "journal_chain_reported_valid": true,
+      "json_streets": 3,
+      "policy_sha256": "6d10fc36c0d35bc43e31c4cd9d5a008ad0208ba2f00eaf772569ddf96c06ea05",
+      "pppoker_windows_validated": false,
+      "status": "PASS"
+    },
+    {
+      "declared_hero_actions_by_street": [
+        {
+          "action_id": "bet:1.667",
+          "street": "FLOP"
+        },
+        {
+          "action_id": "bet:2.778",
+          "street": "TURN"
+        },
+        {
+          "action_id": "bet:4.63",
+          "street": "RIVER"
+        }
+      ],
+      "event_counts": {
+        "action": 6,
+        "board": 2
+      },
+      "journal_chain_reported_valid": true,
+      "json_streets": 3,
+      "policy_sha256": "c37875e2b4585693e92ae46e22b46e7af0b0af5d44b0da7099cbe3c84ee89b4c",
+      "pppoker_windows_validated": false,
+      "status": "PASS"
+    },
+    {
+      "declared_hero_actions_by_street": [
+        {
+          "action_id": "bet:1.667",
+          "street": "FLOP"
+        },
+        {
+          "action_id": "bet:2.778",
+          "street": "TURN"
+        },
+        {
+          "action_id": "bet:4.63",
+          "street": "RIVER"
+        }
+      ],
+      "event_counts": {
+        "action": 6,
+        "board": 2
+      },
+      "journal_chain_reported_valid": true,
+      "json_streets": 3,
+      "policy_sha256": "dda2ca624f25d08f4ae95d5f1784a611be056dc0d75d9286bebe6a9fddfeea41",
+      "pppoker_windows_validated": false,
+      "status": "PASS"
+    }
+  ],
+  "required_source_paths": [
+    "BAIXAR_BLIND_WAR_40BB_51.bat",
+    "strategy/campaign_download.py",
+    "strategy/sb40_progression.py",
+    "tools/prepare_hu_sb40_complete51.py",
+    "docs/GUIA_SB40_51_FLOPS_20261116.txt",
+    "RELATORIO_SB40_51_FLOPS.txt",
+    "docs/software-hu-sb40-complete51-20261116/sb40-complete51-plan.json",
+    "docs/software-hu-sb40-complete51-20261116/checkpoint-primeiros34.json"
+  ],
+  "schema": "software.hu-sb40-51-publication-check.v1",
+  "source_asset": "Software-SB40-51-3a1f4456-43807544505-a1.zip",
+  "source_bytes": 133411591,
+  "source_sha256": "a0912320a8eeae6cede60447a7673d872e1b898bbf345d1e05b97d6c37917777",
+  "status": "PASS",
+  "user_notebook_validated": false,
+  "windows_run": "43807544505",
+  "zip_crc_all_entries_valid": true
+}
