@@ -74,3 +74,10 @@ Intencao congelada: 3f0dd847adab654bc793a22530207b8db68d9b51adc48330843a6327b314
 Regressao final Linux com controles nativos: 264/264 PASS, sem falhas ou pulados.
 O YAML e as dependencias dos jobs foram conferidos; calcule e contracts
 dependem da verificacao real dos 34. O novo lote nao cancela o anterior.
+
+ENCADEAMENTO PUBLICADO E OBSERVADO EM ESPERA
+https://github.com/eduardodinizti-design/Software/actions/runs/43807544505
+
+O unico job inicial aguarda os 34 salvos e validados; nenhum worker de
+calculo do terceiro lote foi liberado antes dessa condicao.
+PR: https://github.com/eduardodinizti-design/Software/pull/17
