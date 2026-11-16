@@ -2,6 +2,7 @@
 import argparse
 from collections import Counter
 import json
+import math
 import os
 from pathlib import Path
 import re
@@ -47,6 +48,15 @@ def main(argv=None):
         row.update(validation_workflow_run_id=run,validation_proof_asset_name=name,validation_history_asset_name=history)
         origins[str(ordinal)]=run;rows.append(row)
     rows=checked_results(catalog,rows)
+    for row in rows:
+        review=row.get('root_policy_review',{})
+        frequencies=[a['frequency'] for a in review.get('actions',[])]
+        if (review.get('source_policy_sha256')!=row['policy_sha256'] or review.get('board')!=row['board']
+                or review.get('actor_position')!='SB' or review.get('policy_modified') is not False
+                or review.get('method')!='BLOCKER_CONDITIONED_JOINT_RANGE_WEIGHTED_ROOT_POLICY'
+                or not frequencies or any(not math.isfinite(v) or not 0<=v<=1 for v in frequencies)
+                or abs(sum(frequencies)-1)>1e-6):
+            raise StrategyError('EXACT_SB40_BLOCKER_CONDITIONED_ROOT_REVIEW_REQUIRED')
     previous=release(SB40_TAG);previous={a['name']:a for a in previous['assets']}
     name='windows-sb40-case-01-43779044783-a1.json';history=name[:-5]+'-json-history.zip'
     for key in (name,history):hashes.append(receive(previous[key],SB40_TAG,evidence/key))
@@ -125,6 +135,12 @@ def main(argv=None):
         'Nenhuma validacao desta entrega e uma sessao real no PPPoker. Nenhum dispositivo de entrada foi acionado.','',
         'NOVOS FLOPS | ITERACOES | NASHCONV GLOBAL NATIVO (BB) | NASHCONV RIVER CONDICIONAL (BB)']
     for c in native:lines.append(f"{c['ordinal']:02d}. {' '.join(c['board'])} | {c['iterations']} | {c['global_gap_bb']:.9f} | {c['independent_river']['nash_conv_bb']:.9f}")
+    lines.extend(['','FREQUENCIAS MEDIAS DO SB NO INICIO DO FLOP',
+        'Ponderadas pelos dois ranges e pelos blockers fisicos. Nao sao uma acao identica para todas as maos.',
+        'Cada mao consulta sua propria mistura. Os amounts abaixo sao contribuicoes adicionais em BB, nao raise-to.'])
+    for row in rows:
+        values='; '.join(a['action_id']+'='+format(100*a['frequency'],'.2f')+'%' for a in row['root_policy_review']['actions'])
+        lines.append(' '.join(row['board'])+' | '+values)
     lines.extend(['','INSTALACAO E CONSUMO',
         'Extraia o ZIP de codigo desta entrega em pasta nova; Python 3.12 x64 e requirements.txt.',
         'Execute BAIXAR_BLIND_WAR_40BB_17.bat. Banco: runtime/hu/sb40-17/bank/library.json.',

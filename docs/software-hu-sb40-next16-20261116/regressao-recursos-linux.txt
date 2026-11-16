@@ -7,6 +7,8 @@ test_merge_rejects_changed_priors_stack_menu_and_ante (test_hu_sb40_next16.SB40N
 test_new_family_installs_seventeen_by_default_but_new_only_selects_the_new_sixteen (test_hu_sb40_next16.SB40Next16Tests.test_new_family_installs_seventeen_by_default_but_new_only_selects_the_new_sixteen) ... ok
 test_resource_profile_cannot_relax_accuracy_change_iterations_or_claim_another_plan (test_hu_sb40_next16.SB40Next16Tests.test_resource_profile_cannot_relax_accuracy_change_iterations_or_claim_another_plan) ... ok
 test_resource_retry_increases_memory_without_mutating_the_study_or_accuracy (test_hu_sb40_next16.SB40Next16Tests.test_resource_retry_increases_memory_without_mutating_the_study_or_accuracy) ... ok
+test_root_summary_conditions_on_villain_blockers_instead_of_naively_averaging_hands (test_hu_sb40_next16.SB40Next16Tests.test_root_summary_conditions_on_villain_blockers_instead_of_naively_averaging_hands) ... ok
+test_root_summary_rejects_invalid_frequencies_instead_of_relabeling_them_as_an_average (test_hu_sb40_next16.SB40Next16Tests.test_root_summary_rejects_invalid_frequencies_instead_of_relabeling_them_as_an_average) ... ok
 test_unfinished_pilot_and_changed_frozen_plan_are_rejected (test_hu_sb40_next16.SB40Next16Tests.test_unfinished_pilot_and_changed_frozen_plan_are_rejected) ... ok
 test_actual_inventory_is_seventeen_and_fifteen_new_models_close_thirty_two (test_hu_campaign.CampaignTests.test_actual_inventory_is_seventeen_and_fifteen_new_models_close_thirty_two) ... ok
 test_catalog_completion_uses_actual_campaign_length (test_hu_campaign.CampaignTests.test_catalog_completion_uses_actual_campaign_length) ... ok
@@ -228,6 +230,6 @@ test_private_card_memory_is_bound_to_a_fresh_same_hand_id (test_hu_operational.L
 test_runtime_uses_process_creation_time_and_physical_client_geometry (test_hu_operational.LiveIntegrationTests.test_runtime_uses_process_creation_time_and_physical_client_geometry) ... ok
 
 ----------------------------------------------------------------------
-Ran 228 tests in 75.212s
+Ran 230 tests in 73.705s
 
 OK

@@ -59,6 +59,11 @@ guarda o estado, acoes, frequencias por combinacao privada e sizes efetivos.
 O historico observado condiciona os ranges no turn/river; nao reinicie o
 range de entrada a cada rua. Bibliotecas BTN25 e SB40 continuam separadas.
 
+O relatorio final tambem mostra as frequencias medias do SB no inicio de
+cada flop, ponderadas pelos DOIS ranges e pelos blockers. Isso e um resumo
+para revisao, nao uma regra de apostar/checkar igual com todas as maos.
+As decisoes continuam consultando as frequencias da combinacao especifica.
+
 Os ZIPs *-json-history.zip guardam requests/responses das tres ruas e a
 mao sintetica confirmada ate showdown. O comando de consulta e:
   .venv\Scripts\python.exe -m strategy.policy_json query --library "CAMINHO\library.json" --request request-flop.json --output resposta.json

@@ -3,6 +3,7 @@ import copy
 import json
 from pathlib import Path
 import unittest
+from types import SimpleNamespace
 from unittest.mock import patch
 
 from strategy.batch_jobs import canonical_flop
@@ -12,6 +13,10 @@ from strategy.blind_war import SB40_NEXT16_TAG
 from strategy.state_contract import StrategyError
 from strategy.campaign_resources import resource_profile,effective_settings,checked_resource_profile
 from strategy.batch_archive import make_catalog
+from strategy.root_policy_review import review_root_policy
+from strategy.action_tree import Action
+from strategy.range_catalog import ComboRange,combo_key
+from strategy.state_contract import BettingState,GameContext
 from tools.prepare_hu_sb40_next16 import prepare
 
 ROOT=Path(__file__).parent
@@ -114,6 +119,27 @@ class SB40Next16Tests(unittest.TestCase):
         self.assertEqual(make_catalog(self.plan,[case])['published_new_flops'],1)
         case['quality']['settings']['memory_budget_mb']=10240
         with self.assertRaisesRegex(StrategyError,'ACTUAL_POLICY_BUDGET'):make_catalog(self.plan,[case])
+
+    def root_example(self):
+        ranges=tuple(ComboRange(tuple(sorted((combo_key(k),1.) for k in keys)),source)
+            for keys,source in ((('AsAh','KsKh'),'synthetic-sb'),(('AsAd','2c2d'),'synthetic-bb')))
+        return SimpleNamespace(root=BettingState(('Kd','8h','3c'),5.,(38.,37.),actor=0,oop=0),
+            context=GameContext(('SB','BB'),dealt_players=9,arrival_id='SYNTHETIC_BLOCKER_REVIEW'),ranges=ranges,fingerprint='a'*64,
+            actions=lambda state:(Action('check'),Action('bet',1.667)),
+            probabilities=lambda state,hand:[0.,1.] if set(hand)=={'As','Ah'} else [1.,0.])
+
+    def test_root_summary_conditions_on_villain_blockers_instead_of_naively_averaging_hands(self):
+        policy=self.root_example();before=[r.to_dict() for r in policy.ranges]
+        result=review_root_policy(policy)
+        self.assertEqual(result['compatible_joint_private_deals'],3)
+        self.assertAlmostEqual(result['actions'][0]['frequency'],2/3)
+        self.assertAlmostEqual(result['actions'][1]['frequency'],1/3)
+        self.assertEqual(result['actor_position'],'SB');self.assertFalse(result['policy_modified'])
+        self.assertEqual([r.to_dict() for r in policy.ranges],before)
+
+    def test_root_summary_rejects_invalid_frequencies_instead_of_relabeling_them_as_an_average(self):
+        policy=self.root_example();policy.probabilities=lambda state,hand:[-.1,1.1]
+        with self.assertRaisesRegex(StrategyError,'INVALID_STORED'):review_root_policy(policy)
 
 
 if __name__=='__main__':unittest.main()
