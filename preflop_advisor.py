@@ -208,6 +208,16 @@ class PreflopAdvisor:
     # they borrow the nearest populated bucket (flagged). 100 is the top bucket;
     # deeper stacks reuse it as a flagged reference (see bucket_stack).
     STACK_BUCKETS = (5, 8, 10, 12, 15, 20, 25, 30, 40, 50, 60, 80, 100)
+    # ALINHAMENTO DE BUCKET POR MODO: cada modo tem sua GRADE NATIVA de solves
+    # (chip_ev/icm cobrem 30/40; PKO topa em 25; PKO-ICM usa 25/35/100 — grades
+    # DIFERENTES). Quando o stack real cai ENTRE os buckets nativos do modo (ex.:
+    # 40bb PKO-ICM, cujo solve mora em 35bb), o lookup exato falha. Se o bucket
+    # nativo mais próximo COM nó validado do MESMO contexto estiver a <= ALIGN_TOL
+    # do stack real, é um ALINHAMENTO de grade (não um empréstimo heurístico): conta
+    # como VALIDADO, exatamente como chip_ev 33bb->30bb já conta hoje. Fora da
+    # tolerância cai no borrow flagged (validated=False) — honesto: 40bb PKO (nativo
+    # só até 25bb = 38%) NÃO vira coberto, é range genuinamente faltando.
+    ALIGN_TOL = 0.20
     # Clone 0.5: nossos cenários (strategy.scenarios) vs os nomes das árvores solved.
     _TREE_SCENARIO_ALIASES = {'vs_4bet_or_more': 'vs_4bet'}
 
@@ -391,6 +401,30 @@ class PreflopAdvisor:
                 return node, s
         return None, None
 
+    def _aligned_stack_node(self, mode, table_format, stage, players, spot, hero, vs, spread, stack_bb):
+        """Nó VALIDADO do MESMO contexto no bucket NATIVO do modo mais próximo, quando
+        o stack real cai ENTRE os buckets nativos (grades diferentes por modo — ver
+        ALIGN_TOL). DIFERE de _nearest_stack_node: aqui só vale se o bucket nativo
+        mais próximo COM nó VALIDADO estiver a <= ALIGN_TOL do stack real (adjacente
+        na grade do modo) -> o nó conta como VALIDADO (alinhamento de grade, não
+        empréstimo de regime). Devolve (node, bucket_alinhado) ou (None, None)."""
+        if not isinstance(stack_bb, (int, float)) or stack_bb <= 0:
+            return None, None
+        best = None
+        for b in self.STACK_BUCKETS:
+            node = self._index.get((mode, table_format, stage, players, b, spot, hero, vs, spread))
+            if node is None or node.get('validated') is not True:
+                continue
+            d = abs(b - stack_bb)
+            if best is None or d < best[0]:
+                best = (d, b, node)
+        if best is None:
+            return None, None
+        d, b, node = best
+        if d / stack_bb <= self.ALIGN_TOL:
+            return node, b
+        return None, None
+
     def _trees(self):
         """TreeBook (Clone 0.5) carregado sob demanda. Diretório ausente -> livro
         vazio (glob não acha nada), nunca erro. Cacheado (inclusive vazio)."""
@@ -451,6 +485,17 @@ class PreflopAdvisor:
                                    hero_position, tuple(vs), None))
             if alt is not None:
                 node, spread = alt, None
+        aligned_bucket = None
+        # ALINHAMENTO DE GRADE POR MODO: o bucket global snapou para um degrau que o
+        # MODO não solva (ex.: 40bb PKO-ICM -> solve mora em 35bb). Antes do borrow
+        # heurístico, procura o bucket NATIVO validado do MESMO contexto a <=ALIGN_TOL
+        # do stack real. Gated a >= SHOVE_ZONE_MAX_BB: abaixo disso o regime é
+        # push/fold e NÃO se realinha spot de raise (preserva a guarda anti mini-raise).
+        if node is None and isinstance(stack_bb, (int, float)) and stack_bb >= SHOVE_ZONE_MAX_BB:
+            anode, ab = self._aligned_stack_node(
+                mode, table_format, stage, players, spot, hero_position, tuple(vs), spread, stack_bb)
+            if anode is not None:
+                node, aligned_bucket, bucket = anode, ab, ab
         borrowed_from = None
         # GUARDA DA ZONA DE SHOVE (<20BB): não empresta range de RAISE por proximidade
         # de stack — isso gerava mini-raises suicidas. Só push/fold puro vale aqui.
@@ -474,6 +519,8 @@ class PreflopAdvisor:
         caveats = self._caveats(bucket, stack_bb, players, mode, spread)
         if not raw_validated:
             caveats.append('UNVALIDATED_REFERENCE_RANGE')
+        if aligned_bucket is not None:
+            caveats.append('BUCKET_ALIGNED_%gBB_TO_%dBB_NATIVE_GRID' % (stack_bb, aligned_bucket))
         if borrowed_from is not None:
             caveats.append('STACK_BORROWED_%dBB_TO_%dBB_HEURISTIC' % (borrowed_from, bucket))
         base = dict(spot=spot, hero_position=hero_position, hand=hand, node_id=node['id'],

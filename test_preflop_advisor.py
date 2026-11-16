@@ -527,7 +527,10 @@ class VsLimpTests(unittest.TestCase):
                                   mode='chip_ev', stage='mid')
         self.assertEqual(r['status'], 'ADVICE')
         self.assertTrue(r['validated'])                 # a range de 25bb é validada
-        self.assertTrue(any('VS_LIMP_RANGE25BB_APROX' in c for c in r['caveats']))
+        # 30->25 (16.7%) agora resolve pelo ALINHAMENTO de grade (caveat BUCKET_ALIGNED);
+        # o caveat específico de vs_limp também é aceito (ambos marcam a aproximação 25bb).
+        self.assertTrue(any(('VS_LIMP_RANGE25BB_APROX' in c) or c.startswith('BUCKET_ALIGNED')
+                            for c in r['caveats']))
 
 
 class FirstInTests(unittest.TestCase):
@@ -540,13 +543,27 @@ class FirstInTests(unittest.TestCase):
         self.assertEqual((r['status'], r['recommended']), ('ADVICE', 'all_in'))
 
     def test_borrows_nearest_stack_when_bucket_missing(self):
-        # Camada heurística ACIMA da zona de shove: sem nó de open em 30bb, pega
-        # emprestado o de 25bb — conselho flagged, validated=False. (<20bb NÃO
-        # empresta: ver ShoveZoneGuardTests.)
-        r = PreflopAdvisor(pack_with_node()).advise_first_in(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=30)
+        # Camada heurística ACIMA da zona de shove, gap DISTANTE (fora da tolerância
+        # de alinhamento): sem nó de open em 40bb e o nativo mais próximo é 25bb
+        # (37.5% > ALIGN_TOL) -> NÃO alinha, empresta o de 25bb — conselho flagged,
+        # validated=False. (Gap adjacente <=20%, ex. 30->25, vira alinhamento VALIDADO:
+        # ver AlignTests. <20bb NÃO empresta raise: ver ShoveZoneGuardTests.)
+        r = PreflopAdvisor(pack_with_node()).advise_first_in(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=40)
         self.assertEqual(r['status'], 'ADVICE')
         self.assertFalse(r['validated'])
         self.assertTrue(any('STACK_BORROWED' in c for c in r['caveats']))
+
+    def test_adjacent_bucket_aligns_validated(self):
+        # ALINHAMENTO DE GRADE: 30bb sem nó, nativo mais próximo 25bb (16.7% <= TOL)
+        # -> conta como VALIDADO (não é empréstimo), com caveat BUCKET_ALIGNED. É a
+        # correção do mismatch de grade por modo (PKO/ICM 25/35 vs grade global 30/40).
+        r = PreflopAdvisor(pack_with_node()).advise(
+            hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=30, spot='open_raise')
+        self.assertEqual(r['status'], 'ADVICE')
+        self.assertTrue(r['validated'])
+        self.assertIsNone(r['stack_borrowed_from'])
+        self.assertEqual(r['stack_bucket'], 25)
+        self.assertTrue(any(c.startswith('BUCKET_ALIGNED') for c in r['caveats']))
 
 
 def pack_with_reference():
@@ -751,7 +768,8 @@ class ShoveZoneGuardTests(unittest.TestCase):
 
     def test_open_raise_above_20bb_still_borrows(self):
         a = PreflopAdvisor(pack_with_node())      # BTN open_raise @25
-        r = a.advise(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=30, spot='open_raise')
+        # 40bb: nativo 25 está a 37.5% (> ALIGN_TOL) -> não alinha, empresta flagged.
+        r = a.advise(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=40, spot='open_raise')
         self.assertEqual(r['status'], 'ADVICE')
         self.assertEqual(r['stack_borrowed_from'], 25)   # empréstimo permitido fundo
         self.assertFalse(r['validated'])

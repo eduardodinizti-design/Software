@@ -78,13 +78,25 @@ class NoScenarioTests(unittest.TestCase):
         self.assertNotEqual(r.get('validated'), True)
 
     def test_borrowed_stack_is_never_validated(self):
-        # Nó só em 25bb; consultar 30bb (sem nó) empresta o de 25 -> validated=False.
+        # Nó só em 25bb; consultar 40bb (gap DISTANTE 37.5% > ALIGN_TOL, não alinha)
+        # empresta o de 25 -> validated=False. Invariante: validade não é emprestada.
         a = PreflopAdvisor(pack([open_node('n', row_for({'AA': 1.0}), stack=25)]))
-        r = a.advise(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=30)
+        r = a.advise(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=40)
         self.assertEqual(r['status'], 'ADVICE')
         self.assertFalse(r['validated'])            # validade NÃO é emprestada
         self.assertEqual(r['stack_borrowed_from'], 25)
         self.assertTrue(any(c.startswith('STACK_BORROWED') for c in r['caveats']))
+
+    def test_adjacent_bucket_alignment_is_validated_not_borrowed(self):
+        # Contraparte da invariante: um gap ADJACENTE (30->25 = 16.7% <= ALIGN_TOL) é
+        # ALINHAMENTO de grade (grades por modo diferem: PKO/ICM 25/35 vs global 30/40),
+        # conta como VALIDADO e NÃO como empréstimo. Não afrouxa a invariante acima.
+        a = PreflopAdvisor(pack([open_node('n', row_for({'AA': 1.0}), stack=25)]))
+        r = a.advise(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=30)
+        self.assertEqual(r['status'], 'ADVICE')
+        self.assertTrue(r['validated'])
+        self.assertIsNone(r['stack_borrowed_from'])
+        self.assertTrue(any(c.startswith('BUCKET_ALIGNED') for c in r['caveats']))
 
 
 class ExplainLinkageTests(unittest.TestCase):
