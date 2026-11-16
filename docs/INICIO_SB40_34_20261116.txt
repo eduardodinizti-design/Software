@@ -65,3 +65,11 @@ nao terminarem. O workflow nao depende de um processo local continuar aberto.
 
 Regressao da integracao: 244/244 PASS no Linux, com controles nativos.
 PR de acompanhamento: https://github.com/eduardodinizti-design/Software/pull/16
+
+Validacao Windows e entrega automatica:
+https://github.com/eduardodinizti-design/Software/actions/runs/43800302038
+
+O lote nativo esta em execucao. A etapa checked-catalog aguarda o seu
+catalogo COMPLETE; nao repete o CFR e nao conta uma politica parcial.
+Os contratos Windows ja passaram; os testes dos bancos novos aguardam
+a conclusao dos calculos. Consulte o log para os testes pulados.
