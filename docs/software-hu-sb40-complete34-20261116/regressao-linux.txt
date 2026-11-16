@@ -1,3 +1,8 @@
+test_actual_previous_windows_root_receipts_pass_the_same_numeric_contract (test_hu_sb40_delivery34.SB40Delivery34Tests.test_actual_previous_windows_root_receipts_pass_the_same_numeric_contract) ... ok
+test_catalog_from_another_run_is_refused_before_creating_any_output (test_hu_sb40_delivery34.SB40Delivery34Tests.test_catalog_from_another_run_is_refused_before_creating_any_output) ... ok
+test_different_board_policy_position_or_modified_policy_cannot_be_relabelled_as_verified (test_hu_sb40_delivery34.SB40Delivery34Tests.test_different_board_policy_position_or_modified_policy_cannot_be_relabelled_as_verified) ... ok
+test_existing_publication_folder_is_preserved_before_network_or_writes (test_hu_sb40_delivery34.SB40Delivery34Tests.test_existing_publication_folder_is_preserved_before_network_or_writes) ... ok
+test_nonfinite_negative_and_unnormalized_mix_is_never_a_publication_pass (test_hu_sb40_delivery34.SB40Delivery34Tests.test_nonfinite_negative_and_unnormalized_mix_is_never_a_publication_pass) ... ok
 test_a_forged_or_wrong_checkpoint_does_not_authorize_a_new_plan (test_hu_sb40_complete34.SB40Complete34Tests.test_a_forged_or_wrong_checkpoint_does_not_authorize_a_new_plan) ... ok
 test_actual_frozen_prior_snapshots_reproduce_the_saved_checkpoint (test_hu_sb40_complete34.SB40Complete34Tests.test_actual_frozen_prior_snapshots_reproduce_the_saved_checkpoint) ... ok
 test_duplicate_suit_alias_is_never_counted_as_model_thirty_four (test_hu_sb40_complete34.SB40Complete34Tests.test_duplicate_suit_alias_is_never_counted_as_model_thirty_four) ... ok
@@ -239,6 +244,6 @@ test_private_card_memory_is_bound_to_a_fresh_same_hand_id (test_hu_operational.L
 test_runtime_uses_process_creation_time_and_physical_client_geometry (test_hu_operational.LiveIntegrationTests.test_runtime_uses_process_creation_time_and_physical_client_geometry) ... ok
 
 ----------------------------------------------------------------------
-Ran 239 tests in 75.050s
+Ran 244 tests in 75.105s
 
 OK

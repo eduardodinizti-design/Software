@@ -51,3 +51,17 @@ como frentes proprias. O caso 8h -> 3h permanece pendente.
 Este documento confirma a preservacao do lote anterior e o plano do novo.
 A conclusao dos novos 17 exige catalogo COMPLETE e comprovantes Windows.
 Branch: https://github.com/eduardodinizti-design/Software/tree/feat/hu-sb40-complete34-20261116
+
+EXECUCOES
+
+Calculo dos 17 novos modelos:
+https://github.com/eduardodinizti-design/Software/actions/runs/43799276504
+
+A validacao automatica Windows aguarda o catalogo COMPLETE desse lote.
+Depois consulta os 17 bancos completos, gera os historicos sinteticos e
+publica o TXT, o codigo e o comprovante de download da entrega final.
+Os novos modelos ainda nao contam como concluidos enquanto essas etapas
+nao terminarem. O workflow nao depende de um processo local continuar aberto.
+
+Regressao da integracao: 244/244 PASS no Linux, com controles nativos.
+PR de acompanhamento: https://github.com/eduardodinizti-design/Software/pull/16
