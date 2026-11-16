@@ -16,7 +16,7 @@ from strategy.batch_jobs import atomic_json
 from strategy.blind_war import SB40_TAG,SB40_NEXT16_TAG
 from strategy.campaign_download import load_family,load_campaign
 from strategy.state_contract import StrategyError
-from strategy.texassolver_backend import file_hash
+from strategy.texassolver_backend import file_hash,SOURCE_COMMIT
 from tools.collect_hu_campaign_evidence import release,receive,check_history
 from tools.finalize_hu_campaign import checked_results
 
@@ -118,6 +118,7 @@ def main(argv=None):
         downloaded_evidence_hashes=hashes,catalog_asset=args.catalog_asset,plan_sha256=catalog['plan_sha256'],
         source_commit=os.environ['GITHUB_SHA'],native_workflow_run=args.native_run,windows_workflow_run=os.environ['GITHUB_RUN_ID'],
         source_ranges='USER_APPROVED_NVT_REFERENCE_NOT_DIRECT_HRC_CERTIFICATION',
+        postflop_backend='TexasSolver',native_upstream_source_commit=SOURCE_COMMIT,
         pppoker_windows_validated=False,user_notebook_validated=False,input_devices_used=False)
     if not summary['all_new_workers_exited'] or not summary['all_new_native_temporaries_removed']:
         raise StrategyError('NATIVE_WORKERS_AND_OWNED_TEMPORARIES_MUST_BE_CLOSED')
@@ -136,6 +137,8 @@ def main(argv=None):
         'Ambos com 40 BB antes das postagens; big-blind ante de 1 BB. Flop: pote 5 BB, SB 38 BB e BB 37 BB.',
         'SB e o jogador fora de posicao. Dois jogadores ativos nao transforma a mesa em um torneio originalmente HU.',
         'Ranges NVT autorizados como referencia; sem certificacao independente de export direto HRC Pro.',
+        'Calculos pos-flop executados com TexasSolver no laboratorio Linux; fonte upstream '+SOURCE_COMMIT+'.',
+        'Os patches de exportacao, limite de agressoes e denominador de chance HU estao registrados nos manifests de compilacao.',
         'Menu: bet 1/3, raise de 100% do pote e all-in; limite de duas agressoes por rua.',
         'Convergencia nesse menu nao prova que os ranges pre-flop de entrada sejam otimos.','',
         'VALIDACAO',
