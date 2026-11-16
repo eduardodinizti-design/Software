@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "tests_run": 15,
+  "passed": 15,
+  "errors": 0,
+  "failures": 0,
+  "skipped": [],
+  "elapsed_seconds": 0.07429559899901506,
+  "tested_file_sha256": {
+    "tools/supervise_hu_sb40.py": "4cb89adcad33d769b558d37b0c9242e6f49933d844f0eec85b2d3b4a84e216cb",
+    "test_hu_sb40_supervisor.py": "128fce064c1102ad6f11b8b63e1d20ecc0cc54587fb2f5adb2038c77c36d8911",
+    ".github/workflows/hu-sb40-supervisor.yml": "2cdda5fa2e3a497b4f7ea2037e131e5a98137964a01778d16c1974df02d609ee"
+  },
+  "scope": "SYNTHETIC_WAIT_RECOVERY_METADATA_NO_CFR_STARTED",
+  "pppoker_windows_validated": false
+}

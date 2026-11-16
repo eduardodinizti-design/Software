@@ -1,0 +1,62 @@
+{
+  "done": false,
+  "observed_at": "2026-11-16T05:39:22.721698+00:00",
+  "pppoker_windows_validated": false,
+  "retries_requested": [],
+  "retry_actions": [],
+  "runs": {
+    "native34": {
+      "attempt": 1,
+      "conclusion": null,
+      "failed_jobs": [],
+      "passed_jobs": 10,
+      "run_id": "43799276504",
+      "running_jobs": [
+        "Complete SB40 new flop 8 of seventeen",
+        "Complete SB40 new flop 9 of seventeen",
+        "Complete SB40 new flop 13 of seventeen",
+        "Complete SB40 new flop 12 of seventeen",
+        "Complete SB40 new flop 11 of seventeen",
+        "Complete SB40 new flop 10 of seventeen",
+        "Complete SB40 new flop 17 of seventeen",
+        "Complete SB40 new flop 14 of seventeen"
+      ],
+      "status": "in_progress"
+    },
+    "seed51": {
+      "attempt": 1,
+      "conclusion": null,
+      "failed_jobs": [],
+      "passed_jobs": 0,
+      "run_id": "43807544505",
+      "running_jobs": [
+        "initialize"
+      ],
+      "status": "in_progress"
+    },
+    "series": {
+      "attempt": 1,
+      "conclusion": null,
+      "failed_jobs": [],
+      "passed_jobs": 0,
+      "run_id": "43810403786",
+      "running_jobs": [
+        "initialize68"
+      ],
+      "status": "in_progress"
+    },
+    "windows34": {
+      "attempt": 1,
+      "conclusion": null,
+      "failed_jobs": [],
+      "passed_jobs": 1,
+      "run_id": "43800302038",
+      "running_jobs": [
+        "checked-catalog"
+      ],
+      "status": "in_progress"
+    }
+  },
+  "schema": "software.hu-sb40-supervisor.v1",
+  "status": "RUNNING"
+}

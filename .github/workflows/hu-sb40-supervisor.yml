@@ -1,0 +1,325 @@
+name: HU SB40 continuous supervision until 102 saved verified models
+'on':
+  push:
+    branches:
+    - feat/hu-sb40-to102-20261116
+    paths:
+    - .github/workflows/hu-sb40-supervisor.yml
+  workflow_dispatch: null
+permissions:
+  actions: write
+  contents: write
+concurrency:
+  group: hu-sb40-supervisor-20261116
+  cancel-in-progress: false
+env:
+  GH_TOKEN: ${{ github.token }}
+  PYTHONUTF8: '1'
+  PYTHONUNBUFFERED: '1'
+  OPENBLAS_NUM_THREADS: '1'
+jobs:
+  watch1:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 350
+    outputs:
+      done: ${{ steps.watch.outputs.done }}
+      artifact: ${{ steps.meta.outputs.artifact }}
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        persist-credentials: false
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    - run: python -m pip install numpy==2.2.6
+    - name: Verify the recovery classifier before allowing any automatic job retry
+      run: python -m unittest test_hu_sb40_supervisor -q
+    - id: meta
+      run: echo "artifact=sb40-supervisor-1-a${{ github.run_attempt }}" >> "$GITHUB_OUTPUT"
+    - id: watch
+      name: Keep the existing batches advancing; retry only an expired prerequisite wait after verification
+      run: python tools/supervise_hu_sb40.py --output runtime/sb40-supervisor --seconds 19800 --poll-seconds 120 --apply
+    - if: steps.watch.outputs.done == 'true'
+      name: Publish proof only after the complete 102-policy delivery passes
+      run: 'cp runtime/sb40-supervisor/state.json runtime/supervisao-sb40-102-${{ github.run_id }}-a${{ github.run_attempt }}.json
+
+        gh release upload hu-sb-bb40-nvt-complete102-20261116 --repo "$GITHUB_REPOSITORY" runtime/supervisao-sb40-102-${{ github.run_id }}-a${{ github.run_attempt }}.json'
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: ${{ steps.meta.outputs.artifact }}
+        path: runtime/sb40-supervisor/*.json*
+        retention-days: 30
+  watch2:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 350
+    outputs:
+      done: ${{ steps.watch.outputs.done }}
+      artifact: ${{ steps.meta.outputs.artifact }}
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        persist-credentials: false
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    - run: python -m pip install numpy==2.2.6
+    - name: Verify the recovery classifier before allowing any automatic job retry
+      run: python -m unittest test_hu_sb40_supervisor -q
+    - id: meta
+      run: echo "artifact=sb40-supervisor-2-a${{ github.run_attempt }}" >> "$GITHUB_OUTPUT"
+    - uses: actions/download-artifact@v4
+      with:
+        name: ${{ needs.watch1.outputs.artifact }}
+        path: runtime/prior
+    - id: watch
+      name: Keep the existing batches advancing; retry only an expired prerequisite wait after verification
+      run: python tools/supervise_hu_sb40.py --output runtime/sb40-supervisor --seconds 19800 --poll-seconds 120 --apply --checkpoint runtime/prior/state.json
+    - if: steps.watch.outputs.done == 'true'
+      name: Publish proof only after the complete 102-policy delivery passes
+      run: 'cp runtime/sb40-supervisor/state.json runtime/supervisao-sb40-102-${{ github.run_id }}-a${{ github.run_attempt }}.json
+
+        gh release upload hu-sb-bb40-nvt-complete102-20261116 --repo "$GITHUB_REPOSITORY" runtime/supervisao-sb40-102-${{ github.run_id }}-a${{ github.run_attempt }}.json'
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: ${{ steps.meta.outputs.artifact }}
+        path: runtime/sb40-supervisor/*.json*
+        retention-days: 30
+    needs:
+    - watch1
+    if: needs.watch1.outputs.done != 'true'
+  watch3:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 350
+    outputs:
+      done: ${{ steps.watch.outputs.done }}
+      artifact: ${{ steps.meta.outputs.artifact }}
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        persist-credentials: false
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    - run: python -m pip install numpy==2.2.6
+    - name: Verify the recovery classifier before allowing any automatic job retry
+      run: python -m unittest test_hu_sb40_supervisor -q
+    - id: meta
+      run: echo "artifact=sb40-supervisor-3-a${{ github.run_attempt }}" >> "$GITHUB_OUTPUT"
+    - uses: actions/download-artifact@v4
+      with:
+        name: ${{ needs.watch2.outputs.artifact }}
+        path: runtime/prior
+    - id: watch
+      name: Keep the existing batches advancing; retry only an expired prerequisite wait after verification
+      run: python tools/supervise_hu_sb40.py --output runtime/sb40-supervisor --seconds 19800 --poll-seconds 120 --apply --checkpoint runtime/prior/state.json
+    - if: steps.watch.outputs.done == 'true'
+      name: Publish proof only after the complete 102-policy delivery passes
+      run: 'cp runtime/sb40-supervisor/state.json runtime/supervisao-sb40-102-${{ github.run_id }}-a${{ github.run_attempt }}.json
+
+        gh release upload hu-sb-bb40-nvt-complete102-20261116 --repo "$GITHUB_REPOSITORY" runtime/supervisao-sb40-102-${{ github.run_id }}-a${{ github.run_attempt }}.json'
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: ${{ steps.meta.outputs.artifact }}
+        path: runtime/sb40-supervisor/*.json*
+        retention-days: 30
+    needs:
+    - watch2
+    if: needs.watch2.outputs.done != 'true'
+  watch4:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 350
+    outputs:
+      done: ${{ steps.watch.outputs.done }}
+      artifact: ${{ steps.meta.outputs.artifact }}
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        persist-credentials: false
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    - run: python -m pip install numpy==2.2.6
+    - name: Verify the recovery classifier before allowing any automatic job retry
+      run: python -m unittest test_hu_sb40_supervisor -q
+    - id: meta
+      run: echo "artifact=sb40-supervisor-4-a${{ github.run_attempt }}" >> "$GITHUB_OUTPUT"
+    - uses: actions/download-artifact@v4
+      with:
+        name: ${{ needs.watch3.outputs.artifact }}
+        path: runtime/prior
+    - id: watch
+      name: Keep the existing batches advancing; retry only an expired prerequisite wait after verification
+      run: python tools/supervise_hu_sb40.py --output runtime/sb40-supervisor --seconds 19800 --poll-seconds 120 --apply --checkpoint runtime/prior/state.json
+    - if: steps.watch.outputs.done == 'true'
+      name: Publish proof only after the complete 102-policy delivery passes
+      run: 'cp runtime/sb40-supervisor/state.json runtime/supervisao-sb40-102-${{ github.run_id }}-a${{ github.run_attempt }}.json
+
+        gh release upload hu-sb-bb40-nvt-complete102-20261116 --repo "$GITHUB_REPOSITORY" runtime/supervisao-sb40-102-${{ github.run_id }}-a${{ github.run_attempt }}.json'
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: ${{ steps.meta.outputs.artifact }}
+        path: runtime/sb40-supervisor/*.json*
+        retention-days: 30
+    needs:
+    - watch3
+    if: needs.watch3.outputs.done != 'true'
+  watch5:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 350
+    outputs:
+      done: ${{ steps.watch.outputs.done }}
+      artifact: ${{ steps.meta.outputs.artifact }}
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        persist-credentials: false
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    - run: python -m pip install numpy==2.2.6
+    - name: Verify the recovery classifier before allowing any automatic job retry
+      run: python -m unittest test_hu_sb40_supervisor -q
+    - id: meta
+      run: echo "artifact=sb40-supervisor-5-a${{ github.run_attempt }}" >> "$GITHUB_OUTPUT"
+    - uses: actions/download-artifact@v4
+      with:
+        name: ${{ needs.watch4.outputs.artifact }}
+        path: runtime/prior
+    - id: watch
+      name: Keep the existing batches advancing; retry only an expired prerequisite wait after verification
+      run: python tools/supervise_hu_sb40.py --output runtime/sb40-supervisor --seconds 19800 --poll-seconds 120 --apply --checkpoint runtime/prior/state.json
+    - if: steps.watch.outputs.done == 'true'
+      name: Publish proof only after the complete 102-policy delivery passes
+      run: 'cp runtime/sb40-supervisor/state.json runtime/supervisao-sb40-102-${{ github.run_id }}-a${{ github.run_attempt }}.json
+
+        gh release upload hu-sb-bb40-nvt-complete102-20261116 --repo "$GITHUB_REPOSITORY" runtime/supervisao-sb40-102-${{ github.run_id }}-a${{ github.run_attempt }}.json'
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: ${{ steps.meta.outputs.artifact }}
+        path: runtime/sb40-supervisor/*.json*
+        retention-days: 30
+    needs:
+    - watch4
+    if: needs.watch4.outputs.done != 'true'
+  watch6:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 350
+    outputs:
+      done: ${{ steps.watch.outputs.done }}
+      artifact: ${{ steps.meta.outputs.artifact }}
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        persist-credentials: false
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    - run: python -m pip install numpy==2.2.6
+    - name: Verify the recovery classifier before allowing any automatic job retry
+      run: python -m unittest test_hu_sb40_supervisor -q
+    - id: meta
+      run: echo "artifact=sb40-supervisor-6-a${{ github.run_attempt }}" >> "$GITHUB_OUTPUT"
+    - uses: actions/download-artifact@v4
+      with:
+        name: ${{ needs.watch5.outputs.artifact }}
+        path: runtime/prior
+    - id: watch
+      name: Keep the existing batches advancing; retry only an expired prerequisite wait after verification
+      run: python tools/supervise_hu_sb40.py --output runtime/sb40-supervisor --seconds 19800 --poll-seconds 120 --apply --checkpoint runtime/prior/state.json
+    - if: steps.watch.outputs.done == 'true'
+      name: Publish proof only after the complete 102-policy delivery passes
+      run: 'cp runtime/sb40-supervisor/state.json runtime/supervisao-sb40-102-${{ github.run_id }}-a${{ github.run_attempt }}.json
+
+        gh release upload hu-sb-bb40-nvt-complete102-20261116 --repo "$GITHUB_REPOSITORY" runtime/supervisao-sb40-102-${{ github.run_id }}-a${{ github.run_attempt }}.json'
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: ${{ steps.meta.outputs.artifact }}
+        path: runtime/sb40-supervisor/*.json*
+        retention-days: 30
+    needs:
+    - watch5
+    if: needs.watch5.outputs.done != 'true'
+  watch7:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 350
+    outputs:
+      done: ${{ steps.watch.outputs.done }}
+      artifact: ${{ steps.meta.outputs.artifact }}
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        persist-credentials: false
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    - run: python -m pip install numpy==2.2.6
+    - name: Verify the recovery classifier before allowing any automatic job retry
+      run: python -m unittest test_hu_sb40_supervisor -q
+    - id: meta
+      run: echo "artifact=sb40-supervisor-7-a${{ github.run_attempt }}" >> "$GITHUB_OUTPUT"
+    - uses: actions/download-artifact@v4
+      with:
+        name: ${{ needs.watch6.outputs.artifact }}
+        path: runtime/prior
+    - id: watch
+      name: Keep the existing batches advancing; retry only an expired prerequisite wait after verification
+      run: python tools/supervise_hu_sb40.py --output runtime/sb40-supervisor --seconds 19800 --poll-seconds 120 --apply --checkpoint runtime/prior/state.json
+    - if: steps.watch.outputs.done == 'true'
+      name: Publish proof only after the complete 102-policy delivery passes
+      run: 'cp runtime/sb40-supervisor/state.json runtime/supervisao-sb40-102-${{ github.run_id }}-a${{ github.run_attempt }}.json
+
+        gh release upload hu-sb-bb40-nvt-complete102-20261116 --repo "$GITHUB_REPOSITORY" runtime/supervisao-sb40-102-${{ github.run_id }}-a${{ github.run_attempt }}.json'
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: ${{ steps.meta.outputs.artifact }}
+        path: runtime/sb40-supervisor/*.json*
+        retention-days: 30
+    needs:
+    - watch6
+    if: needs.watch6.outputs.done != 'true'
+  watch8:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 350
+    outputs:
+      done: ${{ steps.watch.outputs.done }}
+      artifact: ${{ steps.meta.outputs.artifact }}
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        persist-credentials: false
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    - run: python -m pip install numpy==2.2.6
+    - name: Verify the recovery classifier before allowing any automatic job retry
+      run: python -m unittest test_hu_sb40_supervisor -q
+    - id: meta
+      run: echo "artifact=sb40-supervisor-8-a${{ github.run_attempt }}" >> "$GITHUB_OUTPUT"
+    - uses: actions/download-artifact@v4
+      with:
+        name: ${{ needs.watch7.outputs.artifact }}
+        path: runtime/prior
+    - id: watch
+      name: Keep the existing batches advancing; retry only an expired prerequisite wait after verification
+      run: python tools/supervise_hu_sb40.py --output runtime/sb40-supervisor --seconds 19800 --poll-seconds 120 --apply --checkpoint runtime/prior/state.json
+    - if: steps.watch.outputs.done == 'true'
+      name: Publish proof only after the complete 102-policy delivery passes
+      run: 'cp runtime/sb40-supervisor/state.json runtime/supervisao-sb40-102-${{ github.run_id }}-a${{ github.run_attempt }}.json
+
+        gh release upload hu-sb-bb40-nvt-complete102-20261116 --repo "$GITHUB_REPOSITORY" runtime/supervisao-sb40-102-${{ github.run_id }}-a${{ github.run_attempt }}.json'
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: ${{ steps.meta.outputs.artifact }}
+        path: runtime/sb40-supervisor/*.json*
+        retention-days: 30
+    needs:
+    - watch7
+    if: needs.watch7.outputs.done != 'true'
