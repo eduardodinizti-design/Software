@@ -26,6 +26,7 @@ def post_progress_status(value):
     if stage=='SOLVING' and value.get('native_export_gzip_bytes',0)>0:stage='EXPORTING'
     metric=value.get('last_native_metric') or {}
     description=stage+(' i='+str(metric['iteration']+1) if 'iteration' in metric else '')
+    if 'public_nodes' in (value.get('stage') or {}):description+=' nodes='+str(value['stage']['public_nodes'])
     if 'exploitibility' in metric:description+=' exploit='+format(metric['exploitibility'],'.4f')+'%'
     payload=dict(state='pending',context=context,description=description[:140],
         target_url=os.environ.get('HU_GITHUB_RUN_URL',''))
@@ -51,7 +52,8 @@ def progress(bank):
             if lines:out['last_native_metric']=json.loads(lines[-1])
         except (FileNotFoundError,json.JSONDecodeError):pass
         export=attempt/'native/strategy.jsonl.gz'
-        if export.exists():out['native_export_gzip_bytes']=export.stat().st_size
+        try:out['native_export_gzip_bytes']=export.stat().st_size
+        except FileNotFoundError:pass  # a successful worker may already have cleaned its export
     return out
 
 
@@ -77,7 +79,10 @@ def main(argv=None):
     p.add_argument('--memory-mb',type=int,default=8192)
     p.add_argument('--work-disk-mb',type=int,default=10240)
     p.add_argument('--timeout-seconds',type=int,default=7200)
+    p.add_argument('--asset-name',default='btn-bb-As7d2c-nvt-reference.zip')
+    p.add_argument('--profile-settings',help='Explicit arrival/ante settings JSON; does not change the solved policy')
     args=p.parse_args(argv)
+    if Path(args.asset_name).name!=args.asset_name or not args.asset_name.endswith('.zip'):p.error('Safe ZIP asset name required')
     output=Path(args.output).resolve()
     if output.exists():p.error('Use a new output directory; previous calculations are preserved')
     output.mkdir(parents=True)
@@ -86,6 +91,12 @@ def main(argv=None):
     plan=make_plan(args.game,boards=[game['root']['board']],iterations=args.iterations,
         accuracy_pct=args.accuracy_pct,threads=args.threads,memory_mb=args.memory_mb,
         timeout_seconds=args.timeout_seconds,work_disk_mb=args.work_disk_mb,batch_size=1)
+    if args.profile_settings:
+        from strategy.operational_profile import OperationalProfile
+        from strategy.state_contract import digest
+        settings=json.loads(Path(args.profile_settings).read_text())
+        OperationalProfile('profile-configuration-check',**settings)
+        plan.pop('plan_sha256');plan['profile_settings']=settings;plan['plan_sha256']=digest(plan)
     atomic_json(output/'plan.json',plan)
     command=[sys.executable,'-m','strategy.batch_jobs','run','--plan',str(output/'plan.json'),
         '--output',str(bank),'--binary',str(Path(args.binary).resolve()),'--resources',str(Path(args.resources).resolve())]
@@ -107,6 +118,13 @@ def main(argv=None):
     if worker.returncode:
         report_worker_failure(output,bank)
         raise SystemExit('Pilot failed; reports and diagnostics retained at '+str(output))
+    return package_study(output,args.game,args.asset_name,time.monotonic()-started)
+
+
+def package_study(output,game_path,asset_name,elapsed_seconds):
+    output=Path(output);bank=output/'bank';delivery=output/'delivery';delivery.mkdir(exist_ok=True)
+    if any(delivery.iterdir()):raise SystemExit('Preserve existing delivery; package only a new empty delivery directory')
+    game=json.loads(Path(game_path).read_text())
     index=json.loads((bank/'library.json').read_text())
     if len(index['entries'])!=1:raise SystemExit('Expected exactly one complete policy')
     entry=index['entries'][0];report=json.loads((bank/'reports'/(entry['case_id']+'.json')).read_text())
@@ -119,21 +137,22 @@ def main(argv=None):
         board=entry['board'],quality=entry['quality'],coverage=report['coverage'],
         lookup_validation=report['lookup_validation'],
         native_target_met=bool(entry['quality'].get('converged')),iterations=entry['quality'].get('iterations'),
-        global_gap_bb=entry['quality'].get('global_gap_bb'),source_game_sha256=file_hash(args.game),
+        global_gap_bb=entry['quality'].get('global_gap_bb'),source_game_sha256=file_hash(game_path),
         prior_ranges_confirmed_as='User approved available NVT ranges as reference; no direct HRC export certification',
-        elapsed_seconds=time.monotonic()-started,temporary_cleanup_verified=True,worker_exited=True,
+        elapsed_seconds=elapsed_seconds,temporary_cleanup_verified=True,worker_exited=True,
         policy_file_bytes=report['policy_file_bytes'],source_export_gzip_bytes=report['source_export_gzip_bytes'],
         peak_process_tree_rss_bytes=report['peak_process_tree_rss_bytes'],
         pppoker_windows_validated=False,source_commit=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip())
+    if report.get('recovery'):summary['recovery']=report['recovery']
     atomic_json(delivery/'result.json',summary)
-    readme=('REFERENCIA NVT BTN x BB — banco completo de flop/turn/river.\n'
+    readme=('REFERENCIA NVT '+ ' x '.join(game['context']['positions'])+' — banco completo de flop/turn/river.\n'
         'Precisao nativa atingida: '+str(summary['native_target_met'])+'\n'
         'Gap global nativo (BB): '+str(summary['global_gap_bb'])+'\n'
         'O indicador nativo nao substitui validacao independente ou no PPPoker Windows.\n'
         'Extraia em pasta nova. Consulte pelo Software com --postflop-library library.json.\n'
-        'Modelo: chip-EV regular, 5,5 BB no pote, 22,5 BB restantes; bet 1/3, raise 100% e all-in.\n')
+        'Modelo exato: '+json.dumps(dict(context=game['context'],root=game['root'],menu=game['menu']))+'\n')
     (delivery/'LEIA_PRIMEIRO.txt').write_text(readme,encoding='utf-8')
-    archive=delivery/'btn-bb-As7d2c-nvt-reference.zip'
+    archive=delivery/asset_name
     with zipfile.ZipFile(archive,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=1,allowZip64=True) as z:
         for folder in ('policies','reports'):
             for path in sorted((bank/folder).rglob('*')):

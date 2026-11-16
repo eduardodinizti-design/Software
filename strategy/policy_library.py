@@ -76,7 +76,8 @@ class LibraryHistory:
     """
     def __init__(self,library,journal,*,profile_settings=None):
         self.library,self.journal=library,journal
-        self.preflop_manifest=None;self.settings=dict(profile_settings or {})
+        self.preflop_manifest=None
+        self.settings=dict(library.data.get('profile_settings',{}) if profile_settings is None else profile_settings)
         if 'policy_sha256' in self.settings:raise StrategyError('LIBRARY_PROFILE_HASH_IS_PER_POLICY')
         if not library.entries:raise StrategyError('NO_VALIDATED_POLICIES_YET')
         library.prepare()

@@ -27,7 +27,7 @@ def gh(*args,body=None):
 
 def status(case,state,description):
     if not os.environ.get('GITHUB_SHA'):return
-    payload=dict(state=state,description=description[:140],context=f"hu-next16/{case['ordinal']:02d}",
+    payload=dict(state=state,description=description[:140],context=f"{os.environ.get('HU_GITHUB_STATUS_PREFIX','hu-next16')}/{case['ordinal']:02d}",
         target_url=os.environ.get('HU_GITHUB_RUN_URL',''))
     try:gh('api',f"repos/{REPOSITORY}/statuses/{os.environ['GITHUB_SHA']}",'--method','POST','--input','-',body=payload)
     except (OSError,subprocess.SubprocessError):print('Progress status unavailable; calculation continues.',flush=True)
@@ -48,7 +48,8 @@ def remote_manifests(plan):
 
 
 def initialize(plan,path):
-    notes=('Lote de 16 flops NOVOS BTN x BB, priors NVT de referencia autorizados.\n\n'
+    label=plan.get('label','BTN/BB NVT: 16 novos flops e politicas completas')
+    notes=(label+f"; {len(plan['cases'])} modelos novos, priors NVT de referencia autorizados.\n\n"
         'Os calculos estao em andamento. Cada manifest-case identifica uma politica completa arquivada.\n'
         'O catalogo final informa quantos atingiram o alvo nativo. Nenhum teste PPPoker real e alegado.\n'
         'Os arquivos ZIP sao divididos em partes de ate 1 GiB, com SHA-256 por parte e do arquivo integral.\n')
@@ -56,7 +57,7 @@ def initialize(plan,path):
     result=subprocess.run(['gh','release','view',BATCH_TAG,'--repo',REPOSITORY],capture_output=True)
     if result.returncode:
         subprocess.run(['gh','release','create',BATCH_TAG,'--repo',REPOSITORY,'--target',os.environ['GITHUB_SHA'],
-            '--prerelease','--title','BTN/BB NVT: 16 novos flops e politicas completas','--notes-file',str(note_file)],check=True)
+            '--prerelease','--title',label,'--notes-file',str(note_file)],check=True)
         subprocess.run(['gh','release','upload',BATCH_TAG,'--repo',REPOSITORY,str(path)],check=True)
     else:
         asset=next((a for a in release()['assets'] if a['name']==path.name and a['state']=='uploaded'),None)
@@ -76,15 +77,29 @@ def run_case(args,plan):
     if root.exists():raise SystemExit('Use a new case output directory to preserve previous work')
     root.mkdir(parents=True);game=dict(plan['game']);game['root']=dict(game['root'],board=case['board'])
     atomic_json(root/'game.json',game);s=plan['settings']
-    os.environ['HU_GITHUB_STATUS_CONTEXT']=f"hu-next16/{case['ordinal']:02d}"
+    os.environ['HU_GITHUB_STATUS_CONTEXT']=f"{os.environ.get('HU_GITHUB_STATUS_PREFIX','hu-next16')}/{case['ordinal']:02d}"
     from run_hu_reference_pilot import main as pilot
     try:
-        pilot(['--game',str(root/'game.json'),'--output',str(root/'study'),'--binary',args.binary,
+        asset=plan.get('archive_filename','btn-bb-As7d2c-nvt-reference.zip')
+        extra=[]
+        if plan.get('profile_settings'):
+            atomic_json(root/'profile-settings.json',plan['profile_settings'])
+            extra=['--profile-settings',str(root/'profile-settings.json')]
+        if getattr(args,'ready_study',None):
+            study=Path(args.ready_study).resolve();marker=json.loads((study/'recovered-study.json').read_text())
+            if marker.get('campaign_plan_sha256')!=plan['plan_sha256']:raise SystemExit('Recovered study belongs to a different campaign')
+        else:
+            pilot(['--game',str(root/'game.json'),'--output',str(root/'study'),'--binary',args.binary,
             '--resources',args.resources,'--iterations',str(s['iterations']),'--threads',str(s['threads']),
             '--accuracy-pct',str(s['accuracy_pct']),'--memory-mb',str(s['memory_mb']),
-            '--work-disk-mb',str(s['work_disk_mb']),'--timeout-seconds',str(s['timeout_seconds'])])
-        bank=root/'study/bank';delivery=root/'study/delivery'
-        result=json.loads((delivery/'result.json').read_text());archive=delivery/'btn-bb-As7d2c-nvt-reference.zip'
+            '--work-disk-mb',str(s['work_disk_mb']),'--timeout-seconds',str(s['timeout_seconds']),'--asset-name',asset]+extra)
+            study=root/'study'
+        bank=study/'bank';delivery=study/'delivery'
+        result=json.loads((delivery/'result.json').read_text());archive=delivery/asset
+        if getattr(args,'ready_study',None):
+            from strategy.batch_download import check_bank
+            manifest=dict(board=case['board'],file_sha256=result['file_sha256'],policy_sha256=result['policy_sha256'],policy_file_bytes=result['policy_file_bytes'])
+            check_bank(bank,manifest,dict(context=game['context'],root_template=game['root'],_original_plan=plan))
         status(case,'pending','Complete tree verified; reviewing conditional river')
         lib=PolicyLibrary(bank/'library.json');policy=lib.open(case['board'])
         try:
@@ -112,6 +127,7 @@ def run_case(args,plan):
                 joint_private_deals=river['joint_private_deals'],runout=runout,scope=river['scope']),
             source_commit=os.environ['GITHUB_SHA'],worker_exited=result['worker_exited'],
             temporary_cleanup_verified=result['temporary_cleanup_verified'],**bundle)
+        if result.get('recovery'):manifest['recovery']=result['recovery']
         for _ in range(6):
             try:verify_remote_parts(manifest,release()['assets']);break
             except ValueError:time.sleep(5)
@@ -135,9 +151,10 @@ def run_case(args,plan):
 def catalog(plan,output):
     result=make_catalog(plan,remote_manifests(plan));folder=Path(output);folder.mkdir(parents=True,exist_ok=True)
     atomic_json(folder/'batch-catalog.json',result)
-    lines=['LOTE NVT — 16 NOVOS FLOPS',f"Estado: {result['status']}",
-        f"Politicas completas publicadas: {result['published_new_flops']}/16",
-        f"Alvo nativo atingido: {result['native_target_met_flops']}/16",'']
+    count=len(plan['cases'])
+    lines=[plan.get('label','LOTE NVT — 16 NOVOS FLOPS'),f"Estado: {result['status']}",
+        f"Politicas completas publicadas: {result['published_new_flops']}/{count}",
+        f"Alvo nativo atingido: {result['native_target_met_flops']}/{count}",'']
     for m in result['cases']:
         lines.append(f"{m['ordinal']:02d}. {' '.join(m['board'])} | iteracoes={m['iterations']} | gap={m['global_gap_bb']:.9f} BB | alvo={m['native_target_met']}")
     lines.extend(['','NVT de referencia; precisao nativa nao e certificacao GTO independente ou PPPoker real.'])
@@ -156,10 +173,19 @@ def main(argv=None):
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('cmd',choices=('init','case','catalog'))
     p.add_argument('--plan',required=True);p.add_argument('--ordinal',type=int);p.add_argument('--binary')
     p.add_argument('--resources');p.add_argument('--output',default='runtime/hu-next16')
-    args=p.parse_args(argv);plan=checked_batch_plan(args.plan)
+    p.add_argument('--ready-study',help='Previously recovered, complete checked study; no native solve is started')
+    args=p.parse_args(argv)
+    raw=json.loads(Path(args.plan).read_text())
+    if raw.get('schema')=='software.hu-campaign-plan.v1':
+        from strategy.campaign import checked_campaign_plan
+        plan=checked_campaign_plan(args.plan)
+    else:plan=checked_batch_plan(args.plan)
+    global BATCH_TAG
+    BATCH_TAG=plan['tag']
     if args.cmd=='init':initialize(plan,Path(args.plan));return 0
     if args.cmd=='catalog':return catalog(plan,args.output)
-    if args.ordinal not in range(1,17) or not args.binary or not args.resources:p.error('Case requires ordinal 1..16, binary and resources')
+    if args.ordinal not in range(1,len(plan['cases'])+1) or (not args.ready_study and (not args.binary or not args.resources)):
+        p.error('Case requires a planned ordinal and a native solver or recovered complete study')
     return run_case(args,plan)
 
 

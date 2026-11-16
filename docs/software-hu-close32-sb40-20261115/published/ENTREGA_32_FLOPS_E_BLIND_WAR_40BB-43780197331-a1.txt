@@ -1,0 +1,74 @@
+SOFTWARE ORIGINAL — 32 FLOPS BTN x BB E PILOTO BLIND WAR 40 BB
+
+CONCLUIDO: 32 flops distintos BTN x BB de 25 BB com arvores completas, publicados e consultaveis.
+CONCLUIDO: 1 flop completo SB x BB de 40 BB, As 7d 2c, com respostas de flop, turn e river.
+O piloto SB40 e outra familia de jogo; nao e contado como um 33o flop distinto do banco BTN.
+
+BTN: 11,060,992 estados publicos, 65.53 GiB de politicas SQLite.
+SB40: 439,736 estados publicos, 3.62 GiB de politica SQLite.
+SB40: 171 iteracoes reais; gap global NATIVO 0.047462067 BB.
+Os 15 modelos novos que completam 32 e o piloto SB40 foram baixados integralmente em runners Windows.
+Foram conferidos partes, ZIPs, SQLite, identidades, ranges, menu e consultas nas tres ruas.
+16 maos sinteticas completas ate showdown; 48 consultas JSON e 48 consultas com bijecao exata de naipes.
+Contratos Windows: {'btn32': 306, 'sb40': 304}; testes pulados: {'btn32': 7, 'sb40': 7}.
+Os sete pulados em cada runner Windows sao seis controles que exigem o solver nativo separado e um lock POSIX.
+Regressao Linux final com solver nativo habilitado: 218/218 PASS; zero falhas e zero pulados.
+Nenhum desses testes e uma sessao real no PPPoker.
+
+COMO O BOT APRENDEU
+library.json aponta para politicas completas no disco: acoes, frequencias por combinacao, sizes e respostas.
+O bot consulta o no correspondente ao board, posicoes, dinheiro e historico confirmado.
+Nao se trata de uma rede neural treinada para qualquer situacao. Outros ranks, stacks e chegadas precisam de politicas proprias.
+O arquivo SQLite guarda a arvore completa dentro do menu estudado. JSONL completo e um export opcional verificado no a no.
+Parametros e checkpoints de convergencia ficam nos reports dos bancos; nao sao snapshots CFR para retomar cada iteracao.
+
+MODELOS
+BTN: nove jogadores originalmente, BTN open 2,5 BB x BB call, 25 BB antes do open, sem ante, pote 5,5 BB e 22,5/22,5 BB restantes.
+SB40: nove jogadores originalmente, sete folds, SB open 2 BB x BB call, BBA 1 BB, ambos 40 BB antes das postagens.
+Chegada SB40: pote 5 BB, stacks SB 38 BB e BB 37 BB; SB age primeiro no pos-flop.
+Menu: bet 1/3, raise de 100% do pote e all-in, com duas agressoes por rua. Frequencias e sizes efetivos sao preservados.
+Ranges NVT autorizados como referencia. Os rotulos HRC/validado do exportador nao sao certificacao HRC independente.
+
+CORRECOES REPRODUZIDAS NESTE LOTE
+1. Monitor nao encerra um lote quando o worker conclui e remove o export temporario.
+2. Verificador aceita checks e linhas mistas suportadas; confere o ID e o size exatos da acao, sem exigir tres apostas.
+3. All-in nativo baseado em stack efetivo e traduzido para all-in fisico do jogador que cobre, com devolucao do excedente.
+   O SB40 convergido em 171 iteracoes foi recuperado do export original; o calculo CFR nao foi repetido.
+   O hash do executavel original nao foi retido no artifact de falha; essa ausencia esta registrada na proveniencia.
+   A medicao de pico RSS recuperada abrange o conversor; nao e apresentada como o pico do treinamento original.
+4. Metadados do GitHub usam a autenticacao do workflow; o token nao e enviado aos downloads publicos nem a outro host.
+5. Em empate, os saldos finais sozinhos nao identificam os sizes intermediarios. A fixture sintetica retem o rotulo do pote final.
+   Sem essa evidencia, o coletor continua rejeitando caminhos ambiguos; nenhum historico real e adivinhado.
+6. O primeiro piloto nao registrava o tamanho bruto SQLite em result.json. O empacotador agora usa a medicao do banco retido,
+   apos conferir seu SHA256 com o arquivo publicado. O piloto original e seus resultados nao foram alterados.
+As transferencias Windows ja aprovadas foram reaproveitadas com a origem real de cada receipt preservada.
+As falhas iniciais e sua recuperacao estao documentadas; os dois workflows finais Windows precisam estar verdes para esta entrega.
+
+INSTALAR
+Baixe o ZIP Software-HU-32-SB40 desta entrega e extraia em pasta nova, preservando a instalacao antiga.
+Instale Python 3.12 x64 e requirements.txt conforme docs/GUIA_32_FLOPS_E_BLIND_WAR_40BB_20261115.txt.
+Execute BAIXAR_BANCO_BTN_BB_32.bat e/ou BAIXAR_BLIND_WAR_40BB.bat. Eles instalam dados e nao acionam o mouse.
+Indices: runtime/hu/btn32/bank/library.json e runtime/hu/sb40/bank/library.json.
+Informe o indice correto ao Software com --postflop-library. Esta entrega usa uma familia por sessao, sem troca automatica.
+Comece a observacao antes da mao para confirmar blinds, open e chegada ao flop.
+Os bancos ficam no disco com cache limitado; o notebook de 8 GB nao carrega as arvores inteiras na RAM.
+Os processos nativos terminaram; temporarios pertencentes aos workers foram removidos apos validacao. Bancos e trabalho antigo foram preservados.
+
+PENDENCIAS CONCRETAS
+SB limp x BB check de 40 BB: faltam os ranges proprios no upload. O complemento do range de raise nao foi usado como limp.
+Esse ramo precisa de perfil de chegada limpado: pote 3 BB, SB 39 BB e BB 38 BB com BBA 1 BB, mais testemunho de limp/check.
+3-bet pots, outros sizes/stacks, multiway, ICM e PKO precisam de modelos proprios.
+Gap nativo <= 0,5% do pote nao certifica por metodo independente o gap global; um river condicional por modelo foi enumerado independentemente.
+EV independente por acao nao esta salvo em todos os nos; ev_bb pode ser null.
+Leitura, sincronizacao, efeito real do clique e desempenho com varias mesas ainda precisam de validacao no PPPoker Windows do notebook.
+Em uma mao real empatada cujo pote final nao foi capturado, a confirmacao completa do historico pode continuar ambigua.
+O caso historico 8h -> 3h continua pendente de reproducao no mesmo tema. Nenhum limiar de leitura foi reduzido.
+
+EVIDENCIAS
+https://github.com/eduardodinizti-design/Software/pull/14
+https://github.com/eduardodinizti-design/Software/actions/runs/43779829004
+https://github.com/eduardodinizti-design/Software/actions/runs/43779044783
+https://github.com/eduardodinizti-design/Software/releases/tag/hu-btn-bb-nvt-complete32-20261115
+https://github.com/eduardodinizti-design/Software/releases/tag/hu-sb-bb40-nvt-pilot-20261115
+Orientacao tecnica: docs/CONTRATO_CONSUMO_HU_E_PROXIMA_BLIND_WAR_20261115.txt
+Codigo desta entrega: bf8e3f178abb25c67b04c50995c83f57468924df

@@ -1,0 +1,35 @@
+name: HU complete32 plus recovered SB40 checked handoff with precise convergence labels
+on:
+  push:
+    branches: [feat/hu-close32-sb40-20261115]
+    paths: [.github/workflows/hu-combined-publication.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+env:
+  GH_TOKEN: ${{ github.token }}
+  PYTHONUNBUFFERED: '1'
+  OPENBLAS_NUM_THREADS: '1'
+jobs:
+  checked-handoff:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install numpy==2.2.6
+      - name: Await both successful final Windows data workflows, verify published JSON histories and release one TXT
+        run: python tools/finalize_hu_combined.py --btn-run 43779829004 --sb-run 43779044783 --output runtime/hu-combined-final
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: hu-combined-checked-publication-a${{ github.run_attempt }}
+          path: |
+            runtime/hu-combined-final/*.json
+            runtime/hu-combined-final/*.txt
+            runtime/hu-combined-final/published/*.json
+            runtime/hu-combined-final/published/*.txt
+          retention-days: 14

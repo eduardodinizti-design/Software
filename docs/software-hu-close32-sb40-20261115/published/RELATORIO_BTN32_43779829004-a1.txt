@@ -1,0 +1,52 @@
+SOFTWARE ORIGINAL — 32 FLOPS BTN x BB CONCLUIDOS
+
+Modelos completos distintos nesta familia: 32.
+Novos modelos calculados e transferidos no Windows: 15/15 PASS.
+Historicos confirmados ate showdown neste lote: 15; consultas JSON: 45.
+Nos publicos: 11,060,992; flop/turn/river: {'FLOP': 320, 'TURN': 72128, 'RIVER': 10988544}.
+Politicas finais no disco: 65.53 GiB.
+
+Salvos: acoes, frequencias de cada combinacao privada, sizes efetivos e respostas nas tres ruas.
+Arvore completa dentro do menu declarado: bet 1/3, raise de 100% do pote e all-in; duas agressoes por rua.
+Logs de parametros e checkpoints de convergencia estao dentro dos ZIPs de cada politica.
+Processos nativos encerrados e temporarios removidos apos verificacao. Bancos finais preservados.
+
+MODELOS NOVOS | ITERACOES REAIS | GAP GLOBAL NATIVO (BB) | WINDOWS/JSON/HISTORICO
+01. 9c Jc Qd | 111 | 0.048786254 | PASS
+02. 4c 8c Kd | 121 | 0.046892697 | PASS
+03. Jc Kd Qc | 111 | 0.048991944 | PASS
+04. 7c 8d Qh | 111 | 0.049517029 | PASS
+05. 7c 8d Jh | 121 | 0.047900269 | PASS
+06. 4c Ad Jh | 81 | 0.045042847 | PASS
+07. Ac Jd Th | 91 | 0.044502442 | PASS
+08. 3c 3d Qc | 121 | 0.052615174 | PASS
+09. 5c 5d 7c | 91 | 0.047837222 | PASS
+10. 4c 4d Ac | 121 | 0.047854246 | PASS
+11. Ac Tc Td | 111 | 0.050916382 | PASS
+12. 6c Jd Jh | 101 | 0.051464601 | PASS
+13. Jc Qd Qh | 141 | 0.051367188 | PASS
+14. 3c 3d Kh | 121 | 0.053402283 | PASS
+15. Jc Jd Kh | 141 | 0.050187986 | PASS
+
+INSTALAR
+Extraia o ZIP de codigo em pasta nova. Preserve a instalacao antiga.
+Execute BAIXAR_BANCO_BTN_BB_32.bat.
+O indice library.json e lido com --postflop-library. Veja docs/GUIA_32_FLOPS_E_BLIND_WAR_40BB_20261115.txt.
+Os bancos ficam no disco, com cache limitado. Nao e preciso manter todas as arvores na RAM.
+
+LIMITACOES
+BTN 25 BB e SB40 sao familias distintas. Esta entrega nao faz troca automatica entre bibliotecas.
+Ranges NVT autorizados como referencia; nao sao um export HRC Pro certificado independentemente.
+SB40 usa SB open 2 BB, BB call, BBA de 1 BB e 40 BB antes das postagens.
+Nao foram encontrados ranges proprios SB limp x BB check no upload. Esse ramo continua pendente.
+Alvo nativo <= 0,5% do pote; precisao nativa nao certifica o gap global por metodo independente.
+Um river condicional por modelo foi enumerado independentemente e conferido no Windows.
+Os testes usam leituras sinteticas no Windows do GitHub, sem PPPoker nem acionamento de dispositivos.
+O notebook do usuario ainda precisa validar leitura, historico e clique real; 8h -> 3h segue pendente.
+Outros stacks, ranks, sizes, multiway, ICM e PKO nao foram resolvidos por este lote.
+
+https://github.com/eduardodinizti-design/Software/releases/tag/hu-btn-bb-nvt-complete32-20261115
+https://github.com/eduardodinizti-design/Software/actions/runs/43779829004
+https://github.com/eduardodinizti-design/Software/pull/14
+Codigo: c58171bb961bb396dd5381d44dcc028de2460f27
+Plano: 356a455380ed5cc1d88e559185c60b1c47a72bbdfa9690da9afbb04af107536f

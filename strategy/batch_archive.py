@@ -84,9 +84,9 @@ def make_catalog(plan,manifests):
         if candidates:
             candidates.sort(key=lambda m:(not m['native_target_met'],m['global_gap_bb'] if m['global_gap_bb'] is not None else float('inf'),m['archive_sha256']))
             entries.append(candidates[0])
-    learned=sum(e['native_target_met'] for e in entries)
+    learned=sum(e['native_target_met'] for e in entries);planned=len(plan['cases'])
     return dict(schema='software.hu-batch-catalog.v1',tag=plan['tag'],plan_sha256=plan['plan_sha256'],
-        status='COMPLETE' if learned==16 else 'PARTIAL',planned_new_flops=16,published_new_flops=len(entries),
+        status='COMPLETE' if learned==planned else 'PARTIAL',planned_new_flops=planned,published_new_flops=len(entries),
         native_target_met_flops=learned,cases=entries,pilot_tag=PILOT_TAG,
         context=plan['game']['context'],root_template=plan['game']['root'],
         already_solved_board=plan['already_solved_board'],preserved_holdout_flops=plan['preserved_holdout_flops'],

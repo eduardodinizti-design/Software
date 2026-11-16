@@ -1,0 +1,45 @@
+name: HU complete32 package previously verified Windows policies
+on:
+  push:
+    branches: [feat/hu-close32-sb40-20261115]
+    paths: [.github/workflows/hu-btn32-package-verified.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ github.token }}
+  PYTHONUTF8: '1'
+  OPENBLAS_NUM_THREADS: '1'
+jobs:
+  verified-delivery:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install numpy==2.2.6 opencv-python==4.11.0.86 psutil==6.1.1 pytesseract==0.3.13
+      - name: Recheck Windows contracts including legacy immutable pilot metadata
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force runtime/hu-btn32-final | Out-Null
+          python -m unittest test_hu_campaign test_hu_blind_war test_hu_campaign_download test_hu_campaign_delivery test_hu_policy_json test_hu_next16 test_hu_reference test_hu_batches test_hu_policy_engine test_hu_operational test_cursor test_window_capture_engine test_window_capture_audit test_capture_windows_native test_raise_plan test_raise_sequencer -v *> runtime/hu-btn32-final/contracts.txt
+          $code = $LASTEXITCODE
+          Get-Content runtime/hu-btn32-final/contracts.txt -Tail 18
+          exit $code
+      - name: Publish this Windows contract result under its actual run ID
+        run: |
+          Copy-Item runtime/hu-btn32-final/contracts.txt runtime/windows-contracts-btn32-${{ github.run_id }}-a${{ github.run_attempt }}.txt
+          gh release upload hu-btn-bb-nvt-complete32-20261115 --repo "$env:GITHUB_REPOSITORY" runtime/windows-contracts-btn32-${{ github.run_id }}-a${{ github.run_attempt }}.txt
+      - name: Package all fifteen existing actual Windows receipts preserving their original workflow IDs
+        run: python tools/finalize_hu_campaign.py --family btn32 --catalog-asset batch-catalog-43769271278.json --windows-run-id "${{ github.run_id }}" --verified-receipts-from-all-runs --output runtime/hu-btn32-final/delivery
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: hu-btn32-verified-delivery-a${{ github.run_attempt }}
+          path: |
+            runtime/hu-btn32-final/*.txt
+            runtime/hu-btn32-final/delivery/*.json
+            runtime/hu-btn32-final/delivery/*.txt
+          retention-days: 14

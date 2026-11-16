@@ -1,0 +1,22 @@
+BTN x BB NVT: fechamento de 32 flops completos
+Estado: COMPLETE
+Politicas completas publicadas: 15/15
+Alvo nativo atingido: 15/15
+
+01. 9c Jc Qd | iteracoes=111 | gap=0.048786254 BB | alvo=True
+02. 4c 8c Kd | iteracoes=121 | gap=0.046892697 BB | alvo=True
+03. Jc Kd Qc | iteracoes=111 | gap=0.048991944 BB | alvo=True
+04. 7c 8d Qh | iteracoes=111 | gap=0.049517029 BB | alvo=True
+05. 7c 8d Jh | iteracoes=121 | gap=0.047900269 BB | alvo=True
+06. 4c Ad Jh | iteracoes=81 | gap=0.045042847 BB | alvo=True
+07. Ac Jd Th | iteracoes=91 | gap=0.044502442 BB | alvo=True
+08. 3c 3d Qc | iteracoes=121 | gap=0.052615174 BB | alvo=True
+09. 5c 5d 7c | iteracoes=91 | gap=0.047837222 BB | alvo=True
+10. 4c 4d Ac | iteracoes=121 | gap=0.047854246 BB | alvo=True
+11. Ac Tc Td | iteracoes=111 | gap=0.050916382 BB | alvo=True
+12. 6c Jd Jh | iteracoes=101 | gap=0.051464601 BB | alvo=True
+13. Jc Qd Qh | iteracoes=141 | gap=0.051367188 BB | alvo=True
+14. 3c 3d Kh | iteracoes=121 | gap=0.053402283 BB | alvo=True
+15. Jc Jd Kh | iteracoes=141 | gap=0.050187986 BB | alvo=True
+
+NVT de referencia; precisao nativa nao e certificacao GTO independente ou PPPoker real.

@@ -1,0 +1,8 @@
+Blind war SB x BB 40 BB: piloto NVT open2, BBA1
+Estado: COMPLETE
+Politicas completas publicadas: 1/1
+Alvo nativo atingido: 1/1
+
+01. As 7d 2c | iteracoes=171 | gap=0.047462067 BB | alvo=True
+
+NVT de referencia; precisao nativa nao e certificacao GTO independente ou PPPoker real.

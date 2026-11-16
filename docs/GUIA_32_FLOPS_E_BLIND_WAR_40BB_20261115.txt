@@ -1,0 +1,138 @@
+SOFTWARE ORIGINAL — POLITICAS COMPLETAS E BLIND WAR
+
+Repositorio: https://github.com/eduardodinizti-design/Software
+Branch: feat/hu-close32-sb40-20261115
+Revisao: https://github.com/eduardodinizti-design/Software/pull/14
+
+O QUE ESTA SENDO ENTREGUE
+
+1. Banco BTN x BB de 25 BB: o piloto anterior, 16 modelos publicados e mais
+   15 modelos distintos fecham 32 flops completos. O corpus antigo de 16
+   texturas/estudos parciais nao equivalia a 16 politicas completas. Variantes
+   de naipe equivalentes nao contam como novos estudos.
+2. Banco separado SB x BB: piloto de blind war com 40 BB, SB open 2 BB,
+   BB call, big-blind ante de 1 BB. SB fica FORA de posicao no pos-flop.
+   Os outros sete jogadores foldaram; nao e um torneio originalmente HU.
+
+Os arquivos de plano nao comprovam conclusao. Consulte o catalogo COMPLETE,
+os manifests individuais e o relatorio final com o numero de modelos PASS.
+
+COMO O BOT USA O ESTUDO
+
+library.json e o indice lido pelo bot. As politicas completas ficam nos
+arquivos SQLite: estados, acoes, frequencias por combinacao privada, sizes
+efetivos e respostas por rua. Nao se trata apenas de um resumo de c-bet.
+O historico confirmado seleciona o no correspondente; a funcao choose()
+consulta as mesmas probabilidades utilizadas nos testes.
+
+Esse e o aprendizado disponibilizado ao bot: consulta de politicas salvas.
+Nao e treinamento de uma rede neural, nem uma estrategia calculada para
+qualquer flop ou stack. Novos ranges de chegada exigem novos calculos.
+
+RAM E DISCO
+
+O notebook de 8 GB consulta os bancos no disco com cache limitado de nos.
+Nao precisa manter 32 arvores completas na RAM. Precisa de dezenas de GB
+livres no DISCO, mais espaco temporario para um ZIP por vez. O instalador
+confere os tamanhos reais publicados antes de baixar.
+
+O solver roda no laboratorio, em processos separados e com limite de
+memoria. Apos validar e arquivar o banco, o processo termina e seus
+temporarios nativos sao removidos. O banco final, os logs e os hashes devem
+permanecer salvos. O ambiente antigo e arquivos locais nao sao apagados.
+
+INSTALAR EM PASTA NOVA NO WINDOWS
+
+1. Obtenha o codigo da branch acima ou o ZIP de codigo da Release final.
+   Na Release, escolha o arquivo Software-btn32-...zip ou Software-sb40-...zip
+   identificado no manifesto de download. Cada um contem o codigo e os dois
+   instaladores BAT. O "Source code" automatico do GitHub corresponde ao
+   commit inicial do produtor dos dados; o pacote identificado no relatorio
+   contem a integracao final verificada.
+   Extraia em pasta nova, preservando a instalacao antiga. Este e o Software
+   original; nao use um launcher do Clone.
+2. Use Python 3.12 x64 e as dependencias do Software. Se ainda nao estiverem
+   instaladas, execute na pasta do projeto:
+     py -3.12 -m venv .venv
+     .venv\Scripts\python.exe -m pip install -r requirements.txt
+3. Execute BAIXAR_BANCO_BTN_BB_32.bat para o banco de 32 flops.
+   Banco: runtime\hu\btn32\bank\library.json
+4. Execute BAIXAR_BLIND_WAR_40BB.bat para o piloto SB x BB.
+   Banco: runtime\hu\sb40\bank\library.json
+5. Confira download-receipt.json: status PASS, hashes conferidos e consultas
+   de flop, turn e river. Reexecutar o mesmo BAT reaproveita somente os
+   arquivos completos e identificados como pertencentes a esse download.
+
+Estes BATs instalam dados. Nao ligam o bot nem acionam o cursor.
+
+USAR A BIBLIOTECA CORRETA
+
+Acrescente ao comando/launcher do operar_mesa.py do Software original:
+  --postflop-library "CAMINHO_COMPLETO\runtime\hu\btn32\bank\library.json"
+ou, para testar exclusivamente a blind war:
+  --postflop-library "CAMINHO_COMPLETO\runtime\hu\sb40\bank\library.json"
+
+As demais opcoes de observacao/execucao sao as do Software original.
+Inicie a observacao antes de uma nova mao: o perfil precisa observar blinds,
+open e chegada ao flop para confirmar o historico. Acompanhe o campo
+confirmed_history e a identidade da politica nos logs. O teste sintetico
+publicado nao substitui essa confirmacao na tela real do notebook.
+Esta entrega nao instala um seletor automatico entre familias. BTN 25 BB e
+SB 40 BB sao bibliotecas separadas; o mesmo flop nao autoriza trocar uma
+pela outra. O perfil do banco SB40 carrega o ante explicitamente.
+
+Para baixar somente um modelo novo, com menos disco, em pasta propria:
+  .venv\Scripts\python.exe -m strategy.campaign_download --family btn32 --new-only --ordinals 1 --output runtime\hu\teste-novo-1
+Para o SB40:
+  .venv\Scripts\python.exe -m strategy.campaign_download --family sb40 --ordinals 1 --output runtime\hu\teste-sb40
+Para retomar, repita a mesma pasta e selecao e acrescente --resume.
+
+JSON E EXPORTACAO COMPLETA
+
+As validacoes publicam request-flop/turn/river.json e response-flop/turn/river.json
+com os estados e as respostas reais de choose(), alem do historico confirmado.
+Para repetir uma consulta fornecendo um desses requests:
+  .venv\Scripts\python.exe -m strategy.policy_json query --library "CAMINHO\library.json" --request request-flop.json --output resposta.json
+
+Quando outro consumidor precisar de toda a politica em JSON, existe export
+JSONL gzip: cabecalho com metadados, todos os nos com suas combinacoes,
+frequencias e sizes, e rodape com contagem e hash. A exportacao e conferida
+contra TODOS os nos do banco, mantendo cache limitado. Pode ocupar muito
+mais disco que o SQLite; nao e necessario exportar para o bot funcionar.
+Exemplo com o primeiro flop do piloto SB:
+  .venv\Scripts\python.exe -m strategy.policy_json export --library "CAMINHO\sb40\bank\library.json" --flop As 7d 2c --output sb40-completo.jsonl.gz
+Nao carregue esse JSONL inteiro com json.load no notebook.
+
+MODELOS E LIMITACOES
+
+BTN: chip-EV regular, nove jogadores originalmente, BTN open 2,5 BB x
+BB call, 25 BB antes do open, pote 5,5 BB, 22,5 BB restantes, sem ante.
+SB40: chip-EV regular, nove jogadores originalmente, ambos com 40 BB ANTES
+das postagens, SB open 2 BB, BB call e BBA de 1 BB. Flop: pote 5 BB,
+stack SB 38 BB, stack BB 37 BB; total preservado de 80 BB.
+
+Nos dois: bet de 1/3 do pote, raise de 100% do pote e all-in, limite nativo
+de duas agressoes por rua. A arvore e completa DENTRO desse menu e desses
+ranges. Isso nao resolve automaticamente outros sizes, stacks, multiway,
+ICM ou recompensas PKO. A igualdade por naipes so e usada quando uma
+bijecao exata preserva os DOIS ranges.
+
+Os ranges NVT foram autorizados como referencia. O upload rotula certos
+nos como HRC/validados, mas isso nao e um export direto HRC Pro conferido
+independentemente. As mesas ilustradas no NVT mostram stacks diferentes;
+o modelo SB40 fixa ambos os stacks iniciais em 40 BB de forma explicita.
+Nao foram encontrados priors SB limp x BB check nesse upload. Esse ramo
+precisa de ranges proprios; nao foi preenchido com o complemento do raise.
+
+Alvo nativo: exploitability ate 0,5% do pote, no maximo 2.001 iteracoes,
+com parada quando atinge o alvo. Os logs preservam checkpoints de
+convergencia a cada 10 iteracoes e a politica media final. Nao sao copias
+de toda a estrategia em cada iteracao, nem um checkpoint para retomar CFR.
+Convergencia com ranges dados nao comprova que esses ranges pre-flop sao
+os melhores. Um river condicional por flop e conferido independentemente;
+isso nao certifica o gap global da arvore inteira.
+
+Os testes Windows desta entrega sao transferencia, JSON, historico e
+consulta em runner Windows do GitHub. Nao sao uma sessao real no PPPoker
+do notebook, nem comprovacao de cliques. O caso historico 8h -> 3h continua
+pendente de reproducao no mesmo tema; nenhum limiar OCR foi alterado.

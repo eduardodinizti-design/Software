@@ -1,0 +1,25 @@
+CORRECAO DO ROTULO DE PRECISAO — SEM RECALCULAR OU ALTERAR AS POLITICAS
+
+O relatorio consolidado 43780197331 continha a frase imprecisa
+"Gap nativo <= 0,5% do pote". O criterio de parada usado foi EXPLOITABILITY
+nativa <= 0,5% do pote. O campo global_gap_bb representa NashConv, isto e,
+duas vezes a exploitability, em BB. Seus valores numericos estao corretos.
+
+No piloto SB40, o pote inicial e 5 BB:
+  exploitability nativa: 0,023731033504 BB = 0,474620670080% do pote;
+  global_gap_bb/NashConv: 0,047462067008 BB = 0,949241340160% do pote.
+O alvo nativo foi atingido em 171 iteracoes. Os bancos nao foram alterados.
+
+O river independente tem OUTRO escopo: apos check/bet/call no flop,
+check/bet/call no turn Ts e check no river 2h, com pote de 13,89 BB:
+  NashConv condicional: 0,229228487466 BB;
+  exploitability condicional: 0,114614243733 BB.
+Esse valor local nao deve ser confundido com a media global do estudo.
+A parada global nao garante a mesma precisao em cada no da arvore.
+
+O relatorio consolidado atual, indicado nas notas das duas Releases,
+substitui essa descricao. Resultados, frequencias, sizes, hashes e os
+comprovantes Windows anteriores permanecem preservados e identificados.
+
+A enumeracao de um river condicional nao certifica independentemente
+o gap global inteiro, nem valida como otimos os ranges pre-flop NVT.

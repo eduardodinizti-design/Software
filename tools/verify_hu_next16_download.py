@@ -43,7 +43,7 @@ def verify_suit_queries(library,source,proof):
         if alias is not None:alias.close()
 
 
-def verify_delivery(receipt_path,output,*,ordinal,require_windows=False):
+def verify_delivery(receipt_path,output,*,ordinal,require_windows=False,verify_hand=False):
     if require_windows and platform.system()!='Windows':raise StrategyError('NATIVE_WINDOWS_REQUIRED')
     if Path(output).exists():raise StrategyError('BATCH_VALIDATION_OUTPUT_MUST_BE_NEW')
     receipt=json.loads(Path(receipt_path).read_text())
@@ -71,6 +71,9 @@ def verify_delivery(receipt_path,output,*,ordinal,require_windows=False):
                 nash_conv_bb=river['nash_conv_bb'],exact_enumeration=river['exact_enumeration']),
             scope='TRANSFERRED_FULL_POLICY_THREE_STREET_QUERY_EXACT_SUIT_ROUTING_AND_CONDITIONAL_RIVER',
             input_devices_used=False,pppoker_windows_validated=False,user_notebook_validated=False)
+        if verify_hand:
+            from strategy.reference_validation import verify_reference_hand
+            result['confirmed_hand']=verify_reference_hand(source,Path(output).with_suffix(''),runout=tuple(runout),library=library)
         atomic_json(output,result);return result
     finally:
         source.close()
@@ -79,8 +82,8 @@ def verify_delivery(receipt_path,output,*,ordinal,require_windows=False):
 def main(argv=None):
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--receipt',required=True)
     p.add_argument('--output',required=True);p.add_argument('--ordinal',required=True,type=int)
-    p.add_argument('--require-windows',action='store_true');args=p.parse_args(argv)
-    r=verify_delivery(args.receipt,args.output,ordinal=args.ordinal,require_windows=args.require_windows)
+    p.add_argument('--require-windows',action='store_true');p.add_argument('--verify-hand',action='store_true');args=p.parse_args(argv)
+    r=verify_delivery(args.receipt,args.output,ordinal=args.ordinal,require_windows=args.require_windows,verify_hand=args.verify_hand)
     print(json.dumps({k:r[k] for k in ('status','ordinal','board','platform','policy_sha256','native_target_met')}));return 0
 
 

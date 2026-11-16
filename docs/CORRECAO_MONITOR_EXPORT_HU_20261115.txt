@@ -1,0 +1,30 @@
+SOFTWARE ORIGINAL — MONITOR DO EXPORT TEMPORARIO
+
+CAUSA REPRODUZIDA
+
+O monitor consultava strategy.jsonl.gz com exists() e depois stat(). Entre
+essas operacoes, o worker podia concluir, validar o SQLite e remover o
+export temporario. O segundo stat() lancava FileNotFoundError. Como o erro
+escapava do monitor, podia interromper o processo pai de um lote valido.
+
+O teste test_progress_tolerates_the_export_removed_during_successful_cleanup
+reproduziu o erro antes da correcao. A evidencia esta em:
+docs/software-hu-close32-sb40-20261115/progress-race-before.txt
+
+CORRECAO
+
+O monitor consulta o tamanho diretamente e trata somente FileNotFoundError.
+Um export ja removido e uma condicao normal no fim do worker. Erros de
+permissao continuam visiveis; nao foram suprimidos genericamente.
+
+Oito testes da campanha passaram, incluindo a regressao e o caso que exige
+a propagacao de PermissionError. A mudanca complementa a correcao anterior
+da corrida de policy.sqlite-journal em folder_bytes().
+
+O calculo original dos 15 modelos foi iniciado no commit 0ca4ec8 e o piloto
+SB40 no be854b5. Esta correcao esta no codigo entregue para execucoes futuras;
+ela nao reescreve o codigo de processos que ja estavam rodando no GitHub.
+Os resultados desses processos sao acompanhados individualmente e so contam
+como completos depois da verificacao e publicacao dos manifests.
+
+Nenhum leitor OCR, limiar de cartas ou comando de clique foi alterado.

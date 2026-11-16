@@ -1,0 +1,12 @@
+{
+  "errors": 0,
+  "failures": 0,
+  "full_regression_file": "regressao-linux.json",
+  "full_regression_tests": 576,
+  "new_cases_after_full_regression": 3,
+  "pppoker_windows_validated": false,
+  "scope": "Campaign integrity, complete JSON model/node/frequency transcription, monitor export-removal race",
+  "status": "PASS",
+  "tested_code_commit": "b86f4fb4983f7816bb2f430aba8fa90a3aa04898",
+  "tests_run": 18
+}

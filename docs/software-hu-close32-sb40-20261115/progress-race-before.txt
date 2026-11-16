@@ -1,0 +1,22 @@
+======================================================================
+ERROR: test_progress_tolerates_the_export_removed_during_successful_cleanup (test_hu_campaign.CampaignTests.test_progress_tolerates_the_export_removed_during_successful_cleanup)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/work/software-hu-close32-sb40-20261115/test_hu_campaign.py", line 80, in test_progress_tolerates_the_export_removed_during_successful_cleanup
+    with patch.object(Path,'stat',disappearing):progress(root)
+                                                ^^^^^^^^^^^^^^
+  File "/workspace/work/software-hu-close32-sb40-20261115/tools/run_hu_reference_pilot.py", line 55, in progress
+    if export.exists():out['native_export_gzip_bytes']=export.stat().st_size
+                                                       ^^^^^^^^^^^^^
+  File "/workspace/work/software-hu-close32-sb40-20261115/test_hu_campaign.py", line 79, in disappearing
+    return original(path,*args,**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 840, in stat
+    return os.stat(self, follow_symlinks=follow_symlinks)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmp1c0qjwg3/temporary/attempt/native/strategy.jsonl.gz'
+
+----------------------------------------------------------------------
+Ran 1 test in 0.774s
+
+FAILED (errors=1)

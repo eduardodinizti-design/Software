@@ -85,7 +85,8 @@ def compact_stream(stream_path,output,context,root,ranges,menu,settings,provenan
             converged=bool(last and last['exploitibility']<=settings['target_exploitability_pct_pot']),
             native_metric_independently_verified=False,action_ev_available=False,
             export_depth_in_streets=6-len(root.board),stream_chunks=chunk_count,
-            windows_validated=False,actual_sizes='native_rounding_to_one_unit_then_legality_checked')
+            windows_validated=False,actual_sizes='native_rounding_to_one_unit_then_legality_checked',
+            effective_covering_shoves_translated_to_physical_all_in=root.stacks[0]!=root.stacks[1])
         if progress:progress('VERIFYING_COMPLETE_TREE',dict(public_nodes=writer.count))
         return writer.finish(quality)
     finally:writer.close()

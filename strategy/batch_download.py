@@ -6,11 +6,14 @@ import argparse
 from datetime import datetime,timezone
 import hashlib
 import json
+import os
 from pathlib import Path
 import re
 import shutil
 import sys
 import uuid
+import urllib.request
+from urllib.parse import urlsplit
 import zipfile
 
 from strategy.batch_archive import BATCH_TAG,PILOT_TAG,REPOSITORY,make_catalog
@@ -25,7 +28,19 @@ ASSET_BASE=f'https://github.com/{REPOSITORY}/releases/download/'
 
 
 def read_json(url,limit=4*1024**2):
-    with fetch(url) as response:raw=response.read(limit+1)
+    parsed=urlsplit(url);token=os.environ.get('GH_TOKEN') or os.environ.get('GITHUB_TOKEN')
+    if token and parsed.scheme=='https' and parsed.netloc=='api.github.com':
+        request=urllib.request.Request(url,headers={'User-Agent':'Software-HU-metadata/1',
+            'Accept':'application/vnd.github+json','Authorization':'Bearer '+token})
+        class MetadataRedirect(urllib.request.HTTPRedirectHandler):
+            def redirect_request(self,req,fp,code,msg,headers,newurl):
+                target=urlsplit(newurl)
+                if target.scheme!='https' or target.netloc!='api.github.com':
+                    raise StrategyError('AUTHENTICATED_METADATA_REDIRECT_OUTSIDE_API_REFUSED')
+                return super().redirect_request(req,fp,code,msg,headers,newurl)
+        response=urllib.request.build_opener(MetadataRedirect()).open(request,timeout=60)
+    else:response=fetch(url)
+    with response:raw=response.read(limit+1)
     if len(raw)>limit:raise StrategyError('BATCH_METADATA_TOO_LARGE')
     return json.loads(raw)
 
@@ -97,7 +112,8 @@ def receive_archive(manifest,destination):
     """Stream parts directly into one ZIP; never keep parts plus another copy."""
     check_bundle(manifest);destination=Path(destination)
     if destination.exists():raise StrategyError('BATCH_ARCHIVE_DESTINATION_MUST_BE_NEW')
-    if manifest['tag'] not in (BATCH_TAG,PILOT_TAG):raise StrategyError('UNKNOWN_REFERENCE_RELEASE')
+    if manifest['tag'] not in (BATCH_TAG,PILOT_TAG,'hu-btn-bb-nvt-complete32-20261115','hu-sb-bb40-nvt-pilot-20261115'):
+        raise StrategyError('UNKNOWN_REFERENCE_RELEASE')
     whole=hashlib.sha256();received=0
     with destination.open('xb') as out:
         for part in manifest['parts']:
@@ -149,12 +165,17 @@ def check_bank(bank,manifest,catalog):
 
 
 def download_batch(output,*,ordinals=None,include_pilot=True,catalog_asset=None,resume=False):
+    if Path(output).exists() and not resume:raise StrategyError('BATCH_OUTPUT_MUST_BE_NEW_OR_EXPLICIT_MANAGED_RESUME')
+    catalog,asset=load_catalog(catalog_asset)
+    return install_catalog(output,catalog,asset,ordinals=ordinals,include_pilot=include_pilot,resume=resume)
+
+
+def install_catalog(output,catalog,asset,*,ordinals=None,include_pilot=False,resume=False):
     output=Path(output).resolve()
     if output.exists() and not resume:raise StrategyError('BATCH_OUTPUT_MUST_BE_NEW_OR_EXPLICIT_MANAGED_RESUME')
-    catalog,asset=load_catalog(catalog_asset)
-    numbers=sorted(set(range(1,17) if ordinals is None else ordinals))
-    if not numbers or any(type(n) is not int or n not in range(1,17) for n in numbers):
-        raise StrategyError('BATCH_ORDINALS_MUST_BE_WITHIN_1_TO_16')
+    maximum=len(catalog['cases']);numbers=sorted(set(range(1,maximum+1) if ordinals is None else ordinals))
+    if not numbers or any(type(n) is not int or n not in range(1,maximum+1) for n in numbers):
+        raise StrategyError('BATCH_ORDINALS_MUST_BE_WITHIN_1_TO_'+str(maximum))
     cases=[c for c in catalog['cases'] if c['ordinal'] in numbers]
     if include_pilot:cases=[pilot_manifest()]+cases
     owner=dict(schema='software.hu-batch-download.v1',plan_sha256=catalog['plan_sha256'],
@@ -170,6 +191,8 @@ def download_batch(output,*,ordinals=None,include_pilot=True,catalog_asset=None,
     index=json.loads(index_path.read_text()) if index_path.exists() else dict(
         schema='software.hu-policy-library.v1',entries=[],context=catalog['context'],
         root_template=catalog['root_template'],plan_sha256=catalog['plan_sha256'])
+    settings=catalog.get('profile_settings',{})
+    if settings:index['profile_settings']=settings
     existing={e['case_id']:e for e in index['entries']};pending=[m for m in cases if m['case_id'] not in existing]
     if set(existing)-{m['case_id'] for m in cases}:raise StrategyError('RESUMED_BANK_HAS_UNEXPECTED_POLICIES')
     estimate=sum(m.get('policy_file_bytes') or m['archive_bytes']*2 for m in pending)

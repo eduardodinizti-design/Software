@@ -1,0 +1,1106 @@
+{
+  "evidence": [
+    {
+      "bytes": 73579,
+      "name": "batch-catalog-43769271278.json",
+      "sha256": "b4557f36ca46c3486f88f87290aac3a1071ee703a2dda0bb492c5e8c0ac303ff",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 49442,
+      "name": "close32-plan.json",
+      "sha256": "2808be398c884965ba7393191350de3541653916ae53f8b8fb9f0a3c1f201115",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 1397,
+      "name": "consolidado-32-sb40-43780197331-a1.json",
+      "sha256": "33a412a42462b4404f0cb3194e0ae93f1a87d8cbb5c91afba0af8997f401d1b8",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 1230732,
+      "name": "entrega-btn32-43779829004-a1.json",
+      "sha256": "0065abb3946c43334e0f7b970baedf7b22bf48090f89915f8621dcfcf9b4fbeb",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 6229,
+      "name": "ENTREGA_32_FLOPS_E_BLIND_WAR_40BB-43780197331-a1.txt",
+      "sha256": "4c3302a37cac9c8416eafd0c1a9c831525266bb327841ad68cc5e3be253e60e9",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 155312,
+      "name": "inventario-btn32-43779829004-a1.json",
+      "sha256": "fa1cea3e582ee2cd6cd38556421f05ee335607e0db96acacb98794b8e8b5cbb3",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 4312,
+      "name": "manifest-case-01-737a80bf28f63e1fc79e-745c210d0c4d-1.json",
+      "sha256": "d267ffac068267392cf863d6324b96c8c38f0166f1c8bb1e239e5923788bd85b",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 4312,
+      "name": "manifest-case-02-a6f7de756348b514b605-4d21bf2ddaf1-1.json",
+      "sha256": "b83924207baf50b4be8320459b2696323fe989eb57a4354b7f47a3a2023e11f9",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 4318,
+      "name": "manifest-case-03-daabe5c41b4727d07b1b-0d48a0f53fe4-1.json",
+      "sha256": "b6e2eb6bacff2e9d231f53a99deea96ecb20062e623c0c117479e37eca5d3d59",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 4318,
+      "name": "manifest-case-04-6fa957b951568f30e76d-d8a49be4329e-1.json",
+      "sha256": "dd3f1e63021a898fe5eb504e0d0a698506276ded175f32a680f48d8337ce2248",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 4316,
+      "name": "manifest-case-05-ce2e28079e07dc09e088-da811396ba5c-1.json",
+      "sha256": "7a95bcf875494bc9e30fba9740ceada62e71c51f4a4c79fff4b16009fc6e523b",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 4309,
+      "name": "manifest-case-06-7482258c73d750ed3b6d-4bdaccbd413e-1.json",
+      "sha256": "f42339bf9ecd4e9c641403ea288ae9f5223cd4478143517d3302fa4684dc8c16",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 4311,
+      "name": "manifest-case-07-dfeb978841d74318a5c5-59cb604e5544-1.json",
+      "sha256": "2da1233993ff146c8ac9135430f132cc2e2ed6dedec1f3d8e30578cdf52e351c",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 4311,
+      "name": "manifest-case-08-63b2c36ac67d4fe384de-6144c35882de-1.json",
+      "sha256": "5c35907101102137645777cc754a3198b751affacc31840786fddc4a1f2a62ca",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 4309,
+      "name": "manifest-case-09-e76ee43d2ca76aaba540-0555ba36e5c7-1.json",
+      "sha256": "7b172c603ffa6c908d5d9d519539c7e37ccca627fd1a30d8626c6591aab1ffa4",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 4314,
+      "name": "manifest-case-10-8e10d3f3f426de781b7f-f8b070ab87b2-1.json",
+      "sha256": "1986b1435ec0e59ece05d33a71aae03362f2f08812e8a86896c84950e4328cf2",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 4312,
+      "name": "manifest-case-11-3cb31ef8d23e7f12b241-52febd2c329f-1.json",
+      "sha256": "cb04e0a94c0033339c197e838927b402c97e8aef5549e1014a1f2f961ebb55b7",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 4312,
+      "name": "manifest-case-12-49305f0846b84b7f19a7-1ba05e7a8254-1.json",
+      "sha256": "b0652344579096f4d0b692f9169380dc130ed02a2f1452b30f3380b068bc8551",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 4316,
+      "name": "manifest-case-13-bc715152c111cc7bd542-91615b8724f6-1.json",
+      "sha256": "c0dbbdffa0aae6f278e77b934f4fd2e0fd96caae8dbf6b760e2d39ec197946e3",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 4312,
+      "name": "manifest-case-14-034319fe3038ac51cf08-cb7b7fb94158-1.json",
+      "sha256": "89a48e09522423030522b4b63e989b40f4e6b0eb803be2bfa564f1c8ec9ffe5c",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 4313,
+      "name": "manifest-case-15-435b2034b4187beb60df-18106bd09484-1.json",
+      "sha256": "b309c5f22b421ac79882fbdd2cb52f98c14823d38a539693907585a634e4a736",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 3008,
+      "name": "RELATORIO_BTN32_43779829004-a1.txt",
+      "sha256": "ef7b930926d007d6446d18d6d78b59aa4350eb3b2501909c8a5abdeb0482e806",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 1147,
+      "name": "RELATORIO_LOTE_16-43769271278.txt",
+      "sha256": "73bcebb056b8dcff408d7e41c1c305a5a17d7366081695da8b030ce19c29a6f6",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 7784,
+      "name": "result-case-01-737a80bf28f63e1fc79e-745c210d0c4d-1.json",
+      "sha256": "8d5dd5a40909c16824e67e8f62216c01a5fea48f0fae6bd663b33da16fddef00",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 7800,
+      "name": "result-case-02-a6f7de756348b514b605-4d21bf2ddaf1-1.json",
+      "sha256": "0a3dd88c78987cdb1ae0226e1fd1973bcd48523fab9e01bb482cfa76902a65ce",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 7814,
+      "name": "result-case-03-daabe5c41b4727d07b1b-0d48a0f53fe4-1.json",
+      "sha256": "b11408c365b32476f46ed88074c9c1708ebf60f1a10f9edbc823b42bf65e3d67",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 7797,
+      "name": "result-case-04-6fa957b951568f30e76d-d8a49be4329e-1.json",
+      "sha256": "b005d43d03c085e30c5caaec56ec66f66c472a6e8e32405b701c37a14a626bdf",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 7792,
+      "name": "result-case-05-ce2e28079e07dc09e088-da811396ba5c-1.json",
+      "sha256": "f4f2c1dd53dc9c0270529ec13be2c91323a2e94ef21295467129f69539dec625",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 7821,
+      "name": "result-case-06-7482258c73d750ed3b6d-4bdaccbd413e-1.json",
+      "sha256": "df3caf5158d63490236a109617af7735863424f8141b39fb86059976934bcc42",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 7810,
+      "name": "result-case-07-dfeb978841d74318a5c5-59cb604e5544-1.json",
+      "sha256": "cbdfca502e69d398fc15417aa35a687d4585f94b4670811743fa69dbc22ed38b",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 7821,
+      "name": "result-case-08-63b2c36ac67d4fe384de-6144c35882de-1.json",
+      "sha256": "d65bbc3878e10720108126604525d5135843e17e325ecc5cc784f35d5e7be0ad",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 7813,
+      "name": "result-case-09-e76ee43d2ca76aaba540-0555ba36e5c7-1.json",
+      "sha256": "4ba44aab79634eff3c1a108eccc789183ee98c1b06ff0e21b7fadae98b6fc957",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 7811,
+      "name": "result-case-10-8e10d3f3f426de781b7f-f8b070ab87b2-1.json",
+      "sha256": "11a6845e63a3b5e4432f187ba85734eb2c75526c8ae54272b12fb81d1d21d001",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 7821,
+      "name": "result-case-11-3cb31ef8d23e7f12b241-52febd2c329f-1.json",
+      "sha256": "7a6fe77696b03b8c5df3befc08131d5f9ca04d02f76187120d28621a40f3635b",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 7821,
+      "name": "result-case-12-49305f0846b84b7f19a7-1ba05e7a8254-1.json",
+      "sha256": "a33235abd1e715f0fcbba7ae75222ad68bf531096368a6f4b3ff48d8eae617eb",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 7846,
+      "name": "result-case-13-bc715152c111cc7bd542-91615b8724f6-1.json",
+      "sha256": "ff7b615925457a6da96a66ba93a24cfd2c13a21740f12ceddb364903d3000300",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 7832,
+      "name": "result-case-14-034319fe3038ac51cf08-cb7b7fb94158-1.json",
+      "sha256": "7bf483230c40e9d68251db641624fa3417d5d9504126ec22d85db3c87c2bb11e",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 7810,
+      "name": "result-case-15-435b2034b4187beb60df-18106bd09484-1.json",
+      "sha256": "4616f91ee767fb787dc9ee7db3b562c2e4a753e24725ee06a1cce03b0540d01e",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 262870,
+      "name": "river-case-01-737a80bf28f63e1fc79e-745c210d0c4d-1.json",
+      "sha256": "dc55d33c819a5bd3b65f26269381aa979962a6168cb5ef1d74bb12347444f39c",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 265499,
+      "name": "river-case-02-a6f7de756348b514b605-4d21bf2ddaf1-1.json",
+      "sha256": "f0d60d0fe30e7dd20973e655c1d78c0b2f0449bc542030c7997f4a025009e8c3",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 256197,
+      "name": "river-case-03-daabe5c41b4727d07b1b-0d48a0f53fe4-1.json",
+      "sha256": "15c54d1803843da539360f3d38f5600a9163e2f27fe744e018dab247ae359f06",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 269189,
+      "name": "river-case-04-6fa957b951568f30e76d-d8a49be4329e-1.json",
+      "sha256": "a6e834415bc422b65a03eb0fd51977c1fce9bc24b6a68141fbe889e9697cd39d",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 269198,
+      "name": "river-case-05-ce2e28079e07dc09e088-da811396ba5c-1.json",
+      "sha256": "389c482f5480ff6dd6b06e7de23c97100e58f081c579a206dd32b06ab45cd298",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 263026,
+      "name": "river-case-06-7482258c73d750ed3b6d-4bdaccbd413e-1.json",
+      "sha256": "c1105ea50fe9a701f475b4cd717507cbe6eb8a1588cab9d3cdba408e1527191b",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 254449,
+      "name": "river-case-07-dfeb978841d74318a5c5-59cb604e5544-1.json",
+      "sha256": "751a51847841796089d7d583272a440d942bf54d41d629add0cfdb1d65ab3c7e",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 282583,
+      "name": "river-case-08-63b2c36ac67d4fe384de-6144c35882de-1.json",
+      "sha256": "dfef6d87cc615d1b5c4c131eb5b6ddc134385cb6f5705104925e264476cd0c6f",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 279609,
+      "name": "river-case-09-e76ee43d2ca76aaba540-0555ba36e5c7-1.json",
+      "sha256": "3d9886985bc3a4b190edd72fe879eaf927c1215d96d125337995629ac1589b9c",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 272704,
+      "name": "river-case-10-8e10d3f3f426de781b7f-f8b070ab87b2-1.json",
+      "sha256": "19ba6a90d001e94957fae94d521e368e865442a45b33436be013058a4103c281",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 255457,
+      "name": "river-case-11-3cb31ef8d23e7f12b241-52febd2c329f-1.json",
+      "sha256": "acf71fbdb491e0bb46bfecfb0d0e357fd678f3421f2b3f8b2b3eb81e2d0ef708",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 269382,
+      "name": "river-case-12-49305f0846b84b7f19a7-1ba05e7a8254-1.json",
+      "sha256": "40b64daa648ffe89097f2f10e34fa53ebc8abc8555ff52dd2eeeb85f1141dc62",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 264085,
+      "name": "river-case-13-bc715152c111cc7bd542-91615b8724f6-1.json",
+      "sha256": "2588ecc8ba04e8bb68e4993af02590c4e86bee9d674ef9b871d99533a189008d",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 280106,
+      "name": "river-case-14-034319fe3038ac51cf08-cb7b7fb94158-1.json",
+      "sha256": "24c727b20e04caca2ad1b42f7a6aee41653e4dc0a082f0239971e45ad86fa7ad",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 260130,
+      "name": "river-case-15-435b2034b4187beb60df-18106bd09484-1.json",
+      "sha256": "7de0191711ca1c1ce60aae702201928b0dcc5f570162e6f38eef5b897b772c38",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 268,
+      "name": "source-combined-43780197331-a1.json",
+      "sha256": "5509ec964f55c10817f6148a6baccf66ae0c252a2061fd01a6cc91a08618c37b",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 270,
+      "name": "source-manifest-btn32-43779829004-a1.json",
+      "sha256": "a07b2236bb961d76160b51063e24e756cc20c0ed73cb99e4f5096ea7474af1e2",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 37329,
+      "name": "windows-btn32-case-01-43777900614-a1-json-history.zip",
+      "sha256": "10981620fdf3eac290dff60b1ca8943904f3bc8d9f1bb96dfca9c2921790ec54",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 61802,
+      "name": "windows-btn32-case-01-43777900614-a1.json",
+      "sha256": "2eacc5039164ae90d349f2cb499cf2307635b6009eaea729d45390fa5bce9b4f",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 37334,
+      "name": "windows-btn32-case-02-43777900614-a1-json-history.zip",
+      "sha256": "dfd62fb1895552c35db106d527f63405984b35c058021c479b548daba3093420",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 61818,
+      "name": "windows-btn32-case-02-43777900614-a1.json",
+      "sha256": "166958a0551f2c631096fd505069b7d79653cd9e6f11bc96e72e1287e6fe4f24",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 37325,
+      "name": "windows-btn32-case-03-43777900614-a1-json-history.zip",
+      "sha256": "a3921bf4aecb0e01550934af5c7a26e43e744513f1e565bb0c10c4c9394f29fc",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 61871,
+      "name": "windows-btn32-case-03-43777900614-a1.json",
+      "sha256": "11ae08fb8c74e4d5233b5bfd78b51858a272aa408f6297f33293a89e10cca690",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 37319,
+      "name": "windows-btn32-case-04-43779044773-a1-json-history.zip",
+      "sha256": "9da39baa152dfba3dc3674a0653d0c69493f15e2aa8846fe3eb3b688254bc8cf",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 61906,
+      "name": "windows-btn32-case-04-43779044773-a1.json",
+      "sha256": "6c2e5476dc8da3e80626e7e956256659a29857e5f48b0b0d058f95b0c3b018cb",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 37365,
+      "name": "windows-btn32-case-05-43777900614-a1-json-history.zip",
+      "sha256": "6943bf297a5960a4ddf68571f257bf47138177584f40de5df4c1a18116596af8",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 61808,
+      "name": "windows-btn32-case-05-43777900614-a1.json",
+      "sha256": "31fb28371d860d0d367df145c2cc34f67ca5d29e3e2fc789663335277bdce825",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 37361,
+      "name": "windows-btn32-case-06-43777900614-a1-json-history.zip",
+      "sha256": "adb3f856eb7e6e2607031f97c3487181581b0c0934b2c78017b3a24f2625c63d",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 61848,
+      "name": "windows-btn32-case-06-43777900614-a1.json",
+      "sha256": "bc05228f6edce5a96e365aa00604d7e2d56e3c116d748d259e911c0622c6fdb7",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 37380,
+      "name": "windows-btn32-case-07-43777900614-a1-json-history.zip",
+      "sha256": "1560bff5e43161a61aa762e868f84ca730397ba668652ee1dfef4b1b66102a09",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 61839,
+      "name": "windows-btn32-case-07-43777900614-a1.json",
+      "sha256": "8e567ae70fffe3b753fd2b12994729e0c3943894b5e4ff48f1a82aa06a870a72",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 37275,
+      "name": "windows-btn32-case-08-43777900614-a1-json-history.zip",
+      "sha256": "969d15b2fed48e2e7842ef0a8d9e0ecf638a7e36f8071cd28c2c4c3ca094a926",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 61846,
+      "name": "windows-btn32-case-08-43777900614-a1.json",
+      "sha256": "8dadd67c8d87f8e179f4898322d167415fc55f1a9dfd1e7c19bd2e505a82b512",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 37311,
+      "name": "windows-btn32-case-09-43777900614-a1-json-history.zip",
+      "sha256": "945b034f39a6f60d5a47cc03bfc0cd6ed7f27bc4f2185087b36c967e641a8b1a",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 61834,
+      "name": "windows-btn32-case-09-43777900614-a1.json",
+      "sha256": "62941928f152a6ca5002a6748c0a6170bfbe3459148ff77c41d1e12e422f73d0",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 37377,
+      "name": "windows-btn32-case-10-43777900614-a1-json-history.zip",
+      "sha256": "7e45f5eb3f6cc0a28b53db693bf80e9ba069663acfd01e0d87a04795f1dee7aa",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 61841,
+      "name": "windows-btn32-case-10-43777900614-a1.json",
+      "sha256": "d50d70a11f9b86765a6411d83b94cfb68b91adb90959d92d2de028e33dd16919",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 37312,
+      "name": "windows-btn32-case-11-43777900614-a1-json-history.zip",
+      "sha256": "759077427db676b723b6201386d32ae9ea89ccfa5ea072a4a914de8817a61155",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 61880,
+      "name": "windows-btn32-case-11-43777900614-a1.json",
+      "sha256": "0c522deb0737091c56e5c01c285229e05b699f5fa87e4204759bb0e4e3d62ef3",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 37663,
+      "name": "windows-btn32-case-12-43777900614-a1-json-history.zip",
+      "sha256": "037530ec8e895a4b107e2997f737b9e275b5eac84229a4459bc74bd89bad8e38",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 61846,
+      "name": "windows-btn32-case-12-43777900614-a1.json",
+      "sha256": "ae8556fa50cd4c38de63b4ebc3619397f546af67b6bf027b14c50da0b4d5a296",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 37386,
+      "name": "windows-btn32-case-13-43777900614-a1-json-history.zip",
+      "sha256": "04db5cebef1ffa4b66ebd2faa8ba6e659ff1250a31bd8afbb4aa353aff36aea0",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 61905,
+      "name": "windows-btn32-case-13-43777900614-a1.json",
+      "sha256": "4fc822dafb1942d659bc1cf814f3ffde56125e5373dc565ba36872de8ea78d3e",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 37592,
+      "name": "windows-btn32-case-14-43777900614-a1-json-history.zip",
+      "sha256": "3ce1d30960b510f71209adc62284304ae1d9be4605a13e1dd803b3f47749dc61",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 61870,
+      "name": "windows-btn32-case-14-43777900614-a1.json",
+      "sha256": "f6c43d6f85fc918458a8fa6416f2a57b02fa72a36acaf62818f7c88446d0f2bb",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 37563,
+      "name": "windows-btn32-case-15-43777900614-a1-json-history.zip",
+      "sha256": "04addb50a30f53d742dbd6cd640ea64ec4850e54f87d492d0f324d489f4c6ad9",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 61839,
+      "name": "windows-btn32-case-15-43777900614-a1.json",
+      "sha256": "fdf3a92af799084331bf0d38871a4327151a228f1aa1b4f6b7a799ea353d26aa",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 44979,
+      "name": "windows-contracts-43770197113-a1.txt",
+      "sha256": "85524fd65b0092c3f9998ad68bb58fc2d02a84a188755e0518f4adcc0766a81c",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 46794,
+      "name": "windows-contracts-43772228555-a1.txt",
+      "sha256": "c9719ea78ee2b6a1f6adb567473bc1651759a777aeb8dda73147eb66baa29aa9",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 47522,
+      "name": "windows-contracts-btn32-43777900614-a1.txt",
+      "sha256": "1b05247bcd92727457ac093e75f85eb02c68f7206e9941bd67e8894e79de4b62",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 47719,
+      "name": "windows-contracts-btn32-43779044773-a1.txt",
+      "sha256": "0f62b70ecab25f3e2f4b4e387390d332d721d04bc8da9891789a873f79d5843f",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 48111,
+      "name": "windows-contracts-btn32-43779829004-a1.txt",
+      "sha256": "e4392e382ff052b83985a1473a46f5202e1cc809cf4e1b7b86b4b0506e75e085",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    {
+      "bytes": 1481,
+      "name": "batch-catalog-43769679234.json",
+      "sha256": "034e52c28adf7b0e22b85df310725ca5c0610f33fe3be5e9fe78b8614de18f92",
+      "tag": "hu-sb-bb40-nvt-pilot-20261115"
+    },
+    {
+      "bytes": 7474,
+      "name": "batch-catalog-43777381626.json",
+      "sha256": "f1370faf869d7134539a590ea81ebd7ebd012e56a432a0678399f46688c4994b",
+      "tag": "hu-sb-bb40-nvt-pilot-20261115"
+    },
+    {
+      "bytes": 1397,
+      "name": "consolidado-32-sb40-43780197331-a1.json",
+      "sha256": "33a412a42462b4404f0cb3194e0ae93f1a87d8cbb5c91afba0af8997f401d1b8",
+      "tag": "hu-sb-bb40-nvt-pilot-20261115"
+    },
+    {
+      "bytes": 97812,
+      "name": "entrega-sb40-43779044783-a1.json",
+      "sha256": "b4296da6f5442ef36f0480820e5f1fe2c2e47bc1f90a5f66b2fb683204459368",
+      "tag": "hu-sb-bb40-nvt-pilot-20261115"
+    },
+    {
+      "bytes": 6229,
+      "name": "ENTREGA_32_FLOPS_E_BLIND_WAR_40BB-43780197331-a1.txt",
+      "sha256": "4c3302a37cac9c8416eafd0c1a9c831525266bb327841ad68cc5e3be253e60e9",
+      "tag": "hu-sb-bb40-nvt-pilot-20261115"
+    },
+    {
+      "bytes": 6499,
+      "name": "inventario-sb40-43779044783-a1.json",
+      "sha256": "a9aeaf6f43ac408ac26d8bd931e94d1f9e3d845eb7739ce5c9ca657f7f1e73b6",
+      "tag": "hu-sb-bb40-nvt-pilot-20261115"
+    },
+    {
+      "bytes": 5397,
+      "name": "manifest-case-01-0fa9d9ebbf6ad9c01085-f135ba03d698-1.json",
+      "sha256": "2f438707d9af7812d8b76189f3dc234e337b687323c5e54f985c8e505efab6cc",
+      "tag": "hu-sb-bb40-nvt-pilot-20261115"
+    },
+    {
+      "bytes": 216,
+      "name": "RELATORIO_LOTE_16-43769679234.txt",
+      "sha256": "75d64e807662335c8996b1f700435fcc9dba4e874b63700d3522fa5e5773290b",
+      "tag": "hu-sb-bb40-nvt-pilot-20261115"
+    },
+    {
+      "bytes": 279,
+      "name": "RELATORIO_LOTE_16-43777381626.txt",
+      "sha256": "288ab6ab93bcdfd13637be3cf797c471f73e84f3f5e6122dbe5e19951db285ee",
+      "tag": "hu-sb-bb40-nvt-pilot-20261115"
+    },
+    {
+      "bytes": 2393,
+      "name": "RELATORIO_SB40_43779044783-a1.txt",
+      "sha256": "1a9ae0310426aded3675a08bb3929bbc0636846718725f522b056a3450696d70",
+      "tag": "hu-sb-bb40-nvt-pilot-20261115"
+    },
+    {
+      "bytes": 8525,
+      "name": "result-case-01-0fa9d9ebbf6ad9c01085-f135ba03d698-1.json",
+      "sha256": "51c5fedb0eb5630d2ac1be87a7d4a5f1f297703054b47631d8e13b7b194f6fba",
+      "tag": "hu-sb-bb40-nvt-pilot-20261115"
+    },
+    {
+      "bytes": 508772,
+      "name": "river-case-01-0fa9d9ebbf6ad9c01085-f135ba03d698-1.json",
+      "sha256": "0cde33b188dd13e412c70bb264f14c091308dfb1c303fcb733b4877c05c7fc4a",
+      "tag": "hu-sb-bb40-nvt-pilot-20261115"
+    },
+    {
+      "bytes": 59085,
+      "name": "sb40-plan.json",
+      "sha256": "7852db0664050dc8f1415b7365e652aea1f6853b6444849fb185e6617cb7e46a",
+      "tag": "hu-sb-bb40-nvt-pilot-20261115"
+    },
+    {
+      "bytes": 268,
+      "name": "source-combined-43780197331-a1.json",
+      "sha256": "5509ec964f55c10817f6148a6baccf66ae0c252a2061fd01a6cc91a08618c37b",
+      "tag": "hu-sb-bb40-nvt-pilot-20261115"
+    },
+    {
+      "bytes": 262,
+      "name": "source-manifest-sb40-43779044783-a1.json",
+      "sha256": "99dfee0cdbfd35480a7110307c947114b5f78690affe707b40b243dff255c9e6",
+      "tag": "hu-sb-bb40-nvt-pilot-20261115"
+    },
+    {
+      "bytes": 47160,
+      "name": "windows-contracts-sb40-43777627105-a1.txt",
+      "sha256": "80b8331422a2465e0f48ce4161512b4747bdfa3817722fc14faa3e6ab692c763",
+      "tag": "hu-sb-bb40-nvt-pilot-20261115"
+    },
+    {
+      "bytes": 47522,
+      "name": "windows-contracts-sb40-43777900730-a1.txt",
+      "sha256": "8e1b68d6936613e91b665b271c4ce75a68afc3d1d8477551e247cc8546156382",
+      "tag": "hu-sb-bb40-nvt-pilot-20261115"
+    },
+    {
+      "bytes": 47719,
+      "name": "windows-contracts-sb40-43779044783-a1.txt",
+      "sha256": "7312fbad047d61dfe07865771209478f6ce5e3d393d4fa307916f3f5dbc5b62c",
+      "tag": "hu-sb-bb40-nvt-pilot-20261115"
+    },
+    {
+      "bytes": 33150,
+      "name": "windows-sb40-case-01-43779044783-a1-json-history.zip",
+      "sha256": "1b307612a2fe97fe034ce9ff94e2d4fac2e6047c89e54001b3c30448570ec11b",
+      "tag": "hu-sb-bb40-nvt-pilot-20261115"
+    },
+    {
+      "bytes": 80030,
+      "name": "windows-sb40-case-01-43779044783-a1.json",
+      "sha256": "9da68a45a27a7ade83a3daedb09a53db5668e1815a3215e8447d48d2b442dccc",
+      "tag": "hu-sb-bb40-nvt-pilot-20261115"
+    }
+  ],
+  "families": {
+    "btn32": {
+      "complete_models": 32,
+      "new_windows_models": 15,
+      "published_json_histories": [
+        {
+          "declared_hero_actions_by_street": [
+            {
+              "action_id": "bet:1.833",
+              "street": "FLOP"
+            },
+            {
+              "action_id": "bet:3.055",
+              "street": "TURN"
+            },
+            {
+              "action_id": "bet:5.092",
+              "street": "RIVER"
+            }
+          ],
+          "event_counts": {
+            "action": 9,
+            "board": 2
+          },
+          "journal_chain_reported_valid": true,
+          "json_streets": 3,
+          "policy_sha256": "303dd55348167df4e598333671bbcdfe3442040f5074e7f0204426f92445f894",
+          "pppoker_windows_validated": false,
+          "status": "PASS"
+        },
+        {
+          "declared_hero_actions_by_street": [
+            {
+              "action_id": "bet:1.833",
+              "street": "FLOP"
+            },
+            {
+              "action_id": "bet:3.055",
+              "street": "TURN"
+            },
+            {
+              "action_id": "bet:5.092",
+              "street": "RIVER"
+            }
+          ],
+          "event_counts": {
+            "action": 9,
+            "board": 2
+          },
+          "journal_chain_reported_valid": true,
+          "json_streets": 3,
+          "policy_sha256": "47455191f546fe6fbd6bdaa9f64bb5fdf38711f7e717ac52fddc6b047d50b20c",
+          "pppoker_windows_validated": false,
+          "status": "PASS"
+        },
+        {
+          "declared_hero_actions_by_street": [
+            {
+              "action_id": "bet:1.833",
+              "street": "FLOP"
+            },
+            {
+              "action_id": "bet:3.055",
+              "street": "TURN"
+            },
+            {
+              "action_id": "bet:5.092",
+              "street": "RIVER"
+            }
+          ],
+          "event_counts": {
+            "action": 9,
+            "board": 2
+          },
+          "journal_chain_reported_valid": true,
+          "json_streets": 3,
+          "policy_sha256": "39b720cc6f5b1e749a31b40cb29da8ef6aa267b745c88fe1703d3d69153d591a",
+          "pppoker_windows_validated": false,
+          "status": "PASS"
+        },
+        {
+          "declared_hero_actions_by_street": [
+            {
+              "action_id": "bet:1.833",
+              "street": "FLOP"
+            },
+            {
+              "action_id": "bet:3.055",
+              "street": "TURN"
+            },
+            {
+              "action_id": "bet:5.092",
+              "street": "RIVER"
+            }
+          ],
+          "event_counts": {
+            "action": 9,
+            "board": 2
+          },
+          "journal_chain_reported_valid": true,
+          "json_streets": 3,
+          "policy_sha256": "f0a4b499243c14a8061b4a33b4fd9cc9d69ac31b3b97b98708c9ba811d2796e7",
+          "pppoker_windows_validated": false,
+          "status": "PASS"
+        },
+        {
+          "declared_hero_actions_by_street": [
+            {
+              "action_id": "bet:1.833",
+              "street": "FLOP"
+            },
+            {
+              "action_id": "bet:3.055",
+              "street": "TURN"
+            },
+            {
+              "action_id": "bet:5.092",
+              "street": "RIVER"
+            }
+          ],
+          "event_counts": {
+            "action": 9,
+            "board": 2
+          },
+          "journal_chain_reported_valid": true,
+          "json_streets": 3,
+          "policy_sha256": "377d035bfe5e86772cfa57e67201c019810e75df8904f392049f3481aea5c8dd",
+          "pppoker_windows_validated": false,
+          "status": "PASS"
+        },
+        {
+          "declared_hero_actions_by_street": [
+            {
+              "action_id": "bet:1.833",
+              "street": "FLOP"
+            },
+            {
+              "action_id": "bet:3.055",
+              "street": "TURN"
+            },
+            {
+              "action_id": "bet:5.092",
+              "street": "RIVER"
+            }
+          ],
+          "event_counts": {
+            "action": 9,
+            "board": 2
+          },
+          "journal_chain_reported_valid": true,
+          "json_streets": 3,
+          "policy_sha256": "40827bf0d256cbc317df2251aed899deb58f8f1e90fe6d0d6c16d7fbd642903c",
+          "pppoker_windows_validated": false,
+          "status": "PASS"
+        },
+        {
+          "declared_hero_actions_by_street": [
+            {
+              "action_id": "bet:1.833",
+              "street": "FLOP"
+            },
+            {
+              "action_id": "bet:3.055",
+              "street": "TURN"
+            },
+            {
+              "action_id": "bet:5.092",
+              "street": "RIVER"
+            }
+          ],
+          "event_counts": {
+            "action": 9,
+            "board": 2
+          },
+          "journal_chain_reported_valid": true,
+          "json_streets": 3,
+          "policy_sha256": "d2bfe1d0ede9a9cc38eb3b15b2dbf82181b4694e4e41c13e3c326baee5d97b56",
+          "pppoker_windows_validated": false,
+          "status": "PASS"
+        },
+        {
+          "declared_hero_actions_by_street": [
+            {
+              "action_id": "bet:1.833",
+              "street": "FLOP"
+            },
+            {
+              "action_id": "bet:3.055",
+              "street": "TURN"
+            },
+            {
+              "action_id": "bet:5.092",
+              "street": "RIVER"
+            }
+          ],
+          "event_counts": {
+            "action": 9,
+            "board": 2
+          },
+          "journal_chain_reported_valid": true,
+          "json_streets": 3,
+          "policy_sha256": "c71da4ce4784609beb4ea49ffda416cd6869c3744c783830aaee09db92874de3",
+          "pppoker_windows_validated": false,
+          "status": "PASS"
+        },
+        {
+          "declared_hero_actions_by_street": [
+            {
+              "action_id": "bet:1.833",
+              "street": "FLOP"
+            },
+            {
+              "action_id": "bet:3.055",
+              "street": "TURN"
+            },
+            {
+              "action_id": "bet:5.092",
+              "street": "RIVER"
+            }
+          ],
+          "event_counts": {
+            "action": 9,
+            "board": 2
+          },
+          "journal_chain_reported_valid": true,
+          "json_streets": 3,
+          "policy_sha256": "4692986fb0d1f304976a06054b7ab30c900ead7be454cb010089aca0b2264cb7",
+          "pppoker_windows_validated": false,
+          "status": "PASS"
+        },
+        {
+          "declared_hero_actions_by_street": [
+            {
+              "action_id": "bet:1.833",
+              "street": "FLOP"
+            },
+            {
+              "action_id": "bet:3.055",
+              "street": "TURN"
+            },
+            {
+              "action_id": "bet:5.092",
+              "street": "RIVER"
+            }
+          ],
+          "event_counts": {
+            "action": 9,
+            "board": 2
+          },
+          "journal_chain_reported_valid": true,
+          "json_streets": 3,
+          "policy_sha256": "93eb9628ddd1995caabff8e95f9307062b9bcd2995716ba32b23fd4df8a8e614",
+          "pppoker_windows_validated": false,
+          "status": "PASS"
+        },
+        {
+          "declared_hero_actions_by_street": [
+            {
+              "action_id": "bet:1.833",
+              "street": "FLOP"
+            },
+            {
+              "action_id": "bet:3.055",
+              "street": "TURN"
+            },
+            {
+              "action_id": "bet:5.092",
+              "street": "RIVER"
+            }
+          ],
+          "event_counts": {
+            "action": 9,
+            "board": 2
+          },
+          "journal_chain_reported_valid": true,
+          "json_streets": 3,
+          "policy_sha256": "e102a2906a94492b3eba2655a5897ef0d7589aa37e9fcf5013026a74bdc6fa6d",
+          "pppoker_windows_validated": false,
+          "status": "PASS"
+        },
+        {
+          "declared_hero_actions_by_street": [
+            {
+              "action_id": "bet:1.833",
+              "street": "FLOP"
+            },
+            {
+              "action_id": "bet:3.055",
+              "street": "TURN"
+            },
+            {
+              "action_id": "bet:5.092",
+              "street": "RIVER"
+            }
+          ],
+          "event_counts": {
+            "action": 9,
+            "board": 2
+          },
+          "journal_chain_reported_valid": true,
+          "json_streets": 3,
+          "policy_sha256": "0551615882dec2b1412219e14daa7b837bc7011a72c33774e2cb5b1effa93f37",
+          "pppoker_windows_validated": false,
+          "status": "PASS"
+        },
+        {
+          "declared_hero_actions_by_street": [
+            {
+              "action_id": "bet:1.833",
+              "street": "FLOP"
+            },
+            {
+              "action_id": "bet:3.055",
+              "street": "TURN"
+            },
+            {
+              "action_id": "bet:5.092",
+              "street": "RIVER"
+            }
+          ],
+          "event_counts": {
+            "action": 9,
+            "board": 2
+          },
+          "journal_chain_reported_valid": true,
+          "json_streets": 3,
+          "policy_sha256": "fd78e5ef340dba8d216211b2df9af7a8477c962e6b5298578a8d711efec85d05",
+          "pppoker_windows_validated": false,
+          "status": "PASS"
+        },
+        {
+          "declared_hero_actions_by_street": [
+            {
+              "action_id": "bet:1.833",
+              "street": "FLOP"
+            },
+            {
+              "action_id": "bet:3.055",
+              "street": "TURN"
+            },
+            {
+              "action_id": "bet:5.092",
+              "street": "RIVER"
+            }
+          ],
+          "event_counts": {
+            "action": 9,
+            "board": 2
+          },
+          "journal_chain_reported_valid": true,
+          "json_streets": 3,
+          "policy_sha256": "744edf6a18d8110ea1c4b7753556194c71f6d676a37c7b2039f83796985e2269",
+          "pppoker_windows_validated": false,
+          "status": "PASS"
+        },
+        {
+          "declared_hero_actions_by_street": [
+            {
+              "action_id": "bet:1.833",
+              "street": "FLOP"
+            },
+            {
+              "action_id": "bet:3.055",
+              "street": "TURN"
+            },
+            {
+              "action_id": "bet:5.092",
+              "street": "RIVER"
+            }
+          ],
+          "event_counts": {
+            "action": 9,
+            "board": 2
+          },
+          "journal_chain_reported_valid": true,
+          "json_streets": 3,
+          "policy_sha256": "dceab0d3978c1781429f387e095027bc3ed8aa48b304e6c59e6bec9bacd11bee",
+          "pppoker_windows_validated": false,
+          "status": "PASS"
+        }
+      ],
+      "source": {
+        "asset": "Software-btn32-c58171bb-43779829004-a1.zip",
+        "bytes": 128431336,
+        "contains_full_policy_data": false,
+        "sha256": "aa1a5780b0fcd92dd19617cf2a0e5fa643ed0838fc9f283943b00810be3f6345",
+        "source_commit": "c58171bb961bb396dd5381d44dcc028de2460f27"
+      },
+      "source_zip_locally_downloaded": false,
+      "source_zip_remote_digest_verified": true,
+      "status": "PASS",
+      "tag": "hu-btn-bb-nvt-complete32-20261115"
+    },
+    "sb40": {
+      "complete_models": 1,
+      "new_windows_models": 1,
+      "published_json_histories": [
+        {
+          "declared_hero_actions_by_street": [
+            {
+              "action_id": "bet:1.667",
+              "street": "FLOP"
+            },
+            {
+              "action_id": "bet:2.778",
+              "street": "TURN"
+            },
+            {
+              "action_id": "bet:4.63",
+              "street": "RIVER"
+            }
+          ],
+          "event_counts": {
+            "action": 6,
+            "board": 2
+          },
+          "journal_chain_reported_valid": true,
+          "json_streets": 3,
+          "policy_sha256": "960e92733625e07faea48a3b480a3f6e83cfc185ee7c23737fe55a0317cc870e",
+          "pppoker_windows_validated": false,
+          "status": "PASS"
+        }
+      ],
+      "source": {
+        "asset": "Software-sb40-fa04c6e8-43779044783-a1.zip",
+        "bytes": 128413589,
+        "contains_full_policy_data": false,
+        "sha256": "87d53174c57720280aa75bc86b590d06d91280be0583b9c2dbff2761998ede0a",
+        "source_commit": "fa04c6e828d092a9aaee30b9746d4a11beac760c"
+      },
+      "source_zip_locally_downloaded": false,
+      "source_zip_remote_digest_verified": true,
+      "status": "PASS",
+      "tag": "hu-sb-bb40-nvt-pilot-20261115"
+    }
+  },
+  "full_policy_data_downloaded_here": false,
+  "metadata_files_verified": 110,
+  "pppoker_windows_validated": false,
+  "schema": "software.hu-campaign-publication-proof.v1",
+  "scope": "PUBLIC_EVIDENCE_HASHES_AND_JSON_HISTORY_CONTENT; actual policy downloads were validated on Windows",
+  "status": "PASS"
+}
