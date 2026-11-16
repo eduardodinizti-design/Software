@@ -96,7 +96,10 @@ class RealPackSmokeTests(unittest.TestCase):
         pack = hi.build_pack(paths)
         s = pc.summarize(pack)
         self.assertGreater(s['contexts'], 20)
-        self.assertEqual(s['nodes_total'], 2798)
+        # Consistência interna + piso que cresce com a biblioteca (não frágil a cada
+        # solve novo). 3047 = short pack (2798) + os 3 solves deep 100bb (chip/pko early/mid).
+        self.assertEqual(s['nodes_total'], len(pack['nodes']))
+        self.assertGreaterEqual(s['nodes_total'], 3047)
 
 
 if __name__ == '__main__':

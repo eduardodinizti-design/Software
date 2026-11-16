@@ -22,6 +22,9 @@ from table_reading.tournament import read_tournament, tournament_context
 from preflop_advisor import PreflopAdvisor, infer_spread
 from postflop_advisor import advise_postflop
 from preflop_context import villain_postflop_range
+import solver_cbet_shadow
+import solver_pr12_shadow
+import solver_sb40_shadow
 
 
 def read_hero_card_slots(crop):
@@ -100,7 +103,110 @@ def _postflop_in_context(advisor, tracker, state, hero, board, *, mode, stage, t
     if isinstance(advice, dict):
         # Observabilidade: qual range foi usado (ou o motivo de ter ficado na Fase 1).
         advice['villain_range_source'] = meta if combos else {'reason': meta}
+        _attach_solver_shadow(advice, ctx, seats, state, hero, board, ptype, mode)
     return advice
+
+
+def _attach_solver_shadow(advice, ctx, seats, state, hero, board, ptype, mode):
+    """Anexa a SOMBRA do solver (pacote btn_vs_bb_25) quando o spot ao vivo é o que o
+    TexasSolver resolveu: FLOP, pote de um raise só, BTN vs BB ~25bb, chip EV, e o board
+    cai num dos 100 flops (por isomorfismo). PURO overlay de estudo/auditoria: não troca
+    `recommended` nem libera execução (segue o gate — solver em sombra até homologação).
+    Fora da cobertura não faz nada."""
+    if advice.get('phase') != 'postflop' or advice.get('street') != 'FLOP':
+        return
+    if ptype != 'single_raised':
+        return                                   # só pote de um raise só (HU)
+    positions = state.get('positions') or {}
+    hero_pos = positions.get('hero')
+    vseat = next((s for s in (seats or {})
+                  if s != 'hero' and (seats.get(s) or {}).get('occupied')), None)
+    villain_pos = positions.get(vseat) if vseat else None
+    try:
+        shadow = solver_cbet_shadow.lookup(
+            hero, board.get('cards'), hero_pos=hero_pos, villain_pos=villain_pos,
+            to_call_bb=advice.get('to_call_bb'), pot_bb=advice.get('pot_bb'),
+            hero_stack_bb=(seats.get('hero') or {}).get('stack_bb'),
+            villain_stack_bb=(seats.get(vseat) or {}).get('stack_bb') if vseat else None,
+            mode=mode, aggressor=(ctx or {}).get('aggressor'))
+    except Exception:                            # noqa: BLE001 — sombra nunca quebra o conselho
+        shadow = None
+    if shadow:
+        advice['solver_shadow'] = shadow
+        advice.setdefault('caveats', [])
+        for cav in shadow.get('caveats', []):
+            if cav not in advice['caveats']:
+                advice['caveats'].append(cav)
+        _prefer_solver_on_covered_spot(advice, shadow)
+    # Cross-check PR#12 (2ª referência, mais convergida, árvore bet-1/3): no flop As7d2c
+    # da c-bet do BTN, anexa a opinião independente p/ ESTUDO (não vira recomendação —
+    # evita duas fontes brigando; o pacote de 100 flops é a fonte preferida sistemática).
+    if (advice.get('street') == 'FLOP' and hero_pos == 'BTN'
+            and (advice.get('to_call_bb') in (0, None))):
+        try:
+            pr12 = solver_pr12_shadow.flop_cbet(hero, board.get('cards'))
+        except Exception:                        # noqa: BLE001
+            pr12 = None
+        if pr12:
+            advice['solver_shadow_pr12'] = pr12
+            advice.setdefault('caveats', [])
+            if 'SOLVER_CROSSCHECK_PR12_AS7D2C' not in advice['caveats']:
+                advice['caveats'].append('SOLVER_CROSSCHECK_PR12_AS7D2C')
+    # Cross-check SB x BB 40bb SRP (estudo do outro agente, AMOSTRAGEM INCREMENTAL):
+    # a sombra é PARCIAL (cresce leva a leva), então é ESTUDO/auditoria — anexa a opinião
+    # do solver no flop-lead do SB (OOP, 1º a agir), sem trocar `recommended` nem liberar
+    # execução. Só engata no contexto exato: SB OOP, BB, ~40bb, pote single-raised, chip-EV.
+    if (advice.get('street') == 'FLOP' and hero_pos == 'SB'
+            and (advice.get('to_call_bb') in (0, None))
+            and solver_sb40_shadow.context_matches(
+                (hero_pos, villain_pos), ptype, mode,
+                (seats.get('hero') or {}).get('stack_bb'))):
+        try:
+            sb40 = solver_sb40_shadow.flop_policy(hero, board.get('cards'))
+        except Exception:                        # noqa: BLE001 — sombra nunca quebra o conselho
+            sb40 = None
+        if sb40:
+            advice['solver_shadow_sb40'] = sb40
+            advice.setdefault('caveats', [])
+            if 'SOLVER_CROSSCHECK_SB40_SRP' not in advice['caveats']:
+                advice['caveats'].append('SOLVER_CROSSCHECK_SB40_SRP')
+
+
+# Mapa size do solver -> fração de pote (p/ o sizing quando a sombra manda apostar).
+_SOLVER_BET_FRACTION = {'b33': 0.33, 'b50': 0.50, 'b70': 0.70, 'allin': None}
+
+
+def _prefer_solver_on_covered_spot(advice, shadow):
+    """Homologação: onde há VERDADE do solver (nó per-combo DECISIVO), a recomendação
+    passa a ser a do SOLVER, não a da heurística — que, medida contra o solver neste
+    spot, acerta ~42%% (postflop_homologation). NÃO libera execução (segue gated) e NÃO
+    toca nó misto (coinflip não vira regra) nem o lado `def` (agregado de range, não é
+    específico da mão). Preserva a leitura da heurística em `heuristic_recommended`."""
+    if shadow.get('side') != 'agg' or not shadow.get('combo_in_range') or not shadow.get('decisive'):
+        return
+    coarse = shadow.get('coarse')             # 'check' ou 'bet'
+    if coarse not in ('check', 'bet'):
+        return
+    prev = (advice.get('recommended') or '').lower()
+    advice['heuristic_recommended'] = advice.get('recommended')
+    advice['recommended'] = coarse
+    advice['recommended_source'] = 'solver_shadow'
+    advice['execution_allowed'] = False       # reafirma o gate: sombra homologada NÃO executa
+    if coarse == 'bet':
+        frac = _SOLVER_BET_FRACTION.get(shadow.get('bet_size'))
+        pot = advice.get('pot_bb')
+        size_bb = (round(pot * frac, 1) if isinstance(pot, (int, float)) and frac
+                   else (advice.get('spr') and None))
+        advice['sizing'] = dict(size_bb=size_bb, solver_size=shadow.get('bet_size'),
+                                basis='solver c-bet (%s)' % shadow.get('bet_size'),
+                                heuristic=False)
+    else:
+        advice['sizing'] = dict(size_bb=0.0, basis='solver check', heuristic=False)
+    tag = 'SOLVER_PREFERRED_ON_COVERED_SPOT'
+    if tag not in advice['caveats']:
+        advice['caveats'].append(tag)
+    if prev and prev != coarse:
+        advice['caveats'].append('SOLVER_OVERRODE_HEURISTIC_%s_TO_%s' % (prev.upper(), coarse.upper()))
 
 
 def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table_key='default',
@@ -248,6 +354,13 @@ def _summary(result):
             adv.get('street'), str(adv['recommended']).upper(), size_txt,
             adv.get('made'), adv.get('category'), adv.get('outs'),
             (' | ' + ', '.join(extra)) if extra else ''))
+        sh = adv.get('solver_shadow')
+        if sh:
+            mixtxt = ', '.join('%s %d%%' % (m['action'], round(m['frequency'] * 100))
+                               for m in (sh.get('mix') or [])) or '(mao fora do range de open)'
+            lines.append('  SOMBRA solver [%s %s%s]: %s -> %s (freq, nao-executar)' % (
+                sh.get('spot'), sh.get('node'), ' iso' if sh.get('iso') else '',
+                str(sh.get('recommended_shadow')).upper(), mixtxt))
     elif adv.get('status') == 'ADVICE':
         mix = ', '.join('%s %d%%' % (m['action'], round(m['frequency'] * 100)) for m in adv['mix'])
         sz = adv.get('sizing') or {}
