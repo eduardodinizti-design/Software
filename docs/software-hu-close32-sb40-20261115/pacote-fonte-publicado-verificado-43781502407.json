@@ -1,0 +1,20 @@
+{
+  "asset": "Software-HU-32-SB40-d94fd15e-43781502407-a1.zip",
+  "bytes": 130348576,
+  "embedded_final_report_sha256": "81c03923bd470d2fe2c11f8a3d7bd86b07ee8e6711872d6e38ba0fc09138cdcc",
+  "full_policy_data_downloaded_here": false,
+  "pppoker_windows_validated": false,
+  "required_installer_and_code_paths": [
+    "BAIXAR_BANCO_BTN_BB_32.bat",
+    "BAIXAR_BLIND_WAR_40BB.bat",
+    "strategy/campaign_download.py",
+    "strategy/policy_json.py",
+    "strategy/blind_war.py",
+    "docs/CORRECAO_ROTULO_PRECISAO_HU_20261116.txt",
+    "RELATORIO_32_E_SB40.txt"
+  ],
+  "sha256": "5a456f0eff6b5a30bd43f532e7d543cdce7fddf394ab3452ff598bbd77e71d9e",
+  "source_commit": "d94fd15e8311428fae0bccf91ead1ea2d90c3c4b",
+  "status": "PASS",
+  "zip_crc_all_entries_valid": true
+}

@@ -1,0 +1,51 @@
+{
+  "btn_bb25_complete_distinct_flops": 32,
+  "btn_summary": "entrega-btn32-43779829004-a1.json",
+  "global_gap_bb_definition": "NASH_CONV_TWICE_EXPLOITABILITY",
+  "linux_reference_regression": {
+    "elapsed_seconds": 74.24741881299997,
+    "errors": 0,
+    "failures": 0,
+    "native_stream_tests_enabled": true,
+    "passed": 218,
+    "pppoker_windows_validated": false,
+    "skipped": [],
+    "status": "PASS",
+    "tested_code_commit": "60e5eee7120ecc2edda8fe65f3e0720eeeb50557",
+    "tests_run": 218
+  },
+  "native_global_gap_independently_certified": false,
+  "native_target_metric": "EXPLOITABILITY_PERCENT_OF_ROOT_POT",
+  "native_target_pct": 0.5,
+  "new_confirmed_synthetic_hands": 16,
+  "new_exact_suit_street_queries": 48,
+  "new_json_street_roundtrips": 48,
+  "new_windows_policy_transfers": 16,
+  "pppoker_windows_validated": false,
+  "sb_bb40_full_reference_pilot_flops": 1,
+  "sb_independent_conditional_river": {
+    "exploitability_bb": 0.11461424373276251,
+    "nash_conv_bb": 0.22922848746552502,
+    "pot_bb": 13.89,
+    "scope": "CONDITIONAL_RIVER_PRIORS_AND_DECLARED_MENU_NOT_FULL_FLOP_GTO_CERTIFICATION"
+  },
+  "sb_summary": "entrega-sb40-43779044783-a1.json",
+  "schema": "software.hu-32-and-sb40-combined-delivery.v1",
+  "source_commit": "d94fd15e8311428fae0bccf91ead1ea2d90c3c4b",
+  "source_ranges": "USER_APPROVED_NVT_REFERENCE_NOT_DIRECT_HRC_CERTIFICATION",
+  "source_workflows": {
+    "btn_windows": "43779829004",
+    "sb_windows": "43779044783"
+  },
+  "status": "PASS",
+  "transfer_count_semantics": "DISTINCT_VALIDATED_MODELS; repeated downloads for a repaired fixture are not new models",
+  "user_notebook_validated": false,
+  "windows_contract_skipped": {
+    "btn32": 7,
+    "sb40": 7
+  },
+  "windows_contract_tests": {
+    "btn32": 306,
+    "sb40": 304
+  }
+}
