@@ -54,6 +54,25 @@ class PlanGateTest(unittest.TestCase):
         self.assertEqual(p['plan']['action'], 'FOLD')
         self.assertIn('screen_rect', p['plan'])          # coord de tela pronta
 
+    def test_trava_pagar_bloqueia_call_sem_allow_commit(self):
+        # TRAVA ABSOLUTA (regra do Eduardo): operador ao vivo sobe com
+        # allow_commit=False -> CALL (=pagar) e BLOQUEADO na origem, mesmo validado.
+        ex = ActionExecutor(window_rect=WIN, allow_commit=False)
+        p = ex.plan(_result('call', validated=True), _buttons(), origin=ORIGIN, frame_size=FRAME)
+        self.assertFalse(p['ok'])
+        self.assertIn('PAGAR_BLOQUEADO', p['reason'])
+        # FOLD e CHECK seguem liberados (nao-commit).
+        self.assertTrue(ex.plan(_result('fold'), _buttons(), origin=ORIGIN, frame_size=FRAME)['ok'])
+        self.assertTrue(ex.plan(_result('check'), _buttons(actions=('FOLD', 'CHECK', 'RAISE')),
+                                origin=ORIGIN, frame_size=FRAME)['ok'])
+
+    def test_call_liberado_com_allow_commit(self):
+        # Com allow_commit=True (default do nucleo) o call-off/validado volta a planejar.
+        ex = ActionExecutor(window_rect=WIN, allow_commit=True)
+        p = ex.plan(_result('call', validated=True), _buttons(), origin=ORIGIN, frame_size=FRAME)
+        self.assertTrue(p['ok'])
+        self.assertEqual(p['plan']['action'], 'CALL')
+
 
 class ExecuteTest(unittest.TestCase):
     def _exec(self, ex, inp, rec='fold', hand='h1'):

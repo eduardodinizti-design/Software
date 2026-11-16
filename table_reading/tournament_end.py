@@ -79,9 +79,24 @@ def detect_tournament_end(crop):
     if not (same_size and 0.35 < pair_center < 0.65 and sair[0] > ficar[0] + ficar[2]):
         return result
 
-    # 2) Confirmação SEM depender de OCR: o BANNER superior do pop-up é azul e
-    # brilhante (estádio MTT). Assinatura robusta junto do par de botões. OCR do
-    # "Ranking N/M" é BÔNUS (quando o tesseract está disponível).
+    # TRAVA ABSOLUTA anti-Pagar (incidente 15/11): numa MESA VIVA a faixa inferior
+    # tem a linha de PRÉ-AÇÃO verde [F/C | Call X | Pagar]. O par geométrico acima
+    # casa F/C(esq) e Pagar(dir) como "Ficar/Sair", e o FELTRO azul da mesa passa
+    # como "banner". Resultado: FALSO POSITIVO -> clicava sair_box = o botão da
+    # DIREITA = PAGAR. Por isso o bot "pagava" sozinho. A única prova confiável de
+    # que é a tela de fim é o RÓTULO: o botão de sair LÊ "Sair" e o de ficar "Ficar".
+    # Sem isso (ou se LÊ Pagar/Call/F/C/Check) NÃO é fim de torneio -> NÃO clica nada.
+    def _btn_text(b):
+        bx, by, bw_, bh_ = b
+        return _ocr(crop[by:by + bh_, bx:bx + bw_]).casefold()
+    sair_txt, ficar_txt = _btn_text(sair), _btn_text(ficar)
+    _PROIBIDO = ('pagar', 'call', 'f/c', 'fc', 'check', 'fold', 'raise', 'bet')
+    if any(p in sair_txt or p in ficar_txt for p in _PROIBIDO):
+        return result                                  # é a linha de pré-ação, NÃO o fim
+    if 'sair' not in sair_txt:
+        return result                                  # sem prova POSITIVA de "Sair" -> não clica
+
+    # 2) Confirmação adicional: o BANNER superior do pop-up é azul e brilhante.
     top = crop[int(0.06 * h):int(0.38 * h), :]
     tb, tg, tr = (float(top[:, :, i].mean()) for i in range(3))
     banner_blue = tb > tr + 15 and (tb + tg + tr) / 3 > 55

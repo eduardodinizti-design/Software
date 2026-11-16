@@ -17,9 +17,13 @@ THREEBET_SB_MULT = 2.9        # from the SB
 THREEBET_BB_MULT = 3.4        # from the BB
 
 
-def open_size_bb(hero_stack_bb):
-    """Solver open size: 2.0bb normally, 2.5bb at 100bb-deep."""
-    if isinstance(hero_stack_bb, (int, float)) and hero_stack_bb > OPEN_DEEP_THRESHOLD_BB:
+def open_size_bb(hero_stack_bb, registration_open=False):
+    """Tamanho do open (regra do Eduardo, 15/11): 2.0bb SEMPRE, exceto 2.5bb só no
+    INÍCIO DO TORNEIO — enquanto a INSCRIÇÃO (late reg) ainda está ABERTA E o stack
+    é deep (>40bb). Fechada a inscrição, ou stack curto -> 2.0bb. Sem o sinal de
+    inscrição (default), assume FECHADA = 2.0bb (default seguro pedido pelo Eduardo)."""
+    if (registration_open and isinstance(hero_stack_bb, (int, float))
+            and hero_stack_bb > OPEN_DEEP_THRESHOLD_BB):
         return OPEN_RAISE_DEEP_BB
     return OPEN_RAISE_BB
 
@@ -69,7 +73,7 @@ def in_position(hero_position, opener_position):
 
 
 def recommend_size(action, *, hero_stack_bb=None, to_call_bb=None, limpers=0,
-                   opener_bb=None, ip=True, hero_position=None):
+                   opener_bb=None, ip=True, hero_position=None, registration_open=False):
     """{action, size_bb, basis, heuristic} for one action, or None for fold.
 
     Open/3bet/4bet sizes come from the solver betting tree; isolating limpers is a
@@ -90,7 +94,7 @@ def recommend_size(action, *, hero_stack_bb=None, to_call_bb=None, limpers=0,
     if action in ('all_in', 'open_shove', 'vs_open_shove', 'three_bet_shove', 'four_bet_shove'):
         return dict(action=action, size_bb=cap, basis='all-in', heuristic=False)
     if action in ('raise', 'open_raise'):
-        open_bb = open_size_bb(hero_stack_bb)
+        open_bb = open_size_bb(hero_stack_bb, registration_open)
         size = open_bb + ISO_ADD_PER_LIMPER_BB * limpers
         basis = 'open %.1fbb (solver)' % open_bb
         if limpers:
@@ -114,4 +118,6 @@ def size_from_reading(action, table_state, hero_position, opener_position=None):
                           to_call_bb=(table_state.get('to_call') or {}).get('to_call_bb'),
                           limpers=count_limpers(table_state),
                           opener_bb=opener_raise_bb(table_state), hero_position=hero_position,
-                          ip=in_position(hero_position, opener_position) if opener_position else True)
+                          ip=in_position(hero_position, opener_position) if opener_position else True,
+                          # 2.5x só com late reg ABERTA (início). Sem o sinal -> 2x (default).
+                          registration_open=bool(table_state.get('registration_open')))

@@ -3,12 +3,20 @@
 Mundo com ESTADO (fases BUTTONS -> PANEL -> DONE), compatível com a dupla
 revalidação do controlador (inicial + na chegada leem a mesma fase). O adaptador
 de input avança a fase a cada clique: 1 abre o painel; 3 fecha (aposta entrou)."""
+import os
 import unittest
 
 import numpy as np
 
+try:
+    import cv2
+except Exception:                       # pragma: no cover
+    cv2 = None
+
 from raise_sequencer import RaiseSequencer
 from action_coordinator import DryRunInput
+from raise_panel import read_raise_panel, read_raise_slider
+from raise_plan import plan_raise
 
 WIN = (-1280, 0, 3840, 1440)
 _PRESETS = [dict(box=[18, 1240, 122, 70], label='2x', mult=2.0),
@@ -224,6 +232,39 @@ class RaiseSequencerTest(unittest.TestCase):
                              hand='H1', read_hand=lambda c: {'hand_id': 'H1'})
         out = seq.run()
         self.assertFalse(out.get('confirmed'))              # leitura falha != aposta confirmada
+
+
+class ShortStackShovePanelReal(unittest.TestCase):
+    """REGRESSAO (captura ao vivo 15/11, pixel REAL, hero 2,2BB): o painel de aumento
+    de STACK CURTO tem SO 1 preset ('2x') + slider + 'Raise', entao read_raise_panel
+    marca NO_RAISE_PANEL. Antes o sequenciador abortava ('PAINEL_NAO_ABRIU') e NENHUM
+    shove curto fechava. Agora _panel_open aceita (confirm + slider) e plan_raise
+    roteia SHOVE. So o teste ao vivo revelou isto."""
+
+    FIX = os.path.join('tests', 'fixtures', 'raise_panel', 'short_stack_allin_slider.png')
+
+    def setUp(self):
+        if cv2 is None or not os.path.exists(self.FIX):
+            self.skipTest('fixture/opencv ausente')
+        # NAO chamar configure_ocr aqui: liga o OCR in-process GLOBAL e vaza p/ outros
+        # testes (rank_confirmation conta chamadas de OCR). _panel_open/slider/confirm
+        # sao PURO CV (sem OCR), entao o fixture basta.
+        self.crop = cv2.imread(self.FIX)
+
+    def test_painel_curto_reconhecido_confirm_e_slider(self):
+        # CV puro: o painel de stack curto (1 preset) tem confirm + slider -> aberto.
+        # _ocr mock (rotulo irrelevante p/ _panel_open) evita tesseract/OCR global.
+        panel = read_raise_panel(self.crop, _ocr=lambda *a, **k: '2x')
+        slider = read_raise_slider(self.crop)
+        self.assertTrue(RaiseSequencer._panel_open(panel, slider))     # painel aberto
+        self.assertEqual(slider['status'], 'SLIDER_FOUND')
+        self.assertIsNotNone(slider.get('allin_to'))                   # tem alvo de all-in
+        self.assertIsNotNone(panel.get('confirm'))                     # tem "Raise" p/ confirmar
+
+    def test_alvo_shove_roteia_mesmo_com_1_preset(self):
+        # Com 1 preset so, o alvo-sentinela do shove roteia plan_raise -> SHOVE.
+        self.assertEqual(plan_raise(1000.0, [dict(mult=2.0, label='2x',
+                                                  box=[0, 0, 10, 10])])['kind'], 'SHOVE')
 
 
 if __name__ == '__main__':

@@ -115,9 +115,15 @@ def evaluate_card(card, config, state=None, *, club=None, now_hhmm=None):
     if modality == 'unknown':
         reasons.append('MODALITY_UNKNOWN_NEEDS_CONFIRMATION')
     elif modality in ('rebuy', 'addon'):
-        # Rebuy/add-on formats are only allowed when they are also PKO (user rule);
-        # a plain rebuy/add-on is not. A PKO-with-rebuy classifies as 'pko' upstream.
-        reasons.append('REBUY_ONLY_IN_PKO' if config.rebuy_pko_only else 'MODALITY_NOT_ALLOWED')
+        # Rebuy/add-on só é permitido quando também é PKO (regra de banca). EXCEÇÃO:
+        # autorização EXPLÍCITA do usuário p/ o evento (rebuy_pko_only=False E a
+        # modalidade incluída em allowed_modalities, via --allow-rebuy). Sem isso,
+        # bloqueia (REBUY_ONLY_IN_PKO). Um PKO-com-rebuy classifica como 'pko' acima.
+        if config.rebuy_pko_only:
+            reasons.append('REBUY_ONLY_IN_PKO')
+        elif modality not in config.allowed_modalities:
+            reasons.append('MODALITY_NOT_ALLOWED')
+        # senão: autorizado explicitamente e na lista -> segue (sem razão de bloqueio)
     elif modality not in config.allowed_modalities:
         reasons.append('MODALITY_NOT_ALLOWED')
     else:

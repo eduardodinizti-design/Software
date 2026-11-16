@@ -7,7 +7,13 @@ import sizing
 class RecommendSizeTests(unittest.TestCase):
     def test_open_solver_sizes_and_iso(self):
         self.assertEqual(sizing.recommend_size('raise', hero_stack_bb=40)['size_bb'], 2.0)   # solver open <=40bb
-        self.assertEqual(sizing.recommend_size('raise', hero_stack_bb=100)['size_bb'], 2.5)  # deep open
+        # Regra do Eduardo: 2.5x deep SO com late reg ABERTA (inicio). Default (reg
+        # fechada) = 2.0x SEMPRE, mesmo deep.
+        self.assertEqual(sizing.recommend_size('raise', hero_stack_bb=100)['size_bb'], 2.0)  # deep, reg FECHADA -> 2x
+        self.assertEqual(sizing.recommend_size('raise', hero_stack_bb=100,
+                                               registration_open=True)['size_bb'], 2.5)       # deep + reg ABERTA -> 2.5x
+        self.assertEqual(sizing.recommend_size('raise', hero_stack_bb=40,
+                                               registration_open=True)['size_bb'], 2.0)       # reg aberta mas NAO deep -> 2x
         self.assertFalse(sizing.recommend_size('raise', hero_stack_bb=40)['heuristic'])      # pure open = solver, not heuristic
         iso = sizing.recommend_size('raise', hero_stack_bb=40, limpers=2)
         self.assertEqual(iso['size_bb'], 4.0)                                                # 2.0 + 2 limpers

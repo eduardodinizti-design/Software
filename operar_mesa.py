@@ -48,6 +48,12 @@ from hero_card_memory import HeroCardMemory
 DEFAULT_RANGES = r'C:\Meus Projetos\Aplicativos\nvt-ranges-validados.json'
 DEFAULT_DEEP = r'C:\Meus Projetos\Aplicativos\nvt-ranges-deep.json'
 
+# SHOVE (push/fold): o all-in NÃO tem "multiplicador" — é "tudo". Um alvo-sentinela
+# bem acima de qualquer preset e do piso de shove (SHOVE_FLOOR_MULT=8.0) faz
+# plan_raise rotear pra SHOVE -> o sequenciador arrasta o slider até o all-in.
+# Sem isso, target_multiplier devolvia None e o operador ABSTINHA no shove.
+_SHOVE_TARGET_MULT = 1000.0
+
 
 def _discover_rect(hwnd):
     """Geometria lógica ATUAL da janela (None se sumiu) — p/ continuidade entre etapas."""
@@ -236,6 +242,10 @@ def main(argv=None):
     p.add_argument('--hud', action='store_true',
                    help='Le o HUD VIP (8 stats por vilao) p/ exploit no pos-flop')
     p.add_argument('--arm', action='store_true', help='Usa o cursor REAL (ainda gated)')
+    p.add_argument('--nao-pagar', dest='nao_pagar', action='store_true',
+                   help='EMERGENCIA: desliga o CALL (so FOLD/CHECK). Por PADRAO o call esta '
+                        'HABILITADO e a decisao pagar/foldar vem do RANGE. O "Pagar" de PRE-ACAO '
+                        '(junto do F/C) continua nulado SEMPRE; isto so afeta o call da VEZ REAL.')
     p.add_argument('--overlay', action='store_true',
                    help='Faixa de status SEMPRE-NO-TOPO (feedback visível: ARMADO/PAUSADO + ações)')
     p.add_argument('--auto-arm', action='store_true',
@@ -284,7 +294,8 @@ def main(argv=None):
 
     def _build_entry(hwnd, w):
         wr = (w['x'], w['y'], w['w'], w['h'])
-        return dict(executor=ActionExecutor(window_rect=wr, bot_control=control, armed=args.arm),
+        return dict(executor=ActionExecutor(window_rect=wr, bot_control=control, armed=args.arm,
+                                            allow_commit=not args.nao_pagar),
                     validator=make_validator(engine, hwnd, args.max_tables),
                     verifier=make_verifier(engine, hwnd, args.max_tables))
 
@@ -606,13 +617,33 @@ def main(argv=None):
                         adv = dict(adv, recommended=_safe, status='ADVICE',
                                    validated=False, phase='preflop', deep_guard=True)
                         result = dict(result, advice=adv)
+                # PREMIUM NO SHOVE ZONE = JAM (regra do Eduardo: "era shove claro").
+                # Multiway curto não tem nó validado -> o cérebro abstém (SHOVE_ZONE).
+                # Premium curto manda ALL-IN, NUNCA paga. Roteia pelo sequenciador de
+                # shove (não pelo CALL do fallback anti-freeze). Autoridade separada
+                # (safety_premium_shove), sem mentir validated=True.
+                if (br['status'] == 'EXPERIMENTAL_BUTTON_ROW'
+                        and isinstance(adv, dict) and adv.get('status') == 'ABSTAIN'
+                        and 'SHOVE_ZONE' in str(adv.get('reason', ''))
+                        and _is_premium(result.get('hero_cards'))):
+                    adv = dict(adv, status='ADVICE', recommended='all_in', validated=False,
+                               phase='preflop', safety_premium_shove=True, fallback=True)
+                    result = dict(result, advice=adv)
+                    print('[%03d] BLINDAGEM PREMIUM (shove zone): %s sem no -> ALL-IN (jam, nao call)'
+                          % (n, result.get('hero_cards')), flush=True)
                 _, caveats = map_advice_to_action(adv.get('recommended'))
                 is_raise = 'REQUIRES_SIZING_MULTISTEP' in caveats
+                is_shove = 'ALL_IN' in caveats
                 # RAISE = fluxo multi-etapa (sequenciador). Só executa ARMADO (em
                 # dry-run os cliques não abrem o painel de verdade).
                 if (br['status'] == 'EXPERIMENTAL_BUTTON_ROW' and adv.get('status') == 'ADVICE'
                         and is_raise and (tkey, hid) not in raise_done):
-                    tmult = target_multiplier(adv, result.get('table_state'))
+                    # SHOVE (push/fold): all-in não tem multiplicador de sizing -> alvo
+                    # sentinela grande roteia o sequenciador pro slider all-in. Sem isso o
+                    # target_multiplier dava None e o operador ABSTINHA (caía no fold/check
+                    # anti-freeze) = o bug do A3s 8bb que nunca jammava.
+                    tmult = _SHOVE_TARGET_MULT if is_shove \
+                        else target_multiplier(adv, result.get('table_state'))
                     if tmult is None:
                         print('[%03d] vez do hero: RAISE sem target de size -> abstem' % n, flush=True)
                     elif not args.arm:
@@ -621,9 +652,11 @@ def main(argv=None):
                               % (n, tmult, (pr and pr['label']) or '?'), flush=True)
                     elif not control.execution_allowed():
                         print('[%03d] RAISE mas BOT PAUSADO' % n, flush=True)
-                    elif not adv.get('validated'):
+                    elif not adv.get('validated') and not adv.get('safety_premium_shove'):
                         # Autorização única também no RAISE: nó não validado
                         # (referência/deep) não dispara a sequência armada (só estuda).
+                        # EXCEÇÃO: safety_premium_shove (premium curto sem nó) É autorizado
+                        # a jamar — é a linha segura no shove zone, não um raise especulativo.
                         print('[%03d] RAISE de no NAO VALIDADO -> nao executa (so estuda)' % n, flush=True)
                     else:
                         seq = RaiseSequencer(capture=lambda h=hwnd: engine.capture_frame(hwnd=h),

@@ -210,6 +210,28 @@ class CallOffTests(unittest.TestCase):
         self.assertEqual(r['status'], 'ABSTAIN')           # abstém, não call-off falso
         self.assertNotEqual(r.get('spot'), 'call_off_vs_3bet_shove')
 
+    def test_shove_zone_vs_open_squeeze_routes_to_3bet_shove(self):
+        # REGRA do Eduardo (15/11): short stack enfrentando um OPEN (+caller = SQUEEZE)
+        # = 3BET ALL-IN pela range validada 3bet_shove, NUNCA o 3bet/call de stack fundo
+        # (que abstinha no shove zone e, com caller, virava range HU larga não-validada).
+        pack = pack_with_3bet_shove(['AQo', 'A5s'], hero='SB', vs=('LJ',), stack=12)
+        a = PreflopAdvisor(pack)
+        state = dict(positions={'hero': 'SB', 's_lj': 'LJ', 's_btn': 'BTN'},
+                     seats={'hero': dict(stack_bb=12, occupied=True),
+                            's_lj': dict(stack_bb=30, occupied=True),
+                            's_btn': dict(stack_bb=25, occupied=True)},
+                     bets=[dict(seat='s_lj', bet_bb=2.0), dict(seat='s_btn', bet_bb=2.0)])
+        sp = infer_live_spot(state)
+        self.assertEqual(sp['spot'], 'vs_open')
+        self.assertEqual(sp['opener'], 'LJ')
+        self.assertEqual(sp.get('callers'), 1)             # squeeze: LJ abre, BTN paga
+        r = a.advise_from_reading(state, ['Ad', 'Qh'], mode='chip_ev')
+        self.assertEqual(r['recommended'], 'all_in')       # JAM, não call
+        self.assertTrue(r['validated'])                    # nó 3bet_shove validado
+        self.assertIn('SQUEEZE_VIA_3BET_SHOVE_1C', r.get('caveats', []))
+        r2 = a.advise_from_reading(state, ['7c', '2d'], mode='chip_ev')
+        self.assertEqual(r2['recommended'], 'fold')        # fora da range -> fold (validado)
+
     def test_reshove_all_in_still_synthesizes_calloff(self):
         state = dict(positions={'hero': 'CO', 's2': 'BTN'},
                      seats={'hero': dict(stack_bb=15, occupied=True),
@@ -344,10 +366,10 @@ class AdvisorTests(unittest.TestCase):
     def test_bucket_stack(self):
         self.assertEqual(self.a.bucket_stack(20.8)[0], 20)
         self.assertEqual(self.a.bucket_stack(26)[0], 25)
-        self.assertEqual(self.a.bucket_stack(65)[0], 40)        # deep bucket now exists
-        self.assertEqual(self.a.bucket_stack(90)[0], 40)
-        self.assertEqual(self.a.bucket_stack(150), (40, 'OK'))   # top solved bucket is 40bb; deeper uses it
-        self.assertEqual(self.a.bucket_stack(200), (40, 'OK'))
+        self.assertEqual(self.a.bucket_stack(65)[0], 60)        # deep ladder: nearest rung (empty rungs borrow)
+        self.assertEqual(self.a.bucket_stack(90)[0], 80)
+        self.assertEqual(self.a.bucket_stack(150), (100, 'OK'))  # top solved bucket is 100bb; deeper uses it
+        self.assertEqual(self.a.bucket_stack(200), (100, 'OK'))
         self.assertEqual(self.a.bucket_stack(0), (None, 'STACK_UNKNOWN'))
 
     def test_advice_for_covered_hand(self):
@@ -365,23 +387,23 @@ class AdvisorTests(unittest.TestCase):
         self.assertIn('STACK_BUCKETED_24_TO_25BB', r['caveats'])
 
     def test_above_solved_depth_uses_top_bucket_reference(self):
-        # The solved pack tops out at the deepest bucket (40bb); a deeper stack
+        # The solved pack tops out at the deepest bucket (100bb); a deeper stack
         # (common early in tournaments) uses that top range as a flagged reference
         # instead of abstaining.
         idx_aa = HANDS.index('AA')
-        node40 = dict(id='n40', context=dict(mode='chip_ev', format='regular', stage='mid', players=9, stack=40),
-                      spot='open_raise', hero='BTN', vs=[], validated=True, evUnit='bb',
-                      legalActions=['fold', 'raise'], actions=['raise', 'fold'],
-                      freq={'raise': [1.0 if k == idx_aa else 0.0 for k in range(169)],
-                            'fold': [0.0 if k == idx_aa else 1.0 for k in range(169)]},
-                      ev={'raise': [2.0] * 169, 'fold': [0.0] * 169}, outOfRange=[], source='test')
+        node100 = dict(id='n100', context=dict(mode='chip_ev', format='regular', stage='mid', players=9, stack=100),
+                       spot='open_raise', hero='BTN', vs=[], validated=True, evUnit='bb',
+                       legalActions=['fold', 'raise'], actions=['raise', 'fold'],
+                       freq={'raise': [1.0 if k == idx_aa else 0.0 for k in range(169)],
+                             'fold': [0.0 if k == idx_aa else 1.0 for k in range(169)]},
+                       ev={'raise': [2.0] * 169, 'fold': [0.0] * 169}, outOfRange=[], source='test')
         pack = pack_with_node()
-        pack['nodes'].append(node40)
+        pack['nodes'].append(node100)
         a = PreflopAdvisor(pack)
         r = a.advise(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=200)
         self.assertEqual(r['status'], 'ADVICE')
-        self.assertEqual(r['stack_bucket'], 40)
-        self.assertIn('STACK_ABOVE_SOLVED_DEPTH_40BB_REFERENCE', r['caveats'])
+        self.assertEqual(r['stack_bucket'], 100)
+        self.assertIn('STACK_ABOVE_SOLVED_DEPTH_100BB_REFERENCE', r['caveats'])
 
     def test_infer_spread_classifies_the_table(self):
         even = {p: 40 for p in ('UTG', 'UTG+1', 'UTG+2', 'LJ', 'HJ', 'CO', 'BTN', 'SB', 'BB')}

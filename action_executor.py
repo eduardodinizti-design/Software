@@ -22,13 +22,22 @@ SINGLE_CLICK_ACTIONS = ('FOLD', 'CALL', 'CHECK')
 
 class ActionExecutor:
     def __init__(self, *, window_rect, bot_control=None, armed=False,
-                 arrival_tol=10.0, clock=time.monotonic, call_margin=0.04):
+                 arrival_tol=10.0, clock=time.monotonic, call_margin=0.04,
+                 allow_commit=True):
         self.window_rect = window_rect
         self.bot_control = bot_control
         self.armed = bool(armed)
         self.arrival_tol = float(arrival_tol)
         self._clock = clock
         self.call_margin = float(call_margin)   # folga mínima de equity p/ auto-CALL de call-off
+        # TRAVA ABSOLUTA (regra do Eduardo, 15/11): com allow_commit=False o operador
+        # SÓ clica FOLD/CHECK (não-commit, grátis/seguro) e CALL (= pagar) fica
+        # BLOQUEADO na origem — defesa em profundidade contra uma linha de PRÉ-AÇÃO
+        # mal lida escapar como "a vez do hero" e o clique tocar o "Pagar"/Call-Any.
+        # O núcleo mantém default True (preserva call-off/call-validado p/ os testes);
+        # é o OPERADOR AO VIVO que sobe com allow_commit=False no teste de dinheiro
+        # real, reabrindo só quando a detecção de pré-ação for 100% confiável.
+        self.allow_commit = bool(allow_commit)
         self._sent = set()               # ASSINATURAS de decisão já enviadas
 
     def plan(self, result, buttons_result, *, origin, frame_size):
@@ -42,6 +51,10 @@ class ActionExecutor:
         if action not in SINGLE_CLICK_ACTIONS:
             return dict(ok=False, plan=None,
                         reason='ACAO_MULTI_ETAPA_NAO_ARMADA:%s' % action)
+        # TRAVA ABSOLUTA anti-Pagar: CALL = pagar ficha. Só passa com allow_commit.
+        # Fora disso, NUNCA clica CALL/Pagar — nem como call-off, nem como premium.
+        if action == 'CALL' and not self.allow_commit:
+            return dict(ok=False, plan=None, reason='PAGAR_BLOQUEADO:TRAVA_ABSOLUTA')
         return p
 
     def _contract(self, advice, action, hero_cards):

@@ -115,6 +115,28 @@ def find_register_button_frame_rect(frame):
     return best[:4] if best else None
 
 
+def find_enter_button_frame_rect(frame):
+    """(x, y, w, h) no FRAME físico do botão verde 'Entrar' (ABRIR A MESA), ou None.
+    Mesma varredura do 'Registrar', conferindo o texto 'Entrar'. REGRA do Eduardo:
+    SEMPRE que inscrever, abrir a mesa clicando aqui."""
+    fh, fw = frame.shape[:2]
+    b = frame[:, :, 0].astype(int)
+    g = frame[:, :, 1].astype(int)
+    r = frame[:, :, 2].astype(int)
+    green = ((g > 110) & (g > r + 30) & (g > b + 10) & (r < 150)).astype(np.uint8) * 255
+    green = cv2.morphologyEx(green, cv2.MORPH_CLOSE, np.ones((15, 15), np.uint8))
+    n, _, stats, _ = cv2.connectedComponentsWithStats(green, 8)
+    best = None
+    for i in range(1, n):
+        x, y, w, h, area = stats[i]
+        if w > 0.05 * fw and h > 0.015 * fh and w > 3 * h and y > 0.5 * fh:
+            txt = _ocr_line(cv2.cvtColor(frame[y:y + h, x:x + w], cv2.COLOR_BGR2GRAY))
+            if 'entrar' in txt.lower():
+                if best is None or area > best[4]:
+                    best = (int(x), int(y), int(w), int(h), int(area))
+    return best[:4] if best else None
+
+
 def detail_screen_signal(frame):
     """Lê sinais da tela de detalhes do torneio. Retorna dict com:
     `detail_open` (título 'Informações do jogo' OU botão Registrar presente),
@@ -214,6 +236,9 @@ def main(argv=None):
     p.add_argument('--frames', type=int, default=5, help='Frames p/ ler o lobby')
     p.add_argument('--db', default=':memory:', help='SQLite do ledger (persiste)')
     p.add_argument('--arm', action='store_true', help='Usa o cursor REAL (ainda gated)')
+    p.add_argument('--allow-rebuy', dest='allow_rebuy', action='store_true',
+                   help='Autoriza EXPLICITAMENTE rebuy/add-on fora de PKO (desliga a guarda '
+                        'rebuy_pko_only). So com autorizacao direta do usuario p/ o evento.')
     p.add_argument('--no-hotkeys', action='store_true')
     args = p.parse_args(argv)
 
@@ -235,9 +260,13 @@ def main(argv=None):
         print('Alvo %r não encontrado. Lidos: %s'
               % (args.target, [c['name'] for c in lob['cards']])); return 1
 
+    _modalities = ('freezeout', 'mko', 'pko')
+    if args.allow_rebuy:
+        _modalities = _modalities + ('rebuy', 'addon')
     config = SessionConfig(
         enabled=True, clubs_authorized=(args.club,),
-        allowed_modalities=('freezeout', 'mko', 'pko'), currency=args.currency,
+        allowed_modalities=_modalities, currency=args.currency,
+        rebuy_pko_only=not args.allow_rebuy,
         max_entry_buyin=args.max_entry, daily_budget=args.budget,
         bankroll_bi=args.bankroll, max_simultaneous=args.max_simultaneous)
     ledger = RegistrationLedger(args.db)

@@ -112,6 +112,29 @@ class RaiseSequencer:
         crop = self._crop(frame)
         return self._rp(crop) if crop is not None else None
 
+    def _read_panel_slider_fresh(self):
+        """Relê painel + slider FRESCOS juntos. (panel, slider) ou (None, None)."""
+        if not self._geom_ok():
+            return None, None
+        frame, _ = self.capture()
+        crop = self._crop(frame)
+        if crop is None:
+            return None, None
+        return self._rp(crop), self._rs(crop)
+
+    @staticmethod
+    def _panel_open(panel, slider):
+        """Painel de aumento ABERTO. Normal: EXPERIMENTAL_RAISE_PANEL (3-5 presets).
+        STACK CURTO (all-in): a PPPoker mostra 1 preso ("2x") + slider + "Raise", o
+        que read_raise_panel marca NO_RAISE_PANEL (exige 3-5). Validado no painel REAL
+        (hero 2,2BB): confirm presente + slider SLIDER_FOUND = painel aberto. Sem isto
+        o shove curto abortava com PAINEL_NAO_ABRIU (so o teste ao vivo revelou)."""
+        if not panel:
+            return False
+        if panel.get('status') == 'EXPERIMENTAL_RAISE_PANEL':
+            return True
+        return bool(panel.get('confirm')) and (slider or {}).get('status') == 'SLIDER_FOUND'
+
     # ---- alvos (lidos FRESCOS dentro do validator) ----------------------
     def _tf_raise(self, crop):
         br = self._ra(crop)
@@ -129,10 +152,16 @@ class RaiseSequencer:
 
     def _tf_confirm(self, crop):
         panel = self._rp(crop)
-        if panel.get('status') != 'EXPERIMENTAL_RAISE_PANEL':
-            return None
         c = panel.get('confirm')
-        return c['box'] if c else None
+        if not c:
+            return None
+        # Normal (3-5 presets) OU painel de STACK CURTO (confirm + slider): o "Raise"
+        # de confirmar existe nos dois -> clica nele. Sem isto o confirm do shove
+        # curto nunca era achado e o all-in nao fechava.
+        if panel.get('status') == 'EXPERIMENTAL_RAISE_PANEL' \
+                or self._rs(crop).get('status') == 'SLIDER_FOUND':
+            return c['box']
+        return None
 
     def _validator(self, target_fn, what, *, lock_hand=False):
         """Revalida NA CHEGADA (e no início): geometria estável, mesa ligada, alvo
@@ -252,8 +281,8 @@ class RaiseSequencer:
         if out_a['state'] == 'CANCELLED':
             return self._fail('ABRIR_CANCELADO')          # não clicou (ou revalidação barrou)
         self._sleep(0.3)
-        panel = self._read_panel_fresh()
-        if not panel or panel.get('status') != 'EXPERIMENTAL_RAISE_PANEL':
+        panel, slider = self._read_panel_slider_fresh()
+        if not self._panel_open(panel, slider):
             return self._unknown('PAINEL_NAO_ABRIU', out_a)
 
         # B) escolher o TAMANHO via contrato discreto (A4): PRESET | SHOVE | ABSTAIN.
