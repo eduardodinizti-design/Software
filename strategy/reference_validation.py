@@ -76,7 +76,7 @@ def supported_reference_line(policy,runout,table_id):
     raise StrategyError('REFERENCE_SUPPORTED_THREE_STREET_COVERAGE_SEED_NOT_FOUND')
 
 
-def synthetic_reading(state,hero,hand_id,*,payouts=None,positions=None):
+def synthetic_reading(state,hero,hand_id,*,payouts=None,positions=None,retain_final_pot=False):
     """Scalar lab snapshots. No OCR, pixels or input devices participate."""
     positions=SEATS if positions is None else positions
     stacks={'hero':state.stacks[0],'villain':state.stacks[1],**{k:30. for k in positions if k not in ('hero','villain')}}
@@ -85,7 +85,7 @@ def synthetic_reading(state,hero,hand_id,*,payouts=None,positions=None):
     seats={k:dict(occupied=True,stack_bb=round(v,1),confidence='high') for k,v in stacks.items()}
     for k in seats:
         if k not in ('hero','villain'):seats[k].update(in_hand=False,in_hand_confidence='high')
-    ts=dict(positions=dict(positions),seats=seats,pot=dict(pot_bb=0. if payouts else round(state.pot_bb,1),confidence='high'),
+    ts=dict(positions=dict(positions),seats=seats,pot=dict(pot_bb=0. if payouts and not retain_final_pot else round(state.pot_bb,1),confidence='high'),
         bets=[dict(seat=seat,bet_bb=round(state.committed[i],1),confidence='high')
               for i,seat in enumerate(('hero','villain')) if state.committed[i]>0],bets_complete=True,
         to_call=dict(to_call_bb=round(state.call_cost_bb,1),confidence='high'))
@@ -151,9 +151,12 @@ def verify_reference_hand(policy,output,*,runout=('Ts','2h'),library=None,profil
         for expected in scenes:
             payouts=tuple(expected.pot_bb*x for x in shares) if expected.terminal else None
             for _ in range(profile.confirmations):
-                result,buttons=synthetic_reading(expected,hands[0],hand_id,payouts=payouts,positions=positions)
+                result,buttons=synthetic_reading(expected,hands[0],hand_id,payouts=payouts,positions=positions,retain_final_pot=True)
                 outcome=observe(result,buttons)
-            if outcome['status']!='CONFIRMED':raise StrategyError('REFERENCE_HISTORY_NOT_CONFIRMED:'+str(outcome))
+            if outcome['status']!='CONFIRMED':
+                atomic_json(output/'failure-context.json',dict(scope=SCOPE,outcome=outcome,expected=expected.to_dict(),
+                    lab_private_hands=[list(h) for h in hands],lab_payout_shares=list(shares),captures=captures))
+                raise StrategyError('REFERENCE_HISTORY_NOT_CONFIRMED:'+str(outcome))
             actual=history.current(table_id)['state']
             if actual.key()!=expected.key():raise StrategyError('REFERENCE_CONFIRMED_STATE_DIFFERS_FROM_SOLVER_STATE')
             if expected.actor==0 and not expected.terminal:
@@ -192,6 +195,7 @@ def verify_reference_hand(policy,output,*,runout=('Ts','2h'),library=None,profil
                 for s in scenes if s.actor==0 and not s.terminal],
             scenario_sampling='COVERAGE_DRIVEN_STORED_ACTIONS_NOT_UNBIASED_PLAY_OR_EV_ESTIMATION',
             opponent_actions='SCRIPTED_CHECK_CALL_WITH_POSITIVE_POSTERIOR_SUPPORT',
+            settlement_snapshot='SYNTHETIC_PAYOUT_WITH_FINAL_POT_LABEL_RETAINED_TO_DISAMBIGUATE_SPLITS',
             library_routing_tested=library is not None,pppoker_windows_validated=False,input_devices_used=False)
         atomic_json(output/'result.json',summary);atomic_json(output/'hand.json',hand)
         atomic_json(output/'decisions.json',decisions);atomic_json(output/'synthetic-captures.json',captures)

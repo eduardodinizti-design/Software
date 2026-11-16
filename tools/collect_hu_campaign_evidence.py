@@ -81,8 +81,11 @@ def main(argv=None):
             raise StrategyError('FINAL_DELIVERY_NOT_COMPLETE')
         histories=[]
         for row in delivery['windows_cases']:
-            pattern=rf'windows-{family}-case-{row["ordinal"]:02d}-{windows_run}-a[0-9]+-json-history\.zip'
-            options=[a for a in remote['assets'] if re.fullmatch(pattern,a['name'])]
+            if row.get('validation_history_asset_name'):
+                options=[a for a in remote['assets'] if a['name']==row['validation_history_asset_name']]
+            else:
+                pattern=rf'windows-{family}-case-{row["ordinal"]:02d}-{windows_run}-a[0-9]+-json-history\.zip'
+                options=[a for a in remote['assets'] if re.fullmatch(pattern,a['name'])]
             if not options:raise StrategyError('PUBLISHED_JSON_HISTORY_MISSING')
             histories.append(check_history(output/max(options,key=lambda a:a['id'])['name'],row))
         source_options=[a for a in remote['assets'] if a['name'].startswith('source-manifest-'+family+'-'+delivery_run)]

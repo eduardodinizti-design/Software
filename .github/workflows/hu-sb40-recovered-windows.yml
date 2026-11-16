@@ -59,7 +59,8 @@ jobs:
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
       - run: python -m pip install numpy==2.2.6
-      - run: python tools/validate_hu_campaign_windows.py --family sb40 --ordinal 1 --catalog-asset "$env:SB_CATALOG" --output runtime/hu-sb40-proof
+      - name: Confirm the complete hand with retained final-pot evidence, including split settlements
+        run: python tools/validate_hu_campaign_windows.py --family sb40 --ordinal 1 --catalog-asset "$env:SB_CATALOG" --output runtime/hu-sb40-proof
       - env:
           GH_TOKEN: ${{ github.token }}
         run: |

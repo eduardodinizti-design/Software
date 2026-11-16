@@ -55,17 +55,23 @@ def checked_results(catalog,rows):
 def main(argv=None):
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--family',required=True,choices=('btn32','sb40'))
     p.add_argument('--catalog-asset',required=True);p.add_argument('--windows-run-id',required=True)
+    p.add_argument('--verified-receipts-from-all-runs',action='store_true',help='Retain each actual source workflow ID; reuse immutable validated proofs')
     p.add_argument('--output',required=True);args=p.parse_args(argv)
     out=Path(args.output)
     if out.exists():raise StrategyError('FINAL_CAMPAIGN_OUTPUT_MUST_BE_NEW')
     out.mkdir(parents=True);full,asset=load_family(args.family,args.catalog_asset)
     catalog,_=load_family(args.family,args.catalog_asset,new_only=True);tag=catalog['tag']
-    release=read_json(f'https://api.github.com/repos/{REPOSITORY}/releases/tags/{tag}');rows=[]
+    release=read_json(f'https://api.github.com/repos/{REPOSITORY}/releases/tags/{tag}');rows=[];origins={}
     for ordinal in range(1,len(catalog['cases'])+1):
-        pattern=rf'windows-{args.family}-case-{ordinal:02d}-{re.escape(args.windows_run_id)}-a([0-9]+)\.json'
-        matches=[(int(m[1]),a['name']) for a in release['assets'] if a['state']=='uploaded' and (m:=re.fullmatch(pattern,a['name']))]
+        run_pattern=r'([0-9]+)' if args.verified_receipts_from_all_runs else '('+re.escape(args.windows_run_id)+')'
+        pattern=rf'windows-{args.family}-case-{ordinal:02d}-{run_pattern}-a([0-9]+)\.json'
+        matches=[(a['id'],a['name'],m[1]) for a in release['assets'] if a['state']=='uploaded' and (m:=re.fullmatch(pattern,a['name']))]
         if not matches:raise StrategyError('CAMPAIGN_WINDOWS_RECEIPT_NOT_PUBLISHED:'+str(ordinal))
-        rows.append(read_json(ASSET_BASE+tag+'/'+max(matches)[1]))
+        _,name,actual_run=max(matches)
+        row=read_json(ASSET_BASE+tag+'/'+name)
+        row.update(validation_workflow_run_id=actual_run,validation_proof_asset_name=name,
+            validation_history_asset_name=name[:-5]+'-json-history.zip')
+        origins[str(ordinal)]=actual_run;rows.append(row)
     rows=checked_results(catalog,rows);native=catalog['cases'];inventory=[dict(c) for c in full['cases']]
     if args.family=='btn32':
         pilot=read_json(ASSET_BASE+PILOT_TAG+'/result.json')
@@ -93,6 +99,7 @@ def main(argv=None):
         plan_sha256=catalog['plan_sha256'],catalog_asset=asset,context=catalog['context'],root_template=catalog['root_template'],
         profile_settings=catalog.get('profile_settings',{}),inventory=inventory,windows_cases=rows,
         source_commit=os.environ['GITHUB_SHA'],release=tag,windows_run_id=args.windows_run_id,
+        windows_case_run_ids=origins,
         native_global_gap_independently_certified=False,source_ranges='USER_APPROVED_NVT_REFERENCE',
         pppoker_windows_validated=False,user_notebook_validated=False,input_devices_used=False)
     atomic_json(out/f'entrega-{args.family}-{stamp}.json',summary)

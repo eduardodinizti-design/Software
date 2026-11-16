@@ -35,7 +35,7 @@ class Clock:
     def sleep(self,seconds): self.now+=seconds
 
 
-def make_test_policy(root=None, recommended=None, context=None):
+def make_test_policy(root=None, recommended=None, context=None, runout=('Ts','2h')):
     """Small exact legal tree, invented frequencies; never a solved strategy."""
     root = root or BettingState(FLOP,5.5,(22.5,22.5),actor=1,oop=1)
     ctx = context or GameContext(('BTN','BB'),arrival_id='SYNTHETIC_OPERATIONAL_TEST')
@@ -47,7 +47,7 @@ def make_test_policy(root=None, recommended=None, context=None):
         s = stack.pop()
         if s.terminal or s.key() in nodes: continue
         if s.needs_cards:
-            stack.append(reveal(s,'Ts' if len(s.board)==3 else '2h'))
+            stack.append(reveal(s,runout[len(s.board)-3]))
             continue
         actions = legal_actions(s,menu)
         selected = next((a.id for a in actions if s.actor==0 and a.kind==recommended),None)

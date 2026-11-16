@@ -30,6 +30,22 @@ from test_hu_operational import make_test_policy
 
 
 class ReferenceHandTests(unittest.TestCase):
+    def test_split_pot_needs_observed_final_pot_to_confirm_the_actual_betting_line(self):
+        from strategy.state_contract import BettingState
+        from strategy import reference_validation as module
+        policy=make_test_policy(BettingState(('9c','Td','Jh'),5.5,(22.5,22.5),actor=1,oop=1),runout=('Qs','Kc'))
+        original=module.synthetic_reading
+        def cleared(*args,**kwargs):
+            kwargs['retain_final_pot']=False;return original(*args,**kwargs)
+        with tempfile.TemporaryDirectory() as tmp:
+            with patch.object(module,'synthetic_reading',side_effect=cleared):
+                with self.assertRaisesRegex(StrategyError,'HISTORY_AMBIGUOUS_LEGAL_PATHS'):
+                    verify_reference_hand(policy,Path(tmp)/'ambiguous',runout=('Qs','Kc'))
+            failure=json.loads((Path(tmp)/'ambiguous/failure-context.json').read_text())
+            self.assertEqual(failure['lab_payout_shares'],[.5,.5])
+            result=verify_reference_hand(policy,Path(tmp)/'with-evidence',runout=('Qs','Kc'))
+            self.assertEqual(result['event_counts'],dict(action=9,board=2))
+            self.assertTrue(result['journal_chain_valid'])
     def test_valid_check_policy_is_confirmed_without_inventing_three_bets(self):
         policy=make_test_policy(recommended='check')
         with tempfile.TemporaryDirectory() as tmp:
