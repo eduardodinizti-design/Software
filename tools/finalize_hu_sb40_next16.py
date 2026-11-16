@@ -75,11 +75,31 @@ def main(argv=None):
             or linux.get('native_stream_tests_enabled') is not True):
         raise StrategyError('FINAL_NATIVE_ENABLED_LINUX_REGRESSION_REQUIRED')
     native=catalog['cases'];inventory=full['cases'];stamp=os.environ['GITHUB_RUN_ID']+'-a'+os.environ.get('GITHUB_RUN_ATTEMPT','1')
+    linux_banks=[]
+    for filename in ('piloto-root-review-linux.json','novo-monotone-root-review-linux.json'):
+        value=json.loads((Path('docs/software-hu-sb40-next16-20261116')/filename).read_text())
+        matching=[c for c in inventory if c['policy_sha256']==value['source_policy_sha256']
+                  and c['file_sha256']==value['file_sha256']]
+        if (value.get('status')!='PASS' or len(matching)!=1 or value.get('native_solver_rerun') is not False
+                or value.get('pppoker_windows_validated') is not False):
+            raise StrategyError('ACTUAL_LINUX_ROOT_REVIEW_DIFFERS_FROM_PUBLISHED_BANK')
+        review=value['root_policy_review']
+        if review['board']!=matching[0]['board'] or review['source_policy_sha256']!=value['source_policy_sha256']:
+            raise StrategyError('LINUX_ROOT_REVIEW_BOARD_OR_POLICY_CHANGED')
+        for row in rows:
+            if row['policy_sha256']==value['source_policy_sha256']:
+                other=row['root_policy_review']
+                if (other['compatible_joint_private_deals']!=review['compatible_joint_private_deals']
+                        or [a['action_id'] for a in other['actions']]!=[a['action_id'] for a in review['actions']]
+                        or any(abs(a['frequency']-b['frequency'])>1e-12 for a,b in zip(other['actions'],review['actions']))):
+                    raise StrategyError('ACTUAL_WINDOWS_AND_LINUX_ROOT_FREQUENCIES_DIFFER')
+        linux_banks.append(value)
     summary=dict(schema='software.hu-sb40-seventeen-delivery.v1',status='PASS',complete_distinct_flop_models=17,
         new_complete_flop_models=16,new_windows_policy_pass=16,new_json_street_queries=48,
         new_exact_suit_street_queries=48,new_confirmed_synthetic_hands=16,previous_confirmed_synthetic_hands_reused=1,
         windows_contract_tests=int(match[1]),windows_contract_skipped=skipped,windows_contract_asset_name=contract,
         linux_reference_regression=linux,
+        actual_full_bank_linux_reviews=linux_banks,
         total_public_nodes=sum(c['coverage']['public_nodes'] for c in inventory),
         total_policy_file_bytes=sum(c['policy_file_bytes'] for c in inventory),
         nodes_by_street={s:sum(c['coverage']['nodes_by_street'][s] for c in inventory) for s in ('FLOP','TURN','RIVER')},
@@ -141,6 +161,11 @@ def main(argv=None):
     for row in rows:
         values='; '.join(a['action_id']+'='+format(100*a['frequency'],'.2f')+'%' for a in row['root_policy_review']['actions'])
         lines.append(' '.join(row['board'])+' | '+values)
+    baseline=linux_banks[0]['root_policy_review']
+    values='; '.join(a['action_id']+'='+format(100*a['frequency'],'.2f')+'%' for a in baseline['actions'])
+    lines.extend(['Piloto anterior '+ ' '.join(baseline['board'])+' | '+values,
+        'O piloto e o novo monotone Qs 7s 2s tambem foram baixados e lidos integralmente no Linux, sem repetir CFR.',
+        'O resumo do novo monotone foi comparado com o Windows, incluindo todos os combos do hero suportados no root.'])
     lines.extend(['','INSTALACAO E CONSUMO',
         'Extraia o ZIP de codigo desta entrega em pasta nova; Python 3.12 x64 e requirements.txt.',
         'Execute BAIXAR_BLIND_WAR_40BB_17.bat. Banco: runtime/hu/sb40-17/bank/library.json.',

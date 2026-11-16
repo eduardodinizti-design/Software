@@ -1,0 +1,196 @@
+{
+  "archive": {
+    "bytes": 3479865064,
+    "sha256": "f135ba03d69830b0851d4644775746f971f5563956249e3af0db883c05bb5e91"
+  },
+  "file_sha256": "3dcd9d540c1f90e1a5798a9865daef7508ff87305414f3dbb1c3ef08cd233381",
+  "lookup_validation": {
+    "policy_sha256": "960e92733625e07faea48a3b480a3f6e83cfc185ee7c23737fe55a0317cc870e",
+    "probes": {
+      "flop": {
+        "action": "bet",
+        "candidates": [
+          {
+            "action": "check",
+            "action_id": "check:0",
+            "additional_bb": 0.0,
+            "ev_bb": null,
+            "frequency": 0.0308856493831932,
+            "raise_to_bb": null,
+            "selection_frequency": 0.0308856493831932
+          },
+          {
+            "action": "bet",
+            "action_id": "bet:1.667",
+            "additional_bb": 1.667,
+            "ev_bb": null,
+            "frequency": 0.9691143487030428,
+            "raise_to_bb": null,
+            "selection_frequency": 0.9691143487030428
+          },
+          {
+            "action": "all_in",
+            "action_id": "all_in:38",
+            "additional_bb": 38.0,
+            "ev_bb": null,
+            "frequency": 1.9137640075170574e-09,
+            "raise_to_bb": 38.0,
+            "selection_frequency": 1.9137640075170574e-09
+          }
+        ],
+        "hero_cards": [
+          "2d",
+          "2h"
+        ],
+        "node_id": "fb51de3514b875618160062d321e58cb6081255bbd65c1a22eda819eb240a675",
+        "sizing": {
+          "fraction_of_current_pot": 0.33340000000000003,
+          "heuristic": false,
+          "raise_to_bb": 1.667,
+          "semantics": "ADDITIONAL_BB",
+          "size_bb": 1.667
+        }
+      },
+      "river": {
+        "action": "all_in",
+        "candidates": [
+          {
+            "action": "check",
+            "action_id": "check:0",
+            "additional_bb": 0.0,
+            "ev_bb": null,
+            "frequency": 0.009961339964716966,
+            "raise_to_bb": null,
+            "selection_frequency": 0.009961339964716966
+          },
+          {
+            "action": "bet",
+            "action_id": "bet:1.667",
+            "additional_bb": 1.667,
+            "ev_bb": null,
+            "frequency": 0.00017797439639156138,
+            "raise_to_bb": null,
+            "selection_frequency": 0.00017797439639156138
+          },
+          {
+            "action": "all_in",
+            "action_id": "all_in:38",
+            "additional_bb": 38.0,
+            "ev_bb": null,
+            "frequency": 0.9898606856388915,
+            "raise_to_bb": 38.0,
+            "selection_frequency": 0.9898606856388915
+          }
+        ],
+        "hero_cards": [
+          "2s",
+          "3s"
+        ],
+        "node_id": "ed950288cc59e9699f212898f1528544169355837905a9cd576a2e73aea4a174",
+        "sizing": {
+          "fraction_of_current_pot": null,
+          "heuristic": false,
+          "raise_to_bb": 38.0,
+          "semantics": "ADDITIONAL_BB",
+          "size_bb": 38.0
+        }
+      },
+      "turn": {
+        "action": "check",
+        "candidates": [
+          {
+            "action": "check",
+            "action_id": "check:0",
+            "additional_bb": 0.0,
+            "ev_bb": null,
+            "frequency": 0.6056947880539681,
+            "raise_to_bb": null,
+            "selection_frequency": 0.6056947880539681
+          },
+          {
+            "action": "bet",
+            "action_id": "bet:1.667",
+            "additional_bb": 1.667,
+            "ev_bb": null,
+            "frequency": 0.39430521060850754,
+            "raise_to_bb": null,
+            "selection_frequency": 0.39430521060850754
+          },
+          {
+            "action": "all_in",
+            "action_id": "all_in:38",
+            "additional_bb": 38.0,
+            "ev_bb": null,
+            "frequency": 1.3375243515995436e-09,
+            "raise_to_bb": 38.0,
+            "selection_frequency": 1.3375243515995436e-09
+          }
+        ],
+        "hero_cards": [
+          "2h",
+          "2s"
+        ],
+        "node_id": "257ba55237db98a874780ad0e1b3c7fe65199f606e483661f581bedf86a8a631",
+        "sizing": {
+          "fraction_of_current_pot": null,
+          "heuristic": false,
+          "raise_to_bb": 0.0,
+          "semantics": "ADDITIONAL_BB",
+          "size_bb": 0.0
+        }
+      }
+    },
+    "scope": "structural/lookup validation, not proof of GTO convergence or Windows input"
+  },
+  "method": "ACTUAL_DOWNLOADED_COMPLETE_SB40_PILOT_SQLITE",
+  "native_solver_rerun": false,
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "policy_file_bytes": 3886010368,
+  "pppoker_windows_validated": false,
+  "root_policy_review": {
+    "actions": [
+      {
+        "action_id": "check:0",
+        "amount_bb": 0.0,
+        "frequency": 0.3749601602257706,
+        "kind": "check"
+      },
+      {
+        "action_id": "bet:1.667",
+        "amount_bb": 1.667,
+        "frequency": 0.6250398380594623,
+        "kind": "bet"
+      },
+      {
+        "action_id": "all_in:38",
+        "amount_bb": 38.0,
+        "frequency": 1.7147672461565024e-09,
+        "kind": "all_in"
+      }
+    ],
+    "actor": 0,
+    "actor_position": "SB",
+    "actor_supported_private_combos": 1016,
+    "board": [
+      "As",
+      "7d",
+      "2c"
+    ],
+    "compatible_joint_prior_mass": 777682.7024999999,
+    "compatible_joint_private_deals": 1067903,
+    "method": "BLOCKER_CONDITIONED_JOINT_RANGE_WEIGHTED_ROOT_POLICY",
+    "policy_modified": false,
+    "pppoker_windows_validated": false,
+    "schema": "software.hu-root-policy-review.v1",
+    "scope": "WEIGHTED_ROOT_FREQUENCIES_NOT_AN_ACTION_FOR_EVERY_HAND_OR_AN_EV_CERTIFICATE",
+    "source_policy_sha256": "960e92733625e07faea48a3b480a3f6e83cfc185ee7c23737fe55a0317cc870e",
+    "source_range_sha256": [
+      "f2cf70bd643a4cebde06a62d1a4f4cb69149f7cfc8591c82874a62a4412efbea",
+      "9c59b1498a9dc0acb6a7abd14172ffd9213bef4e77bd00a66638fce83723d0c2"
+    ]
+  },
+  "schema": "software.hu-sb40-pilot-root-review-proof.v1",
+  "source_catalog_asset": "batch-catalog-43777381626.json",
+  "source_policy_sha256": "960e92733625e07faea48a3b480a3f6e83cfc185ee7c23737fe55a0317cc870e",
+  "status": "PASS"
+}

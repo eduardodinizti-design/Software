@@ -1,0 +1,200 @@
+{
+  "archive": {
+    "bytes": 3011838644,
+    "sha256": "3072a18d5d7a18ffcfaa80c013590920fe7bcb5845815a1052f54357a1010bad"
+  },
+  "board": [
+    "Qs",
+    "7s",
+    "2s"
+  ],
+  "file_sha256": "4bf0a6cecaae5947beb27d79081073982cac835a91b0b012921095a432274d29",
+  "lookup_validation": {
+    "policy_sha256": "14f059b467c0478507407711d7928bb5c2af5adb32b7f0ffceeca13eefa1ba0e",
+    "probes": {
+      "flop": {
+        "action": "check",
+        "candidates": [
+          {
+            "action": "check",
+            "action_id": "check:0",
+            "additional_bb": 0.0,
+            "ev_bb": null,
+            "frequency": 0.43216076823424326,
+            "raise_to_bb": null,
+            "selection_frequency": 0.43216076823424326
+          },
+          {
+            "action": "bet",
+            "action_id": "bet:1.667",
+            "additional_bb": 1.667,
+            "ev_bb": null,
+            "frequency": 0.5678392300489825,
+            "raise_to_bb": null,
+            "selection_frequency": 0.5678392300489825
+          },
+          {
+            "action": "all_in",
+            "action_id": "all_in:38",
+            "additional_bb": 38.0,
+            "ev_bb": null,
+            "frequency": 1.7167742840403545e-09,
+            "raise_to_bb": 38.0,
+            "selection_frequency": 1.7167742840403545e-09
+          }
+        ],
+        "hero_cards": [
+          "2c",
+          "2d"
+        ],
+        "node_id": "a5f140113160cda461989ac2dc3fa637bf5000bf5406946cbe428c795fd01e20",
+        "sizing": {
+          "fraction_of_current_pot": null,
+          "heuristic": false,
+          "raise_to_bb": 0.0,
+          "semantics": "ADDITIONAL_BB",
+          "size_bb": 0.0
+        }
+      },
+      "river": {
+        "action": "all_in",
+        "candidates": [
+          {
+            "action": "check",
+            "action_id": "check:0",
+            "additional_bb": 0.0,
+            "ev_bb": null,
+            "frequency": 0.6320942563775691,
+            "raise_to_bb": null,
+            "selection_frequency": 0.6320942563775691
+          },
+          {
+            "action": "bet",
+            "action_id": "bet:1.667",
+            "additional_bb": 1.667,
+            "ev_bb": null,
+            "frequency": 0.0026027680990882355,
+            "raise_to_bb": null,
+            "selection_frequency": 0.0026027680990882355
+          },
+          {
+            "action": "all_in",
+            "action_id": "all_in:38",
+            "additional_bb": 38.0,
+            "ev_bb": null,
+            "frequency": 0.3653029755233427,
+            "raise_to_bb": 38.0,
+            "selection_frequency": 0.3653029755233427
+          }
+        ],
+        "hero_cards": [
+          "2h",
+          "3h"
+        ],
+        "node_id": "2eab10e104b0b609b4dbd673ecb9871964b8497de7f21d4bad21dcde8aab0f7f",
+        "sizing": {
+          "fraction_of_current_pot": null,
+          "heuristic": false,
+          "raise_to_bb": 38.0,
+          "semantics": "ADDITIONAL_BB",
+          "size_bb": 38.0
+        }
+      },
+      "turn": {
+        "action": "bet",
+        "candidates": [
+          {
+            "action": "check",
+            "action_id": "check:0",
+            "additional_bb": 0.0,
+            "ev_bb": null,
+            "frequency": 4.451213832769169e-05,
+            "raise_to_bb": null,
+            "selection_frequency": 4.451213832769169e-05
+          },
+          {
+            "action": "bet",
+            "action_id": "bet:1.667",
+            "additional_bb": 1.667,
+            "ev_bb": null,
+            "frequency": 0.9999554872981242,
+            "raise_to_bb": null,
+            "selection_frequency": 0.9999554872981242
+          },
+          {
+            "action": "all_in",
+            "action_id": "all_in:38",
+            "additional_bb": 38.0,
+            "ev_bb": null,
+            "frequency": 5.635480147186932e-10,
+            "raise_to_bb": 38.0,
+            "selection_frequency": 5.635480147186932e-10
+          }
+        ],
+        "hero_cards": [
+          "2d",
+          "2h"
+        ],
+        "node_id": "c61cd500b4fe1e2fc3d80ad83f1bf3772b49ba3094313291b934d8fb0c398460",
+        "sizing": {
+          "fraction_of_current_pot": 0.33340000000000003,
+          "heuristic": false,
+          "raise_to_bb": 1.667,
+          "semantics": "ADDITIONAL_BB",
+          "size_bb": 1.667
+        }
+      }
+    },
+    "scope": "structural/lookup validation, not proof of GTO convergence or Windows input"
+  },
+  "method": "ACTUAL_DOWNLOADED_COMPLETE_SB40_MONOTONE_SQLITE_ALL_SUPPORTED_HERO_ROOT_COMBINATIONS",
+  "native_solver_rerun": false,
+  "policy_file_bytes": 3418112000,
+  "pppoker_windows_validated": false,
+  "root_policy_review": {
+    "actions": [
+      {
+        "action_id": "check:0",
+        "amount_bb": 0.0,
+        "frequency": 0.7018680232648856,
+        "kind": "check"
+      },
+      {
+        "action_id": "bet:1.667",
+        "amount_bb": 1.667,
+        "frequency": 0.2981319385629116,
+        "kind": "bet"
+      },
+      {
+        "action_id": "all_in:38",
+        "amount_bb": 38.0,
+        "frequency": 3.817220286816976e-08,
+        "kind": "all_in"
+      }
+    ],
+    "actor": 0,
+    "actor_position": "SB",
+    "actor_supported_private_combos": 1017,
+    "board": [
+      "Qs",
+      "7s",
+      "2s"
+    ],
+    "compatible_joint_prior_mass": 771762.6009999999,
+    "compatible_joint_private_deals": 1065263,
+    "method": "BLOCKER_CONDITIONED_JOINT_RANGE_WEIGHTED_ROOT_POLICY",
+    "policy_modified": false,
+    "pppoker_windows_validated": false,
+    "schema": "software.hu-root-policy-review.v1",
+    "scope": "WEIGHTED_ROOT_FREQUENCIES_NOT_AN_ACTION_FOR_EVERY_HAND_OR_AN_EV_CERTIFICATE",
+    "source_policy_sha256": "14f059b467c0478507407711d7928bb5c2af5adb32b7f0ffceeca13eefa1ba0e",
+    "source_range_sha256": [
+      "f2cf70bd643a4cebde06a62d1a4f4cb69149f7cfc8591c82874a62a4412efbea",
+      "9c59b1498a9dc0acb6a7abd14172ffd9213bef4e77bd00a66638fce83723d0c2"
+    ]
+  },
+  "schema": "software.hu-sb40-full-root-review-proof.v1",
+  "source_manifest_asset": "manifest-case-09-e49a02555988f7501940-3072a18d5d7a-1.json",
+  "source_policy_sha256": "14f059b467c0478507407711d7928bb5c2af5adb32b7f0ffceeca13eefa1ba0e",
+  "status": "PASS"
+}
