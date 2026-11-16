@@ -69,8 +69,10 @@ def ingest(evidencias_zip, base_pack=None):
     pack = base_pack if isinstance(base_pack, dict) and base_pack.get('flops') is not None \
         else _empty_pack()
     added = 0
-    hist_names = [n for n in z.namelist() if n.endswith('json-history.zip')
-                  and 'next16' in n]
+    # AGNÓSTICO À LEVA: o nome muda a cada release (next16 -> complete34/68/85/102...),
+    # mas a estrutura request/response dentro do *-json-history.zip é a mesma. Filtrar
+    # por 'next16' fazia o ingestor pular TODA leva renomeada (+0 silencioso).
+    hist_names = [n for n in z.namelist() if n.endswith('json-history.zip')]
     for hn in sorted(hist_names):
         hz = zipfile.ZipFile(io.BytesIO(z.read(hn)))
         inner = set(hz.namelist())
@@ -99,7 +101,7 @@ def ingest(evidencias_zip, base_pack=None):
                                          board=board)
     # menu (do param do modelo, se presente num case json completo)
     for n in z.namelist():
-        if n.endswith('.json') and 'next16-case' in n and 'history' not in n:
+        if n.endswith('.json') and '-case-' in n and 'history' not in n:
             try:
                 cj = json.loads(z.read(n))
                 mp = cj.get('complete_model_parameters') or {}
