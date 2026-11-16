@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "scope": "REAL_GITHUB_METADATA_NEGATIVE_GATE_CONTROL",
+  "target": 68,
+  "required_previous": 51,
+  "parent_delivery_run": "43807544505",
+  "reason": "VERIFIED_PARENT_WAIT_TIMEOUT_NO_NEW_CFR_STARTED",
+  "elapsed_seconds": 5.4427681759989355,
+  "input_folder_created": false,
+  "new_cfr_started": false,
+  "release_created": false,
+  "pppoker_windows_validated": false
+}

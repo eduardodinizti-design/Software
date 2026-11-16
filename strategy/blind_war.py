@@ -15,6 +15,7 @@ SB40_TAG='hu-sb-bb40-nvt-pilot-20261115'
 SB40_NEXT16_TAG='hu-sb-bb40-nvt-next16-20261116'
 SB40_COMPLETE34_TAG='hu-sb-bb40-nvt-complete34-20261116'
 SB40_COMPLETE51_TAG='hu-sb-bb40-nvt-complete51-20261116'
+SB40_SERIES_TAGS={n:f'hu-sb-bb40-nvt-complete{n}-20261116' for n in (68,85,102)}
 
 
 def extract_reference(path):

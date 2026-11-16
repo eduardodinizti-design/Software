@@ -7,9 +7,9 @@ import uuid
 
 from strategy.batch_archive import REPOSITORY,BATCH_TAG,PILOT_TAG,make_catalog,verify_remote_parts
 from strategy.batch_download import (ASSET_BASE,check_bundle,install_catalog,load_catalog,
-    pilot_manifest,read_json,valid_sha)
+    pilot_manifest,read_json,valid_sha,metadata_snapshot)
 from strategy.batch_jobs import canonical_flop,case_id
-from strategy.blind_war import SB40_TAG,SB40_NEXT16_TAG,SB40_COMPLETE34_TAG,SB40_COMPLETE51_TAG
+from strategy.blind_war import SB40_TAG,SB40_NEXT16_TAG,SB40_COMPLETE34_TAG,SB40_COMPLETE51_TAG,SB40_SERIES_TAGS
 from strategy.campaign import CLOSE32_TAG,validate_campaign_plan,model_identity
 from strategy.state_contract import StrategyError
 
@@ -20,15 +20,25 @@ PLANS={
     SB40_COMPLETE34_TAG:('sb40-complete34-plan.json','f070d2c0289dd6eef328e48da8fbecd001c6bf483380e987a7208ea730b63d67'),
     SB40_COMPLETE51_TAG:('sb40-complete51-plan.json',None),
 }
+PLANS.update({tag:(f'sb40-complete{n}-plan.json',None) for n,tag in SB40_SERIES_TAGS.items()})
 
 
 def load_campaign(tag,asset=None):
+    with metadata_snapshot():return _load_campaign(tag,asset)
+
+
+def _load_campaign(tag,asset=None,*,return_parent=False):
     if tag not in PLANS:raise StrategyError('KNOWN_CAMPAIGN_REQUIRED')
     filename,pinned=PLANS[tag]
     plan=validate_campaign_plan(read_json(ASSET_BASE+tag+'/'+filename))
+    previous=None
     if tag==SB40_COMPLETE51_TAG:
         from strategy.sb40_progression import validate_derived_plan51
-        validate_derived_plan51(plan)
+        previous,_=validate_derived_plan51(plan)
+        pinned=plan['plan_sha256']
+    elif tag in SB40_SERIES_TAGS.values():
+        from strategy.sb40_series import validate_series_plan
+        previous,_=validate_series_plan(plan)
         pinned=plan['plan_sha256']
     if plan['tag']!=tag or plan['plan_sha256']!=pinned:raise StrategyError('CAMPAIGN_IMMUTABLE_PLAN_CHANGED')
     release=read_json(f'https://api.github.com/repos/{REPOSITORY}/releases/tags/{tag}')
@@ -52,7 +62,7 @@ def load_campaign(tag,asset=None):
                 or type(case.get('policy_file_bytes')) is not int or case['policy_file_bytes']<=0):
             raise StrategyError('CAMPAIGN_CASE_IDENTITY_INVALID')
     catalog['_original_plan']=plan;catalog['profile_settings']=plan.get('profile_settings',{})
-    return catalog,chosen['name']
+    return (catalog,chosen['name'],previous) if return_parent else (catalog,chosen['name'])
 
 
 def combine_thirty_two(catalog,old,pilot):
@@ -138,9 +148,19 @@ def combine_sb40_fifty_one(catalog,previous):
 
 
 def load_family(family,asset=None,*,new_only=False):
-    tag={'btn32':CLOSE32_TAG,'sb40':SB40_TAG,'sb40-next16':SB40_NEXT16_TAG,'sb40-34':SB40_COMPLETE34_TAG,'sb40-51':SB40_COMPLETE51_TAG}.get(family)
+    with metadata_snapshot():return _load_family(family,asset,new_only=new_only)
+
+
+def _load_family(family,asset=None,*,new_only=False):
+    tags={'btn32':CLOSE32_TAG,'sb40':SB40_TAG,'sb40-next16':SB40_NEXT16_TAG,'sb40-34':SB40_COMPLETE34_TAG,'sb40-51':SB40_COMPLETE51_TAG}
+    tags.update({f'sb40-{n}':tag for n,tag in SB40_SERIES_TAGS.items()})
+    tag=tags.get(family)
     if tag is None:raise StrategyError('KNOWN_FAMILY_REQUIRED')
-    catalog,name=load_campaign(tag,asset)
+    validated_parent=None
+    if tag==SB40_COMPLETE51_TAG or tag in SB40_SERIES_TAGS.values():
+        catalog,name,validated_parent=_load_campaign(tag,asset,return_parent=True)
+    else:
+        catalog,name=load_campaign(tag,asset)
     if family=='btn32' and not new_only:
         old,_=load_catalog('batch-catalog-43764947533.json')
         catalog=combine_thirty_two(catalog,old,pilot_manifest())
@@ -151,13 +171,16 @@ def load_family(family,asset=None,*,new_only=False):
         previous,_=load_family('sb40-next16','batch-catalog-43783594940.json')
         catalog=combine_sb40_thirty_four(catalog,previous)
     if family=='sb40-51' and not new_only:
-        previous,_=load_family('sb40-34','batch-catalog-43799276504.json')
+        previous=validated_parent
         catalog=combine_sb40_fifty_one(catalog,previous)
+    if tag in SB40_SERIES_TAGS.values() and not new_only:
+        from strategy.sb40_series import combine_series
+        catalog=combine_series(catalog,validated_parent)
     return catalog,name
 
 
 def main(argv=None):
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--family',required=True,choices=('btn32','sb40','sb40-next16','sb40-34','sb40-51'))
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--family',required=True,choices=('btn32','sb40','sb40-next16','sb40-34','sb40-51','sb40-68','sb40-85','sb40-102'))
     p.add_argument('--output');p.add_argument('--ordinals',nargs='+',type=int);p.add_argument('--catalog-asset')
     p.add_argument('--new-only',action='store_true');p.add_argument('--resume',action='store_true')
     args=p.parse_args(argv)

@@ -1,0 +1,41 @@
+SOFTWARE ORIGINAL — META AUTORIZADA: 102 FLOPS SB x BB 40 BB
+Data: 16/11/2026, horario de Brasilia.
+
+Programada a continuacao: 51 -> 68 -> 85 -> 102, tres novos lotes de 17.
+Cada lote comeca somente apos salvar e validar o anterior no GitHub.
+Foram reservados 51 boards adicionais sem duplicar os 51 anteriores,
+sem reutilizar holdouts e mantendo exatamente ranges, stacks e menu.
+
+Esta entrega e a AUTOMACAO DA FILA, nao a conclusao de 102 flops.
+17 SB40 ja tinham entrega completa; 34 estavam em calculo e 51 aguardavam
+a entrega dos 34. A execucao nova comeca aguardando os 51 completos.
+O GitHub Actions executara as etapas posteriores pelas dependencias
+publicadas, sem precisar manter um processo local deste executor.
+
+Cada lote salva a politica completa dentro do menu: acoes, frequencias,
+sizes e respostas nas tres ruas. Antes de avancar: 17 bancos novos
+baixados e lidos no Windows, consultas JSON e naipes, historicos sinteticos,
+manifestos e partes SHA-256, ZIP e CRC, workers encerrados e temporarios
+proprios removidos depois da preservacao. Os dados finais sao conservados.
+
+Os 32 BTN25, a main, os worktrees antigos e o trabalho local sao preservados.
+Os novos planos definitivos usam os hashes REAIS dos modelos anteriores,
+somente quando estiverem concluidos; as intencoes nao fingem resultados.
+
+Guia: docs/GUIA_SB40_102_FLOPS_20261116.txt.
+Codigo: strategy/sb40_series.py e tools/prepare_hu_sb40_series.py.
+Pipeline: .github/workflows/hu-sb40-to102.yml.
+
+NVT autorizado como referencia; TexasSolver no laboratorio. Isto nao e
+certificacao direta HRC Pro nem validacao real do PPPoker do notebook.
+Hero SB fixo; hero BB e outras configuracoes seguem separados.
+8h -> 3h segue pendente; nenhum leitor ou limiar OCR foi alterado.
+
+VERIFICACAO DESTA ENTREGA
+280/280 testes Linux PASS, com controles nativos, sem falhas ou pulados.
+Inclui 16 testes novos de fila, preservacao, receitas exatas e publicacao.
+Os testes da serie usam metadados e ZIPs sinteticos; nao sao novos solves
+SB40 concluidos e nao sao validacao Windows real.
+Controle com metadados REAIS do GitHub: aguardou os 51 sem criar inputs,
+release ou solver. actionlint 1.7.7 e grafo de dependencias: PASS.
+Evidencias: docs/software-hu-sb40-to102-20261116/.

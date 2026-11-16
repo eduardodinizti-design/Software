@@ -17,7 +17,7 @@ from verify_hu_next16_download import verify_delivery
 
 
 def main(argv=None):
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--family',required=True,choices=('btn32','sb40','sb40-next16','sb40-34','sb40-51'))
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--family',required=True,choices=('btn32','sb40','sb40-next16','sb40-34','sb40-51','sb40-68','sb40-85','sb40-102'))
     p.add_argument('--ordinal',required=True,type=int);p.add_argument('--catalog-asset',required=True)
     p.add_argument('--output',required=True);args=p.parse_args(argv)
     if platform.system()!='Windows':raise StrategyError('NATIVE_WINDOWS_REQUIRED')
@@ -38,7 +38,7 @@ def main(argv=None):
             atomic_json(root/('response-'+street+'.json'),response)
         result.update(family=args.family,json_roundtrip_streets=['flop','turn','river'],
             complete_model_parameters=policy.data,all_json_responses_exactly_match_stored_policy=True)
-        if args.family in ('sb40-next16','sb40-34','sb40-51'):
+        if args.family in ('sb40-next16','sb40-34','sb40-51','sb40-68','sb40-85','sb40-102'):
             from strategy.root_policy_review import review_root_policy
             result['root_policy_review']=review_root_policy(policy)
         atomic_json(root/'windows-proof.json',result)
