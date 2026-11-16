@@ -1,5 +1,6 @@
 """Publish seventeen SB40 models only after the sixteen actual Windows proofs."""
 import argparse
+from collections import Counter
 import json
 import os
 from pathlib import Path
@@ -59,11 +60,16 @@ def main(argv=None):
     text=(evidence/contract).read_text(encoding='utf-8-sig');match=re.search(r'Ran (\d+) tests',text)
     if not match or not re.search(r'\nOK(?: |\r|\n|$)',text):raise StrategyError('FINAL_WINDOWS_CONTRACTS_NOT_PASS')
     skipped=re.search(r'OK \(skipped=(\d+)\)',text);skipped=int(skipped[1]) if skipped else 0
+    linux=json.loads(Path('docs/software-hu-sb40-next16-20261116/regressao-recursos-linux.json').read_text())
+    if (linux.get('status')!='PASS' or linux.get('errors') or linux.get('failures') or linux.get('skipped')
+            or linux.get('native_stream_tests_enabled') is not True):
+        raise StrategyError('FINAL_NATIVE_ENABLED_LINUX_REGRESSION_REQUIRED')
     native=catalog['cases'];inventory=full['cases'];stamp=os.environ['GITHUB_RUN_ID']+'-a'+os.environ.get('GITHUB_RUN_ATTEMPT','1')
     summary=dict(schema='software.hu-sb40-seventeen-delivery.v1',status='PASS',complete_distinct_flop_models=17,
         new_complete_flop_models=16,new_windows_policy_pass=16,new_json_street_queries=48,
         new_exact_suit_street_queries=48,new_confirmed_synthetic_hands=16,previous_confirmed_synthetic_hands_reused=1,
         windows_contract_tests=int(match[1]),windows_contract_skipped=skipped,windows_contract_asset_name=contract,
+        linux_reference_regression=linux,
         total_public_nodes=sum(c['coverage']['public_nodes'] for c in inventory),
         total_policy_file_bytes=sum(c['policy_file_bytes'] for c in inventory),
         nodes_by_street={s:sum(c['coverage']['nodes_by_street'][s] for c in inventory) for s in ('FLOP','TURN','RIVER')},
@@ -71,6 +77,9 @@ def main(argv=None):
         all_new_native_temporaries_removed=all(c['temporary_cleanup_verified'] for c in native),
         max_new_process_tree_rss_bytes=max(c['measurements']['peak_process_tree_rss_bytes'] for c in native),
         iterations=dict(min=min(c['iterations'] for c in native),max=max(c['iterations'] for c in native)),
+        new_memory_budgets_mb=dict(Counter(str(c['quality']['settings']['memory_budget_mb']) for c in native)),
+        native_resource_profiles={c['resource_profile']['profile_sha256']:c['resource_profile']
+            for c in native if c.get('resource_profile')},
         native_target_metric='EXPLOITABILITY_PERCENT_OF_ROOT_POT',native_target_pct=.5,
         global_gap_bb_definition='NASH_CONV_TWICE_EXPLOITABILITY',native_global_gap_independently_certified=False,
         context=catalog['context'],root_template=catalog['root_template'],profile_settings=catalog['profile_settings'],
@@ -103,11 +112,16 @@ def main(argv=None):
         '16 bancos novos integralmente baixados e verificados em runners Windows do GitHub.',
         '16 maos sinteticas novas confirmadas ate showdown; 48 consultas JSON e 48 consultas por bijecao exata de naipes.',
         f"Contratos Windows: {summary['windows_contract_tests']} testes; {skipped} pulados. Consulte o log para os motivos.",
+        f"Regressao Linux final com o solver nativo: {linux['passed']}/{linux['tests_run']} PASS; nenhuma falha ou teste pulado.",
         'Historico anterior do piloto conferido novamente, preservando seu workflow de origem.',
         'Os ZIPs de historico publicados foram baixados e comparados com os receipts e as respostas JSON.',
         'Um river condicional por modelo foi enumerado independentemente e repetido no Windows.',
         'O alvo nativo e exploitability <= 0,5% do pote. global_gap_bb e NashConv, o dobro da exploitability.',
         'O criterio global nao garante igual precisao em cada no; a revisao condicional tem outro escopo.',
+        'A primeira tentativa encontrou std::bad_alloc na inicializacao de alguns boards com limite de 10 GiB.',
+        'Um perfil de recursos separado aumenta a memoria, preservando o plano, ranges, sizes, iteracoes e alvo estrategico.',
+        f"Orcamentos efetivos nos 16 modelos novos (MiB: quantidade): {summary['new_memory_budgets_mb']}.",
+        'Os bancos concluidos na primeira tentativa foram reaproveitados; nenhum CFR ativo foi duplicado.',
         'Nenhuma validacao desta entrega e uma sessao real no PPPoker. Nenhum dispositivo de entrada foi acionado.','',
         'NOVOS FLOPS | ITERACOES | NASHCONV GLOBAL NATIVO (BB) | NASHCONV RIVER CONDICIONAL (BB)']
     for c in native:lines.append(f"{c['ordinal']:02d}. {' '.join(c['board'])} | {c['iterations']} | {c['global_gap_bb']:.9f} | {c['independent_river']['nash_conv_bb']:.9f}")
@@ -132,6 +146,7 @@ def main(argv=None):
         f'https://github.com/{REPOSITORY}/releases/tag/{SB40_NEXT16_TAG}',
         f'https://github.com/{REPOSITORY}/actions/runs/{args.native_run}',
         f'https://github.com/{REPOSITORY}/actions/runs/{os.environ["GITHUB_RUN_ID"]}',
+        f'https://github.com/{REPOSITORY}/tree/feat/hu-sb40-next16-20261116',
         f'Codigo: {os.environ["GITHUB_SHA"]}',f'Plano: {catalog["plan_sha256"]}'])
     report=out/f'SB40_17_FLOPS_{stamp}.txt';report.write_text('\n'.join(lines)+'\n')
     source=out/f'Software-SB40-17-{os.environ["GITHUB_SHA"][:8]}-{stamp}.zip'
