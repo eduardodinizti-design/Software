@@ -53,19 +53,26 @@ def main(argv=None):
     proof=json.loads((published/'publication-proof.json').read_text());stamp=os.environ['GITHUB_RUN_ID']+'-a'+os.environ.get('GITHUB_RUN_ATTEMPT','1')
     if (btn['complete_distinct_flop_models']!=32 or sb['complete_distinct_flop_models']!=1
             or proof['status']!='PASS'):raise StrategyError('THIRTY_TWO_PLUS_ONE_CHECKED_MODELS_REQUIRED')
-    contracts={}
+    contracts={};contract_skips={}
     for family,run in (('btn32',args.btn_run),('sb40',args.sb_run)):
         text=latest(published,'windows-contracts-'+family+'-'+run+'-a*.txt').read_text(encoding='utf-8-sig')
         match=re.search(r'Ran (\d+) tests',text)
         if not match or not re.search(r'\nOK(?: |\n|\r|$)',text):raise StrategyError('FINAL_WINDOWS_CONTRACTS_NOT_PASS')
         contracts[family]=int(match[1])
+        skipped=re.search(r'OK \(skipped=(\d+)\)',text)
+        contract_skips[family]=int(skipped[1]) if skipped else 0
+    linux=json.loads(Path('docs/software-hu-close32-sb40-20261115/regressao-entrega-final.json').read_text())
+    if (linux.get('status')!='PASS' or linux.get('errors') or linux.get('failures')
+            or linux.get('native_stream_tests_enabled') is not True):
+        raise StrategyError('NATIVE_ENABLED_FINAL_LINUX_REGRESSION_REQUIRED')
     source_commit=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
     summary=dict(schema='software.hu-32-and-sb40-combined-delivery.v1',status='PASS',
         btn_bb25_complete_distinct_flops=32,sb_bb40_full_reference_pilot_flops=1,
         new_windows_policy_transfers=16,new_confirmed_synthetic_hands=16,
         transfer_count_semantics='DISTINCT_VALIDATED_MODELS; repeated downloads for a repaired fixture are not new models',
         new_json_street_roundtrips=48,new_exact_suit_street_queries=48,
-        windows_contract_tests=contracts,source_commit=source_commit,
+        windows_contract_tests=contracts,windows_contract_skipped=contract_skips,
+        linux_reference_regression=linux,source_commit=source_commit,
         btn_summary=btn_file.name,sb_summary=sb_file.name,
         source_ranges='USER_APPROVED_NVT_REFERENCE_NOT_DIRECT_HRC_CERTIFICATION',
         native_global_gap_independently_certified=False,pppoker_windows_validated=False,user_notebook_validated=False,
@@ -82,7 +89,10 @@ def main(argv=None):
         'Os 15 modelos novos que completam 32 e o piloto SB40 foram baixados integralmente em runners Windows.',
         'Foram conferidos partes, ZIPs, SQLite, identidades, ranges, menu e consultas nas tres ruas.',
         '16 maos sinteticas completas ate showdown; 48 consultas JSON e 48 consultas com bijecao exata de naipes.',
-        f"Contratos Windows: {contracts}; nenhum desses testes e uma sessao real no PPPoker.",'',
+        f"Contratos Windows: {contracts}; testes pulados: {contract_skips}.",
+        'Os sete pulados em cada runner Windows sao seis controles que exigem o solver nativo separado e um lock POSIX.',
+        f"Regressao Linux final com solver nativo habilitado: {linux['passed']}/{linux['tests_run']} PASS; zero falhas e zero pulados.",
+        'Nenhum desses testes e uma sessao real no PPPoker.','',
         'COMO O BOT APRENDEU',
         'library.json aponta para politicas completas no disco: acoes, frequencias por combinacao, sizes e respostas.',
         'O bot consulta o no correspondente ao board, posicoes, dinheiro e historico confirmado.',
