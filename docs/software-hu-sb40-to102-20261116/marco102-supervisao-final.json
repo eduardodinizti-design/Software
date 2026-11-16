@@ -1,0 +1,59 @@
+{
+  "done": true,
+  "final_verification": {
+    "all_policy_bytes_redownloaded_by_supervisor": false,
+    "catalog_asset": "batch-catalog-43810403786-a1.json",
+    "complete_distinct_models": 102,
+    "full_policy_files_previously_read_on_windows": 102,
+    "input_devices_used": false,
+    "pppoker_windows_validated": false,
+    "publication_asset": "publicacao-final-verificada-sb40-102-43810403786-a1.json",
+    "publication_sha256": "7365073de8b4cf4339351070ea1527f94837d39bc433bf7be1a5fc7c6dc68745",
+    "release": "hu-sb-bb40-nvt-complete102-20261116",
+    "status": "PASS"
+  },
+  "observed_at": "2026-11-16T21:49:48.954623+00:00",
+  "pppoker_windows_validated": false,
+  "retries_requested": [],
+  "retry_actions": [],
+  "runs": {
+    "native34": {
+      "attempt": 1,
+      "conclusion": "success",
+      "failed_jobs": [],
+      "passed_jobs": 19,
+      "run_id": "43799276504",
+      "running_jobs": [],
+      "status": "completed"
+    },
+    "seed51": {
+      "attempt": 1,
+      "conclusion": "success",
+      "failed_jobs": [],
+      "passed_jobs": 38,
+      "run_id": "43807544505",
+      "running_jobs": [],
+      "status": "completed"
+    },
+    "series": {
+      "attempt": 1,
+      "conclusion": "success",
+      "failed_jobs": [],
+      "passed_jobs": 114,
+      "run_id": "43810403786",
+      "running_jobs": [],
+      "status": "completed"
+    },
+    "windows34": {
+      "attempt": 1,
+      "conclusion": "success",
+      "failed_jobs": [],
+      "passed_jobs": 20,
+      "run_id": "43800302038",
+      "running_jobs": [],
+      "status": "completed"
+    }
+  },
+  "schema": "software.hu-sb40-supervisor.v1",
+  "status": "COMPLETE_102"
+}

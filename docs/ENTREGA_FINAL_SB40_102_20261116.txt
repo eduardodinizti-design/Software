@@ -1,0 +1,52 @@
+SOFTWARE ORIGINAL — 102 FLOPS SB x BB 40 BB CONCLUIDOS
+
+Entrega final real: 102 flops distintos, sem contar aliases de naipes como novos modelos.
+Sequencia concluida: 17 -> 34 -> 51 -> 68 -> 85 -> 102. Cada avanco preservou e validou o lote anterior.
+Verificacao final em Brasilia: 2026-11-16T18:54:11.721841-03:00
+
+POLITICAS E CONSULTA
+Politicas completas dentro do menu configurado: acoes, frequencias privadas, sizes e respostas em flop/turn/river.
+Consumo normal: indice library.json e politicas SQLite; JSONL completo opcional para interoperabilidade.
+Estados publicos: 44,853,072.
+Bancos SQLite: 378,648,596,480 bytes = 352.64 GiB.
+85 modelos anteriores preservados e 17 novos bancos integralmente baixados e lidos no ultimo lote Windows.
+Ultimo lote: 17 historicos sinteticos confirmados, 51 consultas JSON e 51 consultas por naipes.
+Contratos Windows: 368 testes; 7 pulados, motivos no log.
+Regressao Linux preservada: 280/280 com controles nativos; 15/15 testes adicionais do supervisor.
+Recibos, inventario, historicos ZIP, SHA-256 e ZIP de codigo/CRC reconferidos apos publicacao.
+Os bancos completos nao foram baixados novamente no executor Linux; preservam as provas Windows de leitura integral.
+Workers nativos encerrados e temporarios proprios removidos depois de preservar as politicas finais.
+Supervisao GitHub encerrada com sucesso; verificacao condicional desta meta desativada apos confirmar102.
+
+JOGO E LIMITES DO ESTUDO
+Chip EV regular, nove jogadores originalmente: sete folds, SB open 2 BB e BB call, BBA 1 BB.
+40 BB antes dos posts; flop: pote 5 BB, SB 38 BB e BB 37 BB. Hero SB fora de posicao.
+Ranges NVT de referencia autorizados; nao e certificacao direta HRC Pro.
+Menu: bet 1/3, raise 100% do pote, all-in e duas agressoes por rua.
+Alvo TexasSolver nativo: exploitability <= 0,5% do pote. global_gap_bb e NashConv, o dobro da exploitability.
+Um river condicional por modelo recebe enumeracao independente; isso nao certifica todos os nos.
+Logs guardam checkpoints de convergencia; nao todos os regrets retomaveis de cada iteracao. EV por acao pode ser null.
+
+INSTALAR OS DADOS
+Baixe Software-SB40-102-e5a1e5e7-43810403786-a1.zip do release e extraia em pasta NOVA.
+Use Python 3.12 x64 e requirements.txt. Execute BAIXAR_BLIND_WAR_40BB_102.bat.
+O BAT baixa e valida os dados; nao liga o bot nem movimenta o mouse.
+Indice: runtime/hu/sb40-102/bank/library.json. Configure --postflop-library no Software original.
+Confira disco livre: banco completo: 352,64 GiB, mais o ZIP temporario de uma politica por vez.
+Para um subconjunto, --family sb40-102 --ordinals N; somente o ultimo lote, --new-only; use pasta nova ou resume gerenciado.
+Consulte docs/GUIA_SB40_102_FLOPS_20261116.txt. SQLite usa cache limitado, sem carregar toda a arvore na RAM.
+
+PENDENCIAS
+Validacao real de leitura, sincronizacao, historico, efeito dos cliques e latencia no PPPoker Windows do notebook.
+Caso 8h -> 3h pendente no mesmo tema; nenhum limiar OCR foi alterado.
+Hero BB, limp/check, outros stacks/antes/sizes, 3-bet pots, multiway, ICM/PKO e roteamento automatico BTN25/SB40 exigem trabalhos proprios.
+Semelhanca visual de outros flops nao cria uma solucao; equivalencias de naipes exigem preservar os dois ranges.
+Os 32 modelos BTN25, a main, as instalacoes antigas e os worktrees anteriores foram preservados.
+
+https://github.com/eduardodinizti-design/Software/releases/tag/hu-sb-bb40-nvt-complete102-20261116
+https://github.com/eduardodinizti-design/Software/releases/download/hu-sb-bb40-nvt-complete102-20261116/SB40_102_FLOPS_43810403786-a1.txt
+https://github.com/eduardodinizti-design/Software/actions/runs/43810403786
+https://github.com/eduardodinizti-design/Software/actions/runs/43811702623
+Fonte: e5a1e5e751ca25cd19d912de9782ce53c4aa5dea
+Plano: 576a6d45bfb8996eedcd7236d6286725af2ef75e8979fff93f3992b5eba1a50e
+SHA-256 do ZIP de codigo: c3f31d3669ca01a41bec07b61b8258bbb7511a5ff5a1fed5c9064da08606f63c
