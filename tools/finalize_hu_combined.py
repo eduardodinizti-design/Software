@@ -105,6 +105,8 @@ def main(argv=None):
         '4. Metadados do GitHub usam a autenticacao do workflow; o token nao e enviado aos downloads publicos nem a outro host.',
         '5. Em empate, os saldos finais sozinhos nao identificam os sizes intermediarios. A fixture sintetica retem o rotulo do pote final.',
         '   Sem essa evidencia, o coletor continua rejeitando caminhos ambiguos; nenhum historico real e adivinhado.',
+        '6. O primeiro piloto nao registrava o tamanho bruto SQLite em result.json. O empacotador agora usa a medicao do banco retido,',
+        '   apos conferir seu SHA256 com o arquivo publicado. O piloto original e seus resultados nao foram alterados.',
         'As transferencias Windows ja aprovadas foram reaproveitadas com a origem real de cada receipt preservada.',
         'As falhas iniciais e sua recuperacao estao documentadas; os dois workflows finais Windows precisam estar verdes para esta entrega.','',
         'INSTALAR',
