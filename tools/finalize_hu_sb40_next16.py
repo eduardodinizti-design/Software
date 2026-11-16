@@ -119,6 +119,8 @@ def main(argv=None):
         source_commit=os.environ['GITHUB_SHA'],native_workflow_run=args.native_run,windows_workflow_run=os.environ['GITHUB_RUN_ID'],
         source_ranges='USER_APPROVED_NVT_REFERENCE_NOT_DIRECT_HRC_CERTIFICATION',
         postflop_backend='TexasSolver',native_upstream_source_commit=SOURCE_COMMIT,
+        operational_hero_position='SB',opponent_policy_responses_saved='BB',
+        bb_hero_operational_adapter_present=False,
         pppoker_windows_validated=False,user_notebook_validated=False,input_devices_used=False)
     if not summary['all_new_workers_exited'] or not summary['all_new_native_temporaries_removed']:
         raise StrategyError('NATIVE_WORKERS_AND_OWNED_TEMPORARIES_MUST_BE_CLOSED')
@@ -136,6 +138,8 @@ def main(argv=None):
         'Torneio chip-EV regular com nove jogadores originalmente; sete folds, SB open 2 BB, BB call.',
         'Ambos com 40 BB antes das postagens; big-blind ante de 1 BB. Flop: pote 5 BB, SB 38 BB e BB 37 BB.',
         'SB e o jogador fora de posicao. Dois jogadores ativos nao transforma a mesa em um torneio originalmente HU.',
+        'O perfil operacional desta biblioteca usa o SB como hero fixo (indice 0).',
+        'As respostas estrategicas do BB estao salvas na arvore; operar como hero BB ainda exige adaptacao propria.',
         'Ranges NVT autorizados como referencia; sem certificacao independente de export direto HRC Pro.',
         'Calculos pos-flop executados com TexasSolver no laboratorio Linux; fonte upstream '+SOURCE_COMMIT+'.',
         'Os patches de exportacao, limite de agressoes e denominador de chance HU estao registrados nos manifests de compilacao.',
@@ -184,6 +188,7 @@ def main(argv=None):
         '3-bet pots, outros stacks/antes/sizes, multiway, ICM e PKO precisam de modelos separados.',
         'Outros flops nao sao resolvidos por semelhanca visual. Equivalencia de naipes exige preservar ambos os ranges.',
         'As familias BTN25 e SB40 permanecem separadas, sem roteamento automatico entre elas.',
+        'O adaptador de execucao/historico nao inverte automaticamente os indices para jogar como hero BB.',
         'EV independente de cada acao nao esta salvo em todos os nos; ev_bb pode ser null.',
         'Leitura, historico, sincronizacao, clique e desempenho real no PPPoker Windows do notebook seguem pendentes.',
         'O caso historico 8h -> 3h continua pendente no mesmo tema; nenhum limiar OCR foi reduzido.','',

@@ -14,6 +14,9 @@ Configuracao: nove jogadores originalmente, sete folds, SB open 2 BB,
 BB call, big-blind ante de 1 BB, 40 BB antes das postagens. O flop tem pote
 de 5 BB, SB com 38 BB e BB com 37 BB. SB age primeiro no pos-flop.
 Nao e um torneio originalmente de dois jogadores, em que SB tambem e BTN.
+Neste perfil, o hero e o SB (indice 0). A arvore inclui as respostas do BB,
+mas usar o BB como hero requer um adaptador proprio de estado, ranges e
+historico; a integracao atual nao faz essa inversao automaticamente.
 
 Os ranges de entrada NVT sao os mesmos do piloto, sem renormalizar os
 mixes pre-flop ou inventar um range de limp. A convergencia e condicional
