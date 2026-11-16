@@ -84,7 +84,7 @@ def combine_sb40_seventeen(catalog,pilot):
     if len({canonical_flop(c['board']) for c in rows})!=17:
         raise StrategyError('SEVENTEEN_SUIT_DISTINCT_SB40_MODELS_REQUIRED')
     return dict(catalog,cases=rows,planned_new_flops=17,published_new_flops=17,native_target_met_flops=17,
-        full_model_count=17,suit_aliases_counted_as_models=False,
+        full_model_count=17,suit_aliases_counted_as_models=False,pilot_tag=SB40_TAG,
         source_catalogs=[dict(tag=SB40_TAG,asset='batch-catalog-43777381626.json'),
             dict(tag=SB40_NEXT16_TAG,plan_sha256=plan['plan_sha256'])])
 

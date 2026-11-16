@@ -61,6 +61,7 @@ class SB40Next16Tests(unittest.TestCase):
         self.assertEqual(merged['cases'][0]['policy_sha256'],self.pilot['cases'][0]['policy_sha256'])
         self.assertEqual(merged['cases'][1]['source_ordinal'],1)
         self.assertEqual(merged['cases'][0]['tag'],self.pilot['tag'])
+        self.assertEqual(merged['pilot_tag'],self.pilot['tag'])
 
     def test_merge_rejects_changed_priors_stack_menu_and_ante(self):
         for kind in ('stack','menu','range','ante'):
