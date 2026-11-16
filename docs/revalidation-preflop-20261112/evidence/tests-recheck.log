@@ -1,0 +1,35 @@
+test_above_solved_depth_uses_100bb_reference (test_preflop_advisor.AdvisorTests.test_above_solved_depth_uses_100bb_reference) ... FAIL
+test_bucket_stack (test_preflop_advisor.AdvisorTests.test_bucket_stack) ... FAIL
+test_unvalidated_deep_node_is_flagged (test_preflop_advisor.ReferenceTests.test_unvalidated_deep_node_is_flagged) ... FAIL
+
+======================================================================
+FAIL: test_above_solved_depth_uses_100bb_reference (test_preflop_advisor.AdvisorTests.test_above_solved_depth_uses_100bb_reference)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/work/visualpilot-revalidation-ace14f6/test_preflop_advisor.py", line 382, in test_above_solved_depth_uses_100bb_reference
+    self.assertEqual(r['stack_bucket'], 100)
+AssertionError: 40 != 100
+
+======================================================================
+FAIL: test_bucket_stack (test_preflop_advisor.AdvisorTests.test_bucket_stack)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/work/visualpilot-revalidation-ace14f6/test_preflop_advisor.py", line 348, in test_bucket_stack
+    self.assertEqual(self.a.bucket_stack(90)[0], 100)
+AssertionError: 40 != 100
+
+======================================================================
+FAIL: test_unvalidated_deep_node_is_flagged (test_preflop_advisor.ReferenceTests.test_unvalidated_deep_node_is_flagged)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/work/visualpilot-revalidation-ace14f6/test_preflop_advisor.py", line 541, in test_unvalidated_deep_node_is_flagged
+    self.assertEqual(r['status'], 'ADVICE')
+AssertionError: 'ABSTAIN' != 'ADVICE'
+- ABSTAIN
++ ADVICE
+
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.001s
+
+FAILED (failures=3)
