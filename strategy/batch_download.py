@@ -112,7 +112,7 @@ def receive_archive(manifest,destination):
     """Stream parts directly into one ZIP; never keep parts plus another copy."""
     check_bundle(manifest);destination=Path(destination)
     if destination.exists():raise StrategyError('BATCH_ARCHIVE_DESTINATION_MUST_BE_NEW')
-    if manifest['tag'] not in (BATCH_TAG,PILOT_TAG,'hu-btn-bb-nvt-complete32-20261115','hu-sb-bb40-nvt-pilot-20261115','hu-sb-bb40-nvt-next16-20261116','hu-sb-bb40-nvt-complete34-20261116'):
+    if manifest['tag'] not in (BATCH_TAG,PILOT_TAG,'hu-btn-bb-nvt-complete32-20261115','hu-sb-bb40-nvt-pilot-20261115','hu-sb-bb40-nvt-next16-20261116','hu-sb-bb40-nvt-complete34-20261116','hu-sb-bb40-nvt-complete51-20261116'):
         raise StrategyError('UNKNOWN_REFERENCE_RELEASE')
     whole=hashlib.sha256();received=0
     with destination.open('xb') as out:

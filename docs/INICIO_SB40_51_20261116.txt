@@ -1,0 +1,76 @@
+SOFTWARE ORIGINAL — TERCEIRO LOTE SB x BB 40 BB: META 51
+
+Pedido confirmado pelo usuario: acrescentar outro lote depois do atual, total 51.
+Condicao: somente iniciar os 17 novos quando os 34 anteriores estiverem salvos, aptos e validados.
+
+ESTADO: ENCADEAMENTO PREPARADO; O TERCEIRO LOTE AINDA AGUARDA OS 34.
+Este documento nao afirma que 34 ou 51 modelos estejam concluidos.
+Os 17 iniciais ja estao salvos e conferidos. O segundo lote de 17 esta em processamento.
+O terceiro lote reserva os 17 boards abaixo e exclui os 34 anteriores/em calculo e os holdouts.
+O plano definitivo e seus hashes de politicas so sao gerados a partir dos resultados reais dos 34.
+
+FLUXO AUTOMATICO NO GITHUB
+1. Aguardar a entrega completa e validada do lote atual.
+2. Conferir novamente partes, SHA-256, inventario, historicos e codigo dos 34.
+3. Gerar o checkpoint real e congelar o plano do terceiro lote.
+4. Calcular 17 arvores novas, uma por worker, com no maximo oito hosts.
+5. Salvar politicas completas dentro do menu, acoes, frequencias, sizes e respostas das tres ruas.
+6. Validar os bancos no Windows com consultas JSON e historicos sinteticos.
+7. Publicar TXT, inventario, politicas e ZIP de codigo com plano/checkpoint reais.
+8. Conferir CRC/SHA-256 da entrega publicada; encerrar workers e remover somente temporarios proprios.
+
+Esse fluxo e executado pelo GitHub e independe de um processo local continuar aberto.
+Os bancos anteriores, as instalacoes antigas, os 32 BTN25 e a main ficam preservados.
+Uma nova tentativa salva um catalogo proprio; as provas de tentativas anteriores nao sao sobrescritas.
+
+NOVOS BOARDS RESERVADOS
+01. 2c 3c Tc
+02. 9c Qc Tc
+03. 4c 6c Kc
+04. Kc Qc Tc
+05. 2c 6c 9d
+06. 9c Jd Qd
+07. 3c Ad Qd
+08. Ac Jd Qc
+09. 2c 7d Qh
+10. 9c Qd Th
+11. 5c 8d Ah
+12. 9c Kd Qh
+13. 3c 3d 8c
+14. 6c 6d 8c
+15. 2c Kc Kd
+16. Ac Qc Qd
+17. 2c 2d 8h
+
+MESMO MODELO
+Mesa originalmente de nove: sete folds, SB open 2 BB, BB call, BBA 1 BB.
+40 BB antes dos posts; flop com pote 5 BB, SB 38 BB e BB 37 BB. Hero SB, fora de posicao.
+Ranges NVT autorizados como referencia. TexasSolver; nao e certificacao direta HRC Pro.
+Menu: bet 1/3, raise de 100% do pote, all-in e duas agressoes por rua.
+Alvo nativo de exploitability <= 0,5% do pote; global_gap_bb e NashConv, seu dobro.
+12 GiB de orcamento de calculo por worker. O notebook apenas consulta SQLite com cache limitado.
+Logs preservam checkpoints de convergencia e a politica final, nao todos os regrets CFR de cada iteracao.
+
+VALIDACAO PREPARATORIA
+As regressoes e os testes da condicao ficam em docs/software-hu-sb40-complete51-20261116/.
+O controle-condicao-real.json leu os metadados reais do GitHub enquanto os 34 ainda nao estavam prontos.
+Confirmou espera/timeout controlado, sem criar inputs nem iniciar novo CFR.
+Testes usam fixtures explicitamente sinteticas para falhas de hashes, partes, historicos e retomada.
+As fixtures nao sao novas politicas calculadas nem sessoes PPPoker.
+
+PENDENCIAS
+Hero BB, limp/check, outros stacks/sizes/antes, 3-bet pots, multiway, ICM e PKO exigem modelos proprios.
+Windows em runners, com arquivos reais e maos sinteticas, nao valida leitura ou clique no PPPoker do notebook.
+O caso historico 8h -> 3h continua pendente no mesmo tema; nenhum limiar OCR foi reduzido.
+
+LOTE ATUAL — CALCULOS
+https://github.com/eduardodinizti-design/Software/actions/runs/43799276504
+LOTE ATUAL — VALIDACAO E ENTREGA
+https://github.com/eduardodinizti-design/Software/actions/runs/43800302038
+TERCEIRO LOTE — CODIGO
+https://github.com/eduardodinizti-design/Software/tree/feat/hu-sb40-complete51-20261116
+Intencao congelada: 3f0dd847adab654bc793a22530207b8db68d9b51adc48330843a6327b314b747
+
+Regressao final Linux com controles nativos: 264/264 PASS, sem falhas ou pulados.
+O YAML e as dependencias dos jobs foram conferidos; calcule e contracts
+dependem da verificacao real dos 34. O novo lote nao cancela o anterior.

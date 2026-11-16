@@ -181,9 +181,12 @@ def catalog(plan,output):
     (folder/report).write_text('\n'.join(lines)+'\n')
     for name in ('batch-catalog.json',report):
         # Catalogs are new run-specific evidence, never overwrite previous ones.
-        unique=folder/(Path(name).stem+'-'+os.environ['GITHUB_RUN_ID']+Path(name).suffix)
+        attempt=('-a'+os.environ.get('GITHUB_RUN_ATTEMPT','1')) if plan.get('catalog_protocol')=='run-attempt-v1' else ''
+        unique=folder/(Path(name).stem+'-'+os.environ['GITHUB_RUN_ID']+attempt+Path(name).suffix)
         shutil.copyfile(folder/name,unique)
         subprocess.run(['gh','release','upload',BATCH_TAG,'--repo',REPOSITORY,str(unique)],check=True)
+        if name=='batch-catalog.json' and os.environ.get('GITHUB_OUTPUT'):
+            with open(os.environ['GITHUB_OUTPUT'],'a') as target:target.write('catalog_asset='+unique.name+'\n')
     print('::notice title=Next16 batch result::'+json.dumps({k:result[k] for k in
         ('status','planned_new_flops','published_new_flops','native_target_met_flops')}),flush=True)
     return 0 if result['status']=='COMPLETE' else 1

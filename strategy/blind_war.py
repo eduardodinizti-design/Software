@@ -14,6 +14,7 @@ CALL_ID='chip_ev|mid|40|vs_open|BB|SB|-'
 SB40_TAG='hu-sb-bb40-nvt-pilot-20261115'
 SB40_NEXT16_TAG='hu-sb-bb40-nvt-next16-20261116'
 SB40_COMPLETE34_TAG='hu-sb-bb40-nvt-complete34-20261116'
+SB40_COMPLETE51_TAG='hu-sb-bb40-nvt-complete51-20261116'
 
 
 def extract_reference(path):

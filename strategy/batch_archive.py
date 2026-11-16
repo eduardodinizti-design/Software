@@ -94,7 +94,7 @@ def make_catalog(plan,manifests):
     learned=sum(e['native_target_met'] for e in entries);planned=len(plan['cases'])
     return dict(schema='software.hu-batch-catalog.v1',tag=plan['tag'],plan_sha256=plan['plan_sha256'],
         status='COMPLETE' if learned==planned else 'PARTIAL',planned_new_flops=planned,published_new_flops=len(entries),
-        native_target_met_flops=learned,cases=entries,pilot_tag=PILOT_TAG,
+        native_target_met_flops=learned,cases=entries,pilot_tag=plan.get('pilot_tag',PILOT_TAG),
         context=plan['game']['context'],root_template=plan['game']['root'],
         already_solved_board=plan['already_solved_board'],preserved_holdout_flops=plan['preserved_holdout_flops'],
         source_ranges='USER_APPROVED_NVT_REFERENCE',pppoker_windows_validated=False)

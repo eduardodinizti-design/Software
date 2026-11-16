@@ -9,7 +9,7 @@ from strategy.batch_archive import REPOSITORY,BATCH_TAG,PILOT_TAG,make_catalog,v
 from strategy.batch_download import (ASSET_BASE,check_bundle,install_catalog,load_catalog,
     pilot_manifest,read_json,valid_sha)
 from strategy.batch_jobs import canonical_flop,case_id
-from strategy.blind_war import SB40_TAG,SB40_NEXT16_TAG,SB40_COMPLETE34_TAG
+from strategy.blind_war import SB40_TAG,SB40_NEXT16_TAG,SB40_COMPLETE34_TAG,SB40_COMPLETE51_TAG
 from strategy.campaign import CLOSE32_TAG,validate_campaign_plan,model_identity
 from strategy.state_contract import StrategyError
 
@@ -18,6 +18,7 @@ PLANS={
     SB40_TAG:('sb40-plan.json','b6c55d124bcb8a334c2d79a2017f66cf43046100f297318093b3c1c51f200756'),
     SB40_NEXT16_TAG:('sb40-next16-plan.json','ed7f4a9b39e34fb4e83055eede52b20d7a9cb065fe6e676d81046bc04dceb26e'),
     SB40_COMPLETE34_TAG:('sb40-complete34-plan.json','f070d2c0289dd6eef328e48da8fbecd001c6bf483380e987a7208ea730b63d67'),
+    SB40_COMPLETE51_TAG:('sb40-complete51-plan.json',None),
 }
 
 
@@ -25,9 +26,13 @@ def load_campaign(tag,asset=None):
     if tag not in PLANS:raise StrategyError('KNOWN_CAMPAIGN_REQUIRED')
     filename,pinned=PLANS[tag]
     plan=validate_campaign_plan(read_json(ASSET_BASE+tag+'/'+filename))
+    if tag==SB40_COMPLETE51_TAG:
+        from strategy.sb40_progression import validate_derived_plan51
+        validate_derived_plan51(plan)
+        pinned=plan['plan_sha256']
     if plan['tag']!=tag or plan['plan_sha256']!=pinned:raise StrategyError('CAMPAIGN_IMMUTABLE_PLAN_CHANGED')
     release=read_json(f'https://api.github.com/repos/{REPOSITORY}/releases/tags/{tag}')
-    candidates=[a for a in release['assets'] if a['state']=='uploaded' and re.fullmatch(r'batch-catalog-[0-9]+\.json',a['name'])]
+    candidates=[a for a in release['assets'] if a['state']=='uploaded' and re.fullmatch(r'batch-catalog-[0-9]+(?:-a[0-9]+)?\.json',a['name'])]
     if asset:candidates=[a for a in candidates if a['name']==asset]
     if not candidates:raise StrategyError('CAMPAIGN_CATALOG_NOT_YET_PUBLISHED')
     chosen=max(candidates,key=lambda a:a['id'])
@@ -111,8 +116,29 @@ def combine_sb40_thirty_four(catalog,previous):
         source_catalogs=previous['source_catalogs']+[dict(tag=SB40_COMPLETE34_TAG,plan_sha256=plan['plan_sha256'])])
 
 
+def combine_sb40_fifty_one(catalog,previous):
+    plan=catalog['_original_plan'];prior=previous['_original_plan']
+    if (catalog.get('tag')!=SB40_COMPLETE51_TAG or catalog.get('status')!='COMPLETE'
+            or len(catalog.get('cases',[]))!=17 or previous.get('tag')!=SB40_COMPLETE34_TAG
+            or previous.get('status')!='COMPLETE' or len(previous.get('cases',[]))!=34):
+        raise StrategyError('SEVENTEEN_NEW_AND_THIRTY_FOUR_COMPLETE_PREVIOUS_SB40_MODELS_REQUIRED')
+    if (model_identity(plan['game'])!=model_identity(prior['game'])
+            or catalog.get('profile_settings')!=previous.get('profile_settings')):
+        raise StrategyError('SB40_PRIORS_MENU_GEOMETRY_OR_ANTE_CHANGED')
+    identity=lambda c:(canonical_flop(c['board']),c['policy_sha256'],c['file_sha256'],c['tag'])
+    if {identity(c) for c in previous['cases']}!={identity(c) for c in plan['preexisting_models']}:
+        raise StrategyError('SB40_PREVIOUS_THIRTY_FOUR_IDENTITIES_CHANGED')
+    rows=[dict(c,source_ordinal=c.get('source_ordinal',c['ordinal']),ordinal=i+1)
+          for i,c in enumerate(previous['cases']+catalog['cases'])]
+    if len({canonical_flop(c['board']) for c in rows})!=51:
+        raise StrategyError('FIFTY_ONE_SUIT_DISTINCT_SB40_MODELS_REQUIRED')
+    return dict(catalog,cases=rows,planned_new_flops=51,published_new_flops=51,native_target_met_flops=51,
+        full_model_count=51,suit_aliases_counted_as_models=False,pilot_tag=SB40_TAG,
+        source_catalogs=previous['source_catalogs']+[dict(tag=SB40_COMPLETE51_TAG,plan_sha256=plan['plan_sha256'])])
+
+
 def load_family(family,asset=None,*,new_only=False):
-    tag={'btn32':CLOSE32_TAG,'sb40':SB40_TAG,'sb40-next16':SB40_NEXT16_TAG,'sb40-34':SB40_COMPLETE34_TAG}.get(family)
+    tag={'btn32':CLOSE32_TAG,'sb40':SB40_TAG,'sb40-next16':SB40_NEXT16_TAG,'sb40-34':SB40_COMPLETE34_TAG,'sb40-51':SB40_COMPLETE51_TAG}.get(family)
     if tag is None:raise StrategyError('KNOWN_FAMILY_REQUIRED')
     catalog,name=load_campaign(tag,asset)
     if family=='btn32' and not new_only:
@@ -124,11 +150,14 @@ def load_family(family,asset=None,*,new_only=False):
     if family=='sb40-34' and not new_only:
         previous,_=load_family('sb40-next16','batch-catalog-43783594940.json')
         catalog=combine_sb40_thirty_four(catalog,previous)
+    if family=='sb40-51' and not new_only:
+        previous,_=load_family('sb40-34','batch-catalog-43799276504.json')
+        catalog=combine_sb40_fifty_one(catalog,previous)
     return catalog,name
 
 
 def main(argv=None):
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--family',required=True,choices=('btn32','sb40','sb40-next16','sb40-34'))
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--family',required=True,choices=('btn32','sb40','sb40-next16','sb40-34','sb40-51'))
     p.add_argument('--output');p.add_argument('--ordinals',nargs='+',type=int);p.add_argument('--catalog-asset')
     p.add_argument('--new-only',action='store_true');p.add_argument('--resume',action='store_true')
     args=p.parse_args(argv)

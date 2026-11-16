@@ -1,0 +1,77 @@
+SOFTWARE ORIGINAL — TERCEIRO LOTE SB x BB 40 BB, META DE 51 MODELOS
+
+Autorizacao: acrescentar outro lote depois do atual, totalizando 51,
+SOMENTE apos os 34 anteriores estarem salvos e validados.
+
+O QUE ESTA PREPARADO
+
+docs/software-hu-sb40-complete51-20261116/sb40-51-intent.json reserva 17
+boards novos e exclui os 34 anteriores/em calculo e os holdouts. Esse
+arquivo NAO afirma que os 34 estejam concluidos. Nao inventa hashes de
+politicas que ainda nao terminaram.
+
+O workflow aguarda a entrega Windows verificada dos 34. Confere os hashes
+atuais de todas as partes e evidencias, o codigo conferido, as consultas
+das tres ruas e os historicos publicados. Somente entao gera e publica
+o plano definitivo, seu SHA-256 e checkpoint-primeiros34.json, que usam
+as identidades REAIS dos modelos concluidos. As etapas de calculo ficam
+dependentes do sucesso dessa conferencia. Falha ou lote parcial impede
+o inicio do novo CFR. O trabalho dos 34 segue em seu workflow original.
+
+Depois: 17 novos solves completos, encerramento dos workers, remocao dos
+temporarios proprios apos preservacao dos bancos, download dos bancos
+novos em Windows, consultas JSON e historicos sinteticos confirmados.
+A entrega final inclui TXT, inventario, ZIP de codigo com plano e
+checkpoint reais, politicas multipartes e comprovante de CRC/SHA-256.
+Esse fluxo e executado no GitHub e independe de processo local aberto.
+
+MODELO EXATO
+
+Nove jogadores originalmente; sete folds, SB open 2 BB, BB call e BBA 1.
+Stacks 40 BB antes dos posts. Flop: pote 5 BB; SB 38 e BB 37 BB.
+O hero e o SB fora de posicao; as respostas do BB ficam na arvore.
+Ranges NVT de referencia autorizados; nao e certificacao direta HRC Pro.
+Menu: bet 1/3, raise de 100% do pote, all-in e duas agressoes por rua.
+Alvo nativo de exploitability <= 0,5% do pote; global_gap_bb e NashConv,
+o dobro da exploitability. O alvo global nao garante igual precisao em
+cada no. Um river condicional por modelo recebe enumeracao independente.
+Log de convergencia e politica completa nao sao snapshots de todos os
+regrets CFR para retomar cada iteracao. EV por acao pode ser null.
+
+Doze GiB por worker de calculo; no maximo oito hosts novos e isolados,
+um worker por host. O notebook consulta os dados; nao repete o solve.
+O solver e TexasSolver; fonte, patches e binario sao identificados nos
+reports. Nenhum leitor OCR nem limiar de confianca foi alterado.
+
+INSTALACAO SOMENTE APOS ENTREGA COMPLETA
+
+Baixe o ZIP Software-SB40-51 apontado no TXT final e extraia em pasta nova.
+Use Python 3.12 x64 e requirements.txt. Execute:
+  BAIXAR_BLIND_WAR_40BB_51.bat
+
+Indice novo: runtime\hu\sb40-51\bank\library.json.
+Os bancos sb40, sb40-17, sb40-34 e os 32 BTN25 permanecem preservados.
+Use --postflop-library com esse indice no operar_mesa.py do Software
+original e inicie a observacao antes dos blinds. Prepare a biblioteca
+uma vez; o historico observado condiciona o range a cada rua.
+
+Os bancos completos exigem bastante DISCO, mais um ZIP temporario por vez.
+O instalador confere os tamanhos. A consulta SQLite usa cache limitado;
+nao carregue a arvore inteira na RAM. Para baixar somente os 17 novos,
+em uma pasta independente:
+  .venv\Scripts\python.exe -m strategy.campaign_download --family sb40-51 --new-only --output runtime\hu\sb40-terceiro-lote --resume
+
+No banco completo, 1 a 34 sao anteriores e 35 a 51 pertencem ao terceiro
+lote. source_ordinal e tag preservam a origem. O plano recebido e
+recalculado a partir do checkpoint e da entrega PARENTES exatos; um
+SHA-256 autodeclarado nao autoriza trocar ranges, stacks, sizes ou alvo.
+
+Hero BB, limp/check, outros stacks/antes/sizes, 3-bet pots, multiway,
+ICM e PKO exigem trabalhos proprios. Nao ha roteamento automatico entre
+BTN25 e SB40. Semelhanca visual de boards nao substitui correspondencia
+exata; equivalencia de naipes precisa preservar os dois ranges.
+
+Windows aqui significa runners com arquivos reais de politicas e maos
+sinteticas, nao uma sessao PPPoker do notebook. Leitura, sincronizacao,
+historico, efeito do clique e desempenho reais continuam pendentes.
+O caso 8h -> 3h continua pendente no mesmo tema; nenhum limiar foi reduzido.
