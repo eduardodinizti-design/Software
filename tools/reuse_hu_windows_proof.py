@@ -16,7 +16,7 @@ from finalize_hu_campaign import checked_results
 
 
 def main(argv=None):
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--family',required=True,choices=('btn32','sb40','sb40-next16'))
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--family',required=True,choices=('btn32','sb40','sb40-next16','sb40-34'))
     p.add_argument('--ordinal',required=True,type=int);p.add_argument('--catalog-asset',required=True)
     p.add_argument('--output',required=True);args=p.parse_args(argv)
     catalog,_=load_family(args.family,args.catalog_asset,new_only=True);tag=catalog['tag']

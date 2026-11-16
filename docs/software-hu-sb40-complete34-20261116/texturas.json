@@ -1,0 +1,521 @@
+{
+  "cases": [
+    {
+      "board": [
+        "9c",
+        "Jc",
+        "Qd"
+      ],
+      "case_id": "737a80bf28f63e1fc79e",
+      "ordinal": 1,
+      "texture": {
+        "cards": [
+          "9c",
+          "Jc",
+          "Qd"
+        ],
+        "flush_count": 2,
+        "flush_possible": false,
+        "high_rank": 12,
+        "n": 3,
+        "paired": false,
+        "quads": false,
+        "straight_on_board": false,
+        "straightish": 3,
+        "structure": [
+          "H",
+          "H",
+          "M"
+        ],
+        "texture": "two_tone",
+        "trips": false
+      }
+    },
+    {
+      "board": [
+        "4c",
+        "8c",
+        "Kd"
+      ],
+      "case_id": "a6f7de756348b514b605",
+      "ordinal": 2,
+      "texture": {
+        "cards": [
+          "4c",
+          "8c",
+          "Kd"
+        ],
+        "flush_count": 2,
+        "flush_possible": false,
+        "high_rank": 13,
+        "n": 3,
+        "paired": false,
+        "quads": false,
+        "straight_on_board": false,
+        "straightish": 2,
+        "structure": [
+          "H",
+          "M",
+          "L"
+        ],
+        "texture": "two_tone",
+        "trips": false
+      }
+    },
+    {
+      "board": [
+        "Jc",
+        "Kd",
+        "Qc"
+      ],
+      "case_id": "daabe5c41b4727d07b1b",
+      "ordinal": 3,
+      "texture": {
+        "cards": [
+          "Jc",
+          "Kd",
+          "Qc"
+        ],
+        "flush_count": 2,
+        "flush_possible": false,
+        "high_rank": 13,
+        "n": 3,
+        "paired": false,
+        "quads": false,
+        "straight_on_board": false,
+        "straightish": 3,
+        "structure": [
+          "H",
+          "H",
+          "H"
+        ],
+        "texture": "two_tone",
+        "trips": false
+      }
+    },
+    {
+      "board": [
+        "7c",
+        "8d",
+        "Qh"
+      ],
+      "case_id": "6fa957b951568f30e76d",
+      "ordinal": 4,
+      "texture": {
+        "cards": [
+          "7c",
+          "8d",
+          "Qh"
+        ],
+        "flush_count": 1,
+        "flush_possible": false,
+        "high_rank": 12,
+        "n": 3,
+        "paired": false,
+        "quads": false,
+        "straight_on_board": false,
+        "straightish": 2,
+        "structure": [
+          "H",
+          "M",
+          "M"
+        ],
+        "texture": "rainbow",
+        "trips": false
+      }
+    },
+    {
+      "board": [
+        "7c",
+        "8d",
+        "Jh"
+      ],
+      "case_id": "ce2e28079e07dc09e088",
+      "ordinal": 5,
+      "texture": {
+        "cards": [
+          "7c",
+          "8d",
+          "Jh"
+        ],
+        "flush_count": 1,
+        "flush_possible": false,
+        "high_rank": 11,
+        "n": 3,
+        "paired": false,
+        "quads": false,
+        "straight_on_board": false,
+        "straightish": 3,
+        "structure": [
+          "H",
+          "M",
+          "M"
+        ],
+        "texture": "rainbow",
+        "trips": false
+      }
+    },
+    {
+      "board": [
+        "4c",
+        "Ad",
+        "Jh"
+      ],
+      "case_id": "7482258c73d750ed3b6d",
+      "ordinal": 6,
+      "texture": {
+        "cards": [
+          "4c",
+          "Ad",
+          "Jh"
+        ],
+        "flush_count": 1,
+        "flush_possible": false,
+        "high_rank": 14,
+        "n": 3,
+        "paired": false,
+        "quads": false,
+        "straight_on_board": false,
+        "straightish": 2,
+        "structure": [
+          "A",
+          "H",
+          "L"
+        ],
+        "texture": "rainbow",
+        "trips": false
+      }
+    },
+    {
+      "board": [
+        "Ac",
+        "Jd",
+        "Th"
+      ],
+      "case_id": "dfeb978841d74318a5c5",
+      "ordinal": 7,
+      "texture": {
+        "cards": [
+          "Ac",
+          "Jd",
+          "Th"
+        ],
+        "flush_count": 1,
+        "flush_possible": false,
+        "high_rank": 14,
+        "n": 3,
+        "paired": false,
+        "quads": false,
+        "straight_on_board": false,
+        "straightish": 3,
+        "structure": [
+          "A",
+          "H",
+          "H"
+        ],
+        "texture": "rainbow",
+        "trips": false
+      }
+    },
+    {
+      "board": [
+        "3c",
+        "3d",
+        "Qc"
+      ],
+      "case_id": "63b2c36ac67d4fe384de",
+      "ordinal": 8,
+      "texture": {
+        "cards": [
+          "3c",
+          "3d",
+          "Qc"
+        ],
+        "flush_count": 2,
+        "flush_possible": false,
+        "high_rank": 12,
+        "n": 3,
+        "paired": true,
+        "quads": false,
+        "straight_on_board": false,
+        "straightish": 1,
+        "structure": [
+          "H",
+          "L"
+        ],
+        "texture": "two_tone",
+        "trips": false
+      }
+    },
+    {
+      "board": [
+        "5c",
+        "5d",
+        "7c"
+      ],
+      "case_id": "e76ee43d2ca76aaba540",
+      "ordinal": 9,
+      "texture": {
+        "cards": [
+          "5c",
+          "5d",
+          "7c"
+        ],
+        "flush_count": 2,
+        "flush_possible": false,
+        "high_rank": 7,
+        "n": 3,
+        "paired": true,
+        "quads": false,
+        "straight_on_board": false,
+        "straightish": 2,
+        "structure": [
+          "M",
+          "L"
+        ],
+        "texture": "two_tone",
+        "trips": false
+      }
+    },
+    {
+      "board": [
+        "4c",
+        "4d",
+        "Ac"
+      ],
+      "case_id": "8e10d3f3f426de781b7f",
+      "ordinal": 10,
+      "texture": {
+        "cards": [
+          "4c",
+          "4d",
+          "Ac"
+        ],
+        "flush_count": 2,
+        "flush_possible": false,
+        "high_rank": 14,
+        "n": 3,
+        "paired": true,
+        "quads": false,
+        "straight_on_board": false,
+        "straightish": 2,
+        "structure": [
+          "A",
+          "L"
+        ],
+        "texture": "two_tone",
+        "trips": false
+      }
+    },
+    {
+      "board": [
+        "Ac",
+        "Tc",
+        "Td"
+      ],
+      "case_id": "3cb31ef8d23e7f12b241",
+      "ordinal": 11,
+      "texture": {
+        "cards": [
+          "Ac",
+          "Tc",
+          "Td"
+        ],
+        "flush_count": 2,
+        "flush_possible": false,
+        "high_rank": 14,
+        "n": 3,
+        "paired": true,
+        "quads": false,
+        "straight_on_board": false,
+        "straightish": 2,
+        "structure": [
+          "A",
+          "H"
+        ],
+        "texture": "two_tone",
+        "trips": false
+      }
+    },
+    {
+      "board": [
+        "6c",
+        "Jd",
+        "Jh"
+      ],
+      "case_id": "49305f0846b84b7f19a7",
+      "ordinal": 12,
+      "texture": {
+        "cards": [
+          "6c",
+          "Jd",
+          "Jh"
+        ],
+        "flush_count": 1,
+        "flush_possible": false,
+        "high_rank": 11,
+        "n": 3,
+        "paired": true,
+        "quads": false,
+        "straight_on_board": false,
+        "straightish": 1,
+        "structure": [
+          "H",
+          "M"
+        ],
+        "texture": "rainbow",
+        "trips": false
+      }
+    },
+    {
+      "board": [
+        "Jc",
+        "Qd",
+        "Qh"
+      ],
+      "case_id": "bc715152c111cc7bd542",
+      "ordinal": 13,
+      "texture": {
+        "cards": [
+          "Jc",
+          "Qd",
+          "Qh"
+        ],
+        "flush_count": 1,
+        "flush_possible": false,
+        "high_rank": 12,
+        "n": 3,
+        "paired": true,
+        "quads": false,
+        "straight_on_board": false,
+        "straightish": 2,
+        "structure": [
+          "H",
+          "H"
+        ],
+        "texture": "rainbow",
+        "trips": false
+      }
+    },
+    {
+      "board": [
+        "3c",
+        "3d",
+        "Kh"
+      ],
+      "case_id": "034319fe3038ac51cf08",
+      "ordinal": 14,
+      "texture": {
+        "cards": [
+          "3c",
+          "3d",
+          "Kh"
+        ],
+        "flush_count": 1,
+        "flush_possible": false,
+        "high_rank": 13,
+        "n": 3,
+        "paired": true,
+        "quads": false,
+        "straight_on_board": false,
+        "straightish": 1,
+        "structure": [
+          "H",
+          "L"
+        ],
+        "texture": "rainbow",
+        "trips": false
+      }
+    },
+    {
+      "board": [
+        "Jc",
+        "Jd",
+        "Kh"
+      ],
+      "case_id": "435b2034b4187beb60df",
+      "ordinal": 15,
+      "texture": {
+        "cards": [
+          "Jc",
+          "Jd",
+          "Kh"
+        ],
+        "flush_count": 1,
+        "flush_possible": false,
+        "high_rank": 13,
+        "n": 3,
+        "paired": true,
+        "quads": false,
+        "straight_on_board": false,
+        "straightish": 2,
+        "structure": [
+          "H",
+          "H"
+        ],
+        "texture": "rainbow",
+        "trips": false
+      }
+    },
+    {
+      "board": [
+        "9c",
+        "9d",
+        "9h"
+      ],
+      "case_id": "f6de068d9c82feab87b9",
+      "ordinal": 16,
+      "texture": {
+        "cards": [
+          "9c",
+          "9d",
+          "9h"
+        ],
+        "flush_count": 1,
+        "flush_possible": false,
+        "high_rank": 9,
+        "n": 3,
+        "paired": true,
+        "quads": false,
+        "straight_on_board": false,
+        "straightish": 1,
+        "structure": [
+          "M"
+        ],
+        "texture": "rainbow",
+        "trips": true
+      }
+    },
+    {
+      "board": [
+        "Kc",
+        "Kd",
+        "Kh"
+      ],
+      "case_id": "3e29ce1765f54ae0df1e",
+      "ordinal": 17,
+      "texture": {
+        "cards": [
+          "Kc",
+          "Kd",
+          "Kh"
+        ],
+        "flush_count": 1,
+        "flush_possible": false,
+        "high_rank": 13,
+        "n": 3,
+        "paired": true,
+        "quads": false,
+        "straight_on_board": false,
+        "straightish": 1,
+        "structure": [
+          "H"
+        ],
+        "texture": "rainbow",
+        "trips": true
+      }
+    }
+  ],
+  "plan_sha256": "f070d2c0289dd6eef328e48da8fbecd001c6bf483380e987a7208ea730b63d67",
+  "schema": "software.hu-sb40-complete34-textures.v1"
+}

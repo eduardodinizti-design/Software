@@ -1,0 +1,122 @@
+name: HU SB40 seventeen new full trees after a durable seventeen-model checkpoint
+on:
+  push:
+    branches: [feat/hu-sb40-complete34-20261116]
+    paths: [.github/workflows/hu-sb40-complete34.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+  statuses: write
+concurrency:
+  group: hu-sb40-complete34-20261116
+  cancel-in-progress: false
+env:
+  PLAN: docs/software-hu-sb40-complete34-20261116/sb40-complete34-plan.json
+  CHECKPOINT: docs/software-hu-sb40-complete34-20261116/checkpoint-primeiros17.json
+  GH_TOKEN: ${{ github.token }}
+  PYTHONUNBUFFERED: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  HU_GITHUB_STATUS_PREFIX: hu-sb40-complete34
+  HU_GITHUB_RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+jobs:
+  initialize:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install numpy==2.2.6
+      - name: Require all previous full policies, actual Windows receipts and verified source to remain saved
+        run: python tools/check_hu_sb40_checkpoint.py --expected "$CHECKPOINT" --output runtime/checked-prerequisite.json
+      - run: python tools/hu_batch16.py init --plan "$PLAN"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sb40-saved-first17-prerequisite-a${{ github.run_attempt }}
+          path: runtime/checked-prerequisite.json
+          retention-days: 30
+  calculate:
+    needs: initialize
+    runs-on: ubuntu-24.04
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        ordinal: [4, 5, 6, 7, 15, 16, 1, 2, 3, 8, 9, 10, 11, 12, 13, 14, 17]
+    name: Complete SB40 new flop ${{ matrix.ordinal }} of seventeen
+    env:
+      OMP_NUM_THREADS: '4'
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install numpy==2.2.6
+      - id: reuse
+        name: Keep any already published complete result without repeating CFR
+        run: python tools/hu_batch16.py check --plan "$PLAN" --ordinal ${{ matrix.ordinal }} --output runtime/reused-native.json
+      - if: steps.reuse.outputs.reused != 'true'
+        name: Reserve storage only on this fresh disposable GitHub-hosted VM
+        run: |
+          test "${{ runner.environment }}" = github-hosted
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
+          df -h "$GITHUB_WORKSPACE"
+      - if: steps.reuse.outputs.reused != 'true'
+        name: Build the pinned separate solver with full streaming export
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libfmt-dev zlib1g-dev
+          python -m pip install opencv-python-headless==4.11.0.86 psutil==6.1.1 pytesseract==0.3.13
+          git clone https://github.com/bupticybee/TexasSolver.git "$RUNNER_TEMP/TexasSolver"
+          git -C "$RUNNER_TEMP/TexasSolver" checkout 02c8021ee1307c18aa1e76b772c6ae1451601bc6
+          python tools/build_texassolver_console.py --source "$RUNNER_TEMP/TexasSolver" --fmt-include /usr/include --out "$RUNNER_TEMP/hu-native/solver-stream" --stream-export
+          cp "$RUNNER_TEMP/hu-native/solver-stream.manifest.json" runtime/native-build.json
+      - if: steps.reuse.outputs.reused != 'true'
+        name: Check saved-bank gating, exact game identity and native asymmetric stacks before solving
+        run: |
+          HU_STREAM_TEST_BINARY="$RUNNER_TEMP/hu-native/solver-stream" HU_STREAM_TEST_RESOURCES="$RUNNER_TEMP/TexasSolver/resources" python -m unittest test_hu_sb40_complete34 test_hu_sb40_next16 test_hu_blind_war test_hu_campaign_download -q
+      - if: steps.reuse.outputs.reused != 'true'
+        name: Solve and preserve full actions, private-combo frequencies and sizes on every street
+        run: python tools/hu_batch16.py case --plan "$PLAN" --ordinal ${{ matrix.ordinal }} --binary "$RUNNER_TEMP/hu-native/solver-stream" --resources "$RUNNER_TEMP/TexasSolver/resources" --output runtime/hu-sb40-complete34-case
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sb40-complete34-diagnostics-${{ matrix.ordinal }}-a${{ github.run_attempt }}
+          path: |
+            runtime/reused-native.json
+            runtime/native-build.json
+            runtime/hu-sb40-complete34-case/**/*.json
+            runtime/hu-sb40-complete34-case/**/*.txt
+            runtime/hu-sb40-complete34-case/**/*.log
+          retention-days: 30
+      - name: Preserve complete output if later conversion or publication fails
+        id: recovery
+        if: failure()
+        run: |
+          python - <<'PY'
+          import os,pathlib
+          root=pathlib.Path('runtime/hu-sb40-complete34-case/study')
+          for pattern in ('delivery/parts/*','delivery/*.zip','bank/policies/*.sqlite','bank/temporary/*/native/strategy.jsonl.gz'):
+              if any(root.glob(pattern)):
+                  with open(os.environ['GITHUB_OUTPUT'],'a') as output:output.write('path='+str(root/pattern)+'\n')
+                  break
+          PY
+      - uses: actions/upload-artifact@v4
+        if: failure() && steps.recovery.outputs.path != ''
+        with:
+          name: sb40-complete34-recovery-${{ matrix.ordinal }}-a${{ github.run_attempt }}
+          path: ${{ steps.recovery.outputs.path }}
+          compression-level: 0
+          retention-days: 30
+  catalog:
+    needs: [initialize, calculate]
+    if: always() && needs.initialize.result == 'success'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install numpy==2.2.6
+      - run: python tools/hu_batch16.py catalog --plan "$PLAN" --output runtime/hu-sb40-complete34-catalog
