@@ -1,0 +1,92 @@
+"""GAP-MAP pré-flop: para CADA célula que o jogo ao vivo precisa (modo x stage x
+spread x spot x bucket x par-de-posição), diz se há nó VALIDADO, e se NÃO, classifica
+o buraco: BUCKET_MISMATCH (existe nó validado do MESMO contexto noutro bucket ->
+fecha alinhando bucket), SPREAD_MISSING (existe noutro spread -> fecha c/ o spread),
+ou SPARSE (não existe em lugar nenhum -> precisa ingerir/gerar range). Read-only.
+
+Uso: python gap_map_preflop.py [pack.json]
+"""
+import collections
+import sys
+
+from preflop_advisor import PreflopAdvisor
+
+LIVE_BUCKETS = [5, 8, 10, 12, 15, 20, 25, 30, 40]
+# chip_ev/pko usam spread=None; icm/pko_icm usam iguais/curtos_ini/curtos_fim.
+_STG = ('iguais', 'curtos_ini', 'curtos_fim')
+MODES = [('chip_ev', 'mid', (None,)),
+         ('icm', 'pre_itm', _STG), ('icm', 'bubble', _STG), ('icm', 'ft', _STG),
+         ('pko', 'mid', (None,)),
+         ('pko_icm', 'pre_itm', _STG), ('pko_icm', 'bubble', _STG), ('pko_icm', 'ft', _STG)]
+# spots executáveis (validar presença de nó): o resto (call-off/piso) é tratado à parte
+EXEC_SPOTS = ('open_raise', 'open_shove', 'vs_open', 'vs_open_shove', '3bet_shove', 'vs_3bet')
+
+
+def main(argv=None):
+    pack = (argv or sys.argv[1:] or [r'C:\Meus Projetos\Aplicativos\nvt-ranges-validados.json'])[0]
+    adv = PreflopAdvisor.from_file(pack)
+    # índice de nós VALIDADOS: (mode,stage,spot,hero,vs,spread) -> set de buckets
+    val = collections.defaultdict(set)
+    allsp = collections.defaultdict(set)      # (mode,stage,spot,hero,vs) -> set de (spread)
+    for key, node in adv._index.items():
+        mode, fmt, stage, players, bucket, spot, hero, vs, spread = key
+        if not node.get('validated'):
+            continue
+        val[(mode, stage, spot, hero, vs, spread)].add(bucket)
+        allsp[(mode, stage, spot, hero, vs)].add(spread)
+
+    cats = collections.Counter()
+    detail = collections.defaultdict(lambda: collections.Counter())
+    # varre as células que importam: por (mode,stage,spread) e os spots executáveis,
+    # cada (hero,vs) presente em QUALQUER bucket, exigindo os LIVE_BUCKETS plausíveis.
+    seen_pairs = collections.defaultdict(set)   # (mode,stage,spot,spread) -> {(hero,vs)}
+    for (mode, stage, spot, hero, vs, spread), bks in val.items():
+        seen_pairs[(mode, stage, spot, spread)].add((hero, vs))
+
+    for mode, stage, spreads in MODES:
+        for spot in EXEC_SPOTS:
+            for spread in spreads:
+                pairs = seen_pairs.get((mode, stage, spot, spread)) \
+                    or {(h, v) for (m, s, sp, h, v) in allsp if (m, s, sp) == (mode, stage, spot)}
+                for (hero, vs) in pairs:
+                    have = val.get((mode, stage, spot, hero, vs, spread), set())
+                    # buckets "necessários" = os LIVE que fazem sentido p/ o spot
+                    need = [b for b in LIVE_BUCKETS
+                            if (b <= 25 if 'shove' in spot else b >= 10)]
+                    for b in need:
+                        if b in have:
+                            cats['COBERTO']; continue
+                        if have:                                    # mesmo contexto, outro bucket
+                            cats['BUCKET_MISMATCH'] += 1
+                            detail['BUCKET_MISMATCH'][(mode, spot)] += 1
+                        elif spread is not None and any(
+                                val.get((mode, stage, spot, hero, vs, s2))
+                                for s2 in _STG if s2 != spread):
+                            cats['SPREAD_MISSING'] += 1
+                            detail['SPREAD_MISSING'][(mode, spot)] += 1
+                        else:
+                            cats['SPARSE'] += 1
+                            detail['SPARSE'][(mode, spot)] += 1
+
+    print('=' * 72)
+    print('GAP-MAP PRE-FLOP — classificação dos buracos executáveis')
+    print('=' * 72)
+    tot = sum(v for k, v in cats.items() if k != 'COBERTO') or 1
+    for k in ('BUCKET_MISMATCH', 'SPREAD_MISSING', 'SPARSE'):
+        print('  %-16s %5d células  (%.0f%% dos buracos)' % (k, cats[k], 100.0 * cats[k] / tot))
+    print()
+    print('COMO FECHA CADA UM:')
+    print('  BUCKET_MISMATCH -> alinhar bucketing (per-modo: 30/40bb PKO usa 35; nó JÁ existe)')
+    print('  SPREAD_MISSING  -> ingerir o spread faltante (nó existe noutro spread)')
+    print('  SPARSE          -> gerar/ingerir range nova (não existe em lugar nenhum)')
+    print()
+    for cat in ('BUCKET_MISMATCH', 'SPREAD_MISSING', 'SPARSE'):
+        print('--- %s por (modo, spot) [top] ---' % cat)
+        for (mode, spot), n in detail[cat].most_common(12):
+            print('    %-9s %-15s x%d' % (mode, spot, n))
+        print()
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())
