@@ -140,20 +140,21 @@ def _classify(node, stacks, bb):
     if not isinstance(player, int) or not (0 <= player < len(POSITIONS)):
         return None
     acts = node.get('actions') or []
+    # SO spot de shove PURO = decisao BINARIA {fold, all-in}. Nos com 3 acoes
+    # (F/C/R = call-off-ou-rejam, ou F/min-open/jam) NAO sao shove puro: a massa
+    # da acao de CALL/open ficaria de fora e a freq nao somaria 1 (bug real que
+    # colocou AA jam=0 no pack). Facing-all-in (F/C) e CALL-OFF, tratado por equity
+    # ao vivo, nao range de jam. Exige exatamente 2 acoes.
+    if len(acts) != 2:
+        return None
     fold_i = next((i for i, a in enumerate(acts) if a.get('type') == 'F'), None)
-    # acao de JAM do hero = R com amount >= 0.9*stack do hero
     hero_stack = stacks[player] if player < len(stacks) else 0.0
     jam_i = next((i for i, a in enumerate(acts)
                   if a.get('type') == 'R' and a.get('amount', 0) >= JAM_FRAC * hero_stack), None)
     if fold_i is None or jam_i is None:
         return None
-    # tem R nao-jam (hero teria um open/3bet nao-allin)? entao nao e spot de shove puro
-    has_small_raise = any(a.get('type') == 'R' and a.get('amount', 0) < JAM_FRAC * hero_stack
-                          for a in acts)
     hero = POSITIONS[player]
     if len(raises) == 0:
-        if has_small_raise:
-            return None                                  # open_raise (vem do rcp), nao open_shove
         return ('open_shove', hero, (), jam_i, fold_i)
     # 1 raise antes (opener)
     opener = raises[0].get('player')
@@ -193,6 +194,11 @@ def nodes_from_tree(zpath):
         acts = node['actions']
         freqs = _hands_freq(node, [jam_i, fold_i])
         freq = {'all_in': freqs[jam_i], 'fold': freqs[fold_i]}
+        # GUARDA: jam+fold tem que capturar ~toda a massa por classe (senao havia
+        # uma 3a acao e o no nao e shove puro -> descarta; nunca entra freq que
+        # nao soma 1 no cerebro).
+        if any(abs(freq['all_in'][i] + freq['fold'][i] - 1.0) > 0.02 for i in range(169)):
+            continue
         # EV por acao (opcional) na nossa ordem
         ev = {}
         hands = node.get('hands') or {}
