@@ -1,0 +1,28 @@
+{
+  "schema": "software.hu-sb40-to102-queue-check.v1",
+  "status": "QUEUED_WAITING_FOR_SAVED_WINDOWS_VERIFIED_51",
+  "observed_at_brasilia": "2026-11-16T02:28:58.159800-03:00",
+  "source_commit": "e5a1e5e751ca25cd19d912de9782ce53c4aa5dea",
+  "branch": "feat/hu-sb40-to102-20261116",
+  "workflow_run": "43810403786",
+  "workflow_url": "https://github.com/eduardodinizti-design/Software/actions/runs/43810403786",
+  "pull_request": 18,
+  "pull_request_url": "https://github.com/eduardodinizti-design/Software/pull/18",
+  "target_totals": [
+    68,
+    85,
+    102
+  ],
+  "new_models_per_stage": 17,
+  "additional_reserved_models": 51,
+  "current_job": "initialize68",
+  "current_step": "Wait for 51 complete saved Windows-verified models before allocating the next seventeen",
+  "only_prerequisite_wait_started": true,
+  "new_series_cfr_started": false,
+  "completed_target_models_claimed": false,
+  "previous_51_run": "43807544505",
+  "native_enabled_linux_tests": 280,
+  "linux_status": "PASS",
+  "actionlint_status": "PASS",
+  "pppoker_windows_validated": false
+}
