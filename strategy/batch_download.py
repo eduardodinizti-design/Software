@@ -6,11 +6,14 @@ import argparse
 from datetime import datetime,timezone
 import hashlib
 import json
+import os
 from pathlib import Path
 import re
 import shutil
 import sys
 import uuid
+import urllib.request
+from urllib.parse import urlsplit
 import zipfile
 
 from strategy.batch_archive import BATCH_TAG,PILOT_TAG,REPOSITORY,make_catalog
@@ -25,7 +28,19 @@ ASSET_BASE=f'https://github.com/{REPOSITORY}/releases/download/'
 
 
 def read_json(url,limit=4*1024**2):
-    with fetch(url) as response:raw=response.read(limit+1)
+    parsed=urlsplit(url);token=os.environ.get('GH_TOKEN') or os.environ.get('GITHUB_TOKEN')
+    if token and parsed.scheme=='https' and parsed.netloc=='api.github.com':
+        request=urllib.request.Request(url,headers={'User-Agent':'Software-HU-metadata/1',
+            'Accept':'application/vnd.github+json','Authorization':'Bearer '+token})
+        class MetadataRedirect(urllib.request.HTTPRedirectHandler):
+            def redirect_request(self,req,fp,code,msg,headers,newurl):
+                target=urlsplit(newurl)
+                if target.scheme!='https' or target.netloc!='api.github.com':
+                    raise StrategyError('AUTHENTICATED_METADATA_REDIRECT_OUTSIDE_API_REFUSED')
+                return super().redirect_request(req,fp,code,msg,headers,newurl)
+        response=urllib.request.build_opener(MetadataRedirect()).open(request,timeout=60)
+    else:response=fetch(url)
+    with response:raw=response.read(limit+1)
     if len(raw)>limit:raise StrategyError('BATCH_METADATA_TOO_LARGE')
     return json.loads(raw)
 

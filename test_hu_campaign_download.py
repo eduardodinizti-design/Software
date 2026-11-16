@@ -1,6 +1,8 @@
 """Pin native models, reject changed inventories and transfer exact contexts."""
 import copy
+import io
 import json
+import os
 from pathlib import Path
 import unittest
 from unittest.mock import patch
@@ -9,6 +11,7 @@ from strategy.batch_archive import make_catalog
 from strategy.batch_jobs import case_id
 from strategy.campaign_download import CLOSE32_TAG,PLANS,combine_thirty_two,load_campaign
 from strategy.state_contract import StrategyError
+from strategy.batch_download import read_json
 
 HERE=Path(__file__).parent
 
@@ -68,6 +71,23 @@ class CampaignDownloadTests(unittest.TestCase):
             return value
         with patch('strategy.campaign_download.read_json',side_effect=wrong):
             with self.assertRaisesRegex(StrategyError,'REMOTE_REFERENCE_PART_NOT_VERIFIED'):load_campaign(CLOSE32_TAG)
+
+
+class AuthenticatedMetadataTests(unittest.TestCase):
+    def test_workflow_token_is_used_only_for_github_api_metadata(self):
+        with patch.dict(os.environ,{'GH_TOKEN':'test-only-token'}),patch('strategy.batch_download.urllib.request.build_opener') as build:
+            build.return_value.open.return_value=io.BytesIO(b'{"ok":true}')
+            self.assertTrue(read_json('https://api.github.com/repos/example/project')['ok'])
+            request=build.return_value.open.call_args.args[0]
+            self.assertEqual(request.get_header('Authorization'),'Bearer test-only-token')
+            redirect=build.call_args.args[0]
+            with self.assertRaisesRegex(StrategyError,'REDIRECT_OUTSIDE_API'):
+                redirect.redirect_request(request,None,302,'redirect',{},'https://example.org/asset')
+
+    def test_release_asset_fetch_does_not_receive_the_metadata_token(self):
+        with patch.dict(os.environ,{'GH_TOKEN':'test-only-token'}),patch('strategy.batch_download.fetch',return_value=io.BytesIO(b'{}')) as fetch,patch('strategy.batch_download.urllib.request.build_opener') as build:
+            read_json('https://github.com/example/project/releases/download/tag/manifest.json')
+            build.assert_not_called();fetch.assert_called_once()
 
 
 if __name__=='__main__':unittest.main()

@@ -1,0 +1,91 @@
+name: HU complete32 authenticated published data and Windows delivery
+on:
+  push:
+    branches: [feat/hu-close32-sb40-20261115]
+    paths: [.github/workflows/hu-close32-verified-windows.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ github.token }}
+  PYTHONUTF8: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  BTN_CATALOG: batch-catalog-43769271278.json
+jobs:
+  contracts:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install numpy==2.2.6 opencv-python==4.11.0.86 psutil==6.1.1 pytesseract==0.3.13
+      - shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force runtime/hu-close32-contracts | Out-Null
+          python -m unittest test_hu_campaign test_hu_blind_war test_hu_campaign_download test_hu_campaign_delivery test_hu_policy_json test_hu_next16 test_hu_reference test_hu_batches test_hu_policy_engine test_hu_operational test_cursor test_window_capture_engine test_window_capture_audit test_capture_windows_native test_raise_plan test_raise_sequencer -v *> runtime/hu-close32-contracts/contracts.txt
+          $code = $LASTEXITCODE
+          Get-Content runtime/hu-close32-contracts/contracts.txt -Tail 18
+          exit $code
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: hu-close32-authenticated-windows-contracts-a${{ github.run_attempt }}
+          path: runtime/hu-close32-contracts/contracts.txt
+          retention-days: 14
+      - run: |
+          Copy-Item runtime/hu-close32-contracts/contracts.txt runtime/windows-contracts-btn32-${{ github.run_id }}-a${{ github.run_attempt }}.txt
+          gh release upload hu-btn-bb-nvt-complete32-20261115 --repo "$env:GITHUB_REPOSITORY" runtime/windows-contracts-btn32-${{ github.run_id }}-a${{ github.run_attempt }}.txt
+  actual-data:
+    needs: contracts
+    runs-on: windows-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        ordinal: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+    name: Authenticated Windows BTN32 new policy ${{ matrix.ordinal }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install numpy==2.2.6
+      - run: python tools/validate_hu_campaign_windows.py --family btn32 --ordinal ${{ matrix.ordinal }} --catalog-asset "$env:BTN_CATALOG" --output runtime/hu-btn32-proof
+      - run: |
+          $label = "{0:D2}" -f [int]"${{ matrix.ordinal }}"
+          Copy-Item runtime/hu-btn32-proof/windows-proof.json "runtime/windows-btn32-case-${label}-${{ github.run_id }}-a${{ github.run_attempt }}.json"
+          Compress-Archive -Path runtime/hu-btn32-proof/windows-proof,runtime/hu-btn32-proof/request-*.json,runtime/hu-btn32-proof/response-*.json -DestinationPath "runtime/windows-btn32-case-${label}-${{ github.run_id }}-a${{ github.run_attempt }}-json-history.zip"
+          gh release upload hu-btn-bb-nvt-complete32-20261115 --repo "$env:GITHUB_REPOSITORY" "runtime/windows-btn32-case-${label}-${{ github.run_id }}-a${{ github.run_attempt }}.json" "runtime/windows-btn32-case-${label}-${{ github.run_id }}-a${{ github.run_attempt }}-json-history.zip"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: hu-close32-authenticated-windows-${{ matrix.ordinal }}-a${{ github.run_attempt }}
+          path: |
+            runtime/hu-btn32-proof/windows-proof.json
+            runtime/hu-btn32-proof/windows-proof/*.json
+            runtime/hu-btn32-proof/request-*.json
+            runtime/hu-btn32-proof/response-*.json
+            runtime/hu-btn32-proof/download/download-receipt.json
+          retention-days: 14
+  deliver:
+    needs: actual-data
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install numpy==2.2.6
+      - run: python tools/finalize_hu_campaign.py --family btn32 --catalog-asset "$BTN_CATALOG" --windows-run-id "${{ github.run_id }}" --output runtime/hu-close32-final
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: hu-close32-authenticated-final-a${{ github.run_attempt }}
+          path: |
+            runtime/hu-close32-final/*.json
+            runtime/hu-close32-final/*.txt
+          retention-days: 14
