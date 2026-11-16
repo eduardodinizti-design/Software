@@ -1,0 +1,9 @@
+{
+  "campaign_plan_sha256": "ed7f4a9b39e34fb4e83055eede52b20d7a9cb065fe6e676d81046bc04dceb26e",
+  "overrides": {
+    "memory_mb": 12288
+  },
+  "profile_sha256": "3998d6b30f093f694addd7c3920972ce4c23b301a57bc5e8e8642525599810e0",
+  "reason": "Native std::bad_alloc during iteration 0 at 10 GiB. Retry matches the published pilot 12 GiB budget; no strategic input is changed.",
+  "schema": "software.hu-campaign-resource-profile.v1"
+}

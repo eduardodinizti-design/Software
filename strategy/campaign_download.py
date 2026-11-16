@@ -9,13 +9,14 @@ from strategy.batch_archive import REPOSITORY,BATCH_TAG,PILOT_TAG,make_catalog,v
 from strategy.batch_download import (ASSET_BASE,check_bundle,install_catalog,load_catalog,
     pilot_manifest,read_json,valid_sha)
 from strategy.batch_jobs import canonical_flop,case_id
-from strategy.blind_war import SB40_TAG
-from strategy.campaign import CLOSE32_TAG,validate_campaign_plan
+from strategy.blind_war import SB40_TAG,SB40_NEXT16_TAG
+from strategy.campaign import CLOSE32_TAG,validate_campaign_plan,model_identity
 from strategy.state_contract import StrategyError
 
 PLANS={
     CLOSE32_TAG:('close32-plan.json','356a455380ed5cc1d88e559185c60b1c47a72bbdfa9690da9afbb04af107536f'),
     SB40_TAG:('sb40-plan.json','b6c55d124bcb8a334c2d79a2017f66cf43046100f297318093b3c1c51f200756'),
+    SB40_NEXT16_TAG:('sb40-next16-plan.json','ed7f4a9b39e34fb4e83055eede52b20d7a9cb065fe6e676d81046bc04dceb26e'),
 }
 
 
@@ -67,18 +68,42 @@ def combine_thirty_two(catalog,old,pilot):
     return result
 
 
+def combine_sb40_seventeen(catalog,pilot):
+    plan=catalog['_original_plan'];old_plan=pilot['_original_plan']
+    if (catalog['tag']!=SB40_NEXT16_TAG or len(catalog['cases'])!=16
+            or pilot['tag']!=SB40_TAG or pilot.get('status')!='COMPLETE' or len(pilot['cases'])!=1):
+        raise StrategyError('SIXTEEN_NEW_SB40_MODELS_AND_COMPLETE_PILOT_REQUIRED')
+    if (model_identity(plan['game'])!=model_identity(old_plan['game'])
+            or catalog.get('profile_settings',{})!=pilot.get('profile_settings',{})):
+        raise StrategyError('SB40_PRIORS_MENU_GEOMETRY_OR_ANTE_CHANGED')
+    identity=lambda c:(canonical_flop(c['board']),c['policy_sha256'],c['file_sha256'],c['tag'])
+    if {identity(c) for c in pilot['cases']}!={identity(c) for c in plan['preexisting_models']}:
+        raise StrategyError('SB40_PREEXISTING_PILOT_IDENTITY_CHANGED')
+    rows=[dict(c,source_ordinal=c['ordinal'],ordinal=i+1)
+          for i,c in enumerate(pilot['cases']+catalog['cases'])]
+    if len({canonical_flop(c['board']) for c in rows})!=17:
+        raise StrategyError('SEVENTEEN_SUIT_DISTINCT_SB40_MODELS_REQUIRED')
+    return dict(catalog,cases=rows,planned_new_flops=17,published_new_flops=17,native_target_met_flops=17,
+        full_model_count=17,suit_aliases_counted_as_models=False,pilot_tag=SB40_TAG,
+        source_catalogs=[dict(tag=SB40_TAG,asset='batch-catalog-43777381626.json'),
+            dict(tag=SB40_NEXT16_TAG,plan_sha256=plan['plan_sha256'])])
+
+
 def load_family(family,asset=None,*,new_only=False):
-    tag=CLOSE32_TAG if family=='btn32' else SB40_TAG if family=='sb40' else None
+    tag={'btn32':CLOSE32_TAG,'sb40':SB40_TAG,'sb40-next16':SB40_NEXT16_TAG}.get(family)
     if tag is None:raise StrategyError('KNOWN_FAMILY_REQUIRED')
     catalog,name=load_campaign(tag,asset)
     if family=='btn32' and not new_only:
         old,_=load_catalog('batch-catalog-43764947533.json')
         catalog=combine_thirty_two(catalog,old,pilot_manifest())
+    if family=='sb40-next16' and not new_only:
+        pilot,_=load_campaign(SB40_TAG,'batch-catalog-43777381626.json')
+        catalog=combine_sb40_seventeen(catalog,pilot)
     return catalog,name
 
 
 def main(argv=None):
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--family',required=True,choices=('btn32','sb40'))
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--family',required=True,choices=('btn32','sb40','sb40-next16'))
     p.add_argument('--output');p.add_argument('--ordinals',nargs='+',type=int);p.add_argument('--catalog-asset')
     p.add_argument('--new-only',action='store_true');p.add_argument('--resume',action='store_true')
     args=p.parse_args(argv)

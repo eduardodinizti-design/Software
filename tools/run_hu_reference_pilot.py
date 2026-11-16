@@ -58,12 +58,15 @@ def progress(bank):
 
 
 def report_worker_failure(output,bank):
-    paths=[output/'driver.txt',*sorted((bank/'temporary').glob('*/worker.log'))[:3]]
+    paths=[output/'driver.txt',*sorted((bank/'temporary').glob('*/worker.log'))[:3],
+           *sorted((bank/'temporary').glob('*/native/solver.log'))[:3]]
     records=[]
     for path in paths:
         try:
             with path.open('rb') as source:
                 source.seek(0,2);source.seek(max(0,source.tell()-5000));tail=source.read().decode(errors='replace')
+            if path.name=='solver.log':
+                tail=tail.replace('\b','').split('<<<START SOLVING>>>')[-1][-1600:]
             records.append(dict(path=str(path.relative_to(output)),tail=tail))
         except FileNotFoundError:pass
     notice(dict(event='WORKER_FAILED',diagnostics=records))

@@ -1,0 +1,105 @@
+SOFTWARE ORIGINAL — BLIND WAR SB x BB 40 BB: 17 FLOPS COMPLETOS
+
+Concluidos 16 flops novos; com o piloto As 7d 2c, sao 17 modelos distintos nesta familia.
+Os 32 modelos BTN x BB de 25 BB e a instalacao antiga foram preservados.
+Estados publicos: 7,475,512; politicas SQLite: 59.07 GiB.
+Salvos: arvore completa dentro do menu, acoes, frequencias por combinacao, sizes e respostas flop/turn/river.
+Os ranges condicionais seguem o historico observado; o range inicial nao e reiniciado a cada street.
+Parametros e checkpoints de convergencia estao nos reports dos bancos. Nao sao snapshots CFR de cada iteracao.
+
+CONFIGURACAO EXATA
+Torneio chip-EV regular com nove jogadores originalmente; sete folds, SB open 2 BB, BB call.
+Ambos com 40 BB antes das postagens; big-blind ante de 1 BB. Flop: pote 5 BB, SB 38 BB e BB 37 BB.
+SB e o jogador fora de posicao. Dois jogadores ativos nao transforma a mesa em um torneio originalmente HU.
+O perfil operacional desta biblioteca usa o SB como hero fixo (indice 0).
+As respostas estrategicas do BB estao salvas na arvore; operar como hero BB ainda exige adaptacao propria.
+Ranges NVT autorizados como referencia; sem certificacao independente de export direto HRC Pro.
+Calculos pos-flop executados com TexasSolver no laboratorio Linux; fonte upstream 02c8021ee1307c18aa1e76b772c6ae1451601bc6.
+Os patches de exportacao, limite de agressoes e denominador de chance HU estao registrados nos manifests de compilacao.
+Menu: bet 1/3, raise de 100% do pote e all-in; limite de duas agressoes por rua.
+Convergencia nesse menu nao prova que os ranges pre-flop de entrada sejam otimos.
+
+VALIDACAO
+16 bancos novos integralmente baixados e verificados em runners Windows do GitHub.
+16 maos sinteticas novas confirmadas ate showdown; 48 consultas JSON e 48 consultas por bijecao exata de naipes.
+Contratos Windows: 318 testes; 7 pulados. Consulte o log para os motivos.
+Regressao Linux final com o solver nativo: 230/230 PASS; nenhuma falha ou teste pulado.
+Historico anterior do piloto conferido novamente, preservando seu workflow de origem.
+Os ZIPs de historico publicados foram baixados e comparados com os receipts e as respostas JSON.
+Um river condicional por modelo foi enumerado independentemente e repetido no Windows.
+O alvo nativo e exploitability <= 0,5% do pote. global_gap_bb e NashConv, o dobro da exploitability.
+O criterio global nao garante igual precisao em cada no; a revisao condicional tem outro escopo.
+A primeira tentativa encontrou std::bad_alloc na inicializacao de alguns boards com limite de 10 GiB.
+Um perfil de recursos separado aumenta a memoria, preservando o plano, ranges, sizes, iteracoes e alvo estrategico.
+Orcamentos efetivos nos 16 modelos novos (MiB: quantidade): {'12288': 6, '10240': 10}.
+Os bancos concluidos na primeira tentativa foram reaproveitados; nenhum CFR ativo foi duplicado.
+Nenhuma validacao desta entrega e uma sessao real no PPPoker. Nenhum dispositivo de entrada foi acionado.
+
+NOVOS FLOPS | ITERACOES | NASHCONV GLOBAL NATIVO (BB) | NASHCONV RIVER CONDICIONAL (BB)
+01. Kd 8h 3c | 201 | 0.049399966 | 0.097186201
+02. Ah Kd 7c | 251 | 0.044481963 | 0.022788095
+03. Qs 8d 3c | 161 | 0.049603474 | 0.043737720
+04. Js Td 4c | 141 | 0.047594458 | 0.055485817
+05. 9s 8s 7d | 121 | 0.047925520 | 0.027777009
+06. 8c 6d 3s | 151 | 0.047122672 | 0.025275434
+07. 7s 7h 2d | 241 | 0.047351563 | 0.010366106
+08. Kc Kd 5s | 171 | 0.049595883 | 0.034927944
+09. Qs 7s 2s | 181 | 0.046217158 | 0.023974359
+10. Jd 9d 4c | 141 | 0.048974472 | 0.063515253
+11. 5c 4d 3s | 131 | 0.045523575 | 0.017740951
+12. 3c 4c 8c | 221 | 0.047118574 | 0.024448414
+13. Jc Qc Tc | 151 | 0.046339571 | 0.022708800
+14. 5c 9c Kc | 201 | 0.048073226 | 0.063850796
+15. Jc Kc Qc | 171 | 0.049848819 | 0.021595120
+16. 6c Jd Td | 141 | 0.049004564 | 0.052506386
+
+FREQUENCIAS MEDIAS DO SB NO INICIO DO FLOP
+Ponderadas pelos dois ranges e pelos blockers fisicos. Nao sao uma acao identica para todas as maos.
+Cada mao consulta sua propria mistura. Os amounts abaixo sao contribuicoes adicionais em BB, nao raise-to.
+Kd 8h 3c | check:0=54.12%; bet:1.667=45.88%; all_in:38=0.00%
+Ah Kd 7c | check:0=31.90%; bet:1.667=68.10%; all_in:38=0.00%
+Qs 8d 3c | check:0=65.12%; bet:1.667=34.88%; all_in:38=0.00%
+Js Td 4c | check:0=53.91%; bet:1.667=46.09%; all_in:38=0.00%
+9s 8s 7d | check:0=54.62%; bet:1.667=45.38%; all_in:38=0.00%
+8c 6d 3s | check:0=77.85%; bet:1.667=17.78%; all_in:38=4.37%
+7s 7h 2d | check:0=55.25%; bet:1.667=44.75%; all_in:38=0.00%
+Kc Kd 5s | check:0=6.19%; bet:1.667=93.81%; all_in:38=0.00%
+Qs 7s 2s | check:0=70.19%; bet:1.667=29.81%; all_in:38=0.00%
+Jd 9d 4c | check:0=62.95%; bet:1.667=37.05%; all_in:38=0.00%
+5c 4d 3s | check:0=68.89%; bet:1.667=31.11%; all_in:38=0.00%
+3c 4c 8c | check:0=66.35%; bet:1.667=33.65%; all_in:38=0.00%
+Jc Qc Tc | check:0=39.81%; bet:1.667=60.19%; all_in:38=0.00%
+5c 9c Kc | check:0=65.34%; bet:1.667=34.66%; all_in:38=0.00%
+Jc Kc Qc | check:0=58.39%; bet:1.667=41.61%; all_in:38=0.00%
+6c Jd Td | check:0=50.93%; bet:1.667=48.77%; all_in:38=0.30%
+Piloto anterior As 7d 2c | check:0=37.50%; bet:1.667=62.50%; all_in:38=0.00%
+O piloto e o novo monotone Qs 7s 2s tambem foram baixados e lidos integralmente no Linux, sem repetir CFR.
+O resumo do novo monotone foi comparado com o Windows, incluindo todos os combos do hero suportados no root.
+
+INSTALACAO E CONSUMO
+Extraia o ZIP de codigo desta entrega em pasta nova; Python 3.12 x64 e requirements.txt.
+Execute BAIXAR_BLIND_WAR_40BB_17.bat. Banco: runtime/hu/sb40-17/bank/library.json.
+Esse BAT instala dados; nao inicia o bot nem movimenta o mouse. O banco antigo runtime/hu/sb40 fica preservado.
+O bot le library.json e consulta as politicas completas SQLite no disco com cache limitado.
+Use --postflop-library com o caminho desse indice no Software original, iniciando a observacao antes dos blinds.
+Nao recrie PolicyLibrary a cada frame: prepare uma vez e mantenha uma instancia por sessao.
+JSONL completo e opcional para interoperabilidade; nao carregue a arvore inteira na RAM do notebook.
+O instalador confere disco livre. E possivel baixar modelos individuais; veja docs/GUIA_SB40_17_FLOPS_20261116.txt.
+Os workers terminaram; seus temporarios foram removidos apos verificacao. Bancos finais e logs foram preservados.
+
+PENDENCIAS
+SB limp x BB check ainda precisa de priors proprios e perfil de chegada limpado; nao e o complemento do raise.
+3-bet pots, outros stacks/antes/sizes, multiway, ICM e PKO precisam de modelos separados.
+Outros flops nao sao resolvidos por semelhanca visual. Equivalencia de naipes exige preservar ambos os ranges.
+As familias BTN25 e SB40 permanecem separadas, sem roteamento automatico entre elas.
+O adaptador de execucao/historico nao inverte automaticamente os indices para jogar como hero BB.
+EV independente de cada acao nao esta salvo em todos os nos; ev_bb pode ser null.
+Leitura, historico, sincronizacao, clique e desempenho real no PPPoker Windows do notebook seguem pendentes.
+O caso historico 8h -> 3h continua pendente no mesmo tema; nenhum limiar OCR foi reduzido.
+
+https://github.com/eduardodinizti-design/Software/releases/tag/hu-sb-bb40-nvt-next16-20261116
+https://github.com/eduardodinizti-design/Software/actions/runs/43783594940
+https://github.com/eduardodinizti-design/Software/actions/runs/43796410882
+https://github.com/eduardodinizti-design/Software/tree/feat/hu-sb40-next16-20261116
+Codigo: 881a6620b8404f265687be361e6b9b41ab62e867
+Plano: ed7f4a9b39e34fb4e83055eede52b20d7a9cb065fe6e676d81046bc04dceb26e

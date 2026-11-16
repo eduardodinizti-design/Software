@@ -1,0 +1,99 @@
+SOFTWARE ORIGINAL — CONTINUACAO DA BLIND WAR SB x BB DE 40 BB
+
+Repositorio: https://github.com/eduardodinizti-design/Software
+Branch: feat/hu-sb40-next16-20261116
+Dados: https://github.com/eduardodinizti-design/Software/releases/tag/hu-sb-bb40-nvt-next16-20261116
+
+ESCOPO
+
+Sao 16 flops novos, mais o piloto As 7d 2c: 17 arvores distintas nessa
+familia. Um plano nao comprova conclusao: confira o catalogo COMPLETE e o
+TXT final com os comprovantes Windows. Os 32 flops BTN25 nao foram alterados.
+
+Configuracao: nove jogadores originalmente, sete folds, SB open 2 BB,
+BB call, big-blind ante de 1 BB, 40 BB antes das postagens. O flop tem pote
+de 5 BB, SB com 38 BB e BB com 37 BB. SB age primeiro no pos-flop.
+Nao e um torneio originalmente de dois jogadores, em que SB tambem e BTN.
+Neste perfil, o hero e o SB (indice 0). A arvore inclui as respostas do BB,
+mas usar o BB como hero requer um adaptador proprio de estado, ranges e
+historico; a integracao atual nao faz essa inversao automaticamente.
+
+Os ranges de entrada NVT sao os mesmos do piloto, sem renormalizar os
+mixes pre-flop ou inventar um range de limp. A convergencia e condicional
+a esses priors, ao board, aos stacks e ao menu. Nao valida como otimos os
+ranges pre-flop nem certifica o rotulo HRC do exportador.
+
+Menu: bet de 1/3 do pote, raise de 100% do pote, all-in e no maximo duas
+agressoes por rua. A arvore e completa dentro desse menu. Outros tamanhos
+na interface nao equivalem automaticamente ao size calculado.
+
+INSTALAR NO WINDOWS EM PASTA NOVA
+
+1. Na Release, baixe o ZIP Software-SB40-17 identificado no TXT final.
+   O Source code automatico do GitHub e o commit inicial do produtor dos
+   dados; o ZIP identificado no TXT inclui a integracao verificada.
+2. Use Python 3.12 x64 e requirements.txt. Na pasta extraida, se necessario:
+     py -3.12 -m venv .venv
+     .venv\Scripts\python.exe -m pip install -r requirements.txt
+3. Execute BAIXAR_BLIND_WAR_40BB_17.bat. Precisa de dezenas de GB no DISCO,
+   mais um ZIP temporario por vez. O instalador confere os tamanhos reais.
+   O banco antigo runtime\hu\sb40 permanece separado e preservado.
+4. Confira status PASS em runtime\hu\sb40-17\download-receipt.json.
+   O banco novo e runtime\hu\sb40-17\bank\library.json.
+5. Informe esse indice ao operar_mesa.py do Software original:
+     --postflop-library "CAMINHO_COMPLETO\runtime\hu\sb40-17\bank\library.json"
+   Mantenha as demais opcoes do Software. O BAT instala dados e nao ativa
+   o bot, nao inscreve em torneios e nao movimenta o mouse.
+
+Inicie a observacao antes dos blinds. O historico precisa confirmar a
+chegada raise/call ao flop. Uma leitura isolada nao comprova a sequencia.
+Prepare a biblioteca uma vez; nao recrie nem revalide todos os bancos a
+cada frame. O notebook de 8 GB usa SQLite no disco e cache limitado.
+
+Para testar apenas o primeiro flop NOVO, em uma pasta independente:
+  .venv\Scripts\python.exe -m strategy.campaign_download --family sb40-next16 --new-only --ordinals 1 --output runtime\hu\sb40-teste-novo-1 --resume
+Nesse modo, ordinal 1 e Kd 8h 3c. No banco combinado de 17, ordinal 1 e o
+piloto As 7d 2c e ordinal 2 e Kd 8h 3c. O source_ordinal fica preservado.
+
+COMO O BOT CONSOME
+
+library.json aponta para politicas completas policies/*.sqlite. Cada no
+guarda o estado, acoes, frequencias por combinacao privada e sizes efetivos.
+O historico observado condiciona os ranges no turn/river; nao reinicie o
+range de entrada a cada rua. Bibliotecas BTN25 e SB40 continuam separadas.
+
+O relatorio final tambem mostra as frequencias medias do SB no inicio de
+cada flop, ponderadas pelos DOIS ranges e pelos blockers. Isso e um resumo
+para revisao, nao uma regra de apostar/checkar igual com todas as maos.
+As decisoes continuam consultando as frequencias da combinacao especifica.
+
+Os ZIPs *-json-history.zip guardam requests/responses das tres ruas e a
+mao sintetica confirmada ate showdown. O comando de consulta e:
+  .venv\Scripts\python.exe -m strategy.policy_json query --library "CAMINHO\library.json" --request request-flop.json --output resposta.json
+Esse verificador compara os mesmos candidatos, frequencias e sizes de
+choose(). Nao envia cliques. O export JSONL completo tambem existe:
+  .venv\Scripts\python.exe -m strategy.policy_json export --library "CAMINHO\library.json" --flop Kd 8h 3c --output sb40-K83-completo.jsonl.gz
+Ele verifica todos os nos contra o banco. Nao carregue um JSON gigante
+inteiro na RAM; o bot normal consulta o SQLite indexado.
+
+PRECISAO E PENDENCIAS
+
+O alvo nativo e exploitability <= 0,5% do pote; global_gap_bb e NashConv,
+duas vezes a exploitability. O alvo global nao garante igual precisao em
+todos os nos. Um river condicional por modelo recebe enumeracao independente,
+sem certificar o gap global da arvore inteira. ev_bb pode ser null em
+outros nos; isso nao autoriza apresentar uma estimativa como EV do solver.
+
+Logs preservam parametros/checkpoints de convergencia e a politica final,
+nao snapshots CFR de cada iteracao. A rotina encerra workers e remove seus
+temporarios depois de verificar e publicar as politicas completas.
+
+SB limp x BB check ainda exige priors proprios, nao o complemento do raise.
+Com BBA 1 e 40 BB antes dos posts: pote limpado 3 BB, SB 39 BB, BB 38 BB,
+perfil limped proprio e testemunho de completada/check. Potes 3-betados,
+outros stacks/antes/sizes, multiway, ICM e PKO precisam de modelos separados.
+
+As provas Windows usam dados e leituras sinteticas em runners do GitHub.
+Leitura, sincronizacao, historico e efeito real do clique no PPPoker do
+notebook ainda precisam de validacao. 8h -> 3h continua pendente no mesmo
+tema. Nenhum limiar OCR foi reduzido nesta frente.

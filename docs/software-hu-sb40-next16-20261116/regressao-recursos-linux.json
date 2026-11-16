@@ -1,0 +1,22 @@
+{
+  "status": "PASS",
+  "tests_run": 230,
+  "passed": 230,
+  "errors": 0,
+  "failures": 0,
+  "skipped": [],
+  "elapsed_seconds": 73.88710839399573,
+  "tested_code_parent_commit": "51f2c0bedc69e1e7b3f93733d9969cb3a4b905fc",
+  "tested_file_sha256": {
+    "strategy/root_policy_review.py": "6a4dad9e37f8ac47f65bb2ae822ecbc8f408bb691a04c96fa48ce16779d40bae",
+    "strategy/campaign_resources.py": "1bf4744bac764fbce874e9ea1a6c0fc6678aa3fdfc0f5e5618f6f95e4a9a99c7",
+    "strategy/batch_archive.py": "1e9383e09e5fb7bcd08397911ec61c29375ef411121d6ae854b6b605c74978c6",
+    "strategy/batch_download.py": "fdcc6ea81798a3c4232340a7061874b1706c6692a20aaa9a312caca7dc052beb",
+    "strategy/campaign_download.py": "39d2def8a5f361fca73cfb512ba0b59872a0d4738e5a18eefee2b4272a8ad3bd",
+    "tools/hu_batch16.py": "d0ac12123ba16a55b263ac8119f1439c75e4716d464e2f1a5813ab4b4c2a7062",
+    "tools/run_hu_reference_pilot.py": "61151a3c45872fedbdc2c62641c2cf21196854f6ea81ee6c9bc500f1d0650533",
+    "test_hu_sb40_next16.py": "070f278556c8380e9c0db7e4ed90344c7c10fdc55666e63f9daea943eeee6fc3"
+  },
+  "native_stream_tests_enabled": true,
+  "pppoker_windows_validated": false
+}

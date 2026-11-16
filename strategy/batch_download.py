@@ -112,7 +112,7 @@ def receive_archive(manifest,destination):
     """Stream parts directly into one ZIP; never keep parts plus another copy."""
     check_bundle(manifest);destination=Path(destination)
     if destination.exists():raise StrategyError('BATCH_ARCHIVE_DESTINATION_MUST_BE_NEW')
-    if manifest['tag'] not in (BATCH_TAG,PILOT_TAG,'hu-btn-bb-nvt-complete32-20261115','hu-sb-bb40-nvt-pilot-20261115'):
+    if manifest['tag'] not in (BATCH_TAG,PILOT_TAG,'hu-btn-bb-nvt-complete32-20261115','hu-sb-bb40-nvt-pilot-20261115','hu-sb-bb40-nvt-next16-20261116'):
         raise StrategyError('UNKNOWN_REFERENCE_RELEASE')
     whole=hashlib.sha256();received=0
     with destination.open('xb') as out:
@@ -158,6 +158,12 @@ def check_bank(bank,manifest,catalog):
             expected=digest(dict(context=asdict(GameContext(**g['context'])),root=BettingState.from_dict(g['root']).to_dict(),
                 ranges=[ComboRange.from_dict(r).to_dict() for r in g['ranges']],menu=asdict(BetMenu(**g['menu']))))
             if model!=expected:raise StrategyError('BATCH_PRIORS_OR_MENU_DIFFER_FROM_ORIGINAL_PLAN')
+        if manifest.get('resource_profile'):
+            from strategy.campaign_resources import effective_settings
+            if '_original_plan' not in catalog:raise StrategyError('RESOURCE_RETRY_REQUIRES_ORIGINAL_CAMPAIGN')
+            settings=effective_settings(catalog['_original_plan'],manifest['resource_profile'])
+            if policy.quality.get('settings',{}).get('memory_budget_mb')!=settings['memory_mb']:
+                raise StrategyError('RESOURCE_RETRY_DIFFERS_FROM_DOWNLOADED_POLICY_BUDGET')
         proof=query_probe(entry['resolved_path'])
         if set(proof['probes'])!={'flop','turn','river'}:raise StrategyError('BATCH_THREE_STREET_LOOKUP_REQUIRED')
         return dict(entry),dict(model_sha256=model,lookup_validation=proof,policy_file_bytes=actual)

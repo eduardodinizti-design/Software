@@ -1,0 +1,115 @@
+name: HU SB40 resource retry preserving completed native policies
+on:
+  push:
+    branches: [feat/hu-sb40-next16-20261116]
+    paths: [.github/workflows/hu-sb40-next16-retry.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+  statuses: write
+  actions: read
+env:
+  PLAN: docs/software-hu-sb40-next16-20261116/sb40-next16-plan.json
+  RESOURCES: docs/software-hu-sb40-next16-20261116/sb40-next16-resources-12g.json
+  GH_TOKEN: ${{ github.token }}
+  PYTHONUNBUFFERED: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  HU_GITHUB_STATUS_PREFIX: hu-sb40-next16-retry
+  HU_GITHUB_RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+jobs:
+  initialize:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install numpy==2.2.6
+      - run: python tools/hu_batch16.py init --plan "$PLAN" --execution-profile "$RESOURCES"
+  calculate:
+    needs: initialize
+    runs-on: ubuntu-24.04
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        ordinal: [1, 2, 3, 4, 6, 11, 5, 7, 8, 9, 10, 12, 13, 14, 15, 16]
+    name: SB40 resource retry case ${{ matrix.ordinal }}
+    env:
+      OMP_NUM_THREADS: '4'
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install numpy==2.2.6
+      - name: Preserve the original worker and any complete export recovery data
+        run: python tools/wait_hu_source_case.py --run 43782350189 --sha 897d30154442bb5ba50c36b940c12fcb14530439 --ordinal ${{ matrix.ordinal }}
+      - name: Reuse complete policies before allocating another solver
+        id: reuse
+        run: python tools/hu_batch16.py check --plan "$PLAN" --ordinal ${{ matrix.ordinal }} --execution-profile "$RESOURCES" --output runtime/reused-native.json
+      - if: steps.reuse.outputs.reused != 'true'
+        name: Reserve storage only on this new disposable GitHub-hosted VM
+        run: |
+          test "${{ runner.environment }}" = github-hosted
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
+          df -h "$GITHUB_WORKSPACE"
+      - if: steps.reuse.outputs.reused != 'true'
+        name: Build the pinned separate solver and retain its identity
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libfmt-dev zlib1g-dev
+          python -m pip install opencv-python-headless==4.11.0.86 psutil==6.1.1 pytesseract==0.3.13
+          git clone https://github.com/bupticybee/TexasSolver.git "$RUNNER_TEMP/TexasSolver"
+          git -C "$RUNNER_TEMP/TexasSolver" checkout 02c8021ee1307c18aa1e76b772c6ae1451601bc6
+          python tools/build_texassolver_console.py --source "$RUNNER_TEMP/TexasSolver" --fmt-include /usr/include --out "$RUNNER_TEMP/hu-native/solver-stream" --stream-export
+          cp "$RUNNER_TEMP/hu-native/solver-stream.manifest.json" runtime/native-build.json
+      - if: steps.reuse.outputs.reused != 'true'
+        name: Verify the exact unchanged strategic inputs and asymmetric all-in behavior
+        run: |
+          HU_STREAM_TEST_BINARY="$RUNNER_TEMP/hu-native/solver-stream" HU_STREAM_TEST_RESOURCES="$RUNNER_TEMP/TexasSolver/resources" python -m unittest test_hu_sb40_next16 test_hu_blind_war test_hu_campaign_download -q
+      - if: steps.reuse.outputs.reused != 'true'
+        name: Compute only missing policies with the explicit resource-only retry
+        run: python tools/hu_batch16.py case --plan "$PLAN" --execution-profile "$RESOURCES" --ordinal ${{ matrix.ordinal }} --binary "$RUNNER_TEMP/hu-native/solver-stream" --resources "$RUNNER_TEMP/TexasSolver/resources" --output runtime/hu-sb40-next16-case
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: hu-sb40-next16-retry-diagnostics-${{ matrix.ordinal }}-a${{ github.run_attempt }}
+          path: |
+            runtime/reused-native.json
+            runtime/native-build.json
+            runtime/hu-sb40-next16-case/**/*.json
+            runtime/hu-sb40-next16-case/**/*.txt
+            runtime/hu-sb40-next16-case/**/*.log
+          retention-days: 14
+      - name: Preserve native output if later conversion or publication fails
+        id: recovery
+        if: failure()
+        run: |
+          python - <<'PY'
+          import os,pathlib
+          root=pathlib.Path('runtime/hu-sb40-next16-case/study')
+          for pattern in ('delivery/parts/*','delivery/*.zip','bank/policies/*.sqlite','bank/temporary/*/native/strategy.jsonl.gz'):
+              if any(root.glob(pattern)):
+                  with open(os.environ['GITHUB_OUTPUT'],'a') as output:output.write('path='+str(root/pattern)+'\n')
+                  break
+          PY
+      - uses: actions/upload-artifact@v4
+        if: failure() && steps.recovery.outputs.path != ''
+        with:
+          name: hu-sb40-next16-retry-recovery-${{ matrix.ordinal }}-a${{ github.run_attempt }}
+          path: ${{ steps.recovery.outputs.path }}
+          compression-level: 0
+          retention-days: 14
+  catalog:
+    needs: [initialize, calculate]
+    if: always() && needs.initialize.result == 'success'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install numpy==2.2.6
+      - run: python tools/hu_batch16.py catalog --plan "$PLAN" --output runtime/hu-sb40-next16-catalog
