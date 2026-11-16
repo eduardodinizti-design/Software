@@ -1,0 +1,39 @@
+{
+  "status": "PASS",
+  "tests_run": 244,
+  "passed": 244,
+  "errors": 0,
+  "failures": 0,
+  "skipped": [],
+  "elapsed_seconds": 75.43375721399934,
+  "tested_code_parent_commit": "9017fcbb2da924ff22853f59ad9da38b09c6e580",
+  "tested_file_sha256": {
+    "strategy/campaign_download.py": "b4d7c402fa95de582080db9260681f866594f684ec33cfaa0e02c330f8c87dc5",
+    "strategy/batch_download.py": "28e33eafc8208aa1bf79f11f7224ab50797d7fdfce16de83be127cf0f7b8cebd",
+    "strategy/blind_war.py": "8bdbcd8c2d849afac6f62f7f5a4b89c370ed1484d408ee1664340dbddae6bf01",
+    "tools/check_hu_sb40_checkpoint.py": "e8622ea08a15bf5cadb14278bdab0ede75070ff043ec85d0b7ee337e9f55c221",
+    "tools/prepare_hu_sb40_complete34.py": "65856ecdae2eec5e34f29512c4ebfcb2699b457eea1f76991805c60ce602ff34",
+    "tools/hu_batch16.py": "4537eee2c9a3b8da9415a5c7eaf7d9659a665c35e77ed096dee0914e757c1ff1",
+    "test_hu_sb40_complete34.py": "61dc89a2823278f9fb91c314fdbed9c894c6c3e6df8e90cbbda376e3a4d93cd9",
+    "test_hu_sb40_delivery34.py": "decfd91577a8774f12012c401528db3dc5a3082b50dca68b7c46eda36778cdb7",
+    "tools/finalize_hu_sb40_complete34.py": "40f8f9ca315660d2895370b7abdb5cc282a93d3da7ace3000f7d9e9c14e4a52b",
+    "tools/verify_hu_sb40_complete34_publication.py": "df0e6f0f68fc95b27621664c56aa2ec3c7aee6e2d88e967335a057b54c9c714e"
+  },
+  "modules": [
+    "test_hu_sb40_delivery34",
+    "test_hu_sb40_complete34",
+    "test_hu_sb40_next16",
+    "test_hu_campaign",
+    "test_hu_blind_war",
+    "test_hu_campaign_download",
+    "test_hu_campaign_delivery",
+    "test_hu_policy_json",
+    "test_hu_next16",
+    "test_hu_reference",
+    "test_hu_batches",
+    "test_hu_policy_engine",
+    "test_hu_operational"
+  ],
+  "native_stream_tests_enabled": true,
+  "pppoker_windows_validated": false
+}

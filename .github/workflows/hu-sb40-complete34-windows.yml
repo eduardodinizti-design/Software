@@ -1,0 +1,133 @@
+name: HU SB40 automatic Windows validation and delivery of 34 saved models
+on:
+  push:
+    branches: [feat/hu-sb40-complete34-20261116]
+    paths: [.github/workflows/hu-sb40-complete34-windows.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: hu-sb40-complete34-windows-20261116
+  cancel-in-progress: false
+env:
+  GH_TOKEN: ${{ github.token }}
+  PYTHONUTF8: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  NATIVE_RUN: '43799276504'
+  CATALOG: batch-catalog-43799276504.json
+  TAG: hu-sb-bb40-nvt-complete34-20261116
+jobs:
+  checked-catalog:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install numpy==2.2.6
+      - name: Verify that the first seventeen remain saved before awaiting the new batch
+        run: python tools/check_hu_sb40_checkpoint.py --expected docs/software-hu-sb40-complete34-20261116/checkpoint-primeiros17.json --output runtime/checked-first17.json
+      - name: Await only the exact complete checked catalog; never call a partial batch learned
+        run: python tools/wait_hu_campaign.py --tag "$TAG" --catalog-asset "$CATALOG" --seconds 19800 --output runtime/checked-catalog.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sb40-34-checked-prerequisite-and-catalog-a${{ github.run_attempt }}
+          path: |
+            runtime/checked-first17.json
+            runtime/checked-catalog.json
+          retention-days: 14
+  contracts:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install numpy==2.2.6 opencv-python==4.11.0.86 psutil==6.1.1 pytesseract==0.3.13
+      - shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force runtime/hu-sb40-contracts | Out-Null
+          python -m unittest test_hu_sb40_delivery34 test_hu_sb40_complete34 test_hu_sb40_next16 test_hu_campaign test_hu_blind_war test_hu_campaign_download test_hu_campaign_delivery test_hu_policy_json test_hu_next16 test_hu_reference test_hu_batches test_hu_policy_engine test_hu_operational test_cursor test_window_capture_engine test_window_capture_audit test_capture_windows_native test_raise_plan test_raise_sequencer -v *> runtime/hu-sb40-contracts/contracts.txt
+          $code = $LASTEXITCODE
+          Get-Content runtime/hu-sb40-contracts/contracts.txt -Tail 15
+          exit $code
+      - run: |
+          Copy-Item runtime/hu-sb40-contracts/contracts.txt runtime/windows-contracts-sb40-34-${{ github.run_id }}-a${{ github.run_attempt }}.txt
+          gh release upload "$env:TAG" --repo "$env:GITHUB_REPOSITORY" runtime/windows-contracts-sb40-34-${{ github.run_id }}-a${{ github.run_attempt }}.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sb40-34-windows-contracts-a${{ github.run_attempt }}
+          path: runtime/hu-sb40-contracts/contracts.txt
+          retention-days: 14
+  actual-data:
+    needs: [contracts, checked-catalog]
+    runs-on: windows-latest
+    timeout-minutes: 80
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        ordinal: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
+    name: Windows complete SB40 new policy ${{ matrix.ordinal }} of seventeen
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install numpy==2.2.6
+      - id: reuse
+        name: Preserve passed immutable Windows proofs with their actual origin
+        run: python tools/reuse_hu_windows_proof.py --family sb40-34 --ordinal ${{ matrix.ordinal }} --catalog-asset "$env:CATALOG" --output runtime/reused-proof.json
+      - if: steps.reuse.outputs.reused != 'true'
+        name: Download the entire new bank and verify three streets, suit aliases and confirmed history
+        run: python tools/validate_hu_campaign_windows.py --family sb40-34 --ordinal ${{ matrix.ordinal }} --catalog-asset "$env:CATALOG" --output runtime/hu-sb40-proof
+      - if: steps.reuse.outputs.reused != 'true'
+        name: Publish actual JSON queries, decisions and the synthetic hand confirmed to showdown
+        run: |
+          $label = "{0:D2}" -f [int]"${{ matrix.ordinal }}"
+          Copy-Item runtime/hu-sb40-proof/windows-proof.json "runtime/windows-sb40-34-case-${label}-${{ github.run_id }}-a${{ github.run_attempt }}.json"
+          Compress-Archive -Path runtime/hu-sb40-proof/windows-proof,runtime/hu-sb40-proof/request-*.json,runtime/hu-sb40-proof/response-*.json -DestinationPath "runtime/windows-sb40-34-case-${label}-${{ github.run_id }}-a${{ github.run_attempt }}-json-history.zip"
+          gh release upload "$env:TAG" --repo "$env:GITHUB_REPOSITORY" "runtime/windows-sb40-34-case-${label}-${{ github.run_id }}-a${{ github.run_attempt }}.json" "runtime/windows-sb40-34-case-${label}-${{ github.run_id }}-a${{ github.run_attempt }}-json-history.zip"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sb40-34-windows-${{ matrix.ordinal }}-a${{ github.run_attempt }}
+          path: |
+            runtime/reused-proof.json
+            runtime/hu-sb40-proof/windows-proof.json
+            runtime/hu-sb40-proof/windows-proof/*.json
+            runtime/hu-sb40-proof/request-*.json
+            runtime/hu-sb40-proof/response-*.json
+          retention-days: 14
+  deliver:
+    needs: [actual-data, contracts]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install numpy==2.2.6
+      - name: Recheck the preserved seventeen and publish the full thirty-four-model handoff
+        run: python tools/finalize_hu_sb40_complete34.py --catalog-asset "$CATALOG" --native-run "$NATIVE_RUN" --output runtime/hu-sb40-34-final
+      - name: Download and verify the published TXT, source ZIP, inventory and seventeen hand-history ZIPs
+        run: python tools/verify_hu_sb40_complete34_publication.py --run "${{ github.run_id }}" --catalog-asset "$CATALOG" --output runtime/hu-sb40-34-publication-check
+      - name: Publish the actual complete-file roundtrip receipt
+        run: |
+          cp runtime/hu-sb40-34-publication-check/publicacao-final-verificada.json runtime/publicacao-final-verificada-sb40-34-${{ github.run_id }}-a${{ github.run_attempt }}.json
+          gh release upload "$TAG" --repo "$GITHUB_REPOSITORY" runtime/publicacao-final-verificada-sb40-34-${{ github.run_id }}-a${{ github.run_attempt }}.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sb40-34-final-publication-a${{ github.run_attempt }}
+          path: |
+            runtime/hu-sb40-34-final/*.json
+            runtime/hu-sb40-34-final/*.txt
+            runtime/hu-sb40-34-publication-check/*.json
+            runtime/hu-sb40-34-publication-check/*.txt
+          retention-days: 14

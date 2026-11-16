@@ -1,0 +1,75 @@
+SOFTWARE ORIGINAL — AUTORIZACAO CONDICIONAL DO SEGUNDO LOTE SB x BB 40 BB
+
+Condicao do usuario: iniciar 17 novos flops somente se os primeiros 17
+estiverem completamente salvos e recuperaveis.
+
+RESULTADO DA CONFERENCIA DOS PRIMEIROS 17: PASS
+
+17 modelos completos e distintos, 7.475.512 estados publicos e
+63.427.264.512 bytes de politicas SQLite. As 63 partes publicadas permanecem
+com os tamanhos e SHA-256 esperados. Codigo, relatorio, inventario, politicas
+por combinacao e historicos confirmados das tres ruas estao preservados.
+
+O ZIP de codigo foi novamente conferido por SHA-256 e CRC integral. As
+politicas completas ja haviam sido baixadas e consultadas no Windows;
+a verificacao atual confirma que os mesmos arquivos continuam publicados.
+Nao foi necessario baixar novamente todos os GB neste executor.
+
+Relatorio dos primeiros 17:
+https://github.com/eduardodinizti-design/Software/releases/download/hu-sb-bb40-nvt-next16-20261116/SB40_17_FLOPS_43796410882-a1.txt
+
+Checkpoint verificavel:
+docs/software-hu-sb40-complete34-20261116/checkpoint-primeiros17.json
+SHA-256 do checkpoint: e0ec0925801b2589892dcd87a8547142e4c4dd8881fc44bf7cf55a74a20d2de1
+
+NOVO LOTE
+
+17 flops novos, excluindo os anteriores e os holdouts. Meta acumulada: 34
+modelos SB40. Os 32 BTN25 ficam separados e preservados.
+Plano: docs/software-hu-sb40-complete34-20261116/sb40-complete34-plan.json
+SHA-256: f070d2c0289dd6eef328e48da8fbecd001c6bf483380e987a7208ea730b63d67
+
+O workflow verifica novamente o checkpoint ANTES de autorizar novos solves.
+As novas politicas serao completas dentro do menu preservado, com acoes,
+frequencias, sizes e respostas em flop, turn e river. Apos verificacao e
+publicacao, os workers encerram e removem apenas seus temporarios.
+Logs e checkpoints de convergencia sao preservados; nao sao snapshots de
+todos os regrets CFR de cada iteracao.
+
+Mesma chegada: nove jogadores originalmente, sete folds, SB open 2 BB,
+BB call, BBA 1 BB, 40 BB antes dos posts. Pote flop 5 BB; SB 38 e BB 37.
+Hero operacional SB. Ranges NVT de referencia. Menu: bet 1/3, raise de
+100% do pote, all-in; duas agressoes por rua. Precisao nativa <= 0,5% do
+pote em exploitability; global_gap_bb e NashConv, seu dobro.
+
+Os novos calculos usam 12 GiB por worker, sem mudar os parametros
+estrategicos. O notebook consulta arquivos no disco; nao repete o solve.
+Nao ha certificacao de export direto HRC nem validacao real no PPPoker.
+Limp/check, hero BB, outros stacks/sizes/antes, multiway, ICM e PKO continuam
+como frentes proprias. O caso 8h -> 3h permanece pendente.
+
+Este documento confirma a preservacao do lote anterior e o plano do novo.
+A conclusao dos novos 17 exige catalogo COMPLETE e comprovantes Windows.
+Branch: https://github.com/eduardodinizti-design/Software/tree/feat/hu-sb40-complete34-20261116
+
+EXECUCOES
+
+Calculo dos 17 novos modelos:
+https://github.com/eduardodinizti-design/Software/actions/runs/43799276504
+
+A validacao automatica Windows aguarda o catalogo COMPLETE desse lote.
+Depois consulta os 17 bancos completos, gera os historicos sinteticos e
+publica o TXT, o codigo e o comprovante de download da entrega final.
+Os novos modelos ainda nao contam como concluidos enquanto essas etapas
+nao terminarem. O workflow nao depende de um processo local continuar aberto.
+
+Regressao da integracao: 244/244 PASS no Linux, com controles nativos.
+PR de acompanhamento: https://github.com/eduardodinizti-design/Software/pull/16
+
+Validacao Windows e entrega automatica:
+https://github.com/eduardodinizti-design/Software/actions/runs/43800302038
+
+O lote nativo esta em execucao. A etapa checked-catalog aguarda o seu
+catalogo COMPLETE; nao repete o CFR e nao conta uma politica parcial.
+Os contratos Windows ja passaram; os testes dos bancos novos aguardam
+a conclusao dos calculos. Consulte o log para os testes pulados.

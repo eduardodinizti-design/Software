@@ -3,3 +3,5 @@ docs/software-hu-convergence-20261115/published/*.json -text whitespace=blank-at
 docs/software-hu-next16-20261115/published/* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 docs/software-hu-close32-sb40-20261115/published/* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 docs/software-hu-sb40-next16-20261116/published/* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+docs/software-hu-sb40-complete34-20261116/published/* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+docs/software-hu-sb40-complete34-20261116/published/* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

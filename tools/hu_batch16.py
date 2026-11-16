@@ -1,4 +1,4 @@
-"""Calculate/publish the next 16 full NVT models on isolated GitHub runners."""
+"""Calculate/publish full NVT campaign models on isolated GitHub runners."""
 import argparse
 import json
 import os
@@ -177,8 +177,9 @@ def catalog(plan,output):
     for m in result['cases']:
         lines.append(f"{m['ordinal']:02d}. {' '.join(m['board'])} | iteracoes={m['iterations']} | gap={m['global_gap_bb']:.9f} BB | alvo={m['native_target_met']}")
     lines.extend(['','NVT de referencia; precisao nativa nao e certificacao GTO independente ou PPPoker real.'])
-    (folder/'RELATORIO_LOTE_16.txt').write_text('\n'.join(lines)+'\n')
-    for name in ('batch-catalog.json','RELATORIO_LOTE_16.txt'):
+    report=f'RELATORIO_LOTE_{count}.txt'
+    (folder/report).write_text('\n'.join(lines)+'\n')
+    for name in ('batch-catalog.json',report):
         # Catalogs are new run-specific evidence, never overwrite previous ones.
         unique=folder/(Path(name).stem+'-'+os.environ['GITHUB_RUN_ID']+Path(name).suffix)
         shutil.copyfile(folder/name,unique)
