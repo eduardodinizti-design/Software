@@ -1,0 +1,21 @@
+{
+  "status": "PASS",
+  "previous_complete_models": 85,
+  "next_target": 102,
+  "new_models": 17,
+  "actual_parent_checkpoint_matches_next_batch": true,
+  "checkpoint_sha256": "82efb472d8e014caf75f248bd39b7a5503d41056d1fa6f3ce716743d0504580f",
+  "next_plan_sha256": "576a6d45bfb8996eedcd7236d6286725af2ef75e8979fff93f3992b5eba1a50e",
+  "parent_native_catalog": "batch-catalog-43810403786-a1.json",
+  "completed_delivery_milestone": {
+    "method": "COMPLETE_PREVIOUS_DELIVERY_JOB_WITHIN_THE_SAME_CONTROLLER",
+    "run_id": "43810403786",
+    "job_id": 133469202305,
+    "job_name": "Deliver SB40 85 and verify publication",
+    "run_attempt": 1,
+    "conclusion": "success"
+  },
+  "parent_windows_workflow": "43810403786",
+  "next_workflow": "43810403786",
+  "pppoker_windows_validated": false
+}
