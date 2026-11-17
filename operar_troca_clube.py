@@ -20,7 +20,7 @@ import argparse
 import time
 
 from club_actions import locate_club_in_frame, scroll_grid_once
-from club_grid import find_grid_crop, read_current_club
+from club_grid import find_grid_crop, read_club_grid, read_current_club
 from club_switcher import same_club
 from cursor_controller import CursorController, Intent, make_intervention_check
 from lobby_runner import find_lobby_crop
@@ -99,10 +99,14 @@ def ensure_club_live(target, *, engine, hwnd, adapter, control, ocr, discover_re
                 return dict(ok=True, action='TROCADO', scrolls=step, click=res)
             return dict(ok=False, action='TROCA_NAO_CONFIRMADA', scrolls=step, click=res,
                         reason=','.join(res.get('reasons', [])) or res.get('state'))
+        # find_grid_crop só LOCALIZA; a grade é real apenas se houver NOME de clube
+        # legível (senão é outra tela com verde — ex.: banner promo dentro de um clube).
         g = find_grid_crop(frame)
-        if not g['ok']:
-            return dict(ok=False, action='SEM_GRADE', reason=g['reason'], scrolls=step,
-                        hint='abra a lista de clubes para a troca')
+        has_clubs = g['ok'] and any(t['name'] for t in read_club_grid(g['crop'], ocr=ocr))
+        if not has_clubs:
+            return dict(ok=False, action='SEM_GRADE',
+                        reason=g['reason'] if not g['ok'] else 'sem nomes de clube legíveis',
+                        scrolls=step, hint='abra a lista de clubes para a troca')
         panel = (g['origin'][0], g['origin'][1], g['crop'].shape[1], g['crop'].shape[0])
         if dry_run:
             return dict(ok=False, action='PLANO_ROLAR', scrolls=step, panel_rect=panel,

@@ -85,6 +85,16 @@ class LiveLogicTests(unittest.TestCase):
         self.assertEqual(r['action'], 'PLANO_CLICAR')
         self.assertIn('target_rect_frame', r)
 
+    def test_dentro_de_clube_com_banner_verde_nao_e_grade(self):
+        # Gabarito DENTRO do Karekas dispara find_grid_crop (verde) mas 0 nomes ->
+        # guarda: SEM_GRADE, nao PLANO_ROLAR (regressao do falso-positivo ao vivo 17/11).
+        import cv2
+        eng = _Engine(cv2.imread(_INSIDE))
+        r = ensure_club_live('AK Amakha Club', engine=eng, hwnd=1, adapter=None,
+                             control=BotControl(), ocr=_ocr(), discover_rect=_discover,
+                             dry_run=True)
+        self.assertEqual(r['action'], 'SEM_GRADE')
+
     def test_dry_run_planeja_rolar_quando_alvo_ausente(self):
         eng = _Engine(_embed_grid())
         r = ensure_club_live('Veneza', engine=eng, hwnd=1, adapter=None,
