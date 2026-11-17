@@ -27,6 +27,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 20
     steps:
+      - name: Preserve repository bytes for exact SHA-256 checks
+        run: git config --global core.autocrlf false
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
