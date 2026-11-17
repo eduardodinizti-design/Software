@@ -1,0 +1,22 @@
+PILOTO DE ESTUDO — SOFTWARE ORIGINAL — MP x BTN x BB 40 BB
+
+Este pacote PREPARA um estudo. Nao e uma instalacao do bot nem inclui o HRC.
+Nao joga, nao movimenta o mouse e ainda nao contem politicas multiway resolvidas.
+
+1. Extraia o ZIP em uma PASTA NOVA; preserve sua instalacao e estudos anteriores.
+2. Tenha Python3.12 x64 instalado no Windows, com o launcher py disponivel.
+3. Abra PREPARAR_ESTUDO_MULTIWAY_40BB.bat.
+4. Ele gera runtime\estudos\mp-btn-bb40\ com plano, referencias, exemplos,
+   diagnostico de equidade e o script MP_BTN_BB40_MENU.js.
+5. Siga docs\GUIA_MULTIWAY_MP_BTN_BB40_20261116.txt no seu HRC Pro licenciado.
+
+O script JavaScript define os sizes permitidos na arvore. Ele NAO e um solver,
+nao importa ranges e nao configura a economia do torneio por conta propria.
+As cinco maos de exemplo sao sinteticas e NAO recomendam a melhor linha.
+Os dois diagnosticos de5000 amostras sao equidade de checkdown em fichas,
+sem decisoes de aposta, sem bunching e sem utilidade PKO calculada.
+
+Ainda precisamos calcular o piloto no HRC e inspecionar o export real antes
+de gerar politicas consultaveis pelo bot. Frequencias de acao nao foram inventadas.
+Se a saida ja existir, o programa para e preserva o estudo. Use outra pasta:
+  py -3.12 -m tools.prepare_multiway_pilot --output runtime\estudos\piloto2 --samples 5000

@@ -1,0 +1,7007 @@
+[
+  {
+    "name": "mp_cbet_btn_call_bb_checkraise_mp_call_btn_fold",
+    "status": "SYNTHETIC_RULE_REPLAY_NOT_SOLVER_POLICY",
+    "history": [
+      {
+        "actor": "BB",
+        "action": "check",
+        "to_bb": null,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            38.0,
+            38.0,
+            37.0
+          ],
+          "contributions": [
+            2.0,
+            2.0,
+            2.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            2,
+            0,
+            1
+          ],
+          "acted_to": [
+            null,
+            null,
+            null
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": []
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "check"
+          },
+          {
+            "kind": "bet",
+            "to_bb": 2.5,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 3.75,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 5.0,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 7.5,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 37.0,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            38.0,
+            38.0,
+            37.0
+          ],
+          "contributions": [
+            2.0,
+            2.0,
+            2.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            0,
+            1
+          ],
+          "acted_to": [
+            null,
+            null,
+            0.0
+          ],
+          "checked": [
+            false,
+            false,
+            true
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000"
+          ]
+        }
+      },
+      {
+        "actor": "MP",
+        "action": "bet",
+        "to_bb": 2.5,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            38.0,
+            38.0,
+            37.0
+          ],
+          "contributions": [
+            2.0,
+            2.0,
+            2.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            0,
+            1
+          ],
+          "acted_to": [
+            null,
+            null,
+            0.0
+          ],
+          "checked": [
+            false,
+            false,
+            true
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000"
+          ]
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "check"
+          },
+          {
+            "kind": "bet",
+            "to_bb": 2.5,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 3.75,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 5.0,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 7.5,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 38.0,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            35.5,
+            38.0,
+            37.0
+          ],
+          "contributions": [
+            4.5,
+            2.0,
+            2.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            2.5,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            1,
+            2
+          ],
+          "acted_to": [
+            2.5,
+            null,
+            0.0
+          ],
+          "checked": [
+            false,
+            false,
+            true
+          ],
+          "last_full_raise_bb": 2.5,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:bet:2.500000000"
+          ]
+        }
+      },
+      {
+        "actor": "BTN",
+        "action": "call",
+        "to_bb": null,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            35.5,
+            38.0,
+            37.0
+          ],
+          "contributions": [
+            4.5,
+            2.0,
+            2.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            2.5,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            1,
+            2
+          ],
+          "acted_to": [
+            2.5,
+            null,
+            0.0
+          ],
+          "checked": [
+            false,
+            false,
+            true
+          ],
+          "last_full_raise_bb": 2.5,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:bet:2.500000000"
+          ]
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "fold"
+          },
+          {
+            "kind": "call",
+            "cost_bb": 2.5
+          },
+          {
+            "kind": "raise",
+            "to_bb": 15.0,
+            "all_in": false
+          },
+          {
+            "kind": "raise",
+            "to_bb": 38.0,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            35.5,
+            35.5,
+            37.0
+          ],
+          "contributions": [
+            4.5,
+            4.5,
+            2.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            2.5,
+            2.5,
+            0.0
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            2
+          ],
+          "acted_to": [
+            2.5,
+            2.5,
+            0.0
+          ],
+          "checked": [
+            false,
+            false,
+            true
+          ],
+          "last_full_raise_bb": 2.5,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:bet:2.500000000",
+            "FLOP:BTN:call:2.500000000"
+          ]
+        }
+      },
+      {
+        "actor": "BB",
+        "action": "raise",
+        "to_bb": 10.0,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            35.5,
+            35.5,
+            37.0
+          ],
+          "contributions": [
+            4.5,
+            4.5,
+            2.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            2.5,
+            2.5,
+            0.0
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            2
+          ],
+          "acted_to": [
+            2.5,
+            2.5,
+            0.0
+          ],
+          "checked": [
+            false,
+            false,
+            true
+          ],
+          "last_full_raise_bb": 2.5,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:bet:2.500000000",
+            "FLOP:BTN:call:2.500000000"
+          ]
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "fold"
+          },
+          {
+            "kind": "call",
+            "cost_bb": 2.5
+          },
+          {
+            "kind": "raise",
+            "to_bb": 17.5,
+            "all_in": false
+          },
+          {
+            "kind": "raise",
+            "to_bb": 37.0,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            35.5,
+            35.5,
+            27.0
+          ],
+          "contributions": [
+            4.5,
+            4.5,
+            12.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            2.5,
+            2.5,
+            10.0
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            0,
+            1
+          ],
+          "acted_to": [
+            2.5,
+            2.5,
+            10.0
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 7.5,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:bet:2.500000000",
+            "FLOP:BTN:call:2.500000000",
+            "FLOP:BB:raise:10.000000000"
+          ]
+        }
+      },
+      {
+        "actor": "MP",
+        "action": "call",
+        "to_bb": null,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            35.5,
+            35.5,
+            27.0
+          ],
+          "contributions": [
+            4.5,
+            4.5,
+            12.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            2.5,
+            2.5,
+            10.0
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            0,
+            1
+          ],
+          "acted_to": [
+            2.5,
+            2.5,
+            10.0
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 7.5,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:bet:2.500000000",
+            "FLOP:BTN:call:2.500000000",
+            "FLOP:BB:raise:10.000000000"
+          ]
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "fold"
+          },
+          {
+            "kind": "call",
+            "cost_bb": 7.5
+          },
+          {
+            "kind": "raise",
+            "to_bb": 38.0,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            28.0,
+            35.5,
+            27.0
+          ],
+          "contributions": [
+            12.0,
+            4.5,
+            12.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            10.0,
+            2.5,
+            10.0
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            1
+          ],
+          "acted_to": [
+            10.0,
+            2.5,
+            10.0
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 7.5,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:bet:2.500000000",
+            "FLOP:BTN:call:2.500000000",
+            "FLOP:BB:raise:10.000000000",
+            "FLOP:MP:call:10.000000000"
+          ]
+        }
+      },
+      {
+        "actor": "BTN",
+        "action": "fold",
+        "to_bb": null,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            28.0,
+            35.5,
+            27.0
+          ],
+          "contributions": [
+            12.0,
+            4.5,
+            12.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            10.0,
+            2.5,
+            10.0
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            1
+          ],
+          "acted_to": [
+            10.0,
+            2.5,
+            10.0
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 7.5,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:bet:2.500000000",
+            "FLOP:BTN:call:2.500000000",
+            "FLOP:BB:raise:10.000000000",
+            "FLOP:MP:call:10.000000000"
+          ]
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "fold"
+          },
+          {
+            "kind": "call",
+            "cost_bb": 7.5
+          },
+          {
+            "kind": "raise",
+            "to_bb": 38.0,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            28.0,
+            35.5,
+            27.0
+          ],
+          "contributions": [
+            12.0,
+            4.5,
+            12.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            10.0,
+            2.5,
+            10.0
+          ],
+          "folded": [
+            false,
+            true,
+            false
+          ],
+          "pending": [],
+          "acted_to": [
+            10.0,
+            2.5,
+            10.0
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 7.5,
+          "phase": "deal",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:bet:2.500000000",
+            "FLOP:BTN:call:2.500000000",
+            "FLOP:BB:raise:10.000000000",
+            "FLOP:MP:call:10.000000000",
+            "FLOP:BTN:fold:2.500000000"
+          ]
+        }
+      },
+      {
+        "actor": null,
+        "action": "board",
+        "to_bb": null,
+        "next_card": "8h",
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            28.0,
+            35.5,
+            27.0
+          ],
+          "contributions": [
+            12.0,
+            4.5,
+            12.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            10.0,
+            2.5,
+            10.0
+          ],
+          "folded": [
+            false,
+            true,
+            false
+          ],
+          "pending": [],
+          "acted_to": [
+            10.0,
+            2.5,
+            10.0
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 7.5,
+          "phase": "deal",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:bet:2.500000000",
+            "FLOP:BTN:call:2.500000000",
+            "FLOP:BB:raise:10.000000000",
+            "FLOP:MP:call:10.000000000",
+            "FLOP:BTN:fold:2.500000000"
+          ]
+        },
+        "legal_candidate_menu": [],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h"
+          ],
+          "stacks": [
+            28.0,
+            35.5,
+            27.0
+          ],
+          "contributions": [
+            12.0,
+            4.5,
+            12.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            true,
+            false
+          ],
+          "pending": [
+            2,
+            0
+          ],
+          "acted_to": [
+            null,
+            null,
+            null
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:bet:2.500000000",
+            "FLOP:BTN:call:2.500000000",
+            "FLOP:BB:raise:10.000000000",
+            "FLOP:MP:call:10.000000000",
+            "FLOP:BTN:fold:2.500000000",
+            "BOARD:8h"
+          ]
+        }
+      },
+      {
+        "actor": "BB",
+        "action": "check",
+        "to_bb": null,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h"
+          ],
+          "stacks": [
+            28.0,
+            35.5,
+            27.0
+          ],
+          "contributions": [
+            12.0,
+            4.5,
+            12.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            true,
+            false
+          ],
+          "pending": [
+            2,
+            0
+          ],
+          "acted_to": [
+            null,
+            null,
+            null
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:bet:2.500000000",
+            "FLOP:BTN:call:2.500000000",
+            "FLOP:BB:raise:10.000000000",
+            "FLOP:MP:call:10.000000000",
+            "FLOP:BTN:fold:2.500000000",
+            "BOARD:8h"
+          ]
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "check"
+          },
+          {
+            "kind": "bet",
+            "to_bb": 10.0,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 15.0,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 20.0,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 27.0,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h"
+          ],
+          "stacks": [
+            28.0,
+            35.5,
+            27.0
+          ],
+          "contributions": [
+            12.0,
+            4.5,
+            12.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            true,
+            false
+          ],
+          "pending": [
+            0
+          ],
+          "acted_to": [
+            null,
+            null,
+            0.0
+          ],
+          "checked": [
+            false,
+            false,
+            true
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:bet:2.500000000",
+            "FLOP:BTN:call:2.500000000",
+            "FLOP:BB:raise:10.000000000",
+            "FLOP:MP:call:10.000000000",
+            "FLOP:BTN:fold:2.500000000",
+            "BOARD:8h",
+            "TURN:BB:check:0.000000000"
+          ]
+        }
+      },
+      {
+        "actor": "MP",
+        "action": "bet",
+        "to_bb": 10.0,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h"
+          ],
+          "stacks": [
+            28.0,
+            35.5,
+            27.0
+          ],
+          "contributions": [
+            12.0,
+            4.5,
+            12.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            true,
+            false
+          ],
+          "pending": [
+            0
+          ],
+          "acted_to": [
+            null,
+            null,
+            0.0
+          ],
+          "checked": [
+            false,
+            false,
+            true
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:bet:2.500000000",
+            "FLOP:BTN:call:2.500000000",
+            "FLOP:BB:raise:10.000000000",
+            "FLOP:MP:call:10.000000000",
+            "FLOP:BTN:fold:2.500000000",
+            "BOARD:8h",
+            "TURN:BB:check:0.000000000"
+          ]
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "check"
+          },
+          {
+            "kind": "bet",
+            "to_bb": 10.0,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 15.0,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 20.0,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 28.0,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h"
+          ],
+          "stacks": [
+            18.0,
+            35.5,
+            27.0
+          ],
+          "contributions": [
+            22.0,
+            4.5,
+            12.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            10.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            true,
+            false
+          ],
+          "pending": [
+            2
+          ],
+          "acted_to": [
+            10.0,
+            null,
+            0.0
+          ],
+          "checked": [
+            false,
+            false,
+            true
+          ],
+          "last_full_raise_bb": 10.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:bet:2.500000000",
+            "FLOP:BTN:call:2.500000000",
+            "FLOP:BB:raise:10.000000000",
+            "FLOP:MP:call:10.000000000",
+            "FLOP:BTN:fold:2.500000000",
+            "BOARD:8h",
+            "TURN:BB:check:0.000000000",
+            "TURN:MP:bet:10.000000000"
+          ]
+        }
+      },
+      {
+        "actor": "BB",
+        "action": "call",
+        "to_bb": null,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h"
+          ],
+          "stacks": [
+            18.0,
+            35.5,
+            27.0
+          ],
+          "contributions": [
+            22.0,
+            4.5,
+            12.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            10.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            true,
+            false
+          ],
+          "pending": [
+            2
+          ],
+          "acted_to": [
+            10.0,
+            null,
+            0.0
+          ],
+          "checked": [
+            false,
+            false,
+            true
+          ],
+          "last_full_raise_bb": 10.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:bet:2.500000000",
+            "FLOP:BTN:call:2.500000000",
+            "FLOP:BB:raise:10.000000000",
+            "FLOP:MP:call:10.000000000",
+            "FLOP:BTN:fold:2.500000000",
+            "BOARD:8h",
+            "TURN:BB:check:0.000000000",
+            "TURN:MP:bet:10.000000000"
+          ]
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "fold"
+          },
+          {
+            "kind": "call",
+            "cost_bb": 10.0
+          },
+          {
+            "kind": "raise",
+            "to_bb": 27.0,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h"
+          ],
+          "stacks": [
+            18.0,
+            35.5,
+            17.0
+          ],
+          "contributions": [
+            22.0,
+            4.5,
+            22.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            10.0,
+            0.0,
+            10.0
+          ],
+          "folded": [
+            false,
+            true,
+            false
+          ],
+          "pending": [],
+          "acted_to": [
+            10.0,
+            null,
+            10.0
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 10.0,
+          "phase": "deal",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:bet:2.500000000",
+            "FLOP:BTN:call:2.500000000",
+            "FLOP:BB:raise:10.000000000",
+            "FLOP:MP:call:10.000000000",
+            "FLOP:BTN:fold:2.500000000",
+            "BOARD:8h",
+            "TURN:BB:check:0.000000000",
+            "TURN:MP:bet:10.000000000",
+            "TURN:BB:call:10.000000000"
+          ]
+        }
+      },
+      {
+        "actor": null,
+        "action": "board",
+        "to_bb": null,
+        "next_card": "Qc",
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h"
+          ],
+          "stacks": [
+            18.0,
+            35.5,
+            17.0
+          ],
+          "contributions": [
+            22.0,
+            4.5,
+            22.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            10.0,
+            0.0,
+            10.0
+          ],
+          "folded": [
+            false,
+            true,
+            false
+          ],
+          "pending": [],
+          "acted_to": [
+            10.0,
+            null,
+            10.0
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 10.0,
+          "phase": "deal",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:bet:2.500000000",
+            "FLOP:BTN:call:2.500000000",
+            "FLOP:BB:raise:10.000000000",
+            "FLOP:MP:call:10.000000000",
+            "FLOP:BTN:fold:2.500000000",
+            "BOARD:8h",
+            "TURN:BB:check:0.000000000",
+            "TURN:MP:bet:10.000000000",
+            "TURN:BB:call:10.000000000"
+          ]
+        },
+        "legal_candidate_menu": [],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h",
+            "Qc"
+          ],
+          "stacks": [
+            18.0,
+            35.5,
+            17.0
+          ],
+          "contributions": [
+            22.0,
+            4.5,
+            22.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            true,
+            false
+          ],
+          "pending": [
+            2,
+            0
+          ],
+          "acted_to": [
+            null,
+            null,
+            null
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:bet:2.500000000",
+            "FLOP:BTN:call:2.500000000",
+            "FLOP:BB:raise:10.000000000",
+            "FLOP:MP:call:10.000000000",
+            "FLOP:BTN:fold:2.500000000",
+            "BOARD:8h",
+            "TURN:BB:check:0.000000000",
+            "TURN:MP:bet:10.000000000",
+            "TURN:BB:call:10.000000000",
+            "BOARD:Qc"
+          ]
+        }
+      },
+      {
+        "actor": "BB",
+        "action": "check",
+        "to_bb": null,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h",
+            "Qc"
+          ],
+          "stacks": [
+            18.0,
+            35.5,
+            17.0
+          ],
+          "contributions": [
+            22.0,
+            4.5,
+            22.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            true,
+            false
+          ],
+          "pending": [
+            2,
+            0
+          ],
+          "acted_to": [
+            null,
+            null,
+            null
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:bet:2.500000000",
+            "FLOP:BTN:call:2.500000000",
+            "FLOP:BB:raise:10.000000000",
+            "FLOP:MP:call:10.000000000",
+            "FLOP:BTN:fold:2.500000000",
+            "BOARD:8h",
+            "TURN:BB:check:0.000000000",
+            "TURN:MP:bet:10.000000000",
+            "TURN:BB:call:10.000000000",
+            "BOARD:Qc"
+          ]
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "check"
+          },
+          {
+            "kind": "bet",
+            "to_bb": 16.666666667,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 17.0,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h",
+            "Qc"
+          ],
+          "stacks": [
+            18.0,
+            35.5,
+            17.0
+          ],
+          "contributions": [
+            22.0,
+            4.5,
+            22.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            true,
+            false
+          ],
+          "pending": [
+            0
+          ],
+          "acted_to": [
+            null,
+            null,
+            0.0
+          ],
+          "checked": [
+            false,
+            false,
+            true
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:bet:2.500000000",
+            "FLOP:BTN:call:2.500000000",
+            "FLOP:BB:raise:10.000000000",
+            "FLOP:MP:call:10.000000000",
+            "FLOP:BTN:fold:2.500000000",
+            "BOARD:8h",
+            "TURN:BB:check:0.000000000",
+            "TURN:MP:bet:10.000000000",
+            "TURN:BB:call:10.000000000",
+            "BOARD:Qc",
+            "RIVER:BB:check:0.000000000"
+          ]
+        }
+      },
+      {
+        "actor": "MP",
+        "action": "bet",
+        "to_bb": 12.0,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h",
+            "Qc"
+          ],
+          "stacks": [
+            18.0,
+            35.5,
+            17.0
+          ],
+          "contributions": [
+            22.0,
+            4.5,
+            22.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            true,
+            false
+          ],
+          "pending": [
+            0
+          ],
+          "acted_to": [
+            null,
+            null,
+            0.0
+          ],
+          "checked": [
+            false,
+            false,
+            true
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:bet:2.500000000",
+            "FLOP:BTN:call:2.500000000",
+            "FLOP:BB:raise:10.000000000",
+            "FLOP:MP:call:10.000000000",
+            "FLOP:BTN:fold:2.500000000",
+            "BOARD:8h",
+            "TURN:BB:check:0.000000000",
+            "TURN:MP:bet:10.000000000",
+            "TURN:BB:call:10.000000000",
+            "BOARD:Qc",
+            "RIVER:BB:check:0.000000000"
+          ]
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "check"
+          },
+          {
+            "kind": "bet",
+            "to_bb": 16.666666667,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 18.0,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h",
+            "Qc"
+          ],
+          "stacks": [
+            6.0,
+            35.5,
+            17.0
+          ],
+          "contributions": [
+            34.0,
+            4.5,
+            22.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            12.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            true,
+            false
+          ],
+          "pending": [
+            2
+          ],
+          "acted_to": [
+            12.0,
+            null,
+            0.0
+          ],
+          "checked": [
+            false,
+            false,
+            true
+          ],
+          "last_full_raise_bb": 12.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:bet:2.500000000",
+            "FLOP:BTN:call:2.500000000",
+            "FLOP:BB:raise:10.000000000",
+            "FLOP:MP:call:10.000000000",
+            "FLOP:BTN:fold:2.500000000",
+            "BOARD:8h",
+            "TURN:BB:check:0.000000000",
+            "TURN:MP:bet:10.000000000",
+            "TURN:BB:call:10.000000000",
+            "BOARD:Qc",
+            "RIVER:BB:check:0.000000000",
+            "RIVER:MP:bet:12.000000000"
+          ]
+        }
+      },
+      {
+        "actor": "BB",
+        "action": "call",
+        "to_bb": null,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h",
+            "Qc"
+          ],
+          "stacks": [
+            6.0,
+            35.5,
+            17.0
+          ],
+          "contributions": [
+            34.0,
+            4.5,
+            22.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            12.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            true,
+            false
+          ],
+          "pending": [
+            2
+          ],
+          "acted_to": [
+            12.0,
+            null,
+            0.0
+          ],
+          "checked": [
+            false,
+            false,
+            true
+          ],
+          "last_full_raise_bb": 12.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:bet:2.500000000",
+            "FLOP:BTN:call:2.500000000",
+            "FLOP:BB:raise:10.000000000",
+            "FLOP:MP:call:10.000000000",
+            "FLOP:BTN:fold:2.500000000",
+            "BOARD:8h",
+            "TURN:BB:check:0.000000000",
+            "TURN:MP:bet:10.000000000",
+            "TURN:BB:call:10.000000000",
+            "BOARD:Qc",
+            "RIVER:BB:check:0.000000000",
+            "RIVER:MP:bet:12.000000000"
+          ]
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "fold"
+          },
+          {
+            "kind": "call",
+            "cost_bb": 12.0
+          },
+          {
+            "kind": "raise",
+            "to_bb": 17.0,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h",
+            "Qc"
+          ],
+          "stacks": [
+            6.0,
+            35.5,
+            5.0
+          ],
+          "contributions": [
+            34.0,
+            4.5,
+            34.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            12.0,
+            0.0,
+            12.0
+          ],
+          "folded": [
+            false,
+            true,
+            false
+          ],
+          "pending": [],
+          "acted_to": [
+            12.0,
+            null,
+            12.0
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 12.0,
+          "phase": "showdown",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:bet:2.500000000",
+            "FLOP:BTN:call:2.500000000",
+            "FLOP:BB:raise:10.000000000",
+            "FLOP:MP:call:10.000000000",
+            "FLOP:BTN:fold:2.500000000",
+            "BOARD:8h",
+            "TURN:BB:check:0.000000000",
+            "TURN:MP:bet:10.000000000",
+            "TURN:BB:call:10.000000000",
+            "BOARD:Qc",
+            "RIVER:BB:check:0.000000000",
+            "RIVER:MP:bet:12.000000000",
+            "RIVER:BB:call:12.000000000"
+          ]
+        }
+      }
+    ],
+    "showdown": {
+      "payouts_bb": [
+        0.0,
+        0.0,
+        74.0
+      ],
+      "layers": [
+        {
+          "amount_bb": 15.0,
+          "eligible": [
+            0,
+            2
+          ],
+          "winners": [
+            2
+          ],
+          "uncalled_return": false
+        },
+        {
+          "amount_bb": 59.0,
+          "eligible": [
+            0,
+            2
+          ],
+          "winners": [
+            2
+          ],
+          "uncalled_return": false
+        }
+      ],
+      "pot_bb": 74.0,
+      "final_stacks_bb": [
+        6.0,
+        35.5,
+        79.0
+      ],
+      "bounty_utility_calculated": false,
+      "odd_chip_rounding": "FRACTIONAL_BB_LAB_ONLY"
+    },
+    "optimality_claimed": false,
+    "action_frequencies": null
+  },
+  {
+    "name": "btn_stab_bb_call_mp_fold",
+    "status": "SYNTHETIC_RULE_REPLAY_NOT_SOLVER_POLICY",
+    "history": [
+      {
+        "actor": "BB",
+        "action": "check",
+        "to_bb": null,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            38.0,
+            38.0,
+            37.0
+          ],
+          "contributions": [
+            2.0,
+            2.0,
+            2.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            2,
+            0,
+            1
+          ],
+          "acted_to": [
+            null,
+            null,
+            null
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": []
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "check"
+          },
+          {
+            "kind": "bet",
+            "to_bb": 2.5,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 3.75,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 5.0,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 7.5,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 37.0,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            38.0,
+            38.0,
+            37.0
+          ],
+          "contributions": [
+            2.0,
+            2.0,
+            2.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            0,
+            1
+          ],
+          "acted_to": [
+            null,
+            null,
+            0.0
+          ],
+          "checked": [
+            false,
+            false,
+            true
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000"
+          ]
+        }
+      },
+      {
+        "actor": "MP",
+        "action": "check",
+        "to_bb": null,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            38.0,
+            38.0,
+            37.0
+          ],
+          "contributions": [
+            2.0,
+            2.0,
+            2.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            0,
+            1
+          ],
+          "acted_to": [
+            null,
+            null,
+            0.0
+          ],
+          "checked": [
+            false,
+            false,
+            true
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000"
+          ]
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "check"
+          },
+          {
+            "kind": "bet",
+            "to_bb": 2.5,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 3.75,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 5.0,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 7.5,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 38.0,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            38.0,
+            38.0,
+            37.0
+          ],
+          "contributions": [
+            2.0,
+            2.0,
+            2.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            1
+          ],
+          "acted_to": [
+            0.0,
+            null,
+            0.0
+          ],
+          "checked": [
+            true,
+            false,
+            true
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000"
+          ]
+        }
+      },
+      {
+        "actor": "BTN",
+        "action": "bet",
+        "to_bb": 2.5,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            38.0,
+            38.0,
+            37.0
+          ],
+          "contributions": [
+            2.0,
+            2.0,
+            2.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            1
+          ],
+          "acted_to": [
+            0.0,
+            null,
+            0.0
+          ],
+          "checked": [
+            true,
+            false,
+            true
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000"
+          ]
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "check"
+          },
+          {
+            "kind": "bet",
+            "to_bb": 2.5,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 3.75,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 5.0,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 7.5,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 38.0,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            38.0,
+            35.5,
+            37.0
+          ],
+          "contributions": [
+            2.0,
+            4.5,
+            2.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            2.5,
+            0.0
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            2,
+            0
+          ],
+          "acted_to": [
+            0.0,
+            2.5,
+            0.0
+          ],
+          "checked": [
+            true,
+            false,
+            true
+          ],
+          "last_full_raise_bb": 2.5,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000",
+            "FLOP:BTN:bet:2.500000000"
+          ]
+        }
+      },
+      {
+        "actor": "BB",
+        "action": "call",
+        "to_bb": null,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            38.0,
+            35.5,
+            37.0
+          ],
+          "contributions": [
+            2.0,
+            4.5,
+            2.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            2.5,
+            0.0
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            2,
+            0
+          ],
+          "acted_to": [
+            0.0,
+            2.5,
+            0.0
+          ],
+          "checked": [
+            true,
+            false,
+            true
+          ],
+          "last_full_raise_bb": 2.5,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000",
+            "FLOP:BTN:bet:2.500000000"
+          ]
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "fold"
+          },
+          {
+            "kind": "call",
+            "cost_bb": 2.5
+          },
+          {
+            "kind": "raise",
+            "to_bb": 15.0,
+            "all_in": false
+          },
+          {
+            "kind": "raise",
+            "to_bb": 37.0,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            38.0,
+            35.5,
+            34.5
+          ],
+          "contributions": [
+            2.0,
+            4.5,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            2.5,
+            2.5
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            0
+          ],
+          "acted_to": [
+            0.0,
+            2.5,
+            2.5
+          ],
+          "checked": [
+            true,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 2.5,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000",
+            "FLOP:BTN:bet:2.500000000",
+            "FLOP:BB:call:2.500000000"
+          ]
+        }
+      },
+      {
+        "actor": "MP",
+        "action": "fold",
+        "to_bb": null,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            38.0,
+            35.5,
+            34.5
+          ],
+          "contributions": [
+            2.0,
+            4.5,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            2.5,
+            2.5
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            0
+          ],
+          "acted_to": [
+            0.0,
+            2.5,
+            2.5
+          ],
+          "checked": [
+            true,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 2.5,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000",
+            "FLOP:BTN:bet:2.500000000",
+            "FLOP:BB:call:2.500000000"
+          ]
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "fold"
+          },
+          {
+            "kind": "call",
+            "cost_bb": 2.5
+          },
+          {
+            "kind": "raise",
+            "to_bb": 17.5,
+            "all_in": false
+          },
+          {
+            "kind": "raise",
+            "to_bb": 38.0,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            38.0,
+            35.5,
+            34.5
+          ],
+          "contributions": [
+            2.0,
+            4.5,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            2.5,
+            2.5
+          ],
+          "folded": [
+            true,
+            false,
+            false
+          ],
+          "pending": [],
+          "acted_to": [
+            0.0,
+            2.5,
+            2.5
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 2.5,
+          "phase": "deal",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000",
+            "FLOP:BTN:bet:2.500000000",
+            "FLOP:BB:call:2.500000000",
+            "FLOP:MP:fold:0.000000000"
+          ]
+        }
+      },
+      {
+        "actor": null,
+        "action": "board",
+        "to_bb": null,
+        "next_card": "8h",
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            38.0,
+            35.5,
+            34.5
+          ],
+          "contributions": [
+            2.0,
+            4.5,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            2.5,
+            2.5
+          ],
+          "folded": [
+            true,
+            false,
+            false
+          ],
+          "pending": [],
+          "acted_to": [
+            0.0,
+            2.5,
+            2.5
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 2.5,
+          "phase": "deal",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000",
+            "FLOP:BTN:bet:2.500000000",
+            "FLOP:BB:call:2.500000000",
+            "FLOP:MP:fold:0.000000000"
+          ]
+        },
+        "legal_candidate_menu": [],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h"
+          ],
+          "stacks": [
+            38.0,
+            35.5,
+            34.5
+          ],
+          "contributions": [
+            2.0,
+            4.5,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            true,
+            false,
+            false
+          ],
+          "pending": [
+            2,
+            1
+          ],
+          "acted_to": [
+            null,
+            null,
+            null
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000",
+            "FLOP:BTN:bet:2.500000000",
+            "FLOP:BB:call:2.500000000",
+            "FLOP:MP:fold:0.000000000",
+            "BOARD:8h"
+          ]
+        }
+      },
+      {
+        "actor": "BB",
+        "action": "check",
+        "to_bb": null,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h"
+          ],
+          "stacks": [
+            38.0,
+            35.5,
+            34.5
+          ],
+          "contributions": [
+            2.0,
+            4.5,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            true,
+            false,
+            false
+          ],
+          "pending": [
+            2,
+            1
+          ],
+          "acted_to": [
+            null,
+            null,
+            null
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000",
+            "FLOP:BTN:bet:2.500000000",
+            "FLOP:BB:call:2.500000000",
+            "FLOP:MP:fold:0.000000000",
+            "BOARD:8h"
+          ]
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "check"
+          },
+          {
+            "kind": "bet",
+            "to_bb": 4.166666667,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 6.25,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 8.333333333,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 12.5,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 34.5,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h"
+          ],
+          "stacks": [
+            38.0,
+            35.5,
+            34.5
+          ],
+          "contributions": [
+            2.0,
+            4.5,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            true,
+            false,
+            false
+          ],
+          "pending": [
+            1
+          ],
+          "acted_to": [
+            null,
+            null,
+            0.0
+          ],
+          "checked": [
+            false,
+            false,
+            true
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000",
+            "FLOP:BTN:bet:2.500000000",
+            "FLOP:BB:call:2.500000000",
+            "FLOP:MP:fold:0.000000000",
+            "BOARD:8h",
+            "TURN:BB:check:0.000000000"
+          ]
+        }
+      },
+      {
+        "actor": "BTN",
+        "action": "check",
+        "to_bb": null,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h"
+          ],
+          "stacks": [
+            38.0,
+            35.5,
+            34.5
+          ],
+          "contributions": [
+            2.0,
+            4.5,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            true,
+            false,
+            false
+          ],
+          "pending": [
+            1
+          ],
+          "acted_to": [
+            null,
+            null,
+            0.0
+          ],
+          "checked": [
+            false,
+            false,
+            true
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000",
+            "FLOP:BTN:bet:2.500000000",
+            "FLOP:BB:call:2.500000000",
+            "FLOP:MP:fold:0.000000000",
+            "BOARD:8h",
+            "TURN:BB:check:0.000000000"
+          ]
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "check"
+          },
+          {
+            "kind": "bet",
+            "to_bb": 4.166666667,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 6.25,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 8.333333333,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 12.5,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 35.5,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h"
+          ],
+          "stacks": [
+            38.0,
+            35.5,
+            34.5
+          ],
+          "contributions": [
+            2.0,
+            4.5,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            true,
+            false,
+            false
+          ],
+          "pending": [],
+          "acted_to": [
+            null,
+            0.0,
+            0.0
+          ],
+          "checked": [
+            false,
+            true,
+            true
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "deal",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000",
+            "FLOP:BTN:bet:2.500000000",
+            "FLOP:BB:call:2.500000000",
+            "FLOP:MP:fold:0.000000000",
+            "BOARD:8h",
+            "TURN:BB:check:0.000000000",
+            "TURN:BTN:check:0.000000000"
+          ]
+        }
+      },
+      {
+        "actor": null,
+        "action": "board",
+        "to_bb": null,
+        "next_card": "Qc",
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h"
+          ],
+          "stacks": [
+            38.0,
+            35.5,
+            34.5
+          ],
+          "contributions": [
+            2.0,
+            4.5,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            true,
+            false,
+            false
+          ],
+          "pending": [],
+          "acted_to": [
+            null,
+            0.0,
+            0.0
+          ],
+          "checked": [
+            false,
+            true,
+            true
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "deal",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000",
+            "FLOP:BTN:bet:2.500000000",
+            "FLOP:BB:call:2.500000000",
+            "FLOP:MP:fold:0.000000000",
+            "BOARD:8h",
+            "TURN:BB:check:0.000000000",
+            "TURN:BTN:check:0.000000000"
+          ]
+        },
+        "legal_candidate_menu": [],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h",
+            "Qc"
+          ],
+          "stacks": [
+            38.0,
+            35.5,
+            34.5
+          ],
+          "contributions": [
+            2.0,
+            4.5,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            true,
+            false,
+            false
+          ],
+          "pending": [
+            2,
+            1
+          ],
+          "acted_to": [
+            null,
+            null,
+            null
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000",
+            "FLOP:BTN:bet:2.500000000",
+            "FLOP:BB:call:2.500000000",
+            "FLOP:MP:fold:0.000000000",
+            "BOARD:8h",
+            "TURN:BB:check:0.000000000",
+            "TURN:BTN:check:0.000000000",
+            "BOARD:Qc"
+          ]
+        }
+      },
+      {
+        "actor": "BB",
+        "action": "check",
+        "to_bb": null,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h",
+            "Qc"
+          ],
+          "stacks": [
+            38.0,
+            35.5,
+            34.5
+          ],
+          "contributions": [
+            2.0,
+            4.5,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            true,
+            false,
+            false
+          ],
+          "pending": [
+            2,
+            1
+          ],
+          "acted_to": [
+            null,
+            null,
+            null
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000",
+            "FLOP:BTN:bet:2.500000000",
+            "FLOP:BB:call:2.500000000",
+            "FLOP:MP:fold:0.000000000",
+            "BOARD:8h",
+            "TURN:BB:check:0.000000000",
+            "TURN:BTN:check:0.000000000",
+            "BOARD:Qc"
+          ]
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "check"
+          },
+          {
+            "kind": "bet",
+            "to_bb": 4.166666667,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 6.25,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 8.333333333,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 12.5,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 34.5,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h",
+            "Qc"
+          ],
+          "stacks": [
+            38.0,
+            35.5,
+            34.5
+          ],
+          "contributions": [
+            2.0,
+            4.5,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            true,
+            false,
+            false
+          ],
+          "pending": [
+            1
+          ],
+          "acted_to": [
+            null,
+            null,
+            0.0
+          ],
+          "checked": [
+            false,
+            false,
+            true
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000",
+            "FLOP:BTN:bet:2.500000000",
+            "FLOP:BB:call:2.500000000",
+            "FLOP:MP:fold:0.000000000",
+            "BOARD:8h",
+            "TURN:BB:check:0.000000000",
+            "TURN:BTN:check:0.000000000",
+            "BOARD:Qc",
+            "RIVER:BB:check:0.000000000"
+          ]
+        }
+      },
+      {
+        "actor": "BTN",
+        "action": "check",
+        "to_bb": null,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h",
+            "Qc"
+          ],
+          "stacks": [
+            38.0,
+            35.5,
+            34.5
+          ],
+          "contributions": [
+            2.0,
+            4.5,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            true,
+            false,
+            false
+          ],
+          "pending": [
+            1
+          ],
+          "acted_to": [
+            null,
+            null,
+            0.0
+          ],
+          "checked": [
+            false,
+            false,
+            true
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000",
+            "FLOP:BTN:bet:2.500000000",
+            "FLOP:BB:call:2.500000000",
+            "FLOP:MP:fold:0.000000000",
+            "BOARD:8h",
+            "TURN:BB:check:0.000000000",
+            "TURN:BTN:check:0.000000000",
+            "BOARD:Qc",
+            "RIVER:BB:check:0.000000000"
+          ]
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "check"
+          },
+          {
+            "kind": "bet",
+            "to_bb": 4.166666667,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 6.25,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 8.333333333,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 12.5,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 35.5,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h",
+            "Qc"
+          ],
+          "stacks": [
+            38.0,
+            35.5,
+            34.5
+          ],
+          "contributions": [
+            2.0,
+            4.5,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            true,
+            false,
+            false
+          ],
+          "pending": [],
+          "acted_to": [
+            null,
+            0.0,
+            0.0
+          ],
+          "checked": [
+            false,
+            true,
+            true
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "showdown",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000",
+            "FLOP:BTN:bet:2.500000000",
+            "FLOP:BB:call:2.500000000",
+            "FLOP:MP:fold:0.000000000",
+            "BOARD:8h",
+            "TURN:BB:check:0.000000000",
+            "TURN:BTN:check:0.000000000",
+            "BOARD:Qc",
+            "RIVER:BB:check:0.000000000",
+            "RIVER:BTN:check:0.000000000"
+          ]
+        }
+      }
+    ],
+    "showdown": {
+      "payouts_bb": [
+        0.0,
+        0.0,
+        12.5
+      ],
+      "layers": [
+        {
+          "amount_bb": 7.5,
+          "eligible": [
+            1,
+            2
+          ],
+          "winners": [
+            2
+          ],
+          "uncalled_return": false
+        },
+        {
+          "amount_bb": 5.0,
+          "eligible": [
+            1,
+            2
+          ],
+          "winners": [
+            2
+          ],
+          "uncalled_return": false
+        }
+      ],
+      "pot_bb": 12.5,
+      "final_stacks_bb": [
+        38.0,
+        35.5,
+        47.0
+      ],
+      "bounty_utility_calculated": false,
+      "odd_chip_rounding": "FRACTIONAL_BB_LAB_ONLY"
+    },
+    "optimality_claimed": false,
+    "action_frequencies": null
+  },
+  {
+    "name": "bb_donk_mp_raise_btn_call_bb_fold",
+    "status": "SYNTHETIC_RULE_REPLAY_NOT_SOLVER_POLICY",
+    "history": [
+      {
+        "actor": "BB",
+        "action": "bet",
+        "to_bb": 2.5,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            38.0,
+            38.0,
+            37.0
+          ],
+          "contributions": [
+            2.0,
+            2.0,
+            2.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            2,
+            0,
+            1
+          ],
+          "acted_to": [
+            null,
+            null,
+            null
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": []
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "check"
+          },
+          {
+            "kind": "bet",
+            "to_bb": 2.5,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 3.75,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 5.0,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 7.5,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 37.0,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            38.0,
+            38.0,
+            34.5
+          ],
+          "contributions": [
+            2.0,
+            2.0,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            2.5
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            0,
+            1
+          ],
+          "acted_to": [
+            null,
+            null,
+            2.5
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 2.5,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:bet:2.500000000"
+          ]
+        }
+      },
+      {
+        "actor": "MP",
+        "action": "raise",
+        "to_bb": 8.0,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            38.0,
+            38.0,
+            34.5
+          ],
+          "contributions": [
+            2.0,
+            2.0,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            2.5
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            0,
+            1
+          ],
+          "acted_to": [
+            null,
+            null,
+            2.5
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 2.5,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:bet:2.500000000"
+          ]
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "fold"
+          },
+          {
+            "kind": "call",
+            "cost_bb": 2.5
+          },
+          {
+            "kind": "raise",
+            "to_bb": 15.0,
+            "all_in": false
+          },
+          {
+            "kind": "raise",
+            "to_bb": 38.0,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            30.0,
+            38.0,
+            34.5
+          ],
+          "contributions": [
+            10.0,
+            2.0,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            8.0,
+            0.0,
+            2.5
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            1,
+            2
+          ],
+          "acted_to": [
+            8.0,
+            null,
+            2.5
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 5.5,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:bet:2.500000000",
+            "FLOP:MP:raise:8.000000000"
+          ]
+        }
+      },
+      {
+        "actor": "BTN",
+        "action": "call",
+        "to_bb": null,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            30.0,
+            38.0,
+            34.5
+          ],
+          "contributions": [
+            10.0,
+            2.0,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            8.0,
+            0.0,
+            2.5
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            1,
+            2
+          ],
+          "acted_to": [
+            8.0,
+            null,
+            2.5
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 5.5,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:bet:2.500000000",
+            "FLOP:MP:raise:8.000000000"
+          ]
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "fold"
+          },
+          {
+            "kind": "call",
+            "cost_bb": 8.0
+          },
+          {
+            "kind": "raise",
+            "to_bb": 34.0,
+            "all_in": false
+          },
+          {
+            "kind": "raise",
+            "to_bb": 38.0,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            30.0,
+            30.0,
+            34.5
+          ],
+          "contributions": [
+            10.0,
+            10.0,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            8.0,
+            8.0,
+            2.5
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            2
+          ],
+          "acted_to": [
+            8.0,
+            8.0,
+            2.5
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 5.5,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:bet:2.500000000",
+            "FLOP:MP:raise:8.000000000",
+            "FLOP:BTN:call:8.000000000"
+          ]
+        }
+      },
+      {
+        "actor": "BB",
+        "action": "fold",
+        "to_bb": null,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            30.0,
+            30.0,
+            34.5
+          ],
+          "contributions": [
+            10.0,
+            10.0,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            8.0,
+            8.0,
+            2.5
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            2
+          ],
+          "acted_to": [
+            8.0,
+            8.0,
+            2.5
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 5.5,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:bet:2.500000000",
+            "FLOP:MP:raise:8.000000000",
+            "FLOP:BTN:call:8.000000000"
+          ]
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "fold"
+          },
+          {
+            "kind": "call",
+            "cost_bb": 5.5
+          },
+          {
+            "kind": "raise",
+            "to_bb": 37.0,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            30.0,
+            30.0,
+            34.5
+          ],
+          "contributions": [
+            10.0,
+            10.0,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            8.0,
+            8.0,
+            2.5
+          ],
+          "folded": [
+            false,
+            false,
+            true
+          ],
+          "pending": [],
+          "acted_to": [
+            8.0,
+            8.0,
+            2.5
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 5.5,
+          "phase": "deal",
+          "history": [
+            "FLOP:BB:bet:2.500000000",
+            "FLOP:MP:raise:8.000000000",
+            "FLOP:BTN:call:8.000000000",
+            "FLOP:BB:fold:2.500000000"
+          ]
+        }
+      },
+      {
+        "actor": null,
+        "action": "board",
+        "to_bb": null,
+        "next_card": "8h",
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            30.0,
+            30.0,
+            34.5
+          ],
+          "contributions": [
+            10.0,
+            10.0,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            8.0,
+            8.0,
+            2.5
+          ],
+          "folded": [
+            false,
+            false,
+            true
+          ],
+          "pending": [],
+          "acted_to": [
+            8.0,
+            8.0,
+            2.5
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 5.5,
+          "phase": "deal",
+          "history": [
+            "FLOP:BB:bet:2.500000000",
+            "FLOP:MP:raise:8.000000000",
+            "FLOP:BTN:call:8.000000000",
+            "FLOP:BB:fold:2.500000000"
+          ]
+        },
+        "legal_candidate_menu": [],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h"
+          ],
+          "stacks": [
+            30.0,
+            30.0,
+            34.5
+          ],
+          "contributions": [
+            10.0,
+            10.0,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            false,
+            true
+          ],
+          "pending": [
+            0,
+            1
+          ],
+          "acted_to": [
+            null,
+            null,
+            null
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:bet:2.500000000",
+            "FLOP:MP:raise:8.000000000",
+            "FLOP:BTN:call:8.000000000",
+            "FLOP:BB:fold:2.500000000",
+            "BOARD:8h"
+          ]
+        }
+      },
+      {
+        "actor": "MP",
+        "action": "check",
+        "to_bb": null,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h"
+          ],
+          "stacks": [
+            30.0,
+            30.0,
+            34.5
+          ],
+          "contributions": [
+            10.0,
+            10.0,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            false,
+            true
+          ],
+          "pending": [
+            0,
+            1
+          ],
+          "acted_to": [
+            null,
+            null,
+            null
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:bet:2.500000000",
+            "FLOP:MP:raise:8.000000000",
+            "FLOP:BTN:call:8.000000000",
+            "FLOP:BB:fold:2.500000000",
+            "BOARD:8h"
+          ]
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "check"
+          },
+          {
+            "kind": "bet",
+            "to_bb": 8.666666667,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 13.0,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 17.333333333,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 26.0,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 30.0,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h"
+          ],
+          "stacks": [
+            30.0,
+            30.0,
+            34.5
+          ],
+          "contributions": [
+            10.0,
+            10.0,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            false,
+            true
+          ],
+          "pending": [
+            1
+          ],
+          "acted_to": [
+            0.0,
+            null,
+            null
+          ],
+          "checked": [
+            true,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:bet:2.500000000",
+            "FLOP:MP:raise:8.000000000",
+            "FLOP:BTN:call:8.000000000",
+            "FLOP:BB:fold:2.500000000",
+            "BOARD:8h",
+            "TURN:MP:check:0.000000000"
+          ]
+        }
+      },
+      {
+        "actor": "BTN",
+        "action": "check",
+        "to_bb": null,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h"
+          ],
+          "stacks": [
+            30.0,
+            30.0,
+            34.5
+          ],
+          "contributions": [
+            10.0,
+            10.0,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            false,
+            true
+          ],
+          "pending": [
+            1
+          ],
+          "acted_to": [
+            0.0,
+            null,
+            null
+          ],
+          "checked": [
+            true,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:bet:2.500000000",
+            "FLOP:MP:raise:8.000000000",
+            "FLOP:BTN:call:8.000000000",
+            "FLOP:BB:fold:2.500000000",
+            "BOARD:8h",
+            "TURN:MP:check:0.000000000"
+          ]
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "check"
+          },
+          {
+            "kind": "bet",
+            "to_bb": 8.666666667,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 13.0,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 17.333333333,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 26.0,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 30.0,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h"
+          ],
+          "stacks": [
+            30.0,
+            30.0,
+            34.5
+          ],
+          "contributions": [
+            10.0,
+            10.0,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            false,
+            true
+          ],
+          "pending": [],
+          "acted_to": [
+            0.0,
+            0.0,
+            null
+          ],
+          "checked": [
+            true,
+            true,
+            false
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "deal",
+          "history": [
+            "FLOP:BB:bet:2.500000000",
+            "FLOP:MP:raise:8.000000000",
+            "FLOP:BTN:call:8.000000000",
+            "FLOP:BB:fold:2.500000000",
+            "BOARD:8h",
+            "TURN:MP:check:0.000000000",
+            "TURN:BTN:check:0.000000000"
+          ]
+        }
+      },
+      {
+        "actor": null,
+        "action": "board",
+        "to_bb": null,
+        "next_card": "Qc",
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h"
+          ],
+          "stacks": [
+            30.0,
+            30.0,
+            34.5
+          ],
+          "contributions": [
+            10.0,
+            10.0,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            false,
+            true
+          ],
+          "pending": [],
+          "acted_to": [
+            0.0,
+            0.0,
+            null
+          ],
+          "checked": [
+            true,
+            true,
+            false
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "deal",
+          "history": [
+            "FLOP:BB:bet:2.500000000",
+            "FLOP:MP:raise:8.000000000",
+            "FLOP:BTN:call:8.000000000",
+            "FLOP:BB:fold:2.500000000",
+            "BOARD:8h",
+            "TURN:MP:check:0.000000000",
+            "TURN:BTN:check:0.000000000"
+          ]
+        },
+        "legal_candidate_menu": [],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h",
+            "Qc"
+          ],
+          "stacks": [
+            30.0,
+            30.0,
+            34.5
+          ],
+          "contributions": [
+            10.0,
+            10.0,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            false,
+            true
+          ],
+          "pending": [
+            0,
+            1
+          ],
+          "acted_to": [
+            null,
+            null,
+            null
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:bet:2.500000000",
+            "FLOP:MP:raise:8.000000000",
+            "FLOP:BTN:call:8.000000000",
+            "FLOP:BB:fold:2.500000000",
+            "BOARD:8h",
+            "TURN:MP:check:0.000000000",
+            "TURN:BTN:check:0.000000000",
+            "BOARD:Qc"
+          ]
+        }
+      },
+      {
+        "actor": "MP",
+        "action": "check",
+        "to_bb": null,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h",
+            "Qc"
+          ],
+          "stacks": [
+            30.0,
+            30.0,
+            34.5
+          ],
+          "contributions": [
+            10.0,
+            10.0,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            false,
+            true
+          ],
+          "pending": [
+            0,
+            1
+          ],
+          "acted_to": [
+            null,
+            null,
+            null
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:bet:2.500000000",
+            "FLOP:MP:raise:8.000000000",
+            "FLOP:BTN:call:8.000000000",
+            "FLOP:BB:fold:2.500000000",
+            "BOARD:8h",
+            "TURN:MP:check:0.000000000",
+            "TURN:BTN:check:0.000000000",
+            "BOARD:Qc"
+          ]
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "check"
+          },
+          {
+            "kind": "bet",
+            "to_bb": 8.666666667,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 13.0,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 17.333333333,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 26.0,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 30.0,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h",
+            "Qc"
+          ],
+          "stacks": [
+            30.0,
+            30.0,
+            34.5
+          ],
+          "contributions": [
+            10.0,
+            10.0,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            false,
+            true
+          ],
+          "pending": [
+            1
+          ],
+          "acted_to": [
+            0.0,
+            null,
+            null
+          ],
+          "checked": [
+            true,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:bet:2.500000000",
+            "FLOP:MP:raise:8.000000000",
+            "FLOP:BTN:call:8.000000000",
+            "FLOP:BB:fold:2.500000000",
+            "BOARD:8h",
+            "TURN:MP:check:0.000000000",
+            "TURN:BTN:check:0.000000000",
+            "BOARD:Qc",
+            "RIVER:MP:check:0.000000000"
+          ]
+        }
+      },
+      {
+        "actor": "BTN",
+        "action": "check",
+        "to_bb": null,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h",
+            "Qc"
+          ],
+          "stacks": [
+            30.0,
+            30.0,
+            34.5
+          ],
+          "contributions": [
+            10.0,
+            10.0,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            false,
+            true
+          ],
+          "pending": [
+            1
+          ],
+          "acted_to": [
+            0.0,
+            null,
+            null
+          ],
+          "checked": [
+            true,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:bet:2.500000000",
+            "FLOP:MP:raise:8.000000000",
+            "FLOP:BTN:call:8.000000000",
+            "FLOP:BB:fold:2.500000000",
+            "BOARD:8h",
+            "TURN:MP:check:0.000000000",
+            "TURN:BTN:check:0.000000000",
+            "BOARD:Qc",
+            "RIVER:MP:check:0.000000000"
+          ]
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "check"
+          },
+          {
+            "kind": "bet",
+            "to_bb": 8.666666667,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 13.0,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 17.333333333,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 26.0,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 30.0,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h",
+            "Qc"
+          ],
+          "stacks": [
+            30.0,
+            30.0,
+            34.5
+          ],
+          "contributions": [
+            10.0,
+            10.0,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            false,
+            true
+          ],
+          "pending": [],
+          "acted_to": [
+            0.0,
+            0.0,
+            null
+          ],
+          "checked": [
+            true,
+            true,
+            false
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "showdown",
+          "history": [
+            "FLOP:BB:bet:2.500000000",
+            "FLOP:MP:raise:8.000000000",
+            "FLOP:BTN:call:8.000000000",
+            "FLOP:BB:fold:2.500000000",
+            "BOARD:8h",
+            "TURN:MP:check:0.000000000",
+            "TURN:BTN:check:0.000000000",
+            "BOARD:Qc",
+            "RIVER:MP:check:0.000000000",
+            "RIVER:BTN:check:0.000000000"
+          ]
+        }
+      }
+    ],
+    "showdown": {
+      "payouts_bb": [
+        26.0,
+        0.0,
+        0.0
+      ],
+      "layers": [
+        {
+          "amount_bb": 15.0,
+          "eligible": [
+            0,
+            1
+          ],
+          "winners": [
+            0
+          ],
+          "uncalled_return": false
+        },
+        {
+          "amount_bb": 11.0,
+          "eligible": [
+            0,
+            1
+          ],
+          "winners": [
+            0
+          ],
+          "uncalled_return": false
+        }
+      ],
+      "pot_bb": 26.0,
+      "final_stacks_bb": [
+        56.0,
+        30.0,
+        34.5
+      ],
+      "bounty_utility_calculated": false,
+      "odd_chip_rounding": "FRACTIONAL_BB_LAB_ONLY"
+    },
+    "optimality_claimed": false,
+    "action_frequencies": null
+  },
+  {
+    "name": "three_way_all_in_and_side_pot",
+    "status": "SYNTHETIC_RULE_REPLAY_NOT_SOLVER_POLICY",
+    "history": [
+      {
+        "actor": "BB",
+        "action": "bet",
+        "to_bb": 37.0,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            38.0,
+            38.0,
+            37.0
+          ],
+          "contributions": [
+            2.0,
+            2.0,
+            2.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            2,
+            0,
+            1
+          ],
+          "acted_to": [
+            null,
+            null,
+            null
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": []
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "check"
+          },
+          {
+            "kind": "bet",
+            "to_bb": 2.5,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 3.75,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 5.0,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 7.5,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 37.0,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            38.0,
+            38.0,
+            0.0
+          ],
+          "contributions": [
+            2.0,
+            2.0,
+            39.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            37.0
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            0,
+            1
+          ],
+          "acted_to": [
+            null,
+            null,
+            37.0
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 37.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:bet:37.000000000"
+          ]
+        }
+      },
+      {
+        "actor": "MP",
+        "action": "raise",
+        "to_bb": 38.0,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            38.0,
+            38.0,
+            0.0
+          ],
+          "contributions": [
+            2.0,
+            2.0,
+            39.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            37.0
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            0,
+            1
+          ],
+          "acted_to": [
+            null,
+            null,
+            37.0
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 37.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:bet:37.000000000"
+          ]
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "fold"
+          },
+          {
+            "kind": "call",
+            "cost_bb": 37.0
+          },
+          {
+            "kind": "raise",
+            "to_bb": 38.0,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            0.0,
+            38.0,
+            0.0
+          ],
+          "contributions": [
+            40.0,
+            2.0,
+            39.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            38.0,
+            0.0,
+            37.0
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            1
+          ],
+          "acted_to": [
+            38.0,
+            null,
+            37.0
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 37.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:bet:37.000000000",
+            "FLOP:MP:raise:38.000000000"
+          ]
+        }
+      },
+      {
+        "actor": "BTN",
+        "action": "call",
+        "to_bb": null,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            0.0,
+            38.0,
+            0.0
+          ],
+          "contributions": [
+            40.0,
+            2.0,
+            39.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            38.0,
+            0.0,
+            37.0
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            1
+          ],
+          "acted_to": [
+            38.0,
+            null,
+            37.0
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 37.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:bet:37.000000000",
+            "FLOP:MP:raise:38.000000000"
+          ]
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "fold"
+          },
+          {
+            "kind": "call",
+            "cost_bb": 38.0
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "contributions": [
+            40.0,
+            40.0,
+            39.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            38.0,
+            38.0,
+            37.0
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [],
+          "acted_to": [
+            38.0,
+            38.0,
+            37.0
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 37.0,
+          "phase": "deal",
+          "history": [
+            "FLOP:BB:bet:37.000000000",
+            "FLOP:MP:raise:38.000000000",
+            "FLOP:BTN:call:38.000000000"
+          ]
+        }
+      },
+      {
+        "actor": null,
+        "action": "board",
+        "to_bb": null,
+        "next_card": "8h",
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "contributions": [
+            40.0,
+            40.0,
+            39.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            38.0,
+            38.0,
+            37.0
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [],
+          "acted_to": [
+            38.0,
+            38.0,
+            37.0
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 37.0,
+          "phase": "deal",
+          "history": [
+            "FLOP:BB:bet:37.000000000",
+            "FLOP:MP:raise:38.000000000",
+            "FLOP:BTN:call:38.000000000"
+          ]
+        },
+        "legal_candidate_menu": [],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h"
+          ],
+          "stacks": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "contributions": [
+            40.0,
+            40.0,
+            39.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [],
+          "acted_to": [
+            null,
+            null,
+            null
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "deal",
+          "history": [
+            "FLOP:BB:bet:37.000000000",
+            "FLOP:MP:raise:38.000000000",
+            "FLOP:BTN:call:38.000000000",
+            "BOARD:8h"
+          ]
+        }
+      },
+      {
+        "actor": null,
+        "action": "board",
+        "to_bb": null,
+        "next_card": "Qc",
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h"
+          ],
+          "stacks": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "contributions": [
+            40.0,
+            40.0,
+            39.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [],
+          "acted_to": [
+            null,
+            null,
+            null
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "deal",
+          "history": [
+            "FLOP:BB:bet:37.000000000",
+            "FLOP:MP:raise:38.000000000",
+            "FLOP:BTN:call:38.000000000",
+            "BOARD:8h"
+          ]
+        },
+        "legal_candidate_menu": [],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h",
+            "Qc"
+          ],
+          "stacks": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "contributions": [
+            40.0,
+            40.0,
+            39.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [],
+          "acted_to": [
+            null,
+            null,
+            null
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "showdown",
+          "history": [
+            "FLOP:BB:bet:37.000000000",
+            "FLOP:MP:raise:38.000000000",
+            "FLOP:BTN:call:38.000000000",
+            "BOARD:8h",
+            "BOARD:Qc"
+          ]
+        }
+      }
+    ],
+    "showdown": {
+      "payouts_bb": [
+        2.0,
+        0.0,
+        118.5
+      ],
+      "layers": [
+        {
+          "amount_bb": 118.5,
+          "eligible": [
+            0,
+            1,
+            2
+          ],
+          "winners": [
+            2
+          ],
+          "uncalled_return": false
+        },
+        {
+          "amount_bb": 2.0,
+          "eligible": [
+            0,
+            1
+          ],
+          "winners": [
+            0
+          ],
+          "uncalled_return": false
+        }
+      ],
+      "pot_bb": 120.5,
+      "final_stacks_bb": [
+        2.0,
+        0.0,
+        118.5
+      ],
+      "bounty_utility_calculated": false,
+      "odd_chip_rounding": "FRACTIONAL_BB_LAB_ONLY"
+    },
+    "optimality_claimed": false,
+    "action_frequencies": null
+  },
+  {
+    "name": "mp_checkraise_btn_stab_bb_call",
+    "status": "SYNTHETIC_RULE_REPLAY_NOT_SOLVER_POLICY",
+    "history": [
+      {
+        "actor": "BB",
+        "action": "check",
+        "to_bb": null,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            38.0,
+            38.0,
+            37.0
+          ],
+          "contributions": [
+            2.0,
+            2.0,
+            2.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            2,
+            0,
+            1
+          ],
+          "acted_to": [
+            null,
+            null,
+            null
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": []
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "check"
+          },
+          {
+            "kind": "bet",
+            "to_bb": 2.5,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 3.75,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 5.0,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 7.5,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 37.0,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            38.0,
+            38.0,
+            37.0
+          ],
+          "contributions": [
+            2.0,
+            2.0,
+            2.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            0,
+            1
+          ],
+          "acted_to": [
+            null,
+            null,
+            0.0
+          ],
+          "checked": [
+            false,
+            false,
+            true
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000"
+          ]
+        }
+      },
+      {
+        "actor": "MP",
+        "action": "check",
+        "to_bb": null,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            38.0,
+            38.0,
+            37.0
+          ],
+          "contributions": [
+            2.0,
+            2.0,
+            2.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            0,
+            1
+          ],
+          "acted_to": [
+            null,
+            null,
+            0.0
+          ],
+          "checked": [
+            false,
+            false,
+            true
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000"
+          ]
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "check"
+          },
+          {
+            "kind": "bet",
+            "to_bb": 2.5,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 3.75,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 5.0,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 7.5,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 38.0,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            38.0,
+            38.0,
+            37.0
+          ],
+          "contributions": [
+            2.0,
+            2.0,
+            2.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            1
+          ],
+          "acted_to": [
+            0.0,
+            null,
+            0.0
+          ],
+          "checked": [
+            true,
+            false,
+            true
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000"
+          ]
+        }
+      },
+      {
+        "actor": "BTN",
+        "action": "bet",
+        "to_bb": 2.5,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            38.0,
+            38.0,
+            37.0
+          ],
+          "contributions": [
+            2.0,
+            2.0,
+            2.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            1
+          ],
+          "acted_to": [
+            0.0,
+            null,
+            0.0
+          ],
+          "checked": [
+            true,
+            false,
+            true
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000"
+          ]
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "check"
+          },
+          {
+            "kind": "bet",
+            "to_bb": 2.5,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 3.75,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 5.0,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 7.5,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 38.0,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            38.0,
+            35.5,
+            37.0
+          ],
+          "contributions": [
+            2.0,
+            4.5,
+            2.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            2.5,
+            0.0
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            2,
+            0
+          ],
+          "acted_to": [
+            0.0,
+            2.5,
+            0.0
+          ],
+          "checked": [
+            true,
+            false,
+            true
+          ],
+          "last_full_raise_bb": 2.5,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000",
+            "FLOP:BTN:bet:2.500000000"
+          ]
+        }
+      },
+      {
+        "actor": "BB",
+        "action": "call",
+        "to_bb": null,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            38.0,
+            35.5,
+            37.0
+          ],
+          "contributions": [
+            2.0,
+            4.5,
+            2.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            2.5,
+            0.0
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            2,
+            0
+          ],
+          "acted_to": [
+            0.0,
+            2.5,
+            0.0
+          ],
+          "checked": [
+            true,
+            false,
+            true
+          ],
+          "last_full_raise_bb": 2.5,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000",
+            "FLOP:BTN:bet:2.500000000"
+          ]
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "fold"
+          },
+          {
+            "kind": "call",
+            "cost_bb": 2.5
+          },
+          {
+            "kind": "raise",
+            "to_bb": 15.0,
+            "all_in": false
+          },
+          {
+            "kind": "raise",
+            "to_bb": 37.0,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            38.0,
+            35.5,
+            34.5
+          ],
+          "contributions": [
+            2.0,
+            4.5,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            2.5,
+            2.5
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            0
+          ],
+          "acted_to": [
+            0.0,
+            2.5,
+            2.5
+          ],
+          "checked": [
+            true,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 2.5,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000",
+            "FLOP:BTN:bet:2.500000000",
+            "FLOP:BB:call:2.500000000"
+          ]
+        }
+      },
+      {
+        "actor": "MP",
+        "action": "raise",
+        "to_bb": 10.0,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            38.0,
+            35.5,
+            34.5
+          ],
+          "contributions": [
+            2.0,
+            4.5,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            2.5,
+            2.5
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            0
+          ],
+          "acted_to": [
+            0.0,
+            2.5,
+            2.5
+          ],
+          "checked": [
+            true,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 2.5,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000",
+            "FLOP:BTN:bet:2.500000000",
+            "FLOP:BB:call:2.500000000"
+          ]
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "fold"
+          },
+          {
+            "kind": "call",
+            "cost_bb": 2.5
+          },
+          {
+            "kind": "raise",
+            "to_bb": 17.5,
+            "all_in": false
+          },
+          {
+            "kind": "raise",
+            "to_bb": 38.0,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            28.0,
+            35.5,
+            34.5
+          ],
+          "contributions": [
+            12.0,
+            4.5,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            10.0,
+            2.5,
+            2.5
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            1,
+            2
+          ],
+          "acted_to": [
+            10.0,
+            2.5,
+            2.5
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 7.5,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000",
+            "FLOP:BTN:bet:2.500000000",
+            "FLOP:BB:call:2.500000000",
+            "FLOP:MP:raise:10.000000000"
+          ]
+        }
+      },
+      {
+        "actor": "BTN",
+        "action": "fold",
+        "to_bb": null,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            28.0,
+            35.5,
+            34.5
+          ],
+          "contributions": [
+            12.0,
+            4.5,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            10.0,
+            2.5,
+            2.5
+          ],
+          "folded": [
+            false,
+            false,
+            false
+          ],
+          "pending": [
+            1,
+            2
+          ],
+          "acted_to": [
+            10.0,
+            2.5,
+            2.5
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 7.5,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000",
+            "FLOP:BTN:bet:2.500000000",
+            "FLOP:BB:call:2.500000000",
+            "FLOP:MP:raise:10.000000000"
+          ]
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "fold"
+          },
+          {
+            "kind": "call",
+            "cost_bb": 7.5
+          },
+          {
+            "kind": "raise",
+            "to_bb": 38.0,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            28.0,
+            35.5,
+            34.5
+          ],
+          "contributions": [
+            12.0,
+            4.5,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            10.0,
+            2.5,
+            2.5
+          ],
+          "folded": [
+            false,
+            true,
+            false
+          ],
+          "pending": [
+            2
+          ],
+          "acted_to": [
+            10.0,
+            2.5,
+            2.5
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 7.5,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000",
+            "FLOP:BTN:bet:2.500000000",
+            "FLOP:BB:call:2.500000000",
+            "FLOP:MP:raise:10.000000000",
+            "FLOP:BTN:fold:2.500000000"
+          ]
+        }
+      },
+      {
+        "actor": "BB",
+        "action": "call",
+        "to_bb": null,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            28.0,
+            35.5,
+            34.5
+          ],
+          "contributions": [
+            12.0,
+            4.5,
+            4.5
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            10.0,
+            2.5,
+            2.5
+          ],
+          "folded": [
+            false,
+            true,
+            false
+          ],
+          "pending": [
+            2
+          ],
+          "acted_to": [
+            10.0,
+            2.5,
+            2.5
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 7.5,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000",
+            "FLOP:BTN:bet:2.500000000",
+            "FLOP:BB:call:2.500000000",
+            "FLOP:MP:raise:10.000000000",
+            "FLOP:BTN:fold:2.500000000"
+          ]
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "fold"
+          },
+          {
+            "kind": "call",
+            "cost_bb": 7.5
+          },
+          {
+            "kind": "raise",
+            "to_bb": 37.0,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            28.0,
+            35.5,
+            27.0
+          ],
+          "contributions": [
+            12.0,
+            4.5,
+            12.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            10.0,
+            2.5,
+            10.0
+          ],
+          "folded": [
+            false,
+            true,
+            false
+          ],
+          "pending": [],
+          "acted_to": [
+            10.0,
+            2.5,
+            10.0
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 7.5,
+          "phase": "deal",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000",
+            "FLOP:BTN:bet:2.500000000",
+            "FLOP:BB:call:2.500000000",
+            "FLOP:MP:raise:10.000000000",
+            "FLOP:BTN:fold:2.500000000",
+            "FLOP:BB:call:10.000000000"
+          ]
+        }
+      },
+      {
+        "actor": null,
+        "action": "board",
+        "to_bb": null,
+        "next_card": "8h",
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c"
+          ],
+          "stacks": [
+            28.0,
+            35.5,
+            27.0
+          ],
+          "contributions": [
+            12.0,
+            4.5,
+            12.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            10.0,
+            2.5,
+            10.0
+          ],
+          "folded": [
+            false,
+            true,
+            false
+          ],
+          "pending": [],
+          "acted_to": [
+            10.0,
+            2.5,
+            10.0
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 7.5,
+          "phase": "deal",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000",
+            "FLOP:BTN:bet:2.500000000",
+            "FLOP:BB:call:2.500000000",
+            "FLOP:MP:raise:10.000000000",
+            "FLOP:BTN:fold:2.500000000",
+            "FLOP:BB:call:10.000000000"
+          ]
+        },
+        "legal_candidate_menu": [],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h"
+          ],
+          "stacks": [
+            28.0,
+            35.5,
+            27.0
+          ],
+          "contributions": [
+            12.0,
+            4.5,
+            12.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            true,
+            false
+          ],
+          "pending": [
+            2,
+            0
+          ],
+          "acted_to": [
+            null,
+            null,
+            null
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000",
+            "FLOP:BTN:bet:2.500000000",
+            "FLOP:BB:call:2.500000000",
+            "FLOP:MP:raise:10.000000000",
+            "FLOP:BTN:fold:2.500000000",
+            "FLOP:BB:call:10.000000000",
+            "BOARD:8h"
+          ]
+        }
+      },
+      {
+        "actor": "BB",
+        "action": "check",
+        "to_bb": null,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h"
+          ],
+          "stacks": [
+            28.0,
+            35.5,
+            27.0
+          ],
+          "contributions": [
+            12.0,
+            4.5,
+            12.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            true,
+            false
+          ],
+          "pending": [
+            2,
+            0
+          ],
+          "acted_to": [
+            null,
+            null,
+            null
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000",
+            "FLOP:BTN:bet:2.500000000",
+            "FLOP:BB:call:2.500000000",
+            "FLOP:MP:raise:10.000000000",
+            "FLOP:BTN:fold:2.500000000",
+            "FLOP:BB:call:10.000000000",
+            "BOARD:8h"
+          ]
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "check"
+          },
+          {
+            "kind": "bet",
+            "to_bb": 10.0,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 15.0,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 20.0,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 27.0,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h"
+          ],
+          "stacks": [
+            28.0,
+            35.5,
+            27.0
+          ],
+          "contributions": [
+            12.0,
+            4.5,
+            12.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            true,
+            false
+          ],
+          "pending": [
+            0
+          ],
+          "acted_to": [
+            null,
+            null,
+            0.0
+          ],
+          "checked": [
+            false,
+            false,
+            true
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000",
+            "FLOP:BTN:bet:2.500000000",
+            "FLOP:BB:call:2.500000000",
+            "FLOP:MP:raise:10.000000000",
+            "FLOP:BTN:fold:2.500000000",
+            "FLOP:BB:call:10.000000000",
+            "BOARD:8h",
+            "TURN:BB:check:0.000000000"
+          ]
+        }
+      },
+      {
+        "actor": "MP",
+        "action": "check",
+        "to_bb": null,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h"
+          ],
+          "stacks": [
+            28.0,
+            35.5,
+            27.0
+          ],
+          "contributions": [
+            12.0,
+            4.5,
+            12.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            true,
+            false
+          ],
+          "pending": [
+            0
+          ],
+          "acted_to": [
+            null,
+            null,
+            0.0
+          ],
+          "checked": [
+            false,
+            false,
+            true
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000",
+            "FLOP:BTN:bet:2.500000000",
+            "FLOP:BB:call:2.500000000",
+            "FLOP:MP:raise:10.000000000",
+            "FLOP:BTN:fold:2.500000000",
+            "FLOP:BB:call:10.000000000",
+            "BOARD:8h",
+            "TURN:BB:check:0.000000000"
+          ]
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "check"
+          },
+          {
+            "kind": "bet",
+            "to_bb": 10.0,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 15.0,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 20.0,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 28.0,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h"
+          ],
+          "stacks": [
+            28.0,
+            35.5,
+            27.0
+          ],
+          "contributions": [
+            12.0,
+            4.5,
+            12.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            true,
+            false
+          ],
+          "pending": [],
+          "acted_to": [
+            0.0,
+            null,
+            0.0
+          ],
+          "checked": [
+            true,
+            false,
+            true
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "deal",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000",
+            "FLOP:BTN:bet:2.500000000",
+            "FLOP:BB:call:2.500000000",
+            "FLOP:MP:raise:10.000000000",
+            "FLOP:BTN:fold:2.500000000",
+            "FLOP:BB:call:10.000000000",
+            "BOARD:8h",
+            "TURN:BB:check:0.000000000",
+            "TURN:MP:check:0.000000000"
+          ]
+        }
+      },
+      {
+        "actor": null,
+        "action": "board",
+        "to_bb": null,
+        "next_card": "Qc",
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h"
+          ],
+          "stacks": [
+            28.0,
+            35.5,
+            27.0
+          ],
+          "contributions": [
+            12.0,
+            4.5,
+            12.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            true,
+            false
+          ],
+          "pending": [],
+          "acted_to": [
+            0.0,
+            null,
+            0.0
+          ],
+          "checked": [
+            true,
+            false,
+            true
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "deal",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000",
+            "FLOP:BTN:bet:2.500000000",
+            "FLOP:BB:call:2.500000000",
+            "FLOP:MP:raise:10.000000000",
+            "FLOP:BTN:fold:2.500000000",
+            "FLOP:BB:call:10.000000000",
+            "BOARD:8h",
+            "TURN:BB:check:0.000000000",
+            "TURN:MP:check:0.000000000"
+          ]
+        },
+        "legal_candidate_menu": [],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h",
+            "Qc"
+          ],
+          "stacks": [
+            28.0,
+            35.5,
+            27.0
+          ],
+          "contributions": [
+            12.0,
+            4.5,
+            12.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            true,
+            false
+          ],
+          "pending": [
+            2,
+            0
+          ],
+          "acted_to": [
+            null,
+            null,
+            null
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000",
+            "FLOP:BTN:bet:2.500000000",
+            "FLOP:BB:call:2.500000000",
+            "FLOP:MP:raise:10.000000000",
+            "FLOP:BTN:fold:2.500000000",
+            "FLOP:BB:call:10.000000000",
+            "BOARD:8h",
+            "TURN:BB:check:0.000000000",
+            "TURN:MP:check:0.000000000",
+            "BOARD:Qc"
+          ]
+        }
+      },
+      {
+        "actor": "BB",
+        "action": "check",
+        "to_bb": null,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h",
+            "Qc"
+          ],
+          "stacks": [
+            28.0,
+            35.5,
+            27.0
+          ],
+          "contributions": [
+            12.0,
+            4.5,
+            12.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            true,
+            false
+          ],
+          "pending": [
+            2,
+            0
+          ],
+          "acted_to": [
+            null,
+            null,
+            null
+          ],
+          "checked": [
+            false,
+            false,
+            false
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000",
+            "FLOP:BTN:bet:2.500000000",
+            "FLOP:BB:call:2.500000000",
+            "FLOP:MP:raise:10.000000000",
+            "FLOP:BTN:fold:2.500000000",
+            "FLOP:BB:call:10.000000000",
+            "BOARD:8h",
+            "TURN:BB:check:0.000000000",
+            "TURN:MP:check:0.000000000",
+            "BOARD:Qc"
+          ]
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "check"
+          },
+          {
+            "kind": "bet",
+            "to_bb": 10.0,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 15.0,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 20.0,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 27.0,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h",
+            "Qc"
+          ],
+          "stacks": [
+            28.0,
+            35.5,
+            27.0
+          ],
+          "contributions": [
+            12.0,
+            4.5,
+            12.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            true,
+            false
+          ],
+          "pending": [
+            0
+          ],
+          "acted_to": [
+            null,
+            null,
+            0.0
+          ],
+          "checked": [
+            false,
+            false,
+            true
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000",
+            "FLOP:BTN:bet:2.500000000",
+            "FLOP:BB:call:2.500000000",
+            "FLOP:MP:raise:10.000000000",
+            "FLOP:BTN:fold:2.500000000",
+            "FLOP:BB:call:10.000000000",
+            "BOARD:8h",
+            "TURN:BB:check:0.000000000",
+            "TURN:MP:check:0.000000000",
+            "BOARD:Qc",
+            "RIVER:BB:check:0.000000000"
+          ]
+        }
+      },
+      {
+        "actor": "MP",
+        "action": "check",
+        "to_bb": null,
+        "next_card": null,
+        "before": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h",
+            "Qc"
+          ],
+          "stacks": [
+            28.0,
+            35.5,
+            27.0
+          ],
+          "contributions": [
+            12.0,
+            4.5,
+            12.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            true,
+            false
+          ],
+          "pending": [
+            0
+          ],
+          "acted_to": [
+            null,
+            null,
+            0.0
+          ],
+          "checked": [
+            false,
+            false,
+            true
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "action",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000",
+            "FLOP:BTN:bet:2.500000000",
+            "FLOP:BB:call:2.500000000",
+            "FLOP:MP:raise:10.000000000",
+            "FLOP:BTN:fold:2.500000000",
+            "FLOP:BB:call:10.000000000",
+            "BOARD:8h",
+            "TURN:BB:check:0.000000000",
+            "TURN:MP:check:0.000000000",
+            "BOARD:Qc",
+            "RIVER:BB:check:0.000000000"
+          ]
+        },
+        "legal_candidate_menu": [
+          {
+            "kind": "check"
+          },
+          {
+            "kind": "bet",
+            "to_bb": 10.0,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 15.0,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 20.0,
+            "all_in": false
+          },
+          {
+            "kind": "bet",
+            "to_bb": 28.0,
+            "all_in": true
+          }
+        ],
+        "after": {
+          "board": [
+            "As",
+            "7d",
+            "2c",
+            "8h",
+            "Qc"
+          ],
+          "stacks": [
+            28.0,
+            35.5,
+            27.0
+          ],
+          "contributions": [
+            12.0,
+            4.5,
+            12.0
+          ],
+          "dead_pot_bb": 1.5,
+          "committed": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "folded": [
+            false,
+            true,
+            false
+          ],
+          "pending": [],
+          "acted_to": [
+            0.0,
+            null,
+            0.0
+          ],
+          "checked": [
+            true,
+            false,
+            true
+          ],
+          "last_full_raise_bb": 1.0,
+          "phase": "showdown",
+          "history": [
+            "FLOP:BB:check:0.000000000",
+            "FLOP:MP:check:0.000000000",
+            "FLOP:BTN:bet:2.500000000",
+            "FLOP:BB:call:2.500000000",
+            "FLOP:MP:raise:10.000000000",
+            "FLOP:BTN:fold:2.500000000",
+            "FLOP:BB:call:10.000000000",
+            "BOARD:8h",
+            "TURN:BB:check:0.000000000",
+            "TURN:MP:check:0.000000000",
+            "BOARD:Qc",
+            "RIVER:BB:check:0.000000000",
+            "RIVER:MP:check:0.000000000"
+          ]
+        }
+      }
+    ],
+    "showdown": {
+      "payouts_bb": [
+        0.0,
+        0.0,
+        30.0
+      ],
+      "layers": [
+        {
+          "amount_bb": 15.0,
+          "eligible": [
+            0,
+            2
+          ],
+          "winners": [
+            2
+          ],
+          "uncalled_return": false
+        },
+        {
+          "amount_bb": 15.0,
+          "eligible": [
+            0,
+            2
+          ],
+          "winners": [
+            2
+          ],
+          "uncalled_return": false
+        }
+      ],
+      "pot_bb": 30.0,
+      "final_stacks_bb": [
+        28.0,
+        35.5,
+        57.0
+      ],
+      "bounty_utility_calculated": false,
+      "odd_chip_rounding": "FRACTIONAL_BB_LAB_ONLY"
+    },
+    "optimality_claimed": false,
+    "action_frequencies": null
+  }
+]

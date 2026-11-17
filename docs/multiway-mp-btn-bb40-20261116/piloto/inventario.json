@@ -1,0 +1,33 @@
+{
+  "schema": "software.multiway-preparation-files.v1",
+  "status": "PREPARED_NOT_SOLVED_NOT_OPERATIONAL",
+  "solved_flops": 0,
+  "executable_policies": 0,
+  "files": [
+    {
+      "file": "MP_BTN_BB40_MENU.js",
+      "bytes": 2003,
+      "sha256": "852f520c0f9b542846097f3d11712ca033e87e162a0a4d3b03ec6a831653cc51"
+    },
+    {
+      "file": "equidade-checkdown.json",
+      "bytes": 2298,
+      "sha256": "d2c405618417366e458914234b369ce74f34c1a3a6b38302fe017d5a5a99e27c"
+    },
+    {
+      "file": "historicos-sinteticos.json",
+      "bytes": 145707,
+      "sha256": "73dd5e831527fd9fc4bdc1d85b62edf3eb93a36cc129bbf338ebe06f01fc367a"
+    },
+    {
+      "file": "plano.json",
+      "bytes": 117970,
+      "sha256": "6b4ecb7f3fe74b1c90bfad46341e9785ccaea0ccdf62397418e5c05d465a6b70"
+    },
+    {
+      "file": "referencias-nvt.json",
+      "bytes": 106118,
+      "sha256": "9b4972ffd5e4ffa42af967cf12837d3291b2f27149dadafa38b0c443202e4871"
+    }
+  ]
+}
