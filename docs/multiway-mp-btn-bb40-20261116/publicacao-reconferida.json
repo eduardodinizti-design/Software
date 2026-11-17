@@ -1,0 +1,14 @@
+{
+  "schema": "software.multiway-publication-check.v1",
+  "published_source_commit": "daa8b430646bd2ddb850c8e99682bf5c92d2c064",
+  "zip_sha256": "31fb7357b7e793de9d047cf974695780a4ae826b80ed08edebf9f6b16eb86c3b",
+  "zip_bytes": 37742,
+  "zip_members": 12,
+  "zip_crc_verified": true,
+  "published_zip_downloaded_and_matches_local": true,
+  "linux_windows_tested_source_hashes_equal": true,
+  "tests_each_os": 137,
+  "hrc_executed": false,
+  "solved_multiway_flops": 0,
+  "operational_multiway_policies": 0
+}

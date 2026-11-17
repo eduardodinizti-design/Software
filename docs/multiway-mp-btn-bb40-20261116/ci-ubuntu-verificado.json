@@ -1,0 +1,52 @@
+{
+  "schema": "software.multiway-github-lab-proof.v1",
+  "run": 43992167810,
+  "job": 133735248684,
+  "source_commit": "daa8b430646bd2ddb850c8e99682bf5c92d2c064",
+  "verification": {
+    "schema": "software.multiway-pilot-lab-verification.v1",
+    "status": "PASS",
+    "os": "Linux-7.0.0-1017-azure-x86_64-with-glibc2.39",
+    "python": "3.12.16 (main, Oct 26 2026, 02:50:49) [GCC 13.3.0]",
+    "tests_run": 137,
+    "passed": 137,
+    "errors": 0,
+    "failures": 0,
+    "skipped": [],
+    "elapsed_seconds": 3.3108000000000004,
+    "modules": [
+      "test_multiway_study",
+      "test_hu_policy_engine",
+      "test_hu_policy_json",
+      "test_hu_operational"
+    ],
+    "tested_file_sha256": {
+      "strategy/multiway_state.py": "7c81376d0a69d85a20d0e44791807206dc8370c4d4dafd2728e29ce2801ed18c",
+      "strategy/multiway_study.py": "1d294bd0e3687c12909eb84e6fee3a6151b9afba665f31d6a60710f6c1374b28",
+      "tools/prepare_multiway_pilot.py": "cf2c64e349e244f39f632ebcd90f3d6e6d8ae7468c0b7cf63c6cdd759babf19f",
+      "tools/verify_multiway_pilot.py": "c407e6159692b744898e69a9d4afa2e4a1c1b5378bfc8243adc70af1f693824c",
+      "test_multiway_study.py": "3b64b9281680c8a38a9aacffbb037f466c4750fd828a545bfdfe3de622d991e2",
+      "hrc/MP_BTN_BB40_MENU.js": "852f520c0f9b542846097f3d11712ca033e87e162a0a4d3b03ec6a831653cc51",
+      "docs/multiway-mp-btn-bb40-20261116/referencias-nvt.json": "9b4972ffd5e4ffa42af967cf12837d3291b2f27149dadafa38b0c443202e4871"
+    },
+    "original_hu_code_unchanged": {
+      "operar_mesa.py": true,
+      "hu_executor.py": true,
+      "strategy/state_contract.py": true,
+      "strategy/action_tree.py": true,
+      "strategy/policy_library.py": true,
+      "strategy/confirmed_history.py": true,
+      "strategy/texassolver_backend.py": true
+    },
+    "preserved_hu_base_commit": "b8187c3756b4c67f1eb026436f45df536d59c7ff",
+    "synthetic_hands_in_rule_tests": true,
+    "optimized_multiway_policies_calculated": 0,
+    "hrc_script_test": "NODE_MOCK_OF_DOCUMENTED_API_NOT_REAL_HRC",
+    "hrc_native_executed": false,
+    "real_pppoker_validated": false,
+    "gameplay_input_sent": false
+  },
+  "preparation_succeeded": true,
+  "input_devices_used": false
+}
+

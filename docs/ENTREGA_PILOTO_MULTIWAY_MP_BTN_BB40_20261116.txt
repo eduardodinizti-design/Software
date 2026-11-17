@@ -43,7 +43,16 @@ contratos HU existentes. Inclui300 maos aleatorias legais, conservacao das
 fichas, amostragem ponderada independente e teste de contrato JavaScript.
 O teste do script usa Node e um contexto simulado da API; NAO executa HRC.
 HRC Pro nao esta conectado a este executor. Nenhuma sessao PPPoker foi feita.
-Verificacao Windows GitHub: sera registrada apos a execucao do CI desta branch.
+Windows GitHub e Ubuntu:137/137 em CADA plataforma, zero falhas/erros/skips;
+ambas geraram o pacote de preparacao. SHA256 das fontes coincidem entre OS.
+Primeiro CI falhou na checagem de preservacao porque Git Windows converteu
+LF em CRLF, apesar dos137 testes aprovados. A causa foi reproduzida por hash.
+Correcao: desativar autocrlf ANTES do checkout somente no runner temporario;
+os criterios de hash e todos os testes foram mantidos. Recibo inicial preservado.
+Fonte testada: daa8b430646bd2ddb850c8e99682bf5c92d2c064
+CI aprovado: https://github.com/eduardodinizti-design/Software/actions/runs/43992167810
+PR de preparacao: https://github.com/eduardodinizti-design/Software/pull/19
+O CI Windows nao tem HRC ou PPPoker conectado; testa regras/contratos e arquivos.
 
 A LACUNA DE RANGES ENCONTRADA
 O BB do arquivo disponivel enfrenta apenas um open de LJ. Nao ha call do BTN
@@ -83,3 +92,11 @@ completo, consulta estrategica e integracao operacional dos tres Heroes.
 Validacao real de leitura/historico/cliques/latencia no PPPoker continua
 pendente; o caso8h->3h permanece aberto. Nenhum limiar OCR foi alterado.
 Main, worktrees anteriores, politicas e instalacoes antigas preservados.
+
+ARQUIVOS PARA EXECUTAR O PILOTO
+Guia: docs/GUIA_MULTIWAY_MP_BTN_BB40_20261116.txt
+Pacote de37742 bytes: docs/multiway-mp-btn-bb40-20261116/Software-Piloto-Multiway-40BB-20261116.zip
+SHA256:31fb7357b7e793de9d047cf974695780a4ae826b80ed08edebf9f6b16eb86c3b
+Extraia em pasta NOVA e abra PREPARAR_ESTUDO_MULTIWAY_40BB.bat; depois siga o guia no HRC.
+O pacote passou CRC e preparacao em extracao isolada Linux. Os mesmos contratos
+e fontes passaram no Windows GitHub, sem alegar execucao do arquivo BAT ou do HRC.
