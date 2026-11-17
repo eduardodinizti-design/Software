@@ -28,6 +28,8 @@ from reader_cache import ReaderCache
 from action_executor import ActionExecutor
 from action_coordinator import DryRunInput, map_advice_to_action, decision_identity
 from position_stabilizer import PositionStabilizer
+from field_stabilizer import FieldStabilizer
+from board_memory import BoardMemory
 from screen_coords import rect_frame_to_screen
 from raise_panel import target_multiplier, map_multiplier_to_preset, read_raise_panel
 from raise_sequencer import RaiseSequencer
@@ -313,6 +315,8 @@ def main(argv=None):
     raise_attempts = {}                # D4: tentativas de raise por (mesa,mao) p/ cap de re-try
     hero_mem = HeroCardMemory()   # memória temporal por-slot das cartas do hero (anti HERO_CARDS_UNKNOWN)
     stabilizer = PositionStabilizer()   # suaviza posições (anti-flicker HJ<->UTG+2)
+    field_memory = FieldStabilizer()    # preenche buracos de pot/to_call/stack na mesma mão (anti POT_UNKNOWN/STACK_UNKNOWN)
+    board_memory = BoardMemory()        # segura o board confirmado na mão (anti BOARD_PRESENT_BUT_UNREADABLE)
     aggr_tracker = PreflopAggressorTracker()   # agressor pré-flop por mesa (p/ equity pós-flop)
     read_cache = ReaderCache()                 # cache de HUD/bounty (latência: relê a cada N frames)
 
@@ -511,7 +515,8 @@ def main(argv=None):
                                                   table_key=tkey, hero_override=override,
                                                   tracker=aggr_tracker, bounty_bb=args.bounty_bb,
                                                   mode=args.mode, stage=args.stage, enable_hud=args.hud,
-                                                  read_cache=read_cache)
+                                                  read_cache=read_cache, field_memory=field_memory,
+                                                  board_memory=board_memory)
                         advise_watch.ok(tkey)   # D7: leitura/cérebro voltou nesta mesa
                     except Exception as e:                 # noqa: BLE001
                         # NUNCA silencioso (regra do Eduardo: logar TUDO): registra o erro

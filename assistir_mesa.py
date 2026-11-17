@@ -15,13 +15,16 @@ from table_reading.automatic_table_crops import detect_table_crops
 from preflop_advisor import PreflopAdvisor
 from preflop_context import PreflopAggressorTracker
 from reader_cache import ReaderCache
+from field_stabilizer import FieldStabilizer
+from board_memory import BoardMemory
 from table_advisor import advise_table, _summary
 from bot_control import BotControl, HotkeyListener, RUNNING, PAUSED, DISABLED
 from state_observer import StateObserver, render
 
 
 def advise_frame(frame_bgr, meta, advisor, max_tables=6, tracker=None, bounty_bb=None,
-                 mode=None, stage=None, enable_hud=False, read_cache=None):
+                 mode=None, stage=None, enable_hud=False, read_cache=None, field_memory=None,
+                 board_memory=None):
     """Detect the tables in one captured frame and advise each. Returns a list of
     {table_index, table_key, box, result}. Pure read; the full table identity still
     comes from the capture metadata upstream.
@@ -45,7 +48,8 @@ def advise_frame(frame_bgr, meta, advisor, max_tables=6, tracker=None, bounty_bb
         with ocr_frame():
             result = advise_table(crop, advisor, table_key=tkey, tracker=tracker,
                                   bounty_bb=bounty_bb, mode=mode, stage=stage, enable_hud=enable_hud,
-                                  read_cache=read_cache)
+                                  read_cache=read_cache, field_memory=field_memory,
+                                  board_memory=board_memory)
         if result.get('is_table'):   # skip lobby/non-table false positives
             out.append(dict(table_index=len(out) + 1, table_key=tkey, box=[x, y, w, h], result=result))
     return out
@@ -87,6 +91,8 @@ def main(argv=None):
     observer = StateObserver()   # estado temporal integrado (Camada A); sem cliques
     aggr_tracker = PreflopAggressorTracker()   # agressor pré-flop p/ pós-flop em contexto
     read_cache = ReaderCache()                 # cache de HUD/bounty (latência)
+    field_memory = FieldStabilizer()           # preenche buracos de pot/to_call/stack na mesma mão
+    board_memory = BoardMemory()               # segura o board confirmado na mão
     try:
         while True:
             started = time.monotonic()
@@ -111,7 +117,8 @@ def main(argv=None):
                 for row in advise_frame(frame, meta, advisor, max_tables=args.max_tables,
                                         tracker=aggr_tracker, bounty_bb=args.bounty_bb,
                                         mode=args.mode, stage=args.stage, enable_hud=args.hud,
-                                        read_cache=read_cache):
+                                        read_cache=read_cache, field_memory=field_memory,
+                                        board_memory=board_memory):
                     # Estado temporal integrado: amarra mesa/mão/campos e explica
                     # o que mudou/ficou pendente. Imprime só quando o estado muda.
                     # Mesma chave usada no tracker (consistência entre contexto e estado).

@@ -211,7 +211,7 @@ def _prefer_solver_on_covered_spot(advice, shadow):
 
 def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table_key='default',
                  villain_range=None, hero_override=None, tracker=None, bounty_bb=None,
-                 enable_hud=False, read_cache=None):
+                 enable_hud=False, read_cache=None, field_memory=None, board_memory=None):
     """Read the table and attach an exploratory recommendation. The tournament
     phase chooses chip EV vs ICM unless mode/stage are forced. Pure read; the
     caller wraps it in an ocr_frame so one snapshot reuses OCR.
@@ -219,12 +219,15 @@ def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table
     `stabilizer` (opcional, PositionStabilizer): suaviza as POSIÇÕES ao longo dos
     frames — o leitor é stateless e os rótulos oscilam quando a ocupação/dealer
     pisca; o estabilizador trava o dealer (debounce) e usa ocupação por maioria.
-    `table_key` identifica a mesa p/ o estado por-mesa do estabilizador."""
+    `table_key` identifica a mesa p/ o estado por-mesa do estabilizador.
+    `field_memory` (opcional, FieldStabilizer): preenche buracos de 1+ frame em
+    pot/to_call/stack com o último valor confirmado da MESMA mão (fill-only,
+    marcado held) — evita POT_UNKNOWN/STACK_UNKNOWN por falha pontual de OCR."""
     state = read_table_state(crop)
     hand = read_hand_id(crop)
+    hkey = (hand or {}).get('hand_id') or (hand or {}).get('hand_number')
     if stabilizer is not None:
         occ = [s for s, d in (state.get('seats') or {}).items() if d.get('occupied')]
-        hkey = (hand or {}).get('hand_id') or (hand or {}).get('hand_number')
         sdealer, spos = stabilizer.update(table_key=table_key, hand_key=hkey,
                                           dealer_seat=state['dealer'].get('seat'),
                                           occupied_seats=occ)
@@ -235,6 +238,11 @@ def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table
         if sdealer is not None:
             new_dealer['seat'] = sdealer
         state = dict(state, positions=spos, dealer=new_dealer)
+    # Memória temporal de pot/to_call/stack: preenche o que o OCR perdeu neste
+    # frame com o último confirmado da mesma mão. Após o stabilizer (que pode ter
+    # trocado o dict de seats) e antes do is_table/advisors. [[field_stabilizer]]
+    if field_memory is not None:
+        state = field_memory.apply(table_key=table_key, hand_key=hkey, state=state)
     hero_slots = read_hero_card_slots(crop)
     hero = _pair_from_slots(hero_slots)
     # As cartas do hero são imutáveis na mão: se este frame não leu mas o chamador
@@ -244,6 +252,16 @@ def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table
     if hero is None and hero_override and len(hero_override) == 2:
         hero = list(hero_override)
     board = read_board(crop, hero_cards=hero or [None, None])
+    # Memória temporal do board: vota nas cartas lidas e, se o OCR falhou NESTE frame
+    # mas um board FOI detectado (candidatos presentes) e a mão já tinha board
+    # confirmado, injeta o board segurado — evita BOARD_PRESENT_BUT_UNREADABLE por
+    # falha pontual. Imutável/monotônico na mão; nunca inventa no pré-flop. [[board_memory]]
+    if board_memory is not None:
+        held_board = board_memory.observe(table_key, hkey, board.get('cards') or [])
+        if not board.get('cards') and held_board and board.get('candidates'):
+            board = dict(board, cards=held_board,
+                         street={3: 'FLOP', 4: 'TURN', 5: 'RIVER'}[len(held_board)],
+                         status='BOARD_HELD', held=True, source='board_memory')
     tourney = read_tournament(crop)
     auto_mode, auto_stage = tournament_context(tourney)
     use_mode, use_stage = mode or auto_mode, stage or auto_stage
