@@ -178,6 +178,33 @@ def find_grid_crop(frame, *, margin=22):
         return dict(ok=False, crop=None, origin=None, pills=[], reason='PILULAS_INCONSISTENTES')
     pw = int(round(np.median([w for (_, _, w, _) in pills])))
     ph = int(round(np.median([h for (_, _, _, h) in pills])))
+    # ESTRUTURA DE GRADE: a grade de clubes tem COLUNAS repetidas verticalmente. Mantém
+    # só pílulas em colunas com >=2 membros e descarta verdes AVULSOS (ex.: valores de BB
+    # soltos de uma mesa na janela ao lado) — foi o que travava o detector na janela errada.
+    tol = max(pw, 18)
+    by_x = sorted(pills, key=lambda b: b[0])
+    cols, cur = [], []
+    for pb in by_x:
+        if cur and pb[0] - cur[-1][0] > tol:
+            cols.append(cur); cur = []
+        cur.append(pb)
+    if cur:
+        cols.append(cur)
+    # Colunas com >=2 membros são candidatas; o cluster da grade = a maior coluna
+    # (âncora) + colunas cujas LINHAS se alinham com ela (mesmos ys). Verdes avulsos de
+    # uma mesa na janela ao lado, mesmo que casem num x, não compartilham as linhas.
+    cols_ge2 = [c for c in cols if len(c) >= 2]
+    if not cols_ge2:
+        return dict(ok=False, crop=None, origin=None, pills=[], reason='SEM_ESTRUTURA_DE_GRADE')
+    anchor_ys = [y for (_, y, _, _) in max(cols_ge2, key=len)]
+
+    def _aligns(col):
+        return sum(1 for (_, y, _, _) in col if any(abs(y - ay) <= ph for ay in anchor_ys)) >= 2
+
+    aligned_cols = [c for c in cols_ge2 if _aligns(c)]
+    if len(aligned_cols) < 2:        # a grade de clubes tem SEMPRE 2 colunas
+        return dict(ok=False, crop=None, origin=None, pills=[], reason='SEM_ESTRUTURA_DE_GRADE')
+    pills = [p for c in aligned_cols for p in c]
     left = max(0, min(x for (x, _, _, _) in pills) - int(_NAME_DX_L * pw) - margin)
     right = min(W, max(x + w for (x, _, w, _) in pills) + margin)
     top = max(0, min(y for (_, y, _, _) in pills) - 2 * ph)

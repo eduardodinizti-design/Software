@@ -207,6 +207,20 @@ class FindGridCropTests(unittest.TestCase):
         self.assertFalse(r['ok'])
         self.assertEqual(r['reason'], 'SEM_PILULAS')
 
+    def test_ignora_verdes_avulsos_de_outra_janela(self):
+        # Regressão (17/11): com uma MESA na janela ao lado, verdes avulsos (BB soltos)
+        # travavam o detector na janela errada. O filtro estrutural (colunas >=2) os
+        # descarta: pílula isolada não forma coluna.
+        from club_grid import find_grid_crop
+        canvas = _embed_grid(600, 350)
+        pill = (156, 177, 123)                           # cor de pílula (BGR)
+        for (x, y) in [(1500, 500), (1550, 1850), (80, 90)]:   # avulsos, sem coluna
+            canvas[y:y + 28, x:x + 59] = pill
+        r = find_grid_crop(canvas)
+        self.assertTrue(r['ok'])
+        self.assertEqual(len(r['pills']), 6)             # só os 6 da grade
+        self.assertGreaterEqual(r['origin'][0], 600)     # ancorou na grade, não no ruído
+
 
 @unittest.skipUnless(_fixture() is not None and _ocr_ready(),
                      'Tesseract/gabarito indisponível — mapeamento vivo pulado')
