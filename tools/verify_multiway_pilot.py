@@ -14,9 +14,10 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-MODULES = ('test_multiway_study', 'test_hu_policy_engine',
+MODULES = ('test_multiway_study', 'test_multiway_bb_defense', 'test_hu_policy_engine',
     'test_hu_policy_json', 'test_hu_operational')
 FILES = ('strategy/multiway_state.py', 'strategy/multiway_study.py',
+    'strategy/multiway_bb_defense.py', 'test_multiway_bb_defense.py',
     'tools/prepare_multiway_pilot.py', 'tools/verify_multiway_pilot.py',
     'test_multiway_study.py', 'hrc/MP_BTN_BB40_MENU.js',
     'docs/multiway-mp-btn-bb40-20261116/referencias-nvt.json')

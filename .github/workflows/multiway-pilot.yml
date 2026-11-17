@@ -7,6 +7,7 @@ name: Three-player MP BTN BB40 laboratory preparation
       - strategy/multiway_*.py
       - tools/*multiway_pilot.py
       - test_multiway_study.py
+      - test_multiway_bb_defense.py
       - hrc/MP_BTN_BB40_MENU.js
       - docs/multiway-mp-btn-bb40-20261116/referencias-nvt.json
   workflow_dispatch:
@@ -43,6 +44,8 @@ jobs:
         run: python -m tools.verify_multiway_pilot --output runtime/multiway-verification
       - name: Prepare files without solver, cursor or PPPoker
         run: python -m tools.prepare_multiway_pilot --output runtime/multiway-study --samples 5000
+      - name: Prepare user fixed BB squeeze10 call50 experiment
+        run: python -m tools.prepare_multiway_pilot --bb-preset bb10c50-lab-v1 --output runtime/multiway-study-bb10c50 --samples 5000
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -50,4 +53,5 @@ jobs:
           path: |
             runtime/multiway-verification
             runtime/multiway-study
+            runtime/multiway-study-bb10c50
           if-no-files-found: error

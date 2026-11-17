@@ -1,0 +1,106 @@
+SOFTWARE ORIGINAL — BB CONTRA MP OPEN + BTN CALL — PRESET BB10C50
+
+O QUE FOI DEFINIDO
+Hipotese de laboratorio solicitada pelo usuario, para destravar o primeiro
+estudo pos-flop: BB squeeze aproximadamente10%, call aproximadamente50%,
+fold40%. Os50% de call ja EXCLUEM a parcela destinada ao squeeze.
+Portanto a continuacao total e60%, e nao50%. Nao e uma medicao de que a
+maioria dos jogadores joga assim, nem uma solucao otima PKO/HRC.
+
+Contexto: MP=LJ em mesa de9 jogadores; MP abre PARA2 BB; BTN paga; SB fold;
+BB decide. Todos40 BB antes dos posts; SB0,5, BB1 e BBA1. Apos o call do BB:
+pote7,5 BB, MP38, BTN38, BB37. Esse perfil ainda e uma premissa, nao solve.
+
+CONTAGEM CORRETA DE COMBINACOES
+Par=6 combos, suited=4, offsuit=12; total1326 antes de cartas conhecidas.
+Squeeze:132,5 combos equivalentes =9,9924585%.
+Call:663,1 combos equivalentes =50,0075415%.
+Fold:530,4 combos equivalentes =40,0000000%.
+Continuacao total:795,6 combos =60%.
+Cada uma das169 classes tem squeeze+call+fold=100%.
+Pequenas diferencas de10/50 sao arredondamento deliberado do perfil manual,
+sem inserir frequencias artificiais minimas para fingir precisao de solver.
+
+SQUEEZE — PORCENTAGEM DAQUELA MAO
+100%: AA KK QQ JJ TT AKs AQs AKo KQs.
+75%: AQo AJs KJs QJs A5s A4s.
+50%: 99 ATs KTs JTs A3s A2s K9s QTs Q9s J9s T9s 98s 87s 76s 65s 54s
+     A9s A8s A7s A6s.
+25%: 88 AJo KQo K8s Q8s J8s T8s 97s 86s.
+Demais maos:0% squeeze neste perfil fixo.
+
+Nao significa que TT, AQs ou cada blefe sejam lucrativos nesse spot.
+Essa e a composicao explicita escolhida para o experimento, sem EV calculado.
+Squeeze NAO significa shove automatico. Size e divisao raise/shove nao foram
+resolvidos por esse preset. O alvo pos-flop usa a linha em que BB DEU CALL.
+
+CALL — RESIDUAL DEPOIS DO SQUEEZE
+Todos os suited e os pares22 a99 usam a parcela restante apos o squeeze.
+O topo de100% squeeze acima fica com0% call: nao e contado nas duas acoes.
+Offsuit que usam a parcela restante:
+AQo AJo ATo A9o A8o A7o A6o A5o A4o A3o A2o
+KQo KJo KTo K9o K8o K7o
+QJo QTo Q9o Q8o Q7o
+JTo J9o J8o
+T9o T8o 98o 87o 76o 65o 54o.
+J7o:80% call e20% fold. Esse80% fecha o volume aproximado, nao vem de EV.
+Demais offsuit:fold, salvo a frequencia explicita de squeeze ja listada.
+
+Exemplos (squeeze/call/fold):
+AA100/0/0; AQo75/25/0; A5s75/25/0; 76s50/50/0; K8s25/75/0;
+99 50/50/0; 88 25/75/0; 32s0/100/0; J7o0/80/20; 72o0/0/100.
+Estes percentuais nao querem dizer que A5s represente75% de todo o squeeze.
+A5s tem4 combos e contribui com3 combos equivalentes ao squeeze total.
+
+COMO ISSO ENTRA NO POS-FLOP
+O programa aplica SOMENTE o vetor de CALL na chegada de tres jogadores.
+Nao soma squeeze+call ao range que vera o flop. MP e BTN mantem seus vetores
+NVT anteriores, sem alteracao silenciosa. O BB original e o pacote anterior
+permanecem preservados para comparacao, assim como as politicas HU.
+
+O novo conjunto tem identificacao e hash proprios; o hash do NVT original
+fica como proveniencia. O arquivo composto NAO se faz passar pelo NVT/HRC.
+A matriz das tres acoes permite auditar o topo retirado e os mixes light.
+Ao fixar o topo todo no squeeze, esse BB nao tem traps dessas maos no call.
+Isso afeta a estrategia pos-flop; deve ser avaliado como hipotese especifica.
+
+Os percentuais de10/50 valem antes dos bloqueios. Cartas de MP/BTN e board
+alteram as massas e a distribuicao condicional. O sampler remove colisoes
+de toda a tripla, sem forcar o range a continuar50% depois de ver o flop.
+O diagnostico Monte Carlo e somente equidade em fichas se todos forem ate
+showdown sem apostar. Nao e solve PKO, frequencia de c-bet ou EV de linha.
+
+ARQUIVOS E EXECUCAO
+Novo pacote: Software-Piloto-Multiway-BB10C50-20261117.zip.
+Extraia em pasta NOVA e execute PREPARAR_ESTUDO_MULTIWAY_BB10C50.bat.
+Requer Python3.12 x64. Nao inicia o bot nem envia cliques.
+O BAT prepara runtime\estudos\mp-btn-bb40-bb10c50, recusando sobrescrever
+uma pasta existente. Alternativa, a partir da raiz do pacote/repo:
+  py -3.12 -m tools.prepare_multiway_pilot --bb-preset bb10c50-lab-v1 --output runtime\estudos\bb10c50-teste2 --samples 5000
+
+Saidas: bb-defesa-169.json, bb-defesa-169.csv, bb-defesa-169.txt, plano.json,
+referencias-nvt.json composto, cinco historicos sinteticos, diagnostico e
+inventario SHA256. CSV e JSON representam as mesmas169 classes.
+O perfil NVT original continua disponivel sem --bb-preset.
+
+No HRC Pro, configurar o estudo dedicado usando estes pesos de call como
+hipotese fixa e registrar as demais premissas. O CSV NAO e declarado um
+formato de importacao nativo HRC: compatibilidade precisa ser conferida no
+build instalado. O script MP_BTN_BB40_MENU.js define menus, nao importa
+esses ranges e nao calcula suas frequencias por conta propria.
+
+VALIDACAO E LIMITES
+Os testes verificam a particao dos1326 combos, total60% de defesa, exclusao
+do topo, mixes explicitos, variantes por naipe, conservacao do NVT original,
+novo fingerprint, regra de call-only, geometria e exports com hashes.
+A regressao tambem preserva os contratos HU e as regras de tres jogadores.
+O CI roda em Ubuntu e Windows GitHub; seus recibos sao publicados junto.
+Nenhuma frequencia deste preset foi calculada por HRC. Solver_executed=false;
+EV=null; bounties=null; politicas multiway executaveis=0.
+
+O usuario autorizou esta HIPOTESE para o BB no lugar de esperar um range real
+de overcall. Isso libera a preparacao do experimento, sem transformar o perfil
+em range correto de todo jogador. Seguem necessarios o calculo HRC dedicado,
+economia PKO, export real verificado, importador de politicas e integracao.
+Nao houve validacao real de leitura/clique no PPPoker; caso8h->3h continua
+pendente. Os102 SB40 e32 BTN25 anteriores nao foram modificados.

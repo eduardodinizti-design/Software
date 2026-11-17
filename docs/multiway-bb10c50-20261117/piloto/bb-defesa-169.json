@@ -1,0 +1,1595 @@
+{
+  "schema": "software.multiway-bb-defense-assumption.v1",
+  "preset": "bb10c50-lab-v1",
+  "authority": "USER_AUTHORIZED_LAB_ASSUMPTION_NOT_SOLVER_NOT_POPULATION_MEASUREMENT",
+  "context": {
+    "mp_position": "LJ",
+    "dealt_players": 9,
+    "initial_stacks_bb": [
+      40.0,
+      40.0,
+      40.0
+    ],
+    "stack_timing": "BEFORE_POSTS",
+    "open_to_bb": 2.0,
+    "big_blind_ante_bb": 1.0,
+    "line": [
+      "MP open",
+      "BTN call",
+      "SB fold",
+      "BB decision"
+    ]
+  },
+  "denominator": {
+    "kind": "UNBLOCKED_STARTING_COMBINATIONS",
+    "combinations": 1326
+  },
+  "requested_approximate_percent": {
+    "squeeze": 10.0,
+    "call": 50.0,
+    "fold": 40.0
+  },
+  "effective_combo_mass": {
+    "squeeze": 132.5,
+    "call": 663.1,
+    "fold": 530.4
+  },
+  "exact_mass_fractions": {
+    "squeeze": [
+      265,
+      2
+    ],
+    "call": [
+      6631,
+      10
+    ],
+    "fold": [
+      2652,
+      5
+    ]
+  },
+  "unblocked_percent": {
+    "squeeze": 9.992458521870287,
+    "call": 50.00754147812972,
+    "fold": 40.0
+  },
+  "rows": [
+    {
+      "hand": "AA",
+      "physical_combos": 6,
+      "frequencies": {
+        "squeeze": 1.0,
+        "call": 0.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "KK",
+      "physical_combos": 6,
+      "frequencies": {
+        "squeeze": 1.0,
+        "call": 0.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "QQ",
+      "physical_combos": 6,
+      "frequencies": {
+        "squeeze": 1.0,
+        "call": 0.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "JJ",
+      "physical_combos": 6,
+      "frequencies": {
+        "squeeze": 1.0,
+        "call": 0.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "TT",
+      "physical_combos": 6,
+      "frequencies": {
+        "squeeze": 1.0,
+        "call": 0.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "99",
+      "physical_combos": 6,
+      "frequencies": {
+        "squeeze": 0.5,
+        "call": 0.5,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "88",
+      "physical_combos": 6,
+      "frequencies": {
+        "squeeze": 0.25,
+        "call": 0.75,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "77",
+      "physical_combos": 6,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "66",
+      "physical_combos": 6,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "55",
+      "physical_combos": 6,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "44",
+      "physical_combos": 6,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "33",
+      "physical_combos": 6,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "22",
+      "physical_combos": 6,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "AKs",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 1.0,
+        "call": 0.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "AKo",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 1.0,
+        "call": 0.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "AQs",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 1.0,
+        "call": 0.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "AQo",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.75,
+        "call": 0.25,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "AJs",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.75,
+        "call": 0.25,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "AJo",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.25,
+        "call": 0.75,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "ATs",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.5,
+        "call": 0.5,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "ATo",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "A9s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.5,
+        "call": 0.5,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "A9o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "A8s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.5,
+        "call": 0.5,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "A8o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "A7s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.5,
+        "call": 0.5,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "A7o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "A6s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.5,
+        "call": 0.5,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "A6o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "A5s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.75,
+        "call": 0.25,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "A5o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "A4s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.75,
+        "call": 0.25,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "A4o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "A3s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.5,
+        "call": 0.5,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "A3o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "A2s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.5,
+        "call": 0.5,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "A2o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "KQs",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 1.0,
+        "call": 0.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "KQo",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.25,
+        "call": 0.75,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "KJs",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.75,
+        "call": 0.25,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "KJo",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "KTs",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.5,
+        "call": 0.5,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "KTo",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "K9s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.5,
+        "call": 0.5,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "K9o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "K8s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.25,
+        "call": 0.75,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "K8o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "K7s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "K7o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "K6s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "K6o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "K5s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "K5o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "K4s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "K4o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "K3s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "K3o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "K2s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "K2o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "QJs",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.75,
+        "call": 0.25,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "QJo",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "QTs",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.5,
+        "call": 0.5,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "QTo",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "Q9s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.5,
+        "call": 0.5,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "Q9o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "Q8s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.25,
+        "call": 0.75,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "Q8o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "Q7s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "Q7o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "Q6s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "Q6o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "Q5s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "Q5o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "Q4s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "Q4o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "Q3s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "Q3o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "Q2s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "Q2o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "JTs",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.5,
+        "call": 0.5,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "JTo",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "J9s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.5,
+        "call": 0.5,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "J9o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "J8s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.25,
+        "call": 0.75,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "J8o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "J7s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "J7o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.8,
+        "fold": 0.2
+      }
+    },
+    {
+      "hand": "J6s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "J6o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "J5s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "J5o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "J4s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "J4o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "J3s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "J3o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "J2s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "J2o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "T9s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.5,
+        "call": 0.5,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "T9o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "T8s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.25,
+        "call": 0.75,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "T8o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "T7s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "T7o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "T6s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "T6o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "T5s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "T5o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "T4s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "T4o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "T3s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "T3o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "T2s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "T2o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "98s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.5,
+        "call": 0.5,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "98o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "97s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.25,
+        "call": 0.75,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "97o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "96s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "96o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "95s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "95o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "94s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "94o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "93s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "93o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "92s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "92o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "87s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.5,
+        "call": 0.5,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "87o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "86s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.25,
+        "call": 0.75,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "86o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "85s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "85o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "84s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "84o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "83s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "83o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "82s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "82o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "76s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.5,
+        "call": 0.5,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "76o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "75s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "75o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "74s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "74o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "73s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "73o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "72s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "72o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "65s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.5,
+        "call": 0.5,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "65o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "64s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "64o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "63s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "63o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "62s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "62o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "54s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.5,
+        "call": 0.5,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "54o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "53s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "53o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "52s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "52o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "43s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "43o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "42s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "42o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    },
+    {
+      "hand": "32s",
+      "physical_combos": 4,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 1.0,
+        "fold": 0.0
+      }
+    },
+    {
+      "hand": "32o",
+      "physical_combos": 12,
+      "frequencies": {
+        "squeeze": 0.0,
+        "call": 0.0,
+        "fold": 1.0
+      }
+    }
+  ],
+  "squeeze_raise_to_bb": null,
+  "squeeze_shove_split": null,
+  "action_ev": null,
+  "pko_economy": null,
+  "solver_executed": false,
+  "notes": [
+    "Call is approximately50% of the WHOLE deck AFTER excluding squeeze frequencies; total continuation is60%.",
+    "All suited and low pairs call with the residual probability; selected offsuit classes also call.",
+    "TT+, AQs+, AKo and KQs squeeze100% in this fixed benchmark; no trap frequency was assumed for them.",
+    "Mixed squeeze/call light hands are explicit; this is not uniformly rescaling the old NVT call vector.",
+    "J7o call80% only closes the approximate volume; it has no calculated EV justification.",
+    "Percentages change after card removal and conditioning on the MP/BTN ranges; they are not fixed after blockers.",
+    "No assertion that most players overcall50%, nor that10% squeeze is optimal at40BB in PKO.",
+    "Squeeze does not mean shove. This postflop family includes the BB CALL branch only."
+  ],
+  "sha256": "0336db2fbf68b49eec6dea84b5077595fbb5cbeb3492a73b341ec318868532e5"
+}
