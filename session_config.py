@@ -18,7 +18,7 @@ class SessionConfig:
     """The operator's pre-grind choices. Financial fields are None until the user
     sets them; None means BLOCKED, never zero or an invented value."""
     enabled: bool = False
-    clubs_authorized: tuple = ('Karekas', 'Veneza')
+    clubs_authorized: tuple = ()   # vazio = TODOS os clubes liberados; a seleção é a grade/preset, não o clube
     allowed_modalities: tuple = ('freezeout', 'mko', 'pko')   # rebuy only if also pko
     currency: Optional[str] = None
     max_entry_buyin: Optional[float] = None       # teto por inscrição (moeda do clube)
@@ -107,8 +107,10 @@ def evaluate_card(card, config, state=None, *, club=None, now_hhmm=None):
     if not config.financial_ready():
         reasons.append('MISSING_FINANCIAL_CONFIG')           # moeda/teto/orçamento em branco = BLOQUEADO
 
+    # Clube NÃO é o filtro de seleção: a grade/preset decide o que jogar. Só bloqueia
+    # se o operador FIXOU uma lista de clubes (clubs_authorized não-vazia). Vazia = todos.
     if config.clubs_authorized and (club is None or club not in config.clubs_authorized):
-        reasons.append('CLUB_NOT_AUTHORIZED')   # unknown club is not authorized either
+        reasons.append('CLUB_NOT_AUTHORIZED')   # clube fora da lista fixada (ou desconhecido)
     if config.grade_preset and name not in config.grade_preset:
         reasons.append('NOT_IN_PRESET_GRADE')
 

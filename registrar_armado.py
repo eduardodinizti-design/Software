@@ -224,7 +224,9 @@ def main(argv=None):
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument('--hwnd', type=lambda s: int(s, 0), required=True,
                    help='HWND da janela PPPoker (lobby na aba do torneio)')
-    p.add_argument('--club', default='Karekas')
+    p.add_argument('--club', default=None,
+                   help='Rotulo do clube do lobby (ex.: "AK Ahakha club2"), so p/ registro; '
+                        'NAO restringe. Todos os clubes sao liberados; a selecao e a grade.')
     p.add_argument('--currency', required=True, help='Moeda explícita (nunca inventada)')
     p.add_argument('--max-entry', type=float, required=True, help='Teto por inscrição')
     p.add_argument('--budget', type=float, required=True, help='Orçamento da sessão')
@@ -264,7 +266,7 @@ def main(argv=None):
     if args.allow_rebuy:
         _modalities = _modalities + ('rebuy', 'addon')
     config = SessionConfig(
-        enabled=True, clubs_authorized=(args.club,),
+        enabled=True, clubs_authorized=(),   # todos os clubes liberados (selecao = grade)
         allowed_modalities=_modalities, currency=args.currency,
         rebuy_pko_only=not args.allow_rebuy,
         max_entry_buyin=args.max_entry, daily_budget=args.budget,
