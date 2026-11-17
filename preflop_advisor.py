@@ -44,6 +44,11 @@ _PREFLOP_ORDER = ('UTG', 'UTG+1', 'UTG+2', 'LJ', 'HJ', 'CO', 'BTN', 'SB', 'BB')
 # preciso que emprestar). open_shove entra para o push/fold curto.
 BORROWABLE_SPOTS = frozenset({'open_raise', 'open_shove', 'vs_open', 'vs_limp'})
 SHOVE_SPOTS = frozenset({'open_shove', 'vs_open_shove'})   # tabelas puras de push/fold
+# Spots de PUSH/FOLD onde, faltando o nó exato do contexto (tipicamente spreads
+# enviesados curtos_ini/curtos_fim ou PKO), cabe uma REFERÊNCIA Nash SOMBRA: reusa a
+# MESMA tabela Nash de um contexto vizinho (spread 'iguais' do mesmo modo/stage, ou
+# Nash chip-EV), marcada validated=False. Não inventa range; só sinaliza a aproximação.
+NASH_SHADOW_SPOTS = frozenset({'open_shove', 'vs_open_shove', '3bet_shove'})
 PUSHFOLD_MAX_BB = 12   # <= isso, first-in tenta SHOVE antes de open-raise
 # ZONA DE SHOVE: abaixo disso o hero está em regime de push/fold. NÃO se pega range
 # emprestada por proximidade de stack para spots de RAISE (open_raise/vs_open/
@@ -401,6 +406,28 @@ class PreflopAdvisor:
                 return node, s
         return None, None
 
+    def _nash_shadow_node(self, mode, table_format, stage, players, bucket, spot, hero, vs, spread):
+        """Referência Nash SOMBRA para a zona de shove quando o nó EXATO do contexto
+        não existe. NÃO inventa range: devolve a MESMA tabela Nash de um contexto
+        vizinho já validado no pack, com o caveat que explicita a aproximação:
+          1) mesmo modo/stage/bucket, spread 'iguais' (assume stacks parelhos) — é o
+             nó ICM/PKO-ICM correto do stage, só sem o viés de spread;
+          2) Nash chip-EV do mesmo (bucket, spot, hero, vs) — sem ajuste ICM/PKO.
+        Só para NASH_SHADOW_SPOTS (push/fold puro). Devolve (node, caveat) ou (None,
+        None). O chamador marca validated=False (nunca auto-executa)."""
+        if spot not in NASH_SHADOW_SPOTS:
+            return None, None
+        if spread != 'iguais':                           # (1) mesmo modo/stage, spread parelho
+            n = self._index.get((mode, table_format, stage, players, bucket, spot, hero, vs, 'iguais'))
+            if n is not None:
+                return n, 'NASH_SHADOW_SPREAD_IGUAIS_APPROX'
+        if not (mode == 'chip_ev' and table_format == 'regular'  # (2) Nash chip-EV
+                and stage == 'mid' and spread is None):
+            n = self._index.get(('chip_ev', 'regular', 'mid', players, bucket, spot, hero, vs, None))
+            if n is not None:
+                return n, 'NASH_SHADOW_CHIP_EV_REF_ICM_PKO_ADJ_NOT_APPLIED'
+        return None, None
+
     def _aligned_stack_node(self, mode, table_format, stage, players, spot, hero, vs, spread, stack_bb):
         """Nó VALIDADO do MESMO contexto no bucket NATIVO do modo mais próximo, quando
         o stack real cai ENTRE os buckets nativos (grades diferentes por modo — ver
@@ -439,7 +466,7 @@ class PreflopAdvisor:
                table_format=None, stage='mid', players=9, spot='open_raise', vs=(), spread=None,
                scenario=None, aggressor=None, limpers=(), callers=(), effective_stack_bb=None,
                to_beat=None, to_call=None, facing_all_in=False, tournament_profile=None,
-               reference_tree_study=False):
+               reference_tree_study=False, _nash_shadow_ok=False):
         """An exploratory recommendation for one preflop spot, or an abstention.
 
         Returns status ADVICE | ABSTAIN | OUT_OF_RANGE with the action mix, EVs,
@@ -507,6 +534,16 @@ class PreflopAdvisor:
             # abstenção — mas NÃO é auto-executável (validated=False abaixo).
             node, borrowed_from = self._nearest_stack_node(
                 mode, table_format, stage, players, spot, hero_position, tuple(vs), spread, bucket)
+        # CAMADA NASH SOMBRA (ÚLTIMO RECURSO, só push/fold): sem nó no contexto exato
+        # nem empréstimo de stack, reusa a tabela Nash de um contexto vizinho como
+        # REFERÊNCIA (validated=False). Fecha a ABSTENÇÃO em spreads enviesados/PKO
+        # curtos sem inventar range. GATED por `_nash_shadow_ok`: só o re-try explícito
+        # de último recurso (fim de advise_from_reading, quando o fluxo normal já
+        # abstém) a liga — assim a sombra NUNCA preempta um nó validado/melhor.
+        nash_shadow = None
+        if node is None and _nash_shadow_ok:
+            node, nash_shadow = self._nash_shadow_node(
+                mode, table_format, stage, players, bucket, spot, hero_position, tuple(vs), spread)
         if node is None:
             reason = 'SHOVE_ZONE_PUSHFOLD_ONLY_NO_BORROW' if blocked_borrow \
                 else 'NO_VALIDATED_NODE_FOR_CONTEXT'
@@ -515,10 +552,13 @@ class PreflopAdvisor:
                                               hero=hero_position, players=players))
         i = self.hands.index(hand)
         raw_validated = bool(node.get('validated'))
-        validated = raw_validated and borrowed_from is None   # stack emprestado não auto-executa
+        # stack emprestado OU sombra Nash de outro contexto não auto-executam
+        validated = raw_validated and borrowed_from is None and nash_shadow is None
         caveats = self._caveats(bucket, stack_bb, players, mode, spread)
         if not raw_validated:
             caveats.append('UNVALIDATED_REFERENCE_RANGE')
+        if nash_shadow is not None:
+            caveats.append(nash_shadow)
         if aligned_bucket is not None:
             caveats.append('BUCKET_ALIGNED_%gBB_TO_%dBB_NATIVE_GRID' % (stack_bb, aligned_bucket))
         if borrowed_from is not None:
@@ -868,6 +908,29 @@ class PreflopAdvisor:
                 result = self.advise_first_in(**base, **kwargs)
         else:
             return self._abstain(spot.get('reason', 'SPOT_NOT_COVERED'))
+        # ÚLTIMO RECURSO — CAMADA NASH SOMBRA: o fluxo normal ABSTEVE num spot de ZONA
+        # DE SHOVE (tipicamente spread enviesado curtos_ini/curtos_fim ou PKO curto sem
+        # nó). Re-tenta o spot de PUSH/FOLD correspondente com a sombra Nash LIGADA
+        # (reusa a tabela Nash de um contexto vizinho — mesmo modo/stage spread 'iguais',
+        # senão chip-EV — marcada validated=False). Só substitui uma ABSTENÇÃO, então
+        # NUNCA rebaixa um nó validado/decisão melhor. Conselho/sombra até homologar.
+        if (isinstance(result, dict) and result.get('status') == 'ABSTAIN'
+                and isinstance(_stk, (int, float)) and _stk < SHOVE_ZONE_MAX_BB):
+            _sh = None
+            if spot['spot'] == 'first_in':
+                _sh = self.advise(spot='open_shove', vs=(), **base, **kwargs, _nash_shadow_ok=True)
+            elif spot['spot'] == 'vs_open' and spot.get('opener'):
+                _b = dict(base, stack_bb=max(_stk, 12))   # 3bet_shove mora em 12-25bb
+                _sh = self.advise(spot='3bet_shove', vs=(spot['opener'],), **_b, **kwargs,
+                                  _nash_shadow_ok=True)
+                if isinstance(_sh, dict) and _sh.get('status') == 'ADVICE':
+                    if spot.get('callers'):
+                        _sh.setdefault('caveats', []).append('SQUEEZE_VIA_3BET_SHOVE_%dC' % spot['callers'])
+                    _sh.setdefault('caveats', []).append('AGGRESSOR_INFERRED_%s' % spot['opener'])
+                    if _stk < 12:
+                        _sh.setdefault('caveats', []).append('JAM_CURTO_SUB12BB_RANGE12BB_TIGHTER_SAFE')
+            if isinstance(_sh, dict) and _sh.get('status') == 'ADVICE':
+                result = _sh
         if isinstance(result, dict) and result.get('status') in ('ADVICE', 'OUT_OF_RANGE'):
             import sizing
             # The pack is 9-max only; a shorter table uses it as a reference. Flag it
