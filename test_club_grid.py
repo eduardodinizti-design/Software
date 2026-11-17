@@ -246,6 +246,19 @@ class ReadCurrentClubTests(unittest.TestCase):
         ocr = lambda g: image_to_string(g, config='--psm 7')
         self.assertEqual(read_current_club(_inside_fixture(), ocr=ocr), 'Karekas Yellow')
 
+    def test_le_em_dois_aspectos_de_painel(self):
+        # Regressão do bug 'arekas Yellow' (17/11): o crop do find_lobby_crop ao vivo
+        # (839x1266) tem aspecto diferente do gabarito (1005x1787); o ROI deve ler o
+        # nome COMPLETO (sem clipar o 'K') nos dois.
+        import cv2
+        from table_reading.ocr_runtime import image_to_string
+        from club_grid import read_current_club
+        ocr = lambda g: image_to_string(g, config='--psm 7')
+        live = cv2.imread(os.path.join('tests', 'fixtures', 'lobby_live',
+                                       'karekas-club-panel-live-3.png'))
+        self.assertIsNotNone(live)
+        self.assertEqual(read_current_club(live, ocr=ocr), 'Karekas Yellow')
+
 
 if __name__ == '__main__':
     unittest.main()

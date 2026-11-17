@@ -189,8 +189,10 @@ def find_grid_crop(frame, *, margin=22):
 
 
 # Cabeçalho DENTRO do clube: caixa "Nome do clube / ID do clube: N" no topo-esquerda
-# do painel de torneios. Frações do painel (calibrado nos gabaritos lobby_live 1005px).
-_HEADER_ROI = (0.205, 0.160, 0.52, 0.196)   # x0, y0, x1, y1
+# do painel de torneios. Frações do painel — calibrado p/ funcionar em DOIS aspectos
+# (gabarito 1005x1787 E o crop do find_lobby_crop ao vivo 839x1266); x0=0.18 evita
+# clipar a 1ª letra no aspecto mais estreito (bug 'arekas Yellow' achado ao vivo 17/11).
+_HEADER_ROI = (0.180, 0.158, 0.520, 0.186)   # x0, y0, x1, y1 (y1 exclui a linha do ID)
 
 
 def read_current_club(panel_crop, *, ocr):
