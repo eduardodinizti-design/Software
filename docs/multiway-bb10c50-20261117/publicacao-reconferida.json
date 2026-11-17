@@ -1,0 +1,21 @@
+{
+  "schema": "software.multiway-bb10c50-publication-check.v1",
+  "source_commit": "0803e5ddb0cea630b2ef09a78971d7a1ed128fee",
+  "run": 44012735366,
+  "publication_zip_sha256": "5cc3b0196f7a084c8a80552f68390599778343b15e03ab4bf82c3785882d4acf",
+  "publication_zip_bytes": 43701,
+  "zip_members": 13,
+  "zip_crc_verified": true,
+  "published_zip_downloaded_and_matches_local": true,
+  "source_hashes_identical_windows_linux": true,
+  "tests_each_os": 149,
+  "preset_sha256": "0336db2fbf68b49eec6dea84b5077595fbb5cbeb3492a73b341ec318868532e5",
+  "unblocked_percent": {
+    "squeeze": 9.992458521870287,
+    "call": 50.00754147812972,
+    "fold": 40.0
+  },
+  "hrc_executed": false,
+  "solved_multiway_flops": 0,
+  "operational_multiway_policies": 0
+}

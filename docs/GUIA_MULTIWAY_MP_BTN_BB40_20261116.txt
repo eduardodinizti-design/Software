@@ -1,0 +1,128 @@
+SOFTWARE ORIGINAL — PILOTO POS-FLOP MP x BTN x BB, 40 BB
+
+STATUS DESTA ENTREGA
+Preparacao implementada e testada. Zero flops multiway resolvidos e zero
+politicas multiway executaveis. Cinco historicos sao exemplos SINTETICOS de
+regras; seus sizes NAO sao recomendacoes. O motor de clique nao foi alterado.
+Os 102 SB40 e 32 BTN25 anteriores continuam separados e preservados.
+
+O QUE SERA CALCULADO
+Uma unica arvore deve fornecer as estrategias dos TRES jogadores, por mao e
+historico. Hero pode ser MP, BTN ou BB: essa identidade nao muda a ordem de
+acao nem autoriza conhecer cartas privadas dos adversarios. Depois de um fold,
+a mesma mao continua entre os sobreviventes, conservando fichas e historico.
+
+GEOMETRIA EXPLICITA DO PILOTO
+Mesa originalmente com nove jogadores: UTG, UTG+1, UTG+2, LJ, HJ, CO, BTN, SB, BB.
+Aqui MP significa LJ, indice3 na indexacao HRC iniciada em0; nao e apelido
+automatico de qualquer middle position. Todos com40 BB ANTES dos posts.
+SB0,5; BB1; big-blind ante1. Fold ate LJ, LJ abre PARA2 BB, HJ/CO fold,
+BTN paga PARA2 BB, SB fold, BB completa mais1 BB.
+Flop: pote7,5 BB; stacks restantes MP38, BTN38, BB37; ordem BB -> MP -> BTN.
+O ante e a SB foldada sao dinheiro morto, sem direitos extras em potes laterais.
+Outro MP, open, ante ou momento de medicao do stack define outro estudo.
+
+LINHAS QUE PRECISAM ESTAR NA MESMA ARVORE
+BB primeiro: check ou donk bet. Enfrentando bet, fold/call/raise quando legais.
+MP apos check do BB: check ou c-bet; deve responder ao BTN e a qualquer raise do BB.
+BTN apos dois checks: check ou stab. Apos c-bet do MP: fold/call/raise,
+lembrando que o BB ainda precisa agir e pode pagar ou dar check-raise.
+BB apos check, c-bet MP e call BTN: fold/call/check-raise; MP e BTN respondem.
+MP apos check, bet BTN e call BB: fold/call/check-raise; BTN e BB respondem.
+BB donk, MP raise, BTN call: BB ainda responde; nao se avanca a rua prematuramente.
+Turn/river: preservar sobreviventes, ranges condicionados, stacks, pote e agressor.
+Estudar barrels, probes, delayed c-bets, check-raises, calls e folds por linha.
+All-in: calcular potes principais/laterais, elegibilidade e empates entre tres.
+Isso descreve as opcoes de estudo; a escolha lucrativa depende do solve.
+
+MENU INICIAL, NAO FREQUENCIAS PRESCRITAS
+Bet1/3,1/2,2/3 e pote, alem de all-in; raise de100% do pote e all-in.
+O raise usa pote APOS o call e tamanho total da aposta naquela rua.
+Exemplo de regra: pote10, call2,5 -> raise de pote PARA15, nao PARA12,5.
+Tres agressoes por rua: bet, raise, reraise. Calls/checks/folds permanecem.
+Nao existe checkdown forcado em multiway nem por chegar ao turn/river.
+O menu e uma abstracao declarada, nao todas as apostas possiveis do poker.
+Alterar menu requer nova identificacao do estudo e nova validacao.
+
+RANGES JA EXTRAIDOS
+docs/multiway-mp-btn-bb40-20261116/referencias-nvt.json contem seis vetores
+de169 classes, expandidos em combinacoes fisicas, sem substituir frequencias.
+Controle chip EV: nvt-ranges-validados, SHA256
+c3fafb3921e671c402b8f5b9a026dab091d8c5a0eefb49e9f7e0003f8718b796
+Referencia PKO: nvt-ranges-pko-deep, SHA256
+e3b5ae24163b99e1b4350a02f81b62f82106f2627428c92e715d1f628cb79232
+Nos: open_raise LJ, vs_open BTN LJ, vs_open BB LJ, stack40.
+Os nos PKO desta fonte estao marcados validated=false e referencia calibrada.
+Um rotulo HRC/validated da exportacao NVT nao e certificacao independente.
+O no do BB mostra somente open do LJ: faltam o call do BTN e o range de
+OVERCALL correspondente. Seu pote ilustrado4,5 nao e o pote6,5 antes do BB
+completar neste alvo. Nao usar esse range como chegada multiway confirmada.
+Os stacks ilustrados dos packs tambem variam: o piloto fixa todos40 antes dos posts.
+
+PREPARAR OS ARQUIVOS NO WINDOWS
+Baixe o pacote Software-Piloto-Multiway-40BB-20261116.zip em pasta NOVA.
+Ele prepara o estudo; nao instala nem substitui o bot. Preserve a instalacao anterior.
+Com Python3.12 x64, rode PREPARAR_ESTUDO_MULTIWAY_40BB.bat.
+Nao precisa instalar Node para essa preparacao; Node e usado somente no CI.
+Saida: runtime\estudos\mp-btn-bb40\ com plano, referencias, historicos,
+diagnostico de equidade, script HRC e inventario SHA256.
+O BAT nao abre o HRC, nao calcula estrategias e nao movimenta o mouse.
+Se a pasta ja existir, preserve-a e use outra com o comando:
+  py -3.12 -m tools.prepare_multiway_pilot --output runtime\estudos\mp-btn-bb40-teste2 --samples 5000
+
+CALCULO NO HRC PRO — INSTALACAO LICENCIADA DO USUARIO
+1. Registre Help/About: versao e build. Abra o calculo Monte Carlo pre-flop
+   correspondente a MP open/BTN call/SB fold/BB overcall. Permita tres jogadores
+   ativos no alvo e preserve os ranges
+   dos jogadores que foldaram; confirme os tres participantes na chegada.
+2. Configure a economia PKO real. Nao substitua automaticamente pelo chip EV.
+   Se o estudo for didatico, rotule-o e fixe os valores como parametros do teste.
+3. Selecione a chegada e use Hand: Create Postflop Calculation, flop As7d2c.
+   O HRC cria um calculo dedicado a partir da chegada selecionada.
+4. Configure o menu; hrc/MP_BTN_BB40_MENU.js oferece as funcoes documentadas
+   de tree-building. Ele nao importa ranges nem configura premios/bounties.
+5. Registre tamanho da arvore/RAM e abstracao POR RUA; amostre e guarde os
+   indicadores reais de convergencia. O script foi testado com contrato simulado
+   da API, ainda nao executado no HRC real. Nao tratar CI como exploitability
+   TexasSolver. Se mudar a abstracao para caber, registre a mudanca.
+6. Salve o calculo completo e suas configuracoes, estrategias, log/indicadores
+   e historicos sinteticos. Confira no build instalado o conteudo efetivo do
+   export. Historicos ou resumos nao comprovam politica completa por combo/no.
+
+A documentacao oficial confirma suporte a multiway/PKO e runouts posteriores,
+mas informa limitacoes nos relatorios pos-flop. O formato real exportado deve
+ser inspecionado ANTES de prometer um importador integral automatico.
+LQ river compromete sua precisao; um resumo do flop nao resolve o river.
+Fontes oficiais consultadas em16/11/2026:
+https://www.holdemresources.net/docs/postflop/
+https://www.holdemresources.net/docs/scripting/
+https://www.holdemresources.net/docs/monte-carlo-sampling/
+https://www.holdemresources.net/docs/memory-limit/
+
+PKO QUE AINDA PRECISA SER DEFINIDO
+Bounties totais exibidos versus parcela imediatamente paga; percentual de
+pagamento e de acumulacao; stacks/bounties individuais; premios regulares,
+field restante e modelo de valor futuro dos bounties. O valor progressivo
+nao deve ser simplesmente somado as fichas como um desconto fixo de call.
+A resposta do usuario sobre esses parametros ainda nao foi recebida nesta entrega.
+
+O QUE ESTA VALIDADO AQUI
+Regras para tres jogadores, cinco replays de flop/turn/river, potes laterais,
+empates, rejeicao de cartas repetidas, direitos de raise e conservacao de fichas.
+Amostragem conjunta rejeita TODAS as cartas privadas quando ha colisao;
+nao mantem MP/BTN fixos e reamostra apenas BB, o que enviesaria os ranges.
+Equidade checkdown por Monte Carlo tem semente e erro amostral publicados.
+E diagnostico das referencias candidatas, sem modelo de bunching ou utilidade
+PKO. Nao e frequencia de c-bet, EV de acao, estrategia otima ou treinamento.
+O regressor executa testes novos e os contratos HU anteriores, sem dispositivos.
+
+ACEITE DA PROXIMA ENTREGA E BLOQUEIOS CONCRETOS
+Necessarios: chegada HRC autentica incluindo overcall; economia PKO explicita;
+calculo nativo dedicado com configuracoes/convergencia reais; verificacao do
+export por acao/combo/no/runout; importador e consultas do bot para os tres
+papeis; comparacao de frequencias com a fonte e prova de respostas nas tres ruas.
+Nao transferir os certificados HU nem declarar convergencia GTO multiway a
+partir do mesmo criterio de jogo de dois jogadores.
+Nao ha acesso desta sessao a instalacao HRC Pro do notebook. Nenhum solve HRC
+nem clique real PPPoker foi executado. O caso8h->3h segue pendente e sem alteracao
+de limiares OCR. A integracao operacional multiway ainda precisa ser desenvolvida.

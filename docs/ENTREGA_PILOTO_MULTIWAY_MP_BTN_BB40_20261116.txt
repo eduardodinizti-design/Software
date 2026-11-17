@@ -1,0 +1,102 @@
+SOFTWARE ORIGINAL — INICIO CONCRETO DO ESTUDO MP x BTN x BB 40 BB
+
+O OBJETIVO DO USUARIO
+Estudar o mesmo pote com Hero em qualquer um dos tres papeis: MP abriu;
+BTN pagou; BB pagou. As respostas precisam considerar os dois adversarios,
+a posicao relativa, o historico, os ranges condicionados, board e stacks.
+O objetivo inclui torneios PKO. A decisao lucrativa depende da economia real
+do torneio, que nao esta determinada por apenas um numero de blinds.
+
+O QUE ESTA IMPLEMENTADO NESTA BRANCH
+1. Estado pos-flop de tres jogadores com identidades fixas MP/BTN/BB e ordem
+   BB -> MP -> BTN. Check, bet, call, raise, fold, fechamento da rodada,
+   novas cartas, direitos de reabrir raises e continuacao com dois jogadores.
+2. Distribuicao de potes principais/laterais, empates, fichas de quem foldou
+   e devolucao de excesso nao pago. O ante fica separado da aposta viva.
+   Fracoes de BB no laboratorio; arredondamento de fichas impares do cliente
+   e atribuicao monetaria de bounties nao estao implementados neste modulo.
+3. Extracao preservando as frequencias NVT de169 classes de seis candidatos:
+   MP open, BTN call e BB call, em chip EV e em referencia pko_icm.
+   SHA256, nos, fontes, contextos, stacks ilustrados e avisos preservados.
+4. Cinco historicos SINTETICOS: c-bet/call/check-raise/call/fold; stab do BTN;
+   donk BB/raise MP/call BTN; check-raise MP; all-in triplo/pote lateral.
+   Flop, turn e river sao registrados. NAO sao politicas aprendidas.
+5. Script original de menu para a API documentada do HRC Pro. Candidatos:
+   bet1/3,1/2,2/3,pote e all-in; raise-pote e all-in; ate tres agressoes por
+   rua. Calls/overcalls e apostas nas ruas seguintes continuam disponiveis.
+   O script especifica opcoes; nao escolhe sua frequencia nem seu lucro.
+6. Preparador executavel e BAT Windows. Gera plano, referencias, historicos,
+   diagnostico de checkdown, script e inventario SHA256 em uma pasta nova.
+   A saida recusa sobrescrever estudos anteriores. Nao abre o HRC nem clica.
+7. Diagnostico Monte Carlo real:5.000 distribuicoes para cada conjunto de
+   ranges, removendo colisoes de todas as cartas antes do runout. A rejeicao
+   e da TRIPLA inteira para nao enviesar o range do ultimo jogador.
+   Mede somente equidade se todos forem ao showdown sem novas apostas.
+   Nao calcula melhor c-bet, EV de linha, bounty, ICM ou frequencia de acao.
+
+ANTES/DEPOIS E VALIDACAO
+Antes: os contratos da biblioteca resolvida e do executor eram HU chip EV.
+Depois: existe uma base separada e testada para preparar/reproduzir o spot
+de tres jogadores. A biblioteca operacional HU permanece HU.
+Regressao Linux:137 testes passaram, zero erros/falhas/skips;24 novos e113
+contratos HU existentes. Inclui300 maos aleatorias legais, conservacao das
+fichas, amostragem ponderada independente e teste de contrato JavaScript.
+O teste do script usa Node e um contexto simulado da API; NAO executa HRC.
+HRC Pro nao esta conectado a este executor. Nenhuma sessao PPPoker foi feita.
+Windows GitHub e Ubuntu:137/137 em CADA plataforma, zero falhas/erros/skips;
+ambas geraram o pacote de preparacao. SHA256 das fontes coincidem entre OS.
+Primeiro CI falhou na checagem de preservacao porque Git Windows converteu
+LF em CRLF, apesar dos137 testes aprovados. A causa foi reproduzida por hash.
+Correcao: desativar autocrlf ANTES do checkout somente no runner temporario;
+os criterios de hash e todos os testes foram mantidos. Recibo inicial preservado.
+Fonte testada: daa8b430646bd2ddb850c8e99682bf5c92d2c064
+CI aprovado: https://github.com/eduardodinizti-design/Software/actions/runs/43992167810
+PR de preparacao: https://github.com/eduardodinizti-design/Software/pull/19
+O CI Windows nao tem HRC ou PPPoker conectado; testa regras/contratos e arquivos.
+
+A LACUNA DE RANGES ENCONTRADA
+O BB do arquivo disponivel enfrenta apenas um open de LJ. Nao ha call do BTN
+no historico daquele no. Ele nao e um overcall calculado para MP+BTN.
+Por isso os seis vetores permanecem CANDIDATOS de referencia; nenhum e
+promovido aqui a chegada conjunta exata ou certificacao direta do HRC.
+O pack PKO profundo usa referencia calibrada e validated=false nesses nos.
+MP neste piloto significa explicitamente LJ numa mesa de nove jogadores.
+Os parametros ilustrados dos arquivos nao sao silenciosamente tratados como
+uma configuracao uniforme: o piloto fixa todos40 BB antes dos posts.
+
+PARA PRODUZIR A PRIMEIRA POLITICA ESTRATEGICA REAL
+A. No HRC Pro licenciado, selecionar o pai com a sequencia completa ate o
+   overcall do BB. Preservar tambem os folds/ranges dos demais jogadores.
+B. Informar bounties, divisao instantanea/progressiva, modelo de premios e
+   contexto do field; registrar versao/build e configuracao de abstracao.
+C. Calcular o flop piloto As7d2c com respostas dos tres jogadores nas tres
+   ruas, medir convergencia e salvar o calculo completo e seus parametros.
+D. Verificar o conteudo efetivo do export desse build. Historicos amostrados
+   nao substituem a politica por combo, historico e runout. O importador
+   integral ainda depende de um export REAL e verificacao de seu contrato.
+E. Testar consultas com Hero MP, BTN e BB, branches com folds, side pots,
+   integridade das frequencias e sizes. So entao integrar observador/executor.
+
+As instrucoes detalhadas estao em docs/GUIA_MULTIWAY_MP_BTN_BB40_20261116.txt.
+A documentacao oficial confirma que HRC Pro pode calcular multiway/PKO:
+https://www.holdemresources.net/docs/postflop/
+API oficial usada pelo script original:
+https://www.holdemresources.net/docs/scripting/
+
+CONTAGEM HONESTA E BLOQUEIOS RESTANTES
+Novos flops multiway resolvidos:0. Politicas multiway executaveis:0.
+102 SB40 e32 BTN25 anteriores preservados; esta preparacao nao aumenta esses
+numeros e nao alimenta automaticamente o bot do notebook com politica nova.
+Pendentes: pai HRC de chegada, economia PKO, solve/export real e importador
+completo, consulta estrategica e integracao operacional dos tres Heroes.
+Validacao real de leitura/historico/cliques/latencia no PPPoker continua
+pendente; o caso8h->3h permanece aberto. Nenhum limiar OCR foi alterado.
+Main, worktrees anteriores, politicas e instalacoes antigas preservados.
+
+ARQUIVOS PARA EXECUTAR O PILOTO
+Guia: docs/GUIA_MULTIWAY_MP_BTN_BB40_20261116.txt
+Pacote de37742 bytes: docs/multiway-mp-btn-bb40-20261116/Software-Piloto-Multiway-40BB-20261116.zip
+SHA256:31fb7357b7e793de9d047cf974695780a4ae826b80ed08edebf9f6b16eb86c3b
+Extraia em pasta NOVA e abra PREPARAR_ESTUDO_MULTIWAY_40BB.bat; depois siga o guia no HRC.
+O pacote passou CRC e preparacao em extracao isolada Linux. Os mesmos contratos
+e fontes passaram no Windows GitHub, sem alegar execucao do arquivo BAT ou do HRC.

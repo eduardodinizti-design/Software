@@ -1,0 +1,48 @@
+{
+  "schema": "software.multiway-preparation-files.v1",
+  "status": "PREPARED_NOT_SOLVED_NOT_OPERATIONAL",
+  "solved_flops": 0,
+  "executable_policies": 0,
+  "files": [
+    {
+      "file": "MP_BTN_BB40_MENU.js",
+      "bytes": 2003,
+      "sha256": "852f520c0f9b542846097f3d11712ca033e87e162a0a4d3b03ec6a831653cc51"
+    },
+    {
+      "file": "bb-defesa-169.csv",
+      "bytes": 3206,
+      "sha256": "6fad7b1a0c3f8d9d71f12c1c5a57da7f1136132ee5df2731ba107fd4d209e34a"
+    },
+    {
+      "file": "bb-defesa-169.json",
+      "bytes": 28931,
+      "sha256": "86d23b70136c6ab661b5ab6cdc0549abe5bca3aa3a06c8cebebaf5802291bb89"
+    },
+    {
+      "file": "bb-defesa-169.txt",
+      "bytes": 6355,
+      "sha256": "b7fe8db4239a9b51010db763fda819fdf22cdf5ea36c64fd840b813dfefa8e42"
+    },
+    {
+      "file": "equidade-checkdown.json",
+      "bytes": 2299,
+      "sha256": "6435853f43d8f063b26a9478c5434c9869e7be0939e4137a327635817732529e"
+    },
+    {
+      "file": "historicos-sinteticos.json",
+      "bytes": 145707,
+      "sha256": "73dd5e831527fd9fc4bdc1d85b62edf3eb93a36cc129bbf338ebe06f01fc367a"
+    },
+    {
+      "file": "plano.json",
+      "bytes": 111157,
+      "sha256": "1398d3b955691b189229d3e42a8e1d5557e136c1ce245f40bec9468d1580c814"
+    },
+    {
+      "file": "referencias-nvt.json",
+      "bytes": 99385,
+      "sha256": "4bc12ac140fc6f24893997367ea77271c755949b36ab060ca52893d8a681d3e2"
+    }
+  ]
+}

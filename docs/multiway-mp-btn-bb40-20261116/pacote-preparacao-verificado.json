@@ -1,0 +1,25 @@
+{
+  "schema": "software.multiway-preparation-packet.v1",
+  "packet": "Software-Piloto-Multiway-40BB-20261116.zip",
+  "bytes": 37742,
+  "sha256": "31fb7357b7e793de9d047cf974695780a4ae826b80ed08edebf9f6b16eb86c3b",
+  "zip_crc_verified": true,
+  "isolated_extract_and_cli_passed": true,
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "environment": "LINUX_NOT_WINDOWS_HRC",
+  "files": {
+    "PREPARAR_ESTUDO_MULTIWAY_40BB.bat": "66363e8c86ca4c2753b56372f2e0c330a4eda608298b19dae3200f6a295ee44b",
+    "preflop_equity.py": "840d9abcc9125c7663ecee1f5263bd0d427477a63a351e8d9bfd8337aee03f9b",
+    "strategy/__init__.py": "9a8bc19b0bba720cc00105dfec077d497f79011f5a6b02014b8bf9fd92bb6a43",
+    "strategy/state_contract.py": "93925017fe03bb6a41263c1a6baeb2a38c16b81e9fa023681b026df5518126cc",
+    "strategy/range_catalog.py": "18cef61b746c63d1e3ae1a9d5e6b111c31f25944b0f96c879861f60de9e89fe4",
+    "strategy/multiway_state.py": "7c81376d0a69d85a20d0e44791807206dc8370c4d4dafd2728e29ce2801ed18c",
+    "strategy/multiway_study.py": "1d294bd0e3687c12909eb84e6fee3a6151b9afba665f31d6a60710f6c1374b28",
+    "tools/prepare_multiway_pilot.py": "cf2c64e349e244f39f632ebcd90f3d6e6d8ae7468c0b7cf63c6cdd759babf19f",
+    "hrc/MP_BTN_BB40_MENU.js": "852f520c0f9b542846097f3d11712ca033e87e162a0a4d3b03ec6a831653cc51",
+    "docs/GUIA_MULTIWAY_MP_BTN_BB40_20261116.txt": "6a5d4e3bf542a40dbd9e7b112d776f9f64d63d617e7cb9afb83bf1bf773071c6",
+    "docs/multiway-mp-btn-bb40-20261116/referencias-nvt.json": "9b4972ffd5e4ffa42af967cf12837d3291b2f27149dadafa38b0c443202e4871"
+  },
+  "optimized_policies": 0,
+  "hrc_executed": false
+}

@@ -1,0 +1,51 @@
+SOFTWARE ORIGINAL — BB10C50 — HIPOTESE EXPLICITA VALIDADA EM LABORATORIO
+
+Pedido: BB enfrenta MP open + BTN call; retirar o topo do call e distribuir
+squeezes light por frequencia, mantendo aproximadamente50% de call.
+
+Resultado da CONTAGEM, antes de cartas conhecidas:
+Squeeze132,5/1326 =9,9924585%.
+Call663,1/1326 =50,0075415%.
+Fold530,4/1326 =40,0000000%.
+Logo sao60% de continuacao, e nao50% de defesa total.
+
+Nucleo100% squeeze: TT+, AQs+, AKo, KQs.
+Exemplos de mixes: A5s/A4s75% squeeze e25% call; 76s50/50;
+K8s25/75. Demais classes e residuos estao na matriz completa.
+Isso NAO demonstra que esses squeezes sao lucrativos; e o perfil fixado
+para comecar o estudo. Squeeze nao foi convertido automaticamente em shove.
+
+Todos os169 vetores somam1 e expandem para1326 combos fisicos sem duplicar.
+Somente o vetor de CALL alimenta a chegada pos-flop; o topo de100% squeeze
+tem0% call. A fonte original BB/NVT e os vetores MP/BTN foram preservados.
+O perfil escolhido e um adversario loose de laboratorio, nao uma medicao
+de que todo jogador ou a maioria paga com50% nesse spot.
+
+VALIDACAO EXECUTADA
+149/149 testes no Linux local e em CADA runner Ubuntu/Windows GitHub.
+Zero erros/falhas/skips. Os12 testes novos verificam particao, massas,
+mixes, exclusao do topo, call-only, geometria, proveniencia e arquivos.
+O preparador original e a variante BB10C50 foram executados nas duas OS.
+HRC Pro e PPPoker nao foram executados nesses runners; BAT nao foi acionado.
+Arquivo ZIP baixado novamente do GitHub e reconferido por SHA256 e CRC.
+Fonte testada:0803e5ddb0cea630b2ef09a78971d7a1ed128fee
+CI:https://github.com/eduardodinizti-design/Software/actions/runs/44012735366
+PR:https://github.com/eduardodinizti-design/Software/pull/19
+
+COMO REPRODUZIR
+Baixar Software-Piloto-Multiway-BB10C50-20261117.zip em pasta NOVA.
+Python3.12 x64; executar PREPARAR_ESTUDO_MULTIWAY_BB10C50.bat.
+Alternativa: py -3.12 -m tools.prepare_multiway_pilot --bb-preset bb10c50-lab-v1 --output runtime\estudos\bb10c50-novo --samples 5000
+Siga docs/GUIA_BB10C50_20261117.txt para as premissas e uso no estudo.
+Matriz: docs/multiway-bb10c50-20261117/piloto/bb-defesa-169.txt
+O JSON/CSV descreve a hipotese; nao e declarado export/import nativo do HRC.
+
+PENDENCIAS E LIMITES
+Novos flops multiway estrategicamente resolvidos:0. Politicas executaveis:0.
+EV de acao=null; bounties=null; HRC_executed=false. Frequencias deste perfil
+sao manuais; nao se atribuiu selo de GTO/HRC a elas.
+Seguem pendentes: economia PKO, calculo dedicado no HRC, verificacao do
+export real e integracao das politicas. O diagnostico de checkdown incluido
+no pacote e equidade em fichas, sem EV de apostas ou utilidade PKO.
+O codigo operacional HU e as102 SB40/32 BTN25 anteriores foram preservados.
+Validacao real PPPoker e o caso8h->3h continuam pendentes.

@@ -1,0 +1,88 @@
+{
+  "chip_ev": {
+    "kind": "MONTE_CARLO_CHECKDOWN_CHIP_EQUITY_DIAGNOSTIC_NOT_POLICY",
+    "samples": 5000,
+    "seed": 20261116,
+    "board": [
+      "As",
+      "7d",
+      "2c"
+    ],
+    "roles": [
+      {
+        "role": "MP",
+        "showdown_share": 0.4160333333333332,
+        "standard_error": 0.006897704279797227,
+        "approximate_95pct_interval": [
+          0.40251383294493065,
+          0.42955283372173575
+        ]
+      },
+      {
+        "role": "BTN",
+        "showdown_share": 0.33043333333333325,
+        "standard_error": 0.006587639744208839,
+        "approximate_95pct_interval": [
+          0.3175215594346839,
+          0.3433451072319826
+        ]
+      },
+      {
+        "role": "BB",
+        "showdown_share": 0.2535333333333333,
+        "standard_error": 0.006093205294710332,
+        "approximate_95pct_interval": [
+          0.24159065095570104,
+          0.2654760157109655
+        ]
+      }
+    ],
+    "reference_sha256": "0c1c4cf5dde2e989b74e27594d845b2f756746ca5ffec8e274a4d9eddd8b5915",
+    "bunching_modelled": false,
+    "pkobounty_utility_calculated": false,
+    "optimal_actions_calculated": false
+  },
+  "pko": {
+    "kind": "MONTE_CARLO_CHECKDOWN_CHIP_EQUITY_DIAGNOSTIC_NOT_POLICY",
+    "samples": 5000,
+    "seed": 20261116,
+    "board": [
+      "As",
+      "7d",
+      "2c"
+    ],
+    "roles": [
+      {
+        "role": "MP",
+        "showdown_share": 0.47333333333333333,
+        "standard_error": 0.006973979778107745,
+        "approximate_95pct_interval": [
+          0.45966433296824216,
+          0.4870023336984245
+        ]
+      },
+      {
+        "role": "BTN",
+        "showdown_share": 0.31323333333333325,
+        "standard_error": 0.006472318712427285,
+        "approximate_95pct_interval": [
+          0.3005475886569758,
+          0.3259190780096907
+        ]
+      },
+      {
+        "role": "BB",
+        "showdown_share": 0.2134333333333334,
+        "standard_error": 0.005741201118063676,
+        "approximate_95pct_interval": [
+          0.20218057914192858,
+          0.2246860875247382
+        ]
+      }
+    ],
+    "reference_sha256": "eed968c4cff4820fbafce96a3ac04430b3dbef2cff98813dd6d66996b3d5b25f",
+    "bunching_modelled": false,
+    "pkobounty_utility_calculated": false,
+    "optimal_actions_calculated": false
+  }
+}

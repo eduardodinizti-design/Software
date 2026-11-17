@@ -1,0 +1,57 @@
+name: Three-player MP BTN BB40 laboratory preparation
+'on':
+  push:
+    branches: [feat/multiway-mp-btn-bb40-20261116]
+    paths:
+      - .github/workflows/multiway-pilot.yml
+      - strategy/multiway_*.py
+      - tools/*multiway_pilot.py
+      - test_multiway_study.py
+      - test_multiway_bb_defense.py
+      - hrc/MP_BTN_BB40_MENU.js
+      - docs/multiway-mp-btn-bb40-20261116/referencias-nvt.json
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: multiway-lab-${{ github.ref }}
+  cancel-in-progress: false
+env:
+  PYTHONUTF8: '1'
+  PYTHONUNBUFFERED: '1'
+jobs:
+  laboratory:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-2025]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - name: Preserve repository bytes for exact SHA-256 checks
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: python -m pip install numpy==2.2.6 opencv-python-headless==4.11.0.86 psutil==6.1.1 pytesseract==0.3.13
+      - name: Verify new multiway and unchanged HU contracts
+        run: python -m tools.verify_multiway_pilot --output runtime/multiway-verification
+      - name: Prepare files without solver, cursor or PPPoker
+        run: python -m tools.prepare_multiway_pilot --output runtime/multiway-study --samples 5000
+      - name: Prepare user fixed BB squeeze10 call50 experiment
+        run: python -m tools.prepare_multiway_pilot --bb-preset bb10c50-lab-v1 --output runtime/multiway-study-bb10c50 --samples 5000
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: multiway-preparation-${{ matrix.os }}-${{ github.run_id }}-a${{ github.run_attempt }}
+          path: |
+            runtime/multiway-verification
+            runtime/multiway-study
+            runtime/multiway-study-bb10c50
+          if-no-files-found: error

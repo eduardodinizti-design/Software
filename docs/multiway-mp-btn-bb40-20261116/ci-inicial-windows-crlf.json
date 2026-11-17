@@ -1,0 +1,51 @@
+{
+  "schema": "software.multiway-ci-initial-failure.v1",
+  "run": 43991834482,
+  "job": 133734114721,
+  "source_commit": "7efacb5af793c794780abdfd945317a2150cba48",
+  "cause": "Windows Git checkout converted source LF to CRLF; raw SHA-256 preservation check failed although all 137 tests passed.",
+  "correction": "Set core.autocrlf=false only on ephemeral CI runner BEFORE checkout; retain exact byte hashes and all tests.",
+  "windows_report": {
+    "schema": "software.multiway-pilot-lab-verification.v1",
+    "status": "FAIL",
+    "os": "Windows-2025Server-10.0.26100-SP0",
+    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+    "tests_run": 137,
+    "passed": 137,
+    "errors": 0,
+    "failures": 0,
+    "skipped": [],
+    "elapsed_seconds": 7.4220000000000255,
+    "modules": [
+      "test_multiway_study",
+      "test_hu_policy_engine",
+      "test_hu_policy_json",
+      "test_hu_operational"
+    ],
+    "tested_file_sha256": {
+      "strategy/multiway_state.py": "89ca232412f4b5538377026472979e673cd42e0768ac777df2c8cef41ffe8bd2",
+      "strategy/multiway_study.py": "6f1874eb09a368dad6d2ce7e13ebdca79a3d17f3df7c028a36901c1801e99643",
+      "tools/prepare_multiway_pilot.py": "56f00d10323fe29cb99af07918f92fc804b2f91ff61f65dcfde75ff2ae4b4f09",
+      "tools/verify_multiway_pilot.py": "93225d3218afcdba94d48d5814fcfd6fdc9150714387849b8250d8350305186b",
+      "test_multiway_study.py": "52b348a31fdf507e4a0ccbec8c1dd32968d22a4ec7b1d35d5ec60498afa430dc",
+      "hrc/MP_BTN_BB40_MENU.js": "09a23a7c33c21936e3dffbe42630ec3e0c17089df429974ee0bfd320e9341553",
+      "docs/multiway-mp-btn-bb40-20261116/referencias-nvt.json": "28ffb5480e305f4be9632fd4ccf6ebd04b867817599eb5ff63a9b4d621f5ff44"
+    },
+    "original_hu_code_unchanged": {
+      "operar_mesa.py": false,
+      "hu_executor.py": false,
+      "strategy/state_contract.py": false,
+      "strategy/action_tree.py": false,
+      "strategy/policy_library.py": false,
+      "strategy/confirmed_history.py": false,
+      "strategy/texassolver_backend.py": false
+    },
+    "preserved_hu_base_commit": "b8187c3756b4c67f1eb026436f45df536d59c7ff",
+    "synthetic_hands_in_rule_tests": true,
+    "optimized_multiway_policies_calculated": 0,
+    "hrc_script_test": "NODE_MOCK_OF_DOCUMENTED_API_NOT_REAL_HRC",
+    "hrc_native_executed": false,
+    "real_pppoker_validated": false,
+    "gameplay_input_sent": false
+  }
+}
