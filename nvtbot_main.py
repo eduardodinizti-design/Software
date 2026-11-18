@@ -18,7 +18,7 @@ for _d in (_HERE, os.path.join(_HERE, 'research', 'ppp_il2cpp')):
 
 def main():
     args = sys.argv[1:]
-    sub = args[0] if args else 'iniciar'
+    sub = args[0] if args else 'painel'   # sem argumento -> PAINEL (central de gestao)
     rest = args[1:]
     # os submodulos usam argparse sobre sys.argv -> deixa so o resto p/ eles
     sys.argv = [sys.argv[0]] + rest
@@ -31,9 +31,12 @@ def main():
     elif sub == 'capturar':
         import capturar_maos
         capturar_maos.main()
-    else:
+    elif sub == 'iniciar':
         import iniciar_bot
         iniciar_bot.main()
+    else:                                  # painel (default)
+        import painel
+        painel.main()
 
 
 if __name__ == '__main__':
