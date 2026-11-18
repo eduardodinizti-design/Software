@@ -74,9 +74,13 @@ def main(argv=None):
     p.add_argument('--no-hotkeys', dest='hotkeys', action='store_false',
                    help='Desliga as hotkeys de pausa/takeover (Ctrl+Alt+P/R/D)')
     p.add_argument('--record', action='store_true',
-                   help='GRAVA as maos observadas (tracker/historico: heroi+cartas+decisao, '
-                        'adversarios por nick, board, torneio) em logs/maos/maos.jsonl')
-    p.add_argument('--record-path', default=None, help='Caminho do JSONL do tracker')
+                   help='GRAVA as maos observadas (tracker: heroi+cartas+decisao, adversarios '
+                        'por nick, board, torneio) no padrao <base>\\ANO\\MES\\DIA\\<torneio>.jsonl')
+    p.add_argument('--record-base', default=None,
+                   help='Base do historico (default C:\\Hand2Note4Hh\\PPPoker): pasta por dia, '
+                        'arquivo por torneio')
+    p.add_argument('--record-path', default=None,
+                   help='(opcional) tambem grava tudo num JSONL unico neste caminho')
     args = p.parse_args(argv)
     advisor = PreflopAdvisor.from_files(args.ranges, args.deep) if args.deep else PreflopAdvisor.from_file(args.ranges)
     from window_capture_engine import WindowCaptureEngine
@@ -101,9 +105,11 @@ def main(argv=None):
     board_memory = BoardMemory()               # segura o board confirmado na mão
     hand_logger = None
     if args.record:
-        rec = HandRecorder(args.record_path) if args.record_path else HandRecorder()
+        from hand_sink import DayTournamentSink, DEFAULT_BASE
+        base = args.record_base or DEFAULT_BASE
+        rec = HandRecorder(path=args.record_path, sink=DayTournamentSink(base))
         hand_logger = LiveHandLogger(rec)
-        print('TRACKER LIGADO: gravando maos em %s' % rec.path, flush=True)
+        print('TRACKER LIGADO: %s\\ANO\\MES\\DIA\\<torneio>.jsonl' % base, flush=True)
     try:
         while True:
             started = time.monotonic()
