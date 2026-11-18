@@ -16,7 +16,7 @@ from datetime import datetime
 
 # Base do NOSSO log de decisões do bot (JSONL). NÃO é a pasta do Hand2Note (aquela é
 # alimentada pelo conversor externo em formato TEXTO; não misturar).
-DEFAULT_BASE = r'C:\Meus Projetos\Aplicativos\_repo_software\logs\maos_bot'
+DEFAULT_BASE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs', 'maos_bot')
 
 
 def sanitize_name(name):

@@ -9,7 +9,7 @@ except Exception:
 import frida
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-REPO = r"C:\Meus Projetos\Aplicativos\_repo_software"
+REPO = os.path.abspath(os.path.join(HERE, "..", ".."))   # portátil: _repo_software
 OUT = os.path.join(REPO, "logs", "live_seats.json")
 RICH = os.path.join(REPO, "logs", "live_seats_rich.json")
 SECONDS = float(sys.argv[1]) if len(sys.argv) > 1 else 0.0

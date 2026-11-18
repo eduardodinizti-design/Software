@@ -50,8 +50,9 @@ from operator_robustness import BoundedKeySet, CaptureWatch, raise_outcome, reco
 from anticipation import AnticipationStore, available_actions, TurnEpochTracker
 from hero_card_memory import HeroCardMemory
 
-DEFAULT_RANGES = r'C:\Meus Projetos\Aplicativos\nvt-ranges-validados.json'
-DEFAULT_DEEP = r'C:\Meus Projetos\Aplicativos\nvt-ranges-deep.json'
+from app_paths import find_data
+DEFAULT_RANGES = find_data('nvt-ranges-validados.json')   # portátil (qualquer PC)
+DEFAULT_DEEP = find_data('nvt-ranges-deep.json')
 
 # SHOVE (push/fold): o all-in NÃO tem "multiplicador" — é "tudo". Um alvo-sentinela
 # bem acima de qualquer preset e do piso de shove (SHOVE_FLOOR_MULT=8.0) faz
@@ -300,7 +301,7 @@ def main(argv=None):
     p.add_argument('--field-exploit', dest='field_exploit', action='store_true',
                    help='Usa NOSSA DB (exploit_db.json) p/ exploit ao vivo: le seat->ID de '
                         'logs/live_seats.json (escrito pelo tracker) e alimenta o exploit por vilao.')
-    p.add_argument('--exploit-db', default='logs/exploit_db.json')
+    p.add_argument('--exploit-db', default=find_data('exploit_db.json'))
     p.add_argument('--live-seats', default='logs/live_seats.json')
     p.add_argument('--live-rich', default='logs/live_seats_rich.json')
     p.add_argument('--posflop', dest='posflop', action='store_true',

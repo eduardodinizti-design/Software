@@ -27,8 +27,9 @@ from state_observer import StateObserver, render
 from action_coordinator import plan_action, describe_plan
 from window_capture_engine import WindowCaptureEngine
 
-DEFAULT_RANGES = r'C:\Meus Projetos\Aplicativos\nvt-ranges-validados.json'
-DEFAULT_DEEP = r'C:\Meus Projetos\Aplicativos\nvt-ranges-deep.json'
+from app_paths import find_data
+DEFAULT_RANGES = find_data('nvt-ranges-validados.json')
+DEFAULT_DEEP = find_data('nvt-ranges-deep.json')
 
 
 def main(argv=None):

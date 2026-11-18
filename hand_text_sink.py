@@ -12,7 +12,7 @@ from hand_sink import sanitize_name
 
 # NOSSA base de texto (não mistura com a pasta do conversor externo). Aponte p/ a pasta do
 # Hand2Note com --base se quiser que ele importe direto.
-DEFAULT_BASE = r'C:\Meus Projetos\Aplicativos\_repo_software\logs\maos_h2n'
+DEFAULT_BASE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs', 'maos_h2n')
 
 
 def _day(ts=None):
