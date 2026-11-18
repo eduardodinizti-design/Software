@@ -19,6 +19,10 @@ class _FakeHand:
         self.rec['advice'].append(kw)
         return self
 
+    def result(self, *, outcome='unknown', delta_bb=None, showdown=None):
+        self.rec['result'] = dict(outcome=outcome, delta_bb=delta_bb, showdown=showdown)
+        return self
+
 
 class _FakeRecorder:
     def __init__(self):
@@ -108,6 +112,34 @@ class LoggerTests(unittest.TestCase):
         log.observe('t2', _result('B-1-1', cards=['As', 'Ks'], recommended='raise'))
         log.flush()
         self.assertEqual({h['hand_id'] for h in rec.committed}, {'A-1-1', 'B-1-1'})
+
+
+def _res(number, hero_stack, cards=('9d', '6d')):
+    return dict(is_table=True, hand=dict(hand_id='H-%d' % number, hand_number=number),
+                tournament=dict(name='T'), hero_cards=list(cards),
+                table_state=dict(positions={'hero': 'SB'},
+                                 seats={'hero': dict(occupied=True, stack_bb=hero_stack,
+                                                     raw='Just do it')}),
+                board={}, advice=dict(recommended='all_in', spot='x', validated=True, ev=1.0))
+
+
+class ResultTests(unittest.TestCase):
+    def test_delta_de_stack_vira_resultado_won(self):
+        rec = _FakeRecorder()
+        log = LiveHandLogger(rec)
+        log.observe('t', _res(10, 20.0))              # mão 10, stack início 20
+        log.observe('t', _res(11, 25.0))              # mão 11 consecutiva, stack 25
+        self.assertEqual(len(rec.committed), 1)       # mão 10 fechada
+        r = rec.committed[0].get('result') or {}
+        self.assertEqual(r.get('delta_bb'), 5.0)      # ganhou +5 bb
+        self.assertEqual(r.get('outcome'), 'won')
+
+    def test_sem_resultado_se_pulou_mao(self):
+        rec = _FakeRecorder()
+        log = LiveHandLogger(rec)
+        log.observe('t', _res(10, 20.0))
+        log.observe('t', _res(13, 25.0))              # pulou 11,12 -> delta não confiável
+        self.assertIsNone(rec.committed[0].get('result'))
 
 
 if __name__ == '__main__':

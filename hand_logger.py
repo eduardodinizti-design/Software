@@ -43,15 +43,20 @@ class LiveHandLogger:
         hid = hand.get('hand_id')
         if not hid:
             return
+        hero_stack = ((((result.get('table_state') or {}).get('seats') or {})
+                       .get('hero') or {}).get('stack_bb'))
         cur = self._open.get(table_key)
         if cur and cur['hand_id'] != hid:          # a mão mudou -> fecha a anterior
-            self._commit(table_key)
+            # o stack do hero AGORA (início da mão nova) = stack no FIM da mão anterior.
+            self._commit(table_key, end_stack=hero_stack, new_number=hand.get('hand_number'))
             cur = None
         if cur is None:
             cur = self._open[table_key] = dict(
                 hand_id=hid, table_key=table_key, hand_number=hand.get('hand_number'),
                 table_ref=hand.get('table_ref'), tournament={}, hero={},
-                opponents={}, board={}, advice=None)
+                opponents={}, board={}, advice=None, hero_start_stack=hero_stack)
+        if cur.get('hero_start_stack') is None and hero_stack is not None:
+            cur['hero_start_stack'] = hero_stack
         self._accumulate(cur, result)
 
     def _accumulate(self, cur, result):
@@ -86,7 +91,7 @@ class LiveHandLogger:
                              ('recommended', 'sizing', 'spot', 'hero_position',
                               'validated', 'ev', 'ev_unit', 'source', 'status', 'node_id')}
 
-    def _commit(self, table_key):
+    def _commit(self, table_key, *, end_stack=None, new_number=None):
         cur = self._open.pop(table_key, None)
         if not cur:
             return None
@@ -112,6 +117,14 @@ class LiveHandLogger:
             h.advice(street=street, recommended=a.get('recommended'), source=a.get('source'),
                      ev_bb=a.get('ev'), validated=a.get('validated'), spot=a.get('spot'),
                      sizing=a.get('sizing'), node_id=a.get('node_id'))
+        # RESULTADO por delta de stack do hero (fim - início). Só quando a mão seguinte
+        # é CONSECUTIVA (não pulamos nenhuma) e temos os dois stacks -> delta confiável.
+        start = cur.get('hero_start_stack')
+        if (start is not None and end_stack is not None and new_number is not None
+                and cur.get('hand_number') is not None and new_number == cur['hand_number'] + 1):
+            delta = round(end_stack - start, 2)
+            outcome = 'won' if delta > 0.3 else ('lost' if delta < -0.3 else 'folded')
+            h.result(outcome=outcome, delta_bb=delta)
         self._rec.commit(h)
         return cur['hand_id']
 
