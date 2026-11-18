@@ -27,6 +27,34 @@ def locate_club_in_frame(frame, target, *, ocr):
     return (ox + x0, oy + y0, x1 - x0, y1 - y0)
 
 
+def find_back_button(frame, *, panel_x=(1920, 2180)):
+    """(x, y) da seta de VOLTAR (verde ESCURA, topo-ESQUERDA do painel de um clube),
+    ou None. Só aparece DENTRO de um clube — leva de volta ao seletor. Fica longe do X
+    de fechar a janela (topo-direita), e é a mais à esquerda; a barra fina (não-quadrada)
+    é descartada por formato. Coords do FRAME (panel_x = janela; depende da posição)."""
+    import cv2
+    import numpy as np
+    h, w = frame.shape[:2]
+    x0, x1 = panel_x[0], min(panel_x[1], w)
+    if x1 - x0 < 10:
+        return None
+    y0, y1 = int(0.025 * h), int(0.09 * h)
+    reg = frame[y0:y1, x0:x1]
+    hsv = cv2.cvtColor(reg, cv2.COLOR_BGR2HSV)
+    H, S, V = hsv[:, :, 0].astype(int), hsv[:, :, 1].astype(int), hsv[:, :, 2].astype(int)
+    mask = ((H > 60) & (H < 110) & (S > 90) & (V > 18) & (V < 140)).astype(np.uint8) * 255
+    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, np.ones((9, 9), np.uint8))
+    n, _, stats, cent = cv2.connectedComponentsWithStats(mask, 8)
+    best = None
+    for i in range(1, n):
+        bw, bh, area = stats[i][2], stats[i][3], stats[i][4]
+        if area > 200 and 20 < bw < 70 and 20 < bh < 70 and 0.55 < bw / max(bh, 1) < 1.8:
+            cx, cy = int(x0 + cent[i][0]), int(y0 + cent[i][1])
+            if best is None or cx < best[0]:          # a seta é a MAIS À ESQUERDA
+                best = (cx, cy)
+    return best
+
+
 def scroll_grid_once(adapter, control, *, panel_rect, drag_frac=0.5, reveal='below',
                      settle_s=0.05):
     """Rola a grade UMA vez. GATED: nada é enviado sem RUNNING. reveal='below'

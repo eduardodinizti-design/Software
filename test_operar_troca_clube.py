@@ -205,6 +205,19 @@ class AnyViewTests(unittest.TestCase):
                                        control=None, ocr=lambda g: '', discover_rect=_discover)
         self.assertEqual(r['action'], 'PLANO_CLICAR')
 
+    def test_dentro_de_clube_planeja_voltar(self):
+        import numpy as np
+        import operar_troca_clube as m
+        from unittest.mock import patch
+        eng = _Engine(np.zeros((10, 10, 3), np.uint8))
+        with patch.object(m, 'ensure_club_live', return_value=dict(action='SEM_GRADE', ok=False)), \
+             patch.object(m, 'ensure_club_via_carousel', return_value=dict(action='SEM_CARROSSEL', ok=False)), \
+             patch.object(m, 'find_back_button', return_value=(1975, 99)):
+            r = m.ensure_club_any_view('AK', engine=eng, hwnd=1, adapter=None, control=None,
+                                       ocr=lambda g: '', discover_rect=_discover, dry_run=True)
+        self.assertEqual(r['action'], 'PLANO_VOLTAR')
+        self.assertEqual(r['back_pt'], (1975, 99))
+
 
 if __name__ == '__main__':
     unittest.main()

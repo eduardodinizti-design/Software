@@ -19,7 +19,7 @@ Uso ao vivo:
 import argparse
 import time
 
-from club_actions import locate_club_in_frame, scroll_grid_once
+from club_actions import find_back_button, locate_club_in_frame, scroll_grid_once
 from club_grid import (find_grid_crop, header_matches, normalize, read_carousel_card,
                        read_club_grid, read_club_header)
 from cursor_controller import CursorController, Intent, make_intervention_check
@@ -177,6 +177,7 @@ def ensure_club_via_search(target, *, engine, hwnd, adapter, keyboard, control, 
     if not c1['ok']:
         return dict(ok=False, action='CLICK_PESQUISAR_FALHOU', reason=c1.get('reason'))
     time.sleep(0.4)
+    _focus_window(hwnd)                                     # foco de teclado na janela/caixa
     keyboard.clear_field(40)                                # campo limpo
     keyboard.type_text(target.strip())                     # filtra a grade
     time.sleep(settle_s)
@@ -259,19 +260,56 @@ def ensure_club_via_carousel(target, *, engine, hwnd, adapter, control, ocr, dis
 
 
 def ensure_club_any_view(target, *, engine, hwnd, adapter, control, ocr, discover_rect,
-                         max_scrolls=10, dry_run=True):
-    """Troca para `target` AUTO-DETECTANDO a vista: tenta a GRADE DE TILES; se não for
-    (SEM_GRADE), tenta o CARROSSEL. Idempotência e verificação já embutidas em cada um."""
-    r = ensure_club_live(target, engine=engine, hwnd=hwnd, adapter=adapter, control=control,
-                         ocr=ocr, discover_rect=discover_rect, max_scrolls=max_scrolls,
-                         dry_run=dry_run)
-    if r.get('action') == 'SEM_GRADE':
+                         max_scrolls=10, dry_run=True, max_back=2, settle_s=0.7):
+    """Troca para `target` AUTO-DETECTANDO a vista: GRADE DE TILES; senão CARROSSEL;
+    senão (estamos DENTRO de um clube) clica VOLTAR ao seletor e re-tenta. Idempotência
+    e verificação já embutidas nos sub-fluxos."""
+    for attempt in range(max_back + 1):
+        r = ensure_club_live(target, engine=engine, hwnd=hwnd, adapter=adapter, control=control,
+                             ocr=ocr, discover_rect=discover_rect, max_scrolls=max_scrolls,
+                             dry_run=dry_run)
+        if r.get('action') != 'SEM_GRADE':
+            return r
         rc = ensure_club_via_carousel(target, engine=engine, hwnd=hwnd, adapter=adapter,
                                       control=control, ocr=ocr, discover_rect=discover_rect,
                                       dry_run=dry_run)
-        if rc.get('action') != 'SEM_CARROSSEL':      # era carrossel -> usa esse resultado
+        if rc.get('action') != 'SEM_CARROSSEL':      # era carrossel
             return rc
+        # Nem tiles nem carrossel -> provavelmente DENTRO de um clube: voltar ao seletor.
+        frame, _ = engine.capture_frame(hwnd=hwnd)
+        back = find_back_button(frame) if frame is not None else None
+        if back is None or attempt >= max_back:
+            return r                                 # sem botão de voltar -> devolve SEM_GRADE
+        if dry_run:
+            return dict(ok=False, action='PLANO_VOLTAR', back_pt=back,
+                        reason='dentro de um clube; voltaria ao seletor e re-tentaria')
+        c = _gated_click_frame_point(adapter, control, discover_rect, hwnd, frame, back)
+        if not c['ok']:
+            return dict(ok=False, action='VOLTAR_FALHOU', reason=c.get('reason'))
+        time.sleep(settle_s)                         # deixa o seletor abrir, e re-tenta
     return r
+
+
+def _focus_window(hwnd):
+    """Traz a janela p/ frente e dá foco de TECLADO (o SendInput de teclado vai p/ a
+    janela em foco). Usa AttachThreadInput p/ driblar a restrição do SetForegroundWindow.
+    Best-effort (no-op fora do Windows ou se falhar)."""
+    try:
+        import ctypes
+        u = ctypes.windll.user32
+        k = ctypes.windll.kernel32
+        fg = u.GetForegroundWindow()
+        t_fg = u.GetWindowThreadProcessId(fg, 0)
+        t_cur = k.GetCurrentThreadId()
+        u.AttachThreadInput(t_cur, t_fg, True)
+        try:
+            u.SetForegroundWindow(hwnd)
+            u.SetFocus(hwnd)
+        finally:
+            u.AttachThreadInput(t_cur, t_fg, False)
+        return True
+    except Exception:
+        return False
 
 
 def _discover_rect(hwnd, *, tries=4, delay=0.15):

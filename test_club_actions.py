@@ -45,6 +45,22 @@ class ScrollTests(unittest.TestCase):
         self.assertEqual(r['reason'], 'RELEASE_UNCONFIRMED')
 
 
+class BackButtonTests(unittest.TestCase):
+    def test_none_sem_seta(self):
+        import numpy as np
+        from club_actions import find_back_button
+        self.assertIsNone(find_back_button(np.zeros((2160, 2200, 3), np.uint8)))
+
+    def test_acha_seta_verde_escura_topo_esquerda(self):
+        import numpy as np
+        from club_actions import find_back_button
+        f = np.zeros((2160, 2200, 3), np.uint8)
+        f[int(0.05 * 2160):int(0.05 * 2160) + 40, 1955:1995] = (28, 34, 10)   # verde-teal escuro (cor real da seta)
+        r = find_back_button(f)
+        self.assertIsNotNone(r)
+        self.assertLess(r[0], 2050)                 # à esquerda do painel
+
+
 def _ocr_ready():
     try:
         from table_reading.pipeline import configure_ocr
