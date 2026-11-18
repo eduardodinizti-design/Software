@@ -302,6 +302,7 @@ def main(argv=None):
                         'logs/live_seats.json (escrito pelo tracker) e alimenta o exploit por vilao.')
     p.add_argument('--exploit-db', default='logs/exploit_db.json')
     p.add_argument('--live-seats', default='logs/live_seats.json')
+    p.add_argument('--live-rich', default='logs/live_seats_rich.json')
     p.add_argument('--antecipar', action='store_true',
                    help='A1: reaproveita a decisao SEGURA (fold/check) ja computada entre '
                         'frames da MESMA vez do hero, pulando o cerebro (~330ms) em revisitas. '
@@ -585,11 +586,9 @@ def main(argv=None):
                     print('[%03d] A1 ANTECIPADO: reusa %s (mesa %s epoca %d) sem repagar o cerebro'
                           % (n, reuse['action'].upper(), tkey_local, epoch), flush=True)
                 else:
-                    field_hud = None
-                    if field_db:
-                        # PONTE: seat->ID (tracker, logs/live_seats.json) -> exploit da NOSSA DB
-                        _seats = field_live.read_live_seats(args.live_seats, tkey_local)
-                        field_hud = field_live.hud_from_seats(_seats, field_db) or None
+                    # PONTE field->exploit: passa os players do emissor (uid+nick) e a DB;
+                    # o advisor casa por NICK contra o nameplate de cada assento.
+                    field_players = (field_live.read_live_players(args.live_rich) if field_db else None)
                     try:
                         with latency.span('percepcao_cerebro'):
                             result = advise_table(crop, advisor, stabilizer=stabilizer,
@@ -597,7 +596,8 @@ def main(argv=None):
                                                   tracker=aggr_tracker, bounty_bb=args.bounty_bb,
                                                   mode=args.mode, stage=args.stage, enable_hud=args.hud,
                                                   read_cache=read_cache, field_memory=field_memory,
-                                                  board_memory=board_memory, field_hud=field_hud)
+                                                  board_memory=board_memory,
+                                                  field_players=field_players, field_db=field_db)
                         advise_watch.ok(tkey)   # D7: leitura/cérebro voltou nesta mesa
                     except Exception as e:                 # noqa: BLE001
                         # NUNCA silencioso (regra do Eduardo: logar TUDO): registra o erro

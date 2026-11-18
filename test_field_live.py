@@ -3,7 +3,7 @@ import os
 import tempfile
 import unittest
 
-from field_live import hud_from_seats, read_live_seats, load_exploit_db, MIN_HANDS
+from field_live import hud_from_seats, hud_from_table, read_live_seats, load_exploit_db, MIN_HANDS
 
 _DB = {
     '8709072': {'category': 'reg', 'hands': 4494, 'tags': ['cbet_light'],
@@ -40,6 +40,32 @@ class TestHudFromSeats(unittest.TestCase):
     def test_multiple_seats(self):
         hud = hud_from_seats({'a': '8709072', 'b': '111', 'c': '222'}, _DB)
         self.assertEqual(set(hud), {'a', 'b'})         # c tem amostra pequena
+
+
+class TestHudFromTable(unittest.TestCase):
+    _players = [{'uid': 8709072, 'name': 'Elesar01'}, {'uid': 111, 'name': 'FinutoMinal'},
+                {'uid': 222, 'name': 'Shorty'}]  # 222 tem amostra pequena
+
+    def test_nick_substring_match(self):
+        seats = {'bot_left': {'raw': 'Elesar01  58,9 BB'}, 'top_center': {'raw': 'FinutoMinal 10,6BB'}}
+        hud = hud_from_table(seats, self._players, _DB)
+        self.assertEqual(set(hud), {'bot_left', 'top_center'})
+        self.assertEqual(hud['bot_left']['_uid'], '8709072')
+        self.assertEqual(hud['bot_left']['confidence'], 'high')
+        self.assertEqual(hud['top_center']['_uid'], '111')
+
+    def test_no_match_seat_skipped(self):
+        seats = {'hero': {'raw': 'Just do it 42BB'}, 's2': {'raw': 'xxxxx'}}
+        self.assertEqual(hud_from_table(seats, self._players, _DB), {})
+
+    def test_small_sample_villain_skipped(self):
+        seats = {'s': {'raw': 'Shorty 5BB'}}   # uid 222 = 5 maos < MIN_HANDS
+        self.assertEqual(hud_from_table(seats, self._players, _DB), {})
+
+    def test_empty_inputs(self):
+        self.assertEqual(hud_from_table({}, self._players, _DB), {})
+        self.assertEqual(hud_from_table({'s': {'raw': 'Elesar01'}}, [], _DB), {})
+        self.assertEqual(hud_from_table({'s': {'raw': 'Elesar01'}}, self._players, {}), {})
 
 
 class TestReadLiveSeats(unittest.TestCase):

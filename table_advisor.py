@@ -212,7 +212,7 @@ def _prefer_solver_on_covered_spot(advice, shadow):
 def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table_key='default',
                  villain_range=None, hero_override=None, tracker=None, bounty_bb=None,
                  enable_hud=False, read_cache=None, field_memory=None, board_memory=None,
-                 field_hud=None):
+                 field_hud=None, field_players=None, field_db=None):
     """Read the table and attach an exploratory recommendation. The tournament
     phase chooses chip EV vs ICM unless mode/stage are forced. Pure read; the
     caller wraps it in an ocr_frame so one snapshot reuses OCR.
@@ -295,9 +295,13 @@ def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table
         else:
             from table_reading.hud_reader import read_seat_huds
             state = dict(state, hud=read_seat_huds(crop, occ))
-    # PONTE field->decisao: injeta o exploit da NOSSA DB (field_live.hud_from_seats)
-    # em state['hud'], no MESMO formato do HUD (stats/confidence='high'/_age=0).
-    # Instantaneo (sem OCR); as entradas da DB tem precedencia sobre o HUD lido.
+    # PONTE field->decisao: injeta o exploit da NOSSA DB em state['hud'], no MESMO
+    # formato do HUD. Com field_players (do emissor: uid+nick), casa por NICK contra
+    # o nameplate (raw) de cada assento -> chaveado pelos assentos do operador (sem
+    # geometria _seatId->tela). Instantaneo (sem OCR); DB tem precedencia.
+    if field_hud is None and field_players and field_db:
+        import field_live
+        field_hud = field_live.hud_from_table(state.get('seats') or {}, field_players, field_db)
     if field_hud:
         state = dict(state, hud={**(state.get('hud') or {}), **field_hud})
     # Postflop guard. A read board (cards) is clearly postflop. A board that was

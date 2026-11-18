@@ -59,6 +59,66 @@ def hud_from_seats(seat_to_id, db, *, min_hands=MIN_HANDS):
     return out
 
 
+def read_live_players(path):
+    """Lê live_seats_rich.json {ref:{room,players:[{uid,name,...}]}} e devolve a
+    UNIÃO dos players (uid+name) de todas as mesas — o casamento por nick nos
+    assentos do operador já isola a mesa certa. [] se faltar."""
+    try:
+        with open(path, encoding='utf-8') as f:
+            data = json.load(f)
+    except Exception:
+        return []
+    out = []
+    if isinstance(data, dict):
+        for info in data.values():
+            for p in (info or {}).get('players', []) or []:
+                if p.get('uid') is not None and p.get('name'):
+                    out.append({'uid': p['uid'], 'name': p['name']})
+    return out
+
+
+def _norm(s):
+    """Normaliza nick/nameplate p/ casar (minúsculas, só alfanumérico)."""
+    return ''.join(ch for ch in (s or '').lower() if ch.isalnum())
+
+
+def hud_from_table(seats, players, db, *, min_hands=MIN_HANDS):
+    """{seat_key: entry} chaveado pelos ASSENTOS DO OPERADOR (state['seats']),
+    casando o NICK do emissor (players: [{uid,name}]) com o nameplate lido (raw)
+    de cada assento. Evita a geometria _seatId->tela: usa o nick, que é único.
+
+    `seats`: {seat_key: {'raw': '<nameplate OCR>', ...}} do read_table_state.
+    `players`: lista do emissor (live_seats_rich), uid+name. `db`: exploit_db."""
+    out = {}
+    if not seats or not players or not db:
+        return out
+    cand = []
+    for pl in players:
+        nick = _norm(pl.get('name'))
+        uid = pl.get('uid')
+        if len(nick) >= 3 and uid is not None:
+            cand.append((nick, str(uid)))
+    if not cand:
+        return out
+    for seat, info in seats.items():
+        raw = _norm((info or {}).get('raw'))
+        if len(raw) < 3:
+            continue
+        # casa o nick que é substring do nameplate (nick único na mesa)
+        hit = next((uid for nick, uid in cand if nick in raw or raw in nick), None)
+        if not hit:
+            continue
+        rec = db.get(hit)
+        if not rec or not isinstance(rec.get('stats'), dict):
+            continue
+        if int(rec.get('hands', 0) or 0) < min_hands:
+            continue
+        out[seat] = {'stats': rec['stats'], 'confidence': 'high', '_age': 0,
+                     'category': rec.get('category'), 'tags': rec.get('tags', []),
+                     'hands': rec.get('hands'), '_source': 'field_db', '_uid': hit}
+    return out
+
+
 def read_live_seats(path, table_key=None):
     """Le o mapa seat->ID que o tracker escreve em logs/live_seats.json.
     Formato: {table_key: {seat: id}} (ou {seat: id} plano). Devolve {seat: id} p/
