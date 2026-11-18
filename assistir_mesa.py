@@ -20,6 +20,8 @@ from board_memory import BoardMemory
 from table_advisor import advise_table, _summary
 from bot_control import BotControl, HotkeyListener, RUNNING, PAUSED, DISABLED
 from state_observer import StateObserver, render
+from hand_recorder import HandRecorder
+from hand_logger import LiveHandLogger
 
 
 def advise_frame(frame_bgr, meta, advisor, max_tables=6, tracker=None, bounty_bb=None,
@@ -71,6 +73,10 @@ def main(argv=None):
     p.add_argument('--hud', action='store_true', help='Le o HUD VIP p/ exploit no pos-flop')
     p.add_argument('--no-hotkeys', dest='hotkeys', action='store_false',
                    help='Desliga as hotkeys de pausa/takeover (Ctrl+Alt+P/R/D)')
+    p.add_argument('--record', action='store_true',
+                   help='GRAVA as maos observadas (tracker/historico: heroi+cartas+decisao, '
+                        'adversarios por nick, board, torneio) em logs/maos/maos.jsonl')
+    p.add_argument('--record-path', default=None, help='Caminho do JSONL do tracker')
     args = p.parse_args(argv)
     advisor = PreflopAdvisor.from_files(args.ranges, args.deep) if args.deep else PreflopAdvisor.from_file(args.ranges)
     from window_capture_engine import WindowCaptureEngine
@@ -93,6 +99,11 @@ def main(argv=None):
     read_cache = ReaderCache()                 # cache de HUD/bounty (latência)
     field_memory = FieldStabilizer()           # preenche buracos de pot/to_call/stack na mesma mão
     board_memory = BoardMemory()               # segura o board confirmado na mão
+    hand_logger = None
+    if args.record:
+        rec = HandRecorder(args.record_path) if args.record_path else HandRecorder()
+        hand_logger = LiveHandLogger(rec)
+        print('TRACKER LIGADO: gravando maos em %s' % rec.path, flush=True)
     try:
         while True:
             started = time.monotonic()
@@ -125,10 +136,15 @@ def main(argv=None):
                     view = observer.observe(row['result'], table_key=row['table_key'])
                     if view.get('changed'):
                         print(render(view), flush=True)
+                    if hand_logger is not None:     # tracker: agrega a mao e grava ao fechar
+                        hand_logger.observe(row['table_key'], row['result'])
             time.sleep(max(0.1, args.intervalo - (time.monotonic() - started)))
     except KeyboardInterrupt:
         print('Encerrado. Nenhuma imagem salva, nenhum clique enviado.', flush=True)
     finally:
+        if hand_logger is not None:
+            hand_logger.flush()                     # fecha as maos abertas (grava as ultimas)
+            print('TRACKER: maos abertas gravadas.', flush=True)
         if listener:
             listener.stop()
     return 0
