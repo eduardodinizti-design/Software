@@ -696,15 +696,19 @@ class PreflopAdvisor:
                 return result
         return result
 
-    def _iso_worthy(self, hand, bucket, *, mode='chip_ev', stage='mid', players=9):
-        """Mão vale um ISO sobre limper? O range de 'open' do SB é de BLIND BATTLE
-        (~91%, certo só quando folda pro SB). Com limper NÃO é blind battle: iso tem
-        que ser VALOR/apertado. Cap conservador: só iso se a mão abriria de uma posição
-        TIGHT (UTG). Folda o lixo (85o/T5o) e mantém valor (ATs/99/KQ...). HEURÍSTICA
-        afinável (trocar a posição/range de referência do iso). Sem referência -> não
-        bloqueia."""
+    def _iso_worthy(self, hand, bucket, *, mode='chip_ev', stage='mid', players=9, position='UTG'):
+        """Mão vale um ISO sobre limper? Régua = o range de OPEN DA POSIÇÃO DO HERÓI
+        (BTN/CO isola LARGO; EP isola apertado). Antes usava UTG fixo em toda posição,
+        o que foldava iso ÓBVIO de posição tardia (44 no BTN, A4o no CO — bug relatado
+        pelo Eduardo 18/11). Folda só o que a PRÓPRIA posição não abriria (lixo).
+        O range de blind-battle do SB (~91%) não serve de régua: com limper não é blind
+        battle. Sem nó p/ a posição, cai no UTG; sem nada -> não bloqueia."""
         tf = 'pko' if mode in ('pko', 'pko_icm') else 'regular'
-        node = self._index.get((mode, tf, stage, players, bucket, 'open_raise', 'UTG', (), None))
+        # SB/BB abrem em BLIND-BATTLE (~91%, largo demais p/ régua de iso) -> usa o
+        # range do BTN (sólido, não blind-battle) p/ esses; demais usam a própria.
+        ref = 'BTN' if position in ('SB', 'BB') else position
+        node = (self._index.get((mode, tf, stage, players, bucket, 'open_raise', ref, (), None))
+                or self._index.get((mode, tf, stage, players, bucket, 'open_raise', 'UTG', (), None)))
         if node is None or hand not in self.hands:
             return True
         i = self.hands.index(hand)
@@ -949,7 +953,8 @@ class PreflopAdvisor:
                         and not self._iso_worthy(result.get('hand'), result.get('stack_bucket'),
                                                  mode=kwargs.get('mode', 'chip_ev'),
                                                  stage=kwargs.get('stage', 'mid'),
-                                                 players=kwargs.get('players', 9))):
+                                                 players=kwargs.get('players', 9),
+                                                 position=base.get('hero_position', 'UTG'))):
                     result['recommended'] = 'fold'
                     result['status'] = 'ADVICE'
                     result.setdefault('caveats', []).append('ISO_CAP_FOLD_FORA_DO_RANGE_TIGHT')
