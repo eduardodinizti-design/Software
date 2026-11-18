@@ -69,12 +69,14 @@ def summarize(rows):
     itms = [r['itm'] for r in rows if r.get('itm') is not None]
     poss = [(r['placed'], r['field']) for r in rows
             if isinstance(r.get('placed'), int) and isinstance(r.get('field'), int) and r['field'] > 0]
+    fts = [r.get('reached_ft') for r in rows if r.get('reached_ft') is not None]
     avg_buyin = sum(buyins) / len(buyins) if buyins else None
     itm_pct = 100.0 * sum(1 for x in itms if x) / len(itms) if itms else None
+    ft_pct = 100.0 * sum(1 for x in fts if x) / len(fts) if fts else None
     avg_pos = 100.0 * sum(p / f for p, f in poss) / len(poss) if poss else None  # % do campo (menor=melhor)
     from collections import Counter
     res = Counter(r.get('result') or '?' for r in rows)
-    return dict(n=n, avg_buyin=avg_buyin, itm_pct=itm_pct, avg_pos=avg_pos, res=dict(res))
+    return dict(n=n, avg_buyin=avg_buyin, itm_pct=itm_pct, ft_pct=ft_pct, avg_pos=avg_pos, res=dict(res))
 
 
 # ----------------------------- UI ---------------------------------------------
@@ -191,6 +193,7 @@ class Painel:
         self._kpi(self.kpis, 'Torneios jogados', str(s['n']))
         self._kpi(self.kpis, 'Buy-in médio', '%.1f BB' % s['avg_buyin'] if s['avg_buyin'] is not None else '--')
         self._kpi(self.kpis, 'ITM%', '%.0f%%' % s['itm_pct'] if s['itm_pct'] is not None else '--')
+        self._kpi(self.kpis, 'Mesa Final%', '%.0f%%' % s['ft_pct'] if s.get('ft_pct') is not None else '--')
         self._kpi(self.kpis, 'Posição média', '%.0f%% do campo' % s['avg_pos'] if s['avg_pos'] is not None else '--')
         self._draw_chart(rows)
         for r in rows[-200:][::-1]:

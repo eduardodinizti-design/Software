@@ -44,6 +44,52 @@ from table_reading.tournament import read_tournament
 from table_reading.busted_table import detect_busted, BustedConfirmer
 from tournament_metrics import record_tournament_end
 import field_live
+
+_GRADE_CACHE = {'mtime': None, 'map': {}}
+
+
+def _grade_buyin(name):
+    """Buy-in (BB) do torneio pelo NOME, lido da grade_do_dia.json (cache por mtime).
+    Casa exato ou por substring (o nome lido pode ter ruído). None se não achar."""
+    if not name:
+        return None
+    try:
+        import json as _json
+        p = find_data('grade_do_dia.json')
+        mt = os.path.getmtime(p)
+        if _GRADE_CACHE['mtime'] != mt:
+            with open(p, encoding='utf-8') as f:
+                rows = _json.load(f)
+            _GRADE_CACHE['map'] = {str(r.get('name', '')).strip().lower(): r.get('buyin_bb')
+                                   for r in rows if isinstance(r, dict) and r.get('name')}
+            _GRADE_CACHE['mtime'] = mt
+    except Exception:
+        return None
+    nm = str(name).strip().lower()
+    m = _GRADE_CACHE['map']
+    if nm in m:
+        return m[nm]
+    for k, v in m.items():
+        if k and (k in nm or nm in k):
+            return v
+    return None
+
+
+def _tour_extra(track, tr=None):
+    """Monta buyin + extra (reached_ft, itm, nome) p/ o record_tournament_end a
+    partir do rastreio por mesa (track) e, se houver, da leitura fresca (tr)."""
+    t = dict(track or {})
+    if tr:
+        pl = tr.get('players_left')
+        if isinstance(pl, int):
+            t['min_left'] = pl if t.get('min_left') is None else min(t['min_left'], pl)
+        t['name'] = tr.get('name') or t.get('name')
+        t['itm'] = t.get('itm') or bool(tr.get('in_money'))
+    name = t.get('name')
+    buyin = _grade_buyin(name)
+    reached_ft = isinstance(t.get('min_left'), int) and t['min_left'] <= 9
+    return name, buyin, dict(reached_ft=reached_ft, itm_live=bool(t.get('itm')),
+                             min_left=t.get('min_left'))
 from latency_metrics import LatencyMetrics
 from shadow_mode import ShadowMonitor
 from operator_robustness import BoundedKeySet, CaptureWatch, raise_outcome, reconcile_targets
@@ -385,6 +431,20 @@ def main(argv=None):
     n = 0
     tourneys_closed = BoundedKeySet(512)   # (hwnd, table_key): LRU p/ não vazar em horas (D3)
     busted_confirmer = BustedConfirmer(need=3)   # debounce do bust em observador (rank>restantes)
+    tour_track = {}   # tkey_local -> {name, min_left, itm} p/ capturar buyin/FT/ITM no bust
+
+    def _track_tour(tkey, tour):
+        if not tour:
+            return
+        prev = tour_track.get(tkey, {})
+        pl = tour.get('players_left')
+        minpl = prev.get('min_left')
+        if isinstance(pl, int):
+            minpl = pl if minpl is None else min(minpl, pl)
+        tour_track[tkey] = dict(name=tour.get('name') or prev.get('name'),
+                                min_left=minpl,
+                                itm=prev.get('itm') or bool(tour.get('in_money')),
+                                paid=tour.get('paid') or prev.get('paid'))
     field_db = field_live.load_exploit_db(args.exploit_db) if args.field_exploit else {}
     if args.field_exploit:
         print('[field] exploit_db: %d viloes carregados de %s (ponte seat->ID->exploit)'
@@ -509,8 +569,10 @@ def main(argv=None):
                     close_armed = args.arm and control.execution_allowed()
                     closed = _close_tournament_table(frame, (x, y, bw, bh), te, hwnd,
                                                      adapter, engine, close_armed)
+                    _nm, _bi, _ex = _tour_extra(tour_track.get(tk))
                     record_tournament_end(
                         ranking=te.get('ranking'), result='busted', mode=args.mode,
+                        tournament=_nm, buyin=_bi, extra=_ex,
                         action='closed_via_sair' if close_armed else 'detected_dry_run',
                         closed=closed, table_key=tk)
                     tourneys_closed.add((hwnd, tk))
@@ -544,15 +606,17 @@ def main(argv=None):
                     # Opt-in (--auto-fechar-bustada) até o X ser calibrado multi-layout.
                     if args.auto_fechar_bustada and (hwnd, tkey_local) not in tourneys_closed:
                         tr = read_tournament(crop)
+                        _track_tour(tkey_local, tr)
                         det = detect_busted(tr.get('hero_rank'), tr.get('players_left'),
                                             has_action=False)
                         if busted_confirmer.update(tkey, det):
                             close_armed = args.arm and control.execution_allowed()
                             closed = _close_busted_observer(frame, (x, y, bw, bh), hwnd,
                                                             adapter, engine, close_armed)
+                            _nm, _bi, _ex = _tour_extra(tour_track.get(tkey_local), tr)
                             record_tournament_end(
                                 ranking='%s/%s' % (tr.get('hero_rank'), tr.get('players_left')),
-                                result='busted', mode=args.mode,
+                                result='busted', mode=args.mode, tournament=_nm, buyin=_bi, extra=_ex,
                                 action='closed_via_x' if close_armed else 'detected_dry_run',
                                 closed=closed, table_key=tkey_local)
                             busted_confirmer.mark_done(tkey)
@@ -603,6 +667,7 @@ def main(argv=None):
                                                   board_memory=board_memory,
                                                   field_players=field_players, field_db=field_db)
                         advise_watch.ok(tkey)   # D7: leitura/cérebro voltou nesta mesa
+                        _track_tour(tkey_local, (result or {}).get('tournament'))  # captura buyin/FT/ITM
                     except Exception as e:                 # noqa: BLE001
                         # NUNCA silencioso (regra do Eduardo: logar TUDO): registra o erro
                         # da leitura/cérebro e PULA p/ a próxima mão/mesa — o fluxo não quebra.
