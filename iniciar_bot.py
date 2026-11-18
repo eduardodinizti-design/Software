@@ -44,27 +44,35 @@ def main():
 
     new_console = getattr(subprocess, "CREATE_NEW_CONSOLE", 0)
     procs = []
+    frozen = getattr(sys, "frozen", False)   # .exe (PyInstaller) vs fonte
+    research = os.path.join(REPO, "research", "ppp_il2cpp")
+
+    def _spawn(sub, script, cwd, extra):
+        # No .exe: chama o proprio executavel como despachante (NVTBot.exe <sub> ...).
+        # No fonte: python <script> (com -I p/ captura/emissor, como antes).
+        if frozen:
+            cmd = [sys.executable, sub] + extra
+            cwd = REPO
+        else:
+            flags = ["-I"] if sub in ("emitir", "capturar") else []
+            cmd = [sys.executable] + flags + [script] + extra
+        return subprocess.Popen(cmd, cwd=cwd, creationflags=new_console)
 
     # 1) OPERADOR: armado automaticamente, exploit do HUD ligado, fecha bustada.
-    op = subprocess.Popen(
-        [sys.executable, "operar_mesa.py", "--hwnd", str(hwnd),
-         "--arm", "--auto-arm", "--auto-fechar-bustada", "--hud", "--field-exploit", "--posflop"],
-        cwd=REPO, creationflags=new_console)
+    op = _spawn("operar", "operar_mesa.py", REPO,
+                ["--hwnd", str(hwnd), "--arm", "--auto-arm", "--auto-fechar-bustada",
+                 "--hud", "--field-exploit", "--posflop"])
     procs.append(("OPERADOR", op))
     print("[ok] OPERADOR no ar: ARMADO + exploit(HUD) + auto-fechar-bustada (janela propria).")
 
     # 2) CAPTURA de maos (read-only) — alimenta a DB no padrao Hand2Note.
-    cap = subprocess.Popen(
-        [sys.executable, "-I", "capturar_maos.py"],
-        cwd=os.path.join(REPO, "research", "ppp_il2cpp"), creationflags=new_console)
+    cap = _spawn("capturar", "capturar_maos.py", research, [])
     procs.append(("CAPTURA", cap))
     print("[ok] CAPTURA de maos no ar (salva em logs/maos_h2n). (janela propria).")
 
     # 3) EMISSOR de assentos: le seat->uid+nick (protobuf) -> logs/live_seats.json
     #    (ponte p/ o exploit da NOSSA DB). Semeia ao ENTRAR/trocar de mesa.
-    emt = subprocess.Popen(
-        [sys.executable, "-I", "emitir_seats.py"],
-        cwd=os.path.join(REPO, "research", "ppp_il2cpp"), creationflags=new_console)
+    emt = _spawn("emitir", "emitir_seats.py", research, [])
     procs.append(("SEATS", emt))
     print("[ok] EMISSOR de assentos no ar (seat->uid p/ exploit da DB). (janela propria).")
 
