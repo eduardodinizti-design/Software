@@ -40,6 +40,8 @@ from table_discovery.pppoker import discover_pppoker
 from status_overlay import StatusOverlay
 from grade_reader import find_buyin_badges
 from table_reading.tournament_end import detect_tournament_end
+from table_reading.tournament import read_tournament
+from table_reading.busted_table import detect_busted, BustedConfirmer
 from tournament_metrics import record_tournament_end
 from latency_metrics import LatencyMetrics
 from shadow_mode import ShadowMonitor
@@ -99,6 +101,43 @@ def _close_tournament_table(frame, crop_box, te, hwnd, adapter, engine, armed):
     if f2 is None:
         return True
     return detect_tournament_end(f2[y:y + cbh, x:x + cbw]).get('status') != 'TOURNAMENT_END'
+
+
+def _close_busted_observer(frame, crop_box, hwnd, adapter, engine, armed):
+    """Fecha uma mesa BUSTADA em modo OBSERVADOR (herói eliminado, SEM o pop-up
+    Ranking/Sair). Não há botão 'Sair' — fecha clicando o X da barra de título da
+    mesa interna (desenhada pelo Unity numa janela única; o processo tem 1 HWND,
+    0 filhas — WM_CLOSE não serve). Posição do X medida ao vivo 18/11 (mesa do
+    meio): x ≈ borda_direita_do_feltro + ~0,08·largura; y ≈ faixa do topo
+    (~0,037·altura do frame). O X fica no TOPO, longe dos botões de ação (embaixo),
+    então não dispara fold/call. move_to antes do click (1º clique só foca).
+    Confirma recapturando: a posição não lê mais rank>restantes ali.
+    PENDENTE: calibração multi-layout do X (medido em 1 tile só)."""
+    x, y, cbw, cbh = crop_box
+    fh, fw = frame.shape[:2]
+    fx = x + cbw + int(round(0.08 * cbw))
+    fy = int(round(0.037 * fh))
+    rect = rect_frame_to_screen((fx, fy, 2, 2), window_rect=_discover_rect(hwnd),
+                                frame_size=(fw, fh))
+    if rect is None:
+        return False
+    cx, cy = int(rect[0] + rect[2] / 2), int(rect[1] + rect[3] / 2)
+    if not armed:
+        return False                                   # dry-run: só detecta/registra
+    try:
+        adapter.move_to(cx, cy)
+        time.sleep(0.15)
+        adapter.click_once(cx, cy)
+        time.sleep(0.9)
+    except Exception as exc:                           # noqa: BLE001
+        print('   (falha ao fechar mesa bustada: %s)' % str(exc)[:80], flush=True)
+        return False
+    f2, _ = engine.capture_frame(hwnd=hwnd)
+    if f2 is None:
+        return True
+    tr2 = read_tournament(f2[y:y + cbh, x:x + cbw])
+    return detect_busted(tr2.get('hero_rank'),
+                         tr2.get('players_left')).get('status') != 'BUSTED'
 
 
 _RANKS = '23456789TJQKA'
@@ -254,6 +293,9 @@ def main(argv=None):
                    help='Comeca JA ARMADO (RUNNING), sem precisar do Ctrl+Alt+R. '
                         'Ctrl+Alt+P ainda pausa e Ctrl+Alt+D desabilita a qualquer momento.')
     p.add_argument('--no-hotkeys', dest='hotkeys', action='store_false')
+    p.add_argument('--auto-fechar-bustada', dest='auto_fechar_bustada', action='store_true',
+                   help='Fecha mesa BUSTADA em observador (gatilho rank>restantes, debounced) '
+                        'clicando o X da janela. Opt-in ate o X ser calibrado multi-layout ao vivo.')
     p.add_argument('--antecipar', action='store_true',
                    help='A1: reaproveita a decisao SEGURA (fold/check) ja computada entre '
                         'frames da MESMA vez do hero, pulando o cerebro (~330ms) em revisitas. '
@@ -331,6 +373,7 @@ def main(argv=None):
 
     n = 0
     tourneys_closed = BoundedKeySet(512)   # (hwnd, table_key): LRU p/ não vazar em horas (D3)
+    busted_confirmer = BustedConfirmer(need=3)   # debounce do bust em observador (rank>restantes)
     capture_watch = CaptureWatch()  # D2: vigia janela morta (captura None consecutiva) sem silêncio
     advise_watch = CaptureWatch(alert_after=3, repeat=20)  # D7: circuit-breaker de exceção do advise_table
     latency = LatencyMetrics()      # A0: instrumentação de latência real (p50/p95/p99)
@@ -480,6 +523,29 @@ def main(argv=None):
                 br0 = read_action_buttons(crop)
                 if br0['status'] != 'EXPERIMENTAL_BUTTON_ROW':
                     anticip_turns.on_nonturn(tkey)     # A2: pisca isolado NÃO fecha a época
+                    # ROTINA: mesa BUSTADA em OBSERVADOR (herói eliminado, SEM pop-up
+                    # Ranking/Sair). Aqui NÃO há botões de ação (has_action=False), então
+                    # é seguro testar o gatilho rank>restantes (impossível vivo), debounced.
+                    # Opt-in (--auto-fechar-bustada) até o X ser calibrado multi-layout.
+                    if args.auto_fechar_bustada and (hwnd, tkey_local) not in tourneys_closed:
+                        tr = read_tournament(crop)
+                        det = detect_busted(tr.get('hero_rank'), tr.get('players_left'),
+                                            has_action=False)
+                        if busted_confirmer.update(tkey, det):
+                            close_armed = args.arm and control.execution_allowed()
+                            closed = _close_busted_observer(frame, (x, y, bw, bh), hwnd,
+                                                            adapter, engine, close_armed)
+                            record_tournament_end(
+                                ranking='%s/%s' % (tr.get('hero_rank'), tr.get('players_left')),
+                                result='busted', mode=args.mode,
+                                action='closed_via_x' if close_armed else 'detected_dry_run',
+                                closed=closed, table_key=tkey_local)
+                            busted_confirmer.mark_done(tkey)
+                            tourneys_closed.add((hwnd, tkey_local))
+                            print('[%03d] >>> MESA BUSTADA em observador (pos %s/%s) -> %s'
+                                  % (n, tr.get('hero_rank'), tr.get('players_left'),
+                                     ('X clicado, fechado=%s' % closed) if close_armed
+                                     else 'DRY-RUN (so detecta)'), flush=True)
                     continue
                 hero_turn_seen = True
                 # Memória de cartas do hero por mão (imutáveis): fallback quando um
