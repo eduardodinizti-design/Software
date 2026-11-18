@@ -711,7 +711,8 @@ def main(argv=None):
                     _nid = (adv.get('node_id') or '').split('|')
                     _bkt = int(_nid[2]) if len(_nid) > 2 and _nid[2].isdigit() else None
                     if (adv.get('validated') is False and _bkt is not None and _bkt > 25
-                            and adv.get('recommended') not in ('fold', 'check', None)):
+                            and adv.get('recommended') not in ('fold', 'check', None)
+                            and adv.get('spot') not in ('open_raise', 'open_shove')):
                         _hc = any(b.get('action') == 'CHECK' for b in br.get('buttons', []))
                         _safe = 'check' if _hc else 'fold'
                         print('[%03d] GUARDA DEEP(bucket %s nao-validado): %s -> SEGURO %s'
@@ -758,11 +759,15 @@ def main(argv=None):
                     elif not control.execution_allowed():
                         print('[%03d] RAISE mas BOT PAUSADO' % n, flush=True)
                     elif (not adv.get('validated') and not adv.get('safety_premium_shove')
-                          and not adv.get('posflop_exec')):
+                          and not adv.get('posflop_exec')
+                          and adv.get('spot') not in ('open_raise', 'open_shove')):
                         # Autorização única também no RAISE: nó não validado
                         # (referência/deep) não dispara a sequência armada (só estuda).
-                        # EXCEÇÕES: safety_premium_shove (premium curto sem nó) e
-                        # posflop_exec (--posflop, bet/raise pós-flop exploratório).
+                        # EXCEÇÕES: safety_premium_shove (premium curto sem nó),
+                        # posflop_exec (--posflop) e OPEN (open_raise/open_shove): o range
+                        # de OPEN de referência é padrão/seguro -> o bot ABRE em mesa deep
+                        # (Eduardo 18/11: foldava ATo HJ 100bb). Cold-call/3bet deep seguem
+                        # bloqueados (spot vs_open/squeeze, não open).
                         print('[%03d] RAISE de no NAO VALIDADO -> nao executa (so estuda)' % n, flush=True)
                     else:
                         seq = RaiseSequencer(capture=lambda h=hwnd: engine.capture_frame(hwnd=h),
