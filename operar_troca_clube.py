@@ -19,7 +19,7 @@ Uso ao vivo:
 import argparse
 import time
 
-from club_actions import find_search_lupa, locate_club_in_frame, scroll_grid_once
+from club_actions import locate_club_in_frame, scroll_grid_once
 from club_grid import find_grid_crop, read_club_grid, read_current_club
 from club_switcher import same_club
 from cursor_controller import CursorController, Intent, make_intervention_check
@@ -152,18 +152,17 @@ def ensure_club_via_search(target, *, engine, hwnd, adapter, keyboard, control, 
         return dict(ok=False, action='SEM_FRAME', reason='captura falhou')
     fw = frame.shape[1]
     region = (1900.0 / fw, 0.45, 2700.0 / fw, 0.62)        # menu no inf-dir do painel
-    pt = locate_word(frame, ['Pesquisar'], region=region)   # vista de TILES (texto)
-    via = 'texto'
-    if pt is None:
-        pt = find_search_lupa(frame)                         # vista de CARROSSEL (ícone)
-        via = 'lupa'
+    # SÓ a vista de TILES tem BUSCA POR NOME (menu 'Pesquisar'). A lupa do CARROSSEL
+    # NÃO é busca: abre 'Entrar em um clube' por ID (descoberto ao vivo 17/11) — por
+    # isso não é usada aqui.
+    pt = locate_word(frame, ['Pesquisar'], region=region)
     if pt is None:
         return dict(ok=False, action='SEM_BUSCA',
-                    reason="busca não encontrada ('Pesquisar'/lupa) — está no seletor/carrossel de clubes?")
+                    reason="'Pesquisar' não encontrado — vá para a GRADE DE TILES (Trocar exibição)")
     if dry_run:
-        return dict(ok=True, action='PLANO_BUSCAR', pesquisar_pt=pt, target=target, via=via,
-                    reason="clicaria a busca (%s) em %s, digitaria %r e clicaria no resultado"
-                           % (via, pt, target))
+        return dict(ok=True, action='PLANO_BUSCAR', pesquisar_pt=pt, target=target,
+                    reason="clicaria 'Pesquisar' em %s, digitaria %r e clicaria no resultado"
+                           % (pt, target))
 
     if control is not None and not control.execution_allowed():
         return dict(ok=False, action='GATE_FECHADO', reason='bot não está RUNNING')

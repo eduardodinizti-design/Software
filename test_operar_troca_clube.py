@@ -118,13 +118,12 @@ class SearchFlowTests(unittest.TestCase):
     import numpy as _np
     _FRAME = _np.zeros((100, 100, 3), _np.uint8)
 
-    def _run(self, target, *, current, pt, lupa=None, dry_run=True, control=None, keyboard=None):
+    def _run(self, target, *, current, pt, dry_run=True, control=None, keyboard=None):
         import operar_troca_clube as m
         from unittest.mock import patch
         eng = _Engine(self._FRAME)
         with patch.object(m, '_read_current_club_live', return_value=current), \
-             patch.object(m, 'locate_word', return_value=pt), \
-             patch.object(m, 'find_search_lupa', return_value=lupa):
+             patch.object(m, 'locate_word', return_value=pt):
             return m.ensure_club_via_search(
                 target, engine=eng, hwnd=1, adapter=None, keyboard=keyboard,
                 control=control, ocr=lambda g: '', discover_rect=_discover, dry_run=dry_run)
@@ -141,16 +140,9 @@ class SearchFlowTests(unittest.TestCase):
         r = self._run('Karekas Yellow', current='Karekas Yellow', pt=(1, 2))
         self.assertEqual(r['action'], 'NOOP_JA_NO_CLUBE')
 
-    def test_sem_busca_quando_nem_texto_nem_lupa(self):
-        r = self._run('AK', current=None, pt=None, lupa=None)
+    def test_sem_busca_quando_pesquisar_nao_achado(self):
+        r = self._run('AK', current=None, pt=None)
         self.assertEqual(r['action'], 'SEM_BUSCA')
-
-    def test_carrossel_usa_a_lupa(self):
-        # sem texto 'Pesquisar' (pt=None), mas com lupa do carrossel -> PLANO_BUSCAR via lupa
-        r = self._run('AK Amakha Club', current=None, pt=None, lupa=(2519, 271))
-        self.assertEqual(r['action'], 'PLANO_BUSCAR')
-        self.assertEqual(r['via'], 'lupa')
-        self.assertEqual(r['pesquisar_pt'], (2519, 271))
 
     def test_armado_pausado_nao_envia(self):
         from bot_control import BotControl
