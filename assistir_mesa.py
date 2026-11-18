@@ -59,7 +59,8 @@ def advise_frame(frame_bgr, meta, advisor, max_tables=6, tracker=None, bounty_bb
 
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument('--hwnd', type=lambda s: int(s, 0), required=True, help='HWND da janela PPPoker')
+    p.add_argument('--hwnd', type=lambda s: int(s, 0), default=None,
+                   help='HWND da janela PPPoker (auto-descoberto se omitido)')
     p.add_argument('--ranges', required=True, help='nvt-ranges-validados.json')
     p.add_argument('--deep', default=None, help='Pacote deep 40/100bb opcional (reference, nao validado)')
     p.add_argument('--intervalo', type=float, default=2.0, help='Segundos entre leituras')
@@ -82,6 +83,14 @@ def main(argv=None):
     p.add_argument('--record-path', default=None,
                    help='(opcional) tambem grava tudo num JSONL unico neste caminho')
     args = p.parse_args(argv)
+    if args.hwnd is None:                       # auto-descobre a janela do PPPoker
+        from table_discovery.pppoker import discover_pppoker
+        wins = discover_pppoker().get('windows', [])
+        if not wins:
+            print('Nenhuma janela PPPoker encontrada. Abra o cliente e tente de novo.', flush=True)
+            return 1
+        args.hwnd = wins[0]['hwnd']
+        print('PPPoker auto-descoberto: HWND %#x' % args.hwnd, flush=True)
     advisor = PreflopAdvisor.from_files(args.ranges, args.deep) if args.deep else PreflopAdvisor.from_file(args.ranges)
     from window_capture_engine import WindowCaptureEngine
     engine = WindowCaptureEngine()
