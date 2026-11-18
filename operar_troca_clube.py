@@ -43,7 +43,7 @@ def _header_matches_live(engine, hwnd, target, ocr):
 
 
 def _click_target_club(engine, hwnd, target, *, adapter, control, ocr, discover_rect,
-                       deadline_s=6.0):
+                       deadline_s=6.0, verify_tries=6, verify_wait_s=0.5):
     """UM clique gated+revalidado no tile do clube-alvo. O validator RELÊ o alvo no
     frame fresco (ordem muda!) e remapeia p/ a tela; o verifier confirma a troca
     relendo o nome do clube. Devolve o dict do CursorController."""
@@ -62,8 +62,15 @@ def _click_target_club(engine, hwnd, target, *, adapter, control, ocr, discover_
                     target_rect=rect_frame_to_screen(rect, window_rect=wr, frame_size=(fw, fh)))
 
     def verifier(intent, now):
-        frame, _ = engine.capture_frame(hwnd=hwnd)
-        return dict(confirmed=bool(frame is not None and header_matches(frame, target, ocr=ocr)))
+        # Entrar no clube TRANSICIONA de tela: re-tenta por alguns segundos (o verifier
+        # do CursorController roda logo após o clique, antes de a tela do clube carregar).
+        for i in range(verify_tries):
+            frame, _ = engine.capture_frame(hwnd=hwnd)
+            if frame is not None and header_matches(frame, target, ocr=ocr):
+                return dict(confirmed=True)
+            if i < verify_tries - 1:
+                time.sleep(verify_wait_s)
+        return dict(confirmed=False)
 
     intent = Intent(id='club-%s-%d' % ((target or '')[:12], int(time.time() * 1000)),
                     action='CLICK', source_key=target, target_rect=(0, 0, 1, 1),
