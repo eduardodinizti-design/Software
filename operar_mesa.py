@@ -43,6 +43,7 @@ from table_reading.tournament_end import detect_tournament_end
 from table_reading.tournament import read_tournament
 from table_reading.busted_table import detect_busted, BustedConfirmer
 from tournament_metrics import record_tournament_end
+import field_live
 from latency_metrics import LatencyMetrics
 from shadow_mode import ShadowMonitor
 from operator_robustness import BoundedKeySet, CaptureWatch, raise_outcome, reconcile_targets
@@ -296,6 +297,11 @@ def main(argv=None):
     p.add_argument('--auto-fechar-bustada', dest='auto_fechar_bustada', action='store_true',
                    help='Fecha mesa BUSTADA em observador (gatilho rank>restantes, debounced) '
                         'clicando o X da janela. Opt-in ate o X ser calibrado multi-layout ao vivo.')
+    p.add_argument('--field-exploit', dest='field_exploit', action='store_true',
+                   help='Usa NOSSA DB (exploit_db.json) p/ exploit ao vivo: le seat->ID de '
+                        'logs/live_seats.json (escrito pelo tracker) e alimenta o exploit por vilao.')
+    p.add_argument('--exploit-db', default='logs/exploit_db.json')
+    p.add_argument('--live-seats', default='logs/live_seats.json')
     p.add_argument('--antecipar', action='store_true',
                    help='A1: reaproveita a decisao SEGURA (fold/check) ja computada entre '
                         'frames da MESMA vez do hero, pulando o cerebro (~330ms) em revisitas. '
@@ -374,6 +380,10 @@ def main(argv=None):
     n = 0
     tourneys_closed = BoundedKeySet(512)   # (hwnd, table_key): LRU p/ não vazar em horas (D3)
     busted_confirmer = BustedConfirmer(need=3)   # debounce do bust em observador (rank>restantes)
+    field_db = field_live.load_exploit_db(args.exploit_db) if args.field_exploit else {}
+    if args.field_exploit:
+        print('[field] exploit_db: %d viloes carregados de %s (ponte seat->ID->exploit)'
+              % (len(field_db), args.exploit_db), flush=True)
     capture_watch = CaptureWatch()  # D2: vigia janela morta (captura None consecutiva) sem silêncio
     advise_watch = CaptureWatch(alert_after=3, repeat=20)  # D7: circuit-breaker de exceção do advise_table
     latency = LatencyMetrics()      # A0: instrumentação de latência real (p50/p95/p99)
@@ -575,6 +585,11 @@ def main(argv=None):
                     print('[%03d] A1 ANTECIPADO: reusa %s (mesa %s epoca %d) sem repagar o cerebro'
                           % (n, reuse['action'].upper(), tkey_local, epoch), flush=True)
                 else:
+                    field_hud = None
+                    if field_db:
+                        # PONTE: seat->ID (tracker, logs/live_seats.json) -> exploit da NOSSA DB
+                        _seats = field_live.read_live_seats(args.live_seats, tkey_local)
+                        field_hud = field_live.hud_from_seats(_seats, field_db) or None
                     try:
                         with latency.span('percepcao_cerebro'):
                             result = advise_table(crop, advisor, stabilizer=stabilizer,
@@ -582,7 +597,7 @@ def main(argv=None):
                                                   tracker=aggr_tracker, bounty_bb=args.bounty_bb,
                                                   mode=args.mode, stage=args.stage, enable_hud=args.hud,
                                                   read_cache=read_cache, field_memory=field_memory,
-                                                  board_memory=board_memory)
+                                                  board_memory=board_memory, field_hud=field_hud)
                         advise_watch.ok(tkey)   # D7: leitura/cérebro voltou nesta mesa
                     except Exception as e:                 # noqa: BLE001
                         # NUNCA silencioso (regra do Eduardo: logar TUDO): registra o erro

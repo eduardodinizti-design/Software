@@ -211,7 +211,8 @@ def _prefer_solver_on_covered_spot(advice, shadow):
 
 def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table_key='default',
                  villain_range=None, hero_override=None, tracker=None, bounty_bb=None,
-                 enable_hud=False, read_cache=None, field_memory=None, board_memory=None):
+                 enable_hud=False, read_cache=None, field_memory=None, board_memory=None,
+                 field_hud=None):
     """Read the table and attach an exploratory recommendation. The tournament
     phase chooses chip EV vs ICM unless mode/stage are forced. Pure read; the
     caller wraps it in an ocr_frame so one snapshot reuses OCR.
@@ -294,6 +295,11 @@ def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table
         else:
             from table_reading.hud_reader import read_seat_huds
             state = dict(state, hud=read_seat_huds(crop, occ))
+    # PONTE field->decisao: injeta o exploit da NOSSA DB (field_live.hud_from_seats)
+    # em state['hud'], no MESMO formato do HUD (stats/confidence='high'/_age=0).
+    # Instantaneo (sem OCR); as entradas da DB tem precedencia sobre o HUD lido.
+    if field_hud:
+        state = dict(state, hud={**(state.get('hud') or {}), **field_hud})
     # Postflop guard. A read board (cards) is clearly postflop. A board that was
     # DETECTED but not fully read (incomplete, duplicate, or obstructed with the
     # anchor found) is also postflop and must abstain, not be treated as preflop.
