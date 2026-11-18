@@ -232,6 +232,37 @@ def find_grid_crop(frame, *, margin=22):
 _HEADER_ROI = (0.180, 0.158, 0.520, 0.186)   # x0, y0, x1, y1 (y1 exclui a linha do ID)
 
 
+_CAROUSEL_IDX = re.compile(r'(\d+)\s*/\s*(\d+)')
+
+
+def read_carousel_card(frame, *, ocr, panel_x=(1900, 2770)):
+    """Card ATUAL da vista de CARROSSEL de clube (uma carta por vez, indicador 'N/M'),
+    ou None se não é carrossel. Devolve dict(name, idx, total, card_click, swipe). O
+    indicador 'N/M' confirma o carrossel; o nome sai do rótulo do card; card_click é o
+    centro do card (entrar); swipe é o par de pontos p/ deslizar ao PRÓXIMO (p/ esquerda).
+    Coords do FRAME (panel_x = janela do app; depende da posição da janela)."""
+    import cv2
+    h, w = frame.shape[:2]
+    x0, x1 = panel_x[0], min(panel_x[1], w)
+    if x1 - x0 < 20:
+        return None
+
+    def ocr_band(y0f, y1f, xa, xb):
+        return ' '.join(ocr(cv2.cvtColor(frame[int(y0f * h):int(y1f * h), xa:xb],
+                                         cv2.COLOR_BGR2GRAY)).split())
+
+    m = _CAROUSEL_IDX.search(ocr_band(0.424, 0.447, x0 + 250, x0 + 470))
+    if not m:
+        return None
+    idx, total = int(m.group(1)), int(m.group(2))
+    name = clean_club_name(ocr_band(0.370, 0.396, x0 + 150, x0 + 620))[0]
+    cx = (x0 + x1) // 2
+    cy_card = int(0.243 * h)
+    return dict(name=name, idx=idx, total=total, card_click=(cx, cy_card),
+                swipe=((x0 + int(0.70 * (x1 - x0)), cy_card),
+                       (x0 + int(0.18 * (x1 - x0)), cy_card)))   # arrasta p/ ESQUERDA = próximo
+
+
 def read_club_header(frame, *, ocr, region=None):
     """Nome do clube lido do cabeçalho 'Nome / ID do clube' no FRAME CHEIO, ANCORADO
     no texto constante 'clube' (de 'ID do clube'), e lendo a LINHA ACIMA. Robusto ao

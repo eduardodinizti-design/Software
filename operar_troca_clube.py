@@ -20,7 +20,8 @@ import argparse
 import time
 
 from club_actions import locate_club_in_frame, scroll_grid_once
-from club_grid import find_grid_crop, header_matches, read_club_grid, read_club_header
+from club_grid import (find_grid_crop, header_matches, normalize, read_carousel_card,
+                       read_club_grid, read_club_header)
 from cursor_controller import CursorController, Intent, make_intervention_check
 from ocr_locate import locate_word
 from screen_coords import frame_to_screen, rect_frame_to_screen
@@ -187,6 +188,92 @@ def ensure_club_via_search(target, *, engine, hwnd, adapter, keyboard, control, 
                 reason=','.join(res.get('reasons', [])) or res.get('state'))
 
 
+def _gated_drag_frame(adapter, control, discover_rect, hwnd, frame, p0, p1, *, settle_s=0.05):
+    """Drag GATED entre dois pontos do frame (mapeados p/ a tela). Para o SWIPE do
+    carrossel. Nada sem RUNNING."""
+    if control is not None and not control.execution_allowed():
+        return dict(ok=False, reason='BOT_NOT_RUNNING')
+    wr = discover_rect(hwnd)
+    if wr is None:
+        return dict(ok=False, reason='WINDOW_GONE')
+    fh, fw = frame.shape[:2]
+    s0 = frame_to_screen(p0, window_rect=wr, frame_size=(fw, fh))
+    s1 = frame_to_screen(p1, window_rect=wr, frame_size=(fw, fh))
+    rep = adapter.drag(s0[0], s0[1], s1[0], s1[1], settle_s=settle_s)
+    return dict(ok=bool(rep.get('released')), drag=rep)
+
+
+def _verify_entered_live(engine, hwnd, target, ocr, *, tries=6, wait_s=0.5):
+    """Confirma a ENTRADA no clube relendo o cabeçalho, re-tentando enquanto a tela
+    transiciona. True se confirmou."""
+    for i in range(tries):
+        frame, _ = engine.capture_frame(hwnd=hwnd)
+        if frame is not None and header_matches(frame, target, ocr=ocr):
+            return True
+        if i < tries - 1:
+            time.sleep(wait_s)
+    return False
+
+
+def ensure_club_via_carousel(target, *, engine, hwnd, adapter, control, ocr, discover_rect,
+                             dry_run=True, max_swipes=12, settle_s=0.6):
+    """Troca para `target` pela vista de CARROSSEL (uma carta por vez, 'N/M'): lê o card
+    atual; se CONTÉM o alvo, clica o card (entra) e VERIFICA; senão DESLIZA ao próximo e
+    repete, até achar ou dar a volta. dry_run PLANEJA. Match por substring (tolera ruído
+    do ícone no nome do card)."""
+    if not (isinstance(target, str) and target.strip()):
+        return dict(ok=False, action='ALVO_INVALIDO', reason='alvo vazio')
+    if _header_matches_live(engine, hwnd, target, ocr):
+        return dict(ok=True, action='NOOP_JA_NO_CLUBE')
+    tgt_ns = normalize(target).replace(' ', '')
+    for step in range(max_swipes + 1):
+        frame, _ = engine.capture_frame(hwnd=hwnd)
+        if frame is None:
+            return dict(ok=False, action='SEM_FRAME', reason='captura falhou')
+        card = read_carousel_card(frame, ocr=ocr)
+        if card is None:
+            return dict(ok=False, action='SEM_CARROSSEL',
+                        reason='não é a vista de carrossel de clube')
+        if tgt_ns and tgt_ns in card['name'].casefold().replace(' ', ''):
+            if dry_run:
+                return dict(ok=True, action='PLANO_CLICAR_CARD', card_click=card['card_click'],
+                            card=card['name'], idx=card['idx'])
+            c = _gated_click_frame_point(adapter, control, discover_rect, hwnd, frame, card['card_click'])
+            if not c['ok']:
+                return dict(ok=False, action='CLICK_CARD_FALHOU', reason=c.get('reason'))
+            if _verify_entered_live(engine, hwnd, target, ocr):
+                return dict(ok=True, action='TROCADO', via='carrossel')
+            return dict(ok=False, action='TROCA_NAO_CONFIRMADA', via='carrossel')
+        # card atual não é o alvo -> deslizar ao próximo
+        if dry_run:
+            return dict(ok=False, action='PLANO_SWIPE', card=card['name'],
+                        idx=card['idx'], total=card['total'], swipe=card['swipe'])
+        if step >= card['total']:                 # deu a volta sem achar
+            return dict(ok=False, action='NAO_ENCONTRADO', reason='rodou os cards', total=card['total'])
+        p0, p1 = card['swipe']
+        sw = _gated_drag_frame(adapter, control, discover_rect, hwnd, frame, p0, p1)
+        if not sw['ok']:
+            return dict(ok=False, action='SWIPE_FALHOU', reason=sw.get('reason'))
+        time.sleep(settle_s)
+    return dict(ok=False, action='NAO_ENCONTRADO', reason='max_swipes')
+
+
+def ensure_club_any_view(target, *, engine, hwnd, adapter, control, ocr, discover_rect,
+                         max_scrolls=10, dry_run=True):
+    """Troca para `target` AUTO-DETECTANDO a vista: tenta a GRADE DE TILES; se não for
+    (SEM_GRADE), tenta o CARROSSEL. Idempotência e verificação já embutidas em cada um."""
+    r = ensure_club_live(target, engine=engine, hwnd=hwnd, adapter=adapter, control=control,
+                         ocr=ocr, discover_rect=discover_rect, max_scrolls=max_scrolls,
+                         dry_run=dry_run)
+    if r.get('action') == 'SEM_GRADE':
+        rc = ensure_club_via_carousel(target, engine=engine, hwnd=hwnd, adapter=adapter,
+                                      control=control, ocr=ocr, discover_rect=discover_rect,
+                                      dry_run=dry_run)
+        if rc.get('action') != 'SEM_CARROSSEL':      # era carrossel -> usa esse resultado
+            return rc
+    return r
+
+
 def _discover_rect(hwnd, *, tries=4, delay=0.15):
     from table_discovery.pppoker import discover_pppoker
     for i in range(max(1, tries)):
@@ -248,13 +335,15 @@ def main(argv=None):
                                    adapter=adapter, keyboard=keyboard, control=control,
                                    ocr=ocr, discover_rect=_discover_rect, dry_run=not args.arm)
     else:
-        r = ensure_club_live(args.target, engine=engine, hwnd=args.hwnd, adapter=adapter,
-                             control=control, ocr=ocr, discover_rect=_discover_rect,
-                             max_scrolls=args.max_scrolls, dry_run=not args.arm)
+        r = ensure_club_any_view(args.target, engine=engine, hwnd=args.hwnd, adapter=adapter,
+                                 control=control, ocr=ocr, discover_rect=_discover_rect,
+                                 max_scrolls=args.max_scrolls, dry_run=not args.arm)
     print('RESULTADO:', r.get('action'), '| ok=%s' % r.get('ok'),
           '| %s' % (r.get('reason') or ''))
     if r.get('action') == 'PLANO_CLICAR':
         print('  clicaria (frame) em rect=%s [DRY-RUN — nada enviado]' % (r['target_rect_frame'],))
+    if r.get('action') == 'PLANO_CLICAR_CARD':
+        print('  clicaria o card %r em %s [DRY-RUN — nada enviado]' % (r.get('card'), r.get('card_click')))
     if r.get('action') == 'PLANO_BUSCAR':
         print("  clicaria 'Pesquisar' em %s, digitaria %r [DRY-RUN — nada enviado]"
               % (r['pesquisar_pt'], r['target']))

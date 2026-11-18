@@ -153,5 +153,58 @@ class SearchFlowTests(unittest.TestCase):
         self.assertEqual(r['action'], 'GATE_FECHADO')
 
 
+class CarouselTests(unittest.TestCase):
+    """ensure_club_via_carousel (read_carousel_card e header mockados)."""
+    import numpy as _np
+    _F = _np.zeros((100, 100, 3), _np.uint8)
+
+    def _run(self, target, *, matches, card, dry_run=True, control=None):
+        import operar_troca_clube as m
+        from unittest.mock import patch
+        with patch.object(m, '_header_matches_live', return_value=matches), \
+             patch.object(m, 'read_carousel_card', return_value=card):
+            return m.ensure_club_via_carousel(
+                target, engine=_Engine(self._F), hwnd=1, adapter=None, control=control,
+                ocr=lambda g: '', discover_rect=_discover, dry_run=dry_run)
+
+    @staticmethod
+    def _card(name='PBB AK Amakha Club'):
+        return dict(name=name, idx=1, total=9, card_click=(2335, 524), swipe=((1, 2), (3, 4)))
+
+    def test_noop(self):
+        self.assertEqual(self._run('Karekas', matches=True, card=None)['action'], 'NOOP_JA_NO_CLUBE')
+
+    def test_card_atual_e_o_alvo_planeja_clique(self):
+        r = self._run('AK Amakha Club', matches=False, card=self._card())   # match por substring (ignora 'PBB')
+        self.assertEqual(r['action'], 'PLANO_CLICAR_CARD')
+        self.assertEqual(r['card_click'], (2335, 524))
+
+    def test_card_diferente_planeja_swipe(self):
+        r = self._run('Karekas Yellow', matches=False, card=self._card())
+        self.assertEqual(r['action'], 'PLANO_SWIPE')
+
+    def test_sem_carrossel(self):
+        self.assertEqual(self._run('AK', matches=False, card=None)['action'], 'SEM_CARROSSEL')
+
+
+class AnyViewTests(unittest.TestCase):
+    def test_cai_no_carrossel_quando_nao_e_grade(self):
+        import operar_troca_clube as m
+        from unittest.mock import patch
+        with patch.object(m, 'ensure_club_live', return_value=dict(action='SEM_GRADE', ok=False)), \
+             patch.object(m, 'ensure_club_via_carousel', return_value=dict(action='PLANO_CLICAR_CARD', ok=True)):
+            r = m.ensure_club_any_view('AK', engine=_Engine(None), hwnd=1, adapter=None,
+                                       control=None, ocr=lambda g: '', discover_rect=_discover)
+        self.assertEqual(r['action'], 'PLANO_CLICAR_CARD')
+
+    def test_usa_a_grade_quando_e_grade(self):
+        import operar_troca_clube as m
+        from unittest.mock import patch
+        with patch.object(m, 'ensure_club_live', return_value=dict(action='PLANO_CLICAR', ok=True)):
+            r = m.ensure_club_any_view('AK', engine=_Engine(None), hwnd=1, adapter=None,
+                                       control=None, ocr=lambda g: '', discover_rect=_discover)
+        self.assertEqual(r['action'], 'PLANO_CLICAR')
+
+
 if __name__ == '__main__':
     unittest.main()
