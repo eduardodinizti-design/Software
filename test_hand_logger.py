@@ -114,6 +114,21 @@ class LoggerTests(unittest.TestCase):
         self.assertEqual({h['hand_id'] for h in rec.committed}, {'A-1-1', 'B-1-1'})
 
 
+class HudTests(unittest.TestCase):
+    def test_hud_por_adversario_e_gravado(self):
+        rec = _FakeRecorder()
+        log = LiveHandLogger(rec)
+        r = _result('H-1-1', cards=['9d', '6d'], recommended='all_in')
+        r['table_state']['hud'] = {'bot_left': {'stats': {'vpip': 29, 'pfr': 16, 'threebet': 6},
+                                                'confidence': 'high'}}
+        log.observe('t', r)
+        log.flush()
+        opp = {o['seat']: o for o in rec.committed[0]['opponents']}
+        self.assertIn('bot_left', opp)
+        self.assertEqual(opp['bot_left']['hud']['vpip'], 29)      # 8 stats VIP no vilão
+        self.assertEqual(opp['bot_left']['hud']['threebet'], 6)
+
+
 def _res(number, hero_stack, cards=('9d', '6d')):
     return dict(is_table=True, hand=dict(hand_id='H-%d' % number, hand_number=number),
                 tournament=dict(name='T'), hero_cards=list(cards),

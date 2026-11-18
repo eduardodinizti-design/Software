@@ -133,7 +133,8 @@ def main(argv=None):
                 last.pop('_capture', None)
                 for row in advise_frame(frame, meta, advisor, max_tables=args.max_tables,
                                         tracker=aggr_tracker, bounty_bb=args.bounty_bb,
-                                        mode=args.mode, stage=args.stage, enable_hud=args.hud,
+                                        mode=args.mode, stage=args.stage,
+                                        enable_hud=args.hud or hand_logger is not None,
                                         read_cache=read_cache, field_memory=field_memory,
                                         board_memory=board_memory):
                     # Estado temporal integrado: amarra mesa/mão/campos e explica

@@ -75,13 +75,18 @@ class LiveHandLogger:
                                cards=list(cards) if cards else prev.get('cards'),
                                stack_bb=hero_seat.get('stack_bb') if hero_seat.get('stack_bb') is not None
                                else prev.get('stack_bb'))
+        hud = ts.get('hud') or {}
         for s, info in seats.items():
             if s == 'hero' or not (isinstance(info, dict) and info.get('occupied')):
                 continue
             name = clean_nameplate(info.get('raw'))
-            cur['opponents'][s] = dict(id=name, seat=s, position=positions.get(s),
-                                       stack_bb=info.get('stack_bb'),
-                                       nameplate_raw=info.get('raw'))
+            opp = cur['opponents'].get(s) or dict(id=name, seat=s)
+            opp.update(id=name or opp.get('id'), seat=s, position=positions.get(s),
+                       stack_bb=info.get('stack_bb'), nameplate_raw=info.get('raw'))
+            hstats = (hud.get(s) or {}).get('stats')       # 8 stats VIP, se o HUD leu
+            if hstats:
+                opp['hud'] = dict(hstats)
+            cur['opponents'][s] = opp
         board = result.get('board') or {}
         if board.get('cards') and board.get('street'):
             cur['board'][str(board['street']).lower()] = list(board['cards'])
