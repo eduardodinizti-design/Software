@@ -27,6 +27,35 @@ def locate_club_in_frame(frame, target, *, ocr):
     return (ox + x0, oy + y0, x1 - x0, y1 - y0)
 
 
+def find_search_lupa(frame, *, region_x=(2380, 2620)):
+    """(x, y) do ícone de LUPA (busca) no topo-direita da vista de CARROSSEL de clube,
+    ou None. É o glifo verde mais à DIREITA na faixa (o 'casa+' fica à esquerda).
+    Entrada ALTERNATIVA p/ a busca — a vista de TILES usa o texto 'Pesquisar' (locate_word).
+    Seguro: fica bem abaixo/à esquerda do X de fechar a janela. Coords do FRAME.
+    (region_x em px do frame — depende da posição da janela; ampliar se a janela mudar.)"""
+    import cv2
+    import numpy as np
+    h, w = frame.shape[:2]
+    y0, y1 = int(0.10 * h), int(0.16 * h)
+    x0, x1 = region_x[0], min(region_x[1], w)
+    if x1 - x0 < 10:
+        return None
+    reg = frame[y0:y1, x0:x1]
+    hsv = cv2.cvtColor(reg, cv2.COLOR_BGR2HSV)
+    H, S, V = hsv[:, :, 0].astype(int), hsv[:, :, 1].astype(int), hsv[:, :, 2].astype(int)
+    mask = ((H > 55) & (H < 100) & (S > 70) & (V > 90)).astype(np.uint8) * 255
+    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, np.ones((7, 7), np.uint8))
+    n, _, stats, cent = cv2.connectedComponentsWithStats(mask, 8)
+    best = None
+    for i in range(1, n):
+        bw, bh, area = stats[i][2], stats[i][3], stats[i][4]
+        if area > 120 and 12 < bw < 60 and 12 < bh < 60:
+            cx, cy = int(x0 + cent[i][0]), int(y0 + cent[i][1])
+            if best is None or cx > best[0]:          # a lupa é a mais à direita
+                best = (cx, cy)
+    return best
+
+
 def scroll_grid_once(adapter, control, *, panel_rect, drag_frac=0.5, reveal='below',
                      settle_s=0.05):
     """Rola a grade UMA vez. GATED: nada é enviado sem RUNNING. reveal='below'

@@ -45,6 +45,25 @@ class ScrollTests(unittest.TestCase):
         self.assertEqual(r['reason'], 'RELEASE_UNCONFIRMED')
 
 
+class SearchLupaTests(unittest.TestCase):
+    def test_none_sem_lupa(self):
+        import numpy as np
+        from club_actions import find_search_lupa
+        self.assertIsNone(find_search_lupa(np.zeros((2160, 2700, 3), np.uint8)))
+
+    def test_pega_a_lupa_mais_a_direita(self):
+        import numpy as np
+        from club_actions import find_search_lupa
+        f = np.zeros((2160, 2700, 3), np.uint8)
+        green = (60, 200, 60)                          # BGR verde (H~60, S/V altos)
+        y = int(0.13 * 2160)
+        f[y:y + 28, 2440:2470] = green                 # 'casa+' (à esquerda)
+        f[y:y + 28, 2540:2570] = green                 # lupa (à direita)
+        r = find_search_lupa(f)
+        self.assertIsNotNone(r)
+        self.assertGreater(r[0], 2510)                 # pegou a da DIREITA (lupa)
+
+
 def _ocr_ready():
     try:
         from table_reading.pipeline import configure_ocr
