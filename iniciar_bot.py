@@ -60,6 +60,14 @@ def main():
     procs.append(("CAPTURA", cap))
     print("[ok] CAPTURA de maos no ar (salva em logs/maos_h2n). (janela propria).")
 
+    # 3) EMISSOR de assentos: le seat->uid+nick (protobuf) -> logs/live_seats.json
+    #    (ponte p/ o exploit da NOSSA DB). Semeia ao ENTRAR/trocar de mesa.
+    emt = subprocess.Popen(
+        [sys.executable, "-I", "emitir_seats.py"],
+        cwd=os.path.join(REPO, "research", "ppp_il2cpp"), creationflags=new_console)
+    procs.append(("SEATS", emt))
+    print("[ok] EMISSOR de assentos no ar (seat->uid p/ exploit da DB). (janela propria).")
+
     print("\n>>> TUDO NO AR. Feche esta janela ou aperte Ctrl+C para PARAR TUDO. <<<\n")
     try:
         while True:
