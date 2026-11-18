@@ -94,6 +94,12 @@ class LiveHandLogger:
                             tournament=cur.get('tournament') or {},
                             hero=cur.get('hero') or {},
                             opponents=list(cur['opponents'].values()))
+        # hand_number/table_ref não são params do begin() -> anexa direto no registro.
+        if hasattr(h, 'rec'):
+            if cur.get('hand_number') is not None:
+                h.rec['hand_number'] = cur['hand_number']
+            if cur.get('table_ref'):
+                h.rec['table_ref'] = cur['table_ref']
         for street, cards in (cur.get('board') or {}).items():
             h.board(street, cards)
         a = cur.get('advice')

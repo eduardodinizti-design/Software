@@ -5,17 +5,18 @@ from hand_logger import LiveHandLogger, clean_nameplate
 
 
 class _FakeHand:
+    """Espelha o HandInProgress real: estado em self.rec; board/advice acumulam nele."""
     def __init__(self, kw):
-        self.data = dict(kw)
-        self.data['board'] = {}
-        self.data['advice'] = []
+        self.rec = dict(kw)
+        self.rec['board'] = {}
+        self.rec['advice'] = []
 
     def board(self, street, cards):
-        self.data['board'][street] = list(cards)
+        self.rec['board'][street] = list(cards)
         return self
 
     def advice(self, **kw):
-        self.data['advice'].append(kw)
+        self.rec['advice'].append(kw)
         return self
 
 
@@ -27,7 +28,7 @@ class _FakeRecorder:
         return _FakeHand(kw)
 
     def commit(self, h):
-        self.committed.append(h.data)
+        self.committed.append(h.rec)
 
 
 def _result(hand_id, *, cards=None, recommended=None, hero_pos='SB', board=None):
@@ -68,6 +69,7 @@ class LoggerTests(unittest.TestCase):
         self.assertEqual(len(rec.committed), 1)                 # a 1a foi fechada
         h = rec.committed[0]
         self.assertEqual(h['hand_id'], 'H-100-1')
+        self.assertEqual(h['hand_number'], 100)                 # hand_number anexado
         self.assertEqual(h['hero']['cards'], ['9d', '6d'])
         self.assertEqual(h['hero']['position'], 'SB')
         self.assertEqual(h['advice'][0]['recommended'], 'all_in')
