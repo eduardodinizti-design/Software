@@ -24,7 +24,8 @@ from club_grid import find_grid_crop, read_club_grid, read_current_club
 from club_switcher import same_club
 from cursor_controller import CursorController, Intent, make_intervention_check
 from lobby_runner import find_lobby_crop
-from screen_coords import rect_frame_to_screen
+from ocr_locate import locate_word
+from screen_coords import frame_to_screen, rect_frame_to_screen
 
 
 def _read_current_club_live(engine, hwnd, ocr, *, min_badges=3):
@@ -120,6 +121,62 @@ def ensure_club_live(target, *, engine, hwnd, adapter, control, ocr, discover_re
     return dict(ok=False, action='NAO_ENCONTRADO', reason='MAX_SCROLLS', scrolls=max_scrolls)
 
 
+def _gated_click_frame_point(adapter, control, discover_rect, hwnd, frame, pt):
+    """Clique GATED num ponto do frame (mapeado p/ a tela). Para alvos ESTÁTICOS
+    (item de menu) — sem revalidação de trajetória. Nada sem RUNNING."""
+    if control is not None and not control.execution_allowed():
+        return dict(ok=False, reason='BOT_NOT_RUNNING')
+    wr = discover_rect(hwnd)
+    if wr is None:
+        return dict(ok=False, reason='WINDOW_GONE')
+    fh, fw = frame.shape[:2]
+    sx, sy = frame_to_screen(pt, window_rect=wr, frame_size=(fw, fh))
+    adapter.move_to(sx, sy)
+    rep = adapter.click_once(sx, sy)
+    return dict(ok=bool(rep.get('released')), screen=(sx, sy), click=rep)
+
+
+def ensure_club_via_search(target, *, engine, hwnd, adapter, keyboard, control, ocr,
+                           discover_rect, dry_run=True, settle_s=0.7):
+    """Troca para `target` pela BUSCA (rota robusta, ignora ordem/scroll): no SELETOR,
+    clica 'Pesquisar' -> DIGITA o nome -> a grade filtra -> clica o tile do resultado
+    (relê/localiza, gated+revalidado) -> VERIFICA. dry_run PLANEJA (não envia).
+    Requer o adaptador de teclado (keyboard)."""
+    if not (isinstance(target, str) and target.strip()):
+        return dict(ok=False, action='ALVO_INVALIDO', reason='alvo vazio')
+    cur = _read_current_club_live(engine, hwnd, ocr)
+    if cur and same_club(cur, target):
+        return dict(ok=True, action='NOOP_JA_NO_CLUBE', current=cur)
+    frame, _ = engine.capture_frame(hwnd=hwnd)
+    if frame is None:
+        return dict(ok=False, action='SEM_FRAME', reason='captura falhou')
+    fw = frame.shape[1]
+    region = (1900.0 / fw, 0.45, 2700.0 / fw, 0.62)        # menu no inf-dir do painel
+    pt = locate_word(frame, ['Pesquisar'], region=region)
+    if pt is None:
+        return dict(ok=False, action='SEM_BUSCA',
+                    reason="item 'Pesquisar' não encontrado — está no seletor de clubes?")
+    if dry_run:
+        return dict(ok=True, action='PLANO_BUSCAR', pesquisar_pt=pt, target=target,
+                    reason="clicaria 'Pesquisar', digitaria %r e clicaria no resultado" % target)
+
+    if control is not None and not control.execution_allowed():
+        return dict(ok=False, action='GATE_FECHADO', reason='bot não está RUNNING')
+    c1 = _gated_click_frame_point(adapter, control, discover_rect, hwnd, frame, pt)
+    if not c1['ok']:
+        return dict(ok=False, action='CLICK_PESQUISAR_FALHOU', reason=c1.get('reason'))
+    time.sleep(0.4)
+    keyboard.clear_field(40)                                # campo limpo
+    keyboard.type_text(target.strip())                     # filtra a grade
+    time.sleep(settle_s)
+    res = _click_target_club(engine, hwnd, target, adapter=adapter, control=control,
+                             ocr=ocr, discover_rect=discover_rect)
+    if res.get('state') == 'DONE':
+        return dict(ok=True, action='TROCADO', via='busca', click=res)
+    return dict(ok=False, action='TROCA_NAO_CONFIRMADA', via='busca', click=res,
+                reason=','.join(res.get('reasons', [])) or res.get('state'))
+
+
 def _discover_rect(hwnd, *, tries=4, delay=0.15):
     from table_discovery.pppoker import discover_pppoker
     for i in range(max(1, tries)):
@@ -137,6 +194,9 @@ def main(argv=None):
     p.add_argument('--hwnd', type=lambda s: int(s, 0), required=True)
     p.add_argument('--target', required=True, help='Clube-alvo (nome como no lobby)')
     p.add_argument('--arm', action='store_true', help='Usa o cursor REAL (começa PAUSADO)')
+    p.add_argument('--search', action='store_true',
+                   help='Rota de BUSCA (lupa Pesquisar -> digitar nome -> resultado), '
+                        'em vez de rolar os tiles. Precisa estar no seletor de clubes.')
     p.add_argument('--max-scrolls', type=int, default=10)
     p.add_argument('--no-hotkeys', action='store_true')
     p.add_argument('--arm-timeout', type=float, default=60.0,
@@ -145,6 +205,7 @@ def main(argv=None):
 
     from bot_control import BotControl, HotkeyListener
     from cursor_input_win import WindowsCursorInput
+    from keyboard_input_win import WindowsKeyboardInput
     from table_reading.ocr_runtime import image_to_string
     from table_reading.pipeline import configure_ocr
     from window_capture_engine import WindowCaptureEngine
@@ -154,6 +215,7 @@ def main(argv=None):
     engine = WindowCaptureEngine()
     control = BotControl()
     adapter = WindowsCursorInput() if args.arm else None
+    keyboard = WindowsKeyboardInput() if args.arm else None
     listener = HotkeyListener(control) if (args.arm and not args.no_hotkeys) else None
     if listener:
         listener.start()
@@ -171,13 +233,21 @@ def main(argv=None):
         if not control.execution_allowed():
             print('Não armado a tempo — nada enviado.'); return 1
 
-    r = ensure_club_live(args.target, engine=engine, hwnd=args.hwnd, adapter=adapter,
-                         control=control, ocr=ocr, discover_rect=_discover_rect,
-                         max_scrolls=args.max_scrolls, dry_run=not args.arm)
+    if args.search:
+        r = ensure_club_via_search(args.target, engine=engine, hwnd=args.hwnd,
+                                   adapter=adapter, keyboard=keyboard, control=control,
+                                   ocr=ocr, discover_rect=_discover_rect, dry_run=not args.arm)
+    else:
+        r = ensure_club_live(args.target, engine=engine, hwnd=args.hwnd, adapter=adapter,
+                             control=control, ocr=ocr, discover_rect=_discover_rect,
+                             max_scrolls=args.max_scrolls, dry_run=not args.arm)
     print('RESULTADO:', r.get('action'), '| ok=%s' % r.get('ok'),
           '| %s' % (r.get('reason') or ''))
     if r.get('action') == 'PLANO_CLICAR':
         print('  clicaria (frame) em rect=%s [DRY-RUN — nada enviado]' % (r['target_rect_frame'],))
+    if r.get('action') == 'PLANO_BUSCAR':
+        print("  clicaria 'Pesquisar' em %s, digitaria %r [DRY-RUN — nada enviado]"
+              % (r['pesquisar_pt'], r['target']))
     return 0 if r.get('ok') else 1
 
 

@@ -112,5 +112,43 @@ class LiveLogicTests(unittest.TestCase):
         self.assertEqual(r['reason'], 'BOT_NOT_RUNNING')
 
 
+class SearchFlowTests(unittest.TestCase):
+    """ensure_club_via_search: orquestração (locate_word e leitura do clube são
+    monkeypatched; cobre dry-run/idempotência/sem-busca/gate sem depender de pixels)."""
+    import numpy as _np
+    _FRAME = _np.zeros((100, 100, 3), _np.uint8)
+
+    def _run(self, target, *, current, pt, dry_run=True, control=None, keyboard=None):
+        import operar_troca_clube as m
+        from unittest.mock import patch
+        eng = _Engine(self._FRAME)
+        with patch.object(m, '_read_current_club_live', return_value=current), \
+             patch.object(m, 'locate_word', return_value=pt):
+            return m.ensure_club_via_search(
+                target, engine=eng, hwnd=1, adapter=None, keyboard=keyboard,
+                control=control, ocr=lambda g: '', discover_rect=_discover, dry_run=dry_run)
+
+    def test_alvo_invalido(self):
+        self.assertEqual(self._run('  ', current=None, pt=(1, 2))['action'], 'ALVO_INVALIDO')
+
+    def test_dry_run_planeja_buscar(self):
+        r = self._run('AK Amakha Club', current=None, pt=(2408, 1202))
+        self.assertEqual(r['action'], 'PLANO_BUSCAR')
+        self.assertEqual(r['pesquisar_pt'], (2408, 1202))
+
+    def test_idempotente(self):
+        r = self._run('Karekas Yellow', current='Karekas Yellow', pt=(1, 2))
+        self.assertEqual(r['action'], 'NOOP_JA_NO_CLUBE')
+
+    def test_sem_busca_quando_pesquisar_nao_achado(self):
+        r = self._run('AK', current=None, pt=None)
+        self.assertEqual(r['action'], 'SEM_BUSCA')
+
+    def test_armado_pausado_nao_envia(self):
+        from bot_control import BotControl
+        r = self._run('AK', current=None, pt=(10, 20), dry_run=False, control=BotControl())
+        self.assertEqual(r['action'], 'GATE_FECHADO')
+
+
 if __name__ == '__main__':
     unittest.main()
