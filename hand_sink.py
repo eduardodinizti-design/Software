@@ -14,7 +14,9 @@ import os
 import re
 from datetime import datetime
 
-DEFAULT_BASE = r'C:\Hand2Note4Hh\PPPoker'
+# Base do NOSSO log de decisões do bot (JSONL). NÃO é a pasta do Hand2Note (aquela é
+# alimentada pelo conversor externo em formato TEXTO; não misturar).
+DEFAULT_BASE = r'C:\Meus Projetos\Aplicativos\_repo_software\logs\maos_bot'
 
 
 def sanitize_name(name):
