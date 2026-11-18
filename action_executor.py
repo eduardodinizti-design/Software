@@ -115,7 +115,11 @@ class ActionExecutor:
         # #6-exec: gate de elegibilidade estratégica no armado, via contrato B04.
         advice = result.get('advice') or {}
         contract = self._contract(advice, action, result.get('hero_cards'))
-        if self.armed:
+        # Pós-flop EXPLORATÓRIO (--posflop): o OPERADOR já decidiu executar a
+        # recomendação heurística; o gate de validação (nó validado) é dispensado
+        # p/ essa decisão. A trava de COMMIT (allow_commit no plan(): CALL só com
+        # --não-pagar desligado) e o clique-único continuam valendo.
+        if self.armed and not advice.get('posflop_exec'):
             ok_elig, why = self._authorize(contract)
             if not ok_elig:
                 return dict(acted=False, reason='NAO_ELEGIVEL:%s' % why,

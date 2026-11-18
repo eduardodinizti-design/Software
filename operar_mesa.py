@@ -303,6 +303,9 @@ def main(argv=None):
     p.add_argument('--exploit-db', default='logs/exploit_db.json')
     p.add_argument('--live-seats', default='logs/live_seats.json')
     p.add_argument('--live-rich', default='logs/live_seats_rich.json')
+    p.add_argument('--posflop', dest='posflop', action='store_true',
+                   help='JOGAR TUDO: executa a recomendacao POS-FLOP (fold/check/call/bet/raise, '
+                        'EXPLORATORIA/heuristica). Sem isso, pos-flop so faz CHECK gratis.')
     p.add_argument('--antecipar', action='store_true',
                    help='A1: reaproveita a decisao SEGURA (fold/check) ja computada entre '
                         'frames da MESMA vez do hero, pulando o cerebro (~330ms) em revisitas. '
@@ -637,38 +640,54 @@ def main(argv=None):
                 hid = hkey
                 adv = result.get('advice') or {}
                 if adv.get('phase') == 'postflop':
-                    # Pós-flop NÃO executa a ESTRATÉGIA (não-validada): sem bet/call/raise.
-                    # D6 — ANTI-FREEZE: se há CHECK (GRÁTIS, não compromete ficha), clica
-                    # CHECK p/ não perder a mão no relógio (ver turn/river de graça).
-                    # Enfrentando aposta (sem CHECK) NÃO age: nunca comita NEM folda cego
-                    # pós-flop. CHECK = piso SAFETY_NONCOMMIT (autorizado por legalidade).
                     has_check = br['status'] == 'EXPERIMENTAL_BUTTON_ROW' and any(
                         b.get('action') == 'CHECK' for b in br.get('buttons', []))
-                    if br['status'] == 'EXPERIMENTAL_BUTTON_ROW' and adv.get('status') == 'ADVICE':
-                        eqtxt = ''
-                        if adv.get('equity') is not None:
-                            eqtxt = ' | eq=%.0f%% vs pot_odds=%.0f%%' % (
-                                adv['equity'] * 100, (adv.get('pot_odds') or 0) * 100)
-                        print('[%03d] vez do hero PÓS-FLOP (%s): %s %s%s | estrategia nao executa%s'
-                              % (n, adv.get('street'), str(adv.get('recommended')).upper(),
-                                 adv.get('made') or '', eqtxt,
-                                 ' (CHECK gratis anti-freeze)' if has_check else ''), flush=True)
-                    elif br['status'] == 'EXPERIMENTAL_BUTTON_ROW':
-                        print('[%03d] vez do hero PÓS-FLOP (%s): ABSTEM %s | mao=%s%s'
-                              % (n, adv.get('street'), adv.get('reason'), adv.get('made'),
-                                 ' | CHECK gratis anti-freeze' if has_check else ' | sem execucao'), flush=True)
-                    if has_check:
-                        check_adv = dict(status='ADVICE', recommended='check', validated=False,
-                                         phase='postflop', anti_freeze=True)
-                        out = executor.execute(dict(result, advice=check_adv), br, origin=(x, y),
-                                               frame_size=(fw, fh), input_adapter=adapter,
-                                               validator=validator, verifier=verifier,
-                                               hand_id=hid, table_key=tkey_local)
-                        if out.get('acted'):
-                            print('[%03d] >>> POS-FLOP anti-freeze: CHECK %s'
-                                  % (n, 'DRY-RUN' if out['dry_run'] else 'REAL'), flush=True)
-                            _emit_shadow(result, adv, 'check', out)
-                    continue
+                    _rec = adv.get('recommended')
+                    _exec_pf = (args.posflop and br['status'] == 'EXPERIMENTAL_BUTTON_ROW'
+                                and adv.get('status') == 'ADVICE'
+                                and _rec in ('fold', 'check', 'call', 'bet', 'raise'))
+                    if _exec_pf:
+                        # MODO JOGAR TUDO (--posflop, EXPLORATÓRIO): executa a recomendação
+                        # pós-flop. Marca posflop_exec -> o executor dispensa o gate de nó
+                        # validado p/ esta decisão (allow_commit e clique-único seguem). Cai
+                        # no caminho de execução abaixo (fold/check/call = executor; bet/raise
+                        # = sequenciador). Heurístico -> corrigir os erros no teste ao vivo.
+                        adv = dict(adv, posflop_exec=True)
+                        result = dict(result, advice=adv)
+                        eqtxt = (' | eq=%.0f%% vs %.0f%%' % (adv['equity'] * 100,
+                                 (adv.get('pot_odds') or 0) * 100)) if adv.get('equity') is not None else ''
+                        print('[%03d] POS-FLOP (%s) EXECUTA: %s%s%s' % (
+                            n, adv.get('street'), str(_rec).upper(), adv.get('made') or '', eqtxt),
+                            flush=True)
+                        # NÃO continua: segue p/ o caminho de execução.
+                    else:
+                        # Comportamento seguro (sem --posflop ou ABSTAIN): só CHECK grátis
+                        # anti-freeze; nunca comita nem folda cego pós-flop.
+                        if br['status'] == 'EXPERIMENTAL_BUTTON_ROW' and adv.get('status') == 'ADVICE':
+                            eqtxt = ''
+                            if adv.get('equity') is not None:
+                                eqtxt = ' | eq=%.0f%% vs pot_odds=%.0f%%' % (
+                                    adv['equity'] * 100, (adv.get('pot_odds') or 0) * 100)
+                            print('[%03d] vez do hero PÓS-FLOP (%s): %s %s%s | estrategia nao executa%s'
+                                  % (n, adv.get('street'), str(_rec).upper(),
+                                     adv.get('made') or '', eqtxt,
+                                     ' (CHECK gratis anti-freeze)' if has_check else ''), flush=True)
+                        elif br['status'] == 'EXPERIMENTAL_BUTTON_ROW':
+                            print('[%03d] vez do hero PÓS-FLOP (%s): ABSTEM %s | mao=%s%s'
+                                  % (n, adv.get('street'), adv.get('reason'), adv.get('made'),
+                                     ' | CHECK gratis anti-freeze' if has_check else ' | sem execucao'), flush=True)
+                        if has_check:
+                            check_adv = dict(status='ADVICE', recommended='check', validated=False,
+                                             phase='postflop', anti_freeze=True)
+                            out = executor.execute(dict(result, advice=check_adv), br, origin=(x, y),
+                                                   frame_size=(fw, fh), input_adapter=adapter,
+                                                   validator=validator, verifier=verifier,
+                                                   hand_id=hid, table_key=tkey_local)
+                            if out.get('acted'):
+                                print('[%03d] >>> POS-FLOP anti-freeze: CHECK %s'
+                                      % (n, 'DRY-RUN' if out['dry_run'] else 'REAL'), flush=True)
+                                _emit_shadow(result, adv, 'check', out)
+                        continue
                 # LOG DO CÉREBRO (toda vez do hero, pré-flop): grava POR QUE a decisão
                 # saiu — hero, posição, to_call, apostas, spot, nó, validated, equity/req.
                 # Sem isto não dá pra auditar erros graves (ex.: cold-call de Q6o) no fim
@@ -738,11 +757,12 @@ def main(argv=None):
                               % (n, tmult, (pr and pr['label']) or '?'), flush=True)
                     elif not control.execution_allowed():
                         print('[%03d] RAISE mas BOT PAUSADO' % n, flush=True)
-                    elif not adv.get('validated') and not adv.get('safety_premium_shove'):
+                    elif (not adv.get('validated') and not adv.get('safety_premium_shove')
+                          and not adv.get('posflop_exec')):
                         # Autorização única também no RAISE: nó não validado
                         # (referência/deep) não dispara a sequência armada (só estuda).
-                        # EXCEÇÃO: safety_premium_shove (premium curto sem nó) É autorizado
-                        # a jamar — é a linha segura no shove zone, não um raise especulativo.
+                        # EXCEÇÕES: safety_premium_shove (premium curto sem nó) e
+                        # posflop_exec (--posflop, bet/raise pós-flop exploratório).
                         print('[%03d] RAISE de no NAO VALIDADO -> nao executa (so estuda)' % n, flush=True)
                     else:
                         seq = RaiseSequencer(capture=lambda h=hwnd: engine.capture_frame(hwnd=h),

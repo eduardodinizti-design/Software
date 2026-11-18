@@ -48,7 +48,7 @@ def main():
     # 1) OPERADOR: armado automaticamente, exploit do HUD ligado, fecha bustada.
     op = subprocess.Popen(
         [sys.executable, "operar_mesa.py", "--hwnd", str(hwnd),
-         "--arm", "--auto-arm", "--auto-fechar-bustada", "--hud", "--field-exploit"],
+         "--arm", "--auto-arm", "--auto-fechar-bustada", "--hud", "--field-exploit", "--posflop"],
         cwd=REPO, creationflags=new_console)
     procs.append(("OPERADOR", op))
     print("[ok] OPERADOR no ar: ARMADO + exploit(HUD) + auto-fechar-bustada (janela propria).")
