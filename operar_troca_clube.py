@@ -20,25 +20,26 @@ import argparse
 import time
 
 from club_actions import locate_club_in_frame, scroll_grid_once
-from club_grid import find_grid_crop, read_club_grid, read_current_club
-from club_switcher import same_club
+from club_grid import find_grid_crop, header_matches, read_club_grid, read_club_header
 from cursor_controller import CursorController, Intent, make_intervention_check
-from lobby_runner import find_lobby_crop
 from ocr_locate import locate_word
 from screen_coords import frame_to_screen, rect_frame_to_screen
 
 
-def _read_current_club_live(engine, hwnd, ocr, *, min_badges=3):
-    """Clube ATUAL (dentro de um clube) ou None. Só confia quando há uma lista de
-    torneios de verdade (>= min_badges badges de buy-in) — senão é a grade/outra
-    tela e 'clube atual' não se aplica (não inventa estado)."""
+def _read_current_club_live(engine, hwnd, ocr):
+    """Nome do clube ATUAL ou None — lido pelo cabeçalho ANCORADO em 'ID do clube'
+    (read_club_header), robusto ao tamanho do crop. Vazio/None = não estamos dentro
+    de um clube (ex.: no seletor/carrossel, onde não há 'ID do clube')."""
     frame, _ = engine.capture_frame(hwnd=hwnd)
     if frame is None:
         return None
-    crop, _box, nb = find_lobby_crop(frame)
-    if crop is None or nb < min_badges:
-        return None
-    return read_current_club(crop, ocr=ocr)
+    return read_club_header(frame, ocr=ocr) or None
+
+
+def _header_matches_live(engine, hwnd, target, ocr):
+    """True se o clube ATUAL corresponde a `target` (match robusto por substring)."""
+    frame, _ = engine.capture_frame(hwnd=hwnd)
+    return frame is not None and header_matches(frame, target, ocr=ocr)
 
 
 def _click_target_club(engine, hwnd, target, *, adapter, control, ocr, discover_rect,
@@ -61,8 +62,8 @@ def _click_target_club(engine, hwnd, target, *, adapter, control, ocr, discover_
                     target_rect=rect_frame_to_screen(rect, window_rect=wr, frame_size=(fw, fh)))
 
     def verifier(intent, now):
-        cur = _read_current_club_live(engine, hwnd, ocr)
-        return dict(confirmed=bool(cur and same_club(cur, target)), current=cur)
+        frame, _ = engine.capture_frame(hwnd=hwnd)
+        return dict(confirmed=bool(frame is not None and header_matches(frame, target, ocr=ocr)))
 
     intent = Intent(id='club-%s-%d' % ((target or '')[:12], int(time.time() * 1000)),
                     action='CLICK', source_key=target, target_rect=(0, 0, 1, 1),
@@ -82,9 +83,8 @@ def ensure_club_live(target, *, engine, hwnd, adapter, control, ocr, discover_re
     if not (isinstance(target, str) and target.strip()):
         return dict(ok=False, action='ALVO_INVALIDO', reason='alvo vazio', scrolls=0)
 
-    cur = _read_current_club_live(engine, hwnd, ocr)
-    if cur and same_club(cur, target):
-        return dict(ok=True, action='NOOP_JA_NO_CLUBE', current=cur, scrolls=0)
+    if _header_matches_live(engine, hwnd, target, ocr):
+        return dict(ok=True, action='NOOP_JA_NO_CLUBE', scrolls=0)
 
     for step in range(max_scrolls + 1):
         frame, _ = engine.capture_frame(hwnd=hwnd)
@@ -144,9 +144,8 @@ def ensure_club_via_search(target, *, engine, hwnd, adapter, keyboard, control, 
     Requer o adaptador de teclado (keyboard)."""
     if not (isinstance(target, str) and target.strip()):
         return dict(ok=False, action='ALVO_INVALIDO', reason='alvo vazio')
-    cur = _read_current_club_live(engine, hwnd, ocr)
-    if cur and same_club(cur, target):
-        return dict(ok=True, action='NOOP_JA_NO_CLUBE', current=cur)
+    if _header_matches_live(engine, hwnd, target, ocr):
+        return dict(ok=True, action='NOOP_JA_NO_CLUBE')
     frame, _ = engine.capture_frame(hwnd=hwnd)
     if frame is None:
         return dict(ok=False, action='SEM_FRAME', reason='captura falhou')

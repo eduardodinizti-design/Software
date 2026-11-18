@@ -69,11 +69,14 @@ def _embed_grid(ox=600, oy=350, cw=1700, ch=2100):
                      'Tesseract/gabaritos indisponíveis')
 class LiveLogicTests(unittest.TestCase):
     def test_idempotente_quando_ja_no_clube(self):
-        import cv2
-        eng = _Engine(cv2.imread(_INSIDE))             # dentro do Karekas
-        r = ensure_club_live('Karekas Yellow', engine=eng, hwnd=1, adapter=None,
-                             control=BotControl(), ocr=_ocr(), discover_rect=_discover,
-                             dry_run=True)
+        import numpy as np
+        from unittest.mock import patch
+        import operar_troca_clube as m
+        eng = _Engine(np.zeros((10, 10, 3), np.uint8))
+        with patch.object(m, '_header_matches_live', return_value=True):
+            r = m.ensure_club_live('Karekas Yellow', engine=eng, hwnd=1, adapter=None,
+                                   control=BotControl(), ocr=_ocr(), discover_rect=_discover,
+                                   dry_run=True)
         self.assertEqual(r['action'], 'NOOP_JA_NO_CLUBE')
         self.assertTrue(r['ok'])
 
@@ -118,35 +121,35 @@ class SearchFlowTests(unittest.TestCase):
     import numpy as _np
     _FRAME = _np.zeros((100, 100, 3), _np.uint8)
 
-    def _run(self, target, *, current, pt, dry_run=True, control=None, keyboard=None):
+    def _run(self, target, *, matches, pt, dry_run=True, control=None, keyboard=None):
         import operar_troca_clube as m
         from unittest.mock import patch
         eng = _Engine(self._FRAME)
-        with patch.object(m, '_read_current_club_live', return_value=current), \
+        with patch.object(m, '_header_matches_live', return_value=matches), \
              patch.object(m, 'locate_word', return_value=pt):
             return m.ensure_club_via_search(
                 target, engine=eng, hwnd=1, adapter=None, keyboard=keyboard,
                 control=control, ocr=lambda g: '', discover_rect=_discover, dry_run=dry_run)
 
     def test_alvo_invalido(self):
-        self.assertEqual(self._run('  ', current=None, pt=(1, 2))['action'], 'ALVO_INVALIDO')
+        self.assertEqual(self._run('  ', matches=False, pt=(1, 2))['action'], 'ALVO_INVALIDO')
 
     def test_dry_run_planeja_buscar(self):
-        r = self._run('AK Amakha Club', current=None, pt=(2408, 1202))
+        r = self._run('AK Amakha Club', matches=False, pt=(2408, 1202))
         self.assertEqual(r['action'], 'PLANO_BUSCAR')
         self.assertEqual(r['pesquisar_pt'], (2408, 1202))
 
     def test_idempotente(self):
-        r = self._run('Karekas Yellow', current='Karekas Yellow', pt=(1, 2))
+        r = self._run('Karekas Yellow', matches=True, pt=(1, 2))
         self.assertEqual(r['action'], 'NOOP_JA_NO_CLUBE')
 
     def test_sem_busca_quando_pesquisar_nao_achado(self):
-        r = self._run('AK', current=None, pt=None)
+        r = self._run('AK', matches=False, pt=None)
         self.assertEqual(r['action'], 'SEM_BUSCA')
 
     def test_armado_pausado_nao_envia(self):
         from bot_control import BotControl
-        r = self._run('AK', current=None, pt=(10, 20), dry_run=False, control=BotControl())
+        r = self._run('AK', matches=False, pt=(10, 20), dry_run=False, control=BotControl())
         self.assertEqual(r['action'], 'GATE_FECHADO')
 
 

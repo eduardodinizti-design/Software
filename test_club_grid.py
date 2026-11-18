@@ -245,6 +245,27 @@ class FindGridCropOCRTests(unittest.TestCase):
         self.assertAlmostEqual(kar['click'][1], oy + 568, delta=25)
 
 
+class HeaderMatchTests(unittest.TestCase):
+    """header_matches: casa o clube atual por substring SEM espaços (tolera ruído do
+    ícone e quebras do OCR). read_club_header é mockado (não precisa de frame real)."""
+    def _frame(self):
+        import numpy as np
+        return np.zeros((10, 10, 3), np.uint8)
+
+    def test_substring_sem_espaco_tolera_ruido(self):
+        from unittest.mock import patch
+        import club_grid as cg
+        with patch.object(cg, 'read_club_header', return_value='re Karekas Yellow ) (083'):
+            self.assertTrue(cg.header_matches(self._frame(), 'Karekas Yellow', ocr=lambda g: ''))
+            self.assertFalse(cg.header_matches(self._frame(), 'AK Amakha Club', ocr=lambda g: ''))
+
+    def test_header_vazio_nao_casa(self):
+        from unittest.mock import patch
+        import club_grid as cg
+        with patch.object(cg, 'read_club_header', return_value=''):
+            self.assertFalse(cg.header_matches(self._frame(), 'Karekas', ocr=lambda g: ''))
+
+
 _INSIDE = os.path.join('tests', 'fixtures', 'lobby_live', 'karekas-lobby-live-1.png')
 
 

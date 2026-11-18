@@ -232,6 +232,38 @@ def find_grid_crop(frame, *, margin=22):
 _HEADER_ROI = (0.180, 0.158, 0.520, 0.186)   # x0, y0, x1, y1 (y1 exclui a linha do ID)
 
 
+def read_club_header(frame, *, ocr, region=None):
+    """Nome do clube lido do cabeçalho 'Nome / ID do clube' no FRAME CHEIO, ANCORADO
+    no texto constante 'clube' (de 'ID do clube'), e lendo a LINHA ACIMA. Robusto ao
+    tamanho inconsistente do crop do find_lobby_crop. Devolve o nome limpo, ou '' se
+    não há 'ID do clube' à vista (= não estamos dentro de um clube). `region` em frações
+    limita a busca da âncora (default: topo do painel esquerdo)."""
+    import cv2
+    from ocr_locate import locate_word
+    h, w = frame.shape[:2]
+    reg = region or (1900.0 / w, 0.05, 2770.0 / w, 0.20)
+    anchor = locate_word(frame, ['clube', 'clube:'], region=reg)
+    if anchor is None:
+        return ''
+    ax, ay = anchor
+    lh = max(18, int(0.018 * h))
+    y0, y1 = max(0, ay - 2 * lh), max(1, ay - int(0.4 * lh))
+    x0, x1 = max(0, ax - int(0.045 * w)), min(w, ax + int(0.06 * w))
+    raw = ' '.join(ocr(cv2.cvtColor(frame[y0:y1, x0:x1], cv2.COLOR_BGR2GRAY)).split())
+    return clean_club_name(raw)[0]
+
+
+def header_matches(frame, target, *, ocr):
+    """True se o cabeçalho do clube atual CORRESPONDE a `target` — substring SEM espaços
+    (tolera ruído do ícone, quebras e espaços espúrios do OCR). Verificação robusta da
+    troca (e da idempotência): confirma que ENTRAMOS/ESTAMOS no clube-alvo."""
+    tgt = normalize(target).replace(' ', '')
+    if not tgt:
+        return False
+    name = read_club_header(frame, ocr=ocr).casefold().replace(' ', '')
+    return tgt in name
+
+
 def read_current_club(panel_crop, *, ocr):
     """Nome do clube ABERTO, lido do cabeçalho do painel de torneios (caixa 'Nome /
     ID do clube' no topo), já limpo — ou None se não leu. É a VERIFICAÇÃO do
