@@ -9,9 +9,17 @@ Responde às perguntas de estudo que o Eduardo pediu:
 EV aqui é o `delta_bb` REALIZADO por mão (resultado), não EV teórico — é o ledger do que
 aconteceu de fato. Linhas com amostra pequena vêm marcadas (baixa confiança).
 """
-from collections import defaultdict
+import re
+from collections import Counter, defaultdict
 
 MIN_SAMPLE = 20          # abaixo disto, a média de EV da linha é ruído (marcada low_sample)
+
+
+def canonical_id(oid):
+    """Chave canônica do adversário p/ DEDUP (casefold, só alfanumérico): junta
+    variações de CAIXA do OCR do nick (ex.: 'TyTwot' e 'Tytwot'). CONSERVADOR: não
+    funde troca de caractere (o/0, l/1) pra não misturar jogadores distintos."""
+    return re.sub(r'[^a-z0-9]', '', str(oid or '').casefold())
 
 
 def _delta(h):
@@ -24,13 +32,16 @@ def by_opponent(hands):
     em que o adversário esteve na mesa (pelo id do nameplate)."""
     agg = defaultdict(lambda: dict(hands=0, net_bb=0.0, outcomes=defaultdict(int),
                                    hud_last=None, categories=defaultdict(int)))
+    names = defaultdict(Counter)            # canônico -> contagem dos nicks originais
     for h in hands:
         d = _delta(h)
         for o in h.get('opponents', []):
             oid = o.get('id')
-            if not oid:
+            c = canonical_id(oid)           # dedup por caixa/pontuação (OCR)
+            if not c:
                 continue
-            a = agg[oid]
+            names[c][oid] += 1
+            a = agg[c]
             a['hands'] += 1
             if d is not None:
                 a['net_bb'] += d            # resultado do hero NA mão em que o vilão estava
@@ -39,9 +50,13 @@ def by_opponent(hands):
                 a['hud_last'] = o['hud']
             if o.get('category'):
                 a['categories'][o['category']] += 1
-    return {k: dict(hands=v['hands'], net_bb=round(v['net_bb'], 2),
-                    outcomes=dict(v['outcomes']), hud_last=v['hud_last'],
-                    categories=dict(v['categories'])) for k, v in agg.items()}
+    out = {}
+    for c, v in agg.items():
+        disp = names[c].most_common(1)[0][0] if names[c] else c   # nick mais visto = display
+        out[disp] = dict(hands=v['hands'], net_bb=round(v['net_bb'], 2),
+                         outcomes=dict(v['outcomes']), hud_last=v['hud_last'],
+                         categories=dict(v['categories']))
+    return out
 
 
 def by_line(hands, *, min_sample=MIN_SAMPLE):
