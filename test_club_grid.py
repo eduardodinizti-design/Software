@@ -31,6 +31,12 @@ class MatchTests(unittest.TestCase):
         self.assertEqual(m['index'], 0)
         self.assertEqual(m['reason'], 'PREFIXO_TRUNCADO')
 
+    def test_tolera_espaco_espurio_do_ocr(self):
+        # OCR as vezes quebra "Karekas" em "Ka rekas" -> casar sem espacos.
+        m = match_club('Karekas Yellow', ['AK Amakha Club', 'Ka rekas Yellow'])
+        self.assertEqual(m['index'], 1)
+        self.assertEqual(m['reason'], 'EXATO_SEM_ESPACO')
+
     def test_clubes_parecidos_sao_ambiguos(self):
         # dois tiles truncados IDÊNTICOS (ex.: "AK Amakha Club" e "...Club 2", ambos
         # cortados em "AK AMAKHA cl...") -> prefixo casa os dois -> não chuta.

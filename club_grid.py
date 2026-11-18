@@ -59,6 +59,16 @@ def match_club(target, candidates):
     if len(exact) > 1:
         return dict(index=None, name=None, ambiguous=True, reason='EXATO_AMBIGUO')
 
+    # Tolerante a ESPAÇOS espúrios do OCR (ex.: "Ka rekas" por "Karekas"): compara sem
+    # espaços. Clubes distintos continuam distintos sem os espaços.
+    tgt_ns = tgt.replace(' ', '')
+    nospace = [i for i, n in enumerate(norms) if n and n.replace(' ', '') == tgt_ns]
+    if len(nospace) == 1:
+        return dict(index=nospace[0], name=candidates[nospace[0]], ambiguous=False,
+                    reason='EXATO_SEM_ESPACO')
+    if len(nospace) > 1:
+        return dict(index=None, name=None, ambiguous=True, reason='SEM_ESPACO_AMBIGUO')
+
     pref = [i for i, n in enumerate(norms) if n and trunc[i] and tgt.startswith(n)]
     if len(pref) == 1:
         return dict(index=pref[0], name=candidates[pref[0]], ambiguous=False, reason='PREFIXO_TRUNCADO')
