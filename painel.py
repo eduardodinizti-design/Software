@@ -163,8 +163,12 @@ class Painel:
         top = ttk.Frame(f); top.pack(fill='x')
         ttk.Button(top, text='↻ Atualizar', command=self._desemp_refresh).pack(side='left')
         self.kpis = ttk.Frame(f); self.kpis.pack(fill='x', pady=10)
+        ttk.Label(f, text='Evolução — posição por torneio (% do campo; MENOR = melhor; '
+                  'linha laranja = média)', foreground='#aaa').pack(anchor='w')
+        self.chart = tk.Canvas(f, height=150, bg='#1b1b1b', highlightthickness=0)
+        self.chart.pack(fill='x', pady=(2, 8))
         self.dtree = ttk.Treeview(f, columns=('torneio', 'buyin', 'pos', 'itm', 'result'),
-                                  show='headings', height=12)
+                                  show='headings', height=9)
         for c, t, w in (('torneio', 'Torneio', 280), ('buyin', 'Buy-in', 90),
                         ('pos', 'Posição', 100), ('itm', 'ITM', 60), ('result', 'Resultado', 110)):
             self.dtree.heading(c, text=t); self.dtree.column(c, width=w)
@@ -188,6 +192,7 @@ class Painel:
         self._kpi(self.kpis, 'Buy-in médio', '%.1f BB' % s['avg_buyin'] if s['avg_buyin'] is not None else '--')
         self._kpi(self.kpis, 'ITM%', '%.0f%%' % s['itm_pct'] if s['itm_pct'] is not None else '--')
         self._kpi(self.kpis, 'Posição média', '%.0f%% do campo' % s['avg_pos'] if s['avg_pos'] is not None else '--')
+        self._draw_chart(rows)
         for r in rows[-200:][::-1]:
             self.dtree.insert('', 'end', values=(
                 r.get('tournament') or r.get('table_key') or '?',
@@ -195,6 +200,42 @@ class Painel:
                 r.get('ranking') or '--',
                 'Sim' if r.get('itm') else ('Não' if r.get('itm') is not None else '--'),
                 r.get('result') or '--'))
+
+    def _draw_chart(self, rows):
+        """Linha da POSIÇÃO (% do campo) por torneio, no tempo. Menor = melhor
+        (ponto mais alto). Linha laranja = média. Sem matplotlib (Canvas puro).
+        Quando houver PRÊMIO gravado, vira gráfico de lucro/ROI acumulado."""
+        c = self.chart
+        c.delete('all')
+        W = max(c.winfo_width(), 400)
+        H = max(c.winfo_height(), 150)
+        pad = 24
+        serie = [100.0 * r['placed'] / r['field'] for r in rows
+                 if isinstance(r.get('placed'), int) and isinstance(r.get('field'), int) and r['field'] > 0]
+        if not serie:
+            c.create_text(W // 2, H // 2, text='(sem dados de posição ainda)', fill='#777')
+            return
+        # eixo: 0% (topo=melhor) .. 100% (base=pior). faixa ITM ~20%.
+        def X(i):
+            return pad + (W - 2 * pad) * (i / max(len(serie) - 1, 1))
+
+        def Y(v):
+            return pad + (H - 2 * pad) * (min(max(v, 0), 100) / 100.0)
+
+        c.create_line(pad, Y(20), W - pad, Y(20), fill='#2e7d32', dash=(3, 3))  # linha ITM 20%
+        c.create_text(W - pad, Y(20) - 8, text='ITM 20%', fill='#4caf50', anchor='e', font=('Segoe UI', 7))
+        pts = []
+        for i, v in enumerate(serie):
+            pts += [X(i), Y(v)]
+        if len(pts) >= 4:
+            c.create_line(*pts, fill='#5aa9ff', width=2, smooth=True)
+        for i, v in enumerate(serie):
+            col = '#4caf50' if v <= 20 else '#f5f5f5'
+            c.create_oval(X(i) - 2, Y(v) - 2, X(i) + 2, Y(v) + 2, fill=col, outline='')
+        avg = sum(serie) / len(serie)
+        c.create_line(pad, Y(avg), W - pad, Y(avg), fill='#ff7a00', width=1)
+        c.create_text(pad + 2, Y(avg) - 8, text='média %.0f%%' % avg, fill='#ff7a00',
+                      anchor='w', font=('Segoe UI', 7))
 
     # --- aba Controle ---
     def _tab_controle(self, nb):
