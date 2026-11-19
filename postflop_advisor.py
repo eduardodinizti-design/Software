@@ -553,10 +553,27 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
     _cbet_cat = postflop_cbet_bb.cbet_check_category(bclass) if _hia is True else None
     if _cbet_cat:
         caveats = caveats + ['CBET_VS_BB_PERIGO_%s' % _cbet_cat.upper()]
+    # RESOLUÇÃO da tensão de size (aula prática 'c-bet vs BB'): no spot PFR IP vs BB em pote
+    # de raise simples HU, c-beta o range INTEIRO com size 1/3 em QUASE TODOS os flops
+    # (aposta 1 no pote de 3 só precisa passar >25% -> auto-profit; o BB over-folda). EXCEÇÃO:
+    # board baixo CONECTADO (3-8) -> CHECK-RANGE (checa tudo, p/ ter mão forte no turn).
+    _cbet_bb_spot = (_hia is True and n_opp == 1 and pot_type in (None, 'single_raised'))
+    if _cbet_bb_spot and _cbet_cat == 'low_connected':
+        info.update(recommended='check',
+                    sizing=dict(size_bb=0.0, basis='check-range: board baixo conectado (3-8) vs BB',
+                                heuristic=False),
+                    caveats=caveats + ['CBET_VS_BB_CHECK_RANGE_LOW_CONNECTED'])
+        return info
     if strong:
         frac, _plan = _bet_fraction(bclass, made, draws, hero_is_aggressor=_hia)
-        caveats = caveats + ['POSTFLOP_TEXTURA_%s' % _plan['lean'].upper()]
-        sizing = _size(pot, frac, cap, 'valor: %s' % _plan['rationale'])
+        lean_cv = ['POSTFLOP_TEXTURA_%s' % _plan['lean'].upper()]
+        basis = 'valor: %s' % _plan['rationale']
+        if _cbet_bb_spot:                        # vs BB: c-bet 1/3 range (auto-profit), não polariza
+            frac = postflop_texture.SMALL
+            lean_cv = ['CBET_VS_BB_SIZE_1_3']
+            basis = 'valor: c-bet 1/3 range vs BB (auto-profit)'
+        caveats = caveats + lean_cv
+        sizing = _size(pot, frac, cap, basis)
         # B9 (overbet polarizado, EXPLORATÓRIO): com mão NUTADA em rua polar (turn/river),
         # a linha polar inclui OVERBET (>pote). Oferece como OPÇÃO de size; NÃO troca a
         # recomendação (segue 'bet') nem o size primário. Sombra; nunca executa.
@@ -572,12 +589,17 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
     if has_strong_draw and not bluff_blocked:
         frac, _plan = _bet_fraction(bclass, made, draws, hero_is_aggressor=_hia)
         caveats.append('SEMI_BLUFF_NEGA_EQUITY_E_CRESCE_POTE')
-        caveats.append('POSTFLOP_TEXTURA_%s' % _plan['lean'].upper())
-        _om = out_manipulation(made, draws)          # draw forte -> LIMPEZA (size grande)
+        sb_basis = 'semi-blefe: %s' % _plan['rationale']
+        if _cbet_bb_spot:                            # vs BB: 1/3 range
+            frac = postflop_texture.SMALL
+            caveats.append('CBET_VS_BB_SIZE_1_3')
+            sb_basis = 'semi-blefe: c-bet 1/3 range vs BB'
+        else:
+            caveats.append('POSTFLOP_TEXTURA_%s' % _plan['lean'].upper())
+        _om = out_manipulation(made, draws)          # draw forte -> LIMPEZA
         if _om:
             caveats.append('OUT_MANIP_%s' % _om['intent'].upper())
-        info.update(recommended='bet', sizing=_size(pot, frac, cap, 'semi-blefe: %s' % _plan['rationale']),
-                    caveats=caveats)
+        info.update(recommended='bet', sizing=_size(pot, frac, cap, sb_basis), caveats=caveats)
         return info
     if made == 'top_pair' and not (bclass['flush_possible'] or bclass['straightish'] >= 3):
         # FREQUÊNCIA do agressor (Pós-flop Avançado): em board POLAR baixo não-pareado, o

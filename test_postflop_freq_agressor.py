@@ -39,11 +39,19 @@ class FreqAgressor(unittest.TestCase):
         a = advise_postflop(st(6, 0), ['9h', 'Kc'], ['9c', '6d', '2h'])
         self.assertEqual(a['recommended'], 'bet')
 
-    def test_valor_forte_board_polar_continua_apostando(self):
-        # set em board polar NÃO vira check — valor forte polariza grande (2/3)
+    def test_valor_forte_vs_bb_c_beta_1_3_range(self):
+        # RESOLUÇÃO da tensão de size (aula prática c-bet vs BB): set em 962 no spot PFR IP
+        # vs BB c-beta 1/3 RANGE (auto-profit), NÃO polariza grande. Segue sendo bet.
         a = advise_postflop(st(6, 0), ['6c', '6h'], ['9c', '6d', '2h'], aggressor='hero')
         self.assertEqual(a['recommended'], 'bet')
-        self.assertAlmostEqual(a['sizing']['fraction'], tx.BIG, places=2)
+        self.assertAlmostEqual(a['sizing']['fraction'], tx.SMALL, places=2)
+        self.assertIn('CBET_VS_BB_SIZE_1_3', a['caveats'])
+
+    def test_low_connected_check_range_vs_bb(self):
+        # board baixo CONECTADO (642) vs BB -> CHECK-RANGE: até o set checa (balanceia o turn)
+        a = advise_postflop(st(6, 0), ['6c', '6h'], ['6d', '4s', '2h'], aggressor='hero')
+        self.assertEqual(a['recommended'], 'check')
+        self.assertIn('CBET_VS_BB_CHECK_RANGE_LOW_CONNECTED', a['caveats'])
 
 
 class EquityBuckets(unittest.TestCase):
