@@ -34,8 +34,10 @@ def bb_chips(table) -> float | None:
 
 
 def _active(players):
-    """Jogadores NA MÃO: com uid e não sentados fora (_isSittingOut)."""
-    return [p for p in (players or []) if p.get('uid') and not p.get('sit')]
+    """Jogadores NA MÃO = que RECEBERAM cartas nesta mão (_hasCard). Sentados-fora /
+    esperando têm hascard=0 e NÃO entram — senão um assento vazio entre o SB e o BB
+    quebraria a ordem das posições (visto ao vivo: s1/s7 com hascard=0 fora da mão)."""
+    return [p for p in (players or []) if p.get('uid') and p.get('hascard')]
 
 
 def assign_positions(occupied_ids, dealer, sbseat, bbseat):

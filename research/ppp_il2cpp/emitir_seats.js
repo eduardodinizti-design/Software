@@ -21,6 +21,7 @@ function main(){
     class_get_name:nf('il2cpp_class_get_name','pointer',['pointer']), object_get_class:nf('il2cpp_object_get_class','pointer',['pointer']),
     class_get_fields:nf('il2cpp_class_get_fields','pointer',['pointer','pointer']),
     field_get_name:nf('il2cpp_field_get_name','pointer',['pointer']), field_get_offset:nf('il2cpp_field_get_offset','uint32',['pointer']),
+    field_get_type:nf('il2cpp_field_get_type','pointer',['pointer']), type_get_type:nf('il2cpp_type_get_type','int',['pointer']),
   };
   const d=il.domain_get(); il.thread_attach(d);
   const sp=Memory.alloc(PS); const arr=il.domain_get_assemblies(d,sp); const cnt=sp.readU64().toNumber();
@@ -40,6 +41,35 @@ function main(){
   // List<int> (cartas): backing array guarda int32 inline a partir de +0x20
   function intitems(list){ try{ if(list.isNull())return []; const n=list.add(0x18).readS32(); const a=list.add(0x10).readPointer();
     const out=[]; if(!a.isNull()&&n>0&&n<16){ for(let i=0;i<n;i++){ out.push(a.add(0x20+i*4).readS32()); } } return out; }catch(e){ return []; } }
+  // --- CAPTURA ROBUSTA do HoldemManager (sem depender de entrar na mesa) ---
+  // reffields: campos de REFERENCIA (class/object/genericinst) de uma classe. SO
+  // referencia -> nunca lemos value-type como ponteiro (zero deref de lixo = zero
+  // risco de crash no PPPoker). Cache por classe.
+  const refCache={};
+  function reffields(obj){ const cn=clsName(obj); if(refCache[cn])return refCache[cn];
+    const k=il.object_get_class(obj); const it=Memory.alloc(PS); it.writePointer(ptr(0));
+    const out=[]; let f;
+    while(!(f=il.class_get_fields(k,it)).isNull()){
+      try{ const te=il.type_get_type(il.field_get_type(f))&0xff;
+        if(te===0x12||te===0x1c||te===0x15){ out.push({name:cstr(il.field_get_name(f)), off:il.field_get_offset(f)}); }
+      }catch(e){}
+    }
+    refCache[cn]=out; return out; }
+  function isHM(p){ try{ if(!p||p.isNull())return false; const c=il.object_get_class(p); return !c.isNull()&&cstr(il.class_get_name(c))==='HoldemManager'; }catch(e){ return false; } }
+  // Acha o HoldemManager a partir de um objeto raiz (this/dispatcher ou mensagem),
+  // andando SO por campos de referencia. depth limita a recursao; a 2a passada so
+  // entra em campos cujo NOME sugere manager (barato e seguro).
+  function findHM(obj, depth){ try{
+    if(!obj||obj.isNull())return null;
+    if(isHM(obj))return obj;
+    if(depth<=0)return null;
+    const fs=reffields(obj);
+    for(const fd of fs){ let p; try{ p=obj.add(fd.off).readPointer(); }catch(e){ continue; } if(isHM(p))return p; }
+    if(depth>1){ for(const fd of fs){ if(!/manager|game|room|holdem|table|ctrl|logic|module|scene/i.test(fd.name))continue;
+      let p; try{ p=obj.add(fd.off).readPointer(); }catch(e){ continue; } if(p.isNull())continue;
+      const r=findHM(p, depth-1); if(r)return r; } }
+    return null;
+  }catch(e){ return null; } }
 
   function snapshot(hm){ try{
     if(hm.isNull()||clsName(hm)!=='HoldemManager')return;
@@ -62,10 +92,14 @@ function main(){
   let lastHM=null, dbg=0;
   HOOK.forEach(name=>{ const mi=il.class_get_method_from_name(klass, Memory.allocUtf8String(name), 2); if(mi.isNull()){console.log('[emit] (sem metodo '+name+')');return;}
     const addr=mi.readPointer(); if(addr.isNull())return;
-    Interceptor.attach(addr,{ onEnter(args){ try{ const m=args[1]; const cn=clsName(m);
+    Interceptor.attach(addr,{ onEnter(args){ try{ const m=args[1], self=args[0]; const cn=clsName(m);
       if(dbg<50){ dbg++; console.log('[dbg] '+cn); }
-      if(cn==='HoldemManager'){ lastHM=m; snapshot(m); }
-      else { const gm=getp(m,'_gameManager'); if(!gm.isNull()&&clsName(gm)==='HoldemManager'){ lastHM=gm; snapshot(gm); } }
+      if(cn==='HoldemManager'){ lastHM=m; snapshot(m); return; }
+      // CAPTURA ROBUSTA: enquanto nao temos o HM, procura-o a partir do dispatcher
+      // (this) e da mensagem, so por campos de referencia (seguro). Dispatcher fira
+      // em TODA msg -> acha o HM durante o jogo normal (nao precisa entrar na mesa).
+      if(!lastHM){ const hm=findHM(self,3)||findHM(m,2);
+        if(hm){ lastHM=hm; console.log('[emit] HoldemManager capturado via findHM (robusto).'); snapshot(hm); } }
     }catch(e){ console.log('[emit] erro:', e); } }});
   });
   // cacheia o HoldemManager: uma vez pego, re-emite a cada 2s (robusto a baixa atividade)

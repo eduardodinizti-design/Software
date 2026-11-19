@@ -17,10 +17,11 @@ def _card_ints(h):
     return [encode_card(h[0:2]), encode_card(h[2:4])]
 
 
-def _pl(seat, stack_bb, *, bet_bb=0.0, cards=None, sit=0, uid=None, name='v'):
+def _pl(seat, stack_bb, *, bet_bb=0.0, cards=None, sit=0, uid=None, name='v', hascard=1):
+    # villao NA MAO: hascard=1 mesmo sem cartas visiveis (cards=[]); hero tem as 2 cartas.
     return dict(seat=seat, uid=uid or (1000 + seat), name=name,
                 stack=int(stack_bb * _BB), bet=int(bet_bb * _BB),
-                cards=(cards or []), sit=sit, act=0, hascard=bool(cards))
+                cards=(cards or []), sit=sit, act=0, hascard=hascard)
 
 
 def _entry(players, *, dealer, sbseat, bbseat, sb=_SB):
@@ -97,6 +98,16 @@ class BuildTableState(unittest.TestCase):
         self.assertAlmostEqual(bb_bet['seat1'], 0.5)      # SB postou 0.5
         self.assertAlmostEqual(bb_bet['seat2'], 1.0)      # BB postou 1.0
         self.assertAlmostEqual(bb_bet['hero'], 0.0)
+
+    def test_hascard0_fica_fora_da_mao(self):
+        # jogador hascard=0 (esperando/sentado fora) NAO entra nas posicoes (visto ao
+        # vivo: um assento assim entre SB e BB quebraria a ordem)
+        players = [_pl(0, 20, bet_bb=0.5), _pl(2, 25, bet_bb=1.0, cards=_card_ints('AsKd')),
+                   _pl(1, 8, hascard=0)]
+        st, hero = P.build_table_state(_entry(players, dealer=0, sbseat=0, bbseat=2))
+        self.assertEqual(hero, ['As', 'Kd'])
+        self.assertEqual(st['positions']['hero'], 'BB')     # heads-up: s0=SB, s2=BB(hero)
+        self.assertNotIn('seat1', st['positions'])          # fora da mão
 
     def test_abstencoes_explicitas(self):
         ok = [_pl(0, 20), _pl(1, 30), _pl(2, 25, cards=_card_ints('AsKd'))]
