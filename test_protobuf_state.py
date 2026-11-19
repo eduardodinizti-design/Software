@@ -76,6 +76,19 @@ class Positions(unittest.TestCase):
         pos = P.assign_positions([2, 5, 7], dealer=5, sbseat=7, bbseat=2)
         self.assertEqual(pos, {7: 'SB', 2: 'BB', 5: 'BTN'})
 
+    def test_hu_sb_stale_ancora_no_dealer(self):
+        # HU real (torneio 19/11): _nowSmallBlindSeat=s7 ficou STALE (jogador bustou),
+        # ativos=[0,4], dealer=s4, bb=s0. Ancorar no DEALER resolve: s4=SB(botao), s0=BB.
+        # Antes abstinha (sb fora dos ativos) -> HERO_POSITION_UNKNOWN no HU.
+        pos = P.assign_positions([0, 4], dealer=4, sbseat=7, bbseat=0)
+        self.assertEqual(pos, {4: 'SB', 0: 'BB'})
+
+    def test_3handed_sb_stale_ancora_no_dealer(self):
+        # 3-handed com sb stale: ativos=[1,3,6], dealer=6, bb=3 (sb velho s9 fora).
+        # Do dealer(6) em ordem horária: 1=SB, 3=BB, 6=BTN.
+        pos = P.assign_positions([1, 3, 6], dealer=6, sbseat=9, bbseat=3)
+        self.assertEqual(pos, {1: 'SB', 3: 'BB', 6: 'BTN'})
+
     def test_abstem_se_sb_bb_nao_adjacentes(self):
         self.assertEqual(P.assign_positions([0, 1, 2, 3], dealer=0, sbseat=1, bbseat=3), {})
 

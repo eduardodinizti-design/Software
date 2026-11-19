@@ -41,35 +41,32 @@ def _active(players):
 
 
 def assign_positions(occupied_ids, dealer, sbseat, bbseat):
-    """Rotula os assentos (ids numéricos do protobuf) com as posições RangeLab,
-    ancorando no SB e andando no sentido horário (do SB o próximo é o BB). Replica
-    EXATAMENTE a regra de table_reading.dealer_button.derive_positions (labels =
-    ('SB','BB') + _CORE[-n:-2], dealer = BTN por último; heads-up: dealer = SB).
+    """Rotula os assentos ATIVOS (ids numéricos do protobuf) com as posições RangeLab,
+    ancorando no DEALER (botão), em ordem horária, com os rótulos canônicos (_CORE) —
+    igual table_reading.dealer_button.derive_positions (labels=('SB','BB')+_CORE[-n:-2];
+    dealer=BTN por último; heads-up: dealer=SB).
 
-    AUTO-VALIDA: a derivação tem que recair no SB/BB/BTN que o protobuf informou;
-    senão devolve {} (abstém — nunca chuta posição e 'abre gaveta errada')."""
+    Ancora no DEALER, NÃO no SB: o botão está SEMPRE num jogador ativo (confiável),
+    enquanto `_nowSmallBlindSeat`/`_nowBigBlindSeat` do protobuf podem ficar STALE num
+    assento que acabou de bustar (visto no HU: sb apontava p/ um assento fora da mão
+    -> abstinha). Cross-check LEVE com o bbseat quando ele está ativo. Devolve {} se
+    não der (dealer ausente/contagem inválida) — aí abstém, nunca chuta posição."""
     ids = sorted(set(occupied_ids))
     n = len(ids)
-    if n < 2 or n > 9:
+    if n < 2 or n > 9 or dealer not in ids:
         return {}
-    if sbseat not in ids or bbseat not in ids or dealer not in ids:
-        return {}
-    si = ids.index(sbseat)
-    # sentido horário: do SB o PRÓXIMO assento ativo é o BB (asc ou desc com wrap)
-    if ids[(si + 1) % n] == bbseat:
-        step = 1
-    elif ids[(si - 1) % n] == bbseat:
-        step = -1
-    else:
-        return {}                      # SB e BB não são adjacentes na ordem de assentos
-    seq = [ids[(si + step * k) % n] for k in range(n)]   # seq[0]=SB, seq[1]=BB, ...
+    i = ids.index(dealer)
     if n == 2:
-        labels = ('SB', 'BB')          # heads-up: o dealer é o SB
+        order, labels = [ids[i], ids[(i + 1) % n]], ('SB', 'BB')   # HU: o dealer é o SB
     else:
+        order = ids[i + 1:] + ids[:i + 1]          # dealer por ÚLTIMO (BTN)
         labels = ('SB', 'BB') + _CORE[-n:-2]
-        if seq[-1] != dealer:          # o último rótulo é BTN -> tem que ser o dealer
-            return {}
-    return dict(zip(seq, labels))
+    pos = dict(zip(order, labels))
+    # cross-check leve: se o BB do protobuf está ATIVO e não bate, descarta (não chuta).
+    # (se o bbseat também estiver stale/fora dos ativos, ignora e confia no dealer.)
+    if bbseat in ids and pos.get(bbseat) != 'BB':
+        return {}
+    return pos
 
 
 def hero_seat(players):
