@@ -33,8 +33,18 @@ def _arr(hands, keys):
     return [round(sum((hands.get(h) or {}).get(a, 0.0) for a in keys), 4) for h in HANDS]
 
 
+# Buckets nativos do advisor (PreflopAdvisor.STACK_BUCKETS). O nó TEM que ser gravado no
+# bucket nativo mais próximo, senão o lookup (que bucketiza o stack real) nunca o acha
+# (ex.: 70->60, 21->20). 12/15/30/50 já são nativos.
+_BUCKETS = (5, 8, 10, 12, 15, 20, 25, 30, 40, 50, 60, 80, 100)
+
+
+def _snap(stack):
+    return min(_BUCKETS, key=lambda s: abs(s - stack))
+
+
 def _ctx(stack):
-    return dict(mode='chip_ev', format='regular', stage='mid', players=9, stack=stack, spread=None)
+    return dict(mode='chip_ev', format='regular', stage='mid', players=9, stack=_snap(stack), spread=None)
 
 
 def _node_rfi(data):
@@ -63,8 +73,16 @@ def _node_bb_vs_sb_limp(data):
     return hrc_ingest._node(_ctx(data['stack_bb']), 'vs_limp', 'BB', ('SB',), freq, {}, _SOURCE, 'bb')
 
 
-_BUILDERS = {'bb_vs_sb_rfi': _node_bb_vs_sb_rfi, 'bb_vs_sb_limp': _node_bb_vs_sb_limp}
-_DEFER = ('bb_vs_sb_shove',)
+def _node_bb_vs_sb_shove(data):
+    """BB enfrentando open-SHOVE do SB -> call-off (spot vs_open_shove, call/fold)."""
+    freq = {'call': _arr(data['hands'], ['call'])}
+    freq['fold'] = hrc_ingest._derive_fold(freq)
+    return hrc_ingest._node(_ctx(data['stack_bb']), 'vs_open_shove', 'BB', ('SB',), freq, {}, _SOURCE, 'bb')
+
+
+_BUILDERS = {'bb_vs_sb_rfi': _node_bb_vs_sb_rfi, 'bb_vs_sb_limp': _node_bb_vs_sb_limp,
+             'bb_vs_sb_shove': _node_bb_vs_sb_shove}
+_DEFER = ()
 
 
 def build_nodes():
@@ -88,8 +106,36 @@ def build_nodes():
     return nodes, defer
 
 
+# PKO (bounty): INGERE SÓ as páginas de RFI de legenda ÚNICA e cor raise/fold confiável.
+# As páginas de DEFESA (BTN vs CO, etc.) têm CALL (verde) que o transcritor de 2 cores NÃO
+# captou -> ficam DEFERIDAS (precisam re-transcrição 3-cores). Idem as de 2 legendas
+# (coberto-vs-não: não sei qual grid foi captado). Mapa HARDCODED (parsing de prosa é frágil).
+_PKO_RFI = {'bounty_p07_0.json': ('UTG', 100),     # RFI UTG 100bb sem cobrir
+            'bounty_p10_0.json': ('LJ', 29),       # RFI LJ 29bb cobrindo todos
+            'bounty_p13_0.json': ('SB', 21)}       # RFI SB 21bb (blind war) coberto pelo BB
+_PKO_DEFER = 'defesa (call verde não captado) + páginas coberto-vs-não (grid ambíguo)'
+
+
+def build_pko_nodes():
+    nodes = []
+    for fn, (pos, stack) in _PKO_RFI.items():
+        p = os.path.join(REPO, 'strategy_data', 'ranges_pko', fn)
+        if not os.path.exists(p):
+            continue
+        data = json.load(open(p, encoding='utf-8'))
+        freq = {'raise': _arr(data['hands'], ['raise'])}
+        freq['fold'] = hrc_ingest._derive_fold(freq)
+        ctx = dict(mode='pko', format='pko', stage='mid', players=9, stack=_snap(stack), spread=None)
+        nodes.append(hrc_ingest._node(ctx, 'open_raise', pos, (), freq, {},
+                                      {'name': 'reg_life_bounty'}, 'bb'))
+    return nodes
+
+
 def main():
     nodes, defer = build_nodes()
+    pko = build_pko_nodes()
+    nodes += pko
+    print('PKO RFI (bounty) ingeridos: %d  | DEFERIDO: %s' % (len(pko), _PKO_DEFER))
     pack = dict(format='nvt-range-export', version=1, engineCommit='reg-life-transcrito',
                 generatedAt=None, hands=list(HANDS), nodes=nodes, source='reg_life_transcrito')
     json.dump(pack, open(OUT, 'w', encoding='utf-8'), ensure_ascii=False)
