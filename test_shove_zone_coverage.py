@@ -67,5 +67,31 @@ class ShoveZoneCoverage(unittest.TestCase):
             self._decide(hand, st, mode='icm', stage='ft', players=9)
 
 
+    # ---- cold 3bet (open + 3bet) curto: jam premium / fold resto / call-off se all-in ----
+    def test_cold_3bet_short_jam_premium_fold_resto(self):
+        # hero BB enfrenta HJ open 2.0 + CO 3bet 6.0 (cold), 10bb (3bet NAO all-in)
+        st = _ts({'hero': 'BB', 'vhj': 'HJ', 'vco': 'CO'},
+                 {'hero': 10, 'vhj': 10, 'vco': 10},
+                 {'vhj': 2.0, 'vco': 6.0, 'hero': 1.0})
+        self.assertEqual(self._decide(['Qd', 'Qh'], st, mode='icm', stage='ft', players=9)
+                         .get('recommended'), 'all_in')          # QQ 4bet-jam
+        self.assertEqual(self._decide(['Ad', 'Kc'], st, mode='icm', stage='ft', players=9)
+                         .get('recommended'), 'all_in')          # AKo 4bet-jam
+        for h in (['8d', '6d'], ['9h', '8c'], ['Qd', 'Td']):     # resto fold (nao abstem!)
+            self.assertEqual(self._decide(h, st, mode='icm', stage='ft', players=9)
+                             .get('recommended'), 'fold')
+
+    def test_cold_3bet_allin_calloff_premium(self):
+        # CO 3bet ALL-IN (0 fichas ATRAS = stack_bb 0, ja com 6 no pote): premium
+        # CALL-off; resto fold.
+        st = _ts({'hero': 'BB', 'vhj': 'HJ', 'vco': 'CO'},
+                 {'hero': 10, 'vhj': 10, 'vco': 0},
+                 {'vhj': 2.0, 'vco': 6.0, 'hero': 1.0})
+        self.assertEqual(self._decide(['Kd', 'Kc'], st, mode='icm', stage='ft', players=9)
+                         .get('recommended'), 'call')            # KK call-off
+        self.assertEqual(self._decide(['7h', '2d'], st, mode='icm', stage='ft', players=9)
+                         .get('recommended'), 'fold')
+
+
 if __name__ == '__main__':
     unittest.main()

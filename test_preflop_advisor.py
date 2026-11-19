@@ -620,11 +620,12 @@ class SpotInferenceTests(unittest.TestCase):
         s = infer_live_spot(self._state([{'seat': 'x', 'bet_bb': 2.5}]))
         self.assertEqual((s['spot'], s['opener']), ('vs_open', 'BTN'))
 
-    def test_two_distinct_levels_abstain(self):
-        # An open (2.5) and a reraise (7.0): two levels -> a 3bet pot the hero
-        # faces cold, which the pack does not cover.
+    def test_two_distinct_levels_threebet_cold(self):
+        # An open (2.5) and a reraise (7.0): two levels -> a 3bet pot the hero faces
+        # cold (threebet_cold). O pack nao cobre; advise_from_reading decide no SHORT
+        # (jam QQ+/AK, call-off se all-in, resto fold) e abstem no DEEP. Aqui so o spot.
         s = infer_live_spot(self._state([{'seat': 'x', 'bet_bb': 2.5}, {'seat': 'y', 'bet_bb': 7.0}]))
-        self.assertEqual((s['spot'], s['reason']), ('abstain', 'MULTIWAY_OR_3BET_NOT_COVERED'))
+        self.assertEqual((s['spot'], s['reason']), ('threebet_cold', 'MULTIWAY_OR_3BET_NOT_COVERED'))
 
     def test_open_with_caller_is_vs_open_against_the_opener(self):
         # Open (BTN 2.5) plus a caller at the same level (CO 2.5): one raise level,

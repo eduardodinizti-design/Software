@@ -142,7 +142,11 @@ def infer_live_spot(table_state):
         return dict(spot='vs_3bet', opener=opener,
                     allin=_opener_is_shove(table_state, opener, top))
     if scen == 'threebet_cold':
-        return dict(spot='abstain', opener=None, reason='MULTIWAY_OR_3BET_NOT_COVERED')
+        # hero enfrenta open + 3bet (cold). Sem nó -> advise_from_reading decide no
+        # short (jam/call premium, resto fold); deep segue abstendo. allin=3bettor shovou.
+        return dict(spot='threebet_cold', opener=opener,
+                    allin=_opener_is_shove(table_state, opener, top),
+                    reason='MULTIWAY_OR_3BET_NOT_COVERED')
     if scen == 'vs_4bet_or_more':
         return dict(spot='abstain', opener=None, reason='MULTIWAY_OR_4BET_NOT_COVERED')
     # pending: hero abriu sem reraise, ou sequência ambígua -> abstém (motivo legado).
@@ -936,6 +940,29 @@ class PreflopAdvisor:
                     result.setdefault('caveats', []).append('VS_LIMP_SB_BLIND_BATTLE')
             else:
                 result = self.advise_first_in(**base, **kwargs)
+        elif spot['spot'] == 'threebet_cold':
+            # Enfrenta open + 3bet COLD, sem nó validado. ZONA DE SHOVE = jam/fold
+            # TIGHT-SAFE (QQ+/AK): se o 3bet é all-in -> CALL-off (premium paga); senão
+            # 4bet-JAM; resto FOLD. Decisão conservadora de ICM, nunca abstém no short
+            # (Eduardo 19/11: cobrir o contexto). DEEP sem nó -> segue abstendo.
+            if isinstance(_stk, (int, float)) and _stk < SHOVE_ZONE_MAX_BB:
+                try:
+                    hand = hand_key(hero_cards)
+                except Blocked as exc:
+                    return self._abstain(str(exc))
+                _jam = hand in {'AA', 'KK', 'QQ', 'AKs', 'AKo'}
+                if _jam and spot.get('allin'):
+                    rec, flags = 'call', dict(safety_premium=True)      # call-off vs shove
+                elif _jam:
+                    rec, flags = 'all_in', dict(safety_premium_shove=True)  # 4bet-jam
+                else:
+                    rec, flags = 'fold', {}
+                result = dict(status='ADVICE', recommended=rec, validated=False,
+                              spot='threebet_cold', hero_position=base['hero_position'],
+                              hand=hand, hero_cards=list(hero_cards), stack_bb=base.get('stack_bb'),
+                              caveats=['COLD_3BET_PUSHFOLD_TIGHT_SAFE'], **flags)
+            else:
+                return self._abstain(spot.get('reason', 'MULTIWAY_OR_3BET_NOT_COVERED'))
         else:
             return self._abstain(spot.get('reason', 'SPOT_NOT_COVERED'))
         # ÚLTIMO RECURSO — CAMADA NASH SOMBRA: o fluxo normal ABSTEVE num spot de ZONA
