@@ -49,6 +49,18 @@ import protobuf_state
 _PB_STALE_S = 8.0   # estado protobuf mais velho que isso = ignorado (emissor re-emite a cada 2s)
 
 
+def never_fold_free(recommended, br):
+    """REGRA INVIOLÁVEL (Eduardo 18/11): NUNCA clicar FOLD tendo CHECK disponível.
+    Se a recomendação é 'fold' e existe botão CHECK (to_call=0), devolve 'check'.
+    Foldar de graça é sempre pior E dispara a popup 'tem certeza?' do PPPoker que
+    cobre a mesa e TRAVA o bot. Vale pré e pós-flop. Caso contrário, não altera."""
+    if (recommended == 'fold' and isinstance(br, dict)
+            and br.get('status') == 'EXPERIMENTAL_BUTTON_ROW'
+            and any(b.get('action') == 'CHECK' for b in (br.get('buttons') or []))):
+        return 'check'
+    return recommended
+
+
 def _protobuf_preflop_advice(advisor, mode, estado_path=None):
     """Conselho PRE-FLOP a partir do estado PROTOBUF (logs/estado_mesa.json), ou None
     se nao houver estado fresco e INEQUIVOCO desta mesa. SEGURO: 0 mesas frescas = sem
@@ -745,9 +757,13 @@ def main(argv=None):
                             else 'ABSTAIN:%s' % _pb.get('reason')
                         _ocrr = adv.get('recommended') if adv.get('status') == 'ADVICE' \
                             else 'ABSTAIN:%s' % adv.get('reason')
-                        print('[%03d] PARIDADE pre-flop: protobuf=%s | ocr=%s%s'
-                              % (n, _pbr, _ocrr, '' if str(_pbr) == str(_ocrr) else '   <-- DIVERGE'),
-                              flush=True)
+                        _pbhc = ''.join(_pb.get('hero_cards') or []) or '??'
+                        _ocrhc = ''.join(result.get('hero_cards') or []) or '??'
+                        _ocrpos = ((result.get('table_state') or {}).get('positions') or {}).get('hero', '?')
+                        print('[%03d] PARIDADE: PB[%s %s %s]=%s | OCR[%s %s]=%s%s'
+                              % (n, _pbhc, _pb.get('hero_position') or '?', _pb.get('spot') or '?', _pbr,
+                                 _ocrhc, _ocrpos, _ocrr,
+                                 '' if str(_pbr) == str(_ocrr) else '   <-- DIVERGE'), flush=True)
                         if _pb.get('status') == 'ADVICE':
                             adv = dict(_pb, perception='protobuf')   # protobuf PREFERIDO
                             result = dict(result, advice=adv,
@@ -838,6 +854,13 @@ def main(argv=None):
                     result = dict(result, advice=adv)
                     print('[%03d] BLINDAGEM PREMIUM (shove zone): %s sem no -> ALL-IN (jam, nao call)'
                           % (n, result.get('hero_cards')), flush=True)
+                # REGRA INVIOLAVEL: nunca foldar com CHECK disponivel (never_fold_free).
+                _nff = never_fold_free(adv.get('recommended'), br)
+                if _nff != adv.get('recommended'):
+                    print('[%03d] REGRA: fold com CHECK disponivel -> CHECK (evita popup/freeze)'
+                          % n, flush=True)
+                    adv = dict(adv, recommended=_nff)
+                    result = dict(result, advice=adv)
                 _, caveats = map_advice_to_action(adv.get('recommended'))
                 is_raise = 'REQUIRES_SIZING_MULTISTEP' in caveats
                 is_shove = 'ALL_IN' in caveats
