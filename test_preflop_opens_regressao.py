@@ -60,21 +60,29 @@ class TestPreflopOpensRegressao(unittest.TestCase):
                 falhas.append(f'{hand} {pos} {stk}bb: esperado {esperado}, veio {rec}')
         self.assertEqual(falhas, [], 'OPENS REGREDIRAM:\n  ' + '\n  '.join(falhas))
 
-    def test_open_deep_e_executavel_pelas_travas(self):
-        """Pina as travas: um OPEN deep (val=False, bucket>25) NAO pode ser bloqueado
-        pela guarda deep nem pelo gate de raise (fix 18/11). Replica as condicoes do
-        operar_mesa; se alguem re-apertar as travas, isto quebra."""
-        adv = self.adv.advise_first_in(hero_cards=_cards('ATo'), hero_position='HJ',
-                                       stack_bb=100, mode='chip_ev', stage='mid', players=9)
-        spot = adv.get('spot')
-        self.assertEqual(spot, 'open_raise', 'ATo HJ 100 deveria rotear como open_raise')
-        self.assertFalse(adv.get('validated'), 'deep e referencia (val=False) por design')
-        # guarda deep NAO pode pegar opens:
-        guarda_pega = (adv.get('validated') is False and spot not in ('open_raise', 'open_shove'))
-        self.assertFalse(guarda_pega, 'GUARDA DEEP nao pode foldar OPEN (fix 18/11)')
-        # gate de raise NAO pode bloquear opens:
-        gate_bloqueia = (not adv.get('validated') and spot not in ('open_raise', 'open_shove'))
-        self.assertFalse(gate_bloqueia, 'GATE DE RAISE nao pode bloquear OPEN deep (fix 18/11)')
+    def test_cobertura_sem_veto_deep(self):
+        """LEI (Eduardo 18/11): tabelas/RangeLab/solver são REFERÊNCIA, não regra; a
+        referência é AUTORIDADE em QUALQUER bb. Sem trava 'não-validado/deep -> fold/
+        não-executa'. Pina 3 coisas (se alguém re-apertar, QUEBRA):
+        (1) COBERTURA: o advisor pega o bucket mais próximo por EV;
+        (2) os vetos antigos NÃO voltam ao operador (GUARDA DEEP / RAISE não-validado);
+        (3) o contrato dá autoridade REFERENCE a um nó REAL val=False (deep) -> executa."""
+        # (1) cobertura: 95->100, 4->5, 2000->100 (bucket nativo mais próximo)
+        self.assertEqual(self.adv.bucket_stack(95)[0], 100)
+        self.assertEqual(self.adv.bucket_stack(4)[0], 5)
+        self.assertEqual(self.adv.bucket_stack(2000)[0], 100)
+        # (2) vetos removidos do operador (não podem voltar)
+        src = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'operar_mesa.py'),
+                   encoding='utf-8').read()
+        self.assertNotIn('GUARDA DEEP(bucket', src, 'veto cego da guarda deep NAO pode voltar')
+        self.assertNotIn('RAISE de no NAO VALIDADO ->', src, 'bloqueio de raise nao-validado NAO pode voltar')
+        # (3) contrato: CALL de nó REAL val=False (deep) tem autoridade REFERENCE -> executa
+        from decision_contract import evaluate
+        c = evaluate(dict(status='ADVICE', recommended='call', validated=False,
+                          node_id='chip_ev|mid|100|vs_open|BTN|UTG+2|-'),
+                     action='CALL', hero_cards=['As', 'Kc'])
+        self.assertEqual(c['authority'], 'REFERENCE')
+        self.assertTrue(c['execution_allowed'])
 
 
 if __name__ == '__main__':

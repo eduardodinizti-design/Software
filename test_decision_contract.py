@@ -47,10 +47,42 @@ class ContractTests(unittest.TestCase):
         self.assertIn('SEM_LEITURA', c['blockers'])
 
     def test_unvalidated_call_has_no_authority(self):
+        # call val=False e SEM nó real (band-aid/abstenção): segue sem autoridade
         c = evaluate(adv('call', validated=False), action='CALL', hero_cards=CARDS)
         self.assertEqual(c['authority'], 'NONE')
         self.assertFalse(c['execution_allowed'])
         self.assertIn('SEM_AUTORIDADE_VALIDADA', c['blockers'])
+
+    # ---- LEI (Eduardo 18/11): referência é autoridade em qualquer bb ----
+    def test_reference_node_call_executes(self):
+        # CALL de um NÓ REAL da range (val=False: referência/deep) É autoridade REFERENCE
+        # -> executa. A range é a verdade; tabelas/solver são referência, não regra.
+        c = evaluate(adv('call', validated=False, node_id='chip_ev|mid|100|vs_open|BTN|UTG+2|-'),
+                     action='CALL', hero_cards=CARDS)
+        self.assertEqual(c['authority'], 'REFERENCE')
+        self.assertTrue(c['execution_allowed'])
+        self.assertFalse(c['source_validated'])      # REFERENCE != 'validated' (provenância)
+
+    def test_reference_node_call_still_needs_cards(self):
+        # cobertura não dispensa LEITURA: sem cartas, não comita (abstém só por leitura ruim)
+        c = evaluate(adv('call', validated=False, node_id='chip_ev|mid|100|vs_open|BTN|UTG+2|-'),
+                     action='CALL', hero_cards=None)
+        self.assertFalse(c['execution_allowed'])
+        self.assertIn('SEM_LEITURA', c['blockers'])
+
+    def test_fallback_call_with_node_is_not_reference(self):
+        # band-aid (anti-freeze/deep_guard) NÃO vira REFERENCE mesmo com node_id
+        c = evaluate(adv('call', validated=False, fallback=True,
+                         node_id='x|mid|100|vs_open|BTN|UTG|-'), action='CALL', hero_cards=CARDS)
+        self.assertNotEqual(c['authority'], 'REFERENCE')
+
+    def test_postflop_commit_with_node_still_blocked(self):
+        # pós-flop tem trilha própria: nó + phase=postflop NÃO vira REFERENCE no contrato
+        c = evaluate(dict(status='ADVICE', phase='postflop', recommended='call',
+                          validated=False, node_id='solver|flop|..'),
+                     action='CALL', hero_cards=CARDS)
+        self.assertNotEqual(c['authority'], 'REFERENCE')
+        self.assertFalse(c['execution_allowed'])
 
     # ---- R1: fallback/abstain nunca vira validado ----
     def test_fallback_flag_is_not_source_validated(self):

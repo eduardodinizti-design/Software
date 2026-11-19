@@ -768,27 +768,14 @@ def main(argv=None):
                         adv.get('validated'), adv.get('equity'),
                         adv.get('required_equity_icm') or adv.get('required_equity'),
                         adv.get('status'), adv.get('recommended') or adv.get('reason') or ''), flush=True)
-                # GUARDA DEEP NÃO-VALIDADA (erro grave): a base HRC é validada só p/
-                # short (bucket <=25). Em bucket 40/100 (deep) o cérebro usa RANGES DE
-                # REFERÊNCIA NÃO-validados (val=False), largos → cold-call de lixo (Q6o).
-                # Regra: nó deep não-validado NUNCA compromete fichas — só joga o SEGURO
-                # (CHECK grátis senão FOLD). Folds de lixo deep seguem iguais.
-                if br['status'] == 'EXPERIMENTAL_BUTTON_ROW':
-                    _nid = (adv.get('node_id') or '').split('|')
-                    _bkt = int(_nid[2]) if len(_nid) > 2 and _nid[2].isdigit() else None
-                    if (adv.get('validated') is False and _bkt is not None and _bkt > 25
-                            and adv.get('recommended') not in ('fold', 'check', None)
-                            and adv.get('spot') not in ('open_raise', 'open_shove')):
-                        _hc = any(b.get('action') == 'CHECK' for b in br.get('buttons', []))
-                        _safe = 'check' if _hc else 'fold'
-                        print('[%03d] GUARDA DEEP(bucket %s nao-validado): %s -> SEGURO %s'
-                              % (n, _bkt, adv.get('recommended'), _safe), flush=True)
-                        # B04: NÃO fabrica validated=True. O seguro (check/fold) é piso
-                        # de não-commit -> o contrato autoriza por SAFETY_NONCOMMIT, sem
-                        # mentir que o cérebro validou. Mantém validated=False + flag.
-                        adv = dict(adv, recommended=_safe, status='ADVICE',
-                                   validated=False, phase='preflop', deep_guard=True)
-                        result = dict(result, advice=adv)
+                # COBERTURA (Eduardo 18/11, LEI): tabelas/RangeLab/solver sao REFERENCIA,
+                # nao regra. O bot pega o bucket MAIS PROXIMO por EV (bucket_stack ja faz:
+                # 95->100, 50->50, 4->5, 2000->100) e JOGA a decisao da range — em QUALQUER
+                # profundidade. NAO existe trava "no nao-validado/deep -> fold". A antiga
+                # GUARDA DEEP foldava decisoes certas, CEGA pra carta (AK 3bet deep virava
+                # fold) — REMOVIDA. Lixo (Q6o) e controlado pela PROPRIA range (que nao o
+                # lista como call), nunca por marreta. Abstencao so por LEITURA ruim
+                # (cartas/board ilegiveis), que e outra coisa.
                 # PREMIUM NO SHOVE ZONE = JAM (regra do Eduardo: "era shove claro").
                 # Multiway curto não tem nó validado -> o cérebro abstém (SHOVE_ZONE).
                 # Premium curto manda ALL-IN, NUNCA paga. Roteia pelo sequenciador de
@@ -824,18 +811,11 @@ def main(argv=None):
                               % (n, tmult, (pr and pr['label']) or '?'), flush=True)
                     elif not control.execution_allowed():
                         print('[%03d] RAISE mas BOT PAUSADO' % n, flush=True)
-                    elif (not adv.get('validated') and not adv.get('safety_premium_shove')
-                          and not adv.get('posflop_exec')
-                          and adv.get('spot') not in ('open_raise', 'open_shove')):
-                        # Autorização única também no RAISE: nó não validado
-                        # (referência/deep) não dispara a sequência armada (só estuda).
-                        # EXCEÇÕES: safety_premium_shove (premium curto sem nó),
-                        # posflop_exec (--posflop) e OPEN (open_raise/open_shove): o range
-                        # de OPEN de referência é padrão/seguro -> o bot ABRE em mesa deep
-                        # (Eduardo 18/11: foldava ATo HJ 100bb). Cold-call/3bet deep seguem
-                        # bloqueados (spot vs_open/squeeze, não open).
-                        print('[%03d] RAISE de no NAO VALIDADO -> nao executa (so estuda)' % n, flush=True)
                     else:
+                        # COBERTURA (Eduardo 18/11): referencia manda. RAISE de nó deep/
+                        # não-validado EXECUTA (não é "só estuda"). A range é a autoridade
+                        # em qualquer bb; sem trava val-based aqui. Segue gated por
+                        # ARME + pausa + alvo de size + dedup (raise_done).
                         seq = RaiseSequencer(capture=lambda h=hwnd: engine.capture_frame(hwnd=h),
                                              window_rect=lambda h=hwnd: _discover_rect(h),
                                              input_adapter=adapter, target_mult=tmult,

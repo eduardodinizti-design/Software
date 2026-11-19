@@ -84,6 +84,15 @@ def evaluate(advice, *, action, hero_cards=None, action_available=True,
     is_fallback = bool(advice.get('fallback') or advice.get('deep_guard'))
     is_premium = advice.get('safety_premium') is True
 
+    has_node = bool(advice.get('node_id'))
+    is_postflop = advice.get('phase') == 'postflop'
+    # REFERENCE (Eduardo 18/11, LEI): decisão vinda de um NÓ REAL da range (validado OU
+    # referência; bucket emprestado p/ COBERTURA é OK) é AUTORIDADE em QUALQUER bb. As
+    # tabelas/RangeLab/solver são referência, não regra — a range é a verdade. Exclui
+    # band-aid (fallback/deep_guard), rótulo premium e pós-flop (trilha própria).
+    reference_authority = (advice.get('status') == 'ADVICE' and has_node
+                           and not is_fallback and not is_premium and not is_postflop)
+
     source_validated = (advice.get('validated') is True and not borrowed
                         and not is_fallback and not is_premium)
     context_match = (advice.get('status') == 'ADVICE' and not borrowed
@@ -134,6 +143,8 @@ def evaluate(advice, *, action, hero_cards=None, action_available=True,
 
     if source_validated and context_match:
         authority = 'VALIDATED'
+    elif reference_authority and not is_calloff:
+        authority = 'REFERENCE'          # nó real da range manda (cobertura, qualquer bb)
     elif calloff_authority:
         authority = 'CALL_OFF'
     elif is_premium and action == 'CALL' and _is_premium_cards(hero_cards):
