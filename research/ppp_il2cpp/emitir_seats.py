@@ -10,12 +10,16 @@ import frida
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, "..", ".."))   # portátil: _repo_software
+if REPO not in sys.path:
+    sys.path.insert(0, REPO)   # p/ importar ppp_cards sob `python -I`
 OUT = os.path.join(REPO, "logs", "live_seats.json")
 RICH = os.path.join(REPO, "logs", "live_seats_rich.json")
+ESTADO = os.path.join(REPO, "logs", "estado_mesa.json")   # estado COMPLETO p/ percepcao protobuf
 SECONDS = float(sys.argv[1]) if len(sys.argv) > 1 else 0.0
 
 _tables = {}        # ref -> {seat: uid}
 _rich = {}          # ref -> {room, players:[...]}
+_estado = {}        # ref -> {ts, room, table:{dealer,sb/bb seats,sb,...}, players:[full]}
 
 
 def _write_atomic(path, obj):
@@ -36,12 +40,19 @@ def on_msg(m, data):
         return
     ref = p.get("ref") or "?"
     players = p.get("players") or []
+    table = p.get("table") or {}
     _tables[ref] = {str(pl["seat"]): str(pl["uid"]) for pl in players if pl.get("uid")}
     _rich[ref] = {"room": p.get("room", ""), "players": players}
+    _estado[ref] = {"ts": time.time(), "room": p.get("room", ""), "table": table, "players": players}
     _write_atomic(OUT, _tables)
     _write_atomic(RICH, _rich)
-    names = ", ".join("s%s=%s(%s)" % (pl.get("seat"), pl.get("name"), pl.get("uid")) for pl in players)
-    print("[emit] mesa %s: %d jogadores -> %s" % (ref, len(players), names), flush=True)
+    _write_atomic(ESTADO, _estado)
+    # validacao ao vivo: dealer + cartas do heroi (quem tem 2 cartas face-up)
+    hero = next((pl for pl in players if pl.get("cards") and len(pl["cards"]) == 2), None)
+    from ppp_cards import decode_cards  # decodifica int->'Qh'
+    hc = (" | HERO s%s cards=%s" % (hero.get("seat"), " ".join(decode_cards(hero["cards"])))) if hero else ""
+    print("[emit] mesa %s: %dj dealer=s%s sb=%s%s" % (
+        ref, len(players), table.get("dealer"), table.get("sb"), hc), flush=True)
 
 
 def main():

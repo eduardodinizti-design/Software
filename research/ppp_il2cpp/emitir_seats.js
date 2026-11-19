@@ -37,6 +37,9 @@ function main(){
   function getp(obj,name){ const o=offs(obj); return o[name]!==undefined?obj.add(o[name]).readPointer():ptr(0); }
   function items(list){ try{ if(list.isNull())return []; const n=list.add(0x18).readS32(); const a=list.add(0x10).readPointer();
     const out=[]; if(!a.isNull()&&n>0&&n<64){ for(let i=0;i<Math.min(n,9);i++){ const p=a.add(0x20+i*PS).readPointer(); if(!p.isNull())out.push(p); } } return out; }catch(e){ return []; } }
+  // List<int> (cartas): backing array guarda int32 inline a partir de +0x20
+  function intitems(list){ try{ if(list.isNull())return []; const n=list.add(0x18).readS32(); const a=list.add(0x10).readPointer();
+    const out=[]; if(!a.isNull()&&n>0&&n<16){ for(let i=0;i<n;i++){ out.push(a.add(0x20+i*4).readS32()); } } return out; }catch(e){ return []; } }
 
   function snapshot(hm){ try{
     if(hm.isNull()||clsName(hm)!=='HoldemManager')return;
@@ -44,8 +47,16 @@ function main(){
     const pl=getp(hm,'_playerDataList'); const its=items(pl); if(!its.length)return;
     const players=[]; its.forEach(pd=>{ const uid=geti(pd,'_uid'); if(!uid)return;
       players.push({seat:geti(pd,'_seatId'), uid:uid, name:(u16(getp(pd,'_name'))||'').trim(),
-                    stack:geti(pd,'_handChips'), sit:geti(pd,'_isSittingOut')}); });
-    if(players.length) send({t:'seats', ref:ref, room:(u16(getp(hm,'_roomName'))||''), players:players});
+                    stack:geti(pd,'_handChips'), sit:geti(pd,'_isSittingOut'),
+                    // --- estado completo p/ percepcao (pre-flop): aposta, acao, cartas ---
+                    bet:geti(pd,'_betChips'), act:geti(pd,'_actionType'),
+                    hascard:geti(pd,'_hasCard'), cards:intitems(getp(pd,'_handCardsCode'))}); });
+    if(!players.length)return;
+    // nivel-mesa: dealer/SB/BB (posicoes) + blind (bb = 2*sb)
+    const table={dealer:geti(hm,'_nowDealerSeat'), sbseat:geti(hm,'_nowSmallBlindSeat'),
+                 bbseat:geti(hm,'_nowBigBlindSeat'), sb:geti(hm,'_smallBlind'),
+                 minraise:geti(hm,'_myMinBetRaiseChips'), maxraise:geti(hm,'_myMaxBetRaiseChips')};
+    send({t:'seats', ref:ref, room:(u16(getp(hm,'_roomName'))||''), table:table, players:players});
   }catch(e){ console.log('[emit] erro snap:', e); } }
 
   let lastHM=null, dbg=0;
