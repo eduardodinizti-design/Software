@@ -302,10 +302,14 @@ class RaiseSequencer:
                 return self._unknown('PRESET_CANCELADO', out_b)   # o abrir já saiu -> desconhecido
         self._sleep(0.25)
 
-        # C) confirmar — relê o painel FRESCO; NUNCA reusa o anterior
-        panel2 = self._read_panel_fresh()
-        if not panel2 or panel2.get('status') != 'EXPERIMENTAL_RAISE_PANEL' \
-                or not panel2.get('confirm'):
+        # C) confirmar — relê painel+slider FRESCOS; NUNCA reusa o anterior.
+        # ACEITA o painel de STACK CURTO (shove): confirm + slider SLIDER_FOUND, com
+        # status != EXPERIMENTAL_RAISE_PANEL (mesmo critério do _panel_open). Antes aqui
+        # exigia EXPERIMENTAL_RAISE_PANEL e o all-in (depois de arrastar a barra) morria
+        # em CONFIRMAR_SEM_PAINEL sem clicar o confirmar (feedback do Eduardo: "arrastou
+        # a barra e não concluiu"). O _tf_confirm já clica o confirmar nos dois layouts.
+        panel2, slider2 = self._read_panel_slider_fresh()
+        if not self._panel_open(panel2, slider2) or not panel2.get('confirm'):
             return self._unknown('CONFIRMAR_SEM_PAINEL', out_b)
         # A4: antes de confirmar, confere que o preset pretendido ainda está no painel
         # relido (pega painel trocado / rótulo mis-OCR entre etapas). Só BARRA, nunca

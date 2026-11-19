@@ -84,6 +84,18 @@ def _rp_of(world):
     return rp
 
 
+def _rp_short(world):
+    """read_panel do painel de STACK CURTO (shove): status NÃO-experimental, mas com
+    confirm presente + 1 preset ('2x'). Com slider SLIDER_FOUND, _panel_open aceita."""
+    def rp(crop):
+        if world.phase() == 'PANEL':
+            return dict(status='NO_RAISE_PANEL',
+                        confirm=dict(box=[555, 1240, 180, 70]),
+                        presets=[dict(mult=2.0, label='2x', box=[400, 1139, 80, 50])])
+        return dict(status='NO_RAISE_PANEL', presets=[], confirm=None)
+    return rp
+
+
 class _Control:
     def __init__(self, running=True):
         self.running = running
@@ -265,6 +277,33 @@ class ShortStackShovePanelReal(unittest.TestCase):
         # Com 1 preset so, o alvo-sentinela do shove roteia plan_raise -> SHOVE.
         self.assertEqual(plan_raise(1000.0, [dict(mult=2.0, label='2x',
                                                   box=[0, 0, 10, 10])])['kind'], 'SHOVE')
+
+
+class ShortStackShoveRunFakes(unittest.TestCase):
+    """REGRESSAO (bug ao vivo 18/11): no shove de stack curto o painel NAO e
+    EXPERIMENTAL_RAISE_PANEL (so confirm+slider). O passo C (confirmar) exigia
+    EXPERIMENTAL_RAISE_PANEL e o all-in MORRIA em CONFIRMAR_SEM_PAINEL depois de
+    arrastar a barra (Eduardo: 'arrastou a barra e nao concluiu'). Agora o passo C
+    aceita o painel curto (mesmo criterio do _panel_open) e o shove FECHA ate confirmar.
+    Roda o run() INTEIRO com fakes (sem fixture)."""
+
+    def test_shove_painel_curto_fecha_ate_confirmar(self):
+        world = World()
+        inp = WInput(world)
+        seq = RaiseSequencer(capture=_capture_of(world), window_rect=WIN, input_adapter=inp,
+                             target_mult=25.0, max_tables=6, sleep=lambda s: None,
+                             read_actions=_ra_of(world), read_panel=_rp_short(world),
+                             detect=_detect, hand='H1',
+                             read_hand=lambda c: {'hand_id': 'H1'},
+                             read_slider=_slider_of(found=True))
+        out = seq.run()
+        self.assertTrue(out['ok'], out)                     # antes do fix: CONFIRMAR_SEM_PAINEL
+        self.assertEqual(out['preset'], 'ALL_IN')
+        self.assertTrue(out['confirmed'])
+        whats = [e[0] for e in out['log'] if isinstance(e[0], str)]
+        self.assertIn('ABRIR', whats)
+        self.assertIn('ALLIN_SLIDER', whats)
+        self.assertIn('CONFIRMAR', whats)                   # <- antes do fix NUNCA chegava
 
 
 if __name__ == '__main__':
