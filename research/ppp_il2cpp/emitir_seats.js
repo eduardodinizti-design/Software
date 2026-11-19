@@ -59,17 +59,28 @@ function main(){
   // Acha o HoldemManager a partir de um objeto raiz (this/dispatcher ou mensagem),
   // andando SO por campos de referencia. depth limita a recursao; a 2a passada so
   // entra em campos cujo NOME sugere manager (barato e seguro).
-  function findHM(obj, depth){ try{
-    if(!obj||obj.isNull())return null;
-    if(isHM(obj))return obj;
-    if(depth<=0)return null;
+  // hero presente = algum assento com 2 cartas validas (so o hero fica face-up).
+  function heroCards(hm){ try{ const its=items(getp(hm,'_playerDataList'));
+    for(const pd of its){ const c=intitems(getp(pd,'_handCardsCode')); let v=0;
+      for(const x of c){ const r=x&0xff; if(r>=2&&r<=14)v++; } if(v>=2)return true; } return false; }catch(e){ return false; } }
+  function dealtCount(hm){ try{ const its=items(getp(hm,'_playerDataList')); let n=0;
+    for(const pd of its){ if(geti(pd,'_hasCard'))n++; } return n; }catch(e){ return 0; } }
+  // coleta HoldemManagers alcancaveis (so campos de referencia, bounded).
+  function collectHM(obj, depth, acc){ try{
+    if(!obj||obj.isNull()||acc.length>=12)return;
+    if(isHM(obj)){ acc.push(obj); return; }
+    if(depth<=0)return;
     const fs=reffields(obj);
-    for(const fd of fs){ let p; try{ p=obj.add(fd.off).readPointer(); }catch(e){ continue; } if(isHM(p))return p; }
-    if(depth>1){ for(const fd of fs){ if(!/manager|game|room|holdem|table|ctrl|logic|module|scene/i.test(fd.name))continue;
-      let p; try{ p=obj.add(fd.off).readPointer(); }catch(e){ continue; } if(p.isNull())continue;
-      const r=findHM(p, depth-1); if(r)return r; } }
-    return null;
-  }catch(e){ return null; } }
+    for(const fd of fs){ let p; try{ p=obj.add(fd.off).readPointer(); }catch(e){ continue; } if(p.isNull())continue;
+      if(isHM(p)){ acc.push(p); continue; }
+      if(depth>1 && /manager|game|room|holdem|table|ctrl|logic|module|scene|current|active|list/i.test(fd.name)){
+        collectHM(p, depth-1, acc); } }
+  }catch(e){} }
+  // melhor HM = o da MESA ATIVA: prefere com HERO (2 cartas), senao mais dealt.
+  function bestHM(self, m){ const acc=[]; collectHM(self,3,acc); collectHM(m,2,acc);
+    let best=null, score=-1;
+    for(const hm of acc){ const s=(heroCards(hm)?1000:0)+dealtCount(hm); if(s>score){ score=s; best=hm; } }
+    return best; }
 
   function snapshot(hm){ try{
     if(hm.isNull()||clsName(hm)!=='HoldemManager')return;
@@ -95,11 +106,12 @@ function main(){
     Interceptor.attach(addr,{ onEnter(args){ try{ const m=args[1], self=args[0]; const cn=clsName(m);
       if(dbg<50){ dbg++; console.log('[dbg] '+cn); }
       if(cn==='HoldemManager'){ lastHM=m; snapshot(m); return; }
-      // CAPTURA ROBUSTA: enquanto nao temos o HM, procura-o a partir do dispatcher
-      // (this) e da mensagem, so por campos de referencia (seguro). Dispatcher fira
-      // em TODA msg -> acha o HM durante o jogo normal (nao precisa entrar na mesa).
-      if(!lastHM){ const hm=findHM(self,3)||findHM(m,2);
-        if(hm){ lastHM=hm; console.log('[emit] HoldemManager capturado via findHM (robusto).'); snapshot(hm); } }
+      // RASTREIA A MESA ATIVA: se nao temos HM OU o atual perdeu o hero (fim da mao /
+      // trocou de mesa no rebalanceamento), re-escolhe o melhor HM (o do hero). Barato:
+      // so re-busca quando o lastHM nao tem hero. Dispatcher fira em TODA msg.
+      if(!lastHM || !heroCards(lastHM)){ const hm=bestHM(self,m);
+        if(hm && hm!==lastHM && (heroCards(hm) || !lastHM)){
+          lastHM=hm; console.log('[emit] HM da mesa ATIVA (hero='+heroCards(hm)+', dealt='+dealtCount(hm)+')'); snapshot(hm); } }
     }catch(e){ console.log('[emit] erro:', e); } }});
   });
   // cacheia o HoldemManager: uma vez pego, re-emite a cada 2s (robusto a baixa atividade)
