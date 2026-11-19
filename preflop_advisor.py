@@ -1006,7 +1006,11 @@ class PreflopAdvisor:
                     mode=kwargs.get('mode', 'chip_ev'), stage=kwargs.get('stage', 'mid'),
                     shove_spot=shove_spot, villain_vs=villain_vs, bounty_bb=bb_eff,
                     villain_stats=vstats,
-                    villain_stack_bb=((table_state.get('seats') or {}).get(vseat) or {}).get('stack_bb'))
+                    villain_stack_bb=((table_state.get('seats') or {}).get(vseat) or {}).get('stack_bb'),
+                    table_stacks=[(s or {}).get('stack_bb')
+                                  for s in (table_state.get('seats') or {}).values()
+                                  if isinstance((s or {}).get('stack_bb'), (int, float))
+                                  and (s or {}).get('stack_bb') > 0])
                 if isinstance(co, dict):
                     if bcav:
                         co.setdefault('caveats', []).append(bcav)
@@ -1186,7 +1190,7 @@ class PreflopAdvisor:
     def advise_call_off(self, *, hero_cards, hero_position, villain_position, stack_bb,
                         to_call_bb, pot_bb, mode='chip_ev', stage='mid', shove_spot='3bet_shove',
                         villain_vs=None, bounty_bb=None, villain_stats=None,
-                        villain_stack_bb=None, iters=6000, seed=0):
+                        villain_stack_bb=None, table_stacks=None, iters=6000, seed=0):
         """Call-off SINTETIZADO por equity quando falta o nó validado da decisão.
 
         Pago se a equity da minha mão contra o range de shove (Nash) do vilão >=
@@ -1251,7 +1255,8 @@ class PreflopAdvisor:
         if villain_stack_bb is not None and mode in ('icm', 'pko_icm'):
             import icm_rp
             rp = icm_rp.risk_premium(mode, stage, hero_stack=stack_bb,
-                                     villain_stack=villain_stack_bb, to_call_bb=to_call_bb)
+                                     villain_stack=villain_stack_bb, to_call_bb=to_call_bb,
+                                     table_stacks=table_stacks)
             risk_adv = icm_rp.risk_advantage(stage, stack_bb, villain_stack_bb)
         else:
             rp = _icm_risk_premium(mode, stage, to_call_bb, stack_bb)

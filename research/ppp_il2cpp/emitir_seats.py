@@ -1,12 +1,41 @@
 """Emissor de ASSENTOS (READ-ONLY): anexa no PPPoker, le os jogadores sentados
 (uid+nick+stack por assento) e grava logs/live_seats.json {table_ref: {seat: uid}}
 + um sidecar logs/live_seats_rich.json (com nick/stack) p/ depuracao/plano vivo."""
-import os, sys, json, time, tempfile
+import os, sys, json, time, tempfile, signal
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 except Exception:
     pass
 import frida
+
+# --- DESLIGAMENTO LIMPO (Eduardo 19/11: "fechar o bot dá fatal error no PPPoker") -------
+# Host Frida morto no OSSO deixa os hooks IL2CPP pendurados no PPPoker -> CRASH. Então:
+#  (a) tratamos SIGBREAK/SIGTERM/SIGINT como "pare e desanexe limpo";
+#  (b) vigiamos o PAI (launcher): se ele morrer de qualquer jeito (Ctrl+C, fechar janela,
+#      kill), nós mesmos fazemos script.unload()+session.detach() antes de sair.
+_PARENT = int(os.environ.get("NVT_PARENT_PID", "0") or 0)
+_stop = {"flag": False}
+
+
+def _request_stop(*_a):
+    _stop["flag"] = True
+
+
+def _parent_gone():
+    if not _PARENT:
+        return False
+    try:
+        import psutil
+        return not psutil.pid_exists(_PARENT)
+    except Exception:
+        return False
+
+
+for _s in ("SIGBREAK", "SIGTERM", "SIGINT"):
+    try:
+        signal.signal(getattr(signal, _s), _request_stop)
+    except Exception:
+        pass
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, "..", ".."))   # portátil: _repo_software
@@ -88,18 +117,25 @@ def main():
         sc = s.create_script(fh.read())
     sc.set_log_handler(lambda l, t: print(t, flush=True))
     sc.on("message", on_msg)
+    s.on("detached", lambda *a: _request_stop())   # PPPoker fechou -> para sem tentar detach morto
     sc.load()
     print("[emit] anexado (pid %d). Gravando %s. Ctrl+C p/ sair." % (procs[0].pid, OUT), flush=True)
     t0 = time.time()
     try:
-        while not SECONDS or (time.time() - t0) < SECONDS:
+        while not _stop["flag"] and (not SECONDS or (time.time() - t0) < SECONDS):
+            if _parent_gone():
+                print("[emit] launcher encerrou -> desanexando LIMPO.", flush=True)
+                break
             time.sleep(0.5)
     except KeyboardInterrupt:
         pass
     finally:
+        # unload ANTES do detach: reverte os hooks IL2CPP com a conexão viva -> sem crash.
+        try: sc.unload()
+        except Exception: pass
         try: s.detach()
         except Exception: pass
-    print("[emit] fim. Mesas capturadas:", list(_tables.keys()), flush=True)
+    print("[emit] fim (desanexado limpo). Mesas capturadas:", list(_tables.keys()), flush=True)
 
 
 if __name__ == "__main__":

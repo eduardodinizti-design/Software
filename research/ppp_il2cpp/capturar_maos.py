@@ -10,6 +10,7 @@ Uso:
 """
 import argparse
 import os
+import signal
 import sys
 import time
 from datetime import datetime
@@ -18,6 +19,32 @@ try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 except Exception:
     pass
+
+# --- DESLIGAMENTO LIMPO (Eduardo 19/11): host Frida morto no osso -> PPPoker fatal error.
+# SIGBREAK/SIGTERM/SIGINT => parar e desanexar; e se o PAI (launcher) morrer, desanexa só.
+_PARENT = int(os.environ.get("NVT_PARENT_PID", "0") or 0)
+_GSTOP = {"flag": False}
+
+
+def _request_stop(*_a):
+    _GSTOP["flag"] = True
+
+
+def _parent_gone():
+    if not _PARENT:
+        return False
+    try:
+        import psutil
+        return not psutil.pid_exists(_PARENT)
+    except Exception:
+        return False
+
+
+for _s in ("SIGBREAK", "SIGTERM", "SIGINT"):
+    try:
+        signal.signal(getattr(signal, _s), _request_stop)
+    except Exception:
+        pass
 
 _REPO = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
 if _REPO not in sys.path:
@@ -78,13 +105,21 @@ def run_once(dev, args, sink):
     print(f"[cap] conectado ao PPPoker (pid {procs[0].pid}). Salvando em: {sink.base}")
     t0 = time.time()
     try:
-        while not stop["flag"]:
+        while not stop["flag"] and not _GSTOP["flag"]:
             if args.seconds and (time.time() - t0) >= args.seconds:
                 stop["reason"] = "tempo"; break
+            if _parent_gone():
+                _GSTOP["flag"] = True
+                stop["reason"] = "launcher_encerrou"; break
             time.sleep(0.5)
     finally:
         try:
             acc.on_hand_over()      # fecha a mão em aberto
+        except Exception:
+            pass
+        # unload ANTES do detach: reverte os hooks IL2CPP com a conexão viva -> sem crash.
+        try:
+            script.unload()
         except Exception:
             pass
         try:
@@ -109,15 +144,21 @@ def main():
     sink = HandTextSink(base=args.base)
     print(f"[cap] CAPTURADOR DE MÃOS (READ-ONLY). Torneio='{args.tournament}'. Ctrl+C p/ sair.")
     try:
-        while True:
+        while not _GSTOP["flag"]:
             reason = run_once(dev, args, sink)
+            if _GSTOP["flag"] or reason == "launcher_encerrou":
+                print("[cap] encerrando LIMPO (launcher/sinal).")
+                break
             if args.seconds and reason == "tempo":
                 break
             if reason == "sem_processo":
                 print("[cap] PPPoker fechado — aguardando abrir...")
             else:
                 print(f"[cap] desconectado ({reason}) — tentando reconectar em 3s...")
-            time.sleep(3)
+            for _ in range(6):               # ~3s, mas acordando p/ sinal/pai
+                if _GSTOP["flag"] or _parent_gone():
+                    _GSTOP["flag"] = True; break
+                time.sleep(0.5)
     except KeyboardInterrupt:
         pass
     print(f"\n[cap] fim. Total salvo nesta execução: {sink.count} mão(s) em {len(sink.written)} arquivo(s).")

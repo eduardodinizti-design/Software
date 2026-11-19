@@ -11,12 +11,14 @@ validada à parte (igual ao pré-flop, que só clicou depois de aconselhar).
 `advise_postflop(table_state, hero, board, ...)` devolve o mesmo formato de
 contrato do pré-flop: status ADVICE/ABSTAIN, `recommended`, métricas e `caveats`.
 """
+import postflop_texture
+import postflop_cbet_bb
 from postflop_eval import classify_board, hand_strength, narrow_to_continuation
 from preflop_equity import required_equity, equity_vs_range, hand_to_combos
 from hud_exploit import classify_villain, exploit_caveats
 from multiway_equity import (apply_multiway_penalty, cbet_bluff_blocked,
                              count_opponents, penalty_pct)
-from postflop_adjustments import (geometric_bet_pct, geometric_street_plan,
+from postflop_adjustments import (geometric_bet_pct, geometric_street_plan, out_manipulation,
                                   pool_adjusted_mdf, remaining_streets, scare_present)
 
 BASE_CAVEATS = ('EXPLORATORY_NOT_FOR_EXECUTION', 'POSTFLOP_HEURISTIC_NO_SOLVER',
@@ -125,20 +127,18 @@ def _implied_bb(street, pot, hero_stack, to_call, draws):
     return round(raw, 2)
 
 
-def _bet_fraction(bclass, made, draws):
-    """Fração do pote para apostar, por vantagem de range/nuts (poucos sizes/rua).
+def _bet_fraction(bclass, made, draws, hero_is_aggressor=None):
+    """Fração do pote por TEXTURA do board (Pós-flop Avançado — postflop_texture): board
+    alto/pareado seco = range-bet pequeno; board baixo não-pareado = polariza grande;
+    molhado = grande (proteção). Devolve (fraction, plan). O plan traz lean/nuts p/ caveat.
 
-    - Valor com vantagem de nuts / board molhado ou pareado -> grande (~0.75).
-    - Valor em board seco (vantagem de range, range mesclado) -> pequeno (~0.33).
-    - Semi-blefe com draw forte -> médio (~0.5).
-    - Top pair fino em board seco -> pequeno (~0.33).
+    'Vantagem de range -> frequência; vantagem de nuts -> tamanho.' Clampado ao slider.
     """
-    wet = bclass['flush_possible'] or bclass['straightish'] >= 3 or bclass['paired']
-    if made in _STRONG:
-        return 0.75 if wet else 0.33
-    if draws.get('combo') or draws.get('flush_draw') or draws.get('oesd'):
-        return 0.5
-    return 0.33
+    plan = postflop_texture.bet_plan(
+        bclass, is_strong=(made in _STRONG),
+        has_strong_draw=bool(draws.get('combo') or draws.get('flush_draw') or draws.get('oesd')),
+        hero_is_aggressor=hero_is_aggressor)
+    return plan['fraction'], plan
 
 
 def _size(pot_bb, fraction, cap_bb, basis):
@@ -384,6 +384,13 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
                                                           overbet=overbet)
             caveats.append('POOL_UNDERBLUFF_MDF_DISCOUNTED')
         cap = hero_stack if isinstance(hero_stack, (int, float)) else None
+        # CHECK-RAISE por vantagem de NUTS (Pós-flop Avançado): como DEFENSOR (o vilão teve
+        # a iniciativa) em board onde o nosso range de defesa tem vantagem de nuts (pareado
+        # ou baixo conectado), o BB check-raiseia — valor E semi-blefe (~3x). Antes o
+        # semi-blefe só aparecia como metadado; aqui vira AÇÃO (mata a passividade).
+        _defender = aggressor is not None and aggressor != 'hero'
+        _nuts_hero_def = (_defender and street != 'RIVER'
+                          and postflop_texture.nuts_holder(bclass, hero_is_aggressor=False) == 'hero')
         board_beats_us = (bclass['straight_on_board']
                           or (bclass['flush_possible'] and made not in
                               ('flush', 'full_house', 'quads', 'straight_flush')))
@@ -398,9 +405,10 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
                                and (equity is None or equity >= _VALUE_RAISE_MIN_EQUITY))
             if can_value_raise:
                 raise_to = round(min(to_call * 3, cap), 1) if cap else round(to_call * 3, 1)
+                cr = caveats + (['CHECK_RAISE_VALOR_VANTAGEM_NUTS'] if _nuts_hero_def else [])
                 info.update(recommended='raise',
                             sizing=dict(size_bb=raise_to, basis='raise ~3x aposta (heuristica)',
-                                        heuristic=True), caveats=caveats)
+                                        heuristic=True), caveats=cr)
                 return info
             if board_beats_us:
                 caveats.append('BOARD_MAY_BEAT_ONE_PAIR_CALL_ONLY')
@@ -466,6 +474,17 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
                 info['semi_bluff_raise'] = dict(size_bb=round(min(to_call * 3, cap), 1),
                                                 exploratory=True, basis='x/r semi-blefe draw forte')
                 caveats.append('SEMI_BLUFF_RAISE_AVAILABLE_EXPLORATORY')
+            # Promove o semi-blefe a AÇÃO (check-raise) quando somos o DEFENSOR com vantagem
+            # de nuts (Pós-flop Avançado) e o draw é FORTE (combo/nut-FD/OESD) vs aposta não
+            # gigante. É a metade de blefe do check-raise do BB — antes o bot só pagava.
+            if (_nuts_hero_def and (draws.get('combo') or draws.get('nut_flush_draw') or draws.get('oesd'))
+                    and pot_odds <= _BIG_BET_POT_ODDS and cap):
+                info.update(recommended='raise',
+                            sizing=dict(size_bb=round(min(to_call * 3, cap), 1),
+                                        basis='check-raise semi-blefe (vantagem de nuts ~3x)',
+                                        heuristic=True),
+                            caveats=caveats + ['CHECK_RAISE_SEMIBLUFF_VANTAGEM_NUTS'])
+                return info
             # Implied odds: o ganho futuro quando o draw completa baixa a equity exigida.
             implied = _implied_bb(street, pot, hero_stack, to_call, draws)
             po_imp = required_equity(to_call, pot + implied) if implied > 0 else pot_odds
@@ -522,9 +541,22 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
         if geo_pct is not None:
             info['geometric'] = dict(pct=geo_pct,
                                      street_plan=geometric_street_plan(spr, street, pot, hero_stack))
+    _hia = True if aggressor == 'hero' else (None if aggressor is None else False)
+    # Equity buckets (Pós-flop Avançado): classifica a força do hero por equidade quando há
+    # range (90-100 nuts / 80-90 strong / 70-80 value / 60-70 medium / <60 weak). Metadado
+    # p/ auditoria E refino: mão de bucket forte NÃO vira check no board polar (abaixo).
+    _eq_bucket = postflop_texture.equity_bucket(equity)
+    if _eq_bucket:
+        caveats = caveats + ['EQUITY_BUCKET_%s' % _eq_bucket.upper()]
+    # C-bet vs BB (Teoria para c-bet vs BB): board de PERIGO em que o PFR IP não c-beta
+    # range (checa mais). Tag honesta p/ auditoria quando o hero tem a iniciativa.
+    _cbet_cat = postflop_cbet_bb.cbet_check_category(bclass) if _hia is True else None
+    if _cbet_cat:
+        caveats = caveats + ['CBET_VS_BB_PERIGO_%s' % _cbet_cat.upper()]
     if strong:
-        frac = _bet_fraction(bclass, made, draws)
-        sizing = _size(pot, frac, cap, 'valor por vantagem de range/nuts')
+        frac, _plan = _bet_fraction(bclass, made, draws, hero_is_aggressor=_hia)
+        caveats = caveats + ['POSTFLOP_TEXTURA_%s' % _plan['lean'].upper()]
+        sizing = _size(pot, frac, cap, 'valor: %s' % _plan['rationale'])
         # B9 (overbet polarizado, EXPLORATÓRIO): com mão NUTADA em rua polar (turn/river),
         # a linha polar inclui OVERBET (>pote). Oferece como OPÇÃO de size; NÃO troca a
         # recomendação (segue 'bet') nem o size primário. Sombra; nunca executa.
@@ -538,14 +570,34 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
     if bluff_blocked:
         caveats.append('CBET_BLUFF_BLOCKED_MULTIWAY_%dOPP' % n_opp)
     if has_strong_draw and not bluff_blocked:
-        frac = _bet_fraction(bclass, made, draws)
+        frac, _plan = _bet_fraction(bclass, made, draws, hero_is_aggressor=_hia)
         caveats.append('SEMI_BLUFF_NEGA_EQUITY_E_CRESCE_POTE')
-        info.update(recommended='bet', sizing=_size(pot, frac, cap, 'semi-blefe com draw'),
+        caveats.append('POSTFLOP_TEXTURA_%s' % _plan['lean'].upper())
+        _om = out_manipulation(made, draws)          # draw forte -> LIMPEZA (size grande)
+        if _om:
+            caveats.append('OUT_MANIP_%s' % _om['intent'].upper())
+        info.update(recommended='bet', sizing=_size(pot, frac, cap, 'semi-blefe: %s' % _plan['rationale']),
                     caveats=caveats)
         return info
     if made == 'top_pair' and not (bclass['flush_possible'] or bclass['straightish'] >= 3):
+        # FREQUÊNCIA do agressor (Pós-flop Avançado): em board POLAR baixo não-pareado, o
+        # agressor NÃO aposta mão média — só valor forte + ar polarizam grande. Top pair
+        # fino dá CHECK (controle de pote, realiza equidade, bluff-catch). Só quando o hero
+        # É o agressor (iniciativa conhecida); senão mantém a aposta fina.
+        # Manipulação de outs: mão feita mediana -> MANUTENÇÃO (mantém dominadas do vilão).
+        _om = out_manipulation(made, draws)
+        _om_cv = ['OUT_MANIP_%s' % _om['intent'].upper()] if _om else []
+        # Frequência do agressor: checa mão média em board POLAR (baixo não-pareado) OU em
+        # board de PERIGO vs BB (pareado meio — monotone/low-connected já saem deste ramo).
+        if (_hia is True and (postflop_texture.polarizes(bclass) or _cbet_cat)
+                and _eq_bucket not in ('nuts', 'strong')):   # bucket forte segue apostando
+            info.update(recommended='check',
+                        sizing=dict(size_bb=0.0, basis='check: mão média em board de perigo vs BB (controle de pote)',
+                                    heuristic=False),
+                        caveats=caveats + ['CHECK_FREQ_BOARD_POLAR_MAO_MEDIA'] + _om_cv)
+            return info
         info.update(recommended='bet', sizing=_size(pot, 0.33, cap, 'valor fino top pair, board seco'),
-                    caveats=caveats)
+                    caveats=caveats + _om_cv)
         return info
     # EXPLOIT (HUD): passaram a vez com AR (sem showdown value) -> normalmente check;
     # mas vs vilão que FOGE de c-bet (tag folds_to_cbet), blefa com size pequeno (a fold

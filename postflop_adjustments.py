@@ -126,6 +126,29 @@ def scare_from_transition(prev_board, new_board):
     return 'brick'
 
 
+# ---- 4) Manipulação de outs (Pós-flop Avançado / Reg-Life) ------------------
+_NUTTED = ('set', 'trips', 'two_pair', 'straight', 'flush', 'full_house', 'quads',
+           'straight_flush')
+_MEDIA_FEITA = ('top_pair', 'second_pair', 'third_pair', 'low_pair', 'underpair')
+
+
+def out_manipulation(made, draws):
+    """Manipulação de outs (Pós-flop Avançado): a INTENÇÃO de size.
+    - 'limpeza' (size grande): com draw FORTE e mão ainda não feita, apostar grande folda
+      os dominadores e LIMPA os seus outs (ex.: T9 no 752 folda JT/QT/KT/K9...).
+    - 'manutencao' (size pequeno/check): mão feita MEDIANA (ahead, não-nut) -> size pequeno
+      ou check MANTÉM as mãos dominadas do vilão (implied, 'ganhar na loteria').
+    - None p/ mão NUTADA (valor direto) e ar puro (blefe). {intent, size_hint, rationale}."""
+    strong_draw = bool(draws.get('combo') or draws.get('oesd') or draws.get('flush_draw'))
+    if made not in _NUTTED and strong_draw:
+        return dict(intent='limpeza', size_hint='big',
+                    rationale='draw forte: aposta grande folda dominadores e limpa os outs')
+    if made in _MEDIA_FEITA:
+        return dict(intent='manutencao', size_hint='small',
+                    rationale='mão feita mediana: size pequeno/check mantém dominadas do vilão (implied)')
+    return None
+
+
 # ---- 3) Pool-underbluff no MDF ----------------------------------------------
 POOL_UNDERBLUFF_FACTOR = 0.75    # desconto do MDF teórico no pool que sub-blefa
 

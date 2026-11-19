@@ -29,6 +29,69 @@ REPO = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, REPO)
 
 
+def _cleanup_stale():
+    """LIMPA processos de bot ÓRFÃOS (emissor/operador/captura/alarme/painel de launches
+    anteriores) ANTES de subir — evita EMISSOR DUPLICADO (Eduardo 19/11: "quando o bot cair
+    de todas as mesas tem que limpar o emissor pra não duplicar"). Só os NOSSOS scripts;
+    nunca o PPPoker nem este processo. Idempotente: todo launch começa limpo."""
+    me = os.getpid()
+    scripts = ('emitir_seats', 'operar_mesa', 'capturar_maos', 'alerta_ft', 'painel.py')
+    killed = []
+    try:
+        import psutil
+    except Exception:                            # noqa: BLE001
+        psutil = None
+    if psutil is not None:
+        import signal
+        brk = getattr(signal, "CTRL_BREAK_EVENT", None)
+        frida_scripts = ('emitir_seats', 'capturar_maos')   # hosts Frida: desanexar LIMPO
+        for p in list(psutil.process_iter(['pid', 'cmdline'])):
+            try:
+                if p.info['pid'] == me:
+                    continue
+                cmd = ' '.join(p.info.get('cmdline') or [])
+                if not (cmd and any(s in cmd for s in scripts)):
+                    continue
+                if any(s in cmd for s in frida_scripts) and brk is not None:
+                    # órfão Frida: pede desanexar limpo (evita fatal error se já há PPPoker)
+                    try:
+                        os.kill(p.info['pid'], brk)
+                    except Exception:            # noqa: BLE001
+                        p.terminate()
+                else:
+                    p.terminate()
+                killed.append(p.info['pid'])
+            except Exception:                    # noqa: BLE001
+                continue
+        if killed:
+            time.sleep(2.0)                      # tempo p/ unload()+detach() dos hosts Frida
+            for pid in killed:
+                try:
+                    psutil.Process(pid).kill()   # sobreviventes: força
+                except Exception:                # noqa: BLE001
+                    pass
+    else:
+        # Fallback Windows sem psutil: wmic acha PIDs por linha de comando e taskkill mata.
+        for s in scripts:
+            try:
+                out = subprocess.check_output(
+                    'wmic process where "commandline like \'%%%s%%\'" get processid' % s,
+                    shell=True, stderr=subprocess.DEVNULL).decode('latin-1', 'replace')
+                for tok in out.split():
+                    if tok.strip().isdigit() and int(tok) != me:
+                        subprocess.call('taskkill /PID %s /F' % tok, shell=True,
+                                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                        killed.append(int(tok))
+            except Exception:                    # noqa: BLE001
+                continue
+    if killed:
+        print("[limpeza] %d processo(s) de bot orfaos encerrados (sem duplicar emissor): %s"
+              % (len(killed), killed))
+    else:
+        print("[limpeza] nenhum processo de bot anterior (inicio limpo).")
+    return killed
+
+
 def discover_hwnd():
     try:
         from table_discovery.pppoker import pppoker_table_hwnds
@@ -53,11 +116,52 @@ def _parse_args(argv):
     return args
 
 
+def _shutdown(procs):
+    """Encerra TUDO sem derrubar o PPPoker (Eduardo 19/11: "fechar o bot dá fatal error").
+    Hosts FRIDA (SEATS/CAPTURA) primeiro recebem CTRL_BREAK -> fazem script.unload()+detach()
+    LIMPO; esperamos eles saírem; só então o resto (operador/alarme/painel) e quem não saiu
+    levam terminate. Hard-kill de host Frida vivo = crash do PPPoker, então isso é evitado."""
+    import signal
+    brk = getattr(signal, "CTRL_BREAK_EVENT", None)
+    frida_hosts = [(n, p) for n, p in procs if n in ("SEATS", "CAPTURA")]
+    for n, p in frida_hosts:
+        try:
+            if p.poll() is None and brk is not None:
+                p.send_signal(brk)          # -> SIGBREAK no filho -> unload+detach limpo
+        except Exception:                    # noqa: BLE001
+            try: p.terminate()
+            except Exception: pass           # noqa: BLE001
+    # espera os hosts Frida desanexarem sozinhos (até ~8s no total)
+    deadline = time.time() + 8
+    for n, p in frida_hosts:
+        try:
+            p.wait(timeout=max(0.2, deadline - time.time()))
+        except Exception:                    # noqa: BLE001
+            pass
+    for n, p in frida_hosts:                  # não saiu no tempo: aí sim força (raro)
+        try:
+            if p.poll() is None:
+                p.terminate()
+        except Exception:                    # noqa: BLE001
+            pass
+    for n, p in procs:                        # resto: encerra normal
+        if (n, p) in frida_hosts:
+            continue
+        try:
+            p.terminate()
+        except Exception:                    # noqa: BLE001
+            pass
+
+
 def main(argv=None):
     opts = _parse_args(argv if argv is not None else sys.argv[1:])
     print("=" * 62)
     print("   NVT BOT  —  launcher COMPLETO (tudo plugado)")
     print("=" * 62)
+    # LIMPEZA PRÉVIA (Eduardo 19/11): mata emissor/operador ÓRFÃOS antes de subir, pra
+    # NUNCA duplicar o emissor (inclusive quando religa p/ um novo torneio provisionado).
+    # Mata SÓ processos do bot; NUNCA o PPPoker.
+    _cleanup_stale()
     hwnd = discover_hwnd()
     if not hwnd:
         print("\n[X] PPPoker nao encontrado. ABRA o PPPoker (com a mesa) e rode de novo.")
@@ -81,14 +185,24 @@ def main(argv=None):
     frozen = getattr(sys, "frozen", False)   # .exe (PyInstaller) vs fonte
     research = os.path.join(REPO, "research", "ppp_il2cpp")
 
+    # Passa o PID do launcher p/ os filhos (watchdog de pai: se este processo morrer de
+    # QUALQUER jeito — Ctrl+C, fechar janela, kill — os hosts Frida se desanexam LIMPOS).
+    child_env = dict(os.environ, NVT_PARENT_PID=str(os.getpid()))
+    new_group = getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0)
+
     def _spawn(sub, script, cwd, extra):
+        cf = new_console
+        # Hosts FRIDA (emissor/captura) em GRUPO próprio p/ receber CTRL_BREAK e desanexar
+        # limpo (hard-kill de host Frida = fatal error no PPPoker — Eduardo 19/11).
+        if sub in ("emitir", "capturar"):
+            cf |= new_group
         if frozen:
             cmd = [sys.executable, sub] + extra
             cwd = REPO
         else:
             flags = ["-I"] if sub in ("emitir", "capturar", "alerta") else []
             cmd = [sys.executable] + flags + [script] + extra
-        return subprocess.Popen(cmd, cwd=cwd, creationflags=new_console)
+        return subprocess.Popen(cmd, cwd=cwd, creationflags=cf, env=child_env)
 
     # 1) OPERADOR: TUDO ligado. Mode/stage auto (ou forcado). Bounty passado se informado.
     op_flags = ["--hwnd", str(hwnd), "--arm", "--auto-arm", "--auto-fechar-bustada",
@@ -139,11 +253,7 @@ def main(argv=None):
     except KeyboardInterrupt:
         print("\nParando tudo (Ctrl+C)...")
     finally:
-        for n, p in procs:
-            try:
-                p.terminate()
-            except Exception:                    # noqa: BLE001
-                pass
+        _shutdown(procs)
 
 
 if __name__ == "__main__":

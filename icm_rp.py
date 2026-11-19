@@ -48,8 +48,56 @@ def coverage_factor(hero_stack, villain_stack):
     return round(min(1.0, villain_stack / hero_stack), 4)
 
 
+# --- Refinos de FT/bolha por COMPOSIÇÃO da mesa (ICM na Prática, Reg-Life/Eduardo) --------
+# [[nvt-teoria-reg-life-corpus]]. O coverage_factor já dá a assimetria PAR-A-PAR; estes dois
+# acrescentam o que depende da MESA TODA:
+#  (1) RANK de stack: chip-leader e short stack têm RP MENOR (CL extrapola; short é "a bola
+#      da vez", pouco a perder); stacks MÉDIOS (esp. o 2º em fichas) são os MAIS pressionados.
+#  (2) "RP na lua": com um jogador quase-morto (~0 bb) na mesa, o pay-jump é quase certo ->
+#      o RP EXPLODE (evitar variância; até KK vira só call).
+_RANK_PEAK = 1.20       # 2º em fichas = pico de pressão
+_CL_FACTOR = 0.75       # chip leader extrapola
+_SHORT_FACTOR = 0.70    # short stack: bola da vez
+_DYING_BB = 1.5         # <= isso = stack moribundo (pay-jump iminente)
+_DYING_FACTOR = 1.5     # multiplicador do "RP na lua"
+_PRESSURE_CAP = 1.6     # teto do fator combinado
+
+
+def ft_rank_factor(hero_stack, table_stacks):
+    """Fator de RP por RANK do stack na mesa (1.0 sem dados / <3 stacks). CL=0,75, short=
+    0,70, 2º em fichas=1,20 (pico), decaindo até o penúltimo. Pós 'ICM na Prática'."""
+    stacks = sorted([s for s in (table_stacks or [])
+                     if isinstance(s, (int, float)) and s > 0], reverse=True)
+    if not isinstance(hero_stack, (int, float)) or len(stacks) < 3:
+        return 1.0
+    r = sum(1 for s in stacks if s > hero_stack)      # 0 = chip leader
+    n = len(stacks)
+    if r == 0:
+        return _CL_FACTOR
+    if r >= n - 1:
+        return _SHORT_FACTOR
+    frac = (r - 1) / max(1, (n - 2) - 1)              # 0 no 2º lugar, 1 no penúltimo
+    return round(_RANK_PEAK - frac * (_RANK_PEAK - 1.0), 4)
+
+
+def _has_dying_stack(hero_stack, table_stacks):
+    """Há um jogador quase-morto (<= _DYING_BB) na mesa, e o hero NÃO é ele?"""
+    if isinstance(hero_stack, (int, float)) and hero_stack <= _DYING_BB:
+        return False      # o próprio hero moribundo não ganha alívio de pay-jump
+    return any(isinstance(s, (int, float)) and 0 < s <= _DYING_BB for s in (table_stacks or []))
+
+
+def table_pressure_factor(hero_stack, table_stacks):
+    """Fator ÚNICO de pressão de mesa (rank + 'RP na lua'), limitado a _PRESSURE_CAP.
+    Quando há stack moribundo, o 'RP na lua' DOMINA (max com _DYING_FACTOR)."""
+    f = ft_rank_factor(hero_stack, table_stacks)
+    if _has_dying_stack(hero_stack, table_stacks):
+        f = max(f, _DYING_FACTOR)
+    return round(min(f, _PRESSURE_CAP), 4)
+
+
 def risk_premium(mode, stage, *, hero_stack=None, villain_stack=None, to_call_bb=None,
-                 field_fraction=None):
+                 field_fraction=None, table_stacks=None):
     """RP efetivo (ICM) p/ o hero PAGAR, dado o par de stacks. 0 em chip EV. Escala a
     base da fase pela cobertura. PKO multiplica por PKO_RP_SCALE (bounty alivia; o
     desconto do bounty em si vem de `bounty_power`). Bounded em [0, RP_CAP]."""
@@ -60,6 +108,11 @@ def risk_premium(mode, stage, *, hero_stack=None, villain_stack=None, to_call_bb
         base *= coverage_factor(hero_stack, villain_stack)
     elif isinstance(to_call_bb, (int, float)) and isinstance(hero_stack, (int, float)) and hero_stack > 0:
         base *= max(0.0, min(1.0, to_call_bb / hero_stack))   # proxy antigo, sem stack do vilão
+    # Refino FT/bolha por composição da mesa (rank + RP na lua) — só em ALTA pressão.
+    high_pressure = (stage in ('ft', 'bubble')
+                     or (isinstance(field_fraction, (int, float)) and field_fraction <= 0.25))
+    if table_stacks and high_pressure:
+        base *= table_pressure_factor(hero_stack, table_stacks)
     if mode == 'pko_icm':
         base *= PKO_RP_SCALE
     return round(max(0.0, min(RP_CAP, base)), 4)
