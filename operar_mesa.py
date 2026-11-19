@@ -61,7 +61,7 @@ def never_fold_free(recommended, br):
     return recommended
 
 
-def _protobuf_preflop_advice(advisor, mode, estado_path=None):
+def _protobuf_preflop_advice(advisor, mode, stage='mid', estado_path=None):
     """Conselho PRE-FLOP a partir do estado PROTOBUF (logs/estado_mesa.json), ou None
     se nao houver estado fresco e INEQUIVOCO desta mesa. SEGURO: 0 mesas frescas = sem
     estado; >1 mesa fresca = ambiguo (nao da p/ saber qual e esta) -> None -> OCR de
@@ -79,8 +79,8 @@ def _protobuf_preflop_advice(advisor, mode, estado_path=None):
              if isinstance(e, dict) and (now - (e.get('ts') or 0)) < _PB_STALE_S]
     if len(fresh) != 1:
         return None
-    return protobuf_state.advise_from_protobuf(fresh[0], advisor, mode=mode,
-                                               stage='mid', players=9)
+    return protobuf_state.advise_from_protobuf(fresh[0], advisor, mode=(mode or 'chip_ev'),
+                                               stage=(stage or 'mid'), players=9)
 
 _GRADE_CACHE = {'mtime': None, 'map': {}}
 
@@ -751,7 +751,7 @@ def main(argv=None):
                 # (cartas/apostas/posicoes EXATAS), OCR de reserva. So pre-flop (sem board).
                 # Loga PARIDADE protobuf x OCR p/ validacao antes de confiar 100%.
                 if args.protobuf and not (result.get('board') or {}).get('cards'):
-                    _pb = _protobuf_preflop_advice(advisor, args.mode)
+                    _pb = _protobuf_preflop_advice(advisor, args.mode, args.stage)
                     if _pb is not None:
                         _pbr = _pb.get('recommended') if _pb.get('status') == 'ADVICE' \
                             else 'ABSTAIN:%s' % _pb.get('reason')
