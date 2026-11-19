@@ -426,6 +426,24 @@ class PreflopAdvisor:
             n = self._index.get(('chip_ev', 'regular', 'mid', players, bucket, spot, hero, vs, None))
             if n is not None:
                 return n, 'NASH_SHADOW_CHIP_EV_REF_ICM_PKO_ADJ_NOT_APPLIED'
+        # (3) COBERTURA DO CONTEXTO (não da mão): nenhum nó no bucket exato -> empresta o
+        # BUCKET mais próximo que TENHA a tabela de push/fold (preferindo 'iguais' do
+        # mesmo modo/stage; senão o Nash chip-EV). Push/fold só ALARGA com stack menor,
+        # então a range do bucket vizinho é aproximação SEGURA. Garante que TODA a zona
+        # de shove tenha decisão (shove/fold) — qualquer mão, qualquer short — em vez de
+        # abster (Eduardo 19/11: atacar o contexto do range, não a mão específica).
+        best = None
+        for b in self.STACK_BUCKETS:
+            for key in ((mode, table_format, stage, players, b, spot, hero, vs, 'iguais'),
+                        ('chip_ev', 'regular', 'mid', players, b, spot, hero, vs, None)):
+                n = self._index.get(key)
+                if n is not None:
+                    d = abs(b - (bucket or 0))
+                    if best is None or d < best[0]:
+                        best = (d, n)
+                    break
+        if best is not None:
+            return best[1], 'NASH_SHADOW_NEAREST_BUCKET_APPROX'
         return None, None
 
     def _aligned_stack_node(self, mode, table_format, stage, players, spot, hero, vs, spread, stack_bb):
@@ -889,8 +907,16 @@ class PreflopAdvisor:
             # nesse caso HU: hero no BB, SB completou (~1bb) e NENHUM limper fora do
             # blind. Limps de outras posições não têm nó validado -> first_in (iso
             # aproximado), e não o nó SB×BB errado.
-            if (base['hero_position'] == 'BB' and _sb_limped(table_state)
-                    and sizing.count_limpers(table_state) == 0):
+            # BB enfrentando limp. DEEP: só o SB-limp HU puro usa o nó vs_limp (como
+            # antes — limp de outra posição deep segue first_in/iso). ZONA DE SHOVE
+            # (<20bb): QUALQUER limp (SB ou outra posição) usa a range vs_limp (nó BB-vs-
+            # limp, vs=(), independe de quem limpou) — senão caía em open_shove|BB
+            # (inexistente, o BB nunca "abre") e ABSTINHA. Eduardo 19/11: cobrir o
+            # CONTEXTO da zona de shove (qualquer mão/limp no BB tem decisão).
+            _sb_hu_limp = _sb_limped(table_state) and sizing.count_limpers(table_state) == 0
+            _short = isinstance(base.get('stack_bb'), (int, float)) and base['stack_bb'] < SHOVE_ZONE_MAX_BB
+            _short_any_limp = _short and (_sb_limped(table_state) or sizing.count_limpers(table_state) >= 1)
+            if base['hero_position'] == 'BB' and (_sb_hu_limp or _short_any_limp):
                 result = self.advise(spot='vs_limp', vs=(), **base, **kwargs)
                 _rr = result if isinstance(result, dict) else {}
                 # vs_limp só tem nó em 25bb. A batalha BB vs limp do SB é estável o
@@ -920,19 +946,25 @@ class PreflopAdvisor:
         # NUNCA rebaixa um nó validado/decisão melhor. Conselho/sombra até homologar.
         if (isinstance(result, dict) and result.get('status') == 'ABSTAIN'
                 and isinstance(_stk, (int, float)) and _stk < SHOVE_ZONE_MAX_BB):
-            _sh = None
-            if spot['spot'] == 'first_in':
-                _sh = self.advise(spot='open_shove', vs=(), **base, **kwargs, _nash_shadow_ok=True)
-            elif spot['spot'] == 'vs_open' and spot.get('opener'):
+            # ZONA DE SHOVE = regime PUSH/FOLD: NUNCA abster (Eduardo 19/11, contexto do
+            # range inteiro). Enfrenta um raise -> 3bet-shove (resteal/squeeze); senão
+            # (first-in OU pote só limpado) -> open-shove. A Nash-sombra cobre o CONTEXTO
+            # (empresta bucket vizinho), então vale p/ QUALQUER mão naquele spot.
+            _opener = spot.get('opener')
+            if _opener:
                 _b = dict(base, stack_bb=max(_stk, 12))   # 3bet_shove mora em 12-25bb
-                _sh = self.advise(spot='3bet_shove', vs=(spot['opener'],), **_b, **kwargs,
+                _sh = self.advise(spot='3bet_shove', vs=(_opener,), **_b, **kwargs,
                                   _nash_shadow_ok=True)
                 if isinstance(_sh, dict) and _sh.get('status') == 'ADVICE':
                     if spot.get('callers'):
                         _sh.setdefault('caveats', []).append('SQUEEZE_VIA_3BET_SHOVE_%dC' % spot['callers'])
-                    _sh.setdefault('caveats', []).append('AGGRESSOR_INFERRED_%s' % spot['opener'])
+                    _sh.setdefault('caveats', []).append('AGGRESSOR_INFERRED_%s' % _opener)
                     if _stk < 12:
                         _sh.setdefault('caveats', []).append('JAM_CURTO_SUB12BB_RANGE12BB_TIGHTER_SAFE')
+            else:
+                _sh = self.advise(spot='open_shove', vs=(), **base, **kwargs, _nash_shadow_ok=True)
+                if isinstance(_sh, dict) and _sh.get('status') == 'ADVICE' and spot.get('limpers'):
+                    _sh.setdefault('caveats', []).append('SHOVE_OVER_LIMPERS')
             if isinstance(_sh, dict) and _sh.get('status') == 'ADVICE':
                 result = _sh
         if isinstance(result, dict) and result.get('status') in ('ADVICE', 'OUT_OF_RANGE'):
