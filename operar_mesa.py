@@ -177,6 +177,10 @@ from hero_card_memory import HeroCardMemory
 from app_paths import find_data, data_dir
 DEFAULT_RANGES = find_data('nvt-ranges-validados.json')   # portátil (qualquer PC)
 DEFAULT_DEEP = find_data('nvt-ranges-deep.json')
+# Sombra Reg-Life (ranges transcritos): preenche gaps de bucket (12/50/60bb RFI, BB vs SB)
+# onde hoje o cérebro empresta. É o ÚLTIMO pack no merge -> validado/deep vencem colisão.
+DEFAULT_REG_LIFE = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                'strategy_data', 'ranges_reg_life_shadow.json')
 
 # SHOVE (push/fold): o all-in NÃO tem "multiplicador" — é "tudo". Um alvo-sentinela
 # bem acima de qualquer preset e do piso de shove (SHOVE_FLOOR_MULT=8.0) faz
@@ -445,8 +449,13 @@ def main(argv=None):
     import os
     configure_ocr()
     deep = args.deep or (DEFAULT_DEEP if os.path.exists(DEFAULT_DEEP) else None)
-    advisor = (PreflopAdvisor.from_files(args.ranges, deep) if deep
-               else PreflopAdvisor.from_file(args.ranges))
+    packs = [args.ranges]
+    if deep:
+        packs.append(deep)
+    if DEFAULT_REG_LIFE and os.path.exists(DEFAULT_REG_LIFE):
+        packs.append(DEFAULT_REG_LIFE)      # ÚLTIMO: sombra transcrita (validado/deep vencem)
+    advisor = (PreflopAdvisor.from_files(*packs) if len(packs) > 1
+               else PreflopAdvisor.from_file(packs[0]))
     # B01/B02: proveniência auditável no startup — quais pack(s) por sha256 alimentam
     # o cérebro, cobertura de nós e colisões de chave resolvidas SEM sombra silenciosa.
     _mani = advisor.manifest()
