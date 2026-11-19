@@ -12,6 +12,7 @@ Uso:
 """
 import argparse
 import sys
+import os
 import time
 
 import cv2
@@ -112,6 +113,25 @@ def _grade_buyin(name):
     return None
 
 
+def _save_table_print(frame, tag='torneio'):
+    """Salva um PNG da TELA (registro visual do resultado + FONTE p/ o bot ler
+    posição/prêmio e gravar os dados sozinho). Em logs/prints/. Eduardo 19/11:
+    'caiu de uma mesa final tira o print, fecha a tela' — e os dados o BOT coleta,
+    não o usuário informa. Nunca quebra o loop."""
+    try:
+        import cv2
+        import re as _re
+        d = data_dir('prints')
+        safe = (_re.sub(r'[^A-Za-z0-9_-]+', '_', str(tag))[:48].strip('_')) or 'torneio'
+        path = os.path.join(d, '%s_%s.png' % (time.strftime('%Y%m%d_%H%M%S'), safe))
+        cv2.imwrite(path, frame)
+        print('[print] tela salva: %s' % path, flush=True)
+        return path
+    except Exception as exc:                 # noqa: BLE001
+        print('[print] falhou: %s' % exc, flush=True)
+        return None
+
+
 def _tour_extra(track, tr=None):
     """Monta buyin + extra (reached_ft, itm, nome) p/ o record_tournament_end a
     partir do rastreio por mesa (track) e, se houver, da leitura fresca (tr)."""
@@ -133,7 +153,7 @@ from operator_robustness import BoundedKeySet, CaptureWatch, raise_outcome, reco
 from anticipation import AnticipationStore, available_actions, TurnEpochTracker
 from hero_card_memory import HeroCardMemory
 
-from app_paths import find_data
+from app_paths import find_data, data_dir
 DEFAULT_RANGES = find_data('nvt-ranges-validados.json')   # portátil (qualquer PC)
 DEFAULT_DEEP = find_data('nvt-ranges-deep.json')
 
@@ -608,6 +628,11 @@ def main(argv=None):
                     # Autorização de input AO VIVO: só fecha (clica 'Sair') se ARMADO
                     # E o controle permitir agora. PAUSADO/DESABILITADO -> dry-run, mesmo
                     # com --arm (o fechamento é input e respeita a pausa como o clique).
+                    # PRINT do RESULTADO (banner) antes de fechar — registro + fonte p/ o
+                    # bot ler posição/prêmio sozinho. (Ao clicar p/ fechar, a premiação
+                    # aparece em seguida; o print do banner + calibração guiam a captura.)
+                    _ftp = isinstance((tour_track.get(tk) or {}).get('min_left'), int) and tour_track[tk]['min_left'] <= 9
+                    _save_table_print(frame, ('FT_' if _ftp else 'fim_') + str(te.get('ranking') or 'torneio').replace('/', '-'))
                     close_armed = args.arm and control.execution_allowed()
                     closed = _close_tournament_table(frame, (x, y, bw, bh), te, hwnd,
                                                      adapter, engine, close_armed)
@@ -652,6 +677,12 @@ def main(argv=None):
                         det = detect_busted(tr.get('hero_rank'), tr.get('players_left'),
                                             has_action=False)
                         if busted_confirmer.update(tkey, det):
+                            # PRINT do resultado antes de fechar (registro + fonte p/ ler
+                            # posição/prêmio). Marca FT quando chegou na mesa final.
+                            _ftp = (isinstance((tour_track.get(tkey_local) or {}).get('min_left'), int)
+                                    and tour_track[tkey_local]['min_left'] <= 9) or ((tr.get('hero_rank') or 99) <= 9)
+                            _save_table_print(frame, ('FT_' if _ftp else 'fim_')
+                                              + ('%s-%s' % (tr.get('hero_rank'), tr.get('players_left'))))
                             close_armed = args.arm and control.execution_allowed()
                             closed = _close_busted_observer(frame, (x, y, bw, bh), hwnd,
                                                             adapter, engine, close_armed)
