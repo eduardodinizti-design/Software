@@ -5,3 +5,9 @@ venv/
 logs/
 *.log
 .env*
+
+# build/runtime (regeneravel/grande) — nao versionar
+build_bot/
+dist_bot/
+prints/
+*.spec

@@ -20,9 +20,11 @@ class RecommendSizeTests(unittest.TestCase):
         self.assertTrue(iso['heuristic'])                                                    # iso add is heuristic
 
     def test_three_bet_by_position(self):
-        self.assertEqual(sizing.recommend_size('three_bet', hero_stack_bb=100, opener_bb=2.0)['size_bb'], 5.0)                      # IP 2.5x
-        self.assertEqual(sizing.recommend_size('three_bet', hero_stack_bb=100, opener_bb=2.0, hero_position='SB')['size_bb'], 5.8)  # 2.9x
-        self.assertEqual(sizing.recommend_size('three_bet', hero_stack_bb=100, opener_bb=2.0, hero_position='BB')['size_bb'], 6.8)  # 3.4x
+        # Eduardo 19/11: IP 3x, OOP 4x; reta final (ft) IP 2.5x / OOP 3.5x.
+        self.assertEqual(sizing.recommend_size('three_bet', hero_stack_bb=100, opener_bb=2.0, ip=True)['size_bb'], 6.0)    # IP 3x
+        self.assertEqual(sizing.recommend_size('three_bet', hero_stack_bb=100, opener_bb=2.0, ip=False)['size_bb'], 8.0)   # OOP 4x
+        self.assertEqual(sizing.recommend_size('three_bet', hero_stack_bb=100, opener_bb=2.0, ip=True, final_table=True)['size_bb'], 5.0)   # IP 2.5x reta final
+        self.assertEqual(sizing.recommend_size('three_bet', hero_stack_bb=100, opener_bb=2.0, ip=False, final_table=True)['size_bb'], 7.0)  # OOP 3.5x reta final
 
     def test_four_bet_is_all_in(self):
         self.assertEqual(sizing.recommend_size('four_bet', hero_stack_bb=50, opener_bb=6.0)['size_bb'], 50)

@@ -185,7 +185,7 @@ class EndToEndComAdvisorReal(unittest.TestCase):
 
 
 class OperatorHelper(unittest.TestCase):
-    """_protobuf_preflop_advice do operador: lê estado_mesa.json, exige UMA mesa
+    """_protobuf_advice do operador: lê estado_mesa.json, exige UMA mesa
     fresca (0 ou >1 -> None -> OCR de reserva), ignora estado velho."""
     @classmethod
     def setUpClass(cls):
@@ -217,19 +217,66 @@ class OperatorHelper(unittest.TestCase):
 
     def test_uma_mesa_fresca_decide(self):
         p = self._write({'r1': self._fresh_entry()})
-        out = self.om._protobuf_preflop_advice(self.adv, 'chip_ev', estado_path=p)
+        out = self.om._protobuf_advice(self.adv, 'chip_ev', estado_path=p)
         self.assertIsNotNone(out)
         self.assertEqual(out.get('status'), 'ADVICE')
         self.assertEqual(out.get('hero_cards'), ['As', 'Kd'])   # cartas exatas anexadas
 
     def test_duas_frescas_abstem_para_ocr(self):
         p = self._write({'r1': self._fresh_entry(), 'r2': self._fresh_entry()})
-        self.assertIsNone(self.om._protobuf_preflop_advice(self.adv, 'chip_ev', estado_path=p))
+        self.assertIsNone(self.om._protobuf_advice(self.adv, 'chip_ev', estado_path=p))
 
     def test_mesa_velha_ignorada(self):
         e = self._fresh_entry(); e['ts'] = 0           # 1970 -> estado velho
         p = self._write({'r1': e})
-        self.assertIsNone(self.om._protobuf_preflop_advice(self.adv, 'chip_ev', estado_path=p))
+        self.assertIsNone(self.om._protobuf_advice(self.adv, 'chip_ev', estado_path=p))
+
+
+class PostflopFromMemory(unittest.TestCase):
+    """Leitura PÓS-FLOP por MEMÓRIA (Eduardo 19/11): board + to_call + pote do protobuf
+    (emitir_seats) -> advise_postflop, sem OCR. Mata o board ilegível e o to_call null."""
+
+    @classmethod
+    def setUpClass(cls):
+        import os as _os
+        v = r'C:\Meus Projetos\Aplicativos\nvt-ranges-validados.json'
+        d = r'C:\Meus Projetos\Aplicativos\nvt-ranges-deep.json'
+        if not (_os.path.exists(v) and _os.path.exists(d)):
+            raise unittest.SkipTest('ranges nao encontrados')
+        from preflop_advisor import PreflopAdvisor
+        cls.adv = PreflopAdvisor.from_files(v, d)
+
+    def _entry(self, tocall, pot, v0bet=0):
+        # dealer=2 (hero BTN), sb=0, bb=1; board 5c4s8d; hero seat2 = AsKs ([270,269]).
+        return dict(table=dict(dealer=2, sbseat=0, bbseat=1, sb=1000, minraise=2000,
+                               maxraise=140000, board=[1029, 260, 776], stage=2,
+                               tocall=tocall, pot=pot),
+                    players=[dict(seat=0, uid=11, name='v1', stack=70000, sit=0, bet=v0bet, act=1, hascard=1, cards=[]),
+                             dict(seat=1, uid=22, name='v2', stack=70000, sit=0, bet=0, act=1, hascard=1, cards=[]),
+                             dict(seat=2, uid=33, name='hero', stack=70000, sit=0, bet=0, act=3, hascard=1, cards=[270, 269])])
+
+    def test_board_e_to_call_da_memoria(self):
+        import protobuf_state as ps
+        st, hero = ps.build_table_state(self._entry(0, 6500))
+        self.assertEqual(st['scope'], 'POSTFLOP_PROTOBUF')
+        self.assertEqual(st['street'], 'FLOP')
+        self.assertEqual(st['board'], ['5c', '4s', '8d'])     # board EXATO da memória
+        self.assertEqual(st['to_call']['to_call_bb'], 0.0)    # to_call EXATO (não null)
+        self.assertEqual(hero, ['As', 'Ks'])
+
+    def test_postflop_decide_sem_ocr(self):
+        import protobuf_state as ps
+        r = ps.advise_from_protobuf(self._entry(0, 6500), self.adv, mode='chip_ev', stage='mid')
+        self.assertEqual(r['status'], 'ADVICE')
+        self.assertEqual(r['phase'], 'postflop')
+        self.assertEqual(r['perception'], 'protobuf')
+        self.assertIn(r['recommended'], ('bet', 'check', 'call', 'fold', 'raise'))
+
+    def test_facing_bet_tem_to_call_e_pot_odds(self):
+        import protobuf_state as ps
+        r = ps.advise_from_protobuf(self._entry(3000, 9500, 3000), self.adv, mode='chip_ev', stage='mid')
+        self.assertEqual(r['phase'], 'postflop')
+        self.assertIsNotNone(r.get('pot_odds'))               # pot odds computável (to_call lido)
 
 
 if __name__ == '__main__':

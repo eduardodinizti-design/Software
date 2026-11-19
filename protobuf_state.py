@@ -114,8 +114,20 @@ def build_table_state(entry):
         bets.append(dict(seat=k, bet_bb=(float(bet) / bb if isinstance(bet, (int, float)) else 0.0)))
 
     hero_cards = decode_cards(next(p['cards'] for p in players if p['seat'] == hs))
+    # POS-FLOP por MEMORIA (Eduardo 19/11): board + to_call + pote vindos do protobuf
+    # (emitir_seats). to_call é EXATO; pote é derivado (carry+bets); board = RoundStartBRC.
+    board_ints = [x for x in (table.get('board') or [])
+                  if isinstance(x, int) and 2 <= (x & 0xff) <= 14]
+    board_cards = decode_cards(board_ints) if board_ints else []
+    n = len(board_cards)
+    street = ('RIVER' if n >= 5 else 'TURN' if n == 4 else 'FLOP' if n == 3 else 'PREFLOP')
+    tocall, pot = table.get('tocall'), table.get('pot')
+    to_call_bb = (round(float(tocall) / bb, 2) if isinstance(tocall, (int, float)) else None)
+    pot_bb = (round(float(pot) / bb, 2) if isinstance(pot, (int, float)) and pot else None)
     state = dict(positions=positions, seats=seats, bets=bets, phase='mid',
-                 source='protobuf', scope='PREFLOP_PROTOBUF')
+                 source='protobuf', scope=('POSTFLOP_PROTOBUF' if n >= 3 else 'PREFLOP_PROTOBUF'),
+                 board=board_cards, street=street,
+                 to_call={'to_call_bb': to_call_bb}, pot={'pot_bb': pot_bb})
     return state, hero_cards
 
 
@@ -126,7 +138,19 @@ def advise_from_protobuf(entry, advisor, **kwargs):
     state, hero_or_reason = build_table_state(entry)
     if state is None:
         return dict(status='ABSTAIN', reason=hero_or_reason, source='protobuf')
-    adv = advisor.advise_from_reading(state, hero_or_reason, **kwargs)
+    board = state.get('board') or []
+    if len(board) >= 3:
+        # POS-FLOP por memória: board/to_call/pote EXATOS -> advise_postflop (não OCR).
+        from postflop_advisor import advise_postflop
+        import postflop_sizing
+        adv = advise_postflop(state, hero_or_reason, board, street=state.get('street'),
+                              mode=kwargs.get('mode', 'chip_ev'), stage=kwargs.get('stage', 'mid'))
+        if isinstance(adv, dict):
+            _hero_stk = (state.get('seats', {}).get('hero') or {}).get('stack_bb')
+            postflop_sizing.enforce(adv, pot_bb=(state.get('pot') or {}).get('pot_bb'),
+                                    stack_bb=_hero_stk, spr=adv.get('spr'))
+    else:
+        adv = advisor.advise_from_reading(state, hero_or_reason, **kwargs)
     if isinstance(adv, dict):
         # carrega as cartas EXATAS (protobuf) na decisão -> o executor/contrato usam a
         # leitura da memória, não a do OCR (que pode ter falhado).

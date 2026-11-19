@@ -1,14 +1,25 @@
-"""LAUNCHER UNICO do bot NVT — "clicou, rodou". Acha o PPPoker e sobe TUDO junto:
-  1) OPERADOR armado (auto-arm, sem depender de hotkey) + EXPLOIT do field (--hud:
-     le os stats do vilao na tela e o advisor explora no pos-flop) + fecha mesa
-     bustada sozinho.
-  2) CAPTURADOR de maos (read-only, salva no padrao Hand2Note p/ alimentar a DB).
-Cada um abre na SUA janela. Feche esta janela (ou Ctrl+C) para PARAR TUDO.
+"""LAUNCHER UNICO do bot NVT — "clicou, rodou". Acha o PPPoker e sobe ABSOLUTAMENTE
+TUDO que o sistema oferece, cada um na SUA janela (lei do Eduardo 19/11: nada pode
+ficar de fora do launcher — "tudo que o sistema oferece tem que estar plugado").
 
-Obs: o exploit hoje vem do HUD lido na tela. A ponte p/ nossa DB gigante
-(exploit_db.json, ~389k maos, chaveada por ID) e o proximo upgrade (precisa o
-tracker ler seat->ID via protobuf; este launcher ja sobe o tracker junto).
+Sobe 5 componentes:
+  1) OPERADOR armado (auto-arm) com TODAS as capacidades ligadas: percepcao PROTOBUF
+     (pre-flop exato), exploit do field (--hud), POS-FLOP (joga tudo: bet/raise/call
+     com size no nosso slider + Plano Geometrico), fecha mesa bustada, faixa de status
+     (--overlay), antecipacao de latencia (--antecipar), re-descoberta de mesas
+     (--rediscover). PKO: passa o --bounty-bb (informado ao subir ou via arg).
+  2) CAPTURADOR de maos (read-only, padrao Hand2Note p/ a DB).
+  3) EMISSOR de assentos (seat->uid+nick via protobuf -> exploit da nossa DB).
+  4) ALARME SONORO (MESA FINAL + BOLHA + DEAL) na propria janela (ENTER silencia).
+  5) PAINEL de KPIs (central de gestao / desempenho) na propria janela.
+
+Feche esta janela (ou Ctrl+C) para PARAR TUDO.
+
+Mode/stage sao AUTO-detectados (chip_ev/icm/pko/pko_icm + fase); da p/ FORCAR com
+--mode/--stage se quiser num teste. O bounty (PKO) e AUTO-LIDO pelo operador (emissor
+-> logs/mtt_bounty.json); --bounty-bb N e so OVERRIDE manual.
 """
+import argparse
 import os
 import sys
 import time
@@ -28,9 +39,24 @@ def discover_hwnd():
         return None
 
 
-def main():
+def _parse_args(argv):
+    p = argparse.ArgumentParser(add_help=False)
+    p.add_argument('--bounty-bb', type=float, default=None,
+                   help='PKO/KO: bounty medio em BB (calibra os call-offs). Sem isso, pergunta ao subir.')
+    p.add_argument('--mode', choices=('chip_ev', 'icm', 'pko', 'pko_icm'), default=None,
+                   help='FORCA o modo (default: auto-detecta pelo torneio).')
+    p.add_argument('--stage', choices=('pre_itm', 'bubble', 'ft', 'mid'), default=None,
+                   help='FORCA a fase (default: auto-detecta).')
+    p.add_argument('--no-painel', dest='painel', action='store_false',
+                   help='Nao sobe o painel de KPIs.')
+    args, _ = p.parse_known_args(argv)
+    return args
+
+
+def main(argv=None):
+    opts = _parse_args(argv if argv is not None else sys.argv[1:])
     print("=" * 62)
-    print("   NVT BOT  —  launcher completo (operador + exploit + maos)")
+    print("   NVT BOT  —  launcher COMPLETO (tudo plugado)")
     print("=" * 62)
     hwnd = discover_hwnd()
     if not hwnd:
@@ -42,14 +68,20 @@ def main():
         return
     print("[ok] PPPoker encontrado (hwnd %s)." % hwnd)
 
+    # Bounty (PKO): AUTO-LIDO pelo operador (emissor -> logs/mtt_bounty.json). O
+    # --bounty-bb aqui é só OVERRIDE manual; sem ele, o bot coleta sozinho.
+    bounty = opts.bounty_bb
+    if bounty is not None:
+        print("[ok] Bounty OVERRIDE manual = %.2f BB." % bounty)
+    else:
+        print("[ok] Bounty PKO: AUTO (operador le de logs/mtt_bounty.json, escrito pelo emissor).")
+
     new_console = getattr(subprocess, "CREATE_NEW_CONSOLE", 0)
     procs = []
     frozen = getattr(sys, "frozen", False)   # .exe (PyInstaller) vs fonte
     research = os.path.join(REPO, "research", "ppp_il2cpp")
 
     def _spawn(sub, script, cwd, extra):
-        # No .exe: chama o proprio executavel como despachante (NVTBot.exe <sub> ...).
-        # No fonte: python <script> (com -I p/ captura/emissor, como antes).
         if frozen:
             cmd = [sys.executable, sub] + extra
             cwd = REPO
@@ -58,32 +90,45 @@ def main():
             cmd = [sys.executable] + flags + [script] + extra
         return subprocess.Popen(cmd, cwd=cwd, creationflags=new_console)
 
-    # 1) OPERADOR: armado, PERCEPCAO PROTOBUF (pre-flop exato) + exploit HUD + pos-flop
-    #    + fecha bustada. Mode/stage auto-detectados (ICM na bolha/FT).
-    op = _spawn("operar", "operar_mesa.py", REPO,
-                ["--hwnd", str(hwnd), "--arm", "--auto-arm", "--auto-fechar-bustada",
-                 "--hud", "--field-exploit", "--posflop", "--protobuf"])
+    # 1) OPERADOR: TUDO ligado. Mode/stage auto (ou forcado). Bounty passado se informado.
+    op_flags = ["--hwnd", str(hwnd), "--arm", "--auto-arm", "--auto-fechar-bustada",
+                "--hud", "--field-exploit", "--posflop", "--protobuf",
+                "--overlay", "--antecipar", "--rediscover"]
+    if bounty is not None:
+        op_flags += ["--bounty-bb", str(bounty)]
+    if opts.mode:
+        op_flags += ["--mode", opts.mode]
+    if opts.stage:
+        op_flags += ["--stage", opts.stage]
+    op = _spawn("operar", "operar_mesa.py", REPO, op_flags)
     procs.append(("OPERADOR", op))
-    print("[ok] OPERADOR no ar: ARMADO + exploit(HUD) + auto-fechar-bustada (janela propria).")
+    print("[ok] OPERADOR no ar: ARMADO + protobuf + pos-flop + exploit(HUD) + overlay + "
+          "antecipar + rediscover + auto-fechar-bustada%s."
+          % (" + bounty" if bounty is not None else ""))
 
     # 2) CAPTURA de maos (read-only) — alimenta a DB no padrao Hand2Note.
     cap = _spawn("capturar", "capturar_maos.py", research, [])
     procs.append(("CAPTURA", cap))
-    print("[ok] CAPTURA de maos no ar (salva em logs/maos_h2n). (janela propria).")
+    print("[ok] CAPTURA de maos no ar (logs/maos_h2n).")
 
-    # 3) EMISSOR de assentos: le seat->uid+nick (protobuf) -> logs/live_seats.json
-    #    (ponte p/ o exploit da NOSSA DB). Semeia ao ENTRAR/trocar de mesa.
+    # 3) EMISSOR de assentos: seat->uid+nick (protobuf) -> logs/live_seats.json.
     emt = _spawn("emitir", "emitir_seats.py", research, [])
     procs.append(("SEATS", emt))
-    print("[ok] EMISSOR de assentos no ar (seat->uid p/ exploit da DB). (janela propria).")
+    print("[ok] EMISSOR de assentos no ar (seat->uid p/ exploit da DB).")
 
-    # 4) ALARME SONORO: MESA FINAL + BOLHA + DEAL -> toca p/ voce ASSUMIR. Fica na
-    #    PROPRIA janela (ENTER silencia). NUNCA esquecer de subir -> por isso esta aqui.
+    # 4) ALARME SONORO: MESA FINAL + BOLHA + DEAL -> toca p/ voce ASSUMIR (ENTER silencia).
     al = _spawn("alerta", "alerta_ft.py", research, ["--bubble"])
     procs.append(("ALARME", al))
-    print("[ok] ALARME SONORO no ar (FT/bolha/deal; ENTER na janela dele silencia). (janela propria).")
+    print("[ok] ALARME SONORO no ar (FT/bolha/deal; ENTER na janela dele silencia).")
 
-    print("\n>>> TUDO NO AR. Feche esta janela ou aperte Ctrl+C para PARAR TUDO. <<<\n")
+    # 5) PAINEL de KPIs (central de gestao / desempenho). Opcional via --no-painel.
+    if opts.painel:
+        pa = _spawn("painel", "painel.py", REPO, [])
+        procs.append(("PAINEL", pa))
+        print("[ok] PAINEL de KPIs no ar (desempenho/gestao).")
+
+    print("\n>>> TUDO NO AR (%d componentes). Feche esta janela ou Ctrl+C para PARAR TUDO. <<<\n"
+          % len(procs))
     try:
         while True:
             time.sleep(2)

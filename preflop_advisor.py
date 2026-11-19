@@ -56,6 +56,74 @@ PUSHFOLD_MAX_BB = 12   # <= isso, first-in tenta SHOVE antes de open-raise
 # tabelas puras de push/fold (open_shove/vs_open_shove) valem. Além disso, o
 # first-in tenta o SHOVE antes do open-raise nessa zona.
 SHOVE_ZONE_MAX_BB = 20
+# Até este stack um 3bet enfrentado é efetivamente COMMIT (4bet-jam/call-off), mesmo sem
+# nó validado (o pack só tem vs_3bet a 25bb). Cobre a fresta 20-25bb em pko/icm.
+VS3BET_JAM_MAX_BB = 25
+
+_RANKS = '23456789TJQKA'
+
+
+def _hand_tier(cards):
+    """Tier de força pré-flop (teoria mais próxima p/ o fallback "nunca abstém"):
+    premium / strong / playable / trash. Grosso mas SEMPRE classifica (nunca None)."""
+    try:
+        a, b = cards[0], cards[1]
+        ra, rb = _RANKS.index(a[0].upper()), _RANKS.index(b[0].upper())
+        suited = a[1].lower() == b[1].lower()
+    except Exception:                                # noqa: BLE001
+        return 'trash'
+    hi, lo = max(ra, rb), min(ra, rb)
+    pair = ra == rb
+    T, N, S, A_ = _RANKS.index('T'), _RANKS.index('9'), _RANKS.index('7'), _RANKS.index('A')
+    if pair and hi >= T:
+        return 'premium'                             # TT+
+    if hi == A_ and lo == _RANKS.index('K'):
+        return 'premium'                             # AK
+    if pair and hi >= S:
+        return 'strong'                              # 77-99
+    if hi == A_ and lo >= _RANKS.index('Q'):
+        return 'strong'                              # AQ+
+    if suited and hi >= _RANKS.index('K') and lo >= _RANKS.index('T'):
+        return 'strong'                              # KTs+/KQs/QJs-ish
+    if pair:
+        return 'playable'                            # 22-66
+    if hi == A_:
+        return 'playable'                            # qualquer Ax
+    if hi >= T and lo >= T:
+        return 'playable'                            # broadways offsuit
+    if suited and (hi - lo) <= 1 and lo >= _RANKS.index('5'):
+        return 'playable'                            # suited connectors médios+
+    if suited and hi >= _RANKS.index('K'):
+        return 'playable'                            # Kxs
+    return 'trash'
+
+
+_GAP_SEEN = set()
+
+
+def _log_gap(flag):
+    """APONTA o gap de cobertura (p/ cobertura real posterior com solver). Append em
+    logs/gaps_cobertura.jsonl, dedup em memória por (reason,spot,heroPos,bucket,tier,facing).
+    Passivo; nunca quebra o cérebro."""
+    try:
+        bucket = None
+        stk = flag.get('stack_bb')
+        if isinstance(stk, (int, float)):
+            bucket = min((5, 8, 10, 12, 15, 20, 25, 30, 40, 50, 60, 80, 100),
+                         key=lambda s: abs(s - stk))
+        key = (flag.get('reason'), flag.get('spot'), flag.get('hero_pos'), bucket,
+               flag.get('tier'), flag.get('facing'))
+        if key in _GAP_SEEN:
+            return
+        _GAP_SEEN.add(key)
+        import json as _j
+        import os as _os
+        d = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), 'logs')
+        _os.makedirs(d, exist_ok=True)
+        with open(_os.path.join(d, 'gaps_cobertura.jsonl'), 'a', encoding='utf-8') as fh:
+            fh.write(_j.dumps(dict(flag, bucket=bucket), ensure_ascii=False) + '\n')
+    except Exception:                                # noqa: BLE001
+        pass
 
 
 # Catalog stack-distribution profiles by position (UTG..BB), from the engine's
@@ -769,14 +837,77 @@ class PreflopAdvisor:
             facing_all_in=facing_all_in, tournament_profile=kwargs.get('tournament_profile'),
             reference_tree_study=kwargs.get('reference_tree_study', False))
 
-    def advise_from_reading(self, table_state, hero_cards, **kwargs):
-        """Pull hero's position/stack from a read_table_state result, infer the
-        spot from the bets (first_in or vs_open), advise, and attach a founded
-        raise size for the recommended action. The spot inference is approximate
-        (it rides on the nearest-seat bet attribution).
+    # Abstenções de PERCEPÇÃO (leitura falhou): o fallback não inventa ação em cima de
+    # leitura ruim -> fica ABSTAIN e o operador joga o seguro (anti-freeze). As demais
+    # (COBERTURA) NUNCA abstêm: viram ação pela teoria mais próxima (Eduardo 19/11).
+    _PERCEPTION_ABSTAINS = frozenset({
+        'HERO_POSITION_UNKNOWN', 'HERO_CARDS_UNKNOWN', 'STACK_UNKNOWN'})
 
-        A árvore de referência (Clone 0.5) é consultada ANTES, como estudo/sombra;
-        ver _tree_from_reading. Nunca autoriza execução."""
+    def advise_from_reading(self, table_state, hero_cards, **kwargs):
+        """LEI "NUNCA ABSTÉM" (Eduardo 19/11): nunca devolve ABSTAIN por falta de
+        cobertura. Roda o núcleo; se abstiver por COBERTURA, tapa com a teoria mais
+        próxima (tier de mão: push/fold curto, open/call fundo) e FLAGGA o gap
+        (caveats GAP_COBERTURA_APROX/APONTAR_PARA_SOLVER + `gap_flag`) p/ cobertura real
+        posterior com solver. Só ABSTÉM em falha de PERCEPÇÃO (leitura)."""
+        r = self._advise_from_reading_core(table_state, hero_cards, **kwargs)
+        if (isinstance(r, dict) and r.get('status') == 'ABSTAIN'
+                and r.get('reason') not in self._PERCEPTION_ABSTAINS):
+            try:
+                fb = self._never_abstain_fallback(table_state, hero_cards, r)
+            except Exception:                       # noqa: BLE001 — fallback nunca quebra
+                fb = None
+            if isinstance(fb, dict):
+                return fb
+        return r
+
+    def _never_abstain_fallback(self, table_state, hero_cards, prev):
+        """Ação pela TEORIA MAIS PRÓXIMA p/ um abstém de cobertura. Sempre devolve uma
+        decisão (nunca None). Flagga o gap p/ cobertura real posterior."""
+        positions = table_state.get('positions') or {}
+        hero_pos = positions.get('hero')
+        hero = table_state.get('seats', {}).get('hero', {})
+        stack = hero.get('stack_bb')
+        to_call = (table_state.get('to_call') or {}).get('to_call_bb') or 0.0
+        bets = [b.get('bet_bb') for b in (table_state.get('bets') or [])
+                if isinstance(b.get('bet_bb'), (int, float))]
+        facing = any(b and b > 1.5 for b in bets) or (isinstance(to_call, (int, float)) and to_call > 1.0)
+        tier = _hand_tier(hero_cards)
+        short = isinstance(stack, (int, float)) and stack <= SHOVE_ZONE_MAX_BB
+        allin = bool(prev.get('allin') or (facing and any(b and b >= (stack or 1e9) - 1e-6 for b in bets)))
+        if facing:
+            if tier == 'premium':
+                rec = 'all_in' if (short or allin) else 'call'
+            elif tier == 'strong' and not short and isinstance(to_call, (int, float)) and to_call <= 3.0:
+                rec = 'call'
+            else:
+                rec = 'fold'
+        else:                                        # sem aposta p/ pagar (first-in-ish)
+            if tier in ('premium', 'strong'):
+                rec = 'all_in' if short else 'raise'
+            elif tier == 'playable' and not short:
+                rec = 'raise'
+            elif hero_pos == 'BB':
+                rec = 'check'                        # BB de graça -> check, nunca fold
+            else:
+                rec = 'fold'
+        reason = prev.get('reason') or 'UNKNOWN'
+        out = dict(status='ADVICE', recommended=rec, validated=False,
+                   execution_allowed=False, exploratory=True,
+                   mix=[{'action': rec, 'frequency': 1.0}],
+                   spot=prev.get('spot'),
+                   caveats=['GAP_COBERTURA_APROX', 'GAP_APROX_%s' % reason,
+                            'NEAREST_THEORY_HAND_TIER_%s' % tier.upper(),
+                            'APONTAR_PARA_SOLVER'],
+                   gap_flag=dict(reason=reason, spot=prev.get('spot'),
+                                 hero_pos=hero_pos, stack_bb=stack, tier=tier, facing=facing))
+        if rec == 'all_in' and isinstance(stack, (int, float)):
+            out['sizing'] = dict(size_bb=round(stack, 1), basis='nearest-theory shove', heuristic=True)
+        _log_gap(out['gap_flag'])
+        return out
+
+    def _advise_from_reading_core(self, table_state, hero_cards, **kwargs):
+        """Núcleo (antigo advise_from_reading). Pode devolver ABSTAIN; o wrapper
+        público converte abstém de cobertura em ação."""
         positions = table_state.get('positions') or {}
         hero = table_state.get('seats', {}).get('hero', {})
         if 'hero' not in positions:
@@ -845,8 +976,12 @@ class PreflopAdvisor:
             # vs_3bet CURTO (<20bb): um 3bet nesse stack é efetivamente COMMIT -> a
             # continuação é 4bet-JAM, então sintetiza o call-off por equity mesmo sem
             # allin explícito (não há nó vs_3bet <20bb). Regra: short + 3bet = jam/fold.
+            # Zona de COMMIT vs 3bet: até ~25bb um 3bet é efetivamente all-in -> a
+            # continuação é 4bet-JAM/call-off. Inclusivo no limite (20bb EXATO caía na
+            # fresta: `< 20` é falso) e cobre 20-25 (o nó validado vs_3bet só existe a
+            # 25bb; em pko/icm sem esse nó o bot ABSTINHA = morria). Lei de cobertura.
             _vs3b_short = (spot['spot'] == 'vs_3bet'
-                           and isinstance(_stk, (int, float)) and _stk < SHOVE_ZONE_MAX_BB)
+                           and isinstance(_stk, (int, float)) and _stk <= VS3BET_JAM_MAX_BB)
             if (isinstance(result, dict) and result.get('status') == 'ABSTAIN'
                     and result.get('reason') == 'NO_VALIDATED_NODE_FOR_CONTEXT'
                     and (spot['spot'] == 'vs_open_shove'
@@ -1019,7 +1154,8 @@ class PreflopAdvisor:
                     result.setdefault('caveats', []).append('ISO_CAP_FOLD_FORA_DO_RANGE_TIGHT')
             if result.get('recommended'):
                 result['sizing'] = sizing.size_from_reading(result['recommended'], table_state,
-                                                            positions['hero'], spot.get('opener'))
+                                                            positions['hero'], spot.get('opener'),
+                                                            stage=kwargs.get('stage'))
         return result
 
     def _shove_range_node(self, spot, shover, vs_tuple, bucket):

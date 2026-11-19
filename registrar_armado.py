@@ -262,6 +262,19 @@ def main(argv=None):
         print('Alvo %r não encontrado. Lidos: %s'
               % (args.target, [c['name'] for c in lob['cards']])); return 1
 
+    # Eduardo 19/11: "tire essa trava de seguranca, nao ha necessidade". Play money,
+    # alvo+custo JA autorizados -> a CONFIRMACAO de modalidade e friccao desnecessaria.
+    # Se o lobby nao classificou, infere pelo nome (KO -> pko/mko). As travas que
+    # IMPORTAM (nome do torneio + custo autorizado) seguem valendo.
+    if not card.get('modality') or card.get('modality') == 'unknown':
+        from table_reading.tournament import is_pko as _ispko, is_mystery as _ismys
+        _nm = card.get('name') or ''
+        card['modality'] = ('mko' if _ismys(_nm)
+                            else 'pko' if (_ispko(_nm) or 'KO' in _nm.upper())
+                            else 'freezeout')
+        print('[modalidade] %r inferida = %s (trava de confirmacao removida)'
+              % (_nm, card['modality']))
+
     _modalities = ('freezeout', 'mko', 'pko')
     if args.allow_rebuy:
         _modalities = _modalities + ('rebuy', 'addon')
@@ -280,8 +293,9 @@ def main(argv=None):
         listener.start()
     # O gate do FLUXO (reserve/authorize) exige RUNNING. Em dry-run liberamos o
     # fluxo (só lógica, não clica); o clique real continua barrado por --arm.
-    if not args.arm:
-        control.resume()                 # PAUSED->RUNNING (fluxo lógico só)
+    # Eduardo removeu a trava manual (Ctrl+Alt+R): AUTO-ARMA sempre (play money, alvo+
+    # custo autorizados). --arm segue definindo cursor REAL (clica) vs dry-run.
+    control.resume()                     # PAUSED->RUNNING (auto-arm, sem Ctrl+Alt+R)
 
     mode = 'real_supervised' if args.arm else 'observation'
     rnd = RegistrationRound(
@@ -402,6 +416,32 @@ def main(argv=None):
     else:
         print('\n*** RESULTADO DESCONHECIDO: não confirmei a inscrição na tela. '
               'Reserva mantida; confira no cliente. ***')
+
+    # ROTINA OBRIGATÓRIA (Eduardo, LEI 19/11): identificar -> registrar -> ENTRAR NA MESA
+    # -> organizar. O registrador PARAVA na inscrição (bug recorrente de "esquecer de
+    # abrir a mesa"). Agora SEMPRE clica "Entrar" após inscrever. Organizar só aparece com
+    # >1 mesa (com 1 mesa é manual/N-A) -> feito pelo tiling quando houver multi-mesa.
+    if registered and args.arm:
+        time.sleep(0.8)
+
+        def _verify_entered(_i, _n):
+            fr, _ = engine.capture_frame(hwnd=args.hwnd)
+            return dict(confirmed=(fr is None or find_enter_button_frame_rect(fr) is None))
+
+        for _try in range(3):
+            fr, _ = engine.capture_frame(hwnd=args.hwnd)
+            if fr is None or find_enter_button_frame_rect(fr) is None:
+                break                             # botão sumiu = mesa já aberta
+            re = _click_step(engine, args.hwnd,
+                             locate_frame_rect=find_enter_button_frame_rect,
+                             source_key='btn:entrar', adapter=adapter, control=control,
+                             verifier=_verify_entered, label='entrar')
+            print('[ENTRAR] -> %s %s' % (re['state'], re.get('reasons') or ''))
+            if re['state'] in ('DONE', 'UNKNOWN_RESULT'):
+                break
+            time.sleep(0.6)
+        print('*** NA MESA (rotina registrar->ENTRAR cumprida). Organizar: automático só '
+              'com >1 mesa (tiling); com 1 mesa não há atalho (manual/N-A). ***')
     ledger.close()
     if listener:
         listener.stop()

@@ -207,7 +207,10 @@ class CallOffTests(unittest.TestCase):
         self.assertFalse(spot['allin'])
         a = PreflopAdvisor(pack_with_3bet_shove(list(HANDS), hero='BTN', vs=('CO',), stack=15))
         r = a.advise_from_reading(state, ['Ah', '7d'])
-        self.assertEqual(r['status'], 'ABSTAIN')           # abstém, não call-off falso
+        # LEI "nunca abstém" (Eduardo 19/11): 13bb vs 3bet é zona de COMMIT -> DECIDE.
+        # A7o é lixo p/ 4bet-jam -> FOLD (não é call-off falso, não abstém).
+        self.assertEqual(r['status'], 'ADVICE')
+        self.assertEqual(r['recommended'], 'fold')
         self.assertNotEqual(r.get('spot'), 'call_off_vs_3bet_shove')
 
     def test_shove_zone_vs_open_squeeze_routes_to_3bet_shove(self):
@@ -512,11 +515,14 @@ class VsLimpTests(unittest.TestCase):
         self.assertEqual(r['recommended'], 'check')
 
     def test_non_sb_limper_does_not_use_sb_node(self):
-        # #1: limp de CO não deve usar o nó SB×BB -> cai no first_in (aqui, abstém)
+        # #1: limp de CO NÃO deve usar o nó SB×BB. LEI "nunca abstém" (Eduardo 19/11):
+        # cai no fallback de COBERTURA (GAP flaggeado) e DECIDE — nunca abstém, e não
+        # usa o nó da batalha de blinds (SB).
         a = PreflopAdvisor(pack_vs_limp(['AKs']))
         r = a.advise_from_reading(self._co_limp(), ['As', 'Ks'], mode='chip_ev', stage='mid')
-        self.assertEqual(r['status'], 'ABSTAIN')
-        self.assertEqual(r['reason'], 'NO_VALIDATED_NODE_FOR_CONTEXT')
+        self.assertEqual(r['status'], 'ADVICE')
+        self.assertIn('GAP_COBERTURA_APROX', r['caveats'])
+        self.assertNotIn('VS_LIMP_SB_BLIND_BATTLE', r.get('caveats', []))
 
     def test_vs_limp_usa_range_25bb_noutros_stacks(self):
         # vs_limp só existe a 25bb. A batalha BB vs limp do SB é estável -> usa a

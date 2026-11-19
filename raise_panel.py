@@ -170,6 +170,35 @@ def target_multiplier(advice, table_state):
     return round(size_bb / to_beat, 2)
 
 
+# Rótulos do painel de APOSTA PÓS-FLOP (fração de pote), por bucket do nosso slider.
+# O painel pós-flop usa frações (não ×BB), então casamos por RÓTULO, não por multiplicador.
+_FRACTION_LABELS = {
+    't33': ('1/3', '33%', '33', '1/3pot'),
+    't50': ('1/2', '50%', '50', '1/2pot'),
+    't66': ('2/3', '2/3pot', '66%', '67%', '66', '75%', '3/4'),  # 60-75% do estudo cola em 2/3
+    'pot': ('pot', 'pote', '100%'),
+    'allin': ('allin', 'allinpot', 'tudo', 'apostartudo'),
+}
+
+
+def _norm_label(s):
+    return ''.join(ch for ch in str(s or '').lower() if ch.isalnum() or ch in '/%')
+
+
+def map_fraction_to_preset(bucket, presets):
+    """Preset do painel PÓS-FLOP cujo RÓTULO casa com o bucket de fração (t33/t50/t66/
+    pot/allin). Casa por texto (não por ×multiplicador) — o painel pós-flop mostra frações.
+    None se nenhum preset legível casar (aí não clica — não aproxima à força)."""
+    cands = [_norm_label(c) for c in _FRACTION_LABELS.get(bucket, ())]
+    if not cands:
+        return None
+    for p in presets or []:
+        lab = _norm_label(p.get('label'))
+        if lab and any(c and (lab == c or c in lab or lab in c) for c in cands):
+            return p
+    return None
+
+
 def map_multiplier_to_preset(target_mult, presets, *, tol=None):
     """Preset com multiplicador mais próximo do alvo (entre os que leram), SE
     estiver dentro da tolerância; senão None (abster — não aproximar à força).

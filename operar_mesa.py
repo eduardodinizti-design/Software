@@ -23,6 +23,26 @@ from table_reading.action_buttons import read_action_buttons
 from table_reading.hand_tracking import read_hand_id
 from table_reading.community_cards import read_board
 from table_advisor import advise_table
+import bounty_reader
+
+# Cache leve (TTL) do bounty AUTO-LIDO (logs/mtt_bounty.json, escrito pelo emissor). O
+# flag --bounty-bb, se dado, tem precedência (override manual). Sem fonte -> None (cai no
+# pko_icm sem desconto, como antes). Lei: o bot coleta o dado, não o Eduardo informa.
+_BOUNTY_CACHE = {'v': None, 't': 0.0}
+
+
+def _auto_bounty(manual, ttl=5.0):
+    if manual is not None:
+        return manual
+    import time as _t
+    now = _t.time()
+    if now - _BOUNTY_CACHE['t'] > ttl:
+        try:
+            _BOUNTY_CACHE['v'] = bounty_reader.read_bounty_bb()
+        except Exception:                        # noqa: BLE001 — nunca quebra o loop
+            _BOUNTY_CACHE['v'] = None
+        _BOUNTY_CACHE['t'] = now
+    return _BOUNTY_CACHE['v']
 from preflop_advisor import PreflopAdvisor
 from preflop_context import PreflopAggressorTracker
 from reader_cache import ReaderCache
@@ -62,8 +82,9 @@ def never_fold_free(recommended, br):
     return recommended
 
 
-def _protobuf_preflop_advice(advisor, mode, stage='mid', estado_path=None):
-    """Conselho PRE-FLOP a partir do estado PROTOBUF (logs/estado_mesa.json), ou None
+def _protobuf_advice(advisor, mode, stage='mid', estado_path=None):
+    """Conselho PRE-FLOP **ou PÓS-FLOP** a partir do estado PROTOBUF (logs/estado_mesa.json;
+    board/to_call/pote da MEMÓRIA via emitir_seats), ou None
     se nao houver estado fresco e INEQUIVOCO desta mesa. SEGURO: 0 mesas frescas = sem
     estado; >1 mesa fresca = ambiguo (nao da p/ saber qual e esta) -> None -> OCR de
     reserva (nunca chuta a mesa errada). players=9 (pack 9-max; o tamanho real da mesa
@@ -734,7 +755,7 @@ def main(argv=None):
                         with latency.span('percepcao_cerebro'):
                             result = advise_table(crop, advisor, stabilizer=stabilizer,
                                                   table_key=tkey, hero_override=override,
-                                                  tracker=aggr_tracker, bounty_bb=args.bounty_bb,
+                                                  tracker=aggr_tracker, bounty_bb=_auto_bounty(args.bounty_bb),
                                                   mode=args.mode, stage=args.stage, enable_hud=args.hud,
                                                   read_cache=read_cache, field_memory=field_memory,
                                                   board_memory=board_memory,
@@ -778,11 +799,12 @@ def main(argv=None):
                     hero_turn_seen = True
                 hid = hkey
                 adv = result.get('advice') or {}
-                # PERCEPCAO PROTOBUF (pre-flop): a decisao vem do estado lido da MEMORIA
-                # (cartas/apostas/posicoes EXATAS), OCR de reserva. So pre-flop (sem board).
-                # Loga PARIDADE protobuf x OCR p/ validacao antes de confiar 100%.
-                if args.protobuf and not (result.get('board') or {}).get('cards'):
-                    _pb = _protobuf_preflop_advice(advisor, args.mode, args.stage)
+                # PERCEPCAO PROTOBUF (pre E pos-flop): a decisao vem do estado lido da
+                # MEMORIA — cartas/apostas/posicoes/BOARD/to_call/pote EXATOS (to_call
+                # derivado, exato; board do RoundStartBRC). OCR de reserva. Eduardo 19/11:
+                # terminar a leitura por memoria (mata o to_call null e o board ilegivel).
+                if args.protobuf:
+                    _pb = _protobuf_advice(advisor, args.mode, args.stage)
                     if _pb is not None:
                         _pbr = _pb.get('recommended') if _pb.get('status') == 'ADVICE' \
                             else 'ABSTAIN:%s' % _pb.get('reason')
@@ -895,6 +917,34 @@ def main(argv=None):
                 _, caveats = map_advice_to_action(adv.get('recommended'))
                 is_raise = 'REQUIRES_SIZING_MULTISTEP' in caveats
                 is_shove = 'ALL_IN' in caveats
+                # RAISE = fluxo multi-etapa (sequenciador). Só executa ARMADO (em
+                # dry-run os cliques não abrem o painel de verdade).
+                if (br['status'] == 'EXPERIMENTAL_BUTTON_ROW' and adv.get('status') == 'ADVICE'
+                        and is_raise and adv.get('phase') == 'postflop'
+                        and (tkey, hid) not in raise_done):
+                    # APOSTA PÓS-FLOP (Eduardo 19/11): painel de FRAÇÃO de pote, não ×BB.
+                    # Executor dedicado clica o preset da fração (1/3,1/2,2/3,allin) +
+                    # confirmar. Antes caía no sequenciador ×BB -> preset não casava -> não
+                    # clicava (o bug que te obrigou a apostar na mão).
+                    _bk = (adv.get('sizing') or {}).get('bucket') or '1/2'
+                    if not args.arm:
+                        print('[%03d] POS-FLOP BET (dry): bucket=%s' % (n, _bk), flush=True)
+                    elif not control.execution_allowed():
+                        print('[%03d] POS-FLOP BET mas BOT PAUSADO' % n, flush=True)
+                    else:
+                        import postflop_bet_executor as _pfbe
+                        res = _pfbe.execute_postflop_bet(
+                            engine, hwnd, _bk, adapter=adapter, control=control,
+                            discover_rect=lambda h=hwnd: _discover_rect(h))
+                        _extra = (' labels=%s' % res.get('labels')) if res.get('state') in (
+                            'NO_FRACTION_PRESET', 'NO_PANEL') else ''
+                        print('[%03d] >>> POS-FLOP BET %s -> %s preset=%s%s' % (
+                            n, _bk, res.get('state'), res.get('preset'), _extra), flush=True)
+                        if res.get('state') in ('DONE', 'PARTIAL'):
+                            raise_done.add((tkey, hid))
+                        _emit_shadow(result, adv, adv.get('recommended') or 'bet',
+                                     {'authority': 'POSTFLOP_FRACTION', 'state': res.get('state')})
+                    continue
                 # RAISE = fluxo multi-etapa (sequenciador). Só executa ARMADO (em
                 # dry-run os cliques não abrem o painel de verdade).
                 if (br['status'] == 'EXPERIMENTAL_BUTTON_ROW' and adv.get('status') == 'ADVICE'

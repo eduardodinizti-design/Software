@@ -93,5 +93,20 @@ class ShoveZoneCoverage(unittest.TestCase):
                          .get('recommended'), 'fold')
 
 
+    # ---- vs_3bet na ZONA DE COMMIT (<=25bb) NUNCA abstem (fresta 20bb/pko fechada) ----
+    def test_vs_3bet_zona_commit_decide_todos_os_modos(self):
+        # hero BTN abre 2.0, SB 3beta 6.0 (nao all-in); o bot tem de DECIDIR (4bet-jam/
+        # call-off/fold), nunca ABSTER — inclusive 20bb EXATO e 20-25 em pko/icm.
+        for stk in (18, 20, 22, 25):
+            for mode, stage in (('pko', 'mid'), ('icm', 'bubble'), ('chip_ev', 'mid')):
+                st = _ts({'hero': 'BTN', 'v': 'SB', 'vbb': 'BB'},
+                         {'hero': stk, 'v': stk, 'vbb': stk},
+                         {'hero': 2.0, 'v': 6.0, 'vbb': 1.0})
+                st['pot'] = {'pot_bb': 9.5}
+                st['to_call'] = {'to_call_bb': 4.0}
+                for hand in (['Ad', 'Kc'], ['Qd', 'Qh'], ['7h', '2d']):
+                    self._decide(hand, st, mode=mode, stage=stage, players=9)
+
+
 if __name__ == '__main__':
     unittest.main()

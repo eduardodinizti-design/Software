@@ -15,6 +15,7 @@ if REPO not in sys.path:
 OUT = os.path.join(REPO, "logs", "live_seats.json")
 RICH = os.path.join(REPO, "logs", "live_seats_rich.json")
 ESTADO = os.path.join(REPO, "logs", "estado_mesa.json")   # estado COMPLETO p/ percepcao protobuf
+BOUNTY = os.path.join(REPO, "logs", "mtt_bounty.json")    # bounty PKO (leitura automatica)
 SECONDS = float(sys.argv[1]) if len(sys.argv) > 1 else 0.0
 
 _tables = {}        # ref -> {seat: uid}
@@ -30,12 +31,34 @@ def _write_atomic(path, obj):
     os.replace(tmp, path)
 
 
+def _on_bounty(p):
+    """Grava logs/mtt_bounty.json. Campo cujo NOME diz 'bounty' (>0) é confiado como
+    bounty do hero (auto/calibrated=True); reward/prize/ko ficam como candidatos crus
+    (calibrar ao vivo). Sem risco: se nada confiável, calibrated=False e o reader devolve
+    None (operador cai no pko_icm sem desconto)."""
+    sb = p.get("sb")
+    bb_chips = (sb * 2) if isinstance(sb, (int, float)) and sb > 0 else None
+    bounty = p.get("bounty") or {}
+    other = p.get("other") or {}
+    hero_chips = next((v for v in bounty.values() if isinstance(v, (int, float)) and v > 0), None)
+    obj = {"ts": time.time(), "cls": p.get("cls"), "bb_chips": bb_chips,
+           "candidates": dict(**bounty, **other), "calibrated": hero_chips is not None}
+    if hero_chips is not None:
+        obj["hero_bounty_chips"] = hero_chips
+    _write_atomic(BOUNTY, obj)
+    print("[emit] bounty %s: hero=%s bb_chips=%s cand=%s" % (
+        p.get("cls"), hero_chips, bb_chips, list(obj["candidates"].keys())), flush=True)
+
+
 def on_msg(m, data):
     if m.get("type") != "send":
         if m.get("type") == "error":
             print("[emit] JS erro:", m.get("stack") or m.get("description"))
         return
     p = m.get("payload") or {}
+    if p.get("t") == "bounty":
+        _on_bounty(p)
+        return
     if p.get("t") != "seats":
         return
     ref = p.get("ref") or "?"

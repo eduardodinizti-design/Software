@@ -39,14 +39,42 @@ except ImportError:
 _HERE = os.path.dirname(os.path.abspath(__file__))
 
 
+def _tones_wav(sequencia, volume=0.6, rate=22050):
+    """Sintetiza um WAV (PCM 16-bit mono) a partir de [(freq_hz, dur_ms), ...].
+    Tocado pela SAIDA DE AUDIO (PlaySound), nao pelo PC speaker (winsound.Beep é
+    mudo em notebook/PC moderno — por isso o alarme nao saia som)."""
+    import io, wave, struct, math
+    buf = io.BytesIO()
+    w = wave.open(buf, "wb"); w.setnchannels(1); w.setsampwidth(2); w.setframerate(rate)
+    frames = bytearray()
+    for freq, dur_ms in sequencia:
+        n = int(rate * (dur_ms / 1000.0))
+        for i in range(n):
+            # envelope leve nas bordas p/ nao estalar
+            env = min(1.0, i / 200.0, (n - i) / 200.0)
+            frames += struct.pack("<h", int(volume * env * 32767 * math.sin(2 * math.pi * freq * i / rate)))
+    w.writeframes(bytes(frames)); w.close()
+    return buf.getvalue()
+
+
 def _beeps(sequencia, repeticoes, pausa):
-    if winsound is None:
+    data = None
+    try:
+        data = _tones_wav(sequencia)
+    except Exception:
+        data = None
+    if winsound is None or not data:
         for _ in range(repeticoes):
             sys.stdout.write("\a"); sys.stdout.flush(); time.sleep(0.3)
         return
     for _ in range(repeticoes):
-        for freq, dur in sequencia:
-            winsound.Beep(freq, dur)
+        try:
+            winsound.PlaySound(data, winsound.SND_MEMORY)   # WAV pela saida de audio (audivel)
+        except Exception:
+            try:
+                winsound.MessageBeep(-1)                     # fallback: som de sistema
+            except Exception:
+                pass
         time.sleep(pausa)
 
 

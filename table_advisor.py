@@ -21,10 +21,12 @@ from table_reading.hand_tracking import read_hand_id
 from table_reading.tournament import read_tournament, tournament_context
 from preflop_advisor import PreflopAdvisor, infer_spread
 from postflop_advisor import advise_postflop
+import postflop_sizing
 from preflop_context import villain_postflop_range
 import solver_cbet_shadow
 import solver_pr12_shadow
 import solver_sb40_shadow
+import solver_srp_shadow
 
 
 def read_hero_card_slots(crop):
@@ -170,10 +172,41 @@ def _attach_solver_shadow(advice, ctx, seats, state, hero, board, ptype, mode):
             advice.setdefault('caveats', [])
             if 'SOLVER_CROSSCHECK_SB40_SRP' not in advice['caveats']:
                 advice['caveats'].append('SOLVER_CROSSCHECK_SB40_SRP')
+    # Cross-check IP x BB SRP deep (packs btn_vs_bb_40/100, estudo TexasSolver no PC do
+    # Eduardo): FLOP (c-bet per-combo) e TURN (2ª barrela agregada), BTN nativo e CO/HJ...
+    # por APROXIMAÇÃO de família. Sizes já no vocabulário do nosso slider (1/3,1/2,2/3,
+    # allin) e, no turn, nota de Plano Geométrico por SPR. ESTUDO/auditoria: anexa a
+    # opinião do solver + caveats, NÃO troca `recommended` (promover exige homologar este
+    # bucket, como fizemos no btn_vs_bb_25). Engata só no spot/stack/flop cobertos.
+    _fam = solver_srp_shadow.POS_FAMILY
+    if (ptype == 'single_raised' and advice.get('street') in ('FLOP', 'TURN')
+            and ((hero_pos in _fam and villain_pos == 'BB')
+                 or (hero_pos == 'BB' and villain_pos in _fam))):
+        bcards = board.get('cards') or []
+        try:
+            srp = solver_srp_shadow.lookup(
+                hero, bcards, hero_pos=hero_pos, villain_pos=villain_pos,
+                to_call_bb=advice.get('to_call_bb'), pot_bb=advice.get('pot_bb'),
+                hero_stack_bb=(seats.get('hero') or {}).get('stack_bb'),
+                villain_stack_bb=(seats.get(vseat) or {}).get('stack_bb') if vseat else None,
+                street=(advice.get('street') or '').lower(), mode=mode,
+                turn_card=(bcards[3] if len(bcards) > 3 else None))
+        except Exception:                        # noqa: BLE001 — sombra nunca quebra o conselho
+            srp = None
+        if srp:
+            advice['solver_shadow_srp'] = srp
+            advice.setdefault('caveats', [])
+            for cav in srp.get('caveats', []):
+                if cav not in advice['caveats']:
+                    advice['caveats'].append(cav)
+            _prefer_solver_srp(advice, srp)
+            _barrel_turn_with_solver(advice, srp)
 
 
 # Mapa size do solver -> fração de pote (p/ o sizing quando a sombra manda apostar).
-_SOLVER_BET_FRACTION = {'b33': 0.33, 'b50': 0.50, 'b70': 0.70, 'allin': None}
+# b33/b50/b70 = vocabulário do pack btn_vs_bb_25; t33/t50/t66 = NOSSO slider (packs srp).
+_SOLVER_BET_FRACTION = {'b33': 0.33, 'b50': 0.50, 'b70': 0.70, 'allin': None,
+                        't33': 1.0 / 3.0, 't50': 0.50, 't66': 2.0 / 3.0}
 
 
 def _prefer_solver_on_covered_spot(advice, shadow):
@@ -207,6 +240,74 @@ def _prefer_solver_on_covered_spot(advice, shadow):
         advice['caveats'].append(tag)
     if prev and prev != coarse:
         advice['caveats'].append('SOLVER_OVERRODE_HEURISTIC_%s_TO_%s' % (prev.upper(), coarse.upper()))
+
+
+def _prefer_solver_srp(advice, srp):
+    """LEI "nao morrer no pos-flop" (Eduardo 19/11): nos spots IP-vs-BB SRP cobertos pelos
+    packs TexasSolver (btn_vs_bb_40/100), onde o solver é DECISIVO e a mão do hero está no
+    range, a recomendação do FLOP passa a ser a do solver — inclusive APOSTAR onde ele
+    aposta, matando o "só check". Sizes já no NOSSO slider (t33/t50/t66). Mesma barra do
+    btn_vs_bb_25 homologado: só nó per-combo DECISIVO do lado `agg`; nó misto e lado
+    agregado (turn) ficam como GUIA (não dirigem a mão específica). Gate: execution_allowed
+    segue False. Preserva a leitura da heurística em `heuristic_recommended`."""
+    if advice.get('solver_shadow'):
+        return                                    # btn_vs_bb_25 (homologado) é a AUTORIDADE na
+        # sua faixa (20-30bb), mesmo quando conclui "misto/não dirige". O srp só dirige FORA
+        # dela (onde o 25bb nem cobre -> sem chave solver_shadow). Cobertura sem conflito.
+    if srp.get('street') != 'flop' or srp.get('side') != 'agg':
+        return                                    # turn é agregado -> só guia, não dirige
+    if not srp.get('per_combo') or not srp.get('combo_in_range') or not srp.get('decisive'):
+        return
+    coarse = srp.get('recommended_shadow')        # 'check' ou 'bet'
+    if coarse not in ('check', 'bet'):
+        return
+    prev = (advice.get('recommended') or '').lower()
+    advice['heuristic_recommended'] = advice.get('recommended')
+    advice['recommended'] = coarse
+    advice['recommended_source'] = 'solver_shadow_srp'
+    advice['execution_allowed'] = False
+    if coarse == 'bet':
+        frac = _SOLVER_BET_FRACTION.get(srp.get('bet_size'))
+        pot = advice.get('pot_bb')
+        size_bb = (round(pot * frac, 1) if isinstance(pot, (int, float)) and frac else None)
+        advice['sizing'] = dict(size_bb=size_bb, solver_size=srp.get('bet_size'),
+                                basis='solver srp c-bet (%s)' % srp.get('bet_size'),
+                                heuristic=False)
+    else:
+        advice['sizing'] = dict(size_bb=0.0, basis='solver srp check', heuristic=False)
+    for tag in ('SOLVER_PREFERRED_ON_COVERED_SPOT', 'SOLVER_SRP_PREFERRED'):
+        if tag not in advice['caveats']:
+            advice['caveats'].append(tag)
+    if prev and prev != coarse:
+        advice['caveats'].append('SOLVER_OVERRODE_HEURISTIC_%s_TO_%s' % (prev.upper(), coarse.upper()))
+
+
+def _barrel_turn_with_solver(advice, srp):
+    """TURN BARREL pela REFERÊNCIA (Eduardo: "não morrer no pós-flop"; o solver manda).
+    Quando o hero tem INICIATIVA no turn (to_call==0) e o solver — agregado da 2ª barrela
+    do IP naquela carta — é DECISIVAMENTE 'bet', a heurística NÃO morre de check: barrela,
+    com size do nosso slider (ou Plano Geométrico). É agregado de range (não per-combo) ->
+    caveat honesto; preserva a leitura heurística em `heuristic_recommended`. O
+    postflop_sizing.enforce (passo final) normaliza o size ao slider/geométrico."""
+    if srp.get('node') != 'ip_turn_barrel' or srp.get('street') != 'turn':
+        return
+    if srp.get('recommended_shadow') != 'bet' or not srp.get('decisive'):
+        return
+    if (advice.get('recommended') or '').lower() != 'check':
+        return                                    # só converte GIVE-UP (não mexe em valor já apostando)
+    if advice.get('to_call_bb') not in (0, None):
+        return
+    advice['heuristic_recommended'] = advice.get('recommended')
+    advice['recommended'] = 'bet'
+    advice['recommended_source'] = 'solver_shadow_srp_turn'
+    frac = _SOLVER_BET_FRACTION.get(srp.get('bet_size'))
+    pot = advice.get('pot_bb')
+    advice['sizing'] = dict(
+        size_bb=(round(pot * frac, 1) if isinstance(pot, (int, float)) and frac else None),
+        solver_size=srp.get('bet_size'), basis='turn barrel (solver agg)', heuristic=False)
+    for tag in ('SOLVER_SRP_TURN_BARREL', 'SOLVER_TURN_RANGE_AGGREGATE_BARREL'):
+        if tag not in advice['caveats']:
+            advice['caveats'].append(tag)
 
 
 def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table_key='default',
@@ -340,6 +441,13 @@ def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table
         if has_board and hero is not None and isinstance(advice, dict) and advice.get('phase') == 'postflop':
             advice = _postflop_in_context(advisor, tracker, state, hero, board,
                                           mode=use_mode, stage=use_stage, table_key=table_key)
+    # Passo FINAL: encaixa o size de QUALQUER aposta pós-flop no nosso slider
+    # (1/3,1/2,2/3,allin) ou no Plano Geométrico do turn. Depois do solver driving, p/ o
+    # alvo executável (size_bb) sair sempre certo e o bot nunca "morrer" sem size. Pós-flop.
+    if isinstance(advice, dict) and advice.get('phase') == 'postflop':
+        _hero_stack = (state.get('seats', {}).get('hero') or {}).get('stack_bb')
+        postflop_sizing.enforce(advice, pot_bb=advice.get('pot_bb'),
+                                stack_bb=_hero_stack, spr=advice.get('spr'))
     return dict(hand=hand, hero_cards=hero, hero_slots=hero_slots, board=board, table_state=state, is_table=True,
                 tournament=tourney, context=dict(mode=use_mode, stage=use_stage), advice=advice)
 

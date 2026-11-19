@@ -425,9 +425,13 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
                     info.update(recommended='fold',
                                 caveats=caveats + ['POOL_UNDERBLUFF_FOLD_BIG_BET'])
                     return info
-                return _abstain('BLUFFCATCH_VS_BIG_BET_NEEDS_READS', pot_bb=pot,
-                                to_call_bb=to_call, pot_odds=round(pot_odds, 4), made=made,
-                                equity=round(equity, 4) if equity is not None else None)
+                # LEI "NUNCA ABSTÉM" (Eduardo 19/11): sem leitura, bluffcatcher de 1 par
+                # vs APOSTA GRANDE tem AÇÃO padrão = FOLD (o pool underbluffa aposta grande;
+                # mesmo princípio do ramo acima). Não abstém: decide o seguro.
+                info.update(recommended='fold',
+                            caveats=caveats + ['BLUFFCATCH_BIG_BET_DEFAULT_FOLD_NO_READ',
+                                               'POOL_UNDERBLUFF_FOLD_BIG_BET'])
+                return info
             if equity is not None:
                 caveats.append('BLUFFCATCH_EQUITY_DRIVEN')
                 info.update(recommended=('call' if equity >= pot_odds + haircut + ex_delta else 'fold'),

@@ -36,6 +36,16 @@ function main(){
     const m={}; let f; while(!(f=il.class_get_fields(k,it)).isNull()){ m[cstr(il.field_get_name(f))]=il.field_get_offset(f); } offCache[cn]=m; return m; }
   function geti(obj,name){ const o=offs(obj); return o[name]!==undefined?obj.add(o[name]).readS32():null; }
   function getp(obj,name){ const o=offs(obj); return o[name]!==undefined?obj.add(o[name]).readPointer():ptr(0); }
+  // BOUNTY (PKO): acha campos por NOME na msg MTT/premio (reflexao). So nomes com
+  // 'bounty' sao CONFIAVEIS; reward/prize/ko ficam como CANDIDATOS p/ calibrar ao vivo.
+  // So leitura de S32 em offsets (seguro). ADITIVO: nunca afeta o caminho dos assentos.
+  function scanBounty(obj){ try{ if(!obj||obj.isNull())return null; const o=offs(obj);
+    const b={}, oth={};
+    for(const nm in o){ let v=null;
+      if(/bounty/i.test(nm)){ try{ v=obj.add(o[nm]).readS32(); }catch(e){} if(v!==null)b[nm]=v; }
+      else if(/reward|bonus|knock|prize|premi/i.test(nm)){ try{ v=obj.add(o[nm]).readS32(); }catch(e){} if(v!==null)oth[nm]=v; } }
+    if(!Object.keys(b).length && !Object.keys(oth).length)return null;
+    return {bounty:b, other:oth}; }catch(e){ return null; } }
   function items(list){ try{ if(list.isNull())return []; const n=list.add(0x18).readS32(); const a=list.add(0x10).readPointer();
     const out=[]; if(!a.isNull()&&n>0&&n<64){ for(let i=0;i<Math.min(n,9);i++){ const p=a.add(0x20+i*PS).readPointer(); if(!p.isNull())out.push(p); } } return out; }catch(e){ return []; } }
   // List<int> (cartas): backing array guarda int32 inline a partir de +0x20
@@ -82,6 +92,17 @@ function main(){
     for(const hm of acc){ const s=(heroCards(hm)?1000:0)+dealtCount(hm); if(s>score){ score=s; best=hm; } }
     return best; }
 
+  // --- BOARD (RoundStartBRC.board_) + carry do POTE: ADITIVO, nunca quebra assentos ---
+  let _board=[], _stage=0, _potCarried=0, _lastBetSum=0, _curGame='';
+  function fieldsOf(obj){ try{ const k=il.object_get_class(obj); const it=Memory.alloc(PS); it.writePointer(ptr(0));
+    const m=[]; let f; while(!(f=il.class_get_fields(k,it)).isNull()){ m.push([cstr(il.field_get_name(f)), il.field_get_offset(f)]); } return m; }catch(e){ return []; } }
+  function offByName(obj,name){ for(const fo of fieldsOf(obj)){ if(fo[0]===name) return fo[1]; } return -1; }
+  function readBoardRF(rf){ try{ if(rf.isNull())return []; let cntOff=-1,arrOff=-1;
+    for(const fo of fieldsOf(rf)){ if(/count/i.test(fo[0]))cntOff=fo[1]; if(/array|^items$/i.test(fo[0]))arrOff=fo[1]; }
+    if(arrOff<0)return []; const a=rf.add(arrOff).readPointer(); if(a.isNull())return [];
+    let n=cntOff>=0?rf.add(cntOff).readS32():a.add(0x18).readS32(); if(n<0||n>7)return [];
+    const out=[]; for(let i=0;i<n;i++){ out.push(a.add(0x20+i*4).readS32()); } return out; }catch(e){ return []; } }
+
   function snapshot(hm){ try{
     if(hm.isNull()||clsName(hm)!=='HoldemManager')return;
     const gameid=u16(getp(hm,'_gameid'))||''; const ref=(gameid.split('-')[1])||gameid||'?';
@@ -93,10 +114,20 @@ function main(){
                     bet:geti(pd,'_betChips'), act:geti(pd,'_actionType'),
                     hascard:geti(pd,'_hasCard'), cards:intitems(getp(pd,'_handCardsCode'))}); });
     if(!players.length)return;
-    // nivel-mesa: dealer/SB/BB (posicoes) + blind (bb = 2*sb)
+    // POS-FLOP por MEMORIA (Eduardo 19/11): to_call EXATO (derivado dos betChips ja lidos)
+    // + pote (derivado: carry entre ruas + bets da rua) + board (RoundStartBRC cacheado).
+    let maxbet=0, betsum=0, herobet=0;
+    players.forEach(p=>{ const bb=(typeof p.bet==='number'?p.bet:0); if(bb>maxbet)maxbet=bb; betsum+=bb;
+      if(p.hascard && (p.cards||[]).filter(function(x){var r=x&0xff;return r>=2&&r<=14;}).length>=2) herobet=bb; });
+    _lastBetSum=betsum;
+    if(gameid && gameid!==_curGame){ _curGame=gameid; _potCarried=0; _board=[]; _stage=0; }  // nova mao
+    const tocall=Math.max(0, maxbet-herobet);
+    const pot=_potCarried+betsum;
+    // nivel-mesa: dealer/SB/BB (posicoes) + blind (bb = 2*sb) + board/stage/to_call/pote
     const table={dealer:geti(hm,'_nowDealerSeat'), sbseat:geti(hm,'_nowSmallBlindSeat'),
                  bbseat:geti(hm,'_nowBigBlindSeat'), sb:geti(hm,'_smallBlind'),
-                 minraise:geti(hm,'_myMinBetRaiseChips'), maxraise:geti(hm,'_myMaxBetRaiseChips')};
+                 minraise:geti(hm,'_myMinBetRaiseChips'), maxraise:geti(hm,'_myMaxBetRaiseChips'),
+                 board:_board.slice(), stage:_stage, tocall:tocall, pot:pot};
     send({t:'seats', ref:ref, room:(u16(getp(hm,'_roomName'))||''), table:table, players:players});
   }catch(e){ console.log('[emit] erro snap:', e); } }
 
@@ -105,6 +136,10 @@ function main(){
     const addr=mi.readPointer(); if(addr.isNull())return;
     Interceptor.attach(addr,{ onEnter(args){ try{ const m=args[1], self=args[0]; const cn=clsName(m);
       if(dbg<50){ dbg++; console.log('[dbg] '+cn); }
+      // BOUNTY (aditivo e guardado): em msg MTT/premio, emite candidatos de bounty.
+      try{ if(/mtt|bounty|reward|prize|premi/i.test(cn)){ const bo=scanBounty(m);
+        if(bo){ const sb=(lastHM&&!lastHM.isNull())?geti(lastHM,'_smallBlind'):null;
+          send({t:'bounty', cls:cn, bounty:bo.bounty, other:bo.other, sb:sb}); } } }catch(e){}
       if(cn==='HoldemManager'){ lastHM=m; snapshot(m); return; }
       // RASTREIA A MESA ATIVA: se nao temos HM OU o atual perdeu o hero (fim da mao /
       // trocou de mesa no rebalanceamento), re-escolhe o melhor HM (o do hero). Barato:
@@ -114,6 +149,22 @@ function main(){
           lastHM=hm; console.log('[emit] HM da mesa ATIVA (hero='+heroCards(hm)+', dealt='+dealtCount(hm)+')'); snapshot(hm); } }
     }catch(e){ console.log('[emit] erro:', e); } }});
   });
+  // BOARD (ADITIVO): hook em OnRoundStartBRC -> decodifica board_ (RepeatedField) e cacheia.
+  // Carry do pote: ao começar FLOP/TURN/RIVER (stage>=2) as apostas da rua anterior foram
+  // recolhidas -> entram no _potCarried. Nunca quebra os assentos (try/catch).
+  try{ const mr=il.class_get_method_from_name(klass, Memory.allocUtf8String('OnRoundStartBRC'), 2);
+    if(!mr.isNull()){ const ra=mr.readPointer(); if(!ra.isNull()){
+      Interceptor.attach(ra,{ onEnter(args){ try{ const msg=args[1]; if(clsName(msg)!=='RoundStartBRC')return;
+        const so=offByName(msg,'stage_'); const st=so>=0?msg.add(so).readS32():0;
+        const bo=offByName(msg,'board_'); const rf=bo>=0?msg.add(bo).readPointer():ptr(0);
+        const b=readBoardRF(rf);
+        if(st>=2){ _potCarried += _lastBetSum; } else { _potCarried = 0; }
+        _stage=st; _board=b;
+        console.log('[emit] board stage='+st+' n='+b.length);
+        if(lastHM) snapshot(lastHM);
+      }catch(e){} } });
+      console.log('[emit] hook board (RoundStartBRC) armado.'); } }
+  }catch(e){ console.log('[emit] (sem OnRoundStartBRC):', e); }
   // cacheia o HoldemManager: uma vez pego, re-emite a cada 2s (robusto a baixa atividade)
   setInterval(()=>{ try{ if(lastHM) snapshot(lastHM); }catch(e){} }, 2000);
   console.log('[emit] emissor de assentos armado (READ-ONLY, cache+2s).');
