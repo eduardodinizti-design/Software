@@ -127,4 +127,10 @@ def advise_from_protobuf(entry, advisor, **kwargs):
     state, hero_or_reason = build_table_state(entry)
     if state is None:
         return dict(status='ABSTAIN', reason=hero_or_reason, source='protobuf')
-    return advisor.advise_from_reading(state, hero_or_reason, **kwargs)
+    adv = advisor.advise_from_reading(state, hero_or_reason, **kwargs)
+    if isinstance(adv, dict):
+        # carrega as cartas EXATAS (protobuf) na decisão -> o executor/contrato usam a
+        # leitura da memória, não a do OCR (que pode ter falhado).
+        adv.setdefault('hero_cards', hero_or_reason)
+        adv['perception'] = 'protobuf'
+    return adv

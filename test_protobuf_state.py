@@ -160,5 +160,53 @@ class EndToEndComAdvisorReal(unittest.TestCase):
         self.assertEqual(out.get('hero_position'), 'BTN')
 
 
+class OperatorHelper(unittest.TestCase):
+    """_protobuf_preflop_advice do operador: lê estado_mesa.json, exige UMA mesa
+    fresca (0 ou >1 -> None -> OCR de reserva), ignora estado velho."""
+    @classmethod
+    def setUpClass(cls):
+        if not (os.path.exists(_VAL) and os.path.exists(_DEEP)):
+            raise unittest.SkipTest('pacotes de range nao encontrados')
+        try:
+            import operar_mesa
+        except Exception as e:                       # noqa: BLE001
+            raise unittest.SkipTest('operar_mesa nao importavel: %s' % e)
+        import tempfile
+        cls.om = operar_mesa
+        cls.adv = PreflopAdvisor.from_files(_VAL, _DEEP)
+        cls.tmp = tempfile.mkdtemp()
+
+    def _write(self, data):
+        import json
+        p = os.path.join(self.tmp, 'estado_mesa.json')
+        with open(p, 'w', encoding='utf-8') as f:
+            json.dump(data, f)
+        return p
+
+    def _fresh_entry(self):
+        import time
+        players = [_pl(0, 10, cards=_card_ints('AsKd')),   # hero BTN 10bb
+                   _pl(1, 20, bet_bb=0.5), _pl(2, 20, bet_bb=1.0)]
+        e = _entry(players, dealer=0, sbseat=1, bbseat=2)
+        e['ts'] = time.time()
+        return e
+
+    def test_uma_mesa_fresca_decide(self):
+        p = self._write({'r1': self._fresh_entry()})
+        out = self.om._protobuf_preflop_advice(self.adv, 'chip_ev', estado_path=p)
+        self.assertIsNotNone(out)
+        self.assertEqual(out.get('status'), 'ADVICE')
+        self.assertEqual(out.get('hero_cards'), ['As', 'Kd'])   # cartas exatas anexadas
+
+    def test_duas_frescas_abstem_para_ocr(self):
+        p = self._write({'r1': self._fresh_entry(), 'r2': self._fresh_entry()})
+        self.assertIsNone(self.om._protobuf_preflop_advice(self.adv, 'chip_ev', estado_path=p))
+
+    def test_mesa_velha_ignorada(self):
+        e = self._fresh_entry(); e['ts'] = 0           # 1970 -> estado velho
+        p = self._write({'r1': e})
+        self.assertIsNone(self.om._protobuf_preflop_advice(self.adv, 'chip_ev', estado_path=p))
+
+
 if __name__ == '__main__':
     unittest.main()

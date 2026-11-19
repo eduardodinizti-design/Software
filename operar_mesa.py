@@ -44,6 +44,31 @@ from table_reading.tournament import read_tournament
 from table_reading.busted_table import detect_busted, BustedConfirmer
 from tournament_metrics import record_tournament_end
 import field_live
+import protobuf_state
+
+_PB_STALE_S = 8.0   # estado protobuf mais velho que isso = ignorado (emissor re-emite a cada 2s)
+
+
+def _protobuf_preflop_advice(advisor, mode, estado_path=None):
+    """Conselho PRE-FLOP a partir do estado PROTOBUF (logs/estado_mesa.json), ou None
+    se nao houver estado fresco e INEQUIVOCO desta mesa. SEGURO: 0 mesas frescas = sem
+    estado; >1 mesa fresca = ambiguo (nao da p/ saber qual e esta) -> None -> OCR de
+    reserva (nunca chuta a mesa errada). players=9 (pack 9-max; o tamanho real da mesa
+    vira posicoes via derive_positions)."""
+    import json as _json
+    try:
+        path = estado_path or find_data('estado_mesa.json')
+        with open(path, encoding='utf-8') as f:
+            data = _json.load(f)
+    except Exception:
+        return None
+    now = time.time()
+    fresh = [e for e in (data or {}).values()
+             if isinstance(e, dict) and (now - (e.get('ts') or 0)) < _PB_STALE_S]
+    if len(fresh) != 1:
+        return None
+    return protobuf_state.advise_from_protobuf(fresh[0], advisor, mode=mode,
+                                               stage='mid', players=9)
 
 _GRADE_CACHE = {'mtime': None, 'map': {}}
 
@@ -357,6 +382,11 @@ def main(argv=None):
                    help='A1: reaproveita a decisao SEGURA (fold/check) ja computada entre '
                         'frames da MESMA vez do hero, pulando o cerebro (~330ms) em revisitas. '
                         'Nunca antecipa call/raise. Default off.')
+    p.add_argument('--protobuf', dest='protobuf', action='store_true',
+                   help='PERCEPCAO PROTOBUF (pre-flop): a decisao pre-flop vem do estado lido '
+                        'da memoria do PPPoker (logs/estado_mesa.json, via emitir_seats) -- '
+                        'cartas/apostas/posicoes EXATAS, sem OCR. OCR fica de reserva. Loga '
+                        'PARIDADE (protobuf x OCR). Precisa do emissor rodando. Default off.')
     args = p.parse_args(argv)
 
     import os
@@ -705,6 +735,24 @@ def main(argv=None):
                     hero_turn_seen = True
                 hid = hkey
                 adv = result.get('advice') or {}
+                # PERCEPCAO PROTOBUF (pre-flop): a decisao vem do estado lido da MEMORIA
+                # (cartas/apostas/posicoes EXATAS), OCR de reserva. So pre-flop (sem board).
+                # Loga PARIDADE protobuf x OCR p/ validacao antes de confiar 100%.
+                if args.protobuf and not (result.get('board') or {}).get('cards'):
+                    _pb = _protobuf_preflop_advice(advisor, args.mode)
+                    if _pb is not None:
+                        _pbr = _pb.get('recommended') if _pb.get('status') == 'ADVICE' \
+                            else 'ABSTAIN:%s' % _pb.get('reason')
+                        _ocrr = adv.get('recommended') if adv.get('status') == 'ADVICE' \
+                            else 'ABSTAIN:%s' % adv.get('reason')
+                        print('[%03d] PARIDADE pre-flop: protobuf=%s | ocr=%s%s'
+                              % (n, _pbr, _ocrr, '' if str(_pbr) == str(_ocrr) else '   <-- DIVERGE'),
+                              flush=True)
+                        if _pb.get('status') == 'ADVICE':
+                            adv = dict(_pb, perception='protobuf')   # protobuf PREFERIDO
+                            result = dict(result, advice=adv,
+                                          hero_cards=_pb.get('hero_cards') or result.get('hero_cards'))
+                        # protobuf ABSTEM -> mantem o OCR (reserva)
                 if adv.get('phase') == 'postflop':
                     has_check = br['status'] == 'EXPERIMENTAL_BUTTON_ROW' and any(
                         b.get('action') == 'CHECK' for b in br.get('buttons', []))
