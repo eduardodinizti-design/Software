@@ -31,6 +31,9 @@ def main():
     elif sub == 'capturar':
         import capturar_maos
         capturar_maos.main()
+    elif sub == 'alerta':
+        import alerta_ft
+        alerta_ft.main()
     elif sub == 'iniciar':
         import iniciar_bot
         iniciar_bot.main()

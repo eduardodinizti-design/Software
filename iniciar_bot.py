@@ -54,14 +54,15 @@ def main():
             cmd = [sys.executable, sub] + extra
             cwd = REPO
         else:
-            flags = ["-I"] if sub in ("emitir", "capturar") else []
+            flags = ["-I"] if sub in ("emitir", "capturar", "alerta") else []
             cmd = [sys.executable] + flags + [script] + extra
         return subprocess.Popen(cmd, cwd=cwd, creationflags=new_console)
 
-    # 1) OPERADOR: armado automaticamente, exploit do HUD ligado, fecha bustada.
+    # 1) OPERADOR: armado, PERCEPCAO PROTOBUF (pre-flop exato) + exploit HUD + pos-flop
+    #    + fecha bustada. Mode/stage auto-detectados (ICM na bolha/FT).
     op = _spawn("operar", "operar_mesa.py", REPO,
                 ["--hwnd", str(hwnd), "--arm", "--auto-arm", "--auto-fechar-bustada",
-                 "--hud", "--field-exploit", "--posflop"])
+                 "--hud", "--field-exploit", "--posflop", "--protobuf"])
     procs.append(("OPERADOR", op))
     print("[ok] OPERADOR no ar: ARMADO + exploit(HUD) + auto-fechar-bustada (janela propria).")
 
@@ -75,6 +76,12 @@ def main():
     emt = _spawn("emitir", "emitir_seats.py", research, [])
     procs.append(("SEATS", emt))
     print("[ok] EMISSOR de assentos no ar (seat->uid p/ exploit da DB). (janela propria).")
+
+    # 4) ALARME SONORO: MESA FINAL + BOLHA + DEAL -> toca p/ voce ASSUMIR. Fica na
+    #    PROPRIA janela (ENTER silencia). NUNCA esquecer de subir -> por isso esta aqui.
+    al = _spawn("alerta", "alerta_ft.py", research, ["--bubble"])
+    procs.append(("ALARME", al))
+    print("[ok] ALARME SONORO no ar (FT/bolha/deal; ENTER na janela dele silencia). (janela propria).")
 
     print("\n>>> TUDO NO AR. Feche esta janela ou aperte Ctrl+C para PARAR TUDO. <<<\n")
     try:
