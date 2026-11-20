@@ -715,11 +715,30 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
                                  'barril: turn overcard favorece o agressor (polo fraco c/ equidade)'),
                     caveats=caveats + ['TURN_BARREL_OVERCARD_AGGRESSOR'])
         return info
+    # PROMOÇÃO RIVER (blefe polarizado por BLOQUEADOR — Reg-Life): no river IP, mão do bottom
+    # (ar/overcards) blefa em frequência ALTA, mas SÓ se (a) o BLOQUEADOR é bom (não bloqueia
+    # o range de fold do vilão) e (b) há sinal de FOLD (vilão não é station/fish e tem
+    # leitura: nit/reg/lag foldam o river). Vs station/fish ou sem leitura -> check (não
+    # spewa). Size grande (polar). Só no spot de barril HU single-raised.
+    if (_cbet_bb_spot and street == 'RIVER' and not bluff_blocked
+            and made in ('air', 'overcards')
+            and postflop_river.river_bluff_blocker_ok(hero, board)):
+        _rvp = classify_villain(villain_stats) if villain_stats else None
+        _fold_prone = bool(_rvp and _rvp.get('category') not in ('unknown', 'fish')
+                           and 'station' not in _rvp.get('tags', []))
+        if _fold_prone:
+            info.update(recommended='bet',
+                        sizing=_size(pot, postflop_texture.BIG, cap,
+                                     'blefe polar de river (bottom, bloqueador ok, vilão folda)'),
+                        caveats=caveats + ['RIVER_BLUFF_POLAR'])
+            return info
     # EXPLOIT (HUD): passaram a vez com AR (sem showdown value) -> normalmente check;
     # mas vs vilão que FOGE de c-bet (tag folds_to_cbet), blefa com size pequeno (a fold
     # equity é alta). Só o ar — mão média tem showdown value e segue de check.
     if (profile and 'folds_to_cbet' in profile.get('tags', [])
-            and made in ('air', 'overcards') and not bluff_blocked):
+            and made in ('air', 'overcards') and not bluff_blocked and street != 'RIVER'):
+        # No RIVER o blefe é governado pela branch polar acima (com seleção por bloqueador);
+        # aqui é a c-bet-blefe de flop/turn (size pequeno, fold equity alta).
         info.update(recommended='bet', sizing=_size(pot, 0.4, cap, 'c-bet blefe vs folds_to_cbet'),
                     caveats=caveats + ['EXPLOIT_CBET_BLUFF_VS_FOLDCBET'])
         return info

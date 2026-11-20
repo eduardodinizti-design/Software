@@ -17,6 +17,9 @@ Princípios (IP, agressor, linha bet-bet-bet):
 
 PURO: sem captura, sem clique. Advisory + promoção de DISCIPLINA DE VALOR (não value-beta
 mão que perdeu valor relativo em river que completou draws)."""
+from collections import Counter
+
+from postflop_eval import _cards
 
 # Piso de valor do river. Em river que COMPLETOU draws, só trinca/sequência/flush+ são valor.
 _VALUE_DRAWY = ('set', 'trips', 'straight', 'flush', 'full_house', 'quads', 'straight_flush')
@@ -57,6 +60,23 @@ def river_jam(made, bclass):
     segue com size grande (pega mais call de 1-2 pares), não jam. flush/sequência não entram
     (podem ser dominados por flush/sequência maior)."""
     return made in _NUTS and is_draw_complete(bclass)
+
+
+def river_bluff_blocker_ok(hero, board):
+    """Blefe de river BOM = a mão NÃO bloqueia o range de FOLD do vilão (material: blefa as
+    piores que desbloqueiam o fold). Regra principal: se havia um FLUSH DRAW que NÃO
+    completou (um naipe com exatamente 2 cartas no board de 5) e o hero segura uma carta
+    desse naipe, ele BLOQUEIA os flush draws perdidos do vilão (que foldariam) -> blefe RUIM
+    (False). Sem esse bloqueio -> blefe OK (True). board < 5 -> True (sem river ainda)."""
+    cards = _cards(board)
+    if len(cards) < 5:
+        return True
+    suit_count = Counter(s for _, s in cards)
+    hero_suits = {s for _, s in _cards(hero)}
+    for suit, cnt in suit_count.items():
+        if cnt == 2 and suit in hero_suits:      # flush draw que faltou + hero o bloqueia
+            return False
+    return True
 
 
 def river_size_hint(made, bclass):

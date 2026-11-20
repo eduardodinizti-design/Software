@@ -51,6 +51,50 @@ class ValorRelativo(unittest.TestCase):
         self.assertFalse(rv.river_jam('flush', bc_flush))            # flush não é nuts (dominável)
 
 
+_NIT = {'vpip': 9, 'pfr': 7, 'threebet': 3, 'fold3bet': 55, 'cbet': 40, 'foldcbet': 65}
+_STATION = {'vpip': 46, 'pfr': 8, 'threebet': 2, 'fold3bet': 20, 'cbet': 28, 'foldcbet': 25}
+
+
+class BluffBlocker(unittest.TestCase):
+    def test_bloqueia_flush_draw_perdido_eh_blefe_ruim(self):
+        # board com 2 copas (flush draw que faltou); hero segura copas -> bloqueia fold -> False
+        self.assertFalse(rv.river_bluff_blocker_ok(['Qh', 'Jd'], ['Ah', '7h', '2c', 'Ks', '3d']))
+
+    def test_sem_bloquear_eh_blefe_ok(self):
+        self.assertTrue(rv.river_bluff_blocker_ok(['Qc', 'Jd'], ['Ah', '7h', '2c', 'Ks', '3d']))
+
+    def test_board_de_4_eh_ok(self):
+        self.assertTrue(rv.river_bluff_blocker_ok(['Qh', 'Jd'], ['Ah', '7h', '2c', 'Ks']))
+
+
+class BluffRiver(unittest.TestCase):
+    def test_blefa_bottom_vs_fold_prone_com_bloqueador_ok(self):
+        # ar (QJ off, sem copas) em river, vilão nit (folda) -> blefa polar
+        a = advise_postflop(_st(10, 0), ['Qc', 'Jd'], ['Ah', '7h', '2c', 'Ks', '3d'],
+                            street='RIVER', aggressor='hero', villain_stats=_NIT)
+        self.assertEqual(a['recommended'], 'bet')
+        self.assertIn('RIVER_BLUFF_POLAR', a['caveats'])
+
+    def test_nao_blefa_vs_station(self):
+        a = advise_postflop(_st(10, 0), ['Qc', 'Jd'], ['Ah', '7h', '2c', 'Ks', '3d'],
+                            street='RIVER', aggressor='hero', villain_stats=_STATION)
+        self.assertEqual(a['recommended'], 'check')
+        self.assertNotIn('RIVER_BLUFF_POLAR', a.get('caveats', []))
+
+    def test_nao_blefa_sem_leitura(self):
+        a = advise_postflop(_st(10, 0), ['Qc', 'Jd'], ['Ah', '7h', '2c', 'Ks', '3d'],
+                            street='RIVER', aggressor='hero')
+        self.assertEqual(a['recommended'], 'check')
+        self.assertNotIn('RIVER_BLUFF_POLAR', a.get('caveats', []))
+
+    def test_nao_blefa_mao_que_bloqueia_fold(self):
+        # hero QJ com copas (bloqueia flush draw perdido) -> check mesmo vs nit
+        a = advise_postflop(_st(10, 0), ['Qh', 'Jd'], ['Ah', '7h', '2c', 'Ks', '3d'],
+                            street='RIVER', aggressor='hero', villain_stats=_NIT)
+        self.assertEqual(a['recommended'], 'check')
+        self.assertNotIn('RIVER_BLUFF_POLAR', a.get('caveats', []))
+
+
 class PromocaoRiver(unittest.TestCase):
     def test_two_pair_checa_em_river_de_flush(self):
         # board 4 copas no river; hero A7 (two pair A+7, sem copas) perdeu valor -> check
