@@ -12,6 +12,7 @@ validada à parte (igual ao pré-flop, que só clicou depois de aconselhar).
 contrato do pré-flop: status ADVICE/ABSTAIN, `recommended`, métricas e `caveats`.
 """
 import postflop_texture
+import postflop_exploit
 import postflop_cbet_bb
 from postflop_eval import classify_board, hand_strength, narrow_to_continuation
 from preflop_equity import required_equity, equity_vs_range, hand_to_combos
@@ -582,7 +583,7 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
             sizing = dict(sizing, overbet_option_bb=over, overbet_pct=125)
             caveats = caveats + ['OVERBET_POLAR_EXPLORATORY']
         info.update(recommended='bet', sizing=sizing, caveats=caveats)
-        return info
+        return postflop_exploit.exploit_postflop(info, villain_stats, pot_bb=pot, cap_bb=cap)
     bluff_blocked = cbet_bluff_blocked(n_opp)
     if bluff_blocked:
         caveats.append('CBET_BLUFF_BLOCKED_MULTIWAY_%dOPP' % n_opp)
@@ -620,7 +621,7 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
             return info
         info.update(recommended='bet', sizing=_size(pot, 0.33, cap, 'valor fino top pair, board seco'),
                     caveats=caveats + _om_cv)
-        return info
+        return postflop_exploit.exploit_postflop(info, villain_stats, pot_bb=pot, cap_bb=cap)
     # EXPLOIT (HUD): passaram a vez com AR (sem showdown value) -> normalmente check;
     # mas vs vilão que FOGE de c-bet (tag folds_to_cbet), blefa com size pequeno (a fold
     # equity é alta). Só o ar — mão média tem showdown value e segue de check.
