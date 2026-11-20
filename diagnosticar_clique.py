@@ -43,6 +43,11 @@ def _probe(rgb, label, from_action_buttons):
 def diagnose(rgb):
     from table_reading.automatic_table_crops import detect_table_crops
     from table_reading.action_buttons import read_action_buttons
+    try:                                             # OCR precisa estar configurado (igual ao operador)
+        from table_reading.pipeline import configure_ocr
+        configure_ocr()
+    except Exception:                                # noqa: BLE001
+        print('[aviso] configure_ocr falhou — rótulos podem sair None')
     H, W = rgb.shape[:2]
     print('=' * 64)
     print('FRAME %dx%d (dividido lobby+mesa se W muito largo)' % (W, H))
