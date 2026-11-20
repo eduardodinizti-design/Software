@@ -1161,13 +1161,24 @@ class PreflopAdvisor:
             # (HUD/DB, só com leitura CONFIÁVEL). ANTES do sizing -> o 3bet-blefe sai com
             # size. Só vs_open por ora (o opener é o vilão inequívoco); steal (perfil dos
             # blinds) fica p/ a próxima leva.
+            _hud = table_state.get('hud') or {}
+
+            def _stats_of(_pos):
+                _s = next((ss for ss, pp in positions.items() if pp == _pos), None)
+                _h = _hud.get(_s) if _s else None
+                return _h['stats'] if (_h and _h.get('confidence') == 'high') else None
             if result.get('status') == 'ADVICE' and spot['spot'] == 'vs_open':
-                _hud = table_state.get('hud') or {}
-                _vseat = next((s for s, p in positions.items() if p == spot.get('opener')), None)
-                _vh = _hud.get(_vseat) if _vseat else None
-                _vstats = _vh['stats'] if (_vh and _vh.get('confidence') == 'high') else None
+                _vstats = _stats_of(spot.get('opener'))
                 if _vstats:
                     result = preflop_exploit.exploit_preflop(result, _vstats, spot='vs_open')
+            elif (result.get('status') == 'ADVICE' and spot['spot'] in ('first_in', 'open_raise')
+                  and positions.get('hero') in preflop_exploit.LATE):
+                # STEAL: perfil dos BLINDS que defendem (SB/BB), só os com leitura confiável.
+                _defs = [s for s in (_stats_of('SB'), _stats_of('BB')) if s]
+                if _defs:
+                    result = preflop_exploit.exploit_preflop(
+                        result, None, spot='first_in', defenders=_defs,
+                        hero_position=positions.get('hero'))
             if result.get('recommended'):
                 result['sizing'] = sizing.size_from_reading(result['recommended'], table_state,
                                                             positions['hero'], spot.get('opener'),
