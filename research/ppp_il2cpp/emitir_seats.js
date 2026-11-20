@@ -93,7 +93,7 @@ function main(){
     return best; }
 
   // --- BOARD (RoundStartBRC.board_) + carry do POTE: ADITIVO, nunca quebra assentos ---
-  let _board=[], _stage=0, _potCarried=0, _lastBetSum=0, _curGame='';
+  let _board=[], _stage=0, _potCarried=0, _lastBetSum=0, _curGame='', _boardGame='';
   function fieldsOf(obj){ try{ const k=il.object_get_class(obj); const it=Memory.alloc(PS); it.writePointer(ptr(0));
     const m=[]; let f; while(!(f=il.class_get_fields(k,it)).isNull()){ m.push([cstr(il.field_get_name(f)), il.field_get_offset(f)]); } return m; }catch(e){ return []; } }
   function offByName(obj,name){ for(const fo of fieldsOf(obj)){ if(fo[0]===name) return fo[1]; } return -1; }
@@ -119,19 +119,29 @@ function main(){
     let maxbet=0, betsum=0, herobet=0;
     players.forEach(p=>{ const bb=(typeof p.bet==='number'?p.bet:0); if(bb>maxbet)maxbet=bb; betsum+=bb;
       if(p.hascard && (p.cards||[]).filter(function(x){var r=x&0xff;return r>=2&&r<=14;}).length>=2) herobet=bb; });
-    _lastBetSum=betsum;
-    if(gameid && gameid!==_curGame){ _curGame=gameid; _potCarried=0; _board=[]; _stage=0; }  // nova mao
+    // MULTI-MESA: board/stage/pote-carry pertencem à mesa ATIVA (a dona do board cacheado via
+    // RoundStartBRC = _boardGame). As OUTRAS mesas saem SEM board (pré-flop; pós cai no OCR) —
+    // nunca board errado. Pote da ativa = carry+bets; das outras = só os bets da rua (aprox.).
+    const isActive = !!(gameid && gameid===_boardGame);
+    if(isActive) _lastBetSum=betsum;         // carry da rua só p/ a ativa
+    const board = isActive ? _board.slice() : [];
+    const stage = isActive ? _stage : 0;
     const tocall=Math.max(0, maxbet-herobet);
-    const pot=_potCarried+betsum;
+    const pot = isActive ? (_potCarried+betsum) : betsum;
     // nivel-mesa: dealer/SB/BB (posicoes) + blind (bb = 2*sb) + board/stage/to_call/pote
     const table={dealer:geti(hm,'_nowDealerSeat'), sbseat:geti(hm,'_nowSmallBlindSeat'),
                  bbseat:geti(hm,'_nowBigBlindSeat'), sb:geti(hm,'_smallBlind'),
                  minraise:geti(hm,'_myMinBetRaiseChips'), maxraise:geti(hm,'_myMaxBetRaiseChips'),
-                 board:_board.slice(), stage:_stage, tocall:tocall, pot:pot};
+                 board:board, stage:stage, tocall:tocall, pot:pot};
     send({t:'seats', ref:ref, room:(u16(getp(hm,'_roomName'))||''), table:table, players:players});
   }catch(e){ console.log('[emit] erro snap:', e); } }
 
-  let lastHM=null, dbg=0;
+  // SNAPSHOT DE TODAS AS MESAS (multi-tabling até N): coleta todos os HoldemManagers
+  // alcançáveis e emite CADA um (keyed por gameid). Bounded (collectHM<=12), dedup, read-only.
+  function snapshotAll(root, m){ try{ const acc=[]; collectHM(root,3,acc); if(m) collectHM(m,2,acc);
+    const seen={}; for(const hm of acc){ try{ if(!hm||hm.isNull()||clsName(hm)!=='HoldemManager')continue;
+      const gid=u16(getp(hm,'_gameid'))||''; if(seen[gid])continue; seen[gid]=true; snapshot(hm); }catch(e){} } }catch(e){} }
+  let lastHM=null, lastSelf=null, dbg=0;
   HOOK.forEach(name=>{ const mi=il.class_get_method_from_name(klass, Memory.allocUtf8String(name), 2); if(mi.isNull()){console.log('[emit] (sem metodo '+name+')');return;}
     const addr=mi.readPointer(); if(addr.isNull())return;
     Interceptor.attach(addr,{ onEnter(args){ try{ const m=args[1], self=args[0]; const cn=clsName(m);
@@ -140,13 +150,15 @@ function main(){
       try{ if(/mtt|bounty|reward|prize|premi/i.test(cn)){ const bo=scanBounty(m);
         if(bo){ const sb=(lastHM&&!lastHM.isNull())?geti(lastHM,'_smallBlind'):null;
           send({t:'bounty', cls:cn, bounty:bo.bounty, other:bo.other, sb:sb}); } } }catch(e){}
-      if(cn==='HoldemManager'){ lastHM=m; snapshot(m); return; }
-      // RASTREIA A MESA ATIVA: se nao temos HM OU o atual perdeu o hero (fim da mao /
-      // trocou de mesa no rebalanceamento), re-escolhe o melhor HM (o do hero). Barato:
-      // so re-busca quando o lastHM nao tem hero. Dispatcher fira em TODA msg.
+      lastSelf=self;
+      if(cn==='HoldemManager'){ lastHM=m; _boardGame=u16(getp(m,'_gameid'))||_boardGame; snapshot(m); return; }
+      // RASTREIA A MESA ATIVA (dona do board global = _boardGame): se nao temos HM OU o atual
+      // perdeu o hero (fim da mao / rebalanceamento), re-escolhe o melhor HM (o do hero).
+      // As DEMAIS mesas saem no snapshotAll do intervalo (2s). Dispatcher fira em TODA msg.
       if(!lastHM || !heroCards(lastHM)){ const hm=bestHM(self,m);
         if(hm && hm!==lastHM && (heroCards(hm) || !lastHM)){
-          lastHM=hm; console.log('[emit] HM da mesa ATIVA (hero='+heroCards(hm)+', dealt='+dealtCount(hm)+')'); snapshot(hm); } }
+          lastHM=hm; _boardGame=u16(getp(hm,'_gameid'))||_boardGame;
+          console.log('[emit] HM da mesa ATIVA (hero='+heroCards(hm)+', dealt='+dealtCount(hm)+')'); snapshot(hm); } }
     }catch(e){ console.log('[emit] erro:', e); } }});
   });
   // BOARD (ADITIVO): hook em OnRoundStartBRC -> decodifica board_ (RepeatedField) e cacheia.
@@ -166,7 +178,7 @@ function main(){
       console.log('[emit] hook board (RoundStartBRC) armado.'); } }
   }catch(e){ console.log('[emit] (sem OnRoundStartBRC):', e); }
   // cacheia o HoldemManager: uma vez pego, re-emite a cada 2s (robusto a baixa atividade)
-  setInterval(()=>{ try{ if(lastHM) snapshot(lastHM); }catch(e){} }, 2000);
+  setInterval(()=>{ try{ if(lastSelf) snapshotAll(lastSelf, lastHM); else if(lastHM) snapshot(lastHM); }catch(e){} }, 2000);
   console.log('[emit] emissor de assentos armado (READ-ONLY, cache+2s).');
 }
 function go(){ try{ main(); }catch(e){ console.log('[emit] erro:', e.stack||e); } }

@@ -66,6 +66,7 @@ from table_reading.busted_table import detect_busted, BustedConfirmer
 from tournament_metrics import record_tournament_end
 import field_live
 import protobuf_state
+import table_binding
 
 _PB_STALE_S = 8.0   # estado protobuf mais velho que isso = ignorado (emissor re-emite a cada 2s)
 
@@ -117,15 +118,15 @@ def _match_fresh_table(fresh, match_hero, match_room):
 
 
 def _protobuf_advice(advisor, mode, stage='mid', estado_path=None,
-                     match_hero=None, match_room=None, n_crops=1):
+                     match_hero=None, match_room=None, n_crops=1, crop_seats=None):
     """Conselho PRE-FLOP **ou PÓS-FLOP** a partir do estado PROTOBUF (logs/estado_mesa.json;
     board/to_call/pote da MEMÓRIA via emitir_seats), ou None se não houver estado seguro.
 
-    SINGLE-TABLE (n_crops<=1): usa a única mesa fresca (comportamento PROVADO; 0 frescas
-    ou >1 = None -> OCR). MULTI-TABLE (n_crops>1): o emissor costuma ter só a mesa ATIVA
-    fresca; aplicá-la a TODO crop CRUZA as mesas (bug do AA — ADVICE de outra mesa). Então
-    exige CASAMENTO positivo (carta do hero OU sala) entre a mesa fresca e ESTE crop;
-    sem casar -> None -> OCR reserva. players=9 (tamanho real vira posições via derive)."""
+    BINDING por NAMEPLATE (`crop_seats`): amarra ESTE crop ao ref do protobuf cujos NOMES de
+    jogador casam com os nameplates lidos na tela — robusto, NÃO depende da carta do hero
+    (resolve o HERO_CARDS_UNKNOWN multi-mesa). Se amarrar, usa ESSE ref. Senão cai no
+    fallback: SINGLE-TABLE (n_crops<=1, 1 fresca) usa a única; MULTI exige casamento por
+    carta/sala (nunca cruza). players=9 (tamanho real vira posições via derive)."""
     import json as _json
     try:
         path = estado_path or find_data('estado_mesa.json')
@@ -136,20 +137,26 @@ def _protobuf_advice(advisor, mode, stage='mid', estado_path=None,
     now = time.time()
     # Filtra a mesa FANTASMA "?" (leitura malformada intermitente do emissor: sbseat gigante,
     # maxraise absurdo) — senão o protobuf abstém à toa, caindo no OCR fraco.
-    fresh = [e for key, e in (data or {}).items()
-             if key != '?' and isinstance(e, dict) and (now - (e.get('ts') or 0)) < _PB_STALE_S
-             and isinstance((e.get('table') or {}).get('sb'), (int, float))]
+    fresh_map = {key: e for key, e in (data or {}).items()
+                 if key != '?' and isinstance(e, dict) and (now - (e.get('ts') or 0)) < _PB_STALE_S
+                 and isinstance((e.get('table') or {}).get('sb'), (int, float))}
+    fresh = list(fresh_map.values())
     if not fresh:
         return None
-    if n_crops <= 1 and len(fresh) == 1:
-        sel = fresh[0]            # single-table limpo: seguro (não há como cruzar)
-    else:
-        # MULTI-table, OU single-table com mesas MORTAS ainda penduradas no estado
-        # (len(fresh)>1): exige casamento positivo com ESTE crop -> nunca cruza; sem
-        # casar -> OCR reserva.
-        sel = _match_fresh_table(fresh, match_hero, match_room)
-        if sel is None:
-            return None
+    sel = None
+    # 1) BINDING ROBUSTO por nameplate (multi-mesa): acha o ref deste crop pelos nomes.
+    if crop_seats:
+        _ref = table_binding.bind_crop_to_ref(crop_seats, fresh_map)
+        if _ref is not None:
+            sel = fresh_map[_ref]
+    # 2) Fallback sem binding (sem nameplates legíveis OU sem casamento).
+    if sel is None:
+        if n_crops <= 1 and len(fresh) == 1:
+            sel = fresh[0]            # single-table limpo: seguro (não há como cruzar)
+        else:
+            sel = _match_fresh_table(fresh, match_hero, match_room)
+            if sel is None:
+                return None
     return protobuf_state.advise_from_protobuf(sel, advisor, mode=(mode or 'chip_ev'),
                                                stage=(stage or 'mid'), players=9)
 
@@ -865,13 +872,15 @@ def main(argv=None):
                 # derivado, exato; board do RoundStartBRC). OCR de reserva. Eduardo 19/11:
                 # terminar a leitura por memoria (mata o to_call null e o board ilegivel).
                 if args.protobuf:
-                    # MULTI-TABLE: casa a mesa fresca do protobuf com ESTE crop pelas
-                    # cartas OCR do hero (ou sala), senão cai no OCR — nunca cruza mesas.
+                    # MULTI-TABLE: amarra ESTE crop ao ref do protobuf pelos NAMEPLATES
+                    # (robusto; não depende da carta do hero -> resolve HERO_CARDS_UNKNOWN).
+                    # Fallback: carta do hero/sala. Nunca cruza mesas.
                     _pb = _protobuf_advice(advisor, args.mode, args.stage,
                                            match_hero=result.get('hero_cards'),
                                            match_room=(result.get('tournament') or {}).get('name')
                                            if isinstance(result.get('tournament'), dict) else None,
-                                           n_crops=len(crops))
+                                           n_crops=len(crops),
+                                           crop_seats=(result.get('table_state') or {}).get('seats'))
                     if _pb is not None:
                         _pbr = _pb.get('recommended') if _pb.get('status') == 'ADVICE' \
                             else 'ABSTAIN:%s' % _pb.get('reason')
