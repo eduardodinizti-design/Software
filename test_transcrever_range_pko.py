@@ -61,5 +61,32 @@ class RealPDF(unittest.TestCase):
                              key=pk.read_range_image(img)['hands']['AA'].get), 'raise')
 
 
+@unittest.skipUnless(os.path.exists(_PDF), 'PDF de bounty ausente')
+class DefesaQuatroCores(unittest.TestCase):
+    def test_p18_btn_vs_co_bate_cabecalho(self):
+        try:
+            import pymupdf
+        except ImportError:
+            self.skipTest('pymupdf ausente')
+        d = pymupdf.open(_PDF)
+        img = pk.defense_grid_from_page(d[17], d)     # p18 BTN vs CO
+        self.assertIsNotNone(img)
+        s = pk.tg.summary(pk.read_defense_image(img)['hands'])
+        # PDF: call 12,3% / raise 6,2% / allin 4,2% / fold 77%
+        self.assertAlmostEqual(s.get('call', {}).get('pct', 0), 12.3, delta=2.0)
+        self.assertAlmostEqual(s.get('fold', {}).get('pct', 0), 77.0, delta=2.5)
+
+    def test_p27_call_heavy_nao_vira_fold(self):
+        try:
+            import pymupdf
+        except ImportError:
+            self.skipTest('pymupdf ausente')
+        d = pymupdf.open(_PDF)
+        img = pk.defense_grid_from_page(d[26], d)     # p27 BB vs CO (call-heavy)
+        self.assertIsNotNone(img)
+        s = pk.tg.summary(pk.read_defense_image(img)['hands'])
+        self.assertGreater(s.get('call', {}).get('pct', 0), 50)   # ~69% call, não fold
+
+
 if __name__ == '__main__':
     unittest.main()

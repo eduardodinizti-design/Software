@@ -29,6 +29,77 @@ def _classify(rgb):
     return np.where(valid, idx, -1)
 
 
+# Paleta de 4 cores das páginas de DEFESA do bounty (fold/call/raise/allin), medida.
+_ACTIONS4 = ['fold', 'call', 'raise', 'allin']
+_CENT4 = np.array([(60, 123, 183),     # fold  = azul
+                   (90, 183, 101),     # call  = verde
+                   (236, 60, 60),      # raise = vermelho
+                   (125, 31, 31)],     # allin = vinho
+                  dtype=np.float32)
+
+
+def _classify4(rgb):
+    mx = rgb.max(2); mn = rgb.min(2)
+    valid = (mx >= 55) & ~(((mx - mn) < 25) & (mx > 150))
+    d = np.sqrt(((rgb[:, :, None, :] - _CENT4[None, None, :, :]) ** 2).sum(3))
+    idx = d.argmin(2)
+    valid &= d.min(2) < 95
+    return np.where(valid, idx, -1)
+
+
+def _range_score(rgb):
+    """Fração de pixels FOLD(azul)+RAISE(vermelho)+ALLIN(vinho) — NÃO usa verde (call),
+    pois a tabela de bubble-factor também é verde. Grid de range tem esses 3; a
+    bubble-factor (verde/amarelo) ~0. Funciona mesmo quando o fold é baixo (call-heavy)."""
+    f = rgb.astype(np.float32)
+    best = np.full(f.shape[:2], 1e9)
+    for i in (0, 2, 3):                         # fold, raise, allin
+        best = np.minimum(best, np.sqrt(((f - _CENT4[i]) ** 2).sum(2)))
+    return float((best < 60).mean())
+
+
+def defense_grid_from_page(page, doc):
+    """O grid 13×13 de RANGE (4 cores) da página de defesa: a imagem ~quadrada com MAIS
+    pixels de fold/raise/allin. Evita a tabela de bubble-factor (verde/amarelo)."""
+    import pymupdf
+    best, bscore = None, 0.0
+    for info in page.get_images(full=True):
+        pix = pymupdf.Pixmap(doc, info[0])
+        if pix.n > 4:
+            pix = pymupdf.Pixmap(pymupdf.csRGB, pix)
+        w, h = pix.width, pix.height
+        if w <= 200 or not (0.8 < w / float(h) < 1.5):
+            continue
+        arr = np.frombuffer(pix.samples, dtype=np.uint8).reshape(h, w, pix.n)[:, :, :3]
+        sc = _range_score(arr)
+        if sc > bscore and sc > 0.12:
+            best, bscore = arr.copy(), sc
+    return best
+
+
+def read_defense_image(rgb):
+    """rgb HxWx3 do grid 4 cores. {'hands': {hand: {fold,call,raise,allin: freq}}}."""
+    rgb = rgb.astype(np.float32)
+    h, w = rgb.shape[:2]
+    cw, ch = w / 13.0, h / 13.0
+    hands = {}
+    for r in range(13):
+        for c in range(13):
+            x0 = int(c * cw + 0.08 * cw); x1 = int((c + 1) * cw - 0.08 * cw)
+            y0 = int(r * ch + 0.30 * ch); y1 = int(r * ch + 0.72 * ch)
+            cell = rgb[y0:y1, x0:x1]
+            lab = _classify4(cell)
+            counts = np.array([(lab == i).sum() for i in range(4)], dtype=float)
+            tot = counts.sum()
+            hd = tg.hand_at(r, c)
+            if tot < 0.02 * cell.shape[0] * cell.shape[1]:
+                hands[hd] = {'fold': 1.0}
+            else:
+                hands[hd] = {_ACTIONS4[i]: round(counts[i] / tot, 3)
+                             for i in range(4) if counts[i] > 0}
+    return {'hands': hands}
+
+
 def grid_image_from_page(page, doc):
     """A imagem ~quadrada (grid 13×13) embutida na página do PDF (RGB HxWx3) ou None."""
     import pymupdf

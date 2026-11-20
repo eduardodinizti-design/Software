@@ -116,6 +116,36 @@ _PKO_RFI = {'bounty_p07_0.json': ('UTG', 100),     # RFI UTG 100bb sem cobrir
 _PKO_DEFER = 'defesa (call verde não captado) + páginas coberto-vs-não (grid ambíguo)'
 
 
+# PKO DEFESA (vs_open), re-transcrito 4 cores (fold/call/raise/allin). page_idx -> (hero, opener, stack).
+_PKO_PDF = os.path.join(REPO, '..', 'Ranges E TEORIAS', 'Teoria',
+                        'Reg_Life_-_TORNEIOS_BOUNTY_-_RANGES_PRATICOS (1).pdf')
+_PKO_DEFENSE = {14: ('LJ', 'UTG', 30), 17: ('BTN', 'CO', 30), 21: ('SB', 'BTN', 18),
+                23: ('SB', 'BTN', 30), 26: ('BB', 'CO', 17)}
+
+
+def build_pko_defense_nodes():
+    if not os.path.exists(_PKO_PDF):
+        return []
+    try:
+        import pymupdf
+        import transcrever_range_pko as pk
+    except Exception:                            # noqa: BLE001
+        return []
+    d = pymupdf.open(_PKO_PDF)
+    nodes = []
+    for pi, (hero, opener, stack) in _PKO_DEFENSE.items():
+        img = pk.defense_grid_from_page(d[pi], d)
+        if img is None:
+            continue
+        hands = pk.read_defense_image(img)['hands']
+        freq = {'call': _arr(hands, ['call']), 'three_bet': _arr(hands, ['raise', 'allin'])}
+        freq['fold'] = hrc_ingest._derive_fold(freq)
+        ctx = dict(mode='pko', format='pko', stage='mid', players=9, stack=_snap(stack), spread=None)
+        nodes.append(hrc_ingest._node(ctx, 'vs_open', hero, (opener,), freq, {},
+                                      {'name': 'reg_life_bounty'}, 'bb'))
+    return nodes
+
+
 def build_pko_nodes():
     nodes = []
     for fn, (pos, stack) in _PKO_RFI.items():
@@ -134,8 +164,9 @@ def build_pko_nodes():
 def main():
     nodes, defer = build_nodes()
     pko = build_pko_nodes()
-    nodes += pko
-    print('PKO RFI (bounty) ingeridos: %d  | DEFERIDO: %s' % (len(pko), _PKO_DEFER))
+    pkodef = build_pko_defense_nodes()
+    nodes += pko + pkodef
+    print('PKO RFI (bounty): %d | PKO DEFESA (4 cores): %d' % (len(pko), len(pkodef)))
     pack = dict(format='nvt-range-export', version=1, engineCommit='reg-life-transcrito',
                 generatedAt=None, hands=list(HANDS), nodes=nodes, source='reg_life_transcrito')
     json.dump(pack, open(OUT, 'w', encoding='utf-8'), ensure_ascii=False)

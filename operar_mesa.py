@@ -177,10 +177,13 @@ from hero_card_memory import HeroCardMemory
 from app_paths import find_data, data_dir
 DEFAULT_RANGES = find_data('nvt-ranges-validados.json')   # portátil (qualquer PC)
 DEFAULT_DEEP = find_data('nvt-ranges-deep.json')
-# Sombra Reg-Life (ranges transcritos): preenche gaps de bucket (12/50/60bb RFI, BB vs SB)
-# onde hoje o cérebro empresta. É o ÚLTIMO pack no merge -> validado/deep vencem colisão.
-DEFAULT_REG_LIFE = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                'strategy_data', 'ranges_reg_life_shadow.json')
+# Reg-Life (ranges transcritos): preenche gaps de bucket (12/50/60bb RFI, BB vs SB, shove).
+# Prefere o pack HOMOLOGADO (GTOWizard promovido a validated=True; PKO segue sombra); se não
+# existir, cai no sombra cru. ÚLTIMO pack no merge -> a verdade já validada sempre vence.
+_REG_LIFE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'strategy_data')
+DEFAULT_REG_LIFE = next((p for p in (
+    os.path.join(_REG_LIFE_DIR, 'ranges_reg_life_homologado.json'),
+    os.path.join(_REG_LIFE_DIR, 'ranges_reg_life_shadow.json')) if os.path.exists(p)), None)
 
 # SHOVE (push/fold): o all-in NÃO tem "multiplicador" — é "tudo". Um alvo-sentinela
 # bem acima de qualquer preset e do piso de shove (SHOVE_FLOOR_MULT=8.0) faz
