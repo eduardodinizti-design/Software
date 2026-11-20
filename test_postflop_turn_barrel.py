@@ -1,7 +1,14 @@
-"""Trava a heurística do barril de turn (3 gavetas polarizadas) + tipos de carta de turn."""
+"""Trava a heurística do barril de turn (3 gavetas polarizadas) + tipos de carta de turn,
+e a PROMOÇÃO (a carta de turn dirige a decisão: barril não-valor checa em turn do caller)."""
 import unittest
 
 import postflop_turn_barrel as tb
+from postflop_advisor import advise_postflop
+
+
+def _st(pot, tocall, stack=40):
+    return dict(pot=dict(pot_bb=pot), to_call=dict(to_call_bb=tocall),
+                hero=dict(stack_bb=stack), n_opponents=1)
 
 
 class Gavetas(unittest.TestCase):
@@ -62,6 +69,35 @@ class Lean(unittest.TestCase):
     def test_flop_nao_range_bet_nao_sobe_carta_do_caller(self):
         # carta que favorece o caller continua 'less' mesmo com flop filtrado
         self.assertEqual(tb.barrel_lean('completes_flush', range_bet_flop=False)['freq_lean'], 'less')
+
+
+class PromocaoDecisao(unittest.TestCase):
+    def test_nao_valor_checa_em_turn_que_completa_flush(self):
+        # flop two-tone de copas + turn de copas (3ª); hero KJ sem copas = ar -> CHECK
+        a = advise_postflop(_st(6, 0), ['Kd', 'Js'], ['Qh', '7h', '2c', 'Ah'],
+                            street='TURN', aggressor='hero')
+        self.assertEqual(a['recommended'], 'check')
+        self.assertIn('TURN_BARREL_CHECK_CALLER_CARD', a['caveats'])
+
+    def test_valor_segue_apostando_em_turn_que_completa_flush(self):
+        # mesmo turn, hero com set de 7 = valor -> NÃO é dampeado (aposta)
+        a = advise_postflop(_st(6, 0), ['7c', '7s'], ['Qh', '7h', '2c', 'Ah'],
+                            street='TURN', aggressor='hero')
+        self.assertEqual(a['recommended'], 'bet')
+        self.assertNotIn('TURN_BARREL_CHECK_CALLER_CARD', a.get('caveats', []))
+
+    def test_nao_valor_checa_em_turn_que_completa_sequencia(self):
+        # flop J-T-8 (alto, não é low-connected) + turn 9 -> completa sequência; hero K2 = ar
+        a = advise_postflop(_st(6, 0), ['Kd', '2s'], ['Jh', 'Td', '8c', '9s'],
+                            street='TURN', aggressor='hero')
+        self.assertEqual(a['recommended'], 'check')
+        self.assertIn('TURN_BARREL_CHECK_CALLER_CARD', a['caveats'])
+
+    def test_turn_blank_nao_dampeia(self):
+        # turn blank: a promoção não intervém (segue a lógica normal do advisor)
+        a = advise_postflop(_st(6, 0), ['Kd', 'Js'], ['Qh', '7d', '2c', '3s'],
+                            street='TURN', aggressor='hero')
+        self.assertNotIn('TURN_BARREL_CHECK_CALLER_CARD', a.get('caveats', []))
 
 
 if __name__ == '__main__':

@@ -600,6 +600,20 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
             caveats = caveats + ['OVERBET_POLAR_EXPLORATORY']
         info.update(recommended='bet', sizing=sizing, caveats=caveats)
         return postflop_exploit.exploit_postflop(info, villain_stats, pot_bb=pot, cap_bb=cap)
+    # PROMOÇÃO do barril de turn (a carta DIRIGE a decisão — barril vs BB, Reg-Life): em
+    # TURN que FAVORECE O CALLER (completa flush/sequência), as mãos NÃO-valor (que chegaram
+    # até aqui; as fortes já apostaram) perdem valor de barril — o range do BB que pagou o
+    # flop melhorou -> CHECK (controle de pote; não barrela blefe/thin numa carta que ajudou
+    # o vilão). Só no spot de barril HU single-raised com o hero agressor.
+    _tb_meta = info.get('turn_barrel') or {}
+    if (_cbet_bb_spot and street == 'TURN'
+            and _tb_meta.get('turn_type') in ('completes_flush', 'completes_straight')):
+        info.update(recommended='check',
+                    sizing=dict(size_bb=0.0,
+                                basis='check: turn completou draw do caller (barril perde valor)',
+                                heuristic=False),
+                    caveats=caveats + ['TURN_BARREL_CHECK_CALLER_CARD'])
+        return info
     bluff_blocked = cbet_bluff_blocked(n_opp)
     if bluff_blocked:
         caveats.append('CBET_BLUFF_BLOCKED_MULTIWAY_%dOPP' % n_opp)
