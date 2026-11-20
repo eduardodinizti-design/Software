@@ -25,10 +25,12 @@ class Polarizes(unittest.TestCase):
 
 
 class FreqAgressor(unittest.TestCase):
-    def test_top_pair_board_polar_agressor_da_check(self):
+    def test_top_pair_board_polar_agressor_cbeta_range(self):
+        # LEI Eduardo: PFR continua AGRESSIVO -> top pair em board de c-bet-range c-beta 1/3
+        # (não controla pote passivo). Resolve a passividade.
         a = advise_postflop(st(6, 0), ['9h', 'Kc'], ['9c', '6d', '2h'], aggressor='hero')
-        self.assertEqual(a['recommended'], 'check')
-        self.assertIn('CHECK_FREQ_BOARD_POLAR_MAO_MEDIA', a['caveats'])
+        self.assertEqual(a['recommended'], 'bet')
+        self.assertIn('CBET_PFR_RANGE_1_3', a['caveats'])
 
     def test_top_pair_board_alto_agressor_aposta(self):
         a = advise_postflop(st(6, 0), ['Ah', 'Qc'], ['Ac', '9d', '3h'], aggressor='hero')
@@ -75,11 +77,12 @@ class EquityBuckets(unittest.TestCase):
         self.assertEqual(a['recommended'], 'bet')
         self.assertIn('EQUITY_BUCKET_STRONG', a['caveats'])
 
-    def test_bucket_medio_vira_check_no_polar(self):
-        # top pair com equidade mediana (bucket value) em board polar -> CHECK (controle)
+    def test_bucket_medio_cbeta_range_pfr(self):
+        # LEI Eduardo: PFR c-beta RANGE no board de c-bet-range mesmo com equidade mediana
+        # (a agressão por vantagem de range supera o controle de pote passivo).
         a = advise_postflop(st(6, 0), ['9h', 'Kc'], ['9c', '6d', '2h'],
                             aggressor='hero', villain_range=['QJo', 'JTo', 'KQo', 'AQo'], seed=1)
-        self.assertEqual(a['recommended'], 'check')
+        self.assertEqual(a['recommended'], 'bet')
 
 
 if __name__ == '__main__':

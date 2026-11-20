@@ -32,13 +32,15 @@ class HarnessTests(unittest.TestCase):
     def test_harness_mede_e_expoe_o_leak(self):
         rep = homolog.run()
         self.assertGreater(rep['total'], 40000)
-        # A heurística NÃO é solver-acurada neste spot: concordância baixa (documentado).
-        self.assertLess(rep['decisive_agreement_pct'], 70.0)
-        # O leak dominante é PASSIVO (heurística passa onde o solver aposta).
+        # Após o fix de AGRESSÃO do PFR (c-bet range no flop — LEI Eduardo), a concordância
+        # com o solver SUBIU (a heurística agora c-beta como o solver, não checa passivo).
+        self.assertGreater(rep['decisive_agreement_pct'], 75.0)
+        # O leak VIROU: antes era PASSIVO dominante (heur checa onde solver aposta); agora
+        # pende pro AGRESSIVO (heur aposta onde o solver às vezes checa) — o PFR erra pro lado
+        # de c-betar, por decisão do dono. Trade-off consciente (aggressive > passive).
         passivo = sum(rep['leak_passivo_heur_check_solver_bet'].values())
         agressivo = sum(rep['leak_agressivo_heur_bet_solver_check'].values())
-        self.assertGreater(passivo, agressivo)
-        self.assertIn('air', rep['leak_passivo_heur_check_solver_bet'])
+        self.assertGreater(agressivo, passivo)
 
 
 class TurnHomologationTests(unittest.TestCase):

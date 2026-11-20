@@ -43,9 +43,10 @@ class TagsNoConselho(unittest.TestCase):
         self.assertEqual(a['recommended'], 'bet')
         self.assertIn('OUT_MANIP_MANUTENCAO', a['caveats'])
 
-    def test_top_pair_check_polar_tagueia_manutencao(self):
+    def test_top_pair_cbeta_polar_tagueia_manutencao(self):
+        # PFR agressivo: c-beta o top pair em board de c-bet-range, mantendo a tag de outs
         a = advise_postflop(st(6, 0), ['9h', 'Kc'], ['9c', '6d', '2h'], aggressor='hero')
-        self.assertEqual(a['recommended'], 'check')
+        self.assertEqual(a['recommended'], 'bet')
         self.assertIn('OUT_MANIP_MANUTENCAO', a['caveats'])
 
 

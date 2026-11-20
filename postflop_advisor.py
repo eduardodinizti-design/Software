@@ -599,7 +599,9 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
     # de raise simples HU, c-beta o range INTEIRO com size 1/3 em QUASE TODOS os flops
     # (aposta 1 no pote de 3 só precisa passar >25% -> auto-profit; o BB over-folda). EXCEÇÃO:
     # board baixo CONECTADO (3-8) -> CHECK-RANGE (checa tudo, p/ ter mão forte no turn).
-    _cbet_bb_spot = (_hia is True and n_opp == 1 and pot_type in (None, 'single_raised'))
+    # C7 (auditoria): 'unknown' (tracking pré-flop piscou) com hero=agressor é tratado como
+    # single_raised — senão TODA a agressão do PFR desliga quando a leitura pré-flop falha.
+    _cbet_bb_spot = (_hia is True and n_opp == 1 and pot_type in (None, 'single_raised', 'unknown'))
     if _cbet_bb_spot and _cbet_cat == 'low_connected':
         info.update(recommended='check',
                     sizing=dict(size_bb=0.0, basis='check-range: board baixo conectado (3-8) vs BB',
@@ -661,6 +663,28 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
             caveats = caveats + ['RIVER_JAM_NUT_ADVANTAGE']
         info.update(recommended='bet', sizing=sizing, caveats=caveats)
         return postflop_exploit.exploit_postflop(info, villain_stats, pot_bb=pot, cap_bb=cap)
+    # C-BET RANGE do PFR no FLOP (LEI Eduardo: PFR continua AGRESSIVO; "qualquer equidade
+    # mínima OU vantagem de range em combinação do board = c-bet", INCLUSIVE multiway). Em
+    # board de c-bet-range (_cbet_cat is None = não perigo) o PFR aposta 1/3 com o RANGE —
+    # ar/overcards/par médio/top pair (resolve a passividade: ar nunca c-betava, top pair fino
+    # checava). HU: sempre. MULTIWAY: só onde o board FAVORECE o PFR (nuts_holder=='hero'),
+    # anti-spew. As fortes já apostaram (ramo strong acima). Size 1/3 fixo. Executável.
+    # (draws fortes seguem para o ramo de semi-blefe abaixo, que os trata/tagueia melhor.)
+    if (_hia is True and street == 'FLOP' and _cbet_cat is None and not has_strong_draw
+            and pot_type in (None, 'single_raised', 'unknown')):
+        _pfr_edge = (n_opp == 1) or (
+            postflop_texture.nuts_holder(bclass, hero_is_aggressor=True) == 'hero')
+        if _pfr_edge:
+            _cv = caveats + ['CBET_PFR_RANGE_1_3' + ('' if n_opp == 1 else '_MULTIWAY')]
+            _om = out_manipulation(made, draws)          # preserva a tag de manipulação de outs
+            if _om:
+                _cv = _cv + ['OUT_MANIP_%s' % _om['intent'].upper()]
+            info.update(recommended='bet',
+                        sizing=_size(pot, postflop_texture.SMALL, cap,
+                                     'c-bet 1/3 RANGE vs defensor (PFR, vantagem de range%s)'
+                                     % ('' if n_opp == 1 else ' multiway')),
+                        caveats=_cv)
+            return info
     # PROMOÇÃO do barril de turn (a carta DIRIGE a decisão — barril vs BB, Reg-Life): em
     # TURN que FAVORECE O CALLER (completa flush/sequência), as mãos NÃO-valor (que chegaram
     # até aqui; as fortes já apostaram) perdem valor de barril — o range do BB que pagou o
