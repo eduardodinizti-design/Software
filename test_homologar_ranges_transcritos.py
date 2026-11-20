@@ -45,16 +45,15 @@ class Promocao(unittest.TestCase):
         self.assertTrue(pko)
         self.assertTrue(all(n.get('validated') is False for n in pko))
 
-    def test_promovidos_sao_gap_nao_sobrepoem_validado(self):
+    def test_promovidos_nunca_sobrepoem_o_VALIDADO(self):
+        # promovidos podem UPGRADAR o deep (não-validado), mas NUNCA tocar o já-validado
         import json
         promoted, _, _ = hm.homologate()
         valk = set()
-        for p in (hm._VAL, hm._DEEP):
-            if os.path.exists(p):
-                for n in json.load(open(p, encoding='utf-8')).get('nodes', []):
-                    valk.add(hm._key(n))
+        for n in json.load(open(hm._VAL, encoding='utf-8')).get('nodes', []):
+            valk.add(hm._key(n))
         for n in promoted:
-            self.assertNotIn(hm._key(n), valk)      # só gap -> nunca sobrepõe validado
+            self.assertNotIn(hm._key(n), valk)
 
 
 if __name__ == '__main__':

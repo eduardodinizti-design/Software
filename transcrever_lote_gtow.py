@@ -21,7 +21,7 @@ def _targets():
     for bb in (10, 12, 15, 20):
         t.append(('%d BB' % bb, 'BB %d vs SB Shove.jpg' % bb, 'bb_vs_sb_shove', bb))
     # RFI de stacks OFF-BUCKET (12/15/30/50/70) — tapa os vãos entre nossas âncoras
-    for bb in (12, 15, 30, 50, 70):
+    for bb in (12, 15, 30, 40, 50, 70, 100):     # +40/100: deep (homologar deep 40-100bb)
         for pos in POSICOES:
             t.append(('%d BB' % bb, '%s %d.jpg' % (pos, bb), 'rfi_%s' % pos.lower(), bb))
         t.append(('%d BB' % bb, 'BB %d vs SB RFI.jpg' % bb, 'bb_vs_sb_rfi', bb))

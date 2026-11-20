@@ -60,11 +60,14 @@ def _sane(n):
 
 def homologate():
     shadow = json.load(open(SHADOW, encoding='utf-8'))
+    # Gap-check só contra o VALIDADO (não o deep): promover TAMBÉM sobrepõe nós do deep
+    # NÃO-validado (upgrade deep->validado). GTOWizard é solver autoritativo; nunca toca o
+    # que JÁ é validado (esse continua vencendo por B01/B02). Só RFI/vs_open/vs_limp/shove
+    # (os spots que transcrevemos) — vs_3bet/4bet/multiway do deep seguem intactos.
     val_keys = set()
-    for p in (_VAL, _DEEP):
-        if os.path.exists(p):
-            for n in json.load(open(p, encoding='utf-8')).get('nodes', []):
-                val_keys.add(_key(n))
+    if os.path.exists(_VAL):
+        for n in json.load(open(_VAL, encoding='utf-8')).get('nodes', []):
+            val_keys.add(_key(n))
     promoted, held, failed = [], [], []
     for n in shadow.get('nodes', []):
         ok, why = _sane(n)
