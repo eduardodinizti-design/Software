@@ -180,9 +180,19 @@ def _opener_is_shove(table_state, opener_position, opener_bet):
     seats = table_state.get('seats') or {}
     seat = next((s for s, p in positions.items() if p == opener_position), None)
     remaining = (seats.get(seat) or {}).get('stack_bb') if seat else None
-    if isinstance(remaining, (int, float)):
-        return remaining <= SHOVE_REMAINING_BB
-    return opener_bet >= SHOVE_SIZE_FALLBACK_BB
+    # 1) stack ATRÁS do abridor ~0 => all-in dele.
+    if isinstance(remaining, (int, float)) and remaining <= SHOVE_REMAINING_BB:
+        return True
+    # 2) ROBUSTO (não depende de ler o stack do ABRIDOR, que falha — causou o KK vs 3bet-shove
+    #    virar four_bet): se a aposta do abridor >= o stack do HERO, o hero NÃO consegue raisar
+    #    (só call-off all-in ou fold) = facing-all-in. Usa o stack do hero (lido confiável).
+    hero_stack = (seats.get('hero') or {}).get('stack_bb')
+    if isinstance(hero_stack, (int, float)) and hero_stack > 0 and opener_bet >= hero_stack:
+        return True
+    # 3) sem stack do abridor lido: aposta gigante (>= fallback) é shove.
+    if remaining is None:
+        return opener_bet >= SHOVE_SIZE_FALLBACK_BB
+    return False
 
 
 def infer_live_spot(table_state):

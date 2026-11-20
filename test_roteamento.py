@@ -75,5 +75,32 @@ class Roteamento(unittest.TestCase):
         self.assertIn(r.get('spot'), ('vs_3bet',) )
 
 
+class FacingAllInRobusto(unittest.TestCase):
+    """Detecção de facing-all-in que NÃO depende de ler o stack do abridor (que falhou ao
+    vivo e fez o KK vs 3bet-shove virar four_bet). Unit test — não precisa do pack."""
+
+    def test_shove_pelo_stack_do_hero(self):
+        from preflop_advisor import _opener_is_shove
+        # BTN aposta 127.5bb; stack ATRÁS do BTN lido GRANDE (50bb, não ~0) -> check antigo falha.
+        # Hero tem 100bb -> não dá p/ raisar (127.5 >= 100) -> facing-all-in via stack do hero.
+        st = {'positions': {'s_btn': 'BTN', 'hero': 'LJ'},
+              'seats': {'s_btn': {'stack_bb': 50.0}, 'hero': {'stack_bb': 100.0}}}
+        self.assertTrue(_opener_is_shove(st, 'BTN', 127.5))
+
+    def test_3bet_normal_nao_e_shove(self):
+        from preflop_advisor import _opener_is_shove
+        # 3bet normal de 11bb com hero 100bb e BTN com stack atrás -> NÃO é shove.
+        st = {'positions': {'s_btn': 'BTN', 'hero': 'LJ'},
+              'seats': {'s_btn': {'stack_bb': 89.0}, 'hero': {'stack_bb': 100.0}}}
+        self.assertFalse(_opener_is_shove(st, 'BTN', 11.0))
+
+    def test_stack_do_abridor_zero_ainda_detecta(self):
+        from preflop_advisor import _opener_is_shove
+        # comportamento original preservado: stack atrás do abridor ~0 -> shove.
+        st = {'positions': {'s_btn': 'BTN', 'hero': 'LJ'},
+              'seats': {'s_btn': {'stack_bb': 0.3}, 'hero': {'stack_bb': 100.0}}}
+        self.assertTrue(_opener_is_shove(st, 'BTN', 12.0))
+
+
 if __name__ == '__main__':
     unittest.main()
