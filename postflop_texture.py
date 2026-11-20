@@ -58,10 +58,18 @@ def nuts_holder(bclass, *, hero_is_aggressor):
     return 'hero' if holder == me else 'villain'
 
 
-def bet_plan(bclass, *, is_strong, has_strong_draw, hero_is_aggressor=None):
+DEEP_SPR = 4.0      # SPR a partir do qual o regime é DEEP (≈40bb+ em pote de raise simples)
+
+
+def bet_plan(bclass, *, is_strong, has_strong_draw, hero_is_aggressor=None, spr=None):
     """Plano de TAMANHO p/ uma aposta pós-flop: {fraction, lean, nuts, rationale}.
     `fraction` já no vocabulário do slider (1/3, 1/2 ou 2/3). `lean` é a intenção
-    (range_small / polarized_big / protect_big / semi_bluff) p/ caveat e p/ a frequência."""
+    (range_small / polarized_big / protect_big / semi_bluff) p/ caveat e p/ a frequência.
+
+    `spr` (opcional) ativa o regime DEEP (c-bet vs BB deep, Reg-Life): mão feita FORTE em
+    board DINÂMICO deep CONTROLA o pote (não infla mão vulnerável p/ um river gigante);
+    DRAW robusto deep em board conectado INFLA (vira nut-range no futuro); board seco-seguro
+    deep mantém grande. Sem spr (ou short) = regime atual (aposta a equidade pronta)."""
     flush = bool(bclass.get('flush_possible'))
     straightish = bclass.get('straightish', 0)
     high_or_paired = bclass.get('high_rank', 0) >= 10 or bool(bclass.get('paired'))
@@ -86,4 +94,16 @@ def bet_plan(bclass, *, is_strong, has_strong_draw, hero_is_aggressor=None):
     else:   # baixo não-pareado seco
         frac, lean = BIG, 'polarized_big'
         rat = 'board baixo não-pareado: polariza grande (valor+ar); média dá check'
+    # --- Regime DEEP (c-bet vs BB deep, Reg-Life): a profundidade muda o size ---
+    deep = isinstance(spr, (int, float)) and spr >= DEEP_SPR
+    dynamic = flush or straightish >= 3
+    if deep and is_strong and dynamic and frac == BIG:
+        # mão feita forte em board dinâmico deep se DETERIORA no runout -> controla o pote
+        # (não infla uma mão vulnerável p/ um river gigante). Overbet só em board seco-seguro.
+        frac, lean = MEDIUM, 'deep_control'
+        rat = 'deep: mão feita em board dinâmico -> controla o pote (não infla vulnerável)'
+    elif deep and has_strong_draw and not is_strong and dynamic:
+        # draw ROBUSTO deep (vira nut-range no futuro) -> infla já p/ maximizar o river.
+        frac, lean = BIG, 'deep_robust_draw'
+        rat = 'deep: draw robusto em board conectado -> infla p/ o nut-range futuro'
     return dict(fraction=frac, lean=lean, nuts=nuts, rationale=rat)

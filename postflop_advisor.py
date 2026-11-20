@@ -127,7 +127,7 @@ def _implied_bb(street, pot, hero_stack, to_call, draws):
     return round(raw, 2)
 
 
-def _bet_fraction(bclass, made, draws, hero_is_aggressor=None):
+def _bet_fraction(bclass, made, draws, hero_is_aggressor=None, spr=None):
     """Fração do pote por TEXTURA do board (Pós-flop Avançado — postflop_texture): board
     alto/pareado seco = range-bet pequeno; board baixo não-pareado = polariza grande;
     molhado = grande (proteção). Devolve (fraction, plan). O plan traz lean/nuts p/ caveat.
@@ -137,7 +137,7 @@ def _bet_fraction(bclass, made, draws, hero_is_aggressor=None):
     plan = postflop_texture.bet_plan(
         bclass, is_strong=(made in _STRONG),
         has_strong_draw=bool(draws.get('combo') or draws.get('flush_draw') or draws.get('oesd')),
-        hero_is_aggressor=hero_is_aggressor)
+        hero_is_aggressor=hero_is_aggressor, spr=spr)
     return plan['fraction'], plan
 
 
@@ -565,7 +565,7 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
                     caveats=caveats + ['CBET_VS_BB_CHECK_RANGE_LOW_CONNECTED'])
         return info
     if strong:
-        frac, _plan = _bet_fraction(bclass, made, draws, hero_is_aggressor=_hia)
+        frac, _plan = _bet_fraction(bclass, made, draws, hero_is_aggressor=_hia, spr=spr)
         lean_cv = ['POSTFLOP_TEXTURA_%s' % _plan['lean'].upper()]
         basis = 'valor: %s' % _plan['rationale']
         if _cbet_bb_spot:                        # vs BB: c-bet 1/3 range (auto-profit), não polariza
@@ -587,7 +587,7 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
     if bluff_blocked:
         caveats.append('CBET_BLUFF_BLOCKED_MULTIWAY_%dOPP' % n_opp)
     if has_strong_draw and not bluff_blocked:
-        frac, _plan = _bet_fraction(bclass, made, draws, hero_is_aggressor=_hia)
+        frac, _plan = _bet_fraction(bclass, made, draws, hero_is_aggressor=_hia, spr=spr)
         caveats.append('SEMI_BLUFF_NEGA_EQUITY_E_CRESCE_POTE')
         sb_basis = 'semi-blefe: %s' % _plan['rationale']
         if _cbet_bb_spot:                            # vs BB: 1/3 range

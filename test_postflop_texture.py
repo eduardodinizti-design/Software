@@ -54,6 +54,38 @@ class Tamanho(unittest.TestCase):
             self.assertIn(plan(b, is_strong=False, draw=True)['fraction'], SLIDER, b)
 
 
+class RegimeDeep(unittest.TestCase):
+    CONNECT = ['9c', '8d', '5h']   # baixo conectado (straightish 3) = dinâmico
+    DRY = ['9c', '5d', '2h']       # baixo desconectado seco (straightish 2)
+
+    def test_deep_mao_feita_board_dinamico_controla(self):
+        p = plan(self.CONNECT, is_strong=True, hero_agg=True)  # sem spr -> BIG
+        self.assertEqual(p['fraction'], tx.BIG)
+        d = tx.bet_plan(classify_board(self.CONNECT), is_strong=True,
+                        has_strong_draw=False, hero_is_aggressor=True, spr=10)
+        self.assertAlmostEqual(d['fraction'], tx.MEDIUM, places=2)   # deep -> controla
+        self.assertEqual(d['lean'], 'deep_control')
+
+    def test_short_mao_feita_board_dinamico_mantem_grande(self):
+        d = tx.bet_plan(classify_board(self.CONNECT), is_strong=True,
+                        has_strong_draw=False, hero_is_aggressor=True, spr=2)
+        self.assertEqual(d['fraction'], tx.BIG)     # short -> aposta a equidade pronta
+
+    def test_deep_draw_robusto_infla(self):
+        d = tx.bet_plan(classify_board(self.CONNECT), is_strong=False,
+                        has_strong_draw=True, hero_is_aggressor=True, spr=10)
+        self.assertEqual(d['fraction'], tx.BIG)
+        self.assertEqual(d['lean'], 'deep_robust_draw')
+
+    def test_deep_board_seco_seguro_mantem_grande(self):
+        d = tx.bet_plan(classify_board(self.DRY), is_strong=True,
+                        has_strong_draw=False, hero_is_aggressor=True, spr=10)
+        self.assertEqual(d['fraction'], tx.BIG)     # seco-seguro deep -> mantém grande
+
+    def test_sem_spr_inalterado(self):
+        self.assertEqual(plan(self.CONNECT, is_strong=True)['fraction'], tx.BIG)
+
+
 class NutsHolder(unittest.TestCase):
     def test_hero_pfr_board_alto_tem_nuts(self):
         self.assertEqual(tx.nuts_holder(classify_board(['Ah', '9c', '3d']),
