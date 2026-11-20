@@ -97,8 +97,11 @@ def _protobuf_advice(advisor, mode, stage='mid', estado_path=None):
     except Exception:
         return None
     now = time.time()
-    fresh = [e for e in (data or {}).values()
-             if isinstance(e, dict) and (now - (e.get('ts') or 0)) < _PB_STALE_S]
+    # Filtra a mesa FANTASMA "?" (leitura malformada intermitente do emissor: sbseat gigante,
+    # maxraise absurdo) — senão len(fresh)==2 e o protobuf abstém à toa, caindo no OCR fraco.
+    fresh = [e for key, e in (data or {}).items()
+             if key != '?' and isinstance(e, dict) and (now - (e.get('ts') or 0)) < _PB_STALE_S
+             and isinstance((e.get('table') or {}).get('sb'), (int, float))]
     if len(fresh) != 1:
         return None
     return protobuf_state.advise_from_protobuf(fresh[0], advisor, mode=(mode or 'chip_ev'),
