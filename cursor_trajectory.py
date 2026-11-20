@@ -17,6 +17,7 @@ Implementa a baseline da spec `ORIENTAÇÃO PARA MOVIMENTO NATURAL D.txt`:
 Este módulo NÃO move o cursor e NÃO clica. É só a geometria/tempo do caminho.
 """
 import math
+import random
 import time
 
 
@@ -34,6 +35,7 @@ def min_jerk_s(u):
 DEFAULT_FITTS_A = 0.12
 DEFAULT_FITTS_B = 0.10
 MIN_DURATION_S = 0.12
+DEFAULT_BOW = 0.12      # curvatura da Bézier (fração da distância); 0 = reta
 
 
 def fitts_duration(distance, width, *, a, b, min_s=MIN_DURATION_S):
@@ -52,12 +54,26 @@ class TrajectoryPlan:
     """Um caminho planejado início→destino com duração fixa. Amostre por tempo
     decorrido real; o plano é imutável e puro."""
 
-    def __init__(self, start, dest, duration_s, *, clock=time.monotonic, t0=None):
+    def __init__(self, start, dest, duration_s, *, clock=time.monotonic, t0=None,
+                 bow=0.0, bow_seed=0):
         self.start = (float(start[0]), float(start[1]))
         self.dest = (float(dest[0]), float(dest[1]))
         self.duration_s = max(float(duration_s), 1e-6)
         self._clock = clock
         self.t0 = self._clock() if t0 is None else t0
+        # Ponto de controle da BÉZIER quadrática: ponto médio + offset PERPENDICULAR à reta,
+        # proporcional à distância. `bow`=fração da distância; sinal/magnitude variam pelo
+        # seed (curva natural, nunca a mesma). bow=0 -> ctrl no meio -> a Bézier VIRA a reta
+        # (compat total com o min-jerk linear anterior). O perfil de velocidade segue min-jerk.
+        sx, sy = self.start
+        dx, dy = self.dest
+        mx, my = (sx + dx) / 2.0, (sy + dy) / 2.0
+        vx, vy = dx - sx, dy - sy
+        length = math.hypot(vx, vy) or 1.0
+        px, py = -vy / length, vx / length          # perpendicular unitário
+        rng = random.Random(bow_seed)
+        mag = float(bow) * length * rng.uniform(0.6, 1.0) * rng.choice((-1.0, 1.0))
+        self.ctrl = (mx + px * mag, my + py * mag)
 
     def progress(self, now=None):
         """u ∈ [0,1] pelo tempo realmente decorrido desde t0."""
@@ -65,9 +81,12 @@ class TrajectoryPlan:
         return max(0.0, min(1.0, (now - self.t0) / self.duration_s))
 
     def point_at(self, u):
+        # Progresso s por min-jerk (velocidade suave); POSIÇÃO por Bézier quadrática
+        # P0->ctrl->P1 (caminho CURVO). Com ctrl no meio (bow=0), reduz à reta anterior.
         s = min_jerk_s(u)
-        return (self.start[0] + s * (self.dest[0] - self.start[0]),
-                self.start[1] + s * (self.dest[1] - self.start[1]))
+        a, bq, c = (1.0 - s) ** 2, 2.0 * (1.0 - s) * s, s * s
+        return (a * self.start[0] + bq * self.ctrl[0] + c * self.dest[0],
+                a * self.start[1] + bq * self.ctrl[1] + c * self.dest[1])
 
     def position(self, now=None):
         return self.point_at(self.progress(now))
@@ -112,16 +131,20 @@ class TrajectoryGenerator:
     são NÃO medidos até `calibrate`."""
 
     def __init__(self, *, a=DEFAULT_FITTS_A, b=DEFAULT_FITTS_B, calibrated=False,
-                 clock=time.monotonic):
+                 clock=time.monotonic, bow=DEFAULT_BOW):
         self.a = float(a)
         self.b = float(b)
         self.calibrated = bool(calibrated)
         self._clock = clock
+        self.bow = float(bow)      # curvatura da Bézier do caminho gerado (0 = reta)
 
     def plan(self, start, dest, *, width=48.0, t0=None):
         d = math.hypot(dest[0] - start[0], dest[1] - start[1])
         dur = fitts_duration(d, width, a=self.a, b=self.b)
-        return TrajectoryPlan(start, dest, dur, clock=self._clock, t0=t0)
+        # seed determinístico por MOVIMENTO (varia o lado/curva, reprodutível no mesmo par).
+        seed = hash((round(start[0]), round(start[1]), round(dest[0]), round(dest[1]))) & 0xffffffff
+        return TrajectoryPlan(start, dest, dur, clock=self._clock, t0=t0,
+                              bow=self.bow, bow_seed=seed)
 
     def calibrate(self, a, b):
         """Fixa coeficientes medidos (ver cursor_calibration.fit_fitts) e marca
