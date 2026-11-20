@@ -576,8 +576,19 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
     if _eq_bucket:
         caveats = caveats + ['EQUITY_BUCKET_%s' % _eq_bucket.upper()]
     # C-bet vs BB (Teoria para c-bet vs BB): board de PERIGO em que o PFR IP não c-beta
-    # range (checa mais). Tag honesta p/ auditoria quando o hero tem a iniciativa.
-    _cbet_cat = postflop_cbet_bb.cbet_check_category(bclass) if _hia is True else None
+    # range (checa mais) — perigo de FLUSH agora stack-gated (só deep ≥60bb; short/vs-humano
+    # aposta 100%). Tag honesta + LEAN de frequência por posição+stack (advisory: a decisão
+    # por mão made/draws/equity segue decidindo). Só quando o hero tem a iniciativa.
+    _cbet_cat = (postflop_cbet_bb.cbet_check_category(bclass, stack_bb=hero_stack)
+                 if _hia is True else None)
+    if _hia is True:
+        _hero_pos = (table_state.get('positions') or {}).get('hero')
+        _cbet_freq = postflop_cbet_bb.cbet_freq_vs_bb(_hero_pos, hero_stack)
+        if _cbet_freq or _cbet_cat:
+            info['cbet_vs_bb'] = dict(danger=_cbet_cat, freq_lean=_cbet_freq,
+                                      position=_hero_pos, stack_bb=hero_stack)
+        if _cbet_freq:
+            caveats = caveats + ['CBET_VS_BB_FREQ_%d' % round(_cbet_freq['freq'] * 100)]
     if _cbet_cat:
         caveats = caveats + ['CBET_VS_BB_PERIGO_%s' % _cbet_cat.upper()]
     # RESOLUÇÃO da tensão de size (aula prática 'c-bet vs BB'): no spot PFR IP vs BB em pote
