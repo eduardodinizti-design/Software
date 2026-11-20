@@ -24,6 +24,7 @@ from pathlib import Path
 from preflop_study import hand_key, Blocked
 from preflop_equity import range_from_node, equity_vs_range, required_equity
 from hud_exploit import classify_villain, shove_calloff_delta, exploit_caveats
+import preflop_exploit
 from strategy.scenarios import classify as classify_scenario, from_table_state
 from preflop_tree_book import TreeBook
 
@@ -1156,6 +1157,17 @@ class PreflopAdvisor:
                     result['recommended'] = 'fold'
                     result['status'] = 'ADVICE'
                     result.setdefault('caveats', []).append('ISO_CAP_FOLD_FORA_DO_RANGE_TIGHT')
+            # EXPLOIT PRÉ-FLOP (delta por cima do GTO, bounded): usa o perfil do OPENER
+            # (HUD/DB, só com leitura CONFIÁVEL). ANTES do sizing -> o 3bet-blefe sai com
+            # size. Só vs_open por ora (o opener é o vilão inequívoco); steal (perfil dos
+            # blinds) fica p/ a próxima leva.
+            if result.get('status') == 'ADVICE' and spot['spot'] == 'vs_open':
+                _hud = table_state.get('hud') or {}
+                _vseat = next((s for s, p in positions.items() if p == spot.get('opener')), None)
+                _vh = _hud.get(_vseat) if _vseat else None
+                _vstats = _vh['stats'] if (_vh and _vh.get('confidence') == 'high') else None
+                if _vstats:
+                    result = preflop_exploit.exploit_preflop(result, _vstats, spot='vs_open')
             if result.get('recommended'):
                 result['sizing'] = sizing.size_from_reading(result['recommended'], table_state,
                                                             positions['hero'], spot.get('opener'),
