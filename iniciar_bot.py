@@ -190,19 +190,36 @@ def main(argv=None):
     child_env = dict(os.environ, NVT_PARENT_PID=str(os.getpid()))
     new_group = getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0)
 
+    # Eduardo 20/11: NÃO poluir a tela com N janelas de cmd. Rodamos os filhos com janela
+    # ESCONDIDA (CREATE_NO_WINDOW) e a saída vai pra logs/bot_<sub>.log (legível p/ auditoria
+    # e p/ o Claude). O desligamento LIMPO do Frida NÃO depende mais do console/CTRL_BREAK:
+    # o watchdog de pai (NVT_PARENT_PID, acima) desanexa quando este launcher morre.
+    CREATE_NO_WINDOW = 0x08000000
+    _logdir = os.path.join(REPO, "logs")
+    try:
+        os.makedirs(_logdir, exist_ok=True)
+    except Exception:
+        pass
+    _logfiles = []
+
     def _spawn(sub, script, cwd, extra):
-        cf = new_console
-        # Hosts FRIDA (emissor/captura) em GRUPO próprio p/ receber CTRL_BREAK e desanexar
-        # limpo (hard-kill de host Frida = fatal error no PPPoker — Eduardo 19/11).
+        cf = CREATE_NO_WINDOW                 # janela escondida (sem console visível)
         if sub in ("emitir", "capturar"):
-            cf |= new_group
+            cf |= new_group                   # grupo próprio (watchdog de pai faz o detach limpo)
         if frozen:
             cmd = [sys.executable, sub] + extra
             cwd = REPO
         else:
             flags = ["-I"] if sub in ("emitir", "capturar", "alerta") else []
             cmd = [sys.executable] + flags + [script] + extra
-        return subprocess.Popen(cmd, cwd=cwd, creationflags=cf, env=child_env)
+        try:
+            logf = open(os.path.join(_logdir, "bot_%s.log" % sub), "w",
+                        encoding="utf-8", errors="replace")
+            _logfiles.append(logf)            # mantém o handle vivo (não GC)
+            return subprocess.Popen(cmd, cwd=cwd, creationflags=cf, env=child_env,
+                                    stdout=logf, stderr=subprocess.STDOUT)
+        except Exception:
+            return subprocess.Popen(cmd, cwd=cwd, creationflags=cf, env=child_env)
 
     # 1) OPERADOR: TUDO ligado. Mode/stage auto (ou forcado). Bounty passado se informado.
     op_flags = ["--hwnd", str(hwnd), "--arm", "--auto-arm", "--auto-fechar-bustada",
