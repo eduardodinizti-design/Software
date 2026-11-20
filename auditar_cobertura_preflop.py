@@ -95,9 +95,16 @@ def _covered(adv, r, mode='chip_ev', stage='mid', bounty=None):
             ok = False; reasons.add(res.get('reason') or status or 'ABSTAIN')
         elif res.get('validated') is not True:
             # Piso SEGURO: fold/check nao-validado = decisao correta e executavel
-            # (o operador folda/checa). So uma COMITADA (raise/call/all_in) nao-validada
-            # e buraco (a agressao pretendida nao e auto-executada -> vira fold).
+            # (o operador folda/checa).
             if res.get('recommended') in ('fold', 'check'):
+                continue
+            # HOMOLOGADO (Eduardo 20/11, Nash push/fold): uma COMITADA nao-validada COM NO
+            # (node_id -> autoridade REFERENCE no contrato) e EXECUTAVEL. O operador NAO tem
+            # trava val-based no caminho de raise/shove ("referencia manda") e o shove usa
+            # _SHOVE_TARGET_MULT (nunca None) -> arma. Nash shadow (node_id setado) entra aqui.
+            # So uma comitada SEM no (gap-aproximacao sem node_id -> raise sem sizing -> abstem)
+            # continua sendo buraco real.
+            if res.get('node_id'):
                 continue
             ok = False; reasons.add('NAO_VALIDADO_COMMIT:%s' % res.get('recommended'))
     return ok, reasons

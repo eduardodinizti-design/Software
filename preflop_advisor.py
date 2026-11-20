@@ -641,8 +641,14 @@ class PreflopAdvisor:
         # curtos sem inventar range. GATED por `_nash_shadow_ok`: só o re-try explícito
         # de último recurso (fim de advise_from_reading, quando o fluxo normal já
         # abstém) a liga — assim a sombra NUNCA preempta um nó validado/melhor.
+        # HOMOLOGADO (Eduardo 20/11, opção 1): a camada Nash arma nos spots de SHOVE
+        # (open_shove/vs_open_shove/3bet_shove) quando NÃO há nó validado — puro gap-fill, nunca
+        # preempta (só quando node is None). node_id setado -> contrato dá autoridade REFERENCE
+        # -> EXECUTÁVEL. Fecha ~3000+ abstenções de shove curto. RESSALVA: ICM/PKO usa a tabela
+        # chip-EV (caveat NASH_SHADOW_CHIP_EV_REF_ICM_PKO_ADJ_NOT_APPLIED) — um pouco largo em
+        # bolha; ICM-tightening é refino futuro. `_nash_shadow_ok` segue valendo p/ re-try externo.
         nash_shadow = None
-        if node is None and _nash_shadow_ok:
+        if node is None and (_nash_shadow_ok or spot in NASH_SHADOW_SPOTS):
             node, nash_shadow = self._nash_shadow_node(
                 mode, table_format, stage, players, bucket, spot, hero_position, tuple(vs), spread)
         if node is None:
