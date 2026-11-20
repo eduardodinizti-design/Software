@@ -11,6 +11,10 @@ def _st(pot, tocall, stack=40):
                 hero=dict(stack_bb=stack), n_opponents=1)
 
 
+# vilão PASSIVO (loose-passive = fish): não lidera nem folda -> check descapado / sticky
+_PASSIVE = {'vpip': 46, 'pfr': 8, 'threebet': 2, 'fold3bet': 25, 'cbet': 30, 'foldcbet': 30}
+
+
 class Gavetas(unittest.TestCase):
     def test_valor_aposta_turn_e_river(self):
         for made in ('set', 'two_pair', 'overpair', 'straight', 'flush', 'trips'):
@@ -52,6 +56,21 @@ class TiposDeCarta(unittest.TestCase):
 
     def test_board_de_3_eh_none(self):
         self.assertIsNone(tb.classify_turn(['Qh', '7d', '2c']))
+
+
+class BBShouldDonk(unittest.TestCase):
+    def test_cartas_do_bb_sao_donk(self):
+        self.assertTrue(tb.bb_should_donk(['Qh', '7h', '2c', 'Ah']))   # completa flush
+        self.assertTrue(tb.bb_should_donk(['Jh', 'Td', '8c', '9s']))   # completa sequência
+        self.assertTrue(tb.bb_should_donk(['Qh', '7d', '2c', '7s']))   # dobra meio
+        self.assertTrue(tb.bb_should_donk(['Qh', '7d', '2c', '3s']))   # blank baixo
+
+    def test_overcard_e_dobra_topo_nao_sao_donk(self):
+        self.assertFalse(tb.bb_should_donk(['9h', '6d', '2c', 'Ks']))  # overcard
+        self.assertFalse(tb.bb_should_donk(['Qh', '7d', '2c', 'Qs']))  # dobra o topo
+
+    def test_board_de_3_eh_false(self):
+        self.assertFalse(tb.bb_should_donk(['Qh', '7d', '2c']))
 
 
 class Lean(unittest.TestCase):
@@ -120,6 +139,22 @@ class AgressorOvercard(unittest.TestCase):
         a = advise_postflop(_st(6, 0), ['Qd', 'Jc'], ['9h', '6d', '2c', '3s'],
                             street='TURN', aggressor='hero')
         self.assertNotIn('TURN_BARREL_OVERCARD_AGGRESSOR', a.get('caveats', []))
+
+    def test_nao_barrela_overcard_vs_passivo(self):
+        # mesmo overcard + QJ gutshot, mas vilão PASSIVO (station) -> não blefa (check back)
+        a = advise_postflop(_st(6, 0), ['Qd', 'Jc'], ['9h', '6d', '2c', 'Ks'],
+                            street='TURN', aggressor='hero', villain_stats=_PASSIVE)
+        self.assertEqual(a['recommended'], 'check')
+        self.assertNotIn('TURN_BARREL_OVERCARD_AGGRESSOR', a.get('caveats', []))
+
+
+class CheckBackVsPassivo(unittest.TestCase):
+    def test_blefe_vira_check_em_carta_de_donk_vs_passivo(self):
+        # blank baixo (3) onde o BB deveria liderar; vilão passivo não lidera -> check back
+        a = advise_postflop(_st(6, 0), ['Kd', '9s'], ['Qh', '7d', '2c', '3s'],
+                            street='TURN', aggressor='hero', villain_stats=_PASSIVE)
+        self.assertEqual(a['recommended'], 'check')
+        self.assertIn('TURN_BARREL_CHECK_BB_WONT_DONK', a['caveats'])
 
 
 if __name__ == '__main__':

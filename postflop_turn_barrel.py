@@ -89,6 +89,24 @@ _HIGH_DRAWY = ('overcard',)
 _FAVORS_CALLER = ('completes_flush', 'completes_straight', 'pairs_low', 'pairs_mid')
 
 
+def bb_should_donk(board):
+    """True se a carta de turn FAVORECE o range largo do BB (quem defendeu o flop), de modo
+    que, EM TEORIA, o BB deveria LIDERAR (donk): completa flush/sequência, dobra carta baixa
+    ou do meio, OU é um blank ABAIXO do topo do flop (carta baixa/meio desloca equidade pro
+    range largo do BB). overcard / dobra-topo / carta alta -> favorece o agressor, False.
+    (board < 4 cartas -> False.) Usado no exploit: vs vilão PASSIVO que NÃO lidera, o check
+    dele nessas cartas fica DESCAPADO (mantém as fortes) -> barril de blefe é ineficaz."""
+    t = classify_turn(board)
+    if t in ('completes_flush', 'completes_straight', 'pairs_low', 'pairs_mid'):
+        return True
+    cards = _cards(board)
+    if len(cards) < 4:
+        return False
+    flop_high = max(r for r, _ in cards[:3])
+    turn_rank = cards[3][0]
+    return t == 'blank' and turn_rank < flop_high
+
+
 def barrel_lean(turn_type, *, range_bet_flop=True):
     """Lean de FREQUÊNCIA do second barrel pelo tipo de carta + se o flop foi range-bet.
     Devolve dict(freq_lean='more'/'neutral'/'less', note). Advisory (não é a decisão)."""

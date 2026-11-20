@@ -614,6 +614,20 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
                                 heuristic=False),
                     caveats=caveats + ['TURN_BARREL_CHECK_CALLER_CARD'])
         return info
+    # EXPLOIT barril de turn (vs PASSIVO que não lidera — Reg-Life): em carta onde o BB
+    # DEVERIA liderar (donk) mas, sendo PASSIVO, só dá check, o check dele fica DESCAPADO
+    # (mantém as fortes que deveria ter liderado). Logo o barril de BLEFE (ar/overcards sem
+    # draw forte) é ineficaz -> CHECK BACK e realiza equidade. Gated no perfil passivo + spot
+    # de barril. Mão de valor/semi-blefe seguem abaixo (valor paga o passivo; draw tem out).
+    if (_cbet_bb_spot and street == 'TURN' and profile and profile.get('passive')
+            and postflop_turn_barrel.bb_should_donk(board)
+            and made in ('air', 'overcards') and not has_strong_draw):
+        info.update(recommended='check',
+                    sizing=dict(size_bb=0.0,
+                                basis='check back: BB passivo não lidera a carta que deveria (check descapado)',
+                                heuristic=False),
+                    caveats=caveats + ['TURN_BARREL_CHECK_BB_WONT_DONK'])
+        return info
     bluff_blocked = cbet_bluff_blocked(n_opp)
     if bluff_blocked:
         caveats.append('CBET_BLUFF_BLOCKED_MULTIWAY_%dOPP' % n_opp)
@@ -658,6 +672,7 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
     # negar/cuidar nessas cartas boas. Só no spot de barril HU single-raised, hero agressor,
     # não multiway-bloqueado. Size médio (polarização de turn). Ar seco segue de check abaixo.
     if (_cbet_bb_spot and street == 'TURN' and not bluff_blocked
+            and not (profile and profile.get('passive'))   # não blefa-barrila um passivo (sticky)
             and (info.get('turn_barrel') or {}).get('turn_type') == 'overcard'
             and made in ('air', 'overcards')
             and (made == 'overcards' or draws.get('gutshot') or draws.get('backdoor_flush'))):
