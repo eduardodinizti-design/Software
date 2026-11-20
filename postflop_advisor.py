@@ -14,6 +14,7 @@ contrato do pré-flop: status ADVICE/ABSTAIN, `recommended`, métricas e `caveat
 import postflop_texture
 import postflop_exploit
 import postflop_turn_barrel
+import postflop_river
 import postflop_cbet_bb
 from postflop_eval import classify_board, hand_strength, narrow_to_continuation
 from preflop_equity import required_equity, equity_vs_range, hand_to_combos
@@ -319,6 +320,15 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
         if _tb_type:
             caveats.append('TURN_CARD_%s' % _tb_type.upper())
 
+    # River (advisory): polarização máxima — gaveta valor/blefe/check por VALOR RELATIVO +
+    # lean de size (nuts -> overbet). Metadado; a disciplina de valor (promoção) age abaixo.
+    if street == 'RIVER':
+        _rv_tier = postflop_river.river_tier(made, draws, bclass)
+        info['river'] = dict(tier=_rv_tier, value_ok=postflop_river.river_value_ok(made, bclass),
+                             draw_complete=postflop_river.is_draw_complete(bclass),
+                             size_hint=postflop_river.river_size_hint(made, bclass))
+        caveats.append('RIVER_%s' % _rv_tier.upper())
+
     # Scare card (metadado exploratório): carta de perigo no turn/river. Não altera a
     # equity de Monte Carlo (o board já entra lá); serve de sinal p/ mãos de 1 par e p/
     # o auditor de leaks. Só marca; a decisão de valor segue a lógica existente.
@@ -580,6 +590,19 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
                     sizing=dict(size_bb=0.0, basis='check-range: board baixo conectado (3-8) vs BB',
                                 heuristic=False),
                     caveats=caveats + ['CBET_VS_BB_CHECK_RANGE_LOW_CONNECTED'])
+        return info
+    # PROMOÇÃO RIVER (polarização máxima — Reg-Life): no river IP, mão FEITA que PERDEU VALOR
+    # RELATIVO (o board completou draws e ela está abaixo do piso de valor do river — ex.:
+    # two pair/overpair/top pair num board de flush/sequência) NÃO value-beta -> CHECK. Mata
+    # o leak de pagar/apostar dentro dos draws completos. Nuts/trinca+ seguem (passam o piso)
+    # e air cai no ramo de blefe abaixo. Só no spot de barril HU single-raised, hero agressor.
+    if (_cbet_bb_spot and street == 'RIVER' and made not in ('air', 'overcards') and made
+            and not postflop_river.river_value_ok(made, bclass)):
+        info.update(recommended='check',
+                    sizing=dict(size_bb=0.0,
+                                basis='check: river completou draws, mão perdeu valor relativo (polariza)',
+                                heuristic=False),
+                    caveats=caveats + ['RIVER_CHECK_PERDEU_VALOR_RELATIVO'])
         return info
     if strong:
         frac, _plan = _bet_fraction(bclass, made, draws, hero_is_aggressor=_hia, spr=spr)
