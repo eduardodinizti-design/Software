@@ -13,6 +13,7 @@ contrato do pré-flop: status ADVICE/ABSTAIN, `recommended`, métricas e `caveat
 """
 import postflop_texture
 import postflop_exploit
+import postflop_turn_barrel
 import postflop_cbet_bb
 from postflop_eval import classify_board, hand_strength, narrow_to_continuation
 from preflop_equity import required_equity, equity_vs_range, hand_to_combos
@@ -302,6 +303,21 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
                 category=strength['category_name'], board_texture=bclass['texture'],
                 structure=bclass['structure'], outs=outs, spr=spr, equity=None,
                 pot_bb=pot, to_call_bb=to_call, exploratory=True, execution_allowed=False)
+
+    # Barril de TURN (advisory): gaveta polarizada (valor/blefe/meio) + tipo de carta de
+    # turn + lean de frequência. Metadado p/ o operador/auditor e p/ alinhar a polarização;
+    # NÃO troca a recomendação (made/draws/textura/equity seguem decidindo). Só turn.
+    if street == 'TURN' and len(board) >= 4:
+        _flop_bclass = classify_board(list(board)[:3])
+        _range_bet_flop = postflop_cbet_bb.cbet_check_category(_flop_bclass) is None
+        _tb_tier = postflop_turn_barrel.barrel_tier(made, draws)
+        _tb_type = postflop_turn_barrel.classify_turn(list(board))
+        _tb_lean = postflop_turn_barrel.barrel_lean(_tb_type, range_bet_flop=_range_bet_flop)
+        info['turn_barrel'] = dict(tier=_tb_tier, turn_type=_tb_type,
+                                   range_bet_flop=_range_bet_flop, **_tb_lean)
+        caveats.append('TURN_BARREL_%s' % _tb_tier.upper())
+        if _tb_type:
+            caveats.append('TURN_CARD_%s' % _tb_type.upper())
 
     # Scare card (metadado exploratório): carta de perigo no turn/river. Não altera a
     # equity de Monte Carlo (o board já entra lá); serve de sinal p/ mãos de 1 par e p/
