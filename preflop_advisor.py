@@ -632,6 +632,19 @@ class PreflopAdvisor:
                 mode, table_format, stage, players, spot, hero_position, tuple(vs), spread, stack_bb)
             if anode is not None:
                 node, aligned_bucket, bucket = anode, ab, ab
+        # FALLBACK DE SPREAD (ICM/PKO-ICM): sem nó no spread específico (curtos_ini/curtos_fim),
+        # reusa o nó 'iguais' do MESMO modo/stage/bucket/spot como REFERÊNCIA. O spread descreve a
+        # distribuição dos OUTROS stacks — pesa pouco num pote heads-up (ex.: vs_3bet). node_id
+        # setado -> contrato dá REFERENCE executável. Fecha os gaps de spread (vs_3bet pko_icm/
+        # curtos_fim @40bb etc.) sem inventar range. validated=False (é aproximação de spread).
+        # NÃO p/ shove-spots (NASH_SHADOW_SPOTS): esses têm a trilha Nash sombra, que já faz
+        # o spread->iguais E aplica o ICM-tightening. Aqui é só p/ os demais (vs_3bet etc.).
+        spread_ref = False
+        if node is None and spread not in (None, 'iguais') and spot not in NASH_SHADOW_SPOTS:
+            n = self._index.get((mode, table_format, stage, players, bucket, spot,
+                                 hero_position, tuple(vs), 'iguais'))
+            if n is not None:
+                node, spread_ref = n, True
         borrowed_from = None
         # GUARDA DA ZONA DE SHOVE (<20BB): não empresta range de RAISE por proximidade
         # de stack — isso gerava mini-raises suicidas. Só push/fold puro vale aqui.
@@ -667,11 +680,13 @@ class PreflopAdvisor:
                                               hero=hero_position, players=players))
         i = self.hands.index(hand)
         raw_validated = bool(node.get('validated'))
-        # stack emprestado OU sombra Nash de outro contexto não auto-executam
-        validated = raw_validated and borrowed_from is None and nash_shadow is None
+        # stack emprestado OU sombra Nash OU ref de spread de outro contexto não auto-executam
+        validated = raw_validated and borrowed_from is None and nash_shadow is None and not spread_ref
         caveats = self._caveats(bucket, stack_bb, players, mode, spread)
         if not raw_validated:
             caveats.append('UNVALIDATED_REFERENCE_RANGE')
+        if spread_ref:
+            caveats.append('SPREAD_REF_IGUAIS_APPROX_%s' % spread)
         if nash_shadow is not None:
             caveats.append(nash_shadow)
         if aligned_bucket is not None:

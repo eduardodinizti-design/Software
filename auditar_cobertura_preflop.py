@@ -195,8 +195,15 @@ def audit(adv, modes=MODES):
 
 
 def main(argv=None):
-    pack = (argv or sys.argv[1:] or [r'C:\Meus Projetos\Aplicativos\nvt-ranges-validados.json'])[0]
-    adv = PreflopAdvisor.from_file(pack)
+    import os
+    args = list(argv or sys.argv[1:])
+    pack = args[0] if args else r'C:\Meus Projetos\Aplicativos\nvt-ranges-validados.json'
+    deep = args[1] if len(args) > 1 else r'C:\Meus Projetos\Aplicativos\nvt-ranges-deep.json'
+    # Audita o que o bot AO VIVO serve: operar_mesa usa from_files(validados, deep). Medir só
+    # o pack validado SUB-REPORTA (ex.: refs de spread/nós que moram no deep) — foi o que fazia
+    # os 63 'gaps' vs_3bet pko_icm/curtos_fim aparecerem sendo que o bot os cobre pelo deep.
+    adv = (PreflopAdvisor.from_files(pack, deep) if os.path.exists(deep)
+           else PreflopAdvisor.from_file(pack))
     covered, total, by_cat_cov, by_cat, gaps = audit(adv)
     print('=' * 72)
     print('COBERTURA PRE-FLOP AO VIVO (TODOS OS MODOS: chip_ev/icm/pko/pko_icm):')

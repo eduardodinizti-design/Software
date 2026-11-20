@@ -89,6 +89,22 @@ class Roteamento(unittest.TestCase):
         self.assertEqual(r.get('status'), 'ADVICE')
         self.assertIn(r.get('spot'), ('vs_3bet',) )
 
+    # --- FALLBACK DE SPREAD (fecha os 63 gaps vs_3bet pko_icm/curtos_fim @40bb, 20/11):
+    #     sem no no spread especifico, reusa o 'iguais' do MESMO modo/stage/bucket como
+    #     REFERENCIA executavel (node_id setado). So p/ spots nao-shove. ---
+    def test_spread_fallback_vs_3bet_executavel(self):
+        deep = r'C:\Meus Projetos\Aplicativos\nvt-ranges-deep.json'
+        if not os.path.exists(deep):
+            self.skipTest('pack deep ausente')
+        adv = PreflopAdvisor.from_files(PACK, deep)   # bot AO VIVO usa os dois
+        st = aud.st_vs_3bet('BTN', 'SB', 40, 'curtos_fim')
+        r = adv.advise_from_reading(st, ['Ad', 'Ac'], mode='pko_icm', stage='bubble',
+                                    bounty_bb=10.0)
+        self.assertEqual(r.get('status'), 'ADVICE')
+        self.assertTrue(r.get('node_id'))                                   # tem NO -> executavel
+        self.assertFalse(r.get('validated'))                                # mas e aproximacao
+        self.assertTrue(any('SPREAD_REF_IGUAIS' in c for c in (r.get('caveats') or [])))
+
 
 class FacingAllInRobusto(unittest.TestCase):
     """Detecção de facing-all-in que NÃO depende de ler o stack do abridor (que falhou ao
