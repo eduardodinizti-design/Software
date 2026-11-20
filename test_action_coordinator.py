@@ -126,10 +126,27 @@ class PlanTest(unittest.TestCase):
         self.assertEqual(r['plan']['action'], 'CHECK')
 
     def test_no_button_for_action(self):
-        r = plan_from_buttons(_buttons(actions=('FOLD', 'CALL')),
+        # só FOLD disponível (sem check/call/raise) -> aí sim trava (não há fallback seguro)
+        r = plan_from_buttons(_buttons(actions=('FOLD',)),
                               dict(status='ADVICE', recommended='raise'))
         self.assertFalse(r['ok'])
         self.assertIn('SEM_BOTAO_PARA:RAISE', r['reason'])
+
+    def test_raise_sem_botao_vira_check_de_graca(self):
+        # AQ no BB vs limps: quer raisar, só tem FOLD/CHECK -> CHECK (de graça, não trava)
+        r = plan_from_buttons(_buttons(actions=('FOLD', 'CHECK')),
+                              dict(status='ADVICE', recommended='raise'))
+        self.assertTrue(r['ok'])
+        self.assertEqual(r['plan']['action'], 'CHECK')
+        self.assertIn('FALLBACK_RAISE_SEM_BOTAO_VIRA_CHECK', r['plan']['caveats'])
+
+    def test_four_bet_vs_allin_vira_call_off(self):
+        # KK vs 3bet-shove: quer 4betar, vilão all-in (só FOLD/CALL) -> CALL (call-off)
+        r = plan_from_buttons(_buttons(actions=('FOLD', 'CALL')),
+                              dict(status='ADVICE', recommended='four_bet'))
+        self.assertTrue(r['ok'])
+        self.assertEqual(r['plan']['action'], 'CALL')
+        self.assertIn('FALLBACK_RAISE_SEM_BOTAO_VIRA_CALL_OFF', r['plan']['caveats'])
 
     def test_describe(self):
         r = plan_from_buttons(_buttons(), dict(status='ADVICE', recommended='fold'))

@@ -108,6 +108,22 @@ def plan_from_buttons(buttons_result, advice, *, origin=(0, 0),
         btn = find('CHECK')
     elif btn is None and action == 'RAISE':
         btn = find('BET')
+    # FALLBACK "NUNCA TRAVAR" (ordem Eduardo 20/11): se o conselho é AGRESSÃO (raise/bet/
+    # all-in) mas NÃO há botão de raise/bet (o hero não pode raisar AGORA), em vez de travar:
+    #  - CHECK disponível (to_call=0, ex.: BB vs limps) -> CHECK (de graça; nunca foldar com
+    #    check disponível — [[nvt-regra-nunca-foldar-com-check]]). Querer raisar e só poder
+    #    checar nunca é erro (não custa ficha); travar e perder a mão é.
+    #  - senão há aposta a enfrentar sem botão de raise = vilão ALL-IN -> CALL (call-off: a
+    #    intenção era commitar fichas; não travar com premium, ex.: KK/AQ vs shove).
+    if btn is None and action in ('RAISE', 'BET', 'ALL_IN'):
+        _chk = find('CHECK')
+        _cal = find('CALL')
+        if _chk is not None:
+            btn = _chk
+            caveats = caveats + ['FALLBACK_RAISE_SEM_BOTAO_VIRA_CHECK']
+        elif _cal is not None:
+            btn = _cal
+            caveats = caveats + ['FALLBACK_RAISE_SEM_BOTAO_VIRA_CALL_OFF']
     if btn is None:
         return dict(ok=False, plan=None,
                     reason='SEM_BOTAO_PARA:%s' % action,
