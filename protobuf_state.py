@@ -122,7 +122,15 @@ def build_table_state(entry):
     n = len(board_cards)
     street = ('RIVER' if n >= 5 else 'TURN' if n == 4 else 'FLOP' if n == 3 else 'PREFLOP')
     tocall, pot = table.get('tocall'), table.get('pot')
-    to_call_bb = (round(float(tocall) / bb, 2) if isinstance(tocall, (int, float)) else None)
+    to_call_bb = (round(float(tocall) / bb, 2) if isinstance(tocall, (int, float)) and tocall > 0 else None)
+    # DERIVA DE RESERVA (Eduardo 19/11): quando o emissor NÃO dá o tocall pós-flop, calcula do
+    # protobuf = MAIOR aposta − aposta do HERO (as apostas por assento são EXATAS). Mata o
+    # to_call=None que quebrava mãos ENFRENTANDO aposta (JJ/ATs: spot=None -> "bet" confuso ->
+    # NO_BET_PANEL / mis-fold). 0.0 é válido (nada a pagar -> pode dar check).
+    if to_call_bb is None and bets:
+        _maxbet = max(b['bet_bb'] for b in bets)
+        _herobet = next((b['bet_bb'] for b in bets if b['seat'] == 'hero'), 0.0)
+        to_call_bb = round(max(0.0, _maxbet - _herobet), 2)
     pot_bb = (round(float(pot) / bb, 2) if isinstance(pot, (int, float)) and pot else None)
     state = dict(positions=positions, seats=seats, bets=bets, phase='mid',
                  source='protobuf', scope=('POSTFLOP_PROTOBUF' if n >= 3 else 'PREFLOP_PROTOBUF'),

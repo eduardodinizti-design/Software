@@ -278,6 +278,15 @@ class PostflopFromMemory(unittest.TestCase):
         self.assertEqual(r['phase'], 'postflop')
         self.assertIsNotNone(r.get('pot_odds'))               # pot odds computável (to_call lido)
 
+    def test_to_call_DERIVADO_quando_emissor_nao_da(self):
+        # Bug do torneio: emissor não deu tocall pós-flop (0), mas o vilão apostou 3000.
+        # O to_call deve DERIVAR das apostas (maior − hero) -> pot odds existe, não abstém.
+        import protobuf_state as ps
+        r = ps.advise_from_protobuf(self._entry(0, 9500, 3000), self.adv, mode='chip_ev', stage='mid')
+        self.assertEqual(r['phase'], 'postflop')
+        self.assertGreater(r.get('to_call_bb') or 0, 0)       # derivou o preço de pagar
+        self.assertIsNotNone(r.get('pot_odds'))
+
 
 if __name__ == '__main__':
     unittest.main()
