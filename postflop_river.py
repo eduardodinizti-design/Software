@@ -50,6 +50,15 @@ def river_tier(made, draws, bclass):
     return 'check'
 
 
+def river_jam(made, bclass):
+    """Vantagem de nuts que LIBERA all-in (overbet) EXECUTÁVEL no river: só nuts de verdade
+    (full house/quadra/straight flush) EM BOARD QUE COMPLETOU DRAWS — aí o vilão tem flush/
+    sequência de segundo-melhor que paga o jam (nut advantage grande). Em board seco, nuts
+    segue com size grande (pega mais call de 1-2 pares), não jam. flush/sequência não entram
+    (podem ser dominados por flush/sequência maior)."""
+    return made in _NUTS and is_draw_complete(bclass)
+
+
 def river_size_hint(made, bclass):
     """Lean de SIZE do river (nossa política: valor grande; nuts libera overbet/all-in):
     'overbet' (nuts) / 'big' (valor não-nuts) / 'none'."""

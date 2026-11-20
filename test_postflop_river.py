@@ -9,7 +9,7 @@ import postflop_river as rv
 
 def _st(pot, tocall, stack=40):
     return dict(pot=dict(pot_bb=pot), to_call=dict(to_call_bb=tocall),
-                hero=dict(stack_bb=stack), n_opponents=1)
+                seats={'hero': {'stack_bb': stack, 'occupied': True}}, n_opponents=1)
 
 
 class ValorRelativo(unittest.TestCase):
@@ -42,6 +42,14 @@ class ValorRelativo(unittest.TestCase):
         self.assertEqual(rv.river_size_hint('top_pair', bc_dry), 'big')
         self.assertEqual(rv.river_size_hint('second_pair', bc_dry), 'none')
 
+    def test_river_jam_so_nuts_em_board_que_completou(self):
+        bc_flush = classify_board(['9h', '9d', '2h', 'Kh', '7h'])    # pareado + flush
+        bc_dry = classify_board(['9h', '9d', '2c', 'Ks', '7d'])      # pareado seco
+        self.assertTrue(rv.river_jam('full_house', bc_flush))
+        self.assertTrue(rv.river_jam('straight_flush', bc_flush))
+        self.assertFalse(rv.river_jam('full_house', bc_dry))         # seco -> não jam
+        self.assertFalse(rv.river_jam('flush', bc_flush))            # flush não é nuts (dominável)
+
 
 class PromocaoRiver(unittest.TestCase):
     def test_two_pair_checa_em_river_de_flush(self):
@@ -64,6 +72,24 @@ class PromocaoRiver(unittest.TestCase):
                             street='RIVER', aggressor='hero')
         self.assertEqual(a['recommended'], 'bet')
         self.assertNotIn('RIVER_CHECK_PERDEU_VALOR_RELATIVO', a.get('caveats', []))
+
+
+class JamPorNuts(unittest.TestCase):
+    def test_full_house_jama_em_river_de_flush(self):
+        # board 9-9-2-K-7 com 4 copas; hero 9-7 = full house -> all-in (overbet por nuts)
+        a = advise_postflop(_st(20, 0), ['9s', '7c'], ['9h', '9d', '2h', 'Kh', '7h'],
+                            street='RIVER', aggressor='hero')
+        self.assertEqual(a['recommended'], 'bet')
+        self.assertEqual(a['sizing']['bucket'], 'allin')
+        self.assertIn('RIVER_JAM_NUT_ADVANTAGE', a['caveats'])
+
+    def test_full_house_nao_jama_em_board_seco(self):
+        # board 9-9-2-K-7 rainbow (sem flush/seq); full house -> aposta grande, NÃO all-in
+        a = advise_postflop(_st(20, 0), ['9s', '7h'], ['9h', '9d', '2c', 'Ks', '7d'],
+                            street='RIVER', aggressor='hero')
+        self.assertEqual(a['recommended'], 'bet')
+        self.assertNotIn('RIVER_JAM_NUT_ADVANTAGE', a.get('caveats', []))
+        self.assertNotEqual(a['sizing'].get('bucket'), 'allin')
 
 
 if __name__ == '__main__':

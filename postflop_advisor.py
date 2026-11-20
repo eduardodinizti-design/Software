@@ -621,6 +621,17 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
             over = round(min(pot * 1.25, cap), 1) if cap else round(pot * 1.25, 1)
             sizing = dict(sizing, overbet_option_bb=over, overbet_pct=125)
             caveats = caveats + ['OVERBET_POLAR_EXPLORATORY']
+        # PROMOÇÃO RIVER (overbet por vantagem de nuts — Reg-Life): nuts de verdade (fh/quads/
+        # sf) no river com board que completou draws -> ALL-IN (executável = botão all-in;
+        # overbet-não-allin exigiria arrastar o slider). Extrai o máximo onde o vilão tem
+        # segundo-melhor (flush/sequência) que paga. Só no spot de barril HU single-raised.
+        if (_cbet_bb_spot and street == 'RIVER' and cap
+                and postflop_river.river_jam(made, bclass)):
+            sizing = dict(size_bb=round(cap, 1),
+                          fraction=(round(cap / pot, 2) if pot else None),
+                          bucket='allin', bucket_enforced=True, heuristic=False,
+                          basis='all-in: overbet por vantagem de nuts (river)')
+            caveats = caveats + ['RIVER_JAM_NUT_ADVANTAGE']
         info.update(recommended='bet', sizing=sizing, caveats=caveats)
         return postflop_exploit.exploit_postflop(info, villain_stats, pot_bb=pot, cap_bb=cap)
     # PROMOÇÃO do barril de turn (a carta DIRIGE a decisão — barril vs BB, Reg-Life): em
