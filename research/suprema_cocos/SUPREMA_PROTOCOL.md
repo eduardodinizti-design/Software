@@ -29,15 +29,28 @@
   sizes. (Não peguei um prompt ATIVO ainda — pegar na próxima, é o que guia a EXECUÇÃO/Fase 2.)
 - Ruído p/ decisão: `matchesStatusPushNotify`, `apiClub...jackpot`, `countdown` (só {seat,sec} do timer).
 
-## Codificação de carta (a confirmar offline com +amostras)
-- Inteiros fora de 0-51 (vi 59) → NÃO é 0-51. Padrão provável **`rank*4 + suit`** (rank 2-14, suit 0-3 →
-  faixa 8..59). Ex. board visto `[36,59,39,56]`, hero `[40,23]`. Decodificar e cross-checar o naipe
-  (qual índice é ♦♣♥♠) com o feltro numa captura com showdown.
-- `[0,0]` = carta oculta (oponente/face-down).
+## Codificação de carta — RESOLVIDA (recon 2)
+- **`carta = rank*4 + suit`**, rank 2..14 (2..9,T,J,Q,K,A), suit 0..3 → faixa 8..59. Decode:
+  `rank = code//4`, `suit = code%4` (bijeção; rótulo exato do naipe ♦♣♥♠ é indiferente p/ o cérebro,
+  igual ao insight do ppp_cards — o que importa é naipes IGUAIS=flush, preservado por `%4`).
+  Amostras: hero `[44,28]`=J?7?, `[40,23]`=T?5?; board `[36,59,39,56]`=9,A,9,A.
+- `[0,0]`/`null` = carta oculta (oponente/face-down). HERÓI = assento com códigos reais.
+
+## STACK vs BET — RESOLVIDO (recon 2)
+- **`coins` = STACK (fichas ATRÁS)**, **`chips` = apostado na mão/rua**. CONFIRMADO: no all-in do hero,
+  `coins`→0 e `chips`→32400 (stack inteiro). Logo **stack_bb = coins / bb**.
+
+## PROMPT ATIVO (a vez do herói) — CAPTURADO (recon 2) — guia a EXECUÇÃO (Fase 2)
+- `event:"prompt"` → `data.gamer_prompt`: cada ação é **`true`** (disponível), **`null`** (não) ou
+  **string de range** p/ raise. Ex. real:
+  `{"fold":true,"check":true,"call":null,"raise":"range,4000,27900,2X,4000,3X,8000,4X,12000","all_in":true,"bet":null}`
+- **raise string** = `"range,<min>,<max>,<label>,<valor>,..."` → min=4000, max=27900, presets 2X=4000,
+  3X=8000, 4X=12000. (`call` traz o valor a pagar quando disponível.) É o que o executor usa p/ dar o size.
 
 ## Blinds
-- `sb`/`bb` NÃO apareceram nos frames de jogo — provavelmente numa mensagem de **room/config/enter**.
-  Capturar o `enterRoom`/config, OU derivar da MENOR aposta de blind (`chips` do SB).
+- No frame de room/status vem `"blinds":10` (rótulo do nível; stakeRangeID=99) + `"ante":0`. O BB EFETIVO
+  em fichas sai do `raise` unit (1X≈2000 no exemplo) OU dos posts de blind (`chips` do SB/BB). Derivar bb
+  dos posts é o mais robusto (não confiar no rótulo `blinds`).
 
 ## PRÓXIMO (offline): construir o parser real
 `suprema_net.py` (novo): hook SSL_read → reassembla frames WS → JSON.parse → alimenta `SupremaTable`
