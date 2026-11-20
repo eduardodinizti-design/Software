@@ -68,6 +68,21 @@ class Roteamento(unittest.TestCase):
         r = self._spot(aud.st_squeeze('SB', 'BTN', 'CO', 22))
         self.assertEqual(r['spot'], '3bet_shove')
 
+    # --- BB iso sobre LIMPERS: executavel via referencia BTN (corrige AQ/AA nao-clicando) ---
+    def test_bb_iso_sobre_limpers_executavel(self):
+        st = {'positions': {'s0': 'HJ', 's1': 'CO', 's2': 'UTG+1', 's3': 'SB', 'hero': 'BB'},
+              'seats': {k: {'stack_bb': 25, 'occupied': True} for k in ('s0', 's1', 's2', 's3', 'hero')},
+              'bets': [{'seat': 's0', 'bet_bb': 1.0}, {'seat': 's1', 'bet_bb': 1.0},
+                       {'seat': 's2', 'bet_bb': 1.0}, {'seat': 's3', 'bet_bb': 0.5},
+                       {'seat': 'hero', 'bet_bb': 1.0}],
+              'to_call': {'to_call_bb': None}, 'pot': {'pot_bb': 4.5}}
+        aq = self.adv.advise_from_reading(st, ['Ad', 'Qc'], mode='chip_ev', stage='mid')
+        self.assertEqual(aq.get('recommended'), 'raise')
+        self.assertFalse(any('GAP_APROX' in c for c in (aq.get('caveats') or [])))  # tem nó
+        self.assertTrue(any('ISO_REF_BTN' in c for c in (aq.get('caveats') or [])))
+        trash = self.adv.advise_from_reading(st, ['7d', '2c'], mode='chip_ev', stage='mid')
+        self.assertEqual(trash.get('recommended'), 'check')   # BB foldar grátis -> check
+
     # --- vs_3bet alcancavel (deep usa o no; curto cai no call-off) ---
     def test_vs_3bet_reachable_deep(self):
         r = self._spot(aud.st_vs_3bet('CO', 'BTN', 25))

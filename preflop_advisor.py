@@ -795,6 +795,23 @@ class PreflopAdvisor:
             if not (result['status'] == 'ABSTAIN'
                     and result.get('reason') == 'NO_VALIDATED_NODE_FOR_CONTEXT'):
                 return result
+        # SB/BB NÃO têm range de OPEN (não abrem). Mas com LIMPER o hero ISOLA (não é blind
+        # battle) — usa a range de REFERÊNCIA do BTN (mesma régua do `_iso_worthy`) p/ ter um
+        # NÓ REAL executável, em vez de cair na aproximação sem nó (bug do AQ/AA no BB vs
+        # limpers: advise_from_reading dava raise não-executável -> operador abstinha).
+        pos = kwargs.get('hero_position')
+        if pos in ('SB', 'BB'):
+            ref_kwargs = dict(kwargs, hero_position='BTN')
+            for spot in order:
+                r2 = self.advise(spot=spot, vs=(), **ref_kwargs)
+                if not (r2['status'] == 'ABSTAIN'
+                        and r2.get('reason') == 'NO_VALIDATED_NODE_FOR_CONTEXT'):
+                    # no BB o fold é de graça -> CHECK (nunca foldar com check disponível).
+                    if pos == 'BB' and r2.get('recommended') == 'fold':
+                        r2['recommended'] = 'check'
+                        r2.setdefault('caveats', []).append('BB_CHECK_GRATIS_EM_VEZ_DE_FOLD')
+                    r2.setdefault('caveats', []).append('ISO_REF_BTN_PARA_%s' % pos)
+                    return r2
         return result
 
     def _iso_worthy(self, hand, bucket, *, mode='chip_ev', stage='mid', players=9, position='UTG'):
