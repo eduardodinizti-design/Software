@@ -6,19 +6,19 @@ Encoding confirmado ao vivo (17/11, HandCardRSP/RoundStartBRC via IL2CPP):
     rank  = card & 0xFF (2..14; 11=J 12=Q 13=K 14=A)
 Ex.: 779 = 3*256+11 = rank J, naipe 3 ; 1038 = 4*256+14 = rank A, naipe 4.
 
-RANK está CONFIRMADO. O MAPA DE NAIPE (1..4 -> c/d/h/s) ainda precisa de confirmação
-ao vivo: comparar o valor de uma carta conhecida (board visível) com a tela. Até lá,
-SUIT_MAP é o palpite-padrão e `suit_confirmed()` devolve False. Trocar SUIT_MAP quando
-confirmado — o resto do pipeline não muda.
+RANK está CONFIRMADO. O MAPA DE NAIPE (1..4) foi CONFIRMADO ao vivo em 20/11/2026
+comparando o board do protobuf com a tela (deck de 4 cores do PPPoker: ♠ preto, ♥
+vermelho, ♦ azul, ♣ verde). Evidência (SMALL PKO, research/ppp_il2cpp/suitsample_*.png):
+    idx 1 = ♦ (3♦ azul) | idx 2 = ♣ (9♣ verde) | idx 3 = ♥ (Q♥ vermelho) | idx 4 = ♠ (A♠ preto)
 """
 from __future__ import annotations
 
 RANKS = {2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7', 8: '8', 9: '9',
          10: 'T', 11: 'J', 12: 'Q', 13: 'K', 14: 'A'}
 
-# PENDENTE confirmar ao vivo. Palpite-padrão (ordem comum em clientes poker):
-SUIT_MAP = {1: 's', 2: 'h', 3: 'd', 4: 'c'}
-_SUIT_CONFIRMED = False
+# CONFIRMADO ao vivo 20/11/2026 (board protobuf x tela; ver docstring/evidência).
+SUIT_MAP = {1: 'd', 2: 'c', 3: 'h', 4: 's'}
+_SUIT_CONFIRMED = True
 
 
 def suit_confirmed() -> bool:

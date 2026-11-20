@@ -247,7 +247,8 @@ class PostflopFromMemory(unittest.TestCase):
         cls.adv = PreflopAdvisor.from_files(v, d)
 
     def _entry(self, tocall, pot, v0bet=0):
-        # dealer=2 (hero BTN), sb=0, bb=1; board 5c4s8d; hero seat2 = AsKs ([270,269]).
+        # dealer=2 (hero BTN), sb=0, bb=1; board 5s4d8h; hero seat2 = AdKd ([270,269]).
+        # (naipes pelo SUIT_MAP CONFIRMADO 20/11: idx1=d idx3=h idx4=s)
         return dict(table=dict(dealer=2, sbseat=0, bbseat=1, sb=1000, minraise=2000,
                                maxraise=140000, board=[1029, 260, 776], stage=2,
                                tocall=tocall, pot=pot),
@@ -260,9 +261,9 @@ class PostflopFromMemory(unittest.TestCase):
         st, hero = ps.build_table_state(self._entry(0, 6500))
         self.assertEqual(st['scope'], 'POSTFLOP_PROTOBUF')
         self.assertEqual(st['street'], 'FLOP')
-        self.assertEqual(st['board'], ['5c', '4s', '8d'])     # board EXATO da memória
+        self.assertEqual(st['board'], ['5s', '4d', '8h'])     # board EXATO da memória (mapa confirmado)
         self.assertEqual(st['to_call']['to_call_bb'], 0.0)    # to_call EXATO (não null)
-        self.assertEqual(hero, ['As', 'Ks'])
+        self.assertEqual(hero, ['Ad', 'Kd'])
 
     def test_postflop_decide_sem_ocr(self):
         import protobuf_state as ps

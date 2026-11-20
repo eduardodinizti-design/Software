@@ -1,4 +1,4 @@
-"""Testes do decodificador de cartas do PPPoker. RANK confirmado ao vivo; naipe = palpite."""
+"""Testes do decodificador de cartas do PPPoker. RANK e NAIPE confirmados ao vivo."""
 import ppp_cards
 from ppp_cards import (decode_card, decode_cards, rank_of, suit_of, is_valid,
                        encode_card, set_suit_map, RANKS)
@@ -35,12 +35,24 @@ def test_roundtrip_encode_decode():
         assert encode_card(decode_card(card)) == card
 
 
+def test_confirmed_suit_map_20261120():
+    # Mapa CONFIRMADO ao vivo 20/11 (board do protobuf x tela, deck 4 cores):
+    # idx 1=♦ 2=♣ 3=♥ 4=♠. Trava p/ nunca regredir pro palpite antigo.
+    assert ppp_cards.suit_confirmed() is True
+    assert ppp_cards.SUIT_MAP == {1: 'd', 2: 'c', 3: 'h', 4: 's'}
+    assert decode_card(1 * 256 + 3) == '3d'    # 3♦ (azul)
+    assert decode_card(2 * 256 + 9) == '9c'    # 9♣ (verde)
+    assert decode_card(3 * 256 + 12) == 'Qh'   # Q♥ (vermelho)
+    assert decode_card(4 * 256 + 14) == 'As'   # A♠ (preto)
+
+
 def test_set_suit_map_live_correction():
-    # simula confirmar ao vivo um mapa diferente
+    # simula confirmar ao vivo um mapa diferente; RESTAURA o original (não um fixo).
+    orig, orig_conf = dict(ppp_cards.SUIT_MAP), ppp_cards.suit_confirmed()
     try:
         set_suit_map({1: 'c', 2: 'd', 3: 'h', 4: 's'}, confirmed=True)
         assert ppp_cards.suit_confirmed() is True
         assert decode_card(779) == 'Jh'    # naipe 3 -> h nesse mapa
         assert decode_card(1038) == 'As'   # naipe 4 -> s
     finally:
-        set_suit_map({1: 's', 2: 'h', 3: 'd', 4: 'c'}, confirmed=False)  # restaura default
+        set_suit_map(orig, confirmed=orig_conf)  # restaura o mapa real
