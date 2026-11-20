@@ -652,6 +652,20 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
         info.update(recommended='bet', sizing=_size(pot, 0.33, cap, 'valor fino top pair, board seco'),
                     caveats=caveats + _om_cv)
         return postflop_exploit.exploit_postflop(info, villain_stats, pot_bb=pot, cap_bb=cap)
+    # PROMOÇÃO barril de turn (LADO AGRESSOR — Reg-Life): em TURN OVERCARD (favorece o range
+    # IP, que tem as cartas altas; o BB que pagou o flop whiffa), barrela o polo FRACO que
+    # tenha EQUIDADE (overcards, gutshot ou backdoor flush) — a polarização teórica quer
+    # negar/cuidar nessas cartas boas. Só no spot de barril HU single-raised, hero agressor,
+    # não multiway-bloqueado. Size médio (polarização de turn). Ar seco segue de check abaixo.
+    if (_cbet_bb_spot and street == 'TURN' and not bluff_blocked
+            and (info.get('turn_barrel') or {}).get('turn_type') == 'overcard'
+            and made in ('air', 'overcards')
+            and (made == 'overcards' or draws.get('gutshot') or draws.get('backdoor_flush'))):
+        info.update(recommended='bet',
+                    sizing=_size(pot, postflop_texture.MEDIUM, cap,
+                                 'barril: turn overcard favorece o agressor (polo fraco c/ equidade)'),
+                    caveats=caveats + ['TURN_BARREL_OVERCARD_AGGRESSOR'])
+        return info
     # EXPLOIT (HUD): passaram a vez com AR (sem showdown value) -> normalmente check;
     # mas vs vilão que FOGE de c-bet (tag folds_to_cbet), blefa com size pequeno (a fold
     # equity é alta). Só o ar — mão média tem showdown value e segue de check.

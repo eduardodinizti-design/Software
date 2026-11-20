@@ -100,5 +100,27 @@ class PromocaoDecisao(unittest.TestCase):
         self.assertNotIn('TURN_BARREL_CHECK_CALLER_CARD', a.get('caveats', []))
 
 
+class AgressorOvercard(unittest.TestCase):
+    def test_barrela_polo_fraco_com_equidade_em_overcard(self):
+        # flop 9-6-2 + turn K (overcard); hero QJ = ar com gutshot (precisa do T) -> barrela
+        a = advise_postflop(_st(6, 0), ['Qd', 'Jc'], ['9h', '6d', '2c', 'Ks'],
+                            street='TURN', aggressor='hero')
+        self.assertEqual(a['recommended'], 'bet')
+        self.assertIn('TURN_BARREL_OVERCARD_AGGRESSOR', a['caveats'])
+
+    def test_nao_barrela_ar_seco_sem_equidade(self):
+        # mesmo turn overcard, hero 7-3 sem par/draw/overcards -> check (não spewa ar seco)
+        a = advise_postflop(_st(6, 0), ['7d', '3s'], ['9h', '6d', '2c', 'Ks'],
+                            street='TURN', aggressor='hero')
+        self.assertEqual(a['recommended'], 'check')
+        self.assertNotIn('TURN_BARREL_OVERCARD_AGGRESSOR', a.get('caveats', []))
+
+    def test_turn_blank_nao_dispara_barril_overcard(self):
+        # turn blank (3): não é overcard -> o barril do lado agressor não intervém
+        a = advise_postflop(_st(6, 0), ['Qd', 'Jc'], ['9h', '6d', '2c', '3s'],
+                            street='TURN', aggressor='hero')
+        self.assertNotIn('TURN_BARREL_OVERCARD_AGGRESSOR', a.get('caveats', []))
+
+
 if __name__ == '__main__':
     unittest.main()
