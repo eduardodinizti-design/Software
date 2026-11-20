@@ -877,6 +877,7 @@ class PreflopAdvisor:
         próxima (tier de mão: push/fold curto, open/call fundo) e FLAGGA o gap
         (caveats GAP_COBERTURA_APROX/APONTAR_PARA_SOLVER + `gap_flag`) p/ cobertura real
         posterior com solver. Só ABSTÉM em falha de PERCEPÇÃO (leitura)."""
+        table_state = self._derive_to_call(table_state)   # deriva to_call dos bets se OCR não leu
         r = self._advise_from_reading_core(table_state, hero_cards, **kwargs)
         if (isinstance(r, dict) and r.get('status') == 'ABSTAIN'
                 and r.get('reason') not in self._PERCEPTION_ABSTAINS):
@@ -887,6 +888,27 @@ class PreflopAdvisor:
             if isinstance(fb, dict):
                 return fb
         return r
+
+    @staticmethod
+    def _derive_to_call(table_state):
+        """Se o OCR NÃO leu o to_call (None) mas há bets por assento, deriva
+        to_call = max(0, maior aposta do vilão - aposta do hero). Evita o `to_call=0.0`
+        enganoso num spot facing-a-bet (pot-odds / call-off errados = "acha que é de graça").
+        Só age quando None (não sobrescreve leitura real); marca derived=True p/ auditoria."""
+        tc = (table_state.get('to_call') or {}).get('to_call_bb')
+        if tc is not None:
+            return table_state
+        bets = table_state.get('bets') or []
+        vals = [b.get('bet_bb') for b in bets if isinstance(b.get('bet_bb'), (int, float))]
+        if not vals:
+            return table_state
+        maxbet = max(vals)
+        herobet = next((b.get('bet_bb') for b in bets
+                        if b.get('seat') == 'hero' and isinstance(b.get('bet_bb'), (int, float))), 0.0)
+        derived = max(0.0, round(maxbet - herobet, 2))
+        new = dict(table_state)
+        new['to_call'] = dict(table_state.get('to_call') or {}, to_call_bb=derived, derived=True)
+        return new
 
     def _never_abstain_fallback(self, table_state, hero_cards, prev):
         """Ação pela TEORIA MAIS PRÓXIMA p/ um abstém de cobertura. Sempre devolve uma

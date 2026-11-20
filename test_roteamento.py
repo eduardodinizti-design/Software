@@ -117,5 +117,30 @@ class FacingAllInRobusto(unittest.TestCase):
         self.assertTrue(_opener_is_shove(st, 'BTN', 12.0))
 
 
+class DeriveToCall(unittest.TestCase):
+    """to_call=None do OCR -> deriva dos bets (evita o 0.0 enganoso facing-a-bet)."""
+
+    def test_facing_raise_deriva(self):
+        from preflop_advisor import PreflopAdvisor
+        st = {'bets': [{'seat': 's0', 'bet_bb': 9.0}, {'seat': 'hero', 'bet_bb': 1.0}],
+              'to_call': {'to_call_bb': None}}
+        out = PreflopAdvisor._derive_to_call(st)
+        self.assertEqual(out['to_call']['to_call_bb'], 8.0)
+        self.assertTrue(out['to_call']['derived'])
+
+    def test_limped_deriva_zero(self):
+        from preflop_advisor import PreflopAdvisor
+        st = {'bets': [{'seat': 's0', 'bet_bb': 1.0}, {'seat': 'hero', 'bet_bb': 1.0}],
+              'to_call': {'to_call_bb': None}}
+        self.assertEqual(PreflopAdvisor._derive_to_call(st)['to_call']['to_call_bb'], 0.0)
+
+    def test_leitura_real_intocada(self):
+        from preflop_advisor import PreflopAdvisor
+        st = {'bets': [{'seat': 's0', 'bet_bb': 9.0}], 'to_call': {'to_call_bb': 8.0}}
+        out = PreflopAdvisor._derive_to_call(st)
+        self.assertEqual(out['to_call']['to_call_bb'], 8.0)
+        self.assertNotIn('derived', out['to_call'])
+
+
 if __name__ == '__main__':
     unittest.main()
