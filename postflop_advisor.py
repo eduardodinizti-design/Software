@@ -606,6 +606,18 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
                                 heuristic=False),
                     caveats=caveats + ['CBET_VS_BB_CHECK_RANGE_LOW_CONNECTED'])
         return info
+    # EXPLOIT flop vs BB que OVERFOLDA (Teoria c-bet vs BB §exploit): vs BB com folds_to_cbet
+    # alto, STAB 100% do range com size pequena — inclusive ar/overcards que normalmente
+    # dariam check. EXCETO low_connected (tratado acima: lá o BB conecta forte e não folda o
+    # bastante). Valor/semi-blefe seguem abaixo (já apostam). Gated no tag folds_to_cbet.
+    if (_cbet_bb_spot and street == 'FLOP' and profile
+            and 'folds_to_cbet' in (profile.get('tags') or [])
+            and made in ('air', 'overcards') and not has_strong_draw):
+        info.update(recommended='bet',
+                    sizing=_size(pot, postflop_texture.SMALL, cap,
+                                 'c-bet 1/3 stab: BB overfolda ao c-bet (exploit vs BB)'),
+                    caveats=caveats + ['CBET_VS_BB_EXPLOIT_OVERFOLD_STAB'])
+        return info
     # PROMOÇÃO RIVER (polarização máxima — Reg-Life): no river IP, mão FEITA que PERDEU VALOR
     # RELATIVO (o board completou draws e ela está abaixo do piso de valor do river — ex.:
     # two pair/overpair/top pair num board de flush/sequência) NÃO value-beta -> CHECK. Mata

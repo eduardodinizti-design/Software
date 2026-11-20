@@ -111,5 +111,30 @@ class FreqNoConselho(unittest.TestCase):
         self.assertTrue(any(c == 'CBET_VS_BB_PERIGO_MONOTONE' for c in a['caveats']))
 
 
+class ExploitOverfold(unittest.TestCase):
+    OVERFOLD = {'vpip': 40, 'pfr': 10, 'foldcbet': 60}   # folds_to_cbet (>=55)
+    STATION = {'vpip': 50, 'pfr': 8, 'foldcbet': 30}     # não overfolda
+
+    def test_ar_staba_vs_bb_overfold(self):
+        # ar (KQ) em board seco não-conectado (752) vs BB que overfolda -> stab 1/3
+        a = advise_postflop(st_full(6, 0, 40, 'BTN'), ['Ks', 'Qd'], ['7h', '5c', '2d'],
+                            aggressor='hero', villain_stats=self.OVERFOLD)
+        self.assertEqual(a['recommended'], 'bet')
+        self.assertIn('CBET_VS_BB_EXPLOIT_OVERFOLD_STAB', a['caveats'])
+
+    def test_ar_nao_staba_sem_overfold(self):
+        a = advise_postflop(st_full(6, 0, 40, 'BTN'), ['Ks', 'Qd'], ['7h', '5c', '2d'],
+                            aggressor='hero', villain_stats=self.STATION)
+        self.assertNotIn('CBET_VS_BB_EXPLOIT_OVERFOLD_STAB', a.get('caveats', []))
+
+    def test_low_connected_segue_check_mesmo_vs_overfold(self):
+        # em low_connected (654) o BB conecta forte -> check-range mesmo vs overfold (não stab)
+        a = advise_postflop(st_full(6, 0, 40, 'BTN'), ['Ks', 'Qd'], ['6h', '5c', '4d'],
+                            aggressor='hero', villain_stats=self.OVERFOLD)
+        self.assertEqual(a['recommended'], 'check')
+        self.assertIn('CBET_VS_BB_CHECK_RANGE_LOW_CONNECTED', a['caveats'])
+        self.assertNotIn('CBET_VS_BB_EXPLOIT_OVERFOLD_STAB', a['caveats'])
+
+
 if __name__ == '__main__':
     unittest.main()
