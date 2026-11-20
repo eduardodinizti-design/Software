@@ -77,9 +77,21 @@ class Lean(unittest.TestCase):
     def test_overcard_barrela_mais(self):
         self.assertEqual(tb.barrel_lean('overcard')['freq_lean'], 'more')
 
-    def test_carta_do_caller_barrela_menos(self):
-        for t in ('completes_flush', 'completes_straight', 'pairs_low', 'pairs_mid'):
+    def test_scare_card_barrela_menos(self):
+        for t in ('completes_flush', 'completes_straight'):
             self.assertEqual(tb.barrel_lean(t)['freq_lean'], 'less', t)
+
+    def test_give_up_turn_checa(self):
+        # piores turns (pareiam carta média/baixa, ex. 3/9 em A93) -> check ~100% (give-up)
+        for t in ('pairs_mid', 'pairs_low'):
+            lean = tb.barrel_lean(t)
+            self.assertEqual(lean['freq_lean'], 'check', t)
+            self.assertTrue(lean['give_up'], t)
+
+    def test_freq_aproximada_ordena(self):
+        # overcard > scare > give-up
+        self.assertGreater(tb.barrel_lean('overcard')['freq'], tb.barrel_lean('completes_flush')['freq'])
+        self.assertGreater(tb.barrel_lean('completes_flush')['freq'], tb.barrel_lean('pairs_low')['freq'])
 
     def test_flop_nao_range_bet_sobe_frequencia(self):
         self.assertEqual(tb.barrel_lean('blank', range_bet_flop=True)['freq_lean'], 'neutral')
@@ -117,6 +129,20 @@ class PromocaoDecisao(unittest.TestCase):
         a = advise_postflop(_st(6, 0), ['Kd', 'Js'], ['Qh', '7d', '2c', '3s'],
                             street='TURN', aggressor='hero')
         self.assertNotIn('TURN_BARREL_CHECK_CALLER_CARD', a.get('caveats', []))
+
+    def test_nao_valor_checa_em_give_up_turn(self):
+        # flop A-9-3 + turn 9 (pareia carta do meio) = give-up; hero KQ = ar -> CHECK
+        a = advise_postflop(_st(6, 0), ['Kd', 'Qc'], ['Ah', '9c', '3d', '9s'],
+                            street='TURN', aggressor='hero')
+        self.assertEqual(a['recommended'], 'check')
+        self.assertIn('TURN_BARREL_CHECK_GIVE_UP', a['caveats'])
+
+    def test_valor_segue_apostando_em_give_up_turn(self):
+        # give-up turn (3s pareia a carta baixa), hero 99 = full house -> valor, NÃO dampeado
+        a = advise_postflop(_st(6, 0), ['9h', '9d'], ['Ah', '9c', '3d', '3s'],
+                            street='TURN', aggressor='hero')
+        self.assertEqual(a['recommended'], 'bet')
+        self.assertNotIn('TURN_BARREL_CHECK_GIVE_UP', a.get('caveats', []))
 
 
 class AgressorOvercard(unittest.TestCase):

@@ -310,7 +310,7 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
     # NÃO troca a recomendação (made/draws/textura/equity seguem decidindo). Só turn.
     if street == 'TURN' and len(board) >= 4:
         _flop_bclass = classify_board(list(board)[:3])
-        _range_bet_flop = postflop_cbet_bb.cbet_check_category(_flop_bclass) is None
+        _range_bet_flop = postflop_cbet_bb.cbet_check_category(_flop_bclass, stack_bb=hero_stack) is None
         _tb_tier = postflop_turn_barrel.barrel_tier(made, draws)
         _tb_type = postflop_turn_barrel.classify_turn(list(board))
         _tb_lean = postflop_turn_barrel.barrel_lean(_tb_type, range_bet_flop=_range_bet_flop)
@@ -319,6 +319,10 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
         caveats.append('TURN_BARREL_%s' % _tb_tier.upper())
         if _tb_type:
             caveats.append('TURN_CARD_%s' % _tb_type.upper())
+        # Give-up turn (pareia carta média/baixa, ex. 3/9 em A93): mão NÃO-valor dá check
+        # ~100% (a teoria é enfática). Advisory: sinaliza p/ o auditor/execução futura.
+        if _tb_lean.get('give_up') and _tb_tier != postflop_turn_barrel.VALUE:
+            caveats.append('TURN_GIVE_UP')
 
     # River (advisory): polarização máxima — gaveta valor/blefe/check por VALOR RELATIVO +
     # lean de size (nuts -> overbet). Metadado; a disciplina de valor (promoção) age abaixo.
@@ -651,13 +655,15 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
     # flop melhorou -> CHECK (controle de pote; não barrela blefe/thin numa carta que ajudou
     # o vilão). Só no spot de barril HU single-raised com o hero agressor.
     _tb_meta = info.get('turn_barrel') or {}
-    if (_cbet_bb_spot and street == 'TURN'
-            and _tb_meta.get('turn_type') in ('completes_flush', 'completes_straight')):
+    _tb_give_up = bool(_tb_meta.get('give_up'))   # pareia carta média/baixa (3/9 em A93)
+    _tb_scare = _tb_meta.get('turn_type') in ('completes_flush', 'completes_straight')
+    if _cbet_bb_spot and street == 'TURN' and (_tb_scare or _tb_give_up):
+        _why = ('turn pareou carta média/baixa do flop (ex. 3/9 em A93), que o BB tem mais'
+                if _tb_give_up else 'turn completou draw do caller (barril perde valor)')
         info.update(recommended='check',
-                    sizing=dict(size_bb=0.0,
-                                basis='check: turn completou draw do caller (barril perde valor)',
-                                heuristic=False),
-                    caveats=caveats + ['TURN_BARREL_CHECK_CALLER_CARD'])
+                    sizing=dict(size_bb=0.0, basis='check: ' + _why, heuristic=False),
+                    caveats=caveats + (['TURN_BARREL_CHECK_GIVE_UP'] if _tb_give_up
+                                       else ['TURN_BARREL_CHECK_CALLER_CARD']))
         return info
     # EXPLOIT barril de turn (vs PASSIVO que não lidera — Reg-Life): em carta onde o BB
     # DEVERIA liderar (donk) mas, sendo PASSIVO, só dá check, o check dele fica DESCAPADO

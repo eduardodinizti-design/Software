@@ -83,10 +83,17 @@ def classify_turn(board):
     return 'blank'
 
 
-# Cartas de turn que, SENDO overcard/broadway, mais formam draws e favorecem o agressor IP.
+# Cartas de turn que, SENDO overcard/broadway (T/J/Q/K), mais formam draws e favorecem o IP.
 _HIGH_DRAWY = ('overcard',)
-# Cartas que favorecem o range do BB (quem pagou o flop) -> mais cuidado/menos barril.
-_FAVORS_CALLER = ('completes_flush', 'completes_straight', 'pairs_low', 'pairs_mid')
+# PIORES turns (aula c-bet vs BB): a carta PAREIA uma carta média/baixa do flop (ex.: 3 e 9
+# em A93) — o BB tem muito mais essas -> check ~100% mesmo com semi-blefe (give-up).
+_GIVE_UP_TURN = ('pairs_mid', 'pairs_low')
+# Scare cards (completa flush/sequência): favorecem o BB -> POLARIZA (valor/nuts barrela,
+# blefe fraco checa), mas NÃO é give-up puro.
+_SCARE_TURN = ('completes_flush', 'completes_straight')
+# Frequência APROXIMADA de barril por lean (lean qualitativo -> número p/ o advisory;
+# ancorado no ranking da teoria: give-up ~check, overcard ~alto).
+_FREQ_BY_LEAN = {'check': 0.05, 'less': 0.35, 'neutral': 0.5, 'more': 0.65}
 
 
 def bb_should_donk(board):
@@ -109,18 +116,24 @@ def bb_should_donk(board):
 
 def barrel_lean(turn_type, *, range_bet_flop=True):
     """Lean de FREQUÊNCIA do second barrel pelo tipo de carta + se o flop foi range-bet.
-    Devolve dict(freq_lean='more'/'neutral'/'less', note). Advisory (não é a decisão)."""
-    if turn_type in _FAVORS_CALLER:
+    Devolve dict(freq_lean='check'/'less'/'neutral'/'more', give_up=bool, freq≈, note).
+    Advisory (não reescreve a decisão; made/draws/equity seguem decidindo)."""
+    give_up = False
+    if turn_type in _GIVE_UP_TURN:
+        lean, give_up = 'check', True
+        note = 'PIOR turn (pareia carta média/baixa, ex. 3/9 em A93): BB tem mais -> check ~100% salvo valor'
+    elif turn_type in _SCARE_TURN:
         lean = 'less'
-        note = 'carta favorece o range do BB (caller) -> mais cuidado/check'
+        note = 'scare (completa flush/seq) favorece o BB -> polariza: valor barrela, blefe fraco checa'
     elif turn_type in _HIGH_DRAWY:
         lean = 'more'
-        note = 'overcard favorece o agressor IP e forma draws -> barril mais'
+        note = 'overcard (T/J/Q/K) favorece o agressor IP e forma draws -> barril mais'
     else:
         lean = 'neutral'
         note = 'carta neutra (blank/dobra o topo) -> polarização padrão'
     # Flop NÃO range-bet (board já filtrado no flop) -> range mais forte -> barril mais alto.
-    if not range_bet_flop and lean != 'less':
+    # (não sobe os give-up/scare: a carta ainda favorece o BB.)
+    if not range_bet_flop and lean not in ('less', 'check'):
         lean = 'more'
         note = note + '; flop não range-bet (range já filtrado) -> frequência maior'
-    return dict(freq_lean=lean, note=note)
+    return dict(freq_lean=lean, give_up=give_up, freq=_FREQ_BY_LEAN[lean], note=note)
