@@ -78,8 +78,10 @@ class NashShadowTest(unittest.TestCase):
                         bad.append(('exec', spread, stk))
         self.assertEqual(bad, [], 'sombra marcou validated/executável: %r' % bad)
 
-    def test_shadow_range_matches_reference(self):
-        """O range sombreado = o range do nó Nash de referência (iguais@mesmo bucket)."""
+    def test_shadow_range_subset_of_reference(self):
+        """O range sombreado ⊆ o range do nó Nash de referência (iguais@mesmo bucket): a
+        sombra REUSA a referência (nunca inventa mão fora dela), e o ICM-tightening (opção A,
+        20/11) só REMOVE marginais em bolha — nunca adiciona. Mantém os fortes (AA)."""
         # nó de referência: icm/bubble/iguais open_shove HJ @10
         ref = self.adv._index[('icm', 'regular', 'bubble', 9, 10,
                                'open_shove', 'HJ', (), 'iguais')]
@@ -91,7 +93,10 @@ class NashShadowTest(unittest.TestCase):
             r = self.adv.advise_from_reading(st, c, mode='icm', stage='bubble')
             if r.get('status') == 'ADVICE' and r.get('recommended') == 'all_in':
                 shoved.add(h)
-        self.assertEqual(shoved, shove_ref)
+        self.assertTrue(shoved <= shove_ref,
+                        'sombra inventou mão fora da referência: %r' % (shoved - shove_ref))
+        self.assertIn('AA', shoved)                 # ICM não aperta os fortes
+        self.assertTrue(shoved < shove_ref)         # bolha REMOVEU marginais (aperto ativo)
 
     def test_existing_validated_node_not_shadowed(self):
         """Contexto COM nó validado (icm/bubble/iguais) continua validated=True."""
@@ -119,6 +124,46 @@ class NashShadowTest(unittest.TestCase):
     def test_shadow_spots_constant(self):
         self.assertEqual(NASH_SHADOW_SPOTS,
                          frozenset({'open_shove', 'vs_open_shove', '3bet_shove'}))
+
+    # --- ICM-TIGHTENING do jam Nash (Eduardo 20/11, opção A) ---
+
+    def _jam_set(self, mode, stage, stk=10):
+        """Conjunto de mãos que JAMAM (BB vs BTN, shove zone) no modo/fase dados."""
+        out = set()
+        for h in self.adv.hands:
+            r = self.adv.advise_from_reading(A.st_vs_open('BB', 'BTN', stk), _cards(h),
+                                             mode=mode, stage=stage)
+            if r.get('status') == 'ADVICE' and r.get('recommended') == 'all_in':
+                out.add(h)
+        return out
+
+    def test_icm_tighten_monotonic_by_phase(self):
+        """O jam ICM aperta de forma monotônica: bolha ⊆ FT ⊆ mid ⊆ chip_ev (fold só cresce
+        com o risk premium). AA jama em todas as fases."""
+        chip = self._jam_set('chip_ev', 'mid')
+        mid = self._jam_set('icm', 'mid')
+        ft = self._jam_set('icm', 'ft')
+        bubble = self._jam_set('icm', 'bubble')
+        self.assertTrue(bubble <= ft <= mid <= chip,
+                        'não-monotônico: bubble=%d ft=%d mid=%d chip=%d'
+                        % (len(bubble), len(ft), len(mid), len(chip)))
+        self.assertLess(len(bubble), len(chip))      # bolha REALMENTE aperta vs chip-EV
+        for s in (chip, mid, ft, bubble):
+            self.assertIn('AA', s)
+
+    def test_icm_tighten_stack_aware(self):
+        """Stack-aware: a 20bb (mais fold equity, ICM pesa) o jam de bolha é mais TIGHT que
+        a 10bb (curto, quase não pode foldar)."""
+        b10 = self._jam_set('icm', 'bubble', stk=10)
+        b20 = self._jam_set('icm', 'bubble', stk=20)
+        self.assertLessEqual(len(b20), len(b10))
+
+    def test_chip_ev_jam_never_tightened(self):
+        """chip_ev nunca recebe o aperto ICM (sem caveat NASH_ICM)."""
+        for h in ('AA', 'Q9s', 'J9s', 'A2s'):
+            r = self.adv.advise_from_reading(A.st_vs_open('BB', 'BTN', 10), _cards(h),
+                                             mode='chip_ev', stage='mid')
+            self.assertFalse(any('NASH_ICM' in c for c in (r.get('caveats') or [])))
 
 
 def _cards(hand):

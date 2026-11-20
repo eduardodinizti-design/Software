@@ -25,6 +25,7 @@ from preflop_study import hand_key, Blocked
 from preflop_equity import range_from_node, equity_vs_range, required_equity
 from hud_exploit import classify_villain, shove_calloff_delta, exploit_caveats
 import preflop_exploit
+import icm_rp
 from strategy.scenarios import classify as classify_scenario, from_table_state
 from preflop_tree_book import TreeBook
 
@@ -50,6 +51,13 @@ SHOVE_SPOTS = frozenset({'open_shove', 'vs_open_shove'})   # tabelas puras de pu
 # MESMA tabela Nash de um contexto vizinho (spread 'iguais' do mesmo modo/stage, ou
 # Nash chip-EV), marcada validated=False. Não inventa range; só sinaliza a aproximação.
 NASH_SHADOW_SPOTS = frozenset({'open_shove', 'vs_open_shove', '3bet_shove'})
+# ICM-TIGHTENING do jam Nash (Eduardo 20/11, opção A): a sombra Nash é chip-EV; sob ICM
+# o jam é LARGO demais (bustar na bolha custa caro). Eleva o piso de chip-EV exigido p/
+# jamar pelo risk premium da fase, dropando os jams marginais (EV perto de 0) e mantendo
+# os sólidos. Piso_bb = stage_rp * stack_bb * PROXY (fração de fichas em risco ao ser
+# pago). Só modos com ICM; nunca toca chip_ev/pko-puro nem nó validado.
+ICM_JAM_MODES = frozenset({'icm', 'pko_icm'})
+ICM_JAM_CALLED_PROXY = 0.30
 PUSHFOLD_MAX_BB = 12   # <= isso, first-in tenta SHOVE antes de open-raise
 # ZONA DE SHOVE: abaixo disso o hero está em regime de push/fold. NÃO se pega range
 # emprestada por proximidade de stack para spots de RAISE (open_raise/vs_open/
@@ -685,7 +693,50 @@ class PreflopAdvisor:
             values = (node.get('ev') or {}).get(act)
             ev[act] = values[i] if values is not None and len(values) == 169 else None
         recommended = max(mix, key=lambda m: m['frequency'])['action'] if mix else None
+        # ICM push/fold do jam Nash sombra (Eduardo 20/11, opção A): o nó Nash vizinho que a
+        # sombra reusa VARIA por fase (ruído do bucket) -> comparar EV do nó daria aperto
+        # NÃO-monotônico. Em vez disso, p/ shove-spot sombra em modo ICM, a decisão jam/fold é
+        # DERIVADA de forma monotônica: jam ⇔ chip-EV de REFERÊNCIA do jam ≥ piso escalado pelo
+        # risk premium da fase (bolha>FT>normal). É o push/fold ICM padrão (Nash chip-EV + RP).
+        jam_act = recommended if recommended in ('all_in', 'jam', 'shove') else None
+        if (nash_shadow is not None and spot in NASH_SHADOW_SPOTS
+                and (jam_act or recommended == 'fold')):
+            floor = self._icm_jam_floor_bb(mode, stage, stack_bb)
+            if floor is not None:
+                edge = self._nash_chip_ev_jam(table_format, stage, players, bucket, spot,
+                                              hero_position, tuple(vs), spread, i,
+                                              jam_act or 'all_in')
+                if isinstance(edge, (int, float)):
+                    new_rec = (jam_act or 'all_in') if edge >= floor else 'fold'
+                    if new_rec != recommended:
+                        caveats.append('NASH_ICM_%s_ev%.2f_floor%.2f_%s' % (
+                            'JAM' if new_rec != 'fold' else 'FOLD', edge, floor, stage))
+                        recommended = new_rec
         return dict(base, status='ADVICE', mix=mix, ev=ev, ev_unit=node['evUnit'], recommended=recommended)
+
+    @staticmethod
+    def _icm_jam_floor_bb(mode, stage, stack_bb):
+        """Piso de chip-EV (bb) p/ um jam valer sob ICM: eleva o boundary chip-EV (~0)
+        pelo risk premium da fase. Stack-aware e monotônico (bolha>FT>normal). Devolve
+        None (sem aperto) p/ modo sem ICM ou dado faltando."""
+        if mode not in ICM_JAM_MODES:
+            return None
+        if not isinstance(stack_bb, (int, float)) or stack_bb <= 0:
+            return None
+        rp = icm_rp.stage_base_rp(stage)
+        if not rp:
+            return None
+        return rp * stack_bb * ICM_JAM_CALLED_PROXY
+
+    def _nash_chip_ev_jam(self, table_format, stage, players, bucket, spot, hero, vs, spread, i, act):
+        """chip-EV do jam (mão índice i, ação act) no nó Nash chip-EV do MESMO contexto —
+        baseline consistente p/ o ICM-tightening ser monotônico entre fases. None se faltar."""
+        node, _ = self._nash_shadow_node('chip_ev', table_format, stage, players, bucket,
+                                         spot, hero, vs, spread)
+        if not node:
+            return None
+        vals = (node.get('ev') or {}).get(act)
+        return vals[i] if vals is not None and len(vals) == 169 else None
 
     def _tree_consult(self, *, hero_cards, scenario, hero_position, aggressor, limpers,
                       callers, mode, stage, stack_bb, effective_stack_bb, to_beat, to_call,
