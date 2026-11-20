@@ -82,13 +82,50 @@ def never_fold_free(recommended, br):
     return recommended
 
 
-def _protobuf_advice(advisor, mode, stage='mid', estado_path=None):
+def _entry_hero_cards(entry):
+    """Cartas do hero (strings, ex.: ['Ac','Ad']) de uma entry do estado protobuf,
+    ou [] se não der p/ determinar. Usado p/ CASAR a mesa fresca com o crop atual."""
+    try:
+        players = entry.get('players') or []
+        hs = protobuf_state.hero_seat(players)
+        if hs is None:
+            return []
+        from ppp_cards import decode_cards as _dc
+        for p in players:
+            if p.get('seat') == hs:
+                return _dc(p.get('cards') or [])
+    except Exception:
+        pass
+    return []
+
+
+def _match_fresh_table(fresh, match_hero, match_room):
+    """Escolhe a mesa fresca do protobuf que casa com o CROP atual, p/ NÃO cruzar
+    mesas em multi-table (ver [[nvt-multitable-tiled-bug]]). Casa por sobreposição de
+    carta do hero (>=1 carta igual às lidas por OCR no crop) ou, se as cartas do crop
+    são desconhecidas, pelo NOME DA SALA. Retorna a ÚNICA entry que casa, ou None
+    (0 casamentos OU >1 ambíguo) -> o chamador usa OCR de reserva (nunca chuta)."""
+    mh = {c for c in (match_hero or []) if c}
+    if mh:
+        hits = [e for e in fresh if mh & set(_entry_hero_cards(e))]
+        return hits[0] if len(hits) == 1 else None
+    mr = (match_room or '').strip().upper()
+    if mr:
+        hits = [e for e in fresh if (e.get('room') or '').strip().upper() == mr]
+        return hits[0] if len(hits) == 1 else None
+    return None
+
+
+def _protobuf_advice(advisor, mode, stage='mid', estado_path=None,
+                     match_hero=None, match_room=None, n_crops=1):
     """Conselho PRE-FLOP **ou PÓS-FLOP** a partir do estado PROTOBUF (logs/estado_mesa.json;
-    board/to_call/pote da MEMÓRIA via emitir_seats), ou None
-    se nao houver estado fresco e INEQUIVOCO desta mesa. SEGURO: 0 mesas frescas = sem
-    estado; >1 mesa fresca = ambiguo (nao da p/ saber qual e esta) -> None -> OCR de
-    reserva (nunca chuta a mesa errada). players=9 (pack 9-max; o tamanho real da mesa
-    vira posicoes via derive_positions)."""
+    board/to_call/pote da MEMÓRIA via emitir_seats), ou None se não houver estado seguro.
+
+    SINGLE-TABLE (n_crops<=1): usa a única mesa fresca (comportamento PROVADO; 0 frescas
+    ou >1 = None -> OCR). MULTI-TABLE (n_crops>1): o emissor costuma ter só a mesa ATIVA
+    fresca; aplicá-la a TODO crop CRUZA as mesas (bug do AA — ADVICE de outra mesa). Então
+    exige CASAMENTO positivo (carta do hero OU sala) entre a mesa fresca e ESTE crop;
+    sem casar -> None -> OCR reserva. players=9 (tamanho real vira posições via derive)."""
     import json as _json
     try:
         path = estado_path or find_data('estado_mesa.json')
@@ -98,13 +135,22 @@ def _protobuf_advice(advisor, mode, stage='mid', estado_path=None):
         return None
     now = time.time()
     # Filtra a mesa FANTASMA "?" (leitura malformada intermitente do emissor: sbseat gigante,
-    # maxraise absurdo) — senão len(fresh)==2 e o protobuf abstém à toa, caindo no OCR fraco.
+    # maxraise absurdo) — senão o protobuf abstém à toa, caindo no OCR fraco.
     fresh = [e for key, e in (data or {}).items()
              if key != '?' and isinstance(e, dict) and (now - (e.get('ts') or 0)) < _PB_STALE_S
              and isinstance((e.get('table') or {}).get('sb'), (int, float))]
-    if len(fresh) != 1:
+    if not fresh:
         return None
-    return protobuf_state.advise_from_protobuf(fresh[0], advisor, mode=(mode or 'chip_ev'),
+    if n_crops <= 1 and len(fresh) == 1:
+        sel = fresh[0]            # single-table limpo: seguro (não há como cruzar)
+    else:
+        # MULTI-table, OU single-table com mesas MORTAS ainda penduradas no estado
+        # (len(fresh)>1): exige casamento positivo com ESTE crop -> nunca cruza; sem
+        # casar -> OCR reserva.
+        sel = _match_fresh_table(fresh, match_hero, match_room)
+        if sel is None:
+            return None
+    return protobuf_state.advise_from_protobuf(sel, advisor, mode=(mode or 'chip_ev'),
                                                stage=(stage or 'mid'), players=9)
 
 _GRADE_CACHE = {'mtime': None, 'map': {}}
@@ -819,7 +865,13 @@ def main(argv=None):
                 # derivado, exato; board do RoundStartBRC). OCR de reserva. Eduardo 19/11:
                 # terminar a leitura por memoria (mata o to_call null e o board ilegivel).
                 if args.protobuf:
-                    _pb = _protobuf_advice(advisor, args.mode, args.stage)
+                    # MULTI-TABLE: casa a mesa fresca do protobuf com ESTE crop pelas
+                    # cartas OCR do hero (ou sala), senão cai no OCR — nunca cruza mesas.
+                    _pb = _protobuf_advice(advisor, args.mode, args.stage,
+                                           match_hero=result.get('hero_cards'),
+                                           match_room=(result.get('tournament') or {}).get('name')
+                                           if isinstance(result.get('tournament'), dict) else None,
+                                           n_crops=len(crops))
                     if _pb is not None:
                         _pbr = _pb.get('recommended') if _pb.get('status') == 'ADVICE' \
                             else 'ABSTAIN:%s' % _pb.get('reason')
