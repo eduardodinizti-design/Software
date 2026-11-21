@@ -119,6 +119,39 @@ class SupremaPerception(unittest.TestCase):
         self.assertIsNone(state)
         self.assertEqual(reason, 'HERO_CARDS_UNKNOWN')
 
+    def test_heroi_por_uid_no_prompt_de_deal(self):
+        # mensagem REAL de deal: uid na RAIZ + game_seat só do herói com cartas reais
+        t = SupremaTable(bb_chips=50)
+        t.feed_json({"route": "onMsg", "uid": 1754193, "event": "prompt", "data": {
+            "gamer_prompt": {"fold": None, "check": None, "call": None, "raise": None,
+                             "all_in": None, "ready": None, "bet": None},
+            "game_seat": {"1754193": {"seat": 7, "uid": 1754193, "coins": 60825,
+                                      "cards": [20, 46], "chips": 75, "sitout": False}}}})
+        self.assertEqual(t.hero_uid, 1754193)
+        self.assertEqual(t.hero_seat, 7)
+        self.assertEqual(t.players[7]['cards'], ['5d', 'Jh'])     # [20,46]
+
+    def test_heroi_persiste_por_uid_com_cards_null(self):
+        t = SupremaTable(bb_chips=50, hero_uid=1754193)
+        # deal: herói recebe cartas
+        t.feed_json({"event": "prompt", "uid": 1754193, "data": {"game_seat": {
+            "1754193": {"seat": 7, "uid": 1754193, "coins": 60825, "cards": [20, 46], "chips": 75, "sitout": False}}}})
+        # moveturn posterior: cards=null p/ todos (servidor não reenvia) -> herói PERSISTE
+        t.feed_json({"event": "moveturn", "data": {"game_seat": {
+            "1754193": {"seat": 7, "uid": 1754193, "coins": 60750, "cards": None, "chips": 150, "sitout": False},
+            "300268": {"seat": 4, "uid": 300268, "coins": 45375, "cards": None, "chips": 150, "sitout": False}}}})
+        self.assertEqual(t.hero_seat, 7)                          # continua o herói (por uid)
+        self.assertEqual(t.players[7]['cards'], ['5d', 'Jh'])     # cartas PERSISTEM na mão
+
+    def test_gamestart_zera_cartas(self):
+        t = SupremaTable(bb_chips=50, hero_uid=1754193)
+        t.feed_json({"event": "prompt", "uid": 1754193, "data": {"game_seat": {
+            "1754193": {"seat": 7, "uid": 1754193, "coins": 60825, "cards": [20, 46], "chips": 75, "sitout": False}}}})
+        self.assertEqual(t.players[7]['cards'], ['5d', 'Jh'])
+        t.feed_json({"event": "gamestart", "data": {}})
+        self.assertEqual(t.players[7]['cards'], [])               # nova mão -> zera
+        self.assertIsNone(t.hero_seat)
+
     @unittest.skipUnless(os.path.exists(PACK), 'pack validado ausente')
     def test_cerebro_decide_AA(self):
         from preflop_advisor import PreflopAdvisor

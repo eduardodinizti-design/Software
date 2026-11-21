@@ -85,12 +85,13 @@ def parse_prompt(gp):
 class SupremaTable:
     """Estado vivo de UMA mesa da Suprema, alimentado por mensagens JSON via `feed_json`."""
 
-    def __init__(self, bb_chips=None):
+    def __init__(self, bb_chips=None, hero_uid=None):
         self.bb_chips = bb_chips          # fichas por BIG BLIND (stake da mesa)
+        self.hero_uid = hero_uid          # uid do herói (da raiz da msg; ID definitivo)
         self.reset()
 
     def reset(self):
-        self.players = {}                 # seat -> {coins, chips, cards[str], sitout, hero}
+        self.players = {}                 # seat -> {coins, chips, cards[str], sitout, uid}
         self.dealer_seat = None
         self.board = []
         self.pot_chips = None
@@ -98,22 +99,33 @@ class SupremaTable:
         self.hero_seat = None
         self.prompt = {'actions': set(), 'call_amount': None, 'raise_range': None}
 
+    def _reset_hand(self):
+        """Nova mão: zera cartas/board/pot/prompt (mantém bb, hero_uid e os stacks)."""
+        for p in self.players.values():
+            p['cards'] = []
+        self.board, self.pot_chips, self.state, self.hero_seat = [], None, None, None
+        self.prompt = {'actions': set(), 'call_amount': None, 'raise_range': None}
+
     # ---- ingestão ----
     def feed_json(self, msg):
-        """Consome UMA mensagem JSON já parseada ({route,event,data,...}). Ignora ruído."""
+        """Consome UMA mensagem JSON já parseada ({route,uid?,event,data,...}). Ignora ruído."""
         if not isinstance(msg, dict):
             return
+        # uid na RAIZ da mensagem = o herói (a quem o servidor endereça o prompt/cartas).
+        if msg.get('uid') is not None:
+            self.hero_uid = msg['uid']
         ev = msg.get('event')
         data = msg.get('data') or {}
+        if ev == 'gamestart':
+            self._reset_hand()
         if ev == 'gameinfo':
             self._gameinfo(data.get('game_info') or {})
-        elif ev in ('moveturn', 'prompt', 'gameinfo'):
+        elif ev in ('moveturn', 'prompt'):
             if isinstance(data.get('game_seat'), dict):
                 self._seats(data['game_seat'])
         if ev == 'prompt' and isinstance(data.get('gamer_prompt'), dict):
             self.prompt = parse_prompt(data['gamer_prompt'])
-        if ev in ('handover', 'gameResult', 'settle'):
-            # mão acabou: zera o board/pot/prompt (mantém bb/assentos p/ a próxima)
+        if ev in ('gameover', 'handover', 'gameResult', 'settle'):
             self.board, self.pot_chips, self.state = [], None, None
             self.prompt = {'actions': set(), 'call_amount': None, 'raise_range': None}
 
@@ -138,6 +150,9 @@ class SupremaTable:
                 continue
             cards = decode_cards(p.get('cards') or [])
             rec = self.players.setdefault(seat, {})
+            uid = p.get('uid')
+            if uid is not None:
+                rec['uid'] = uid
             if isinstance(p.get('coins'), (int, float)):
                 rec['coins'] = float(p['coins'])
             if isinstance(p.get('chips'), (int, float)):
@@ -145,11 +160,13 @@ class SupremaTable:
             if 'sitout' in p:
                 rec['sitout'] = bool(p.get('sitout'))
             rec['role'] = p.get('role')
-            if len(cards) == 2:                 # assento com 2 cartas reais = herói
+            if len(cards) == 2:                 # cartas reais presentes -> guarda (persistem na mão)
                 rec['cards'] = cards
-                self.hero_seat = seat
             elif 'cards' not in rec:
                 rec['cards'] = []
+            # HERÓI: pelo uid da raiz (definitivo); fallback = assento com 2 cartas reais.
+            if (self.hero_uid is not None and uid == self.hero_uid) or len(cards) == 2:
+                self.hero_seat = seat
 
     # ---- conversão p/ o cérebro ----
     def bb(self):
