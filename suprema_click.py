@@ -20,21 +20,24 @@ import ctypes.wintypes as wt
 
 import suprema_act as A
 
-# Layout RELATIVO ao client (fx, fy em 0..1). PONTO DE PARTIDA — calibrar com captura limpa.
-# Barra inferior; Bet/Raise à direita (laranja), Check/Call ao centro, Fold à esquerda.
+# Layout RELATIVO ao client (fx, fy em 0..1). CALIBRADO 20/11 numa captura LIMPA DPI-aware
+# (922x1657). Barra inferior com 3 botoes: 'Desistir'(Fold) esq, 'Pagar'/'Passar'(Call/Check)
+# centro, 'Aumentar'/'Apostar'(Raise/Bet) dir (laranja). Fracoes sobrevivem a resize.
 BUTTON_LAYOUT = {
-    A.FOLD:   (0.18, 0.955),
-    A.CHECK:  (0.50, 0.955),
-    A.CALL:   (0.50, 0.955),      # Call ocupa o mesmo lugar do Check (um ou outro por vez)
-    A.RAISE:  (0.80, 0.955),      # 'Aumentar'/'Apostar'
-    A.ALL_IN: (0.80, 0.900),      # all-in costuma ser um atalho acima/na barra de size
+    A.FOLD:   (0.185, 0.950),     # "Desistir"
+    A.CHECK:  (0.500, 0.950),     # "Passar" (= Pagar quando ha aposta)
+    A.CALL:   (0.500, 0.950),     # "Pagar X BB"
+    A.RAISE:  (0.815, 0.950),     # "Aumentar"/"Apostar"
+    A.ALL_IN: (0.815, 0.950),     # via painel de aumento no MAXIMO (ver PRESET_LAYOUT/TODO)
 }
-# Presets de size (quando o painel de aumento abre): fração do slider/botoes. A CALIBRAR.
+# Painel de size do raise (quando 'Aumentar' abre o slider): A CALIBRAR com 1 captura do painel
+# aberto. Controles vistos no rodapé: toggle verde "BB" + "+" (lado direito, ~x0.9). Placeholder.
 PRESET_LAYOUT = {
     '2X': (0.30, 0.86), '3X': (0.50, 0.86), '4X': (0.70, 0.86),
-    'confirm': (0.80, 0.955),     # confirmar o aumento (mesmo botao vira "Confirmar")
+    'confirm': (0.815, 0.950),    # 'Aumentar' confirma apos ajustar o size
+    'plus': (0.90, 0.880), 'bb_toggle': (0.90, 0.810),
 }
-_CALIBRATED = False               # vira True quando suprema_calibrar gravar coords reais
+_CALIBRATED = True                # botoes principais calibrados; painel de size pendente
 
 
 def set_dpi_aware():

@@ -32,20 +32,23 @@ class Execute(unittest.TestCase):
     def tearDown(self):
         C.client_rect_screen = self._orig
 
+    @staticmethod
+    def _expected(frac):
+        # client (100,50,500,900): x=100+fx*500, y=50+fy*900 (int)
+        return (int(100 + frac[0] * 500), int(50 + frac[1] * 900))
+
     def test_dry_run_nao_clica(self):
         out = C.execute({'action': A.FOLD}, hwnd=1, armed=False)
         self.assertFalse(out['clicked'])
         self.assertEqual(out['reason'], 'DRY_RUN')
-        # FOLD frac (0.18,0.955) -> x=100+0.18*500=190, y=50+0.955*900=909.5->909
-        self.assertEqual(out['screen'], (190, 909))
+        self.assertEqual(out['screen'], self._expected(C.BUTTON_LAYOUT[A.FOLD]))
 
     def test_armado_clica_a_coord(self):
         cliques = []
         out = C.execute({'action': A.RAISE}, hwnd=1, armed=True, mover=lambda x, y: cliques.append((x, y)))
         self.assertTrue(out['clicked'])
         self.assertEqual(len(cliques), 1)
-        # RAISE frac (0.80,0.955) -> x=100+400=500, y=50+859.5=909
-        self.assertEqual(cliques[0], (500, 909))
+        self.assertEqual(cliques[0], self._expected(C.BUTTON_LAYOUT[A.RAISE]))
 
     def test_sem_alvo_nao_clica(self):
         cliques = []
