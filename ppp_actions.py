@@ -21,17 +21,25 @@ FOLD, CHECK, CALL = 'fold', 'check', 'call'
 BET, RAISE, ALLIN = 'bets', 'raises', 'all-in'
 
 # código bruto -> rótulo base
+# 4/5/6/7 = AÇÕES VOLUNTÁRIAS COM FICHAS (visto ao vivo 20/11: actionType=4 numa mão real).
+# Tratados como AGRESSÃO (bet/raise pelo contexto da rua; all-in pelo is_all_in). Mapear 4/5/6
+# como 'aggr' conta o valor e mantém a conservação de fichas — antes caíam em 'action4' (sem
+# valor) e o parser DESCARTAVA a linha, desbalanceando a mão. (PROVISÓRIO: a distinção exata
+# raise×all-in×call-allin entre 4/5/6 ainda a confirmar; não altera o valor investido.)
 ACTION_TYPES = {
     1: 'fold',
     2: 'check',
     3: 'call',
+    4: 'aggr',
+    5: 'aggr',
+    6: 'aggr',
     7: 'aggr',       # bet ou raise (decidir pelo contexto)
     8: 'post_sb',
     9: 'post_bb',
     10: 'post_ante',
 }
 POST_TYPES = {8, 9, 10}
-AGGRESSIVE = {7}
+AGGRESSIVE = {4, 5, 6, 7}
 
 STAGES = {1: 'preflop', 2: 'flop', 3: 'turn', 4: 'river'}
 

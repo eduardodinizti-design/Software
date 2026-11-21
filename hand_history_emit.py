@@ -48,11 +48,16 @@ def _action_line(a):
 
 
 def emit_hand(h):
-    """Devolve o texto da mão no formato do Hand2Note (uma mão)."""
+    """Devolve o texto da mão no formato do Hand2Note (uma mão).
+
+    `room` é o token da sala no cabeçalho (`PPPoker`, `SupremaPoker`, `Xpoker`...). O
+    parser do NvtTracker lê a sala desse token (`\\S+`), então a MESMA pipeline
+    (acumulador→emit→sink→watcher) serve qualquer sala — só muda o `room`."""
     L = []
+    room = h.get('room') or 'PPPoker'
     buyin = h.get('buyin', '$0 USD')
-    L.append("PPPoker Hand #%s:  Tournament #%s, %s Hold'em No Limit - Level  (%s/%s - Ante %s) - %s UTC"
-             % (h['hand_id'], h.get('tournament_id', ''), buyin, h['sb'], h['bb'],
+    L.append("%s Hand #%s:  Tournament #%s, %s Hold'em No Limit - Level  (%s/%s - Ante %s) - %s UTC"
+             % (room, h['hand_id'], h.get('tournament_id', ''), buyin, h['sb'], h['bb'],
                 h.get('ante', 0), h.get('datetime', '')))
     L.append("Table 'ClubId:%s,Table:%s' %d-max Seat #%d is the button"
              % (h.get('club_id', ''), h.get('table_tag', ''), h.get('max_seats', 8), h['button_seat']))

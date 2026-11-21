@@ -67,15 +67,33 @@ def test_full_hand_with_board_roundtrip():
 
 
 def test_bet_then_raise_aggression_tracking():
+    # bet->raise é conceito PÓS-FLOP: no preflop o BB já é a aposta (1ª voluntária = raise).
     a = _acc()
     for s in (1, 2):
         a.set_seat(s, player=f'q{s}', stack=500000)
     a.on_round_start(1, cur_blind=1000)
-    a.on_action(1, 7, 3000)              # bet (1ª agressão)
-    a.on_action(2, 7, 9000)              # raise (já houve agressão)
+    a.on_round_start(2, board=[256 + 10, 2 * 256 + 14, 3 * 256 + 3])   # FLOP
+    a.on_action(1, 7, 3000)              # bet (1ª agressão do flop)
+    a.on_action(2, 7, 9000)              # raise (já houve agressão) -> to = 0+9000
     txt = a.on_hand_over()
     assert 'bets 3000' in txt
     assert 'raises' in txt and 'to 9000' in txt
+
+
+def test_preflop_open_is_raise():
+    # preflop: a 1ª ação voluntária encara o BB -> deve sair como RAISE (PFR conta), com o
+    # 'to' somando o blind já comprometido pelo próprio jogador.
+    a = _acc()
+    for s in (1, 2, 3):
+        a.set_seat(s, player=f'p{s}', stack=500000)
+    a.on_round_start(1, cur_blind=1000)
+    a.on_action(1, 8, 1000)              # SB
+    a.on_action(2, 9, 2000)              # BB
+    a.on_action(3, 7, 6000)              # open (type 7) -> raises, to = 0+6000
+    a.on_action(2, 7, 14000)             # BB re-raise -> to = 2000(bb) + 14000 = 16000
+    txt = a.on_hand_over()
+    assert 'p3: raises' in txt and 'to 6000' in txt
+    assert 'p2: raises' in txt and 'to 16000' in txt   # soma o BB já comprometido
 
 
 def test_antes_before_round_start_attach():

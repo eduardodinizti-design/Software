@@ -2,7 +2,7 @@
 TUDO que o sistema oferece, cada um na SUA janela (lei do Eduardo 19/11: nada pode
 ficar de fora do launcher — "tudo que o sistema oferece tem que estar plugado").
 
-Sobe 5 componentes:
+Sobe 6 componentes:
   1) OPERADOR armado (auto-arm) com TODAS as capacidades ligadas: percepcao PROTOBUF
      (pre-flop exato), exploit do field (--hud), POS-FLOP (joga tudo: bet/raise/call
      com size no nosso slider + Plano Geometrico), fecha mesa bustada, faixa de status
@@ -12,6 +12,9 @@ Sobe 5 componentes:
   3) EMISSOR de assentos (seat->uid+nick via protobuf -> exploit da nossa DB).
   4) ALARME SONORO (MESA FINAL + BOLHA + DEAL) na propria janela (ENTER silencia).
   5) PAINEL de KPIs (central de gestao / desempenho) na propria janela.
+  6) GUARDIAO de crashes: vigia o PPPoker/Suprema; se CAIR, registra a assinatura
+     WER em logs/crashes.jsonl, desanexa o stack Frida LIMPO e toca alarme (NAO
+     reabre o cliente — voce reabre na mao). Decisao do Eduardo 20/11: detect+alarme.
 
 Feche esta janela (ou Ctrl+C) para PARAR TUDO.
 
@@ -35,7 +38,7 @@ def _cleanup_stale():
     de todas as mesas tem que limpar o emissor pra não duplicar"). Só os NOSSOS scripts;
     nunca o PPPoker nem este processo. Idempotente: todo launch começa limpo."""
     me = os.getpid()
-    scripts = ('emitir_seats', 'operar_mesa', 'capturar_maos', 'alerta_ft', 'painel.py')
+    scripts = ('emitir_seats', 'operar_mesa', 'capturar_maos', 'alerta_ft', 'painel.py', 'guardiao')
     killed = []
     try:
         import psutil
@@ -257,6 +260,12 @@ def main(argv=None):
         pa = _spawn("painel", "painel.py", REPO, [])
         procs.append(("PAINEL", pa))
         print("[ok] PAINEL de KPIs no ar (desempenho/gestao).")
+
+    # 6) GUARDIAO de crashes: vigia o cliente; se cair, registra WER + desanexa
+    #    limpo + alarme. NAO reabre (detect+alarme — decisao do Eduardo 20/11).
+    gu = _spawn("guardiao", "guardiao.py", REPO, [])
+    procs.append(("GUARDIAO", gu))
+    print("[ok] GUARDIAO de crashes no ar (vigia PPPoker/Suprema -> logs/crashes.jsonl + alarme).")
 
     print("\n>>> TUDO NO AR (%d componentes). Feche esta janela ou Ctrl+C para PARAR TUDO. <<<\n"
           % len(procs))

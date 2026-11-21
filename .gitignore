@@ -11,3 +11,14 @@ build_bot/
 dist_bot/
 prints/
 *.spec
+
+# binarios/dados pesados e runtime (regeneraveis) — nao versionar
+*.png
+*.pt
+*.onnx
+*.sqlite
+*.sqlite3
+*.bak*
+vision_yolo/data/
+vision_yolo/dataset/
+vision_yolo/runs/

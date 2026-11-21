@@ -24,11 +24,17 @@ def parse_ranking(ranking):
 def record_tournament_end(*, ranking=None, tournament=None, series=None, buyin=None,
                           mode=None, result='busted', action='closed_via_sair',
                           closed=None, table_key=None, extra=None,
+                          room=None, tournament_id=None, player_id=None, prize=None,
                           path=DEFAULT_LOG, now=None):
     """Acrescenta uma linha JSON ao log de métricas e devolve o registro.
 
     `ranking` = 'posição/campo' (ex.: '65/272'). `closed` = a mesa foi de fato
-    fechada (confirmado). `now` injetável p/ teste."""
+    fechada (confirmado). `now` injetável p/ teste.
+
+    PONTE p/ o NVT Tracker: se `room`+`tournament_id`+`player_id` vierem, reporta
+    colocação/field/prêmio ao ledger de torneios (best-effort, nunca quebra a rotina).
+    O `prize` costuma chegar DEPOIS (captura do banner) — o ledger é idempotente e
+    preserva os campos já gravados, então pode-se reportar em 2 tempos."""
     placed, field = parse_ranking(ranking)
     row = dict(ts=(now or (lambda: datetime.now(timezone.utc).isoformat()))(),
                event='tournament_end', tournament=tournament, series=series,
@@ -38,6 +44,14 @@ def record_tournament_end(*, ranking=None, tournament=None, series=None, buyin=N
                action=action, closed=closed, table_key=table_key)
     if extra:
         row.update(extra)
+    # ponte captura -> ledger do NVT Tracker (opcional, best-effort)
+    if room and tournament_id and player_id:
+        try:
+            from ledger_bridge import report_tournament_end as _led_report
+            _led_report(room, tournament_id, player_id, rank=placed, field=field,
+                        prize=prize, name=tournament)
+        except Exception:
+            pass
     directory = os.path.dirname(path)
     if directory:
         os.makedirs(directory, exist_ok=True)

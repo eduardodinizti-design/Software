@@ -91,9 +91,11 @@ def messages_from_stream(chunks):
 
 
 def is_game_event(msg):
-    """True se a mensagem é um evento de jogo que o SupremaTable consome."""
+    """True se a mensagem é um evento de jogo que o SupremaTable/HandBuilder consomem.
+    (Nomes REAIS descobertos ao vivo 21/11: início=`gamestart`, fim/showdown=`gameover`,
+    assentos=`updateseat`, bounty=`KOdata`.)"""
     return isinstance(msg, dict) and msg.get('event') in (
-        'gameinfo', 'moveturn', 'prompt', 'handover', 'gameResult', 'settle')
+        'gameinfo', 'moveturn', 'prompt', 'gamestart', 'gameover', 'updateseat', 'KOdata')
 
 
 # ---------------------------------------------------------------------------
@@ -131,7 +133,23 @@ def run_live(bb_chips, on_state=None, seconds=0, process='SupremaPoker.exe'):
     procs = [p for p in dev.enumerate_processes() if p.name.lower() == process.lower()]
     if not procs:
         raise RuntimeError('%s não está aberto' % process)
-    session = dev.attach(procs[0].pid)
+    # Escolhe o PROCESSO DO JOGO (maior RSS) — evita o helper/launcher (procs[0] podia ser
+    # o processo de 18MB, cujo attach dava TransportError timeout). Tenta o próximo se falhar.
+    try:
+        import psutil
+        procs.sort(key=lambda p: psutil.Process(p.pid).memory_info().rss, reverse=True)
+    except Exception:
+        pass
+    session = None
+    last_err = None
+    for p in procs:
+        try:
+            session = dev.attach(p.pid)
+            break
+        except Exception as e:
+            last_err = e
+    if session is None:
+        raise RuntimeError('não consegui anexar em %s: %s' % (process, last_err))
     script = session.create_script(_AGENT)
 
     def _on(m, data):

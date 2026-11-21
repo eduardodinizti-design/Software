@@ -9,11 +9,12 @@ Uso:
     python -I capturar_maos.py --seconds 120        # roda por tempo fixo (teste)
 """
 import argparse
+import json
 import os
 import signal
 import sys
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -51,40 +52,144 @@ if _REPO not in sys.path:
     sys.path.insert(0, _REPO)
 from hand_accumulator import HandAccumulator       # noqa: E402
 from hand_text_sink import HandTextSink, DEFAULT_BASE  # noqa: E402
+from protobuf_state import assign_positions         # noqa: E402  (posições pela geometria do botão)
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 
 
-def _make_accumulator(sink, tournament):
-    saved = {"n": 0}
+class RoomRouter:
+    """UM HandAccumulator por MESA (roomid = args[2], provado ao vivo 20/11). Cada evento
+    traz `room`; mesas diferentes nunca se misturam (antes caíam num acumulador só)."""
 
-    def on_hand(text, hand):
-        saved["n"] += 1
+    def __init__(self, sink, tournament):
+        self.sink = sink
+        self.tournament = tournament
+        self.accs = {}
+        self.saved = 0
+        # estado AO VIVO por mesa (p/ o snapshot do HUD: nick/pos/bb/bounty no instante da mão)
+        self.live = {}        # room -> {seat: {uid, nick, bounty, stack}}
+        self.btn = {}         # room -> {button, sb, bb}
+        self.ingame = {}      # room -> [seatid] em jogo (DealerInfoRSP)
+        self.hero = {}        # room -> seatid do herói (SeatStatus.card1!=0)
+        self._live_dir = os.path.join(getattr(sink, "base", "."), "_live")
+
+    def _on_hand(self, text, hand):
+        self.saved += 1
         acts = sum(len(v) for v in hand.get("streets", {}).values())
-        print(f"  [{datetime.now():%H:%M:%S}] mão #{saved['n']} salva "
+        print(f"  [{datetime.now():%H:%M:%S}] [mesa {hand.get('table_tag')}] mão #{self.saved} salva "
               f"({len(hand.get('seats', []))} assentos, {acts} ações)"
-              + (f" cartas {hand['hero_cards']}" if hand.get("hero_cards") else ""))
+              + (f" cartas {hand['hero_cards']}" if hand.get("hero_cards") else ""), flush=True)
 
-    acc = HandAccumulator(tournament_id=tournament, table_tag=tournament, max_seats=9,
-                          sink=sink, on_hand=on_hand)
-    return acc
+    def _acc(self, room):
+        room = int(room or 0)
+        acc = self.accs.get(room)
+        if acc is None:
+            tag = f"{self.tournament}_r{room}" if room else self.tournament
+            acc = HandAccumulator(room="PPPoker", tournament_id=str(room or self.tournament),
+                                  table_tag=tag, max_seats=9, sink=self.sink, on_hand=self._on_hand)
+            self.accs[room] = acc
+        return acc
 
+    def _live_seat(self, room, seat):
+        return self.live.setdefault(int(room or 0), {}).setdefault(int(seat), {})
 
-def _route(acc, e):
-    t = e.get("t")
-    try:
-        if t == "round_start":
-            acc.on_round_start(e["stage"], cur_blind=e.get("cur_blind", 0),
-                               board=e.get("board") or None, hero_cards=e.get("hero_cards") or None)
-        elif t == "hand_card":
-            acc.on_hand_card(e.get("cards") or [])
-        elif t == "action":
-            acc.on_action(e["seat"], e["atype"], e.get("chips", 0), hand_chips=e.get("hand_chips"))
-        elif t == "winner":
-            acc.on_winner()
-        # 'ante'/'round_over' não precisam de ação direta aqui
-    except Exception as ex:
-        print("[cap] erro evento", t, ex)
+    def _snapshot(self, room, cur_blind):
+        """Escreve <base>\\_live\\<table_tag>.json com o estado da mesa AGORA (início da mão):
+        nick/posição/stack em BB/bounty por assento. O HUD lê p/ o cabeçalho das caixas."""
+        room = int(room or 0)
+        bb = 2 * int(cur_blind or 0)
+        ingame = self.ingame.get(room) or list(self.live.get(room, {}).keys())
+        info = self.btn.get(room, {})
+        pos = assign_positions(ingame, info.get("button"), info.get("sb"), info.get("bb")) if ingame else {}
+        seats = []
+        for s in ingame:
+            d = self.live.get(room, {}).get(s, {})
+            stack = d.get("stack")
+            seats.append({"seat": s, "uid": d.get("uid"), "nick": d.get("nick") or "",
+                          "pos": pos.get(s, ""), "bounty": d.get("bounty") or 0,
+                          "stack": stack, "bb": (round(stack / bb, 1) if stack and bb else None)})
+        tag = f"{self.tournament}_r{room}" if room else self.tournament
+        snap = {"room": room, "table_id": tag, "bb": bb, "ts": datetime.now(timezone.utc).isoformat(),
+                "hero_seat": self.hero.get(room), "max_seats": 9,
+                "seats": seats}
+        try:
+            os.makedirs(self._live_dir, exist_ok=True)
+            with open(os.path.join(self._live_dir, tag + ".json"), "w", encoding="utf-8") as f:
+                json.dump(snap, f, ensure_ascii=False)
+        except Exception:
+            pass
+
+    def _write_tiles(self, order):
+        """Ordem de roomids das páginas (tiles) lida da UI -> _live\\_tiles.json p/ o HUD
+        pôr cada mesa no tile certo (grade determinística da janela)."""
+        try:
+            os.makedirs(self._live_dir, exist_ok=True)
+            with open(os.path.join(self._live_dir, "_tiles.json"), "w", encoding="utf-8") as f:
+                json.dump({"order": [int(r) for r in order], "total": len(order),
+                           "ts": datetime.now(timezone.utc).isoformat()}, f)
+        except Exception:
+            pass
+
+    def route(self, e):
+        t = e.get("t")
+        if t == "tiles":
+            self._write_tiles(e.get("order") or [])
+            return
+        room = e.get("room")
+        acc = self._acc(room)
+        try:
+            if t == "round_start":
+                acc.on_round_start(e["stage"], cur_blind=e.get("cur_blind", 0),
+                                   board=e.get("board") or None, hero_cards=e.get("hero_cards") or None)
+                if int(e.get("stage", 0)) == 1:
+                    self._snapshot(room, e.get("cur_blind", 0))   # estado da mesa no início da mão
+            elif t == "hand_card":
+                acc.on_hand_card(e.get("cards") or [])
+            elif t == "action":
+                acc.on_action(e["seat"], e["atype"], e.get("chips", 0), hand_chips=e.get("hand_chips"))
+            elif t == "dealer":
+                acc.on_dealer(button_seat=e.get("button"), seats=e.get("seats"))
+                self.btn[int(room or 0)] = {"button": e.get("button"), "sb": e.get("sb_seat"), "bb": e.get("bb_seat")}
+                self.ingame[int(room or 0)] = [s["seat"] for s in (e.get("seats") or [])]
+                for s in (e.get("seats") or []):      # stack/bounty iniciais do DealerInfo
+                    ls = self._live_seat(room, s["seat"])
+                    if s.get("stack") is not None:
+                        ls["stack"] = s["stack"]
+                    if s.get("bounty"):
+                        ls["bounty"] = s["bounty"]
+            elif t == "seat":
+                acc.set_seat(e["seat"], player=(str(e["uid"]) if e.get("uid") else None),
+                             stack=(e["stack"] if e.get("stack") else None))
+                ls = self._live_seat(room, e["seat"])    # nick/uid/bounty/stack ao vivo
+                if e.get("uid"):
+                    ls["uid"] = str(e["uid"])
+                if e.get("nick"):
+                    ls["nick"] = e["nick"]
+                if e.get("bounty"):
+                    ls["bounty"] = e["bounty"]
+                if e.get("stack"):
+                    ls["stack"] = e["stack"]
+                if e.get("hero"):
+                    acc.mark_hero(e["seat"])
+                    self.hero[int(room or 0)] = int(e["seat"])     # p/ a rotação do HUD
+            elif t == "winner":
+                winners = e.get("winners") or []
+                collected = [(w["seat"], w["chips"]) for w in winners if w.get("chips")]
+                pot = sum(w["chips"] for w in winners if w.get("chips")) or None
+                acc.on_winner(collected=collected or None, total_pot=pot, seat_uids=e.get("seat_uids"))
+                for su in (e.get("seat_uids") or []):   # uid de TODOS os assentos (p/ o snapshot/HUD)
+                    if su.get("uid"):
+                        self._live_seat(room, su["seat"])["uid"] = str(su["uid"])
+            # 'ante'/'round_over'/'show' não precisam de ação direta (show = cartas de vilão, futuro)
+        except Exception as ex:
+            print("[cap] erro evento", t, ex, flush=True)
+
+    def close_all(self):
+        for acc in self.accs.values():
+            try:
+                acc.on_hand_over()
+            except Exception:
+                pass
 
 
 def run_once(dev, args, sink):
@@ -93,12 +198,12 @@ def run_once(dev, args, sink):
     if not procs:
         return "sem_processo"
     session = dev.attach(procs[0].pid)
-    acc = _make_accumulator(sink, args.tournament)
+    router = RoomRouter(sink, args.tournament)
     with open(os.path.join(_HERE, "capturar_maos.js"), encoding="utf-8") as fh:
         script = session.create_script(fh.read())
     stop = {"flag": False, "reason": "ok"}
     session.on("detached", lambda *a: stop.update(flag=True, reason="detached"))
-    script.on("message", lambda m, d: (_route(acc, m["payload"])
+    script.on("message", lambda m, d: (router.route(m["payload"])
               if m.get("type") == "send" and isinstance(m.get("payload"), dict) else None))
     script.set_log_handler(lambda level, text: print(text))
     script.load()
@@ -114,7 +219,7 @@ def run_once(dev, args, sink):
             time.sleep(0.5)
     finally:
         try:
-            acc.on_hand_over()      # fecha a mão em aberto
+            router.close_all()      # fecha a mão em aberto de CADA mesa
         except Exception:
             pass
         # unload ANTES do detach: reverte os hooks IL2CPP com a conexão viva -> sem crash.
@@ -145,7 +250,11 @@ def main():
     print(f"[cap] CAPTURADOR DE MÃOS (READ-ONLY). Torneio='{args.tournament}'. Ctrl+C p/ sair.")
     try:
         while not _GSTOP["flag"]:
-            reason = run_once(dev, args, sink)
+            try:
+                reason = run_once(dev, args, sink)
+            except Exception as ex:   # erro de anexação do Frida (ex.: processo fechando) -> espera e reconecta
+                print(f"[cap] falha ao anexar ({type(ex).__name__}) — aguardando PPPoker...")
+                reason = "sem_processo"
             if _GSTOP["flag"] or reason == "launcher_encerrou":
                 print("[cap] encerrando LIMPO (launcher/sinal).")
                 break

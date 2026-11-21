@@ -57,3 +57,28 @@
 (suprema_state.py já existe e vira table_state). O contrato de eventos do `inject_emit.js` muda de
 "hooks JS" para "parse do JSON de rede". Capturas desta sessão: `suprema_capture_full.log`,
 `../../../scratchpad/diag5_out.log`.
+
+## DECODIFICAÇÃO COMPLETA DO FLUXO DA MÃO (recon 21/11/2026, SSL_read ao vivo)
+Eventos REAIS do ciclo da mão (o `is_game_event` antigo não incluía gamestart/gameover — corrigido):
+- **`gamestart`** = INÍCIO (vem em vários frames): `game_info{dealer_seat, game_counter(=ID da mão),
+  state, pot}` + `room_status.seats:[uid por índice de assento]` (None=vazio) + `game_seat{uid->
+  {seat, coins(=STACK), chips(=apostado na mão), chips_round(=apostado na rua), cards, role, sitout}}`.
+  - **ANTE**: no 1º frame todos com `chips=1500 round=1500` (ante=1500/jogador; pot=1500×N).
+  - **BLINDS por `role`**: `role=82`=SB, `role=93`=BB; valor = `chips - ante`. Ex.: SB 6000, BB 12000.
+  - **INVARIANTE-CHAVE**: `coins + chips` por assento = **stack inicial da mão** (constante até o
+    gameover somar ganhos). Logo `start_stack = coins+chips` no 1º avistamento.
+- **`moveturn`** / **`gameinfo`** = updates de estado. Ação do assento = **Δ(chips)** entre snapshots
+  (incremento). Rua = qtd de `shared_cards` no `gameinfo` (0=pré,3=flop,4=turn,5=river). `state` 1/2=pré.
+- **`gameover`** = FIM/SHOWDOWN: `game_result{allpots:[...], cards:[[board]], seats{uid->{seat, coins
+  (=stack final, inclui ganho), chips(=total investido), cards(=reveladas)}}, patterns, lightcards}`.
+  Ganhador = assento com `coins` final > (stack antes do showdown). ⚠️ As `cards` do gameover usam
+  codificação DIFERENTE (valores >59, ex. 77) — NÃO é rank*4+suit; p/ o board usar `gameinfo.shared_cards`
+  (confiável) e p/ cartas do herói o `game_seat` do fluxo. Reveladas de vilão: decodificação a resolver.
+- **`KOdata`** = bounty PKO: `{loser{uid,displayID}, winners{uid,displayID,bounty,bountyTmp}}`.
+- Ruído: `countdown, clientPing, matchesStatusPushNotify, apiClub.*, sendEmoji, updateOutsCards`.
+
+### Contrato p/ o HandAccumulator (códigos ppp_actions): 1=fold,2=check,3=call,4=agressão(bet/raise/
+### all-in por contexto),8=SB,9=BB,10=ante. `on_action(seat, code, chips=INCREMENTO)`. start_stack via
+### set_seat; mark_hero(hero_seat); board no on_round_start(stage,board=...); winner no on_winner.
+### Fixtures capturados: scratchpad/suprema_all_events.jsonl (2 mãos completas gamestart→gameover).
+### PRÓXIMO: suprema_hand_builder.py (buffer por mão; constrói no gameover; conserva dinheiro) -> .txt.
