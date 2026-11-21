@@ -84,5 +84,32 @@ class PlanAction(unittest.TestCase):
         self.assertEqual(p['chips'], 1000.0)          # min-raise
 
 
+class DecideAndPlanIntegrado(unittest.TestCase):
+    """Fim-a-fim offline: SupremaTable vivo -> cérebro -> plano (via assistir_suprema)."""
+
+    def test_aa_btn_prompt_ativo(self):
+        import os
+        pack = r'C:\Meus Projetos\Aplicativos\nvt-ranges-validados.json'
+        if not os.path.exists(pack):
+            self.skipTest('pack ausente')
+        import assistir_suprema
+        from suprema_state import SupremaTable
+        adv = assistir_suprema.load_advisor()
+        t = SupremaTable(bb_chips=500)
+        t.feed_json({"event": "gameinfo", "data": {"game_info": {
+            "dealer_seat": 2, "shared_cards": [], "pot": 750, "state": 3}}})
+        t.feed_json({"event": "moveturn", "data": {"game_seat": {
+            "1": {"seat": 2, "coins": 10000, "cards": [59, 56], "chips": 0, "sitout": False},
+            "2": {"seat": 3, "coins": 9000, "cards": None, "chips": 250, "sitout": False},
+            "3": {"seat": 6, "coins": 12000, "cards": [0, 0], "chips": 500, "sitout": False}}}})
+        t.feed_json({"event": "prompt", "data": {"gamer_prompt": {
+            "fold": True, "check": None, "call": 500,
+            "raise": "range,1000,10000,2X,1000,3X,1500", "all_in": True}}})
+        state, advice, plan = assistir_suprema.decide_and_plan(t, adv)
+        self.assertIsNotNone(state)
+        self.assertEqual(advice.get('status'), 'ADVICE')
+        self.assertIn(plan['action'], (A.RAISE, A.ALL_IN, A.CALL))   # AA agride, nunca folda
+
+
 if __name__ == '__main__':
     unittest.main()
