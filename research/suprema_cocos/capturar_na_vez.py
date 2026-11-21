@@ -37,15 +37,25 @@ def find_suprema_hwnd():
 
 
 def grab(hwnd, path):
-    """Captura a REGIAO DA TELA onde a janela esta (pega overlays GL, ex.: barra de botoes,
-    que o PrintWindow/BitBlt no DC do cliente PERDE). Requer a janela visivel e nao obstruida."""
+    """Captura EXATA da janela (DPI-aware: coords fisicas). ImageGrab(bbox) na tela pega o
+    overlay GL dos botoes. Requer a janela visivel/nao obstruida."""
     from PIL import ImageGrab
-    img = ImageGrab.grab(all_screens=True)             # DESKTOP INTEIRO (localizar os botoes)
+    u = ctypes.windll.user32
+    r = wt.RECT(); u.GetWindowRect(hwnd, ctypes.byref(r))
+    bbox = (r.left, r.top, r.right, r.bottom)
+    img = ImageGrab.grab(bbox=bbox, all_screens=True)
     img.save(path)
     return img.width, img.height
 
 
 def main():
+    try:
+        ctypes.windll.user32.SetProcessDpiAwarenessContext(ctypes.c_void_p(-4))  # PER_MONITOR_V2
+    except Exception:
+        try:
+            ctypes.windll.shcore.SetProcessDpiAwareness(2)
+        except Exception:
+            pass
     import suprema_net
     hwnd = find_suprema_hwnd()
     if not hwnd:
