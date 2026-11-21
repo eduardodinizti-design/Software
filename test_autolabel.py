@@ -49,6 +49,17 @@ class AutoLabel(unittest.TestCase):
         txt = format_yolo([(5, 0.5, 0.5, 0.1, 0.2)])
         self.assertEqual(txt, '5 0.500000 0.500000 0.100000 0.200000')
 
+    def test_layout_suprema_alimenta_autolabel(self):
+        from vision_yolo.suprema_layout import LAYOUT
+        v = {'hero_cards': ['As', 'Ad'], 'board': ['9c', '6d', '2h'],
+             'legal_actions': ['fold', 'call', 'raise']}
+        labels = to_yolo_labels(v, LAYOUT)
+        self.assertEqual(len(labels), 8)                     # 2 hero + 3 board + 3 botões
+        # toda caixa é fração válida 0..1
+        for (_c, cx, cy, w, h) in labels:
+            for val in (cx, cy, w, h):
+                self.assertTrue(0.0 <= val <= 1.0, val)
+
     def test_write_example_grava_par(self):
         with tempfile.TemporaryDirectory() as d:
             img = os.path.join(d, 'src.png')
