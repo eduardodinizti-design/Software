@@ -81,7 +81,7 @@ def main():
         if not turn:
             state["armed"] = False      # rearma p/ a proxima vez
 
-    suprema_net.run_live(bb_chips=1, on_state=on_state, seconds=90)
+    suprema_net.run_live(bb_chips=1, on_state=on_state, seconds=150)
     print("[capturar_na_vez] fim. shots=%d" % state["shots"], flush=True)
     return 0
 
