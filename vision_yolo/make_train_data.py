@@ -25,8 +25,8 @@ def main():
     import shutil
     for sub in ("images", "labels"):            # limpa dataset antigo (evita stale)
         shutil.rmtree(os.path.join(DS, sub), ignore_errors=True)
-    generate(bgs, 800, os.path.join(DS, "images", "train"), os.path.join(DS, "labels", "train"), seed=1)
-    generate(bgs, 160, os.path.join(DS, "images", "val"), os.path.join(DS, "labels", "val"), seed=2)
+    generate(bgs, 2500, os.path.join(DS, "images", "train"), os.path.join(DS, "labels", "train"), seed=1)
+    generate(bgs, 500, os.path.join(DS, "images", "val"), os.path.join(DS, "labels", "val"), seed=2)
     yaml = os.path.join(DS, "data.yaml")
     with open(yaml, "w", encoding="utf-8") as fh:
         fh.write("path: %s\n" % DS.replace("\\", "/"))

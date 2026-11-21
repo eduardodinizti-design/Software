@@ -1,5 +1,6 @@
-"""Treina o detector de cartas YOLOv8n no dataset sintetico. CPU (sem GPU) -> modelo nano,
-poucos epochs p/ um 1o prototipo. Uso: python -I vision_yolo/train.py"""
+"""Treina o detector de cartas/objetos YOLOv8 no dataset sintetico. Auto-detecta GPU (CUDA):
+na RTX 4060 usa yolov8s + mais epochs + imgsz 960 (treino de VERDADE, minutos). Sem GPU,
+cai p/ nano/CPU. Uso: python -I vision_yolo/train.py"""
 import os
 import sys
 
@@ -8,13 +9,18 @@ DATA = os.path.join(HERE, "dataset", "data.yaml")
 
 
 def main():
+    import torch
     from ultralytics import YOLO
     if not os.path.exists(DATA):
         print("[erro] rode make_train_data.py antes:", DATA); return 1
-    model = YOLO("yolov8n.pt")                      # baixa ~6MB na 1a vez (transfer learning)
-    model.train(data=DATA, epochs=45, imgsz=768, batch=8, patience=12,
-                project=os.path.join(HERE, "runs"), name="cards", exist_ok=True,
-                verbose=True, plots=False)
+    gpu = torch.cuda.is_available()
+    print("[train] CUDA=%s device=%s" % (gpu, torch.cuda.get_device_name(0) if gpu else "CPU"))
+    if gpu:
+        model, kw = YOLO("yolov8s.pt"), dict(epochs=100, imgsz=960, batch=16, device=0)
+    else:
+        model, kw = YOLO("yolov8n.pt"), dict(epochs=45, imgsz=768, batch=8, device="cpu")
+    model.train(data=DATA, patience=20, project=os.path.join(HERE, "runs"),
+                name="cards", exist_ok=True, verbose=True, plots=True, **kw)
     print("[train] fim. melhor peso em runs/cards/weights/best.pt")
     return 0
 
