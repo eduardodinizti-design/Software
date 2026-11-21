@@ -41,6 +41,16 @@ HERO_CARD_SLOTS = [(0.645, 0.805, 0.075, 0.055), (0.725, 0.805, 0.075, 0.055)]
 BOARD_SLOTS = [(0.37, 0.40, 0.065, 0.05), (0.45, 0.40, 0.065, 0.05),
                (0.53, 0.40, 0.065, 0.05), (0.61, 0.40, 0.065, 0.05), (0.69, 0.40, 0.065, 0.05)]
 
+# --- MEDIDO + OCR-VALIDADO: caixa do STACK de cada assento (valor em BB -> ocr_read) ---
+# (cx,cy,w,h fracao). Validado lendo 112.6/41.7/125.6/65.3/39.2 em raise_c_01.
+STACK_REGIONS = {
+    'hero':      (0.50, 0.864, 0.16, 0.026),
+    'top':       (0.50, 0.150, 0.18, 0.026),
+    'top_left':  (0.11, 0.310, 0.16, 0.026), 'top_right': (0.89, 0.310, 0.16, 0.026),
+    'mid_left':  (0.11, 0.560, 0.16, 0.026), 'mid_right': (0.89, 0.560, 0.16, 0.026),
+    'low_left':  (0.11, 0.730, 0.16, 0.026), 'low_right': (0.89, 0.730, 0.16, 0.026),
+}
+
 # formato que autolabel.to_yolo_labels consome
 LAYOUT = {
     'hero_card_slots': HERO_CARD_SLOTS,
