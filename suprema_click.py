@@ -30,14 +30,16 @@ BUTTON_LAYOUT = {
     A.RAISE:  (0.815, 0.950),     # "Aumentar"/"Apostar"
     A.ALL_IN: (0.815, 0.950),     # via painel de aumento no MAXIMO (ver PRESET_LAYOUT/TODO)
 }
-# Painel de size do raise (quando 'Aumentar' abre o slider): A CALIBRAR com 1 captura do painel
-# aberto. Controles vistos no rodapé: toggle verde "BB" + "+" (lado direito, ~x0.9). Placeholder.
+# Painel de size do raise (abre ao clicar 'Aumentar'): CALIBRADO 20/11 numa captura do painel
+# ABERTO (870x1564). Barra inferior vira presets: 2X/3X/4X/All In + 'Confirmar'(laranja);
+# slider a direita com +/- p/ ajuste fino.
 PRESET_LAYOUT = {
-    '2X': (0.30, 0.86), '3X': (0.50, 0.86), '4X': (0.70, 0.86),
-    'confirm': (0.815, 0.950),    # 'Aumentar' confirma apos ajustar o size
-    'plus': (0.90, 0.880), 'bb_toggle': (0.90, 0.810),
+    '2X': (0.101, 0.949), '3X': (0.261, 0.949), '4X': (0.420, 0.949),
+    'all_in': (0.583, 0.949),     # "All In 128.3 BB"
+    'confirm': (0.816, 0.949),    # "Confirmar" (laranja)
+    'plus': (0.618, 0.650), 'minus': (0.618, 0.724),   # ajuste fino do slider
 }
-_CALIBRATED = True                # botoes principais calibrados; painel de size pendente
+_CALIBRATED = True                # botoes principais E painel de size calibrados+validados
 
 
 def set_dpi_aware():
@@ -67,8 +69,7 @@ def frac_to_screen(hwnd, fx, fy):
 
 
 def resolve_target(plan, layout=None):
-    """(action, (fx, fy)) do botão a clicar p/ o plano, ou (action, None) se não há alvo.
-    TESTÁVEL offline (não toca em janela). `plan` = saída de suprema_act.plan_action."""
+    """(action, (fx, fy)) do botão único p/ fold/check/call, ou (action, None). TESTÁVEL."""
     layout = layout or BUTTON_LAYOUT
     act = (plan or {}).get('action')
     if act in (A.WAIT, A.ABSTAIN, None):
@@ -76,20 +77,43 @@ def resolve_target(plan, layout=None):
     return act, layout.get(act)
 
 
-def execute(plan, hwnd, *, armed=False, mover=None):
-    """Executa o plano na janela. DRY-RUN por padrão (armed=False: só resolve+loga). Com
-    armed=True, move e clica via `mover(x,y)` (injeta p/ testar; default = SendInput real).
-    Devolve dict {action, screen?, clicked, reason}."""
-    act, frac = resolve_target(plan)
-    if frac is None:
+def build_sequence(plan):
+    """Sequência de frações (fx,fy) a clicar EM ORDEM p/ o plano. Fold/Check/Call = 1 clique.
+    RAISE = Aumentar(abre painel) -> preset(2X/3X/4X) -> Confirmar. ALL_IN = Aumentar -> All In
+    -> Confirmar. TESTÁVEL offline (puro)."""
+    act = (plan or {}).get('action')
+    if act in (A.FOLD, A.CHECK, A.CALL):
+        f = BUTTON_LAYOUT.get(act)
+        return [f] if f else []
+    if act == A.RAISE:
+        seq = [BUTTON_LAYOUT[A.RAISE]]                 # 'Aumentar' abre o painel de size
+        preset = (plan or {}).get('preset')
+        if preset and preset in PRESET_LAYOUT:
+            seq.append(PRESET_LAYOUT[preset])          # escolhe o preset (2X/3X/4X)
+        seq.append(PRESET_LAYOUT['confirm'])           # Confirmar
+        return seq
+    if act == A.ALL_IN:
+        return [BUTTON_LAYOUT[A.RAISE], PRESET_LAYOUT['all_in'], PRESET_LAYOUT['confirm']]
+    return []
+
+
+def execute(plan, hwnd, *, armed=False, mover=None, sleeper=None, step_delay=0.5):
+    """Executa o plano na janela. DRY-RUN por padrão (armed=False: só resolve a sequência de
+    coords e loga). armed=True clica cada passo via `mover(x,y)` com `step_delay` entre eles
+    (deixa o painel de size renderizar). Devolve {action, screen:[...], clicked, reason}."""
+    import time as _t
+    act = (plan or {}).get('action')
+    seq = build_sequence(plan)
+    if not seq:
         return dict(action=act, clicked=False, reason='SEM_ALVO:%s' % act)
-    x, y = frac_to_screen(hwnd, *frac)
+    screens = [frac_to_screen(hwnd, fx, fy) for (fx, fy) in seq]
     if not armed:
-        return dict(action=act, screen=(x, y), clicked=False, reason='DRY_RUN')
-    (mover or _click_sendinput)(x, y)
-    # RAISE: além de clicar o botao de aumentar, aqui entraria o ajuste de size (preset/slider
-    # + confirmar). Mantido como passo seguinte da calibracao (precisa do painel de aumento real).
-    return dict(action=act, screen=(x, y), clicked=True, reason='CLICOU')
+        return dict(action=act, screen=screens, clicked=False, reason='DRY_RUN')
+    for i, (x, y) in enumerate(screens):
+        (mover or _click_sendinput)(x, y)
+        if i < len(screens) - 1:
+            (sleeper or _t.sleep)(step_delay)
+    return dict(action=act, screen=screens, clicked=True, reason='CLICOU')
 
 
 def _click_sendinput(x, y):
