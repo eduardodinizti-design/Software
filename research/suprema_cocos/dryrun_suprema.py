@@ -1,5 +1,5 @@
 """DRY-RUN ao vivo da Suprema (RISCO ZERO): na vez do heroi, roda percepcao->cerebro->plano
-->calcula a SEQUENCIA de cliques, captura a tela e DESENHA marcadores onde o bot CLICARIA —
+->calcula a SEQUENCIA de cliques, captura a tela e DESENHA marcadores onde o Henrique CLICARIA —
 sem clicar nada, sem mexer o cursor. Valida a cadeia inteira visualmente. Read-only."""
 import ctypes
 import os

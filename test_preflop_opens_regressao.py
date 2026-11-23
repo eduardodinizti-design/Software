@@ -1,5 +1,5 @@
 """TRAVA DE REGRESSAO do PRE-FLOP (Eduardo 18/11): 'uma vez que confirmo algo e
-seto no bot, nao pode desaprender'. Este teste PINA os opens confirmados. Se uma
+seto no Henrique, nao pode desaprender'. Este teste PINA os opens confirmados. Se uma
 mudanca futura quebrar qualquer um, a SUITE FALHA (nao passa em silencio).
 
 Fonte da verdade = ranges do Eduardo, carregadas como o OPERADOR carrega: os DOIS

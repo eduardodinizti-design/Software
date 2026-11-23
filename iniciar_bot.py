@@ -1,4 +1,4 @@
-"""LAUNCHER UNICO do bot NVT — "clicou, rodou". Acha o PPPoker e sobe ABSOLUTAMENTE
+"""LAUNCHER UNICO do Henrique NVT — "clicou, rodou". Acha o PPPoker e sobe ABSOLUTAMENTE
 TUDO que o sistema oferece, cada um na SUA janela (lei do Eduardo 19/11: nada pode
 ficar de fora do launcher — "tudo que o sistema oferece tem que estar plugado").
 
@@ -33,8 +33,8 @@ sys.path.insert(0, REPO)
 
 
 def _cleanup_stale():
-    """LIMPA processos de bot ÓRFÃOS (emissor/operador/captura/alarme/painel de launches
-    anteriores) ANTES de subir — evita EMISSOR DUPLICADO (Eduardo 19/11: "quando o bot cair
+    """LIMPA processos de Henrique ÓRFÃOS (emissor/operador/captura/alarme/painel de launches
+    anteriores) ANTES de subir — evita EMISSOR DUPLICADO (Eduardo 19/11: "quando o Henrique cair
     de todas as mesas tem que limpar o emissor pra não duplicar"). Só os NOSSOS scripts;
     nunca o PPPoker nem este processo. Idempotente: todo launch começa limpo."""
     me = os.getpid()
@@ -88,10 +88,10 @@ def _cleanup_stale():
             except Exception:                    # noqa: BLE001
                 continue
     if killed:
-        print("[limpeza] %d processo(s) de bot orfaos encerrados (sem duplicar emissor): %s"
+        print("[limpeza] %d processo(s) de Henrique orfaos encerrados (sem duplicar emissor): %s"
               % (len(killed), killed))
     else:
-        print("[limpeza] nenhum processo de bot anterior (inicio limpo).")
+        print("[limpeza] nenhum processo de Henrique anterior (inicio limpo).")
     return killed
 
 
@@ -120,7 +120,7 @@ def _parse_args(argv):
 
 
 def _shutdown(procs):
-    """Encerra TUDO sem derrubar o PPPoker (Eduardo 19/11: "fechar o bot dá fatal error").
+    """Encerra TUDO sem derrubar o PPPoker (Eduardo 19/11: "fechar o Henrique dá fatal error").
     Hosts FRIDA (SEATS/CAPTURA) primeiro recebem CTRL_BREAK -> fazem script.unload()+detach()
     LIMPO; esperamos eles saírem; só então o resto (operador/alarme/painel) e quem não saiu
     levam terminate. Hard-kill de host Frida vivo = crash do PPPoker, então isso é evitado."""
@@ -159,11 +159,11 @@ def _shutdown(procs):
 def main(argv=None):
     opts = _parse_args(argv if argv is not None else sys.argv[1:])
     print("=" * 62)
-    print("   NVT BOT  —  launcher COMPLETO (tudo plugado)")
+    print("   NVT HENRIQUE  —  launcher COMPLETO (tudo plugado)")
     print("=" * 62)
     # LIMPEZA PRÉVIA (Eduardo 19/11): mata emissor/operador ÓRFÃOS antes de subir, pra
     # NUNCA duplicar o emissor (inclusive quando religa p/ um novo torneio provisionado).
-    # Mata SÓ processos do bot; NUNCA o PPPoker.
+    # Mata SÓ processos do Henrique; NUNCA o PPPoker.
     _cleanup_stale()
     hwnd = discover_hwnd()
     if not hwnd:
@@ -176,7 +176,7 @@ def main(argv=None):
     print("[ok] PPPoker encontrado (hwnd %s)." % hwnd)
 
     # Bounty (PKO): AUTO-LIDO pelo operador (emissor -> logs/mtt_bounty.json). O
-    # --bounty-bb aqui é só OVERRIDE manual; sem ele, o bot coleta sozinho.
+    # --bounty-bb aqui é só OVERRIDE manual; sem ele, o Henrique coleta sozinho.
     bounty = opts.bounty_bb
     if bounty is not None:
         print("[ok] Bounty OVERRIDE manual = %.2f BB." % bounty)

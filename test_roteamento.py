@@ -96,7 +96,7 @@ class Roteamento(unittest.TestCase):
         deep = r'C:\Meus Projetos\Aplicativos\nvt-ranges-deep.json'
         if not os.path.exists(deep):
             self.skipTest('pack deep ausente')
-        adv = PreflopAdvisor.from_files(PACK, deep)   # bot AO VIVO usa os dois
+        adv = PreflopAdvisor.from_files(PACK, deep)   # Henrique AO VIVO usa os dois
         st = aud.st_vs_3bet('BTN', 'SB', 40, 'curtos_fim')
         r = adv.advise_from_reading(st, ['Ad', 'Ac'], mode='pko_icm', stage='bubble',
                                     bounty_bb=10.0)

@@ -15,9 +15,10 @@ class RecommendSizeTests(unittest.TestCase):
         self.assertEqual(sizing.recommend_size('raise', hero_stack_bb=40,
                                                registration_open=True)['size_bb'], 2.0)       # reg aberta mas NAO deep -> 2x
         self.assertFalse(sizing.recommend_size('raise', hero_stack_bb=40)['heuristic'])      # pure open = solver, not heuristic
+        # LEI (Eduardo, LOCK): isolar limper NAO infla o open -> continua 2x (NUNCA 3X/4X).
         iso = sizing.recommend_size('raise', hero_stack_bb=40, limpers=2)
-        self.assertEqual(iso['size_bb'], 4.0)                                                # 2.0 + 2 limpers
-        self.assertTrue(iso['heuristic'])                                                    # iso add is heuristic
+        self.assertEqual(iso['size_bb'], 2.0)                                                # iso = open 2x, sem add por limper
+        self.assertTrue(iso['heuristic'])                                                    # presenca de limper ainda e sinalizada
 
     def test_three_bet_by_position(self):
         # Eduardo 19/11: IP 3x, OOP 4x; reta final (ft) IP 2.5x / OOP 3.5x.
@@ -36,7 +37,8 @@ class RecommendSizeTests(unittest.TestCase):
         self.assertIsNone(sizing.recommend_size('fold'))
 
     def test_size_capped_by_stack(self):
-        self.assertEqual(sizing.recommend_size('raise', hero_stack_bb=3, limpers=2)['size_bb'], 3)   # 4.0 capped to 3
+        # open=2x (sem add por limper); com stack 1.5bb o 2x (=3bb) seria capado ao stack.
+        self.assertEqual(sizing.recommend_size('raise', hero_stack_bb=1.5, limpers=2)['size_bb'], 1.5)  # 2x capped to stack
 
     def test_in_position(self):
         self.assertTrue(sizing.in_position('BTN', 'UTG'))

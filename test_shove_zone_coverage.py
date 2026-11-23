@@ -1,5 +1,5 @@
 """COBERTURA DA ZONA DE SHOVE (Eduardo 19/11: atacar o CONTEXTO do range, não a mão).
-Na zona de shove (<20bb) o bot NUNCA pode abster por falta de range: regime push/fold
+Na zona de shove (<20bb) o Henrique NUNCA pode abster por falta de range: regime push/fold
 tem sempre decisão (shove ou fold) pela Nash (empresta bucket vizinho). Trava o
 CONTEXTO inteiro — vários spots e mãos diferentes, não o 88 específico."""
 import os
@@ -95,7 +95,7 @@ class ShoveZoneCoverage(unittest.TestCase):
 
     # ---- vs_3bet na ZONA DE COMMIT (<=25bb) NUNCA abstem (fresta 20bb/pko fechada) ----
     def test_vs_3bet_zona_commit_decide_todos_os_modos(self):
-        # hero BTN abre 2.0, SB 3beta 6.0 (nao all-in); o bot tem de DECIDIR (4bet-jam/
+        # hero BTN abre 2.0, SB 3beta 6.0 (nao all-in); o Henrique tem de DECIDIR (4bet-jam/
         # call-off/fold), nunca ABSTER — inclusive 20bb EXATO e 20-25 em pko/icm.
         for stk in (18, 20, 22, 25):
             for mode, stage in (('pko', 'mid'), ('icm', 'bubble'), ('chip_ev', 'mid')):

@@ -97,7 +97,7 @@ def main(argv=None):
     configure_ocr()
     # Pause/takeover control. The observer only reads, but the same gate is what a
     # future executor must consult before sending any input. Start armed (RUNNING).
-    control = BotControl(on_change=lambda s: print('\n>>> BOT %s%s <<<\n' % (
+    control = BotControl(on_change=lambda s: print('\n>>> HENRIQUE %s%s <<<\n' % (
         s, {'PAUSED': ' (voce no controle; Ctrl+Alt+R reativa)',
             'DISABLED': ' (desabilitado; Ctrl+Alt+R reativa)'}.get(s, '')), flush=True))
     control.resume()
@@ -123,7 +123,7 @@ def main(argv=None):
         while True:
             started = time.monotonic()
             if control.state == DISABLED:
-                print('Bot desabilitado. Encerrando. Nenhum clique foi enviado.', flush=True)
+                print('Henrique desabilitado. Encerrando. Nenhum clique foi enviado.', flush=True)
                 break
             if control.state == PAUSED:
                 # You have the tables: stay quiet (no advice). A future executor

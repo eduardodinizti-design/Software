@@ -18,18 +18,36 @@ FOLD, CHECK, CALL, RAISE, ALL_IN, WAIT, ABSTAIN = \
     'fold', 'check', 'call', 'raise', 'all_in', 'wait', 'abstain'
 
 
+# Vocabulário do cérebro -> família de ação (ALINHADO ao action_coordinator._MAP: 3bet/
+# 4bet/three_bet/four_bet/squeeze/isolate/iso/open_raise = RAISE; shove/open_shove = ALL_IN;
+# limp = CALL). Faltar aqui fazia o `three_bet` cair em ABSTAIN:REC_DESCONHECIDO (bug 21/11).
+_FAM_FOLD = frozenset({'fold'})
+_FAM_CHECK = frozenset({'check'})
+_FAM_CALL = frozenset({'call', 'limp', 'overlimp', 'complete'})
+_FAM_ALLIN = frozenset({'all_in', 'allin', 'open_shove', 'shove', 'jam'})
+_FAM_RAISE = frozenset({'raise', 'raises', 'bet', 'bets', 'open_raise', 'open', 'min_raise',
+                        'reraise', '3bet', '4bet', '5bet', 'three_bet', 'four_bet', 'five_bet',
+                        'squeeze', 'isolate', 'iso'})
+
+
 def _rec_family(rec):
-    """Normaliza o `recommended` do cérebro p/ família de ação."""
-    r = (rec or '').lower()
-    if r in ('fold',):
+    """Normaliza o `recommended` do cérebro p/ família de ação. Vocabulário alinhado ao
+    action_coordinator; com rede de segurança por substring p/ variantes não listadas."""
+    r = (rec or '').lower().replace('-', '_')
+    if r in _FAM_FOLD:
         return FOLD
-    if r in ('check',):
+    if r in _FAM_CHECK:
         return CHECK
-    if r in ('call',):
+    if r in _FAM_CALL:
         return CALL
-    if r in ('all_in', 'all-in', 'allin', 'jam', 'shove'):
+    if r in _FAM_ALLIN:
         return ALL_IN
-    if r in ('raise', 'bet', 'bets', 'raises'):
+    if r in _FAM_RAISE:
+        return RAISE
+    # rede de segurança: variante não catalogada mas reconhecível
+    if any(k in r for k in ('shove', 'jam', 'allin', 'all_in')):
+        return ALL_IN
+    if any(k in r for k in ('raise', 'bet', 'squeeze', 'iso')):
         return RAISE
     return None
 
@@ -105,7 +123,9 @@ def plan_action(advice, table):
 
     if fam == RAISE:
         rr = table.prompt.get('raise_range')
-        if RAISE in legal and rr:
+        # PÓS-FLOP: quando não há aposta anterior, a ação legal é 'bet' (não 'raise'); é o MESMO
+        # botão (Apostar/Aumentar) e o mesmo raise_range. Sem isso, bet pós-flop caía p/ check.
+        if (RAISE in legal or 'bet' in legal) and rr:
             target = _target_chips(advice, table)
             if target is None:
                 target = rr.get('min')

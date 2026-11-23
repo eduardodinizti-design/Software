@@ -2,7 +2,7 @@
 
 Pega a recomendação do conselheiro e a resolve no BOTÃO de ação na tela
 (Fold/Check/Call/Bet/Raise), devolvendo a coordenada do clique PRETENDIDO —
-**sem enviar nada**. Serve para conferir, em várias mãos, que o bot miraria o
+**sem enviar nada**. Serve para conferir, em várias mãos, que o Henrique miraria o
 botão certo antes de armar o clique real.
 
 - Só planeja quando é a vez do hero (linha de botões EXPERIMENTAL_BUTTON_ROW); se

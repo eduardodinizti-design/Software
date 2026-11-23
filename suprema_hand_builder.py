@@ -16,7 +16,7 @@ import sys
 from datetime import datetime
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from suprema_state import decode_cards   # noqa: E402
+from suprema_state import decode_cards, decode_board   # noqa: E402
 
 FOLD, CHECK, CALL, AGGR, SB, BB, ANTE = 1, 2, 3, 4, 8, 9, 10
 ROLE_SB, ROLE_BB = 82, 93
@@ -24,6 +24,14 @@ ROLE_SB, ROLE_BB = 82, 93
 
 def _street_of(nshared):
     return 1 if nshared < 3 else 2 if nshared == 3 else 3 if nshared == 4 else 4
+
+
+# A Suprema codifica a AÇÃO/estado de cada jogador no campo `role` do game_seat:
+# 0=sem agir, 82=SB postou, 93=BB postou; ao AGIR vira família 2x (20/23=in/call/raise,
+# vai ao showdown) ou família 4x (40/42=FOLD). Decodificado por verdade-terreno no fixture
+# hands_2011 (showdown=[0,1] role 20/23; folds=[2..7] role 40/42) — ver SUPREMA_PROTOCOL.md.
+def _is_fold_role(role):
+    return isinstance(role, int) and 40 <= role <= 49
 
 
 class SupremaHandBuilder:
@@ -113,19 +121,26 @@ class SupremaHandBuilder:
         bb_amt = bb_amt or 0
         sb_amt = sb_amt or 0
 
-        # herói: assento com cartas reais em qualquer frame (ou uid do prompt)
+        # herói: PELO uid da raiz do prompt (DEFINITIVO). O fallback "assento com 2 cartas reais"
+        # vale SÓ se o uid for desconhecido — senão uma REVELAÇÃO de oponente (showdown/all-in)
+        # sequestra o hero_seat/hero_cards (bug 21/11: lia a mão do vilão). Igual suprema_state.
+        hero_uid = next((m.get("uid") for m in self.buf
+                         if m.get("event") == "prompt" and m.get("uid") is not None), None)
         for m in self.buf:
-            d = m.get("data") or {}
-            gs = d.get("game_seat")
-            if isinstance(gs, dict):
-                for uid, p in gs.items():
-                    cc = decode_cards(p.get("cards") or [])
-                    if len(cc) == 2 and p.get("seat") is not None:
-                        hero_seat, hero_cards = p["seat"], cc
-            if m.get("event") == "prompt" and m.get("uid") is not None:
-                for s, u in seat_uid.items():
-                    if u == m["uid"]:
-                        hero_seat = s
+            gs = (m.get("data") or {}).get("game_seat")
+            if not isinstance(gs, dict):
+                continue
+            for uid, p in gs.items():
+                seat, cc = p.get("seat"), decode_cards(p.get("cards") or [])
+                if seat is None:
+                    continue
+                if hero_uid is not None:
+                    if _as_uid(uid) == hero_uid:
+                        hero_seat = seat                       # assento do herói (mesmo sem cartas)
+                        if len(cc) == 2:
+                            hero_cards = cc                    # cartas só do PRÓPRIO herói
+                elif len(cc) == 2:
+                    hero_seat, hero_cards = seat, cc           # uid ainda desconhecido: fallback
 
         seats_sorted = sorted(start_stack)
 
@@ -149,7 +164,14 @@ class SupremaHandBuilder:
             if hero_cards:
                 acc.on_hand_card(hero_cards, seatid=hero_seat)
 
-        # ---- 3) ações por delta de chips_round, rua a rua ----
+        # assentos do showdown (gameover) — quem chegou ao fim; o resto foldou
+        gr = (gameover_data or {}).get("game_result") or {}
+        go_seats = set()
+        for uid, p in (gr.get("seats") or {}).items():
+            if p.get("seat") is not None:
+                go_seats.add(p["seat"])
+
+        # ---- 3) ações por delta de chips_round + FOLDS NA RUA CERTA, rua a rua ----
         street = 1
         street_max = bb_amt
         committed = {s: 0 for s in seats_sorted}
@@ -159,6 +181,7 @@ class SupremaHandBuilder:
             committed[bb_seat] = bb_amt
         last_active_street = {s: 1 for s in seats_sorted}
         board_codes = []
+        folded = set()        # assentos cujo FOLD já foi emitido (na rua em que ocorreu)
 
         for m in flow_msgs:
             d = m.get("data") or {}
@@ -171,16 +194,24 @@ class SupremaHandBuilder:
                 ns = _street_of(len(sc))
                 if ns > street:
                     street = ns
-                    acc.on_round_start(street, board=decode_cards(sc))
+                    # decode_board (não decode_cards): mantém a CONTAGEM do board com '??' p/
+                    # carta >59; senão o board encurta e o emissor dropa o betting da rua -> saldo.
+                    acc.on_round_start(street, board=decode_board(sc))
                     street_max = 0
                     committed = {s: 0 for s in committed}
             gs = d.get("game_seat") or gi.get("game_seat")
             if not isinstance(gs, dict):
                 continue
-            # ordena por assento p/ determinismo
+            # ordena por assento p/ determinismo (um snapshot = estado completo da mesa)
             for uid, p in sorted(gs.items(), key=lambda kv: (kv[1] or {}).get("seat", 99)):
                 seat = p.get("seat")
                 if seat is None:
+                    continue
+                # FOLD: role entrou na família 4x neste snapshot -> emite AGORA (rua+ordem certas).
+                # So p/ quem NAO vai ao showdown; dispara uma unica vez por assento.
+                if seat not in folded and seat not in go_seats and _is_fold_role(p.get("role")):
+                    acc.on_action(seat, FOLD, 0)
+                    folded.add(seat)
                     continue
                 cr = p.get("chips_round")
                 if cr is None:
@@ -197,16 +228,11 @@ class SupremaHandBuilder:
                     committed[seat] = cr
                     last_active_street[seat] = street
 
-        # ---- 4) folds dos que não foram ao showdown ----
-        go_seats = set()
-        gr = (gameover_data or {}).get("game_result") or {}
-        for uid, p in (gr.get("seats") or {}).items():
-            if p.get("seat") is not None:
-                go_seats.add(p["seat"])
+        # ---- 4) fallback: folds não vistos pelo role (sinal perdido) caem na última rua ----
+        # Mantém o balanço (fold = 0 fichas); raro, só quando o snapshot do fold não chegou.
         for s in seats_sorted:
-            if s in go_seats:
+            if s in go_seats or s in folded:
                 continue
-            # não chegou ao showdown e não está all-in -> foldou (na sua última rua ativa)
             acc.on_action(s, FOLD, 0)
 
         # ---- 5) winner + fim ----

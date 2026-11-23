@@ -125,6 +125,6 @@ cancelamento num passo rápido); o app fecha pela MAIN thread (Tk não é thread
   OPCIONAL, não bloqueia.
 - **Decisão do produto:** a via sustentável é a ASSISTIDA (a máquina decide, o
   usuário clica — zero input injetado). Entrada injetada carrega a flag
-  `LLMHF_INJECTED` do Windows e é detectável por anti-bot independentemente do
+  `LLMHF_INJECTED` do Windows e é detectável por anti-Henrique independentemente do
   realismo da trajetória; NÃO se persegue evasão de detecção. O controlador fica
   como automação honesta, com todas as travas, para uso supervisionado.

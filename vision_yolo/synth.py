@@ -18,6 +18,12 @@ from vision_yolo import suprema_layout as SL
 
 SUIT_SYM = {'d': '♦', 'h': '♥', 'c': '♣', 's': '♠'}
 SUIT_RED = {'d', 'h'}
+# Baralho 2 cores (padrão): ♦♥ vermelho, ♣♠ preto. Baralho 4 CORES: cada naipe uma cor
+# (♠ preto, ♥ vermelho, ♦ AZUL, ♣ VERDE) — elimina a confusão ♦↔♥ e vira leitura por COR
+# (robusta, agnóstica de desenho) em qualquer sala que ofereça o baralho de 4 cores.
+SUIT_COLOR_2 = {'d': (200, 28, 28), 'h': (200, 28, 28), 'c': (20, 20, 20), 's': (20, 20, 20)}
+SUIT_COLOR_4 = {'d': (24, 86, 196), 'h': (200, 28, 28), 'c': (22, 140, 60), 's': (20, 20, 20)}
+FOUR_COLOR = False                                 # make_train_data liga p/ gerar 4 cores
 _FONTS = ('arial.ttf', 'arialbd.ttf', 'segoeui.ttf', 'DejaVuSans.ttf')
 
 
@@ -30,16 +36,52 @@ def _font(size):
     return ImageFont.load_default()
 
 
+def _draw_suit(d, suit, box, color):
+    """Desenha o pip do naipe por GEOMETRIA VETORIAL (nítido em qualquer escala) em
+    box=(x0,y0,x1,y1). Silhuetas inconfundíveis: ♦ rombo pontudo, ♥ topo redondo/base
+    pontuda, ♠ ♥ invertido + haste, ♣ três círculos + haste. Resolve a confusão ♦↔♥."""
+    x0, y0, x1, y1 = box
+    w, h = x1 - x0, y1 - y0
+    cx, cy = (x0 + x1) / 2, (y0 + y1) / 2
+    if suit == 'd':                                        # losango: 4 pontas
+        d.polygon([(cx, y0), (x1, cy), (cx, y1), (x0, cy)], fill=color)
+    elif suit == 'h':                                      # coração: 2 lóbulos + ponta p/ baixo
+        d.ellipse([x0, y0, x0 + w * 0.56, y0 + h * 0.60], fill=color)
+        d.ellipse([x1 - w * 0.56, y0, x1, y0 + h * 0.60], fill=color)
+        d.polygon([(x0 + w * 0.02, y0 + h * 0.34), (x1 - w * 0.02, y0 + h * 0.34),
+                   (cx, y1)], fill=color)
+    elif suit == 's':                                      # espada: coração invertido + haste
+        d.ellipse([x0, y0 + h * 0.40, x0 + w * 0.56, y0 + h * 1.0], fill=color)
+        d.ellipse([x1 - w * 0.56, y0 + h * 0.40, x1, y0 + h * 1.0], fill=color)
+        d.polygon([(cx, y0), (x0 + w * 0.02, y0 + h * 0.66),
+                   (x1 - w * 0.02, y0 + h * 0.66)], fill=color)
+        d.polygon([(cx - w * 0.16, y1), (cx + w * 0.16, y1),
+                   (cx + w * 0.06, y0 + h * 0.70), (cx - w * 0.06, y0 + h * 0.70)], fill=color)
+    else:                                                  # paus (c): 3 círculos + haste
+        r = w * 0.30
+        d.ellipse([cx - r, y0, cx + r, y0 + 2 * r], fill=color)
+        d.ellipse([x0, cy - r * 0.2, x0 + 2 * r, cy + r * 1.8], fill=color)
+        d.ellipse([x1 - 2 * r, cy - r * 0.2, x1, cy + r * 1.8], fill=color)
+        d.polygon([(cx - w * 0.12, y1), (cx + w * 0.12, y1),
+                   (cx + w * 0.05, cy), (cx - w * 0.05, cy)], fill=color)
+
+
 def render_card(name, w=120, h=168):
-    """PIL RGBA de uma carta ('As','Td',...) no estilo padrão de poker."""
+    """PIL RGBA de uma carta ('As','Td',...) no estilo da Suprema: rank no canto + pip de
+    canto + pip central, naipe desenhado por GEOMETRIA (não glifo de fonte)."""
     img = Image.new('RGBA', (w, h), (255, 255, 255, 255))
     d = ImageDraw.Draw(img)
     d.rounded_rectangle([0, 0, w - 1, h - 1], radius=int(w * 0.12),
                         outline=(170, 170, 170), width=max(2, w // 50))
     rank, suit = name[0], name[1]
-    color = (200, 28, 28) if suit in SUIT_RED else (20, 20, 20)
-    d.text((int(w * 0.10), int(h * 0.02)), rank, fill=color, font=_font(int(h * 0.34)))
-    d.text((int(w * 0.10), int(h * 0.40)), SUIT_SYM[suit], fill=color, font=_font(int(h * 0.30)))
+    color = (SUIT_COLOR_4 if FOUR_COLOR else SUIT_COLOR_2)[suit]
+    d.text((int(w * 0.09), int(h * 0.01)), rank, fill=color, font=_font(int(h * 0.32)))
+    # pip de canto (logo abaixo do rank) — o traço discriminante que o detector lê
+    cpw, cph = w * 0.26, h * 0.17
+    _draw_suit(d, suit, (w * 0.11, h * 0.36, w * 0.11 + cpw, h * 0.36 + cph), color)
+    # pip central grande (reforça o sinal, como nas cartas de número reais)
+    bpw, bph = w * 0.46, h * 0.30
+    _draw_suit(d, suit, (w * 0.5 - bpw / 2, h * 0.52, w * 0.5 + bpw / 2, h * 0.52 + bph), color)
     return img
 
 

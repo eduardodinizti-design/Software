@@ -5,7 +5,7 @@ para um módulo com detector testável + clique armado revalidado + watcher.
 
 CONTEXTO (ver memória [[nvt-rotina-addon-torneio]]):
   - O add-on de um torneio é habilitado ~5 min antes de encerrar o late registration.
-    Nessa janela curta aparece um POP-UP de add-on. O bot deve detectá-lo e confirmar.
+    Nessa janela curta aparece um POP-UP de add-on. O Henrique deve detectá-lo e confirmar.
   - Anatomia do modal (capturado ao vivo): título "Add-on", texto
     "Você tem N fichas. Adicionar M fichas com C Fichas PP? (mm:ss)", e dois botões
     VERDES: "Confirmar" (esquerda) e "Cancelar" (direita). Variantes Add-on/Duplo/Triplo.

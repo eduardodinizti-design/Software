@@ -1,9 +1,9 @@
 """Prontidão por telemetria REAL: lê os logs de estado das sessões (logs/estado/*.jsonl)
-e mede o que o bot DE FATO faria numa mesa — quanto executaria, quanto só estudaria e
+e mede o que o Henrique DE FATO faria numa mesa — quanto executaria, quanto só estudaria e
 quanto absteria, e por quê. Offline, sem mesa, sem clique.
 
 Responde com DADOS (não teoria) às perguntas de prontidão:
-  - Em que fração das decisões reais o bot ARMARIA ficha (nó validado + commit)?
+  - Em que fração das decisões reais o Henrique ARMARIA ficha (nó validado + commit)?
   - Quanto vira ESTUDO (approximation/referência não-validada -> não dispara)?
   - Quanto ABSTÉM, e por qual motivo (pós-flop não-coberto, sem nó, leitura falha)?
   - Em que ZONA (stack/mesa) as sessões caíram vs a zona executável (5-25bb, 9-max)?
@@ -103,7 +103,7 @@ def _fmt(r):
          'Sessões: %d | decisões: %d' % (r['sessions'], r['total_decisions']),
          'Status: %s' % r['status'],
          '',
-         'O QUE O BOT FARIA de fato:',
+         'O QUE O HENRIQUE FARIA de fato:',
          '  ARMARIA ficha (commit validado):   %d  (%s%% do total)' % (
              r['would_execute_commit'], r['exec_rate_pct']),
          '  ESTUDO só (commit não-validado):    %d  (recomenda mas NÃO dispara)' % r['study_only_commit'],

@@ -1,6 +1,6 @@
 """REGRA INVIOLAVEL (Eduardo 18/11): NUNCA clicar FOLD tendo CHECK disponivel.
 Foldar de graca e sempre pior E dispara a popup 'tem certeza?' do PPPoker que cobre
-a mesa e TRAVA o bot. Trava a regra: se quebrar, a suite falha."""
+a mesa e TRAVA o Henrique. Trava a regra: se quebrar, a suite falha."""
 import unittest
 
 import operar_mesa

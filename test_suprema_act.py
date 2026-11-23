@@ -21,6 +21,10 @@ FACING = {"fold": True, "check": None, "call": 500,
 OPEN = {"fold": True, "check": True, "call": None,
         "raise": "range,1000,10000,2X,1000,3X,1500", "all_in": True}
 IDLE = {"fold": None, "check": None, "call": None, "raise": None, "all_in": None}
+# prompt POS-FLOP sem aposta anterior: fold/check/APOSTAR('bet', presets de POTE)/all-in.
+# A acao legal e 'bet' (NAO 'raise'); mesmo botao Apostar/Aumentar, range com presets de pote.
+POSFLOP_BET = {"fold": True, "check": True, "call": None, "raise": None, "all_in": True,
+               "bet": "range,600,282360,1/2 POT,3300,2/3 POT,4400,1 POT,6600"}
 
 
 class PlanAction(unittest.TestCase):
@@ -82,6 +86,30 @@ class PlanAction(unittest.TestCase):
         p = A.plan_action(ADV('raise'), _table_with_prompt(FACING))   # sem sizing
         self.assertEqual(p['action'], A.RAISE)
         self.assertEqual(p['chips'], 1000.0)          # min-raise
+
+    def test_bet_posflop_alimenta_range_e_acoes(self):
+        # a chave 'bet' (pos-flop) entra como acao legal E alimenta o raise_range (presets de pote).
+        t = _table_with_prompt(POSFLOP_BET, bb_chips=600)
+        self.assertIn('bet', t.legal_actions())
+        rr = t.prompt.get('raise_range')
+        self.assertIsNotNone(rr)
+        self.assertIn('2/3 POT', rr.get('presets') or {})
+
+    def test_bet_posflop_vira_raise_executavel(self):
+        # BUG pre-fix: cerebro='bet' mas so 'bet' legal (sem 'raise') -> caia p/ CHECK.
+        # Agora: vira RAISE (mesmo botao Apostar) com o preset de pote mais proximo.
+        t = _table_with_prompt(POSFLOP_BET, bb_chips=600)
+        p = A.plan_action(ADV('bet', sizing={'size_bb': 7}), t)   # 7*600=4200 ~ 2/3 POT(4400)
+        self.assertEqual(p['action'], A.RAISE)
+        self.assertEqual(p['preset'], '2/3 POT')
+        self.assertEqual(p['chips'], 4200.0)
+
+    def test_cbet_posflop_sem_size_usa_min(self):
+        # 'cbet' (variante de aposta) sem sizing -> RAISE no minimo, nunca check.
+        t = _table_with_prompt(POSFLOP_BET, bb_chips=600)
+        p = A.plan_action(ADV('cbet'), t)             # 'cbet' -> rede substring -> RAISE
+        self.assertEqual(p['action'], A.RAISE)
+        self.assertEqual(p['chips'], 600.0)           # min do range do bet
 
 
 class DecideAndPlanIntegrado(unittest.TestCase):

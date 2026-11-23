@@ -1,6 +1,6 @@
-"""Ponte do bot -> ledger de torneios do NVT Tracker.
+"""Ponte do Henrique -> ledger de torneios do NVT Tracker.
 
-No FIM do torneio (tela de ranking / herói eliminado), o bot já tem o MttRankInfo lido do lobby
+No FIM do torneio (tela de ranking / herói eliminado), o Henrique já tem o MttRankInfo lido do lobby
 (rank, total de entradas, prêmio). Esta ponte envia isso pro tracker, que calcula Lucro/ROI.
 
 Desacoplado: fala com o tracker por HTTP (o nvt-server precisa estar no ar). Nada de DB aqui.

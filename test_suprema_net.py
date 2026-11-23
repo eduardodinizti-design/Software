@@ -68,8 +68,8 @@ class Integracao(unittest.TestCase):
                 table.feed_json(msg)
         state, hero = table.to_table_state()
         self.assertIsNotNone(state, 'abstido: %r' % (hero,))
-        self.assertEqual(hero, ['Td', '5s'])                  # [40,23]
-        self.assertEqual(state['board'], ['9d', 'As', '9s'])  # [36,59,39]
+        self.assertEqual(hero, ['8c', '7d'])                  # [40,23] = 8c, 7d (decode real)
+        self.assertEqual(state['board'], ['4c', 'Jh', '7c'])  # [36,59,39] = 4c,Jh,7c
         self.assertEqual(state['street'], 'FLOP')
         self.assertEqual(state['positions']['hero'], 'BTN')   # dealer=2
         self.assertAlmostEqual(state['seats']['hero']['stack_bb'], 20.0)

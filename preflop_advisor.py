@@ -1101,7 +1101,7 @@ class PreflopAdvisor:
             # Zona de COMMIT vs 3bet: até ~25bb um 3bet é efetivamente all-in -> a
             # continuação é 4bet-JAM/call-off. Inclusivo no limite (20bb EXATO caía na
             # fresta: `< 20` é falso) e cobre 20-25 (o nó validado vs_3bet só existe a
-            # 25bb; em pko/icm sem esse nó o bot ABSTINHA = morria). Lei de cobertura.
+            # 25bb; em pko/icm sem esse nó o Henrique ABSTINHA = morria). Lei de cobertura.
             _vs3b_short = (spot['spot'] == 'vs_3bet'
                            and isinstance(_stk, (int, float)) and _stk <= VS3BET_JAM_MAX_BB)
             if (isinstance(result, dict) and result.get('status') == 'ABSTAIN'

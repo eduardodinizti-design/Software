@@ -469,5 +469,50 @@ class ContractTests(unittest.TestCase):
         self.assertEqual(advise_postflop(state(8, 0), ['As', 'Qc'], ['Ah', '9c', '3d', '5s', 'Jd'])['street'], 'RIVER')
 
 
+class NoDonkBetTests(unittest.TestCase):
+    """LEI Eduardo (sem donk bet): o DEFENSOR fora de posição, PRIMEIRO a agir no FLOP,
+    NÃO lidera apostando (donk) — mesmo com mão feita e agressor DESCONHECIDO (o caso
+    do Q9 ao vivo na Suprema, onde aggressor chega None). Hero=agressor ainda c-beta."""
+
+    @staticmethod
+    def _oop_state(pot, to_call, stack=40.0, hero_pos='BB', vill_pos='BTN'):
+        return dict(pot=dict(pot_bb=pot), to_call=dict(to_call_bb=to_call),
+                    seats={'hero': dict(stack_bb=stack, occupied=True),
+                           'v1': dict(stack_bb=stack, occupied=True)},
+                    positions={'hero': hero_pos, 'v1': vill_pos})
+
+    def test_defender_oop_made_hand_checks_aggressor_unknown(self):
+        # Top pair OOP, agressor DESCONHECIDO (None), to_call=0, FLOP -> CHECK (não donk).
+        r = advise_postflop(self._oop_state(6, 0), ['As', 'Qc'], ['Ah', '9c', '3d'])
+        self.assertEqual(r['recommended'], 'check')
+        self.assertIn('NO_DONK_CHECK_AS_DEFENDER', r['caveats'])
+
+    def test_defender_oop_strong_hand_checks_villain_aggressor(self):
+        # Set OOP, agressor = vilão (defensor confirmado) -> CHECK (não lidera/donk).
+        r = advise_postflop(self._oop_state(6, 0), ['3c', '3h'], ['As', '9c', '3d'],
+                            aggressor='BTN')
+        self.assertEqual(r['recommended'], 'check')
+        self.assertIn('NO_DONK_CHECK_AS_DEFENDER', r['caveats'])
+
+    def test_hero_aggressor_still_cbets_oop(self):
+        # Hero = agressor (iniciativa) OOP com mão forte -> AINDA c-beta (não vira donk-check).
+        r = advise_postflop(self._oop_state(6, 0), ['3c', '3h'], ['As', '9c', '3d'],
+                            aggressor='hero')
+        self.assertEqual(r['recommended'], 'bet')
+        self.assertNotIn('NO_DONK_CHECK_AS_DEFENDER', r['caveats'])
+
+    def test_in_position_known_bets_unchanged(self):
+        # Posição conhecida e EM posição (BTN) sem vilão no mapa (como os demais testes):
+        # NÃO é donk -> o tier de lead segue apostando (preserva a suíte existente).
+        r = advise_postflop(state(8, 0), ['3c', '3h'], ['As', '9h', '3d'])
+        self.assertEqual(r['recommended'], 'bet')
+        self.assertNotIn('NO_DONK_CHECK_AS_DEFENDER', r['caveats'])
+
+    def test_facing_bet_not_gated(self):
+        # Enfrentando aposta (to_call>0) NÃO é lead/donk: o gate não dispara.
+        r = advise_postflop(self._oop_state(10, 4), ['3c', '3h'], ['As', '9c', '3d'])
+        self.assertNotIn('NO_DONK_CHECK_AS_DEFENDER', r['caveats'])
+
+
 if __name__ == '__main__':
     unittest.main()

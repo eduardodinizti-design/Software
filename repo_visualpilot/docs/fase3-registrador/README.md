@@ -1,7 +1,7 @@
 # Fase 3A — Registrador supervisionado (sem clique)
 
 Implementa a spec `ESTRATÉGIA DE INSCRIÇ.txt` como **lógica pura + SQLite**, no
-modo que a própria spec manda fazer primeiro (§2): o bot seleciona, confere,
+modo que a própria spec manda fazer primeiro (§2): o Henrique seleciona, confere,
 reserva e concilia uma inscrição, mas **nunca envia o clique de confirmação** —
 quem clica no cliente é o usuário. Risco operacional zero: nenhum input é
 enviado ao PPPoker (não há `SendInput`/`SetCursorPos`/`mouse_event` em lugar
@@ -148,7 +148,7 @@ python plugar_lobby.py --hwnd 0xHWND --club Karekas --currency BRL \
 ## Limitações (honestas)
 
 - **Leitura/seleção/fluxo: validados ao vivo** até AGUARDANDO CONFIRMAÇÃO. O que
-  NÃO foi validado no cliente real: a inscrição em si (o bot não clica) e a
+  NÃO foi validado no cliente real: a inscrição em si (o Henrique não clica) e a
   conciliação do recibo. A lógica do ledger/estados é toda exercitada no lab.
 - O filtro de política (`evaluate_card`) usa o `SessionState` em memória como
   pré-filtro grosso; a **fonte de verdade** de orçamento/vaga no fluxo é o
@@ -166,4 +166,4 @@ python plugar_lobby.py --hwnd 0xHWND --club Karekas --currency BRL \
   futuro. O horário de início fica `None` quando o cartão não o mostra (a
   identidade usa nome+buy-in, suficiente).
 - Este bloco **não** habilita registro autônomo. A próxima fronteira (Fase 3B /
-  F4) é o controlador de cursor — e só ele, validado, autoriza o bot a clicar.
+  F4) é o controlador de cursor — e só ele, validado, autoriza o Henrique a clicar.

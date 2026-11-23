@@ -52,7 +52,7 @@ class RegistrationRound:
         self.mode = mode
         self._clock = clock
 
-        self.execution_allowed = False      # invariante: o bot NUNCA clica
+        self.execution_allowed = False      # invariante: o Henrique NUNCA clica
         self.flow_state = 'OBSERVATION'
         self.attempts = 0
         self.token = None
@@ -276,7 +276,7 @@ class RegistrationRound:
             start_time=d.get('start_time'),
             budget_remaining_after_reserve=avail,
             active_commitments=active,
-            note='O bot NÃO envia o clique; a confirmação no cliente é do usuário.')
+            note='O Henrique NÃO envia o clique; a confirmação no cliente é do usuário.')
 
     # ---- ETAPA E/F: autorização explícita + ação do usuário --------------
     def authorize(self, *, confirm, revalidation_snapshot=None):
@@ -327,7 +327,7 @@ class RegistrationRound:
     def record_user_action(self):
         """Registra que o USUÁRIO enviou a confirmação no cliente (modo real).
 
-        O bot não clicou — isto só marca CONFIRMATION_SENT para a reconciliação.
+        O Henrique não clicou — isto só marca CONFIRMATION_SENT para a reconciliação.
         """
         if self.mode != 'real_supervised':
             return self._block(['USER_ACTION_ONLY_IN_REAL_MODE'])

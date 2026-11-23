@@ -71,12 +71,12 @@ def emit_hand(h):
         L.append('Dealt to %s [%s]' % (h['hero'], _cards(h['hero_cards'])))
     board = h.get('board', {})
     for street in _STREETS:
+        acts = h.get('streets', {}).get(street) or []
         if street != 'preflop':
-            hdr = _street_header(street, board)
-            if not board.get(street):
-                continue                       # rua não alcançada
-            L.append(hdr)
-        for a in (h.get('streets', {}).get(street) or []):
+            if not board.get(street) and not acts:
+                continue                       # rua não alcançada (sem board E sem ação)
+            L.append(_street_header(street, board))   # emite se houve board OU ação (não dropa betting)
+        for a in acts:
             L.append(_action_line(a))
     if h.get('uncalled'):
         amt, who = h['uncalled']

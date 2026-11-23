@@ -1,4 +1,4 @@
-"""Caminhos PORTÁTEIS — o bot roda em QUALQUER PC, sem path absoluto hardcoded.
+"""Caminhos PORTÁTEIS — o Henrique roda em QUALQUER PC, sem path absoluto hardcoded.
 
 base_dir() entende PyInstaller (--onefile/onedir, sys.frozen). find_data() acha um
 arquivo de dado (ranges, exploit_db) procurando em vários locais candidatos, então

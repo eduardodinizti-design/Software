@@ -6,8 +6,11 @@ import sys
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")))
 
+from vision_yolo import synth
 from vision_yolo.synth import generate
 from vision_yolo.classes import CLASSES
+
+synth.FOUR_COLOR = True          # baralho 4 cores (Eduardo liga nas salas) — naipe por COR
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 DS = os.path.join(HERE, "dataset")
@@ -35,7 +38,7 @@ def main():
         fh.write("names:\n")
         for i, c in enumerate(CLASSES):
             fh.write("  %d: %s\n" % (i, c))
-    print("[data] train=800 val=160 ->", DS)
+    print("[data] train=2500 val=500 (4 cores) ->", DS)
     print("[data] data.yaml ->", yaml)
     return 0
 

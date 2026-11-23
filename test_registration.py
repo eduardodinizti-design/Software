@@ -182,7 +182,7 @@ class FlowHappyPathTest(unittest.TestCase):
         res = r.reserve()
         self.assertEqual(res['flow_state'], 'AWAITING_CONFIRMATION')
         self.assertIsNotNone(res['summary'])
-        self.assertFalse(r.execution_allowed)                 # o bot nunca clica
+        self.assertFalse(r.execution_allowed)                 # o Henrique nunca clica
         self.assertEqual(r.authorize(confirm=True)['flow_state'], 'AWAITING_CONFIRMATION')
         self.assertEqual(r.record_user_action()['flow_state'], 'CONFIRMATION_SENT')
         rec = r.reconcile(dict(confirmed=True, identity=r.identity, cost=50.0,

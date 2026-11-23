@@ -57,7 +57,7 @@ def main(argv=None):
     ocr = _ocr()
 
     print('=' * 70)
-    print('TROCA DE CLUBE — DRY-RUN (o bot NÃO clica) | fonte:', srcdesc)
+    print('TROCA DE CLUBE — DRY-RUN (o Henrique NÃO clica) | fonte:', srcdesc)
     print('OCR:', st.get('status'), st.get('version') or '', '| alvo:', repr(args.target))
     print('=' * 70)
 

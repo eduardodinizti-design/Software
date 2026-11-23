@@ -1,7 +1,7 @@
 """End-to-end: read one PPPoker table crop and produce an exploratory read-out.
 
 Ties together the readers (hero cards, table state, hand id, board) and the
-PreflopAdvisor so that, for one frame, the bot prints what it sees and what it
+PreflopAdvisor so that, for one frame, the Henrique prints what it sees and what it
 would do. Observation only: no capture, no clicks, execution never allowed.
 Preflop advice comes from the PreflopAdvisor (spot inferred from the bets); from
 the flop on, the postflop_advisor attaches a founded-heuristic read (phase
@@ -431,6 +431,13 @@ def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table
                                              bounty_bb=bounty_bb)
         if isinstance(advice, dict):
             advice.setdefault('caveats', []).append('SPOT_INFERRED_FROM_BETS')
+        # ALARGAR O OPEN pra caçar bounty (bounded): alvo curto bountiado coberto + GTO abre misto.
+        if bounty_bb and use_mode in ('pko', 'pko_icm') and (state.get('bounties')):
+            try:
+                import bounty_open
+                advice = bounty_open.widen_open(advice, state)
+            except Exception:
+                pass
     # Contexto ENTRE frames (opcional): atualiza o rastreador do agressor pré-flop e,
     # no pós-flop, recalcula o conselho com pot_type/iniciativa/range do vilão. Só é
     # útil a observadores CONTÍNUOS (um frame único não tem histórico pré-flop).
@@ -443,7 +450,7 @@ def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table
                                           mode=use_mode, stage=use_stage, table_key=table_key)
     # Passo FINAL: encaixa o size de QUALQUER aposta pós-flop no nosso slider
     # (1/3,1/2,2/3,allin) ou no Plano Geométrico do turn. Depois do solver driving, p/ o
-    # alvo executável (size_bb) sair sempre certo e o bot nunca "morrer" sem size. Pós-flop.
+    # alvo executável (size_bb) sair sempre certo e o Henrique nunca "morrer" sem size. Pós-flop.
     if isinstance(advice, dict) and advice.get('phase') == 'postflop':
         _hero_stack = (state.get('seats', {}).get('hero') or {}).get('stack_bb')
         postflop_sizing.enforce(advice, pot_bb=advice.get('pot_bb'),

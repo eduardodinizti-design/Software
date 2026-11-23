@@ -1,9 +1,9 @@
-"""PAINEL DE GESTAO do NVT Bot (Tkinter, estilo NVT Mesas). 3 abas:
+"""PAINEL DE GESTAO do NVT Henrique (Tkinter, estilo NVT Mesas). 3 abas:
   - Grade do Dia: define quais torneios jogar e quando (grava grade_do_dia.json).
   - Desempenho: metricas reais de logs/metrics/torneios.jsonl (nº torneios, buy-in
     medio, ITM%, posicao media, resultado).
   - Controle: liga/desliga o agente (iniciar_bot).
-Le/grava dados que o bot ja usa; portatil (app_paths). Roda do fonte ou do .exe.
+Le/grava dados que o Henrique ja usa; portatil (app_paths). Roda do fonte ou do .exe.
 """
 import json
 import os
@@ -83,7 +83,7 @@ def summarize(rows):
 class Painel:
     def __init__(self, root):
         self.root = root
-        root.title('NVT Bot — Painel de Gestão')
+        root.title('NVT Henrique — Painel de Gestão')
         root.geometry('900x600')
         root.minsize(760, 520)
         try:
@@ -105,7 +105,7 @@ class Painel:
     # --- aba Grade do Dia ---
     def _tab_grade(self, nb):
         f = ttk.Frame(nb, padding=10); nb.add(f, text='🗓️ Grade do Dia')
-        ttk.Label(f, text='Torneios do dia (o bot registra/entra na hora):',
+        ttk.Label(f, text='Torneios do dia (o Henrique registra/entra na hora):',
                   font=('Segoe UI', 11, 'bold')).pack(anchor='w')
         cols = ('name', 'start', 'buyin_bb', 'reg_opens')
         self.gtree = ttk.Treeview(f, columns=cols, show='headings', height=12)
@@ -244,7 +244,7 @@ class Painel:
     def _tab_controle(self, nb):
         f = ttk.Frame(nb, padding=16); nb.add(f, text='🎛️ Controle')
         ttk.Label(f, text='Controle do Agente', font=('Segoe UI', 13, 'bold')).pack(anchor='w')
-        ttk.Label(f, text='Liga o bot (operador + exploit do field + captura de mãos + fecha '
+        ttk.Label(f, text='Liga o Henrique (operador + exploit do field + captura de mãos + fecha '
                   'bustada). Precisa do PPPoker aberto na mesa.', foreground='#aaa',
                   wraplength=700, justify='left').pack(anchor='w', pady=(4, 12))
         self.ctl_proc = None
@@ -262,7 +262,7 @@ class Painel:
         try:
             self.ctl_proc = subprocess.Popen(cmd, cwd=base_dir(),
                                              creationflags=getattr(subprocess, 'CREATE_NEW_CONSOLE', 0))
-            self.ctl_status.config(text='AGENTE RODANDO (veja as janelas do bot).')
+            self.ctl_status.config(text='AGENTE RODANDO (veja as janelas do Henrique).')
         except Exception as e:
             self.ctl_status.config(text='erro ao iniciar: %s' % e)
 
@@ -272,7 +272,7 @@ class Painel:
                 self.ctl_proc.terminate()
             except Exception:
                 pass
-            self.ctl_status.config(text='parado (feche as janelas do bot se sobraram).')
+            self.ctl_status.config(text='parado (feche as janelas do Henrique se sobraram).')
         else:
             self.ctl_status.config(text='não estava rodando.')
 

@@ -1,7 +1,7 @@
 """AUDITOR DE ROTEAMENTO PRE-FLOP (matriz de reachability). Para cada (spot, bucket)
 injeta um no-SONDA validado no contexto e, com o CENARIO ao vivo correto, verifica se
 o roteador (advise_from_reading) de fato CHEGA na sonda. Diz, de forma limpa e
-independente do dado existente, quais (spot,bucket) o bot REALMENTE usa — logo o que
+independente do dado existente, quais (spot,bucket) o Henrique REALMENTE usa — logo o que
 vale a pena solvar (uma range que o roteador nunca pede seria desperdicio/range morta).
 
 Cenarios por spot: first-in (open_*), vs-open-normal (vs_open), vs-open-ALL-IN
@@ -83,7 +83,7 @@ def main(argv=None):
     pack = (argv or sys.argv[1:] or [r'C:\Meus Projetos\Aplicativos\nvt-ranges-validados.json'])[0]
     adv = PreflopAdvisor.from_file(pack)
     print('=' * 70)
-    print('MATRIZ DE REACHABILITY DO ROTEADOR (buckets que o bot REALMENTE usa)')
+    print('MATRIZ DE REACHABILITY DO ROTEADOR (buckets que o Henrique REALMENTE usa)')
     print('=' * 70)
     for mode, stage, spread in [('chip_ev', 'mid', None), ('pko', 'mid', None),
                                 ('icm', 'bubble', 'iguais'), ('pko_icm', 'bubble', 'iguais')]:

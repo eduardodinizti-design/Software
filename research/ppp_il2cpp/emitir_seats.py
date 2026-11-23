@@ -8,7 +8,7 @@ except Exception:
     pass
 import frida
 
-# --- DESLIGAMENTO LIMPO (Eduardo 19/11: "fechar o bot dá fatal error no PPPoker") -------
+# --- DESLIGAMENTO LIMPO (Eduardo 19/11: "fechar o Henrique dá fatal error no PPPoker") -------
 # Host Frida morto no OSSO deixa os hooks IL2CPP pendurados no PPPoker -> CRASH. Então:
 #  (a) tratamos SIGBREAK/SIGTERM/SIGINT como "pare e desanexe limpo";
 #  (b) vigiamos o PAI (launcher): se ele morrer de qualquer jeito (Ctrl+C, fechar janela,
@@ -45,11 +45,13 @@ OUT = os.path.join(REPO, "logs", "live_seats.json")
 RICH = os.path.join(REPO, "logs", "live_seats_rich.json")
 ESTADO = os.path.join(REPO, "logs", "estado_mesa.json")   # estado COMPLETO p/ percepcao protobuf
 BOUNTY = os.path.join(REPO, "logs", "mtt_bounty.json")    # bounty PKO (leitura automatica)
+HOLECARDS = os.path.join(REPO, "logs", "live_holecards.json")  # cartas do heroi POR MESA (multi-mesa)
 SECONDS = float(sys.argv[1]) if len(sys.argv) > 1 else 0.0
 
 _tables = {}        # ref -> {seat: uid}
 _rich = {}          # ref -> {room, players:[...]}
 _estado = {}        # ref -> {ts, room, table:{dealer,sb/bb seats,sb,...}, players:[full]}
+_holecards = {}     # ref -> {ts, cards:[int], decoded:[str]} (do MultipleTableHoleCardRSP, multi-mesa)
 
 
 def _write_atomic(path, obj):
@@ -88,6 +90,22 @@ def on_msg(m, data):
     if p.get("t") == "bounty":
         _on_bounty(p)
         return
+    if p.get("t") == "holecards":
+        # cartas do heroi POR MESA (multi-mesa) via MultipleTableHoleCardRSP -> cacheia por ref,
+        # mesmo a mesa NAO estando ativa. Chave p/ o agente multi-torneio.
+        from ppp_cards import decode_cards
+        ref = p.get("ref") or "?"
+        codes = p.get("cards") or []
+        dec = decode_cards(codes)
+        _holecards[ref] = {"ts": time.time(), "cards": codes, "decoded": dec}
+        _write_atomic(HOLECARDS, _holecards)
+        # MERGE no estado por mesa: cada mesa (mesmo NÃO-ativa) passa a ter as cartas do herói.
+        _estado.setdefault(ref, {"ts": time.time(), "room": "", "table": {}, "players": []})
+        _estado[ref]["hero_cards_mt"] = dec
+        _write_atomic(ESTADO, _estado)
+        print("[emit] HOLECARDS mesa %s: %s (todas as mesas cacheadas: %s)"
+              % (ref, " ".join(dec), list(_holecards.keys())), flush=True)
+        return
     if p.get("t") != "seats":
         return
     ref = p.get("ref") or "?"
@@ -96,6 +114,12 @@ def on_msg(m, data):
     _tables[ref] = {str(pl["seat"]): str(pl["uid"]) for pl in players if pl.get("uid")}
     _rich[ref] = {"room": p.get("room", ""), "players": players}
     _estado[ref] = {"ts": time.time(), "room": p.get("room", ""), "table": table, "players": players}
+    if ref in _holecards:                       # anexa as cartas multi-mesa se já cacheadas
+        _estado[ref]["hero_cards_mt"] = _holecards[ref]["decoded"]
+    # VEZ DO HERÓI (anti-crossing): meta-chave _hero_turn={ref,ts} = roomid onde o protocolo diz
+    # ser a vez do hero (actseat==heroseat). O operador ancora a ação nesse roomid (não na aparência).
+    if table.get("heroturn"):
+        _estado["_hero_turn"] = {"ref": ref, "ts": time.time()}
     _write_atomic(OUT, _tables)
     _write_atomic(RICH, _rich)
     _write_atomic(ESTADO, _estado)

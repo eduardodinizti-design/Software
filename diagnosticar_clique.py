@@ -1,6 +1,6 @@
 """DIAGNÓSTICO do clique pós-leitura (Eduardo 19/11: "clique robusto").
 
-O bot não clica quando `read_action_buttons` devolve NO_BUTTON_ROW — e a causa quase sempre
+O Henrique não clica quando `read_action_buttons` devolve NO_BUTTON_ROW — e a causa quase sempre
 é o CROP da mesa (detect_table_crops) pegando o frame dividido (lobby+mesa) em vez da mesa.
 Sem um FRAME REAL da sua vez é impossível consertar sem chutar. Esta ferramenta captura o
 frame real com o PPPoker aberto NA SUA VEZ e mostra EXATAMENTE onde a detecção falha:

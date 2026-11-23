@@ -10,7 +10,7 @@ Eventos (classe da mensagem Pb, como vem do hook):
   fim/encerra   : EvChopOverBRC, *Refuse*, *Cancel*  -> libera
 
 Failsafe: se perdermos o evento de fim, o guard EXPIRA sozinho após `max_seconds`
-(default 2100s = 35 min, um pouco acima da janela de 30 min do deal) p/ não travar o bot
+(default 2100s = 35 min, um pouco acima da janela de 30 min do deal) p/ não travar o Henrique
 pra sempre. Também há limpeza manual (human assumiu o controle).
 """
 from __future__ import annotations

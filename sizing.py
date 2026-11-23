@@ -11,7 +11,13 @@ calls, limps and all-ins are exact.
 OPEN_RAISE_BB = 2.0           # first-in open at <=40bb
 OPEN_RAISE_DEEP_BB = 2.5      # first-in open at 100bb
 OPEN_DEEP_THRESHOLD_BB = 40   # above this, use the deep open size
-ISO_ADD_PER_LIMPER_BB = 1.0   # heuristic add per limper (iso is not in the solved tree)
+# LEI (Eduardo, LOCK): o OPEN e 2x SEMPRE (2.5x so deep+reg); NUNCA 3X/4X de open.
+# ISOLAR um limper continua sendo um OPEN (1a aposta agressiva) -> NAO infla o size.
+# O add de 1bb por limper gerava opens 3X/4X/5X (bug ao vivo 21/11: open 3X), violando
+# a LEI. Mantido em 0.0 para travar a regra; a presenca de limper ainda e sinalizada
+# (heuristic=True + caveat), mas o TAMANHO permanece o do open. Ver nvt-squeeze-3bet-
+# shove-curto / nvt-autoridade-eduardo-decide.
+ISO_ADD_PER_LIMPER_BB = 0.0
 # 3bet-to como múltiplo do open (REGRA do Eduardo, 19/11): 3x em posição, 4x fora de
 # posição. SÓ na RETA FINAL do torneio (stage 'ft') diminui p/ 2.5x IP e 3.5x OOP.
 THREEBET_IP_MULT = 3.0        # IP, torneio normal
@@ -98,10 +104,12 @@ def recommend_size(action, *, hero_stack_bb=None, to_call_bb=None, limpers=0,
         return dict(action=action, size_bb=cap, basis='all-in', heuristic=False)
     if action in ('raise', 'open_raise'):
         open_bb = open_size_bb(hero_stack_bb, registration_open)
+        # LEI: open/iso = tamanho do open SEMPRE (2x; 2.5x deep+reg). O add por limper
+        # fica em 0.0 (ISO_ADD_PER_LIMPER_BB) -> nunca vira 3X/4X de open.
         size = open_bb + ISO_ADD_PER_LIMPER_BB * limpers
         basis = 'open %.1fbb (solver)' % open_bb
         if limpers:
-            basis += ' + %d limper(s) (heuristica)' % limpers
+            basis += ' + %d limper(s): ISO sem inflar size (LEI open=2x)' % limpers
         return dict(action='raise', size_bb=capped(size), heuristic=bool(limpers), basis=basis)
     if action == 'three_bet':
         base = opener_bb if isinstance(opener_bb, (int, float)) else open_size_bb(hero_stack_bb)

@@ -27,18 +27,19 @@ import bounty_reader
 
 # Cache leve (TTL) do bounty AUTO-LIDO (logs/mtt_bounty.json, escrito pelo emissor). O
 # flag --bounty-bb, se dado, tem precedência (override manual). Sem fonte -> None (cai no
-# pko_icm sem desconto, como antes). Lei: o bot coleta o dado, não o Eduardo informa.
+# pko_icm sem desconto, como antes). Lei: o Henrique coleta o dado, não o Eduardo informa.
 _BOUNTY_CACHE = {'v': None, 't': 0.0}
 
 
-def _auto_bounty(manual, ttl=5.0):
+def _auto_bounty(manual, starting_stack=None, head_fraction=0.5, ttl=5.0):
     if manual is not None:
         return manual
     import time as _t
     now = _t.time()
     if now - _BOUNTY_CACHE['t'] > ttl:
         try:
-            _BOUNTY_CACHE['v'] = bounty_reader.read_bounty_bb()
+            _BOUNTY_CACHE['v'] = bounty_reader.read_bounty_bb(
+                starting_stack=starting_stack, head_fraction=head_fraction)
         except Exception:                        # noqa: BLE001 — nunca quebra o loop
             _BOUNTY_CACHE['v'] = None
         _BOUNTY_CACHE['t'] = now
@@ -67,15 +68,49 @@ from tournament_metrics import record_tournament_end
 import field_live
 import protobuf_state
 import table_binding
+import table_sticky_bind
 
 _PB_STALE_S = 8.0   # estado protobuf mais velho que isso = ignorado (emissor re-emite a cada 2s)
+
+# BINDING GRUDENTO pos->roomid (anti-crossing multi-mesa, atrás do flag --sticky-bind). Aprende
+# por frame e reusa por posição; ver [[nvt-pppoker-sticky-bind]]. Estado por processo.
+_STICKY = table_sticky_bind.StickyBinder()
+_STICKY_FRAME = {'cycle': None, 'binds': {}, 'roomids': set(), 'n': 0}
+
+
+def _sticky_batch(cycle, pos, crop_seats, fresh_map, n_crops):
+    """Acumula o bind confiante deste crop no frame atual; quando o CICLO vira, descarrega o frame
+    anterior no StickyBinder (observe) — assim ele aprende por frame e reusa no próximo (1 ciclo de
+    lag, seguro). Não decide nada aqui; só alimenta o binder."""
+    fr = _STICKY_FRAME
+    if fr['cycle'] is None:
+        fr['cycle'] = cycle
+    elif cycle != fr['cycle']:
+        _STICKY.observe(n_panels=fr['n'] or len(fr['binds']),
+                        fresh_roomids=fr['roomids'], frame_binds=fr['binds'])
+        fr['cycle'] = cycle
+        fr['binds'] = {}
+    ref, score = table_binding.best_crop_ref(crop_seats or {}, fresh_map)
+    fr['binds'][pos] = (ref, score)
+    fr['roomids'] = set(fresh_map)
+    fr['n'] = n_crops
+
+
+def _hero_turn_roomid(data, now):
+    """roomid onde o PROTOCOLO diz ser a VEZ do hero (meta `_hero_turn` do emissor: actseat==
+    heroseat), se fresco; senão None. Âncora anti-crossing: age só na mesa da vez (não na aparência)."""
+    ht = (data or {}).get('_hero_turn') or {}
+    ref = ht.get('ref')
+    if ref is not None and (now - (ht.get('ts') or 0)) < _PB_STALE_S:
+        return ref
+    return None
 
 
 def never_fold_free(recommended, br):
     """REGRA INVIOLÁVEL (Eduardo 18/11): NUNCA clicar FOLD tendo CHECK disponível.
     Se a recomendação é 'fold' e existe botão CHECK (to_call=0), devolve 'check'.
     Foldar de graça é sempre pior E dispara a popup 'tem certeza?' do PPPoker que
-    cobre a mesa e TRAVA o bot. Vale pré e pós-flop. Caso contrário, não altera."""
+    cobre a mesa e TRAVA o Henrique. Vale pré e pós-flop. Caso contrário, não altera."""
     if (recommended == 'fold' and isinstance(br, dict)
             and br.get('status') == 'EXPERIMENTAL_BUTTON_ROW'
             and any(b.get('action') == 'CHECK' for b in (br.get('buttons') or []))):
@@ -100,16 +135,24 @@ def _entry_hero_cards(entry):
     return []
 
 
-def _match_fresh_table(fresh, match_hero, match_room):
+def _match_fresh_table(fresh, match_hero, match_room, allow_room=True):
     """Escolhe a mesa fresca do protobuf que casa com o CROP atual, p/ NÃO cruzar
     mesas em multi-table (ver [[nvt-multitable-tiled-bug]]). Casa por sobreposição de
     carta do hero (>=1 carta igual às lidas por OCR no crop) ou, se as cartas do crop
-    são desconhecidas, pelo NOME DA SALA. Retorna a ÚNICA entry que casa, ou None
-    (0 casamentos OU >1 ambíguo) -> o chamador usa OCR de reserva (nunca chuta)."""
+    são desconhecidas e `allow_room`, pelo NOME DA SALA. Retorna a ÚNICA entry que casa,
+    ou None (0 casamentos OU >1 ambíguo) -> o chamador usa OCR de reserva (nunca chuta).
+
+    GUARDA MULTI-MESA (`allow_room=False`): a SALA/torneio NÃO é identidade ÚNICA por mesa
+    (duas mesas do mesmo torneio/clube têm o MESMO nome). Se só a mesa ATIVA está fresca,
+    casar por sala ligaria o crop errado à única fresca -> CRUZAMENTO silencioso (o pior
+    erro). Logo, com >1 mesa na tela só vale sinal ÚNICO por mesa (carta do hero ou
+    nameplate); sem ele, abstém (OCR reserva). A sala só amarra em single-table."""
     mh = {c for c in (match_hero or []) if c}
     if mh:
         hits = [e for e in fresh if mh & set(_entry_hero_cards(e))]
         return hits[0] if len(hits) == 1 else None
+    if not allow_room:
+        return None
     mr = (match_room or '').strip().upper()
     if mr:
         hits = [e for e in fresh if (e.get('room') or '').strip().upper() == mr]
@@ -118,7 +161,8 @@ def _match_fresh_table(fresh, match_hero, match_room):
 
 
 def _protobuf_advice(advisor, mode, stage='mid', estado_path=None,
-                     match_hero=None, match_room=None, n_crops=1, crop_seats=None):
+                     match_hero=None, match_room=None, n_crops=1, crop_seats=None,
+                     pos=None, cycle=None, use_sticky=False):
     """Conselho PRE-FLOP **ou PÓS-FLOP** a partir do estado PROTOBUF (logs/estado_mesa.json;
     board/to_call/pote da MEMÓRIA via emitir_seats), ou None se não houver estado seguro.
 
@@ -143,20 +187,40 @@ def _protobuf_advice(advisor, mode, stage='mid', estado_path=None,
     fresh = list(fresh_map.values())
     if not fresh:
         return None
+    # STICKY (multi-mesa, atrás de --sticky-bind): alimenta o binder por frame e PREFERE o roomid
+    # grudado nesta posição (reusa quando o OCR do nameplate falha; invalida em re-tile; abstém se
+    # incerto). OFF por padrão -> comportamento idêntico ao atual (zero regressão single-table).
     sel = None
+    sel_ref = None
+    if use_sticky and pos is not None and cycle is not None:
+        _sticky_batch(cycle, pos, crop_seats, fresh_map, n_crops)
+        _rid = _STICKY.roomid_for(pos, fresh_roomids=list(fresh_map))
+        if _rid is not None and _rid in fresh_map:
+            sel, sel_ref = fresh_map[_rid], _rid
     # 1) BINDING ROBUSTO por nameplate (multi-mesa): acha o ref deste crop pelos nomes.
-    if crop_seats:
+    if sel is None and crop_seats:
         _ref = table_binding.bind_crop_to_ref(crop_seats, fresh_map)
         if _ref is not None:
-            sel = fresh_map[_ref]
+            sel, sel_ref = fresh_map[_ref], _ref
     # 2) Fallback sem binding (sem nameplates legíveis OU sem casamento).
     if sel is None:
         if n_crops <= 1 and len(fresh) == 1:
             sel = fresh[0]            # single-table limpo: seguro (não há como cruzar)
         else:
-            sel = _match_fresh_table(fresh, match_hero, match_room)
+            # GUARDA: com >1 mesa na tela a SALA não desambigua (não é única por mesa) ->
+            # só carta do hero/nameplate amarram; sem eles, abstém (nunca cruza).
+            sel = _match_fresh_table(fresh, match_hero, match_room,
+                                     allow_room=(n_crops <= 1))
             if sel is None:
                 return None
+        sel_ref = next((k for k, v in fresh_map.items() if v is sel), sel_ref)
+    # TURN-ANCHOR (anti-crossing, --sticky-bind): o emissor marca o roomid onde é a VEZ do hero
+    # (actseat==heroseat). Se esse roomid é fresco e DIFERENTE do que amarramos a este crop, este
+    # crop NÃO é a mesa da vez (ou o bind cruzou) -> ABSTÉM (nunca age na mesa errada).
+    if use_sticky:
+        _htr = _hero_turn_roomid(data, now)
+        if _htr is not None and _htr in fresh_map and sel_ref is not None and sel_ref != _htr:
+            return None
     return protobuf_state.advise_from_protobuf(sel, advisor, mode=(mode or 'chip_ev'),
                                                stage=(stage or 'mid'), players=9)
 
@@ -191,9 +255,9 @@ def _grade_buyin(name):
 
 
 def _save_table_print(frame, tag='torneio'):
-    """Salva um PNG da TELA (registro visual do resultado + FONTE p/ o bot ler
+    """Salva um PNG da TELA (registro visual do resultado + FONTE p/ o Henrique ler
     posição/prêmio e gravar os dados sozinho). Em logs/prints/. Eduardo 19/11:
-    'caiu de uma mesa final tira o print, fecha a tela' — e os dados o BOT coleta,
+    'caiu de uma mesa final tira o print, fecha a tela' — e os dados o HENRIQUE coleta,
     não o usuário informa. Nunca quebra o loop."""
     try:
         import cv2
@@ -464,7 +528,12 @@ def main(argv=None):
     p.add_argument('--rediscover-every', type=int, default=200,
                    help='ciclos entre re-descobertas (com --rediscover)')
     p.add_argument('--bounty-bb', type=float, default=None,
-                   help='PKO: valor do bounty em BB p/ o overlay de call-off (so engata em torneio PKO e cobrindo o shove)')
+                   help='PKO: valor do bounty em BB p/ o overlay de call-off (override MANUAL; sem isso, auto)')
+    p.add_argument('--starting-stack', dest='starting_stack', type=float, default=None,
+                   help='PKO: stack inicial em fichas. Com isso, o bounty BASE vira auto pelo BRIDGE '
+                        'moeda-premio->fichas (correto); o call-off caca pelo bounty por assento (OCR).')
+    p.add_argument('--head-fraction', dest='head_fraction', type=float, default=0.5,
+                   help='PKO: fracao do buy-in na cabeca (0.5 PKO default, 0.75 super-PKO).')
     p.add_argument('--mode', choices=('chip_ev', 'icm', 'pko', 'pko_icm'), default=None,
                    help='Forca o modo do torneio (sobrepoe a deteccao por nome; ex. PKO quando o skin nao mostra no nome)')
     p.add_argument('--stage', choices=('pre_itm', 'bubble', 'ft', 'mid'), default=None,
@@ -503,6 +572,11 @@ def main(argv=None):
                         'da memoria do PPPoker (logs/estado_mesa.json, via emitir_seats) -- '
                         'cartas/apostas/posicoes EXATAS, sem OCR. OCR fica de reserva. Loga '
                         'PARIDADE (protobuf x OCR). Precisa do emissor rodando. Default off.')
+    p.add_argument('--sticky-bind', dest='sticky_bind', action='store_true',
+                   help='BINDING GRUDENTO pos->roomid (anti-crossing multi-mesa tilado): aprende a '
+                        'posicao de cada mesa pelos nameplates e REUSA por posicao quando o OCR '
+                        'falha; invalida em re-tile; abstem se incerto. Default off (comportamento '
+                        'atual). Validar com 2+ mesas ao vivo antes de confiar. Ver sticky-bind.')
     args = p.parse_args(argv)
 
     import os
@@ -527,7 +601,7 @@ def main(argv=None):
     overlay = StatusOverlay().start() if args.overlay else None
 
     def _on_change(s):
-        print('\n>>> BOT %s <<<\n' % s, flush=True)
+        print('\n>>> HENRIQUE %s <<<\n' % s, flush=True)
         if overlay:
             overlay.set_state(s)
     control = BotControl(on_change=_on_change)
@@ -578,6 +652,15 @@ def main(argv=None):
           flush=True)
     print('Janelas monitoradas: %d (round-robin, 1 por ciclo). Com 2 mesas use --intervalo menor.'
           % len(per), flush=True)
+    # GUARDA multi-mesa + protobuf (ver [[nvt-multitable-tiled-bug]]): o protobuf só é
+    # SEGURO com 1 mesa. Com várias mesas tiladas numa janela, o estado é amarrado ao crop
+    # SÓ por sinal ÚNICO por mesa (carta do hero / nameplate); a sala não desambigua e é
+    # ignorada, então uma mesa sem leitura cai p/ OCR (nunca cruza). Avisa em alto e bom som.
+    if args.protobuf and args.max_tables > 1:
+        print('[GUARDA] --protobuf com --max-tables=%d: multi-mesa tilado NAO e validado. '
+              'O protobuf so decide um crop com casamento POSITIVO por carta/nameplate; '
+              'sem casar, usa OCR de reserva. Para garantia total rode 1 mesa (--max-tables 1).'
+              % args.max_tables, flush=True)
 
     n = 0
     tourneys_closed = BoundedKeySet(512)   # (hwnd, table_key): LRU p/ não vazar em horas (D3)
@@ -610,7 +693,7 @@ def main(argv=None):
     anticip = AnticipationStore()
     anticip_turns = TurnEpochTracker()   # A2: debounce da vez (pisca da linha de botões)
     anticip_payload = {}            # (tkey, hkey, época) -> (result, adv) p/ pular advise_table
-    # Shadow Mode / Monitoring: compara bot x GTO em tempo real e avisa quando o
+    # Shadow Mode / Monitoring: compara Henrique x GTO em tempo real e avisa quando o
     # cérebro sai dos trilhos na sessão (grava logs/shadow/decisoes.jsonl).
     def _shadow_sink(rec):
         if rec['verdict'] == 'fora_dos_trilhos':
@@ -718,7 +801,7 @@ def main(argv=None):
                     # E o controle permitir agora. PAUSADO/DESABILITADO -> dry-run, mesmo
                     # com --arm (o fechamento é input e respeita a pausa como o clique).
                     # PRINT do RESULTADO (banner) antes de fechar — registro + fonte p/ o
-                    # bot ler posição/prêmio sozinho. (Ao clicar p/ fechar, a premiação
+                    # Henrique ler posição/prêmio sozinho. (Ao clicar p/ fechar, a premiação
                     # aparece em seguida; o print do banner + calibração guiam a captura.)
                     _ftp = isinstance((tour_track.get(tk) or {}).get('min_left'), int) and tour_track[tk]['min_left'] <= 9
                     _save_table_print(frame, ('FT_' if _ftp else 'fim_') + str(te.get('ranking') or 'torneio').replace('/', '-'))
@@ -823,7 +906,8 @@ def main(argv=None):
                         with latency.span('percepcao_cerebro'):
                             result = advise_table(crop, advisor, stabilizer=stabilizer,
                                                   table_key=tkey, hero_override=override,
-                                                  tracker=aggr_tracker, bounty_bb=_auto_bounty(args.bounty_bb),
+                                                  tracker=aggr_tracker,
+                                                  bounty_bb=_auto_bounty(args.bounty_bb, args.starting_stack, args.head_fraction),
                                                   mode=args.mode, stage=args.stage, enable_hud=args.hud,
                                                   read_cache=read_cache, field_memory=field_memory,
                                                   board_memory=board_memory,
@@ -880,7 +964,8 @@ def main(argv=None):
                                            match_room=(result.get('tournament') or {}).get('name')
                                            if isinstance(result.get('tournament'), dict) else None,
                                            n_crops=len(crops),
-                                           crop_seats=(result.get('table_state') or {}).get('seats'))
+                                           crop_seats=(result.get('table_state') or {}).get('seats'),
+                                           pos=tkey_local, cycle=n, use_sticky=args.sticky_bind)
                     if _pb is not None:
                         _pbr = _pb.get('recommended') if _pb.get('status') == 'ADVICE' \
                             else 'ABSTAIN:%s' % _pb.get('reason')
@@ -962,7 +1047,7 @@ def main(argv=None):
                         adv.get('required_equity_icm') or adv.get('required_equity'),
                         adv.get('status'), adv.get('recommended') or adv.get('reason') or ''), flush=True)
                 # COBERTURA (Eduardo 18/11, LEI): tabelas/RangeLab/solver sao REFERENCIA,
-                # nao regra. O bot pega o bucket MAIS PROXIMO por EV (bucket_stack ja faz:
+                # nao regra. O Henrique pega o bucket MAIS PROXIMO por EV (bucket_stack ja faz:
                 # 95->100, 50->50, 4->5, 2000->100) e JOGA a decisao da range — em QUALQUER
                 # profundidade. NAO existe trava "no nao-validado/deep -> fold". A antiga
                 # GUARDA DEEP foldava decisoes certas, CEGA pra carta (AK 3bet deep virava
@@ -1006,7 +1091,7 @@ def main(argv=None):
                     if not args.arm:
                         print('[%03d] POS-FLOP BET (dry): bucket=%s' % (n, _bk), flush=True)
                     elif not control.execution_allowed():
-                        print('[%03d] POS-FLOP BET mas BOT PAUSADO' % n, flush=True)
+                        print('[%03d] POS-FLOP BET mas HENRIQUE PAUSADO' % n, flush=True)
                     else:
                         import postflop_bet_executor as _pfbe
                         res = _pfbe.execute_postflop_bet(
@@ -1038,7 +1123,7 @@ def main(argv=None):
                         print('[%03d] vez do hero: RAISE alvo %.2fx (preset %s) | DRY-RUN: sequencia so executa armada'
                               % (n, tmult, (pr and pr['label']) or '?'), flush=True)
                     elif not control.execution_allowed():
-                        print('[%03d] RAISE mas BOT PAUSADO' % n, flush=True)
+                        print('[%03d] RAISE mas HENRIQUE PAUSADO' % n, flush=True)
                     else:
                         # COBERTURA (Eduardo 18/11): referencia manda. RAISE de nó deep/
                         # não-validado EXECUTA (não é "só estuda"). A range é a autoridade

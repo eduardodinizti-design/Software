@@ -15,11 +15,12 @@ def main():
         print("[erro] rode make_train_data.py antes:", DATA); return 1
     gpu = torch.cuda.is_available()
     print("[train] CUDA=%s device=%s" % (gpu, torch.cuda.get_device_name(0) if gpu else "CPU"))
+    # converge em ~6-8 epocas; imgsz 768 cobre as capturas reais (~920px) e acelera ~2-3x.
     if gpu:
-        model, kw = YOLO("yolov8s.pt"), dict(epochs=100, imgsz=960, batch=16, device=0)
+        model, kw = YOLO("yolov8s.pt"), dict(epochs=40, imgsz=768, batch=24, device=0)
     else:
         model, kw = YOLO("yolov8n.pt"), dict(epochs=45, imgsz=768, batch=8, device="cpu")
-    model.train(data=DATA, patience=20, project=os.path.join(HERE, "runs"),
+    model.train(data=DATA, patience=15, project=os.path.join(HERE, "runs"),
                 name="cards", exist_ok=True, verbose=True, plots=True, **kw)
     print("[train] fim. melhor peso em runs/cards/weights/best.pt")
     return 0

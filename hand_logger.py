@@ -3,7 +3,7 @@ a fundação do tracker/histórico (estudo de linhas + DB de adversários + fiel
 
 Snapshot-based: por mão (fronteira = `hand_id` do nameplate do torneio), guarda o
 CONTEXTO (torneio, herói+cartas+posição+stack, ADVERSÁRIOS por id/nick, board, pote)
-e o RASTRO de recomendação do cérebro (o que o bot decidiu no spot). A sequência
+e o RASTRO de recomendação do cérebro (o que o Henrique decidiu no spot). A sequência
 EXATA de ações (quem apostou/subiu quando) é fase 2; o que já temos aqui alimenta o
 DB de adversários e o estudo de linhas (spot+decisão) — análise em hand_db.py.
 

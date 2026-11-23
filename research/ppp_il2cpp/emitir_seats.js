@@ -93,7 +93,7 @@ function main(){
     return best; }
 
   // --- BOARD (RoundStartBRC.board_) + carry do POTE: ADITIVO, nunca quebra assentos ---
-  let _board=[], _stage=0, _potCarried=0, _lastBetSum=0, _curGame='';
+  let _board=[], _stage=0, _potCarried=0, _lastBetSum=0, _curGame='', _dumpedHM=false;
   function fieldsOf(obj){ try{ const k=il.object_get_class(obj); const it=Memory.alloc(PS); it.writePointer(ptr(0));
     const m=[]; let f; while(!(f=il.class_get_fields(k,it)).isNull()){ m.push([cstr(il.field_get_name(f)), il.field_get_offset(f)]); } return m; }catch(e){ return []; } }
   function offByName(obj,name){ for(const fo of fieldsOf(obj)){ if(fo[0]===name) return fo[1]; } return -1; }
@@ -116,10 +116,21 @@ function main(){
     if(!players.length)return;
     // POS-FLOP por MEMORIA (Eduardo 19/11): to_call EXATO (derivado dos betChips ja lidos)
     // + pote (derivado: carry entre ruas + bets da rua) + board (RoundStartBRC cacheado).
-    let maxbet=0, betsum=0, herobet=0;
+    let maxbet=0, betsum=0, herobet=0, heroSeat=null;
     players.forEach(p=>{ const bb=(typeof p.bet==='number'?p.bet:0); if(bb>maxbet)maxbet=bb; betsum+=bb;
-      if(p.hascard && (p.cards||[]).filter(function(x){var r=x&0xff;return r>=2&&r<=14;}).length>=2) herobet=bb; });
+      if(p.hascard && (p.cards||[]).filter(function(x){var r=x&0xff;return r>=2&&r<=14;}).length>=2){ herobet=bb; heroSeat=p.seat; } });
     _lastBetSum=betsum;
+    // VEZ do heroi (ADITIVO, anti-crossing): assento que DEVE agir == assento do hero?
+    // O nome exato do campo no HoldemManager varia; tenta candidatos (geti=null se nao existe,
+    // seguro) e o debug unico abaixo revela o nome real ao vivo p/ afinar a lista.
+    if(!_dumpedHM){ _dumpedHM=true; try{ const o=offs(hm);
+      const cand=Object.keys(o).filter(function(k){return /seat|act|op|turn|cur|now/i.test(k);});
+      console.log('[emit] HM campos(seat/act/op/turn/cur/now): '+cand.join(',')); }catch(e){} }
+    let actSeat=null;
+    ['_nowActionSeat','_nowOperateSeat','_curActionSeat','_nowActSeat','_operateSeat','_curOpSeat',
+     '_actionSeat','_activeSeat','_nowOpSeat','_curOperateSeat','_nowTurnSeat'].forEach(function(nm){
+       if(actSeat===null){ const v=geti(hm,nm); if(v!==null && v>=0) actSeat=v; } });
+    const heroTurn=(actSeat!==null && heroSeat!==null && actSeat===heroSeat);
     if(gameid && gameid!==_curGame){ _curGame=gameid; _potCarried=0; _board=[]; _stage=0; }  // nova mao
     const tocall=Math.max(0, maxbet-herobet);
     const pot=_potCarried+betsum;
@@ -127,7 +138,8 @@ function main(){
     const table={dealer:geti(hm,'_nowDealerSeat'), sbseat:geti(hm,'_nowSmallBlindSeat'),
                  bbseat:geti(hm,'_nowBigBlindSeat'), sb:geti(hm,'_smallBlind'),
                  minraise:geti(hm,'_myMinBetRaiseChips'), maxraise:geti(hm,'_myMaxBetRaiseChips'),
-                 board:_board.slice(), stage:_stage, tocall:tocall, pot:pot};
+                 board:_board.slice(), stage:_stage, tocall:tocall, pot:pot,
+                 actseat:actSeat, heroseat:heroSeat, heroturn:heroTurn};
     send({t:'seats', ref:ref, room:(u16(getp(hm,'_roomName'))||''), table:table, players:players});
   }catch(e){ console.log('[emit] erro snap:', e); } }
 
@@ -136,6 +148,20 @@ function main(){
     const addr=mi.readPointer(); if(addr.isNull())return;
     Interceptor.attach(addr,{ onEnter(args){ try{ const m=args[1], self=args[0]; const cn=clsName(m);
       if(dbg<50){ dbg++; console.log('[dbg] '+cn); }
+      // MULTI-MESA: cartas do heroi por MESA (roomid) numa msg viva -> cacheia sem varrer memoria.
+      // Estrutura (recon 22/11): items_@24 (lista de MultipleTableHoleCardItem{roomid_@28,
+      // cards_@32 (RepeatedField int), hadHandSqueeze_@40}). ref = roomid (mesmo da emissao seats).
+      if(cn==='MultipleTableHoleCardRSP'){ try{
+        const items=m.add(24).readPointer();
+        const icount=items.isNull()?0:items.add(24).readS32();
+        const iarr=items.isNull()?ptr(0):items.add(16).readPointer();
+        for(let i=0;i<icount&&i<16;i++){ const it=iarr.add(0x20+i*Process.pointerSize).readPointer();
+          if(it.isNull())continue; const roomid=it.add(28).readS32();
+          const crf=it.add(32).readPointer(); const cc=crf.isNull()?0:crf.add(24).readS32();
+          const ca=crf.isNull()?ptr(0):crf.add(16).readPointer(); const cards=[];
+          for(let j=0;j<cc&&j<4;j++){ try{ cards.push(ca.add(0x20+j*4).readS32()); }catch(e){} }
+          if(cards.length) send({t:'holecards', ref:(''+roomid), cards:cards}); }
+      }catch(e){ console.log('[emit] erro multihole:', e); } return; }
       // BOUNTY (aditivo e guardado): em msg MTT/premio, emite candidatos de bounty.
       try{ if(/mtt|bounty|reward|prize|premi/i.test(cn)){ const bo=scanBounty(m);
         if(bo){ const sb=(lastHM&&!lastHM.isNull())?geti(lastHM,'_smallBlind'):null;

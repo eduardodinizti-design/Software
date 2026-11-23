@@ -31,6 +31,20 @@ BASE_CAVEATS = ('EXPLORATORY_NOT_FOR_EXECUTION', 'POSTFLOP_HEURISTIC_NO_SOLVER',
 _STRONG = ('set', 'trips', 'two_pair', 'overpair', 'straight', 'flush',
            'full_house', 'quads', 'straight_flush')
 _MARGINAL = ('second_pair', 'third_pair', 'low_pair', 'underpair')
+# Ordem de ação PÓS-FLOP (quem age por ÚLTIMO = mais em posição): SB<BB<...<CO<BTN.
+_POS_RANK = {'SB': 0, 'BB': 1, 'UTG': 2, 'UTG1': 3, 'UTG2': 4, 'UTG+1': 3, 'UTG+2': 4,
+             'LJ': 5, 'MP': 5, 'MP1': 5, 'MP2': 6, 'HJ': 6, 'CO': 7, 'BTN': 8, 'BU': 8}
+
+
+def _hero_in_position(positions):
+    """True/False se o hero age por ÚLTIMO (IP) vs os vilões pós-flop; None se indeterminado."""
+    if not positions:
+        return None
+    hp = _POS_RANK.get(positions.get('hero'))
+    if hp is None:
+        return None
+    vr = [_POS_RANK[p] for k, p in positions.items() if k != 'hero' and p in _POS_RANK]
+    return (hp > max(vr)) if vr else None
 
 # Deságio aplicado ao decidir um CALL pela equity vs o range PRÉ-FLOP do vilão: o
 # range pré-flop é mais largo que o range que realmente aposta/continua pós-flop,
@@ -507,7 +521,7 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
                 caveats.append('SEMI_BLUFF_RAISE_AVAILABLE_EXPLORATORY')
             # Promove o semi-blefe a AÇÃO (check-raise) quando somos o DEFENSOR com vantagem
             # de nuts (Pós-flop Avançado) e o draw é FORTE (combo/nut-FD/OESD) vs aposta não
-            # gigante. É a metade de blefe do check-raise do BB — antes o bot só pagava.
+            # gigante. É a metade de blefe do check-raise do BB — antes o Henrique só pagava.
             if (_nuts_hero_def and (draws.get('combo') or draws.get('nut_flush_draw') or draws.get('oesd'))
                     and pot_odds <= _BIG_BET_POT_ODDS and cap):
                 info.update(recommended='raise',
@@ -573,6 +587,17 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
             info['geometric'] = dict(pct=geo_pct,
                                      street_plan=geometric_street_plan(spr, street, pot, hero_stack))
     _hia = True if aggressor == 'hero' else (None if aggressor is None else False)
+    _hero_ip = _hero_in_position(table_state.get('positions'))
+    # OOP p/ o GATE ANTI-DONK: hero age PRIMEIRO (fora de posição) = _hero_ip is False.
+    # Ao vivo (protobuf_state.build_table_state) o mapa `positions` SEMPRE traz os vilões,
+    # então _hero_ip é True/False confiável e o donk OOP é pego. Indeterminado (_hero_ip
+    # None: sem vilão no mapa — só stubs de teste, nunca um frame vivo) NÃO dispara, p/ não
+    # mexer no tier de lead quando a posição relativa é desconhecida.
+    _hero_oop = (_hero_ip is False)
+    _vill_pos = None                                  # posição do ÚNICO vilão (HU), p/ regra vs SB
+    if n_opp == 1:
+        _vps = [p for k, p in (table_state.get('positions') or {}).items() if k != 'hero']
+        _vill_pos = _vps[0] if len(_vps) == 1 else None
     # Equity buckets (Pós-flop Avançado): classifica a força do hero por equidade quando há
     # range (90-100 nuts / 80-90 strong / 70-80 value / 60-70 medium / <60 weak). Metadado
     # p/ auditoria E refino: mão de bucket forte NÃO vira check no board polar (abaixo).
@@ -595,6 +620,41 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
             caveats = caveats + ['CBET_VS_BB_FREQ_%d' % round(_cbet_freq['freq'] * 100)]
     if _cbet_cat:
         caveats = caveats + ['CBET_VS_BB_PERIGO_%s' % _cbet_cat.upper()]
+    # C-bet FORA DE POSIÇÃO (guia pós-flop: o PFR OOP checa ~71% — NÃO range-beta). Só VALOR
+    # forte (_STRONG) e DRAW forte c-betam OOP; ar/marginal/top-pair dão CHECK (controle de pote,
+    # realiza equidade). Mata o leak de c-bet OOP (a lógica de range-bet 1/3, pensada p/ IP vs BB,
+    # vazava p/ OOP). Só quando o hero TEM a iniciativa e está COMPROVADAMENTE OOP.
+    if _hia is True and _hero_ip is False and not strong and not has_strong_draw:
+        info.update(recommended='check',
+                    sizing=dict(size_bb=0.0, heuristic=False,
+                                basis='check OOP: PFR fora de posição só c-beta valor/draw forte (guia)'),
+                    caveats=caveats + ['CBET_OOP_CHECK_MARGINAL'])
+        return info
+    # C-bet vs SB (guia pós-flop): o SB que COLD-CALLOU tem range mais forte/capado e NÃO
+    # over-folda como o BB -> SEM auto-profit de stab. Só VALOR (top pair+ / _STRONG) e draw
+    # forte apostam; ar/overcards/par baixo/2º par dão CHECK (vão a showdown; o SB não folda
+    # melhor). HU, hero com iniciativa. (top_pair NÃO entra no check -> segue apostando p/ valor.)
+    if (_hia is True and n_opp == 1 and _vill_pos == 'SB' and not has_strong_draw
+            and (made in _MARGINAL or made in ('air', 'overcards'))):
+        info.update(recommended='check',
+                    sizing=dict(size_bb=0.0, heuristic=False,
+                                basis='check vs SB: SB nao over-folda; ar/marginal vai a showdown (guia)'),
+                    caveats=caveats + ['CBET_VS_SB_CHECK_MARGINAL'])
+        return info
+    # RIVER da linha BET-CHECK-BET (guia): hero c-betou o flop e CHECOU o turn -> range capado-médio;
+    # no RIVER value-beta FINO (qualquer par+ com showdown: 2º par/top pair/overpair/dois pares+/
+    # flush/sequência) -> bet pequeno (o check no turn capou o range, valor fino lucra). Par baixo/
+    # A-high/ar vão a showdown (caem no check abaixo). Gated no sinal villain_line='checked_turn'
+    # (NÃO afeta o triple-barrel, que não seta esse sinal). Preempta o check de river (perdeu valor).
+    _bcb_value = ('second_pair', 'top_pair', 'overpair', 'two_pair', 'set', 'trips',
+                  'straight', 'flush', 'full_house', 'quads', 'straight_flush')
+    if (_hia is True and street == 'RIVER' and villain_line == 'checked_turn' and n_opp == 1
+            and made in _bcb_value and pot_type in (None, 'single_raised', 'unknown')):
+        info.update(recommended='bet',
+                    sizing=_size(pot, postflop_texture.SMALL, cap,
+                                 'valor fino river (bet-check-bet): check no turn capou o range'),
+                    caveats=caveats + ['BET_CHECK_BET_RIVER_THIN_VALUE'])
+        return info
     # RESOLUÇÃO da tensão de size (aula prática 'c-bet vs BB'): no spot PFR IP vs BB em pote
     # de raise simples HU, c-beta o range INTEIRO com size 1/3 em QUASE TODOS os flops
     # (aposta 1 no pote de 3 só precisa passar >25% -> auto-profit; o BB over-folda). EXCEÇÃO:
@@ -632,6 +692,22 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
                                 basis='check: river completou draws, mão perdeu valor relativo (polariza)',
                                 heuristic=False),
                     caveats=caveats + ['RIVER_CHECK_PERDEU_VALOR_RELATIVO'])
+        return info
+    # GATE ANTI-DONK (LEI Eduardo — NÃO temos estratégia de DONK BET): o hero que PAGOU o
+    # pré-flop (DEFENSOR), FORA DE POSIÇÃO e PRIMEIRO a agir no FLOP, CHECA — jamais lidera
+    # apostando (donk). Só lidera no flop com INICIATIVA conhecida (_hia is True = c-bet,
+    # tratada nos ramos acima) OU com sinal de probe/delayed (ruas posteriores). Ao vivo na
+    # Suprema o agressor chega None (_hia None) -> sem este gate a mão feita (strong/top_pair/
+    # draw) apostava assim mesmo = o DONK do Q9. Mata o donk mesmo com agressor desconhecido.
+    # Só FLOP, só OOP (_hero_oop), só com a vez passada (to_call==0, esta seção toda é lead);
+    # NÃO afeta c-bet (hero=agressor), probe/delayed (villain_line), turn/river nem enfrentar
+    # aposta (to_call>0, tratado acima).
+    if (street == 'FLOP' and to_call == 0 and _hia is not True and _hero_oop
+            and villain_line not in ('delayed', 'checked_back')):
+        info.update(recommended='check',
+                    sizing=dict(size_bb=0.0, heuristic=False,
+                                basis='check: defensor OOP primeiro a agir nao lidera (sem donk bet)'),
+                    caveats=caveats + ['NO_DONK_CHECK_AS_DEFENDER'])
         return info
     if strong:
         frac, _plan = _bet_fraction(bclass, made, draws, hero_is_aggressor=_hia, spr=spr)
@@ -685,6 +761,31 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
                                      % ('' if n_opp == 1 else ' multiway')),
                         caveats=_cv)
             return info
+    # DELAYED C-BET no TURN (guia): hero=PFR deu CHECK no flop e o vilão deu CHECK-CHECK -> range
+    # capado/fraco; o check no flop disfarçou a mão. Aposta WIDE (c-bet de range, atrasada): par
+    # baixo/2º par/A-high/K-high/ar que o barril checaria agora APOSTAM 1/3 (valor forte e draw forte
+    # já apostam nos ramos próprios). Gated no sinal villain_line='delayed'. HU single-raised.
+    if (_hia is True and street == 'TURN' and villain_line == 'delayed' and _cbet_cat is None
+            and not has_strong_draw and n_opp == 1
+            and pot_type in (None, 'single_raised', 'unknown')):
+        info.update(recommended='bet',
+                    sizing=_size(pot, postflop_texture.SMALL, cap,
+                                 'delayed c-bet wide: vilao deu check-check (capado/fraco)'),
+                    caveats=caveats + ['DELAYED_CBET_WIDE'])
+        return info
+    # PROBE no TURN (guia §probe): flop foi CHECK-CHECK; o PFR desistiu da iniciativa (range capado/
+    # fraco) e o hero (caller) LIDERA o turn apostando WIDE no range capado — par baixo/2º par/top
+    # pair/A-high/K-high apostam 1/3; valor forte e draw forte já apostam nos ramos próprios. SÓ o AR
+    # PURO (sem par, sem draw, sem overcards) dá check (o guia quase não blefa ar sem outs). Gated no
+    # sinal villain_line='checked_back'. HU single-raised.
+    if (street == 'TURN' and villain_line == 'checked_back' and _cbet_cat is None
+            and not has_strong_draw and not strong and made != 'air' and n_opp == 1
+            and pot_type in (None, 'single_raised', 'unknown')):
+        info.update(recommended='bet',
+                    sizing=_size(pot, postflop_texture.SMALL, cap,
+                                 'probe: PFR deu check back (capado), hero lidera wide'),
+                    caveats=caveats + ['PROBE_WIDE'])
+        return info
     # PROMOÇÃO do barril de turn (a carta DIRIGE a decisão — barril vs BB, Reg-Life): em
     # TURN que FAVORECE O CALLER (completa flush/sequência), as mãos NÃO-valor (que chegaram
     # até aqui; as fortes já apostaram) perdem valor de barril — o range do BB que pagou o

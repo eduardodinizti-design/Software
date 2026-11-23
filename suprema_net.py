@@ -119,63 +119,90 @@ send({ready: true});
 """
 
 
-def run_live(bb_chips, on_state=None, seconds=0, process='SupremaPoker.exe'):
+def run_live(bb_chips, on_state=None, seconds=0, process='SupremaPoker.exe', on_message=None, lock=True):
     """Anexa no cliente, hooka SSL_read e mantém um SupremaTable vivo. A cada evento de jogo,
-    chama `on_state(table)` (se dado) — ex.: rodar advise_from_suprema em DRY-RUN. READ-ONLY.
-    Requer o cliente aberto; a extração de JSON é a mesma testada offline."""
+    chama `on_state(table)` (se dado) — ex.: rodar advise_from_suprema em DRY-RUN — e também
+    `on_message(msg)` com a MENSAGEM CRUA (dict event/data) p/ quem reconstrói mão a mão
+    (SupremaHandBuilder -> banco). READ-ONLY. Requer o cliente aberto; a extração de JSON é a
+    mesma testada offline."""
     import time
     import frida
     from suprema_state import SupremaTable
 
+    # BLINDAGEM (Eduardo 21/11): só UM hook Frida por cliente. Recusa o 2º attach pra
+    # evitar injeção dupla (suspeito nº1 de crash em clientes 32-bit V8/Cocos frágeis).
+    _lock = None
+    if lock:
+        from client_lock import ClientLock, ClientBusy
+        _lock = ClientLock(process)
+        try:
+            _lock.acquire()
+        except ClientBusy as e:
+            raise RuntimeError(
+                "RECUSADO: %s. Já existe um hook Frida ativo nesse cliente; um 2º attach "
+                "injetaria por cima (injeção dupla = risco de crash). Feche o outro antes, "
+                "ou passe lock=False se tiver CERTEZA do que faz." % e) from None
+
     ex = JsonFrameExtractor()
     table = SupremaTable(bb_chips=bb_chips)
-    dev = frida.get_local_device()
-    procs = [p for p in dev.enumerate_processes() if p.name.lower() == process.lower()]
-    if not procs:
-        raise RuntimeError('%s não está aberto' % process)
-    # Escolhe o PROCESSO DO JOGO (maior RSS) — evita o helper/launcher (procs[0] podia ser
-    # o processo de 18MB, cujo attach dava TransportError timeout). Tenta o próximo se falhar.
-    try:
-        import psutil
-        procs.sort(key=lambda p: psutil.Process(p.pid).memory_info().rss, reverse=True)
-    except Exception:
-        pass
     session = None
-    last_err = None
-    for p in procs:
-        try:
-            session = dev.attach(p.pid)
-            break
-        except Exception as e:
-            last_err = e
-    if session is None:
-        raise RuntimeError('não consegui anexar em %s: %s' % (process, last_err))
-    script = session.create_script(_AGENT)
-
-    def _on(m, data):
-        if m.get('type') != 'send':
-            return
-        p = m.get('payload') or {}
-        if not p.get('ssl') or not data:
-            return
-        for msg in ex.feed(bytes(data).decode('latin-1', 'replace')):
-            if is_game_event(msg):
-                table.feed_json(msg)
-                if on_state:
-                    try:
-                        on_state(table)
-                    except Exception:
-                        pass
-
-    script.on('message', _on)
-    script.load()
-    t0 = time.time()
+    script = None
     try:
+        dev = frida.get_local_device()
+        procs = [p for p in dev.enumerate_processes() if p.name.lower() == process.lower()]
+        if not procs:
+            raise RuntimeError('%s não está aberto' % process)
+        # Escolhe o PROCESSO DO JOGO (maior RSS) — evita o helper/launcher (procs[0] podia
+        # ser o processo de 18MB, cujo attach dava TransportError timeout). Tenta o próximo.
+        try:
+            import psutil
+            procs.sort(key=lambda p: psutil.Process(p.pid).memory_info().rss, reverse=True)
+        except Exception:
+            pass
+        last_err = None
+        for p in procs:
+            try:
+                session = dev.attach(p.pid)
+                break
+            except Exception as e:
+                last_err = e
+        if session is None:
+            raise RuntimeError('não consegui anexar em %s: %s' % (process, last_err))
+        script = session.create_script(_AGENT)
+
+        def _on(m, data):
+            if m.get('type') != 'send':
+                return
+            p = m.get('payload') or {}
+            if not p.get('ssl') or not data:
+                return
+            for msg in ex.feed(bytes(data).decode('latin-1', 'replace')):
+                if is_game_event(msg):
+                    table.feed_json(msg)
+                    if on_message:
+                        try:
+                            on_message(msg)
+                        except Exception:
+                            pass
+                    if on_state:
+                        try:
+                            on_state(table)
+                        except Exception:
+                            pass
+
+        script.on('message', _on)
+        script.load()
+        t0 = time.time()
         while seconds == 0 or (time.time() - t0) < seconds:
             time.sleep(0.3)
     finally:
-        try: script.unload()
-        except Exception: pass
-        try: session.detach()
-        except Exception: pass
+        # unload ANTES do detach: reverte os hooks com a conexão viva -> sem crash.
+        if script is not None:
+            try: script.unload()
+            except Exception: pass
+        if session is not None:
+            try: session.detach()
+            except Exception: pass
+        if _lock is not None:
+            _lock.release()
     return table

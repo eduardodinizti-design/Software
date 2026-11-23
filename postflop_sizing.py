@@ -1,6 +1,6 @@
 """Sizing de APOSTA pós-flop no vocabulário do NOSSO slider (Eduardo 19/11).
 
-O bot só clica 1/3, 1/2, 2/3 e all-in no pós-flop ([[nvt-posflop-sizes-nosso-slider]]).
+O Henrique só clica 1/3, 1/2, 2/3 e all-in no pós-flop ([[nvt-posflop-sizes-nosso-slider]]).
 Este módulo é o passo FINAL que, para toda recomendação de `bet` pós-flop (venha da
 heurística ou dirigida pelo solver), encaixa o size num desses buckets — traduzindo a
 fração do pote pelo valor real — e grava `bucket`/`size_bb`. Idempotente.

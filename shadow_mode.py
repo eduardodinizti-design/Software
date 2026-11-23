@@ -1,4 +1,4 @@
-"""Shadow Mode / Monitoring — compara, em tempo real, a DECISÃO do bot com o range
+"""Shadow Mode / Monitoring — compara, em tempo real, a DECISÃO do Henrique com o range
 ideal do solver (GTO) e sinaliza quando o 'Cérebro' sai dos trilhos na sessão.
 
 Para cada decisão na vez do hero, registra um DecisionRecord (spot, nó, sugestão
@@ -29,7 +29,7 @@ _NONCOMMIT = ('fold', 'check')
 
 
 def classify_decision(rec):
-    """Veredito da disparidade bot×GTO (ver módulo). Usa gto_recommended (sugestão
+    """Veredito da disparidade Henrique×GTO (ver módulo). Usa gto_recommended (sugestão
     do nó), bot_action (executada), validated e authority."""
     gto = (rec.get('gto_recommended') or '').lower() or None
     act = (rec.get('bot_action') or '').lower() or None

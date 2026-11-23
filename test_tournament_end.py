@@ -60,7 +60,7 @@ class TournamentEndTests(unittest.TestCase):
     def test_live_preaction_row_is_not_tournament_end(self):
         # REGRESSÃO (incidente 15/11, pixel REAL): mesa VIVA com a linha de pré-ação
         # verde [F/C | Call X | Pagar] + feltro azul no topo era FALSO POSITIVO ->
-        # o detector clicava sair_box = botão da direita = PAGAR (o bot "pagava"
+        # o detector clicava sair_box = botão da direita = PAGAR (o Henrique "pagava"
         # sozinho). Agora o detector lê o rótulo: "Pagar" != "Sair" -> NÃO é fim.
         live = os.path.join('tests', 'fixtures', 'tournament_end', 'live_preaction_pagar.png')
         if not os.path.exists(live):

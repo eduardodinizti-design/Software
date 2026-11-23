@@ -1,4 +1,4 @@
-"""Shadow Mode / Monitoring — classificação bot×GTO, saúde da sessão, parser."""
+"""Shadow Mode / Monitoring — classificação Henrique×GTO, saúde da sessão, parser."""
 import os
 import tempfile
 import unittest

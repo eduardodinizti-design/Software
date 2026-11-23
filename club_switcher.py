@@ -81,7 +81,7 @@ class ClubSwitcher:
 
         if self._control is not None and not self._control.execution_allowed():
             return self._result(target=target, from_club=current, action='GATE_FECHADO',
-                                 reason='bot não está RUNNING (gate fechado) — não executa')
+                                 reason='Henrique não está RUNNING (gate fechado) — não executa')
 
         # Executa com verificação pós-troca e re-tentativa limitada.
         last = current

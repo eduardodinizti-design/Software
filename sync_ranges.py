@@ -1,4 +1,4 @@
-"""Sync da fonte de ranges (repo range-coach-pro) -> pack de estudo do bot.
+"""Sync da fonte de ranges (repo range-coach-pro) -> pack de estudo do Henrique.
 
 Fluxo: (opcional git pull) -> varre `public/solver/hrc/*.json` -> diff por
 sha256 contra o lockfile -> reconstrói o pack de estudo (hrc_ingest) ->

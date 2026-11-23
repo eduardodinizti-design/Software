@@ -1,7 +1,7 @@
 # vision_yolo — percepção por VISÃO (YOLO)
 
 Decisão estratégica 20/11 (memória `nvt-visao-yolo-decisao`): a percepção **padrão**
-do bot passa a ser **visão (YOLO)** em vez de injeção Frida. Motivo: o Frida é a
+do Henrique passa a ser **visão (YOLO)** em vez de injeção Frida. Motivo: o Frida é a
 fonte da fragilidade — crasha o PPPoker (IL2CPP invasivo, fail-fast `0xc0000409`),
 travou a Suprema, e precisa de RE por site. Visão lê a tela **de fora**: não injeta,
 não crasha, e **um só modelo serve todos os sites** (PPPoker/Suprema/X-Poker).

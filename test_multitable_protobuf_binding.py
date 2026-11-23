@@ -75,13 +75,41 @@ def test_multitable_casa_a_mesa_certa(tmp_path, monkeypatch):
     assert out is not None and out["sel_hero"] == HERO_B
 
 
-def test_multitable_sem_cartas_casa_por_sala(tmp_path, monkeypatch):
-    """Cartas do crop desconhecidas (OCR falhou) -> casa pela SALA."""
+def test_multitable_so_sala_abstem(tmp_path, monkeypatch):
+    """GUARDA: em MULTI-MESA (n_crops=2) a SALA NÃO é identidade única por mesa; sem carta
+    do hero nem nameplate, DEVE abster (None) -> OCR reserva. Antes do fix casava por sala
+    e podia cruzar. (Ver [[nvt-multitable-tiled-bug]].)"""
     _patch_sel(monkeypatch)
     data = {"A": _table("BINGO", CARDS_A), "B": _table("SMALL PKO", CARDS_B)}
     path = _write(tmp_path, data)
     out = om._protobuf_advice(object(), "chip_ev", "mid", estado_path=path,
                               match_hero=[], match_room="SMALL PKO", n_crops=2)
+    assert out is None
+
+
+def test_multitable_sala_colidente_nao_cruza(tmp_path, monkeypatch):
+    """CRUZAMENTO RESIDUAL (falha antes do fix, passa depois): 2 mesas do MESMO torneio
+    ('SMALL PKO'), mas só a ATIVA (B/Js8h... aqui CARDS_B) está FRESCA. O crop atual é a
+    outra mesa, cartas do hero ilegíveis por OCR (match_hero=[]), 2 mesas na tela.
+    Casar por SALA ligaria o crop à única fresca -> jogaria a mão da mesa ERRADA. O fix
+    exige sinal ÚNICO por mesa em multi-mesa -> None (OCR reserva), nunca cruza."""
+    _patch_sel(monkeypatch)
+    data = {"ATIVA": _table("SMALL PKO", CARDS_B, fresh=True),
+            "OUTRA": _table("SMALL PKO", CARDS_A, fresh=False)}  # mesma sala, outra morta
+    path = _write(tmp_path, data)
+    out = om._protobuf_advice(object(), "chip_ev", "mid", estado_path=path,
+                              match_hero=[], match_room="SMALL PKO", n_crops=2)
+    assert out is None
+
+
+def test_singletable_casa_por_sala_ainda_vale(tmp_path, monkeypatch):
+    """Single-table (n_crops=1) com 2 frescas: a SALA ainda desambigua (há 1 mesa só na
+    tela) -> casa a mesa certa. A guarda só corta a sala em MULTI-mesa."""
+    _patch_sel(monkeypatch)
+    data = {"A": _table("BINGO", CARDS_A), "B": _table("SMALL PKO", CARDS_B)}
+    path = _write(tmp_path, data)
+    out = om._protobuf_advice(object(), "chip_ev", "mid", estado_path=path,
+                              match_hero=[], match_room="SMALL PKO", n_crops=1)
     assert out is not None and out["sel_hero"] == HERO_B
 
 

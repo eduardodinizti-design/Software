@@ -2,7 +2,7 @@
 
 Captura (ou carrega) o lobby do PPPoker, lê os cartões com `grade_reader`,
 aplica o seletor de política (F1) e, para um alvo autorizado, percorre o fluxo
-de inscrição até AGUARDANDO CONFIRMAÇÃO — e PARA. O bot não clica: a confirmação
+de inscrição até AGUARDANDO CONFIRMAÇÃO — e PARA. O Henrique não clica: a confirmação
 no cliente é sua.
 
 Uso:
@@ -91,7 +91,7 @@ def main(argv=None):
     ledger = RegistrationLedger(args.db)
 
     print('=' * 70)
-    print('PLUG NO LOBBY — MODO OBSERVACAO (o bot NAO clica) | fonte:', meta.get('source', 'hwnd'))
+    print('PLUG NO LOBBY — MODO OBSERVACAO (o Henrique NAO clica) | fonte:', meta.get('source', 'hwnd'))
     print('=' * 70)
     if not lob['ok']:
         print('Sem lobby:', lob['reason'])

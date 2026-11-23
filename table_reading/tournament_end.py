@@ -83,7 +83,7 @@ def detect_tournament_end(crop):
     # tem a linha de PRÉ-AÇÃO verde [F/C | Call X | Pagar]. O par geométrico acima
     # casa F/C(esq) e Pagar(dir) como "Ficar/Sair", e o FELTRO azul da mesa passa
     # como "banner". Resultado: FALSO POSITIVO -> clicava sair_box = o botão da
-    # DIREITA = PAGAR. Por isso o bot "pagava" sozinho. A única prova confiável de
+    # DIREITA = PAGAR. Por isso o Henrique "pagava" sozinho. A única prova confiável de
     # que é a tela de fim é o RÓTULO: o botão de sair LÊ "Sair" e o de ficar "Ficar".
     # Sem isso (ou se LÊ Pagar/Call/F/C/Check) NÃO é fim de torneio -> NÃO clica nada.
     def _btn_text(b):

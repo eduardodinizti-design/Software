@@ -172,7 +172,7 @@ def ensure_club_via_search(target, *, engine, hwnd, adapter, keyboard, control, 
                            % (pt, target))
 
     if control is not None and not control.execution_allowed():
-        return dict(ok=False, action='GATE_FECHADO', reason='bot não está RUNNING')
+        return dict(ok=False, action='GATE_FECHADO', reason='Henrique não está RUNNING')
     c1 = _gated_click_frame_point(adapter, control, discover_rect, hwnd, frame, pt)
     if not c1['ok']:
         return dict(ok=False, action='CLICK_PESQUISAR_FALHOU', reason=c1.get('reason'))

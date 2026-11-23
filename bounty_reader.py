@@ -1,5 +1,5 @@
-"""Leitura AUTOMÁTICA do bounty (PKO/KO) — o bot coleta o dado sozinho, sem o Eduardo
-informar na mão ([[nvt]] lei "os dado é o bot que tem que registrar").
+"""Leitura AUTOMÁTICA do bounty (PKO/KO) — o Henrique coleta o dado sozinho, sem o Eduardo
+informar na mão ([[nvt]] lei "os dado é o Henrique que tem que registrar").
 
 Consome `logs/mtt_bounty.json` (escrito pelo emissor via protobuf: campos de bounty da
 mensagem MTT, por nome) e devolve o bounty em BB p/ o call-off (`icm_rp.bounty_power`).
@@ -41,10 +41,13 @@ def _fresh(data, max_age_s, now):
     return (now - ts) <= max_age_s
 
 
-def read_bounty_bb(path=None, *, villain_uid=None, max_age_s=MAX_AGE_S, now=None):
-    """Bounty em BB p/ o spot (vilão específico quando dado), ou None se sem fonte fresca.
+def read_bounty_bb(path=None, *, villain_uid=None, max_age_s=MAX_AGE_S, now=None,
+                   starting_stack=None, head_fraction=0.5):
+    """Bounty BASE em BB (cabeça fresca) p/ o call-off escalar pelo bounty do vilão, ou None.
 
-    Converte fichas->BB por `bb_chips`. Precedência: `bounty_bb` calibrado > vilão > hero.
+    Precedência: `bounty_bb` calibrado > BRIDGE por estrutura (starting_stack + head_fraction:
+    moeda-prêmio -> fichas-stack via o stack inicial, CORRETO p/ PKO) > ratio chips/bb (fallback
+    legado, aproximado). O bridge resolve o bug de unidade (bounty é prêmio, não stack).
     """
     data = _load(path or DEFAULT_PATH)
     if not isinstance(data, dict):
@@ -55,8 +58,14 @@ def read_bounty_bb(path=None, *, villain_uid=None, max_age_s=MAX_AGE_S, now=None
     bb = data.get('bounty_bb')
     if isinstance(bb, (int, float)) and bb > 0:
         return round(float(bb), 3)
-    # 2/3) converter fichas -> BB precisa do big blind
     bb_chips = data.get('bb_chips')
+    # 1.5) BRIDGE por ESTRUTURA (preferido p/ PKO): cabeça fresca em BB via o stack inicial.
+    if starting_stack:
+        from bounty_model import base_bb_from_structure
+        base = base_bb_from_structure(starting_stack, bb_chips, head_fraction)
+        if base is not None:
+            return base
+    # 2/3) LEGADO: converter fichas -> BB precisa do big blind (ratio aproximado, unidade incerta)
     if not isinstance(bb_chips, (int, float)) or bb_chips <= 0:
         return None
     chips = None

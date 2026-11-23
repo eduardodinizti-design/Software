@@ -1,4 +1,4 @@
-"""Trava a leitura automática do bounty (PKO). O bot coleta o dado sozinho; conversão
+"""Trava a leitura automática do bounty (PKO). O Henrique coleta o dado sozinho; conversão
 fichas->BB, precedência (calibrado>vilão>hero/médio) e guarda de frescor."""
 import json
 import os

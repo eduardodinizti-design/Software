@@ -1,6 +1,6 @@
 """PONTE field->decisao AO VIVO: transforma nossa DB de exploit (exploit_db.json,
 ~389k maos, CHAVEADA POR ID numerico) no formato que o advisor ja consome em
-`state['hud']` — para o bot explorar usando NOSSA base, instantaneo, em vez do
+`state['hud']` — para o Henrique explorar usando NOSSA base, instantaneo, em vez do
 HUD lido na tela.
 
 O advisor (table_advisor) exploita assim: `state['hud'] = {seat: entry}` onde

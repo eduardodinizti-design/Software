@@ -136,7 +136,7 @@ class AutoApp:
         root.bind('<Escape>', lambda e: setattr(self, 'abort', True))
         frame = tk.Frame(root, bg='#101418')
         frame.pack(fill='both', expand=True)
-        tk.Label(frame, text='AUTO: o bot vai mover e clicar nos botoes. ESC aborta.',
+        tk.Label(frame, text='AUTO: o Henrique vai mover e clicar nos botoes. ESC aborta.',
                  bg='#101418', fg='#9fb3c8', font=('Segoe UI', 12)).pack(pady=8)
         grid = tk.Frame(frame, bg='#101418')
         grid.pack(expand=True)
@@ -214,7 +214,7 @@ def main(argv=None):
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--measure', action='store_true',
                     help='Modo medicao do usuario (default se --auto ausente)')
-    ap.add_argument('--auto', action='store_true', help='Bot move+clica (experimental)')
+    ap.add_argument('--auto', action='store_true', help='Henrique move+clica (experimental)')
     ap.add_argument('--trials', type=int, default=12, help='Nº de alvos (measure)')
     ap.add_argument('--size', default='1100x740', help='Tamanho da janela')
     ap.add_argument('--check', action='store_true', help='So checa tkinter e sai')
