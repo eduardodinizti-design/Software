@@ -886,7 +886,8 @@ class PreflopAdvisor:
                     return r2
         return result
 
-    def _iso_worthy(self, hand, bucket, *, mode='chip_ev', stage='mid', players=9, position='UTG'):
+    def _iso_worthy(self, hand, bucket, *, mode='chip_ev', stage='mid', players=9, position='UTG',
+                    strict=False):
         """Mão vale um ISO sobre limper? Régua = o range de OPEN DA POSIÇÃO DO HERÓI
         (BTN/CO isola LARGO; EP isola apertado). Antes usava UTG fixo em toda posição,
         o que foldava iso ÓBVIO de posição tardia (44 no BTN, A4o no CO — bug relatado
@@ -894,13 +895,17 @@ class PreflopAdvisor:
         O range de blind-battle do SB (~91%) não serve de régua: com limper não é blind
         battle. Sem nó p/ a posição, cai no UTG; sem nada -> não bloqueia."""
         tf = 'pko' if mode in ('pko', 'pko_icm') else 'regular'
-        # SB/BB abrem em BLIND-BATTLE (~91%, largo demais p/ régua de iso) -> usa o
-        # range do BTN (sólido, não blind-battle) p/ esses; demais usam a própria.
-        ref = 'BTN' if position in ('SB', 'BB') else position
+        # SB/BB: a régua do ISO vs limpers usa a range de open do CO (sólida, mais APERTADA que o
+        # BTN). O BTN deixava TRASH isolar (K6o/Q8o) — Eduardo 23/11 pediu apertar. (P/ apertar mais:
+        # 'HJ'/'UTG'.) Demais posições usam a PRÓPRIA range de open.
+        ref = 'CO' if position in ('SB', 'BB') else position
         node = (self._index.get((mode, tf, stage, players, bucket, 'open_raise', ref, (), None))
                 or self._index.get((mode, tf, stage, players, bucket, 'open_raise', 'UTG', (), None)))
         if node is None or hand not in self.hands:
-            return True
+            # Sem nó p/ confirmar: o DEFAULT (não-estrito) é PERMISSIVO (True) — usado pelo CAP
+            # (raise->fold) p/ não foldar demais. Mas o UPGRADE passivo->iso usa strict=True: na
+            # DÚVIDA NÃO sobe trash pra raise (bug 23/11: BB pegava K6o/J2o "pra punir" limper).
+            return not strict
         i = self.hands.index(hand)
         if i in (node.get('outOfRange') or []):
             return False
@@ -1199,6 +1204,29 @@ class PreflopAdvisor:
                         result = self.advise_first_in(**base, **kwargs)
                 elif isinstance(result, dict):
                     result.setdefault('caveats', []).append('VS_LIMP_SB_BLIND_BATTLE')
+                # DEEP (>=20bb) no blind war BB vs limp: shove é SÓ <20bb. all_in aqui = REGIME
+                # ERRADO (empresta a range curta de 25bb -> vira jam de 40bb com K6o). E o ATAQUE
+                # usa régua SÓLIDA (CO via _iso_worthy), não a range larga do blind-battle:
+                # worthy -> raise (sizing.recommend_size dá 3X/4X); senão CHECK de graça (é o BB).
+                # Eduardo 23/11: apertar o blind war + matar o jam deep.
+                if (not _short and isinstance(result, dict)
+                        and result.get('recommended') in ('all_in', 'raise')):
+                    if self._iso_worthy(hand_key(hero_cards), result.get('stack_bucket'),
+                                        mode=kwargs.get('mode', 'chip_ev'),
+                                        stage=kwargs.get('stage', 'mid'),
+                                        players=kwargs.get('players', 9),
+                                        position=base['hero_position'], strict=True):
+                        # Isolar o complete do SB = 1 limper (count_limpers exclui blinds) -> 3X
+                        # pela regra do Eduardo (1 limper=3X). Vale p/ all_in->raise e raise->raise.
+                        result['recommended'] = 'raise'
+                        result['sizing'] = sizing.recommend_size(
+                            'raise', hero_stack_bb=base.get('stack_bb'), limpers=1)
+                        result.setdefault('caveats', []).append('BLIND_WAR_DEEP_ISO_SOLIDO')
+                    else:
+                        result['recommended'] = 'check'
+                        result['sizing'] = dict(action='check', size_bb=0.0, basis='check', heuristic=False)
+                        result.setdefault('caveats', []).append('BLIND_WAR_DEEP_TRASH_CHECK')
+                    result['status'] = 'ADVICE'
             else:
                 result = self.advise_first_in(**base, **kwargs)
         elif spot['spot'] == 'threebet_cold':
@@ -1278,6 +1306,44 @@ class PreflopAdvisor:
                     result['recommended'] = 'fold'
                     result['status'] = 'ADVICE'
                     result.setdefault('caveats', []).append('ISO_CAP_FOLD_FORA_DO_RANGE_TIGHT')
+                # UPGRADE DO PASSIVO (Padrão de Jogo, Eduardo 23/11): com limper, mão ISO-WORTHY
+                # NUNCA completa/limpa passivo (bug ao vivo: AQo no SB vs limpers virou limp/flat).
+                # Vira ISO-RAISE (deep) ou SHOVE (curto). Régua = _iso_worthy (range de open do BTN
+                # p/ SB/BB — a mesma do cap). Size do iso = o nó REAL de open do BTN (sem inventar).
+                # SHADOW (validated=False) até homologar ao vivo.
+                elif (result.get('recommended') in ('limp', 'call', 'check')
+                      and self._iso_worthy(result.get('hand'), result.get('stack_bucket'),
+                                           mode=kwargs.get('mode', 'chip_ev'),
+                                           stage=kwargs.get('stage', 'mid'),
+                                           players=kwargs.get('players', 9),
+                                           position=base.get('hero_position', 'UTG'),
+                                           strict=True)):   # na DÚVIDA (sem nó) NÃO sobe trash
+                    _stk = base.get('stack_bb')
+                    if isinstance(_stk, (int, float)) and _stk < SHOVE_ZONE_MAX_BB:
+                        result['recommended'] = 'all_in'
+                        result['sizing'] = dict(size_bb=round(_stk, 1),
+                                                basis='iso-vs-limpers shove', heuristic=True)
+                        result.setdefault('caveats', []).append('ISO_VS_LIMPERS_SHOVE_CURTO')
+                    else:
+                        _ref = self.advise(spot='open_raise', vs=(),
+                                           **dict(base, hero_position='BTN'), **kwargs)
+                        result['recommended'] = 'raise'
+                        if isinstance(_ref, dict) and _ref.get('sizing'):
+                            result['sizing'] = _ref['sizing']   # size do nó real do BTN (autoridade)
+                        result.setdefault('caveats', []).append('ISO_VS_LIMPERS_UPGRADE_DO_PASSIVO')
+                    result['status'] = 'ADVICE'
+                    result['validated'] = False
+                # UNDER 20bb vs limpers (Eduardo 23/11): o raise do iso vira SHOVE (nada de mini-raise;
+                # o fold já foi tratado pelo cap). O SIZE 3X/4X do iso DEEP é feito no sizing.py
+                # (recommend_size: +1bb/limper, cap 4X) -> não precisa setar size aqui.
+                if (result.get('recommended') == 'raise'
+                        and isinstance(base.get('stack_bb'), (int, float))
+                        and base['stack_bb'] < SHOVE_ZONE_MAX_BB):
+                    result['recommended'] = 'all_in'
+                    result['sizing'] = dict(size_bb=round(base['stack_bb'], 1),
+                                            basis='iso-vs-limpers shove <20bb', heuristic=True)
+                    result.setdefault('caveats', []).append('ISO_VS_LIMPERS_SHOVE_SUB20')
+                    result['status'] = 'ADVICE'
             # EXPLOIT PRÉ-FLOP (delta por cima do GTO, bounded): usa o perfil do OPENER
             # (HUD/DB, só com leitura CONFIÁVEL). ANTES do sizing -> o 3bet-blefe sai com
             # size. Só vs_open por ora (o opener é o vilão inequívoco); steal (perfil dos

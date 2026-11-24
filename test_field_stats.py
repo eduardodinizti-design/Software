@@ -153,3 +153,90 @@ def test_no_cbet_when_pfr_checks():
     f = build_field(hh)
     assert f.stats('BTN')['cbet'] == 0.0          # teve oportunidade mas deu check
     assert f.players['BTN'].cbet_opp == 1
+
+
+# ---------- LIMP-RERAISE (tell de bot — nvt-exploit-anti-bot-pppoker) ----------
+_LRR = """PPPoker Hand #20:  Tournament #9, $0 USD Hold'em No Limit - Level  (50/100 - Ante 0) -  UTC
+Table 'T' 6-max Seat #1 is the button
+Seat 1: Raiser (10000 in chips)
+Seat 2: SB (10000 in chips)
+Seat 3: BB (10000 in chips)
+Seat 4: Bote (10000 in chips)
+SB: posts small blind 50
+BB: posts big blind 100
+*** HOLE CARDS ***
+Dealt to Bote [Ah As]
+Bote: calls 100
+Raiser: raises 300 to 400
+SB: folds
+BB: folds
+Bote: raises 900 to 1300
+Raiser: folds
+*** SUMMARY ***
+Total pot 1750 | Rake 0
+"""
+
+# limpou e NÃO re-raiseou (só call ao raise) -> opp mas not made
+_LIMP_CALL = """PPPoker Hand #21:  Tournament #9, $0 USD Hold'em No Limit - Level  (50/100 - Ante 0) -  UTC
+Table 'T' 6-max Seat #1 is the button
+Seat 1: Raiser (10000 in chips)
+Seat 4: Fish (10000 in chips)
+Raiser: posts small blind 50
+Fish: posts big blind 100
+*** HOLE CARDS ***
+Fish: calls 0
+Raiser: raises 300 to 400
+Fish: calls 300
+*** SUMMARY ***
+Total pot 800 | Rake 0
+"""
+
+# limpou e ninguém raiseou -> limp sem oportunidade de re-raise
+_LIMP_NORAISE = """PPPoker Hand #22:  Tournament #9, $0 USD Hold'em No Limit - Level  (50/100 - Ante 0) -  UTC
+Table 'T' 6-max Seat #1 is the button
+Seat 1: Limper (10000 in chips)
+Seat 2: SB (10000 in chips)
+Seat 3: BB (10000 in chips)
+SB: posts small blind 50
+BB: posts big blind 100
+*** HOLE CARDS ***
+Limper: calls 100
+SB: calls 50
+BB: checks
+*** FLOP *** [2c 7d Js]
+SB: checks
+BB: checks
+Limper: checks
+*** SUMMARY ***
+Total pot 300 | Rake 0
+"""
+
+
+def test_limp_reraise_detected():
+    f = build_field(_LRR)
+    p = f.players['Bote']
+    assert p.limp_made == 1
+    assert p.limp_reraise_opp == 1 and p.limp_reraise_made == 1
+    assert f.stats('Bote')['limp_reraise'] == 100.0
+    assert f.stats('Bote')['limp_reraise_opp'] == 1
+
+
+def test_limp_then_call_is_opp_not_made():
+    f = build_field(_LIMP_CALL)
+    p = f.players['Fish']
+    assert p.limp_made == 1
+    assert p.limp_reraise_opp == 1 and p.limp_reraise_made == 0
+    assert f.stats('Fish')['limp_reraise'] == 0.0
+
+
+def test_limp_no_raise_no_opportunity():
+    f = build_field(_LIMP_NORAISE)
+    p = f.players['Limper']
+    assert p.limp_made == 1
+    assert p.limp_reraise_opp == 0
+    assert f.stats('Limper')['limp_reraise'] is None   # sem oportunidade -> None
+
+
+def test_raiser_is_not_a_limper():
+    f = build_field(_LRR)
+    assert f.players['Raiser'].limp_made == 0          # abriu, não limpou

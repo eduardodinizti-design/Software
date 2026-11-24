@@ -21,11 +21,15 @@ Uso:
 from __future__ import annotations
 
 import argparse
+import json
 import os
+import queue
 import random
+import signal
 import sys
 import threading
 import time
+import _thread
 from datetime import datetime
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
@@ -47,6 +51,8 @@ from hand_accumulator import HandAccumulator          # noqa: E402
 from hand_text_sink import HandTextSink, DEFAULT_BASE  # noqa: E402
 from suprema_hand_builder import SupremaHandBuilder    # noqa: E402
 from suprema_operar import find_suprema_hwnd           # noqa: E402
+from bot_control import BotControl, HotkeyListener, DISABLED  # noqa: E402  (plano de controle: RUNNING/PAUSED/DISABLED)
+from status_overlay import StatusOverlay                # noqa: E402  (badge na tela: ARMADO/PAUSADO/DESABILITADO)
 
 try:
     from nvttracker.parser.nlhe_text import parse_hand, ParseError   # noqa: E402
@@ -132,7 +138,41 @@ def _human_delay(posflop, act, tocall):
     return round(random.uniform(0.4, 1.3), 2)
 
 
-def make_auto_emit(hwnd, *, armed, delay, stats, room=None, room_index_fn=None, n_rooms_fn=None):
+def _click_worker(q, stats, stop, *, stale_s=6.0):
+    """THREAD ÚNICA de clique (Eduardo 23/11): executa as ações que o auto_emit ENFILEIRA, UMA por vez
+    (sem conflito de cursor entre mesas), com o delay humano. Tira o clique da thread do callback do Frida
+    -> a percepção NUNCA bloqueia -> sem backlog/"mute"/sit-out (era a causa real do travamento). Pula a
+    ação que esperou demais na fila (> stale_s): a janela de ação provavelmente já passou (não clica fora
+    de hora). Em regime normal a fila fica ~vazia (a percepção não bloqueia mais), então quase nunca pula."""
+    while not stop.is_set():
+        try:
+            item = q.get(timeout=0.5)
+        except queue.Empty:
+            continue
+        try:
+            ts, plan, hwnd, ri, nr, posflop, act, tocall, delay, tag = item
+            waited = time.time() - ts
+            if waited > stale_s:
+                print("%s %s ação STALE na fila (%.1fs) -> pulo (não clica fora de hora)"
+                      % (tag, time.strftime("%H:%M:%S"), waited), flush=True)
+                continue
+            think = _human_delay(posflop, act, tocall)         # timing humanizado (LEI Eduardo)
+            if think > 0:
+                time.sleep(think)
+            res = C.execute(plan, hwnd, armed=True, step_delay=delay, room_index=ri, n_rooms=nr)
+            stats["acoes"] += 1
+            print("%s %s CLIQUE[m%s/%s]: %s" % (tag, time.strftime("%H:%M:%S"), ri, nr, res), flush=True)
+        except Exception as e:
+            print("[AG] clique worker erro: %s" % e, flush=True)
+        finally:
+            try:
+                q.task_done()
+            except Exception:
+                pass
+
+
+def make_auto_emit(hwnd, *, armed, delay, stats, room=None, room_index_fn=None, n_rooms_fn=None,
+                   control=None, overlay=None, click_q=None):
     """Fábrica do emit (por MESA): decide 1x por spot estável e, se armado, CLICA na COLUNA da
     mesa (room_index/n_rooms -> execute roteia). Cursor volta à posição (restore) p/ multi-mesa.
     Anti-thrash: 1 ação por (sala, hand_id, rua) no pós-flop."""
@@ -169,20 +209,39 @@ def make_auto_emit(hwnd, *, armed, delay, stats, room=None, room_index_fn=None, 
             print("%s %s %s pos=%s hero=%s board=%s -> %s (não age)" % (_tag, ts, fase, pos, hero, board, act), flush=True)
             return
         acted[akey] = _tc          # MARCA ANTES de clicar -> nunca re-clica a mesma ação
-        print("%s %s >>> %s pos=%s hero=%s board=%s pot=%sbb to_call=%sbb CÉREBRO=%s PLANO=%s%s%s%s"
-              % (_tag, ts, fase, pos, hero, board, pot, tocall, advice.get("recommended"), act,
-                 (" %s" % plan.get("chips")) if plan.get("chips") is not None else "",
-                 (" [%s]" % preset) if preset else "", "" if armed else "  [DRY: não clica]"), flush=True)
-        if not armed:
-            return
-        think = _human_delay(posflop, act, tocall)     # timing humanizado/randomizado (LEI Eduardo)
-        if think > 0:
-            time.sleep(think)
+        # COLUNA-na-tela (0-based) da mesa + nº de mesas vivas. Calculado e LOGADO também no DRY:
+        # é o que o Eduardo confere na validação multi-tela (sala->coluna vs a tela) ANTES de armar.
         ri = room_index_fn() if room_index_fn else 0
         nr = n_rooms_fn() if n_rooms_fn else 1
-        res = C.execute(plan, hwnd, armed=True, step_delay=delay, room_index=ri, n_rooms=nr)
-        stats["acoes"] += 1
-        print("%s %s CLIQUE[m%s/%s]: %s" % (_tag, time.strftime("%H:%M:%S"), ri, nr, res), flush=True)
+        allowed = control.execution_allowed() if control is not None else armed
+        _label = "" if allowed else ("  [%s: não clica]" % (control.state if control is not None else "DRY"))
+        print("%s %s >>> %s col=m%s/%s pos=%s hero=%s board=%s pot=%sbb to_call=%sbb CÉREBRO=%s PLANO=%s%s%s%s"
+              % (_tag, ts, fase, ri, nr, pos, hero, board, pot, tocall, advice.get("recommended"), act,
+                 (" %s" % plan.get("chips")) if plan.get("chips") is not None else "",
+                 (" [%s]" % preset) if preset else "", _label), flush=True)
+        if overlay is not None:                          # BADGE na tela: última ação por mesa
+            try:
+                overlay.set_table("mesa %s" % (room or "?"), "%s %s %s -> %s%s" % (
+                    ts, fase, pos, (advice.get("recommended") or act),
+                    (" %s" % plan.get("chips")) if plan.get("chips") is not None else ""))
+            except Exception:
+                pass
+        if not allowed:                                  # PAUSADO/DESABILITADO/DRY: loga+mostra, NÃO clica
+            return
+        # CLIQUE DESACOPLADO (Eduardo 23/11): NÃO clica aqui — isto roda na THREAD DO CALLBACK do Frida;
+        # clicar com sleeps BLOQUEIA a entrega de eventos -> backlog -> "mute"/sit-out (a causa real do
+        # travamento). ENFILEIRA a ação p/ o worker de clique (1 por vez, sem conflito de cursor entre
+        # mesas). A decisão/anti-thrash/log do CÉREBRO já saíram acima (síncronos, corretos). Sem fila
+        # (teste/fallback) mantém o clique síncrono.
+        if click_q is not None:
+            click_q.put((time.time(), plan, hwnd, ri, nr, posflop, act, tocall, delay, _tag))
+        else:
+            think = _human_delay(posflop, act, tocall)
+            if think > 0:
+                time.sleep(think)
+            res = C.execute(plan, hwnd, armed=True, step_delay=delay, room_index=ri, n_rooms=nr)
+            stats["acoes"] += 1
+            print("%s %s CLIQUE[m%s/%s]: %s" % (_tag, time.strftime("%H:%M:%S"), ri, nr, res), flush=True)
 
     return auto_emit
 
@@ -236,20 +295,90 @@ def main():
     ap.add_argument("--base", default=DEFAULT_BASE, help="pasta base dos .txt H2N")
     ap.add_argument("--tournament", default=None)
     ap.add_argument("--process", default="SupremaPoker.exe")
+    ap.add_argument("--hud-dir", dest="hud_dir", default=None,
+                    help="pasta _live p/ a HUD overlay: snapshot por assento, 1 arquivo por SALA "
+                         "(table_id=sala). Sem isto NÃO alimenta a HUD (usado quando o launcher sobe o agente).")
+    ap.add_argument("--dump-raw", dest="dump_raw", default=None,
+                    help="espelha TODOS os eventos crus num .jsonl (evidência durável; paridade c/ o capturador).")
     ap.add_argument("--no-guardiao", dest="guardiao", action="store_false",
                     help="NÃO sobe o guardião de quedas. Default: LIGADO (alarme de crash da Suprema, "
                          "a MESMA regra do PPPoker — pedido do Eduardo 23/11).")
+    ap.add_argument("--no-overlay", dest="overlay", action="store_false",
+                    help="NÃO mostra o badge de estado na tela. Default: LIGADO (padrão do executável — "
+                         "ARMADO/PAUSADO/DESABILITADO sempre-no-topo).")
+    ap.add_argument("--no-hotkeys", dest="hotkeys", action="store_false",
+                    help="NÃO liga os atalhos globais. Default: LIGADO (Ctrl+Alt+R arma / P pausa / D off "
+                         "— você assume as mesas a qualquer hora).")
+    ap.add_argument("--no-sitout-guard", dest="sitout_guard", action="store_false",
+                    help="DESLIGA o anti-sit-out. Default LIGADO: detecta sit-out por OCR do texto do "
+                         "botão 'Estou de volta' (NÃO por cor — cor dava falso-positivo nos botões de "
+                         "ação verdes, Eduardo 23/11) e clica Voltar só quando RUNNING.")
+    ap.add_argument("--no-bust-guard", dest="bust_guard", action="store_false",
+                    help="DESLIGA o vigia de bust. Default LIGADO: detecta o pop-up de CLASSIFICAÇÃO "
+                         "(caiu do torneio) por OCR do título + cor dos botões, e clica SAIR (fecha a "
+                         "mesa) só quando RUNNING — calibrado no print real 23/11.")
+    ap.add_argument("--stop-file", dest="stop_file",
+                    default=os.path.join(_HERE, "logs", "suprema_stop.flag"),
+                    help="arquivo-gatilho de PARADA LIMPA: ao aparecer, o agente faz unload+detach do "
+                         "Frida e sai (sem hook pendurado -> pode relançar SEM fechar a Suprema).")
     args = ap.parse_args()
     if not args.tournament:
         args.tournament = "suprema_%s" % datetime.now().strftime("%Y-%m-%d")
 
     C.set_dpi_aware()
+
+    # Encerramento LIMPO quando o launcher manda CTRL_BREAK (o agente sobe em grupo próprio): vira
+    # KeyboardInterrupt -> propaga pelo run_live -> o finally faz unload+detach do Frida (sem hook
+    # pendurado = sem sit out). Só Windows (SIGBREAK); Ctrl+C (SIGINT) segue igual.
+    def _raise_kbint(*_a):
+        raise KeyboardInterrupt
+    _brk = getattr(signal, "SIGBREAK", None)
+    if _brk is not None:
+        try:
+            signal.signal(_brk, _raise_kbint)
+        except Exception:
+            pass
+
     hwnd = find_suprema_hwnd(args.process)
     if not hwnd:
         print("[AG] janela da Suprema não encontrada.", flush=True)
         return 1
     left, top, w, h = C.client_rect_screen(hwnd)
     print("[AG] hwnd=%s client=%dx%d @ (%d,%d) calibrado=%s" % (hwnd, w, h, left, top, C._CALIBRATED), flush=True)
+
+    # PLANO DE CONTROLE + BADGE NA TELA (padrão do executável, idêntico ao operar_mesa do PPPoker):
+    # BotControl (RUNNING/PAUSED/DISABLED; default PAUSED=seguro) + StatusOverlay (faixa sempre-no-topo
+    # ARMADO/PAUSADO/DESABILITADO) + HotkeyListener (Ctrl+Alt+R arma / P pausa / D off -> você assume as
+    # mesas a qualquer hora, o clique é gated por execution_allowed()). --armed começa ARMADO (RUNNING).
+    overlay = StatusOverlay(title="NVT Henrique — Suprema").start() if args.overlay else None
+
+    def _clean_stop(reason):
+        # PARADA LIMPA: interrompe a main thread -> KeyboardInterrupt -> o finally do run_live faz
+        # unload+detach do Frida. SEM hook pendurado -> dá pra RELANÇAR sem fechar a Suprema (resolve
+        # o "por que toda vez tem que fechar a Suprema": o restart era remendo de parada suja).
+        print("[AG] parada LIMPA (%s) -> unload+detach do Frida." % reason, flush=True)
+        if overlay:
+            try:
+                overlay.note("parando — detach limpo do Frida…")
+            except Exception:
+                pass
+        _thread.interrupt_main()
+
+    def _on_change(s):
+        print("\n>>> HENRIQUE %s <<<\n" % s, flush=True)
+        if overlay:
+            overlay.set_state(s)
+        if s == DISABLED:                 # Ctrl+Alt+D = kill-switch LIMPO (detach, nunca hard-kill)
+            _clean_stop("Ctrl+Alt+D (DESABILITADO)")
+    control = BotControl(on_change=_on_change)
+    if overlay:
+        overlay.set_state(control.state)
+        overlay.note("Ctrl+Alt+R arma   Ctrl+Alt+P pausa   Ctrl+Alt+D desliga")
+    if args.armed:
+        control.resume()     # PAUSED -> RUNNING: começa ARMADO (regra Eduardo: teste ao vivo é clicando)
+    listener = HotkeyListener(control) if args.hotkeys else None
+    if listener:
+        listener.start()
 
     # H2N + DECISÃO + CLIQUE por MESA (MULTI-MESA): SupremaRouter roteia por roomID -> 1 estado,
     # 1 cérebro e 1 builder POR SALA; o clique vai na COLUNA certa (room_index/n_rooms). 1 mesa =
@@ -267,12 +396,28 @@ def main():
     # a cada mesa nova) e NÃO infla n_rooms com mesas que já bustaram. Não há sinal de posição no
     # protocolo (varredura do dump) -> ordem de 1ª aparição; L/R real a validar DRY ao vivo.
     order = suprema_multi.RoomOrder()
-    _ctx = {}                         # room -> {builder, on_state, acc}
+    import suprema_tile_binder
+    # roomID -> COLUNA por VISÃO (OCR do ID no feltro de cada tile): ANCORA na realidade, não no
+    # palpite de ordem de 1ª aparição (que clicava na mesa espelhada ao vivo). 1 mesa = atalho sem OCR.
+    binder = suprema_tile_binder.TileBinder(hwnd)
+    _ctx = {}                         # room -> {builder, on_state, acc, emit_hud}
+    _last_evt = [time.time()]         # watchdog de HOOK MUDO: carimba cada evento recebido
+
+    raw_fp = None
+    if args.dump_raw:                 # evidência crua durável (paridade c/ o capturador)
+        os.makedirs(os.path.dirname(os.path.abspath(args.dump_raw)) or ".", exist_ok=True)
+        raw_fp = open(args.dump_raw, "a", encoding="utf-8")
 
     def _n_rooms():
-        return order.n_rooms()
+        return binder.n_cols or order.n_rooms()
 
     def _room_index(room):
+        binder.ensure(order.live_rooms())      # re-liga só se a grade mudou (cacheado; 1 mesa = atalho)
+        col = binder.column_of(room)
+        if col is not None:
+            return col
+        print("[AG] binder SEM mapa p/ sala %s (OCR do ID falhou?) -> fallback ordem de aparição"
+              % room, flush=True)
         return order.index(room)
 
     def _ctx_for(room):
@@ -282,8 +427,16 @@ def main():
                                   table_tag="%s_%s" % (args.tournament, room), max_seats=9,
                                   sink=sink, on_hand=save.on_hand)
             emit = make_auto_emit(hwnd, armed=args.armed, delay=args.delay, stats=stats, room=room,
-                                  room_index_fn=(lambda r=room: _room_index(r)), n_rooms_fn=_n_rooms)
-            c = {"acc": acc, "builder": SupremaHandBuilder(acc),
+                                  room_index_fn=(lambda r=room: _room_index(r)), n_rooms_fn=_n_rooms,
+                                  control=control, overlay=overlay, click_q=_click_q)
+            emit_hud = None
+            if args.hud_dir:          # 1 snapshot por SALA (table_id=sala) -> a HUD overlay desenha cada mesa
+                try:
+                    from suprema_live_emit import SupremaLiveEmitter
+                    emit_hud = SupremaLiveEmitter(args.hud_dir, table_id=room)
+                except Exception:
+                    emit_hud = None
+            c = {"acc": acc, "builder": SupremaHandBuilder(acc), "emit_hud": emit_hud,
                  "on_state": make_on_state(advisor, mode=args.mode, stage=args.stage, emit=emit,
                                            hunt_bounty=args.hunt_bounty, head_fraction=args.head_fraction,
                                            starting_stack=args.starting_stack)}
@@ -291,9 +444,16 @@ def main():
         return c
 
     def on_message(msg):
+        _last_evt[0] = time.time()                       # hook VIVO (qualquer evento de jogo recebido)
         room = suprema_multi.room_of(msg)
         if room is None:
             return
+        if raw_fp is not None:                           # evidência crua durável (paridade capturador)
+            try:
+                raw_fp.write(json.dumps({"ts": time.time(), "msg": msg}, ensure_ascii=False) + "\n")
+                raw_fp.flush()
+            except Exception:
+                pass
         order.touch(room, suprema_multi.event_ts(msg))   # ordem estável + liveness (poda bustadas)
         c = _ctx_for(room)
         try:
@@ -307,8 +467,44 @@ def main():
                 c["on_state"](t)
             except Exception:
                 pass
+            if c["emit_hud"] is not None:                # alimenta a HUD overlay (snapshot da sala)
+                try:
+                    c["emit_hud"](t)
+                except Exception:
+                    pass
 
     stop = threading.Event()
+
+    # CLIQUE DESACOPLADO (Eduardo 23/11): fila + 1 thread worker que executa TODOS os cliques (de todas as
+    # mesas), UMA ação por vez. Tira o clique da thread do callback do Frida -> a percepção nunca bloqueia
+    # -> sem backlog/"mute"/sit-out. O auto_emit (no callback) só decide e ENFILEIRA. Ver _click_worker.
+    _click_q = queue.Queue()
+    threading.Thread(target=_click_worker, args=(_click_q, stats, stop), daemon=True).start()
+
+    # PARADA LIMPA por ARQUIVO-GATILHO: quem quiser parar o agente só cria `args.stop_file` (ex.: eu,
+    # do terminal: `touch logs/suprema_stop.flag`). O watcher remove o arquivo e dispara o _clean_stop
+    # (unload+detach). Substitui o hard-kill (TaskStop) que deixava o hook pendurado e exigia reabrir a
+    # Suprema. Se o arquivo já existe de uma sessão anterior, limpa na largada p/ não parar na hora.
+    try:
+        if os.path.exists(args.stop_file):
+            os.remove(args.stop_file)
+    except Exception:
+        pass
+
+    def _stop_file_watcher():
+        while not stop.wait(1.0):
+            try:
+                if os.path.exists(args.stop_file):
+                    try:
+                        os.remove(args.stop_file)
+                    except Exception:
+                        pass
+                    _clean_stop("stop-file")
+                    return
+            except Exception:
+                pass
+    threading.Thread(target=_stop_file_watcher, daemon=True).start()
+
     if args.guardiao:
         # ALARME DE QUEDA (LEI Eduardo 23/11: a MESMA regra do PPPoker, agora na Suprema). O
         # guardiao.py já vigia SupremaPoker.exe (CLIENTS) — detecta crash/fechamento, registra a
@@ -324,9 +520,66 @@ def main():
     if args.rebuy:
         threading.Thread(target=_rebuy_loop, args=(hwnd, args.armed, args.seconds, stop), daemon=True).start()
 
-    print("[AG] AGENTE no ar MULTI-MESA (%s). Salva H2N em %s %s%s" % (
-        "ARMADO — joga sozinho" if args.armed else "DRY — não clica",
-        sink.base, "| rebuy ON" if args.rebuy else "", "" if _HAS_PARSER else " | (sem parser)"), flush=True)
+    # WATCHDOG DE HOOK MUDO: se nenhum evento chega há >15s, o hook pode estar pendurado (religou com
+    # a Suprema aberta = o bug recorrente). Em vez de ficar parado em silêncio, AVISA na tela (badge)
+    # e no log; some quando os eventos voltam. Mata o mistério "não clica e não sei por quê".
+    def _mute_watchdog():
+        # 45s: lull normal entre mãos (herói espera) NÃO alarma; hook mudo de verdade = silêncio
+        # permanente (passa de 45s). Evita falso-alarme a cada pausa.
+        warned = False
+        while not stop.wait(3.0):
+            silence = time.time() - _last_evt[0]
+            if silence > 45:
+                # BREAK-AWARE (LEI Eduardo 23/11): silêncio na janela do intervalo (:55->:00, com folga
+                # p/ o drift) é ESPERADO, NÃO é hook mudo. No break todas as mesas param juntas. Fora da
+                # janela, silêncio longo = provável hook mudo real.
+                _mnt = datetime.now().minute
+                if _mnt >= 53 or _mnt <= 2:
+                    m = "BREAK (intervalo ~:55->:00) — silêncio esperado, não é hook mudo"
+                else:
+                    m = "SEM DADOS há %ds — hook mudo? feche e reabra a Suprema" % int(silence)
+                if overlay:
+                    try: overlay.note("⚠ " + m)
+                    except Exception: pass
+                if not warned:
+                    print("[AG] ⚠ %s" % m, flush=True)
+                    warned = True
+            elif warned:
+                if overlay:
+                    try: overlay.note("")
+                    except Exception: pass
+                warned = False
+    threading.Thread(target=_mute_watchdog, daemon=True).start()
+
+    # ANTI-SIT-OUT (LEI Eduardo 23/11): vigia a TELA (independente do hook); se o hero fica SIT-OUT,
+    # clica "Estou de volta" p/ reentrar. Default LIGADO (--no-sitout-guard desliga). DETECÇÃO POR OCR
+    # do TEXTO do botão ('volta' presente = sit-out), NÃO por cor — a 1ª versão por cor dava falso-
+    # positivo nos botões de ação verdes (Pagar/Aumentar) e clicava antes da ação chegar. Validado nos
+    # pixels reais (sit-out='Estou de volta'; sua vez='Desistir/Pagar...'). Ver suprema_sitout.
+    if args.sitout_guard:
+        try:
+            import suprema_sitout
+            threading.Thread(target=suprema_sitout.sitout_watch, args=(hwnd, control, stop),
+                             kwargs=dict(seconds=args.seconds), daemon=True).start()
+            print("[AG] anti-sit-out ATIVO (--sitout-guard).", flush=True)
+        except Exception as e:
+            print("[AG] anti-sit-out NÃO subiu (%s)." % e, flush=True)
+
+    # VIGIA DE BUST (Eduardo 23/11): caiu do torneio -> pop-up CLASSIFICAÇÃO -> clica SAIR (fecha a
+    # mesa). Independente do hook; calibrado no print real (título por OCR + botões por cor). Só age
+    # ARMADO. Default LIGADO (--no-bust-guard desliga). Ver suprema_bust.
+    if getattr(args, "bust_guard", True):
+        try:
+            import suprema_bust
+            threading.Thread(target=suprema_bust.bust_watch, args=(hwnd, control, stop),
+                             kwargs=dict(seconds=args.seconds), daemon=True).start()
+            print("[AG] vigia de BUST ATIVO (--bust-guard).", flush=True)
+        except Exception as e:
+            print("[AG] vigia de bust NÃO subiu (%s)." % e, flush=True)
+
+    print("[AG] AGENTE no ar MULTI-MESA (estado=%s). Salva H2N em %s %s%s" % (
+        control.state, sink.base, "| rebuy ON" if args.rebuy else "", "" if _HAS_PARSER else " | (sem parser)"),
+        flush=True)
     try:
         suprema_net.run_live(bb_chips=args.bb, on_message=on_message, on_state=None,
                              seconds=args.seconds, process=args.process)
@@ -339,6 +592,17 @@ def main():
                 c["acc"].on_hand_over()
             except Exception:
                 pass
+        if raw_fp is not None:
+            try:
+                raw_fp.close()
+            except Exception:
+                pass
+        if listener is not None:
+            try: listener.stop()
+            except Exception: pass
+        if overlay is not None:
+            try: overlay.stop()
+            except Exception: pass
     print("[AG] fim. ações=%d | salas(vivas)=%s | todas=%s | mãos H2N: %d OK, %d saldo!=0, %d falha | arquivos: %d"
           % (stats["acoes"], order.live_rooms(), order.all_rooms(),
              save.ok, save.unbalanced, save.bad, len(sink.written)), flush=True)

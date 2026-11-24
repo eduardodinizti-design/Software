@@ -500,6 +500,15 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
             info.update(recommended='call', caveats=caveats)
             return info
         if marginal:
+            # UNDERPAIR DEVALUADO (review do leak real, H2N #61: QQ em K-alto 3-way pagou all-in e
+            # perdeu ~50k). O underpair tem OVERCARD no board por definição (par abaixo da carta mais
+            # alta). Em MULTIWAY (n_opp>1) OU vs APOSTA GRANDE/ALL-IN (pot_odds>_BIG_BET), o range de
+            # VALOR domina -> FOLDA (bluffcatcher atrás), NUNCA paga pela equity otimista. HU vs aposta
+            # normal segue decidindo pela equity abaixo. Eduardo (review underpair, alvo #1).
+            if made == 'underpair' and (n_opp > 1 or pot_odds > _BIG_BET_POT_ODDS):
+                info.update(recommended='fold',
+                            caveats=caveats + ['UNDERPAIR_DEVALUED_FOLD_MULTIWAY_OR_BIGBET'])
+                return info
             if equity is not None:
                 caveats.append('MARGINAL_EQUITY_DRIVEN')
                 info.update(recommended=('call' if equity >= pot_odds + haircut + ex_delta else 'fold'),

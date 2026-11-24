@@ -313,7 +313,7 @@ def _barrel_turn_with_solver(advice, srp):
 def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table_key='default',
                  villain_range=None, hero_override=None, tracker=None, bounty_bb=None,
                  enable_hud=False, read_cache=None, field_memory=None, board_memory=None,
-                 field_hud=None, field_players=None, field_db=None):
+                 field_hud=None, field_players=None, field_db=None, tag_store=None):
     """Read the table and attach an exploratory recommendation. The tournament
     phase chooses chip EV vs ICM unless mode/stage are forced. Pure read; the
     caller wraps it in an ocr_frame so one snapshot reuses OCR.
@@ -405,6 +405,11 @@ def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table
         field_hud = field_live.hud_from_table(state.get('seats') or {}, field_players, field_db)
     if field_hud:
         state = dict(state, hud={**(state.get('hud') or {}), **field_hud})
+    # TAGS MANUAIS (shadow): anota tag/plano/sugestão por assento no HUD. Sem tag_store,
+    # não faz nada (seguro). [[nvt-exploit-anti-bot-pppoker]]
+    if tag_store is not None and state.get('hud'):
+        import tag_live
+        tag_live.annotate_hud(state['hud'], tag_store)
     # Postflop guard. A read board (cards) is clearly postflop. A board that was
     # DETECTED but not fully read (incomplete, duplicate, or obstructed with the
     # anchor found) is also postflop and must abstain, not be treated as preflop.
@@ -455,6 +460,10 @@ def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table
         _hero_stack = (state.get('seats', {}).get('hero') or {}).get('stack_bb')
         postflop_sizing.enforce(advice, pot_bb=advice.get('pot_bb'),
                                 stack_bb=_hero_stack, spr=advice.get('spr'))
+    # SOMBRA das tags manuais no conselho: o que o plano FARIA por vilão taggeado (não arma).
+    if tag_store is not None and isinstance(advice, dict):
+        import tag_live
+        tag_live.attach_shadow(advice, state.get('hud') or {})
     return dict(hand=hand, hero_cards=hero, hero_slots=hero_slots, board=board, table_state=state, is_table=True,
                 tournament=tourney, context=dict(mode=use_mode, stage=use_stage), advice=advice)
 

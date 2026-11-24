@@ -15,10 +15,11 @@ class RecommendSizeTests(unittest.TestCase):
         self.assertEqual(sizing.recommend_size('raise', hero_stack_bb=40,
                                                registration_open=True)['size_bb'], 2.0)       # reg aberta mas NAO deep -> 2x
         self.assertFalse(sizing.recommend_size('raise', hero_stack_bb=40)['heuristic'])      # pure open = solver, not heuristic
-        # LEI (Eduardo, LOCK): isolar limper NAO infla o open -> continua 2x (NUNCA 3X/4X).
+        # Eduardo 23/11 (REVERTEU 21/11): isolar limper INFLA (+1bb/limper sobre o open, cap 4X).
+        self.assertEqual(sizing.recommend_size('raise', hero_stack_bb=40, limpers=1)['size_bb'], 3.0)  # 1 limper = 3X
         iso = sizing.recommend_size('raise', hero_stack_bb=40, limpers=2)
-        self.assertEqual(iso['size_bb'], 2.0)                                                # iso = open 2x, sem add por limper
-        self.assertTrue(iso['heuristic'])                                                    # presenca de limper ainda e sinalizada
+        self.assertEqual(iso['size_bb'], 4.0)                                                # 2 limpers = 4X
+        self.assertTrue(iso['heuristic'])                                                    # iso é heurística sinalizada
 
     def test_three_bet_by_position(self):
         # Eduardo 19/11: IP 3x, OOP 4x; reta final (ft) IP 2.5x / OOP 3.5x.

@@ -43,25 +43,33 @@ def _write_estado(tmp, hero_turn_ref):
 
 
 def test_turn_anchor_abstem_se_vez_diferente_do_bind(tmp_path):
+    _orig = OM.protobuf_state.advise_from_protobuf   # RESTAURAR (senão envenena protobuf_state p/ a suíte)
     OM.protobuf_state.advise_from_protobuf = lambda sel, *a, **k: {'status': 'ADVICE', 'sentinel': True}
-    OM._STICKY = OM.table_sticky_bind.StickyBinder(min_score=2)
-    OM._STICKY_FRAME.update(cycle=None, binds={}, roomids=set(), n=0)
-    est = _write_estado(str(tmp_path / 'e.json'), hero_turn_ref='A')   # a VEZ é na mesa A
-    crop_B = {1: {'raw': 'lucas'}, 2: {'raw': 'rafael'}}               # mas o crop casa com a mesa B
-    out = OM._protobuf_advice(None, 'chip_ev', 'mid', estado_path=est, n_crops=2,
-                              crop_seats=crop_B, pos='p0', cycle=1, use_sticky=True)
-    assert out is None          # vez=A, bind=B -> ABSTÉM (não age na mesa errada)
+    try:
+        OM._STICKY = OM.table_sticky_bind.StickyBinder(min_score=2)
+        OM._STICKY_FRAME.update(cycle=None, binds={}, roomids=set(), n=0)
+        est = _write_estado(str(tmp_path / 'e.json'), hero_turn_ref='A')   # a VEZ é na mesa A
+        crop_B = {1: {'raw': 'lucas'}, 2: {'raw': 'rafael'}}               # mas o crop casa com a mesa B
+        out = OM._protobuf_advice(None, 'chip_ev', 'mid', estado_path=est, n_crops=2,
+                                  crop_seats=crop_B, pos='p0', cycle=1, use_sticky=True)
+        assert out is None          # vez=A, bind=B -> ABSTÉM (não age na mesa errada)
+    finally:
+        OM.protobuf_state.advise_from_protobuf = _orig
 
 
 def test_turn_anchor_age_quando_bind_bate_com_a_vez(tmp_path):
+    _orig = OM.protobuf_state.advise_from_protobuf   # RESTAURAR (senão envenena protobuf_state p/ a suíte)
     OM.protobuf_state.advise_from_protobuf = lambda sel, *a, **k: {'status': 'ADVICE', 'sentinel': True}
-    OM._STICKY = OM.table_sticky_bind.StickyBinder(min_score=2)
-    OM._STICKY_FRAME.update(cycle=None, binds={}, roomids=set(), n=0)
-    est = _write_estado(str(tmp_path / 'e.json'), hero_turn_ref='B')   # a VEZ é na mesa B
-    crop_B = {1: {'raw': 'lucas'}, 2: {'raw': 'rafael'}}               # e o crop casa com B
-    out = OM._protobuf_advice(None, 'chip_ev', 'mid', estado_path=est, n_crops=2,
-                              crop_seats=crop_B, pos='p0', cycle=1, use_sticky=True)
-    assert out and out.get('sentinel')    # vez=B, bind=B -> AGE
+    try:
+        OM._STICKY = OM.table_sticky_bind.StickyBinder(min_score=2)
+        OM._STICKY_FRAME.update(cycle=None, binds={}, roomids=set(), n=0)
+        est = _write_estado(str(tmp_path / 'e.json'), hero_turn_ref='B')   # a VEZ é na mesa B
+        crop_B = {1: {'raw': 'lucas'}, 2: {'raw': 'rafael'}}               # e o crop casa com B
+        out = OM._protobuf_advice(None, 'chip_ev', 'mid', estado_path=est, n_crops=2,
+                                  crop_seats=crop_B, pos='p0', cycle=1, use_sticky=True)
+        assert out and out.get('sentinel')    # vez=B, bind=B -> AGE
+    finally:
+        OM.protobuf_state.advise_from_protobuf = _orig
 
 
 if __name__ == "__main__":

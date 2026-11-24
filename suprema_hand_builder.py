@@ -237,8 +237,11 @@ class SupremaHandBuilder:
 
         # ---- 5) winner + fim ----
         allpots = gr.get("allpots") or []
-        total_pot = int(allpots[0]) if allpots else sum(
-            (p.get("chips") or 0) for p in latest_gs.values())
+        # SIDE POTS: allpots é a lista de TODOS os potes (principal + laterais), amounts INDIVIDUAIS
+        # (confirmado em dump real: [39185,78272,74973,53728] não é monotônico -> não é cumulativo).
+        # O builder antigo lia só allpots[0] e DESCARTAVA os laterais -> chip_imbalance em all-in
+        # multiway desigual (mão #111 dropava o side pot de 43k). Agora SOMA todos. 1 pote = idêntico.
+        total_pot = _pot_total(allpots, latest_gs)
         # ganhador(es): maior coins final entre os do showdown
         winners = []
         if gr.get("seats"):
@@ -248,6 +251,15 @@ class SupremaHandBuilder:
         collected = [(w, total_pot // len(winners)) for w in winners] if winners else None
         acc.on_winner(collected=collected, total_pot=total_pot, seat_uids=seat_uids)
         acc.on_hand_over()
+
+
+def _pot_total(allpots, latest_gs):
+    """Total do pote = SOMA de TODOS os potes (principal + laterais). `allpots` traz amounts
+    individuais por pote (ver nota em _build). Sem allpots, cai no fallback pelo `chips` do snapshot
+    final. Corrige o chip_imbalance de all-in multiway desigual (o antigo usava só allpots[0])."""
+    if allpots:
+        return sum(int(x) for x in allpots)
+    return sum((p.get("chips") or 0) for p in (latest_gs or {}).values())
 
 
 def _as_uid(uid):

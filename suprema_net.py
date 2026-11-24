@@ -103,7 +103,9 @@ def is_game_event(msg):
 # ---------------------------------------------------------------------------
 _AGENT = r"""
 'use strict';
-const a = Process.getModuleByName('libssl-1_1.dll').findExportByName('SSL_read');
+const _ssl = Process.getModuleByName('libssl-1_1.dll');
+// SSL_read: ret = nº de bytes lidos; buffer em args[1].
+const a = _ssl.findExportByName('SSL_read');
 if (!a) { send({err: 'sem SSL_read' }); }
 else Interceptor.attach(a, {
   onEnter(args) { this.buf = args[1]; },
@@ -112,6 +114,23 @@ else Interceptor.attach(a, {
       const n = ret.toInt32(); if (n <= 0 || !this.buf) return;
       const take = Math.min(n, 65536);
       send({ssl: true}, this.buf.readByteArray(take));   // manda os bytes crus p/ o Python
+    } catch (e) {}
+  }
+});
+// SSL_read_ex (OpenSSL 1.1.1): int SSL_read_ex(SSL*, void* buf, size_t num, size_t* readbytes).
+// ret = 1 em sucesso; os bytes lidos vêm em *readbytes (args[3]), buffer em args[1]. MUITAS libs/WS
+// usam ESTA em vez de SSL_read -> quando o cliente lê por aqui, o hook de SSL_read fica MUDO (medido:
+// agente ocioso esperando o Frida durante os travamentos). Cliente 32-bit -> size_t = 32-bit (readUInt).
+const b = _ssl.findExportByName('SSL_read_ex');
+if (!b) { send({err: 'sem SSL_read_ex' }); }
+else Interceptor.attach(b, {
+  onEnter(args) { this.buf = args[1]; this.pn = args[3]; },
+  onLeave(ret) {
+    try {
+      if (ret.toInt32() !== 1 || !this.buf || this.pn.isNull()) return;
+      const n = this.pn.readUInt(); if (n <= 0) return;   // *readbytes (size_t, 32-bit)
+      const take = Math.min(n, 65536);
+      send({ssl: true}, this.buf.readByteArray(take));
     } catch (e) {}
   }
 });
@@ -169,6 +188,7 @@ def run_live(bb_chips, on_state=None, seconds=0, process='SupremaPoker.exe', on_
         if session is None:
             raise RuntimeError('não consegui anexar em %s: %s' % (process, last_err))
         script = session.create_script(_AGENT)
+        last_evt = [time.time()]      # carimba cada EVENTO DE JOGO -> detecta hook mudo p/ auto-re-attach
 
         def _on(m, data):
             if m.get('type') != 'send':
@@ -178,6 +198,7 @@ def run_live(bb_chips, on_state=None, seconds=0, process='SupremaPoker.exe', on_
                 return
             for msg in ex.feed(bytes(data).decode('latin-1', 'replace')):
                 if is_game_event(msg):
+                    last_evt[0] = time.time()
                     table.feed_json(msg)
                     if on_message:
                         try:
@@ -193,6 +214,11 @@ def run_live(bb_chips, on_state=None, seconds=0, process='SupremaPoker.exe', on_
         script.on('message', _on)
         script.load()
         t0 = time.time()
+        # NOTA (Eduardo 23/11): havia aqui um AUTO-RE-ATTACH (re-injetar o script no silêncio). REVERTIDO:
+        # medido ao vivo que re-injetar NÃO restaura os eventos (o mute NÃO é hook pendurado — re-hookar o
+        # mesmo SSL_read não traz dados), e re-injetar a cada 30s no cliente 32-bit frágil é risco de crash
+        # e atrapalha a recuperação natural (o hook voltava sozinho em ~3-4min). Causa real do mute EM
+        # INVESTIGAÇÃO. Por ora: só mantém o hook; o _mute_watchdog do agente apenas AVISA (seguro).
         while seconds == 0 or (time.time() - t0) < seconds:
             time.sleep(0.3)
     finally:

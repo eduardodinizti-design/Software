@@ -22,3 +22,9 @@ prints/
 vision_yolo/data/
 vision_yolo/dataset/
 vision_yolo/runs/
+
+# build do Henrique (PyInstaller) + temporarios de investigacao — nao versionar
+build/
+dist/
+_h1.txt
+_h2.txt

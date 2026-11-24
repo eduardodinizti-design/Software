@@ -9,16 +9,18 @@ REGRAS (LEI de Eduardo — valem p/ qualquer update deste arquivo):
 
 Com a Suprema aberta numa mesa, sobe numa ÚNICA instância de hook (respeita a trava
 anti-injeção-dupla) tudo que faz a mesa virar dados + HUD no NVT:
-  1) CAPTURADOR (capturar_suprema_net.py, 1 hook Frida READ-ONLY): --base -> .txt Hand2Note
-     (sala 'SupremaPoker') p/ o watcher; --hud-dir -> snapshot por assento p/ o HUD;
-     --advise -> CONSELHO (dry-run). DADOS + BANCO + HUD + CONSELHO com UM só attach.
+  1) AGENTE (suprema_agente.py, 1 hook Frida): --base -> .txt Hand2Note (sala 'SupremaPoker') p/ o
+     watcher; --hud-dir -> snapshot por SALA p/ o HUD; DECIDE o plano e, se ARMADO (checkbox
+     "Armar" -> flag suprema_armed), CLICA. DRY por padrão. DADOS + BANCO + HUD + DECISÃO num attach.
   2) WATCHER (nvt-watch): ingere os .txt -> banco. Só com membro autorizado e se já não roda.
   3) HUD OVERLAY da Suprema (--layout suprema --live-only): HUD nos 9 assentos da janela do
      cliente, lendo o snapshot isolado (_live_suprema). --live-only = NUNCA inventa mesa do
      banco (sem mesa ao vivo = nenhuma caixa; mata o bug das "mesas-fantasma" sobre o lobby).
 
-Tudo OBSERVACIONAL (lê e mostra; NÃO clica/joga). Fechar o Wizard (ou Parar) desanexa o
-Frida LIMPO (CTRL_BREAK ao capturador) p/ não travar o cliente.
+Por padrão OBSERVACIONAL (lê, mostra e salva; NÃO clica). Com "Armar" marcado, o agente JOGA
+sozinho (clica) — o flag é lido no INÍCIO, então armar/desarmar só efetiva ao reabrir (o hook é
+único e já sobe aqui; nunca religar com a Suprema aberta). Fechar o Wizard (ou Parar) desanexa o
+Frida LIMPO (CTRL_BREAK ao agente -> unload+detach) p/ não travar o cliente.
 """
 import os
 import sys
@@ -51,6 +53,7 @@ _NVTDIR = os.path.join(os.environ.get("LOCALAPPDATA", os.path.expanduser("~")), 
 _HIDE_HERO_FILE = os.path.join(_NVTDIR, "hud_hide_hero.flag")   # existe = oculta a caixa do herói
 _ALPHA_FILE = os.path.join(_NVTDIR, "hud_alpha.flag")           # opacidade 0.20–1.0 (slider)
 _LOCK_FILE = os.path.join(_NVTDIR, "hud_locked.flag")           # existe = HUD fixa (não arrasta; segue a mesa)
+_ARMED_FILE = os.path.join(_NVTDIR, "suprema_armed.flag")      # existe = AGENTE ARMADO (joga/clica) no próximo início
 
 
 def _read_alpha_pct():
@@ -59,6 +62,22 @@ def _read_alpha_pct():
             return max(20, min(100, int(round(float(f.read().strip()) * 100))))
     except Exception:
         return 95
+
+def _agent_cmd(py, base, hud_dir, tourney, rawfile, armed):
+    """Comando do AGENTE unificado (1 hook: dados + .txt H2N + snapshot HUD por sala + decisão).
+    --armed SÓ quando o flag suprema_armed está ligado. Único ponto de verdade — Wizard e o
+    fallback headless montam o comando por aqui (sem divergir).
+    FROZEN (.exe): re-invoca o PRÓPRIO executável com o subcomando 'suprema-agente' (o nvtbot_main
+    despacha) — no bundle NÃO existe python.exe nem o arquivo suprema_agente.py solto. Igual ao
+    padrão do iniciar_bot. No FONTE: python -I -u suprema_agente.py (como antes)."""
+    base_cmd = ([sys.executable, "suprema-agente"] if getattr(sys, "frozen", False)
+                else [py, "-I", "-u", "suprema_agente.py"])
+    cmd = base_cmd + ["--base", base, "--hud-dir", hud_dir,
+                      "--tournament", tourney, "--dump-raw", rawfile]
+    if armed:
+        cmd.append("--armed")
+    return cmd
+
 
 NEW_GROUP = getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0x00000200)
 NO_WINDOW = 0x08000000
@@ -155,7 +174,7 @@ def _cleanup_stale():
     """Libera a trava de hook único: encerra hooks ÓRFÃOS da Suprema (capturar/assistir/validar)
     e um overlay suprema anterior. Host Frida recebe CTRL_BREAK -> detach LIMPO. Nunca o cliente."""
     me = os.getpid()
-    hook_scripts = ("capturar_suprema_net", "assistir_suprema", "validar_suprema")
+    hook_scripts = ("capturar_suprema_net", "assistir_suprema", "validar_suprema", "suprema_agente")
     overlay_mark = "_live_suprema"
     brk = getattr(signal, "CTRL_BREAK_EVENT", None)
     killed = []
@@ -256,7 +275,7 @@ class Wizard:
     STEPS = [
         ("suprema", "Suprema Poker"),
         ("limpeza", "Preparando sessão"),
-        ("captura", "Captura  (dados · banco · HUD · conselho)"),
+        ("captura", "Agente  (dados · banco · HUD · decisão)"),
         ("watcher", "Ingestão no banco"),
         ("hud", "HUD nos assentos"),
     ]
@@ -320,6 +339,20 @@ class Wizard:
             info.pack(side="right")
             self.rows[key] = (dot, info)
 
+        # ── AGENTE: jogar sozinho (DRY por padrão; armar só efetiva ao reabrir) ──
+        ag = tk.Frame(self.root, bg=BG)
+        ag.pack(fill="x", padx=24, pady=(6, 0))
+        tk.Label(ag, text="AGENTE", font=("Segoe UI", 8, "bold"),
+                 fg=MUTED, bg=BG, anchor="w").pack(fill="x")
+        self.armed_var = tk.BooleanVar(value=os.path.exists(_ARMED_FILE))
+        tk.Checkbutton(ag, text="Armar — JOGAR sozinho (clica). Sem isto = DRY (só mostra o plano)",
+                       variable=self.armed_var, command=self._toggle_armed,
+                       bg=BG, fg=FG, selectcolor=CARD, activebackground=BG,
+                       activeforeground=GOLD, font=("Segoe UI", 10), anchor="w",
+                       bd=0, highlightthickness=0, cursor="hand2").pack(anchor="w", pady=(1, 0))
+        self.armed_note = tk.Label(ag, text="", font=("Segoe UI", 8), fg=MUTED, bg=BG, anchor="w")
+        self.armed_note.pack(fill="x")
+
         # ── CONFIGURAÇÃO da HUD (lida pelo overlay ao vivo) ──
         cfg = tk.Frame(self.root, bg=BG)
         cfg.pack(fill="x", padx=24, pady=(2, 2))
@@ -362,6 +395,25 @@ class Wizard:
         if info is not None:
             lbl.config(text=info, fg=(FG if state == "ok" else color if state == "err" else MUTED))
         self.root.update_idletasks()
+
+    def _toggle_armed(self):
+        """Grava/remove o flag de ARMAR. O hook é único e já está no ar: muda só no PRÓXIMO início
+        (Parar tudo e reabrir) — nunca religa com a Suprema aberta (hook pendurado)."""
+        try:
+            os.makedirs(_NVTDIR, exist_ok=True)
+            if self.armed_var.get():
+                open(_ARMED_FILE, "w").close()
+            elif os.path.exists(_ARMED_FILE):
+                os.remove(_ARMED_FILE)
+        except Exception:
+            pass
+        try:
+            self.armed_note.config(
+                text=("→ efetiva no PRÓXIMO início: Parar tudo e reabrir." if self.armed_var.get()
+                      else "→ DRY no próximo início."),
+                fg=(GOLD if self.armed_var.get() else MUTED))
+        except Exception:
+            pass
 
     # ── config da HUD: escreve os flags que o overlay lê a cada ciclo (efeito em ~3s) ──
     def _toggle_lock(self):
@@ -443,15 +495,15 @@ class Wizard:
             env["NVT_DATABASE_URL"] = dsn
         env["PYTHONPATH"] = TRACKER_ROOT + os.pathsep + env.get("PYTHONPATH", "")
 
-        # 3) CAPTURADOR UNIFICADO (1 hook: dados + .txt + HUD + conselho). Grupo próprio p/ CTRL_BREAK.
-        self._set("captura", "wait", "anexando…")
-        p, err = self._spawn(
-            "captura",
-            [py, "-I", "-u", "capturar_suprema_net.py", "--base", base,
-             "--hud-dir", hud_dir, "--tournament", tourney, "--advise",
-             "--dump-raw", rawfile],
-            cwd=REPO, env=env, group=True)
-        self._set("captura", "ok" if p else "err", "1 hook no ar" if p else (err or "falhou"))
+        # 3) AGENTE UNIFICADO (1 hook: dados + .txt + HUD + decisão/clique). Grupo próprio p/ CTRL_BREAK
+        # (encerramento limpo: unload+detach). DRY por padrão; ARMA só se o flag suprema_armed existir
+        # — LIDO AQUI, no início, pois o hook é único e já sobe agora (mudar o checkbox exige reabrir).
+        armed = os.path.exists(_ARMED_FILE)
+        self._set("captura", "wait", "armando…" if armed else "anexando…")
+        p, err = self._spawn("captura", _agent_cmd(py, base, hud_dir, tourney, rawfile, armed),
+                             cwd=REPO, env=env, group=True)
+        self._set("captura", "ok" if p else "err",
+                  (("JOGANDO (armado)" if armed else "DRY (não clica)") if p else (err or "falhou")))
 
         # 4) WATCHER (ingere .txt -> banco). Só com membro e se nenhum já roda.
         self._set("watcher", "wait", "verificando…")
@@ -482,8 +534,10 @@ class Wizard:
             self._set("hud", "skip", "sem DSN p/ stats")
 
         up = len([1 for _n, pr in self.procs if pr.poll() is None])
-        self.foot.config(text="● NO AR — %d componentes. Jogue; eu mostro a HUD e o conselho." % up,
-                         fg=GREEN)
+        self.foot.config(
+            text=(("● NO AR (ARMADO) — %d no ar. O Henrique JOGA sozinho; HUD ligada." % up) if armed
+                  else ("● NO AR (DRY) — %d no ar. Mostro HUD e plano; marque \"Armar\" p/ jogar." % up)),
+            fg=(GOLD if armed else GREEN))
         self.root.after(1500, self._monitor)
 
     def _monitor(self):
@@ -582,8 +636,8 @@ def _fallback_headless():
         lf = open(os.path.join(logdir, "suprema_%s.log" % name), "w", encoding="utf-8", errors="replace")
         p = subprocess.Popen(cmd, cwd=cwd, env=env, creationflags=cf, stdout=lf, stderr=subprocess.STDOUT)
         procs.append((name, p))
-    sp("captura", [py, "-I", "-u", "capturar_suprema_net.py", "--base", base, "--hud-dir", hud_dir,
-                   "--tournament", tourney, "--advise", "--dump-raw", rawfile], REPO, group=True)
+    armed = os.path.exists(_ARMED_FILE) or os.environ.get("NVT_SUPREMA_ARMED") == "1"
+    sp("captura", _agent_cmd(py, base, hud_dir, tourney, rawfile, armed), REPO, group=True)
     if member and dsn and not _proc_has("nvt-watch"):
         sp("watcher", [py, "-u", "-m", "nvttracker.cli", "nvt-watch", base, "--member", member,
                        "--poll", "1", "--debounce", "1", "--rescan", "8"], TRACKER_ROOT)

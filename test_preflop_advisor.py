@@ -483,7 +483,13 @@ def pack_vs_limp(raise_hands, stack=25):
                 spot='vs_limp', hero='BB', vs=[], validated=True, evUnit='bb',
                 legalActions=['check', 'raise', 'all_in'], actions=['all_in', 'raise', 'check'],
                 freq={'all_in': z, 'raise': raise_v, 'check': check_v}, ev={}, outOfRange=[], source='t')
-    return dict(format='nvt-range-export', version=1, engineCommit='t', hands=HANDS, nodes=[node])
+    # CO open node: régua do gate BLIND_WAR_DEEP (Eduardo 23/11) que CONFIRMA o ataque sólido antes
+    # de isolar (sem ele, strict=True derruba tudo pra check). Em produção o pack real tem CO (+UTG).
+    co = dict(id='co', context=dict(mode='chip_ev', format='regular', stage='mid', players=9, stack=stack),
+              spot='open_raise', hero='CO', vs=[], validated=True, evUnit='bb',
+              legalActions=['fold', 'raise'], actions=['raise', 'fold'],
+              freq={'raise': raise_v, 'fold': check_v}, ev={}, outOfRange=[], source='t')
+    return dict(format='nvt-range-export', version=1, engineCommit='t', hands=HANDS, nodes=[node, co])
 
 
 class VsLimpTests(unittest.TestCase):

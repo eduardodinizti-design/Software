@@ -396,6 +396,25 @@ def advise_from_suprema(table, advisor, *, hunt_bounty=False, head_fraction=0.5,
     state, hero_or_reason = table.to_table_state()
     if state is None:
         return dict(status='ABSTAIN', reason=hero_or_reason, source='suprema')
+    # PÓS-FLOP (board>=3): religa o MOTOR PÓS-FLOP (23/11). ANTES a Suprema decidia TODO pós-flop com
+    # lógica PRÉ-FLOP (advise_from_reading) -> supervalorizava underpair (ex. QQ em K-alto virava
+    # call-off premium -> perdeu ~50k, H2N #61). Espelha protobuf_state.advise_from_protobuf: board/
+    # pote/to_call EXATOS do stream -> advise_postflop + postflop_sizing.enforce. SHADOW (validated=
+    # False, heurístico) até homologar. Pré-flop segue idêntico (bounty/sitout são só pré-flop).
+    board = state.get('board') or []
+    if len(board) >= 3:
+        from postflop_advisor import advise_postflop
+        import postflop_sizing
+        advice = advise_postflop(state, hero_or_reason, board, street=state.get('street'),
+                                 mode=kwargs.get('mode', 'chip_ev'), stage=kwargs.get('stage', 'mid'))
+        if isinstance(advice, dict):
+            _stk = (state.get('seats', {}).get('hero') or {}).get('stack_bb')
+            postflop_sizing.enforce(advice, pot_bb=(state.get('pot') or {}).get('pot_bb'),
+                                    stack_bb=_stk, spr=advice.get('spr'))
+            advice['source'] = 'suprema_postflop'
+            advice.setdefault('validated', False)       # heurístico -> shadow até homologar
+            advice.setdefault('hero_cards', hero_or_reason)
+        return advice
     if hunt_bounty and kwargs.get('mode') in ('pko', 'pko_icm'):
         try:
             import suprema_bounty

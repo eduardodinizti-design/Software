@@ -11,13 +11,12 @@ calls, limps and all-ins are exact.
 OPEN_RAISE_BB = 2.0           # first-in open at <=40bb
 OPEN_RAISE_DEEP_BB = 2.5      # first-in open at 100bb
 OPEN_DEEP_THRESHOLD_BB = 40   # above this, use the deep open size
-# LEI (Eduardo, LOCK): o OPEN e 2x SEMPRE (2.5x so deep+reg); NUNCA 3X/4X de open.
-# ISOLAR um limper continua sendo um OPEN (1a aposta agressiva) -> NAO infla o size.
-# O add de 1bb por limper gerava opens 3X/4X/5X (bug ao vivo 21/11: open 3X), violando
-# a LEI. Mantido em 0.0 para travar a regra; a presenca de limper ainda e sinalizada
-# (heuristic=True + caveat), mas o TAMANHO permanece o do open. Ver nvt-squeeze-3bet-
-# shove-curto / nvt-autoridade-eduardo-decide.
-ISO_ADD_PER_LIMPER_BB = 0.0
+# OPEN sem limper = 2x SEMPRE (2.5x só deep+reg) — LEI open=2x INTACTA (limpers==0).
+# ISO vs LIMPERS (Eduardo 23/11 REVERTEU a regra do 21/11): isolar limper INFLA o size — +1bb por
+# limper a partir do open 2x => 1 limper=3X, 2 limpers=4X, CAPADO em 4X (ISO_MAX_BB) p/ não voltar ao
+# runaway 5X. Só vale quando há limper; o open puro continua 2x. Ver nvt-padrao-de-jogo-henrique.
+ISO_ADD_PER_LIMPER_BB = 1.0
+ISO_MAX_BB = 4.0              # teto do iso vs limpers = 4X (Eduardo 23/11)
 # 3bet-to como múltiplo do open (REGRA do Eduardo, 19/11): 3x em posição, 4x fora de
 # posição. SÓ na RETA FINAL do torneio (stage 'ft') diminui p/ 2.5x IP e 3.5x OOP.
 THREEBET_IP_MULT = 3.0        # IP, torneio normal
@@ -104,13 +103,15 @@ def recommend_size(action, *, hero_stack_bb=None, to_call_bb=None, limpers=0,
         return dict(action=action, size_bb=cap, basis='all-in', heuristic=False)
     if action in ('raise', 'open_raise'):
         open_bb = open_size_bb(hero_stack_bb, registration_open)
-        # LEI: open/iso = tamanho do open SEMPRE (2x; 2.5x deep+reg). O add por limper
-        # fica em 0.0 (ISO_ADD_PER_LIMPER_BB) -> nunca vira 3X/4X de open.
-        size = open_bb + ISO_ADD_PER_LIMPER_BB * limpers
-        basis = 'open %.1fbb (solver)' % open_bb
         if limpers:
-            basis += ' + %d limper(s): ISO sem inflar size (LEI open=2x)' % limpers
-        return dict(action='raise', size_bb=capped(size), heuristic=bool(limpers), basis=basis)
+            # ISO vs LIMPERS (Eduardo 23/11): +1bb por limper sobre o open 2x, CAPADO em 4X ->
+            # 1 limper=3X, 2 limpers=4X, 3+ = 4X. (Reverteu o "não inflar" do 21/11.)
+            size = min(open_bb + ISO_ADD_PER_LIMPER_BB * limpers, ISO_MAX_BB)
+            return dict(action='raise', size_bb=capped(size), heuristic=True,
+                        basis='iso %.1fbb vs %d limper(s) (3X/4X cap, Eduardo 23/11)' % (size, limpers))
+        # OPEN puro (sem limper) = tamanho do open SEMPRE (LEI open=2x).
+        return dict(action='raise', size_bb=capped(open_bb), heuristic=False,
+                    basis='open %.1fbb (solver)' % open_bb)
     if action == 'three_bet':
         base = opener_bb if isinstance(opener_bb, (int, float)) else open_size_bb(hero_stack_bb)
         mult = three_bet_mult(ip, final_table)
@@ -122,13 +123,32 @@ def recommend_size(action, *, hero_stack_bb=None, to_call_bb=None, limpers=0,
     return None
 
 
+def _sb_completed(table_state):
+    """SB completou (~1bb) = o 'limper' da BATALHA DE BLINDS. count_limpers() exclui blinds, então
+    o complete do SB não entra lá; aqui ele conta como 1 limper p/ o BB isolar a 3X (regra Eduardo)."""
+    positions = table_state.get('positions') or {}
+    sb = next((s for s, p in positions.items() if p == 'SB'), None)
+    if sb is None:
+        return False
+    for bet in (table_state.get('bets') or []):
+        if bet.get('seat') == sb and isinstance(bet.get('bet_bb'), (int, float)):
+            return 0.9 <= bet['bet_bb'] <= 1.1
+    return False
+
+
 def size_from_reading(action, table_state, hero_position, opener_position=None, stage=None):
     """Convenience: build the context from a read_table_state result and size the action.
     `stage=='ft'` (reta final) reduz os 3bets (2.5x IP / 3.5x OOP)."""
     hero = (table_state.get('seats') or {}).get('hero', {})
+    limpers = count_limpers(table_state)
+    # BLIND WAR: o BB isolando o complete do SB conta como 1 limper (iso 3X) — count_limpers
+    # exclui blinds, então sem isto o raise sairia 2x (o "mini raise 2x" que o Eduardo reclamou).
+    if (action in ('raise', 'open_raise') and hero_position == 'BB'
+            and limpers == 0 and _sb_completed(table_state)):
+        limpers = 1
     return recommend_size(action, hero_stack_bb=hero.get('stack_bb'),
                           to_call_bb=(table_state.get('to_call') or {}).get('to_call_bb'),
-                          limpers=count_limpers(table_state),
+                          limpers=limpers,
                           opener_bb=opener_raise_bb(table_state), hero_position=hero_position,
                           ip=in_position(hero_position, opener_position) if opener_position else True,
                           # 2.5x só com late reg ABERTA (início). Sem o sinal -> 2x (default).

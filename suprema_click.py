@@ -231,7 +231,7 @@ def build_sequence(plan):
 
 
 def execute(plan, hwnd, *, armed=False, mover=None, sleeper=None, step_delay=0.5,
-            background=None, restore_cursor=False, room_index=0, n_rooms=1):
+            panel_delay=0.5, background=None, restore_cursor=False, room_index=0, n_rooms=1):
     """Executa o plano na janela. DRY-RUN por padrão (armed=False: só resolve a sequência de
     coords e loga). armed=True clica cada passo com `step_delay` entre eles (deixa o painel de
     size renderizar).
@@ -259,7 +259,10 @@ def execute(plan, hwnd, *, armed=False, mover=None, sleeper=None, step_delay=0.5
         for i, (cx, cy) in enumerate(clients):
             (mover(cx, cy) if mover is not None else _click_postmessage(hwnd, cx, cy))
             if i < len(clients) - 1:
-                (sleeper or _t.sleep)(step_delay)
+                # após 'Aumentar'/'Apostar' (1º de uma sequência) o PAINEL de size precisa RENDERIZAR
+                # antes do clique do preset -> espera MAIS (senão o preset cai no vazio = zig-zag / size
+                # errado / all-in acidental = bust). Eduardo 23/11.
+                (sleeper or _t.sleep)(panel_delay if (i == 0 and len(clients) > 1) else step_delay)
         return dict(action=act, client=clients, mode='bg', clicked=True, reason='CLICOU')
     # DEFAULT: SendInput (cursor físico). Dict IDÊNTICO ao histórico (não quebra chamadores).
     # room_index/n_rooms default (0,1) -> frac_to_screen_room == frac_to_screen (1 mesa).
@@ -270,7 +273,10 @@ def execute(plan, hwnd, *, armed=False, mover=None, sleeper=None, step_delay=0.5
     for i, (x, y) in enumerate(screens):
         click_fn(x, y)
         if i < len(screens) - 1:
-            (sleeper or _t.sleep)(step_delay)
+            # após 'Aumentar'/'Apostar' (1º de uma sequência) o PAINEL de size precisa RENDERIZAR antes
+            # do clique do preset -> espera MAIS (senão o preset cai no vazio = zig-zag / size errado /
+            # all-in acidental = bust). Eduardo 23/11. Fold/call/check = 1 clique, sem espera.
+            (sleeper or _t.sleep)(panel_delay if (i == 0 and len(screens) > 1) else step_delay)
     return dict(action=act, screen=screens, clicked=True, reason='CLICOU')
 
 

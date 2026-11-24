@@ -26,7 +26,11 @@ class _P:
     __slots__ = ('hands', 'vpip', 'pfr', 'faced_raise', 'threebet',
                  'post_aggr', 'post_call', 'post_check',
                  'steal_opp', 'steal_att', 'fold3bet_opp', 'fold3bet_made',
-                 'cbet_opp', 'cbet_made', 'foldcbet_opp', 'foldcbet_made')
+                 'cbet_opp', 'cbet_made', 'foldcbet_opp', 'foldcbet_made',
+                 # LIMP-RERAISE (tell de bot — [[nvt-exploit-anti-bot-pppoker]]): limpou e
+                 # depois, encarando um raise, re-raiseou. limp_made = quantos limps; o par
+                 # opp/made = (limpou e enfrentou raise) / (dessas, re-raiseou).
+                 'limp_made', 'limp_reraise_opp', 'limp_reraise_made')
 
     def __init__(self):
         for s in self.__slots__:
@@ -75,6 +79,13 @@ class Field:
             fold3bet=_pct(p.fold3bet_made, p.fold3bet_opp) if p.fold3bet_opp else None,
             cbet=_pct(p.cbet_made, p.cbet_opp) if p.cbet_opp else None,
             foldcbet=_pct(p.foldcbet_made, p.foldcbet_opp) if p.foldcbet_opp else None,
+            # LIMP-RERAISE: taxa de limp sobre as mãos + % de re-raise após limpar (o tell).
+            # limp_reraise_opp (n cru) acompanha para quem consome exigir amostra mínima.
+            limp=_pct(p.limp_made, p.hands),
+            limp_reraise=(_pct(p.limp_reraise_made, p.limp_reraise_opp)
+                          if p.limp_reraise_opp else None),
+            limp_reraise_opp=p.limp_reraise_opp,
+            limp_reraise_made=p.limp_reraise_made,
         )
         s['tag'] = _tag(s)
         return s
@@ -162,6 +173,9 @@ def _accumulate(players, block):
     # flags por mão (contar 1x por mão onde aplicável)
     f_vpip, f_pfr, f_faced, f_3bet = set(), set(), set(), set()
     steal_opp, steal_att = set(), set()
+    # LIMP-RERAISE (tell de bot): limpers = quem deu call pré com o pote ainda não raiseado;
+    # lrr_opp = limpou e depois encarou um raise (teve a chance de re-raise); lrr_made = re-raiseou.
+    limpers, lrr_opp, lrr_made = set(), set(), set()
     opened = False
     pf_raises = 0
     opener = None            # 1º raiser (2bet)
@@ -211,6 +225,12 @@ def _accumulate(players, block):
                     steal_att.add(actor)
             if faced:
                 f_faced.add(actor)
+            # LIMP-RERAISE: um limper que agora encara um raise teve a chance de re-raise.
+            # Conta a oportunidade 1x (1ª vez que reage ao raise); re-raise => made.
+            if actor in limpers and faced and actor not in lrr_opp:
+                lrr_opp.add(actor)
+                if is_raise:
+                    lrr_made.add(actor)
             if is_raise:
                 f_vpip.add(actor); f_pfr.add(actor)
                 if faced:
@@ -225,7 +245,10 @@ def _accumulate(players, block):
                 pfr = actor
                 opened = True
             elif is_call:
-                f_vpip.add(actor); opened = True
+                f_vpip.add(actor)
+                if pf_raises == 0:             # call com o pote ainda não raiseado = LIMP
+                    limpers.add(actor)
+                opened = True
             elif is_bet:
                 f_vpip.add(actor); opened = True
             elif is_fold:
@@ -263,6 +286,12 @@ def _accumulate(players, block):
         players[n].steal_opp += 1
     for n in steal_att:
         players[n].steal_att += 1
+    for n in limpers:
+        players[n].limp_made += 1
+    for n in lrr_opp:
+        players[n].limp_reraise_opp += 1
+    for n in lrr_made:
+        players[n].limp_reraise_made += 1
     if fold3bet_opp is not None:
         players[fold3bet_opp].fold3bet_opp += 1
         if fold3bet_made:
