@@ -24,6 +24,7 @@ function main(){
     field_get_type:nf('il2cpp_field_get_type','pointer',['pointer']), type_get_type:nf('il2cpp_type_get_type','int',['pointer']),
     field_get_flags:nf('il2cpp_field_get_flags','int',['pointer']),
     field_static_get_value:nf('il2cpp_field_static_get_value','void',['pointer','pointer']),
+    class_get_parent:nf('il2cpp_class_get_parent','pointer',['pointer']),
   };
   const d=il.domain_get(); il.thread_attach(d);
   const sp=Memory.alloc(PS); const arr=il.domain_get_assemblies(d,sp); const cnt=sp.readU64().toNumber();
@@ -100,17 +101,22 @@ function main(){
     try{ const k=il.class_from_name(img, Memory.allocUtf8String(ns), Memory.allocUtf8String('HoldemManager'));
       if(!k.isNull()) return k; }catch(e){} } return ptr(0); }
   let _hmStaticLog=false;
-  function findHMStatic(){ try{ const k=findHMClass();
+  function findHMStatic(){ try{ let k=findHMClass();
     if(k.isNull()){ if(!_hmStaticLog){_hmStaticLog=true;console.log('[diag] HM class NAO achada por nome');} return null; }
-    const it=Memory.alloc(PS); it.writePointer(ptr(0)); let f;
-    while(!(f=il.class_get_fields(k,it)).isNull()){ try{
-      if(!(il.field_get_flags(f) & 0x10)) continue;                              // 0x10 = STATIC
-      const te=il.type_get_type(il.field_get_type(f))&0xff;
-      if(te!==0x12 && te!==0x1c && te!==0x15) continue;                          // so referencia (seguro)
-      const out=Memory.alloc(PS); il.field_static_get_value(f, out); const v=out.readPointer();
-      if(!v.isNull() && isHM(v)){ if(!_hmStaticLog){_hmStaticLog=true;console.log('[diag] HM singleton no campo estatico '+cstr(il.field_get_name(f)));} return v; }
-    }catch(e){} }
-    if(!_hmStaticLog){_hmStaticLog=true;console.log('[diag] HM class OK mas sem campo estatico self-type');}
+    // sobe pela hierarquia: o padrao Singleton<HoldemManager> guarda o _instance na classe-BASE.
+    for(let depth=0; depth<5 && !k.isNull(); depth++){
+      const it=Memory.alloc(PS); it.writePointer(ptr(0)); let f;
+      while(!(f=il.class_get_fields(k,it)).isNull()){ try{
+        if(!(il.field_get_flags(f) & 0x10)) continue;                            // 0x10 = STATIC
+        const te=il.type_get_type(il.field_get_type(f))&0xff;
+        if(te!==0x12 && te!==0x1c && te!==0x15) continue;                        // so referencia (seguro)
+        const out=Memory.alloc(PS); il.field_static_get_value(f, out); const v=out.readPointer();
+        if(!v.isNull() && isHM(v)){ if(!_hmStaticLog){_hmStaticLog=true;
+          console.log('[diag] HM singleton: campo estatico '+cstr(il.field_get_name(f))+' @ '+clsName(v));} return v; }
+      }catch(e){} }
+      try{ k=il.class_get_parent(k); }catch(e){ break; }
+    }
+    if(!_hmStaticLog){_hmStaticLog=true;console.log('[diag] HM class OK mas sem static self-type (nem nas bases)');}
     return null;
   }catch(e){ return null; } }
 
