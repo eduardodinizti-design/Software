@@ -11,6 +11,10 @@ from __future__ import annotations
 import json
 
 _MAX_BUF = 1 << 20   # 1 MiB: teto do buffer de remontagem (evita runaway)
+_MAX_MSG = 1 << 17   # 128 KiB: maior mensagem de jogo plausível. Um '{' que não fecha em 128KB (e sem
+                     # byte de controle que já o marque como lixo) é tratado como LIXO e PULADO — senão o
+                     # parser TRAVA nele até encher _MAX_BUF (~3-4min = os "mutes" medidos 24/11). Ver
+                     # _match_object: o gatilho PRINCIPAL é o byte de controle do framing WS (pula na hora).
 
 
 class JsonFrameExtractor:
@@ -36,8 +40,16 @@ class JsonFrameExtractor:
                 i += 1
                 continue
             end = self._match_object(self._buf, i)
+            if end == -1:                          # '{' é LIXO binário (byte de controle no framing WS)
+                i += 1                             # -> PULA na hora (senão trava o parser = o "mute")
+                continue
             if end is None:
-                break                              # objeto incompleto -> espera mais bytes
+                # objeto ainda INCOMPLETO (msg real chegando aos pedaços) -> espera mais bytes. MAS se já
+                # acumulou MUITO após o '{' sem fechar, trata como lixo e pula (teto de segurança, raro).
+                if n - i > _MAX_MSG:
+                    i += 1
+                    continue
+                break
             chunk = self._buf[i:end]
             try:
                 obj = json.loads(chunk)
@@ -54,8 +66,11 @@ class JsonFrameExtractor:
 
     @staticmethod
     def _match_object(s, start):
-        """Índice APÓS o '}' que fecha o objeto que começa em `start`, ou None se incompleto.
-        Respeita strings e escapes."""
+        """Índice APÓS o '}' que fecha o objeto que começa em `start`; None se INCOMPLETO (ainda pode
+        chegar mais bytes); -1 se o '{' é LIXO — contém um BYTE DE CONTROLE cru (framing binário WS/pomelo),
+        que nunca vai fechar como JSON. O JSON de jogo é bem-formado (sem byte de controle cru fora de
+        \\t\\n\\r), então controle cru = não é JSON -> o chamador PULA esse '{' em vez de travar o parser
+        nele até encher _MAX_BUF (~3-4min = os 'mutes' medidos 24/11). Respeita strings e escapes."""
         depth = 0
         in_str = False
         esc = False
@@ -68,6 +83,8 @@ class JsonFrameExtractor:
                     esc = True
                 elif c == '"':
                     in_str = False
+                elif c < ' ' and c not in '\t\n\r':
+                    return -1                          # byte de controle cru dentro de string -> lixo
             else:
                 if c == '"':
                     in_str = True
@@ -77,6 +94,8 @@ class JsonFrameExtractor:
                     depth -= 1
                     if depth == 0:
                         return j + 1
+                elif c < ' ' and c not in '\t\n\r':
+                    return -1                          # byte de controle cru fora de string -> não é JSON
         return None
 
 
@@ -113,7 +132,7 @@ else Interceptor.attach(a, {
     try {
       const n = ret.toInt32(); if (n <= 0 || !this.buf) return;
       const take = Math.min(n, 65536);
-      send({ssl: true}, this.buf.readByteArray(take));   // manda os bytes crus p/ o Python
+      send({ssl: true, via: 'read'}, this.buf.readByteArray(take));   // manda os bytes crus p/ o Python
     } catch (e) {}
   }
 });
@@ -130,7 +149,7 @@ else Interceptor.attach(b, {
       if (ret.toInt32() !== 1 || !this.buf || this.pn.isNull()) return;
       const n = this.pn.readUInt(); if (n <= 0) return;   // *readbytes (size_t, 32-bit)
       const take = Math.min(n, 65536);
-      send({ssl: true}, this.buf.readByteArray(take));
+      send({ssl: true, via: 'read_ex'}, this.buf.readByteArray(take));
     } catch (e) {}
   }
 });
@@ -188,7 +207,11 @@ def run_live(bb_chips, on_state=None, seconds=0, process='SupremaPoker.exe', on_
         if session is None:
             raise RuntimeError('não consegui anexar em %s: %s' % (process, last_err))
         script = session.create_script(_AGENT)
-        last_evt = [time.time()]      # carimba cada EVENTO DE JOGO -> detecta hook mudo p/ auto-re-attach
+        last_evt = [time.time()]      # carimba cada EVENTO DE JOGO -> detecta hook mudo
+        # DIAGNÓSTICO do mute (Eduardo 24/11): conta leituras por função (read/read_ex), bytes e eventos
+        # de jogo. O loop abaixo imprime um resumo a cada 5s — INCLUSIVE durante o mute -> mostra se o
+        # hook está disparando (dado não-jogo) ou se NÃO chega nada (dados em outro caminho/conexão parada).
+        _diag = {'read': 0, 'read_ex': 0, 'rb': 0, 'xb': 0, 'game': 0}
 
         def _on(m, data):
             if m.get('type') != 'send':
@@ -196,8 +219,15 @@ def run_live(bb_chips, on_state=None, seconds=0, process='SupremaPoker.exe', on_
             p = m.get('payload') or {}
             if not p.get('ssl') or not data:
                 return
+            if p.get('via') == 'read_ex':
+                _diag['read_ex'] += 1
+                _diag['xb'] += len(data)
+            else:
+                _diag['read'] += 1
+                _diag['rb'] += len(data)
             for msg in ex.feed(bytes(data).decode('latin-1', 'replace')):
                 if is_game_event(msg):
+                    _diag['game'] += 1
                     last_evt[0] = time.time()
                     table.feed_json(msg)
                     if on_message:
@@ -219,8 +249,18 @@ def run_live(bb_chips, on_state=None, seconds=0, process='SupremaPoker.exe', on_
         # mesmo SSL_read não traz dados), e re-injetar a cada 30s no cliente 32-bit frágil é risco de crash
         # e atrapalha a recuperação natural (o hook voltava sozinho em ~3-4min). Causa real do mute EM
         # INVESTIGAÇÃO. Por ora: só mantém o hook; o _mute_watchdog do agente apenas AVISA (seguro).
+        _last_diag = time.time()
         while seconds == 0 or (time.time() - t0) < seconds:
             time.sleep(0.3)
+            _dt_s = time.time() - _last_diag
+            if _dt_s >= 5.0:
+                # resumo do que o HOOK recebeu nos últimos ~5s (imprime mesmo no mute: aí mostra 0/0/0)
+                print('[NET-DIAG] %.0fs  read=%d/%.0fkb  read_ex=%d/%.0fkb  game_events=%d'
+                      % (_dt_s, _diag['read'], _diag['rb'] / 1024,
+                         _diag['read_ex'], _diag['xb'] / 1024, _diag['game']), flush=True)
+                for _k in _diag:
+                    _diag[_k] = 0
+                _last_diag = time.time()
     finally:
         # unload ANTES do detach: reverte os hooks com a conexão viva -> sem crash.
         if script is not None:

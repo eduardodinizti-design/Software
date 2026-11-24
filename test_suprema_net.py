@@ -75,5 +75,33 @@ class Integracao(unittest.TestCase):
         self.assertAlmostEqual(state['seats']['hero']['stack_bb'], 20.0)
 
 
+class StuckGarbageBrace(unittest.TestCase):
+    """REGRESSÃO do travamento (CAUSA RAIZ medida 24/11 via NET-DIAG: read>0, game_events=0): um '{'
+    no framing BINÁRIO WS nunca fecha como JSON; o parser travava nele até encher o buffer de 1 MiB
+    (~3-4min a 4,6KB/s = exatamente a duração dos 'mutes'). Agora um byte de controle cru marca o '{'
+    como lixo -> PULA e extrai o jogo NA HORA, em vez de travar a percepção inteira."""
+
+    def test_pula_chave_lixo_com_byte_de_controle(self):
+        ex = JsonFrameExtractor()
+        out = ex.feed('\x00\x7b\x03\x11' + '{"event":"moveturn","seat":2}')
+        self.assertIn({"event": "moveturn", "seat": 2}, out)      # extraiu o jogo, não travou no '{' lixo
+
+    def test_nao_trava_com_lixo_chegando_em_pedacos(self):
+        ex = JsonFrameExtractor()
+        ex.feed('\x7b\x02lixo_binario_sem_fechar')                # '{' + byte de controle -> lixo
+        self.assertIn({"event": "gameinfo"}, ex.feed('{"event":"gameinfo"}'))
+
+    def test_hdr_binario_com_chave_espuria_embutida(self):
+        ex = JsonFrameExtractor()
+        out = ex.feed(HDR + '\x7b\x01' + '{"event":"prompt"}')    # '{' espúrio no framing + corpo real
+        self.assertIn({"event": "prompt"}, out)
+
+    def test_json_limpo_normal_segue_intacto(self):
+        # garantia de não-regressão: JSON de jogo bem-formado continua sendo extraído normalmente
+        ex = JsonFrameExtractor()
+        self.assertEqual(ex.feed('{"event":"gamestart","a":1}{"event":"gameover"}'),
+                         [{"event": "gamestart", "a": 1}, {"event": "gameover"}])
+
+
 if __name__ == '__main__':
     unittest.main()
