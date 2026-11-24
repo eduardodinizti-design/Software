@@ -157,7 +157,7 @@ send({ready: true});
 """
 
 
-def run_live(bb_chips, on_state=None, seconds=0, process='SupremaPoker.exe', on_message=None, lock=True):
+def run_live(bb_chips, on_state=None, seconds=0, process='SupremaPoker.exe', on_message=None, lock=True, pid=None):
     """Anexa no cliente, hooka SSL_read e mantém um SupremaTable vivo. A cada evento de jogo,
     chama `on_state(table)` (se dado) — ex.: rodar advise_from_suprema em DRY-RUN — e também
     `on_message(msg)` com a MENSAGEM CRUA (dict event/data) p/ quem reconstrói mão a mão
@@ -172,7 +172,9 @@ def run_live(bb_chips, on_state=None, seconds=0, process='SupremaPoker.exe', on_
     _lock = None
     if lock:
         from client_lock import ClientLock, ClientBusy
-        _lock = ClientLock(process)
+        # MULTI-INSTANCIA (Eduardo 24/11): lock por PID quando `pid` é dado (duas instâncias da Suprema =
+        # dois agentes, um por cliente/PID; não recusa o 2º cliente). Sem pid = lock por nome (1 instância).
+        _lock = ClientLock('%s_%s' % (process, pid) if pid is not None else process)
         try:
             _lock.acquire()
         except ClientBusy as e:
@@ -187,18 +189,21 @@ def run_live(bb_chips, on_state=None, seconds=0, process='SupremaPoker.exe', on_
     script = None
     try:
         dev = frida.get_local_device()
-        procs = [p for p in dev.enumerate_processes() if p.name.lower() == process.lower()]
-        if not procs:
+        if pid is not None:
+            session = dev.attach(int(pid))     # MULTI-INSTANCIA: anexa no cliente ESPECÍFICO (por PID)
+        else:
+          procs = [p for p in dev.enumerate_processes() if p.name.lower() == process.lower()]
+          if not procs:
             raise RuntimeError('%s não está aberto' % process)
-        # Escolhe o PROCESSO DO JOGO (maior RSS) — evita o helper/launcher (procs[0] podia
-        # ser o processo de 18MB, cujo attach dava TransportError timeout). Tenta o próximo.
-        try:
+          # Escolhe o PROCESSO DO JOGO (maior RSS) — evita o helper/launcher (procs[0] podia
+          # ser o processo de 18MB, cujo attach dava TransportError timeout). Tenta o próximo.
+          try:
             import psutil
             procs.sort(key=lambda p: psutil.Process(p.pid).memory_info().rss, reverse=True)
-        except Exception:
+          except Exception:
             pass
-        last_err = None
-        for p in procs:
+          last_err = None
+          for p in procs:
             try:
                 session = dev.attach(p.pid)
                 break

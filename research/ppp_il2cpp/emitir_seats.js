@@ -22,6 +22,8 @@ function main(){
     class_get_fields:nf('il2cpp_class_get_fields','pointer',['pointer','pointer']),
     field_get_name:nf('il2cpp_field_get_name','pointer',['pointer']), field_get_offset:nf('il2cpp_field_get_offset','uint32',['pointer']),
     field_get_type:nf('il2cpp_field_get_type','pointer',['pointer']), type_get_type:nf('il2cpp_type_get_type','int',['pointer']),
+    field_get_flags:nf('il2cpp_field_get_flags','int',['pointer']),
+    field_static_get_value:nf('il2cpp_field_static_get_value','void',['pointer','pointer']),
   };
   const d=il.domain_get(); il.thread_attach(d);
   const sp=Memory.alloc(PS); const arr=il.domain_get_assemblies(d,sp); const cnt=sp.readU64().toNumber();
@@ -91,9 +93,29 @@ function main(){
     let best=null, score=-1;
     for(const hm of acc){ const s=(heroCards(hm)?1000:0)+dealtCount(hm); if(s>score){ score=s; best=hm; } }
     return best; }
+  // SINGLETON ESTATICO do HoldemManager (fix 24/11): o AppProtocol nao segura o HM (medido: alcancavel=
+  // NENHUM). O HM eh um singleton -> acha a CLASSE por nome e le o campo ESTATICO self-type (Instance).
+  // Independe de hook/mensagem. Seguro: so campos de REFERENCIA (nunca deref de value-type).
+  function findHMClass(){ for(const ns of ['PP.PPPoker','PP.PPPoker.Holdem','PPPoker','Holdem','PP','']){
+    try{ const k=il.class_from_name(img, Memory.allocUtf8String(ns), Memory.allocUtf8String('HoldemManager'));
+      if(!k.isNull()) return k; }catch(e){} } return ptr(0); }
+  let _hmStaticLog=false;
+  function findHMStatic(){ try{ const k=findHMClass();
+    if(k.isNull()){ if(!_hmStaticLog){_hmStaticLog=true;console.log('[diag] HM class NAO achada por nome');} return null; }
+    const it=Memory.alloc(PS); it.writePointer(ptr(0)); let f;
+    while(!(f=il.class_get_fields(k,it)).isNull()){ try{
+      if(!(il.field_get_flags(f) & 0x10)) continue;                              // 0x10 = STATIC
+      const te=il.type_get_type(il.field_get_type(f))&0xff;
+      if(te!==0x12 && te!==0x1c && te!==0x15) continue;                          // so referencia (seguro)
+      const out=Memory.alloc(PS); il.field_static_get_value(f, out); const v=out.readPointer();
+      if(!v.isNull() && isHM(v)){ if(!_hmStaticLog){_hmStaticLog=true;console.log('[diag] HM singleton no campo estatico '+cstr(il.field_get_name(f)));} return v; }
+    }catch(e){} }
+    if(!_hmStaticLog){_hmStaticLog=true;console.log('[diag] HM class OK mas sem campo estatico self-type');}
+    return null;
+  }catch(e){ return null; } }
 
   // --- BOARD (RoundStartBRC.board_) + carry do POTE: ADITIVO, nunca quebra assentos ---
-  let _board=[], _stage=0, _potCarried=0, _lastBetSum=0, _curGame='', _dumpedHM=false;
+  let _board=[], _stage=0, _potCarried=0, _lastBetSum=0, _curGame='', _dumpedHM=false, _diagDumped=false;
   function fieldsOf(obj){ try{ const k=il.object_get_class(obj); const it=Memory.alloc(PS); it.writePointer(ptr(0));
     const m=[]; let f; while(!(f=il.class_get_fields(k,it)).isNull()){ m.push([cstr(il.field_get_name(f)), il.field_get_offset(f)]); } return m; }catch(e){ return []; } }
   function offByName(obj,name){ for(const fo of fieldsOf(obj)){ if(fo[0]===name) return fo[1]; } return -1; }
@@ -187,12 +209,32 @@ function main(){
         if(st>=2){ _potCarried += _lastBetSum; } else { _potCarried = 0; }
         _stage=st; _board=b;
         console.log('[emit] board stage='+st+' n='+b.length);
+        // DIAGNÓSTICO 24/11 (seats mortos): dump ÚNICO do grafo a partir do self do board hook, p/ VER
+        // onde o HoldemManager está alcançável (só campos de REFERÊNCIA = seguro). Mostra o caminho real.
+        if(!_diagDumped){ _diagDumped=true; try{ const self=args[0];
+          console.log('[diag] board self cls='+clsName(self)+' | msg cls='+clsName(msg));
+          for(const fd of reffields(self)){ try{ const p=self.add(fd.off).readPointer();
+            if(!p.isNull()) console.log('[diag]  self.'+fd.name+' -> '+clsName(p)); }catch(e){} }
+          const acc=[]; (function walk(o,d,path){ if(!o||o.isNull()||acc.length>=25||d<0)return;
+            if(isHM(o)){ acc.push(path); return; }
+            for(const fd of reffields(o)){ try{ const p=o.add(fd.off).readPointer();
+              if(!p.isNull()) walk(p,d-1,path+'.'+fd.name); }catch(e){} } })(self,5,'self');
+          console.log('[diag] HoldemManager alcançável em: '+(acc.join(' | ')||'NENHUM caminho <=5'));
+        }catch(e){ console.log('[diag] erro:', e); } }
+        // FIX 24/11 (seats parados): OnEnterRoomRSP deixou de disparar (PPPoker mudou o dispatcher) ->
+        // lastHM nunca era setado -> snapshot nunca rodava -> 0 seats (so board). Este hook
+        // (OnRoundStartBRC) FUNCIONA -> acho o HoldemManager a partir DELE (bestHM, args[0]=dispatcher,
+        // msg). Uma vez setado lastHM, o board + o setInterval(2s) voltam a emitir seats/to_call.
+        if(!lastHM || !heroCards(lastHM)){ try{ let hm=bestHM(args[0], msg);
+          if(!hm) hm=findHMStatic();                     // AppProtocol nao segura o HM -> singleton estatico
+          if(hm && (heroCards(hm) || !lastHM)){ lastHM=hm;
+            console.log('[emit] HM pego (hero='+heroCards(hm)+', dealt='+dealtCount(hm)+')'); } }catch(e){} }
         if(lastHM) snapshot(lastHM);
       }catch(e){} } });
       console.log('[emit] hook board (RoundStartBRC) armado.'); } }
   }catch(e){ console.log('[emit] (sem OnRoundStartBRC):', e); }
   // cacheia o HoldemManager: uma vez pego, re-emite a cada 2s (robusto a baixa atividade)
-  setInterval(()=>{ try{ if(lastHM) snapshot(lastHM); }catch(e){} }, 2000);
+  setInterval(()=>{ try{ if(!lastHM){ const hm=findHMStatic(); if(hm){ lastHM=hm; console.log('[emit] HM via SINGLETON (polling 2s)'); } } if(lastHM) snapshot(lastHM); }catch(e){} }, 2000);
   console.log('[emit] emissor de assentos armado (READ-ONLY, cache+2s).');
 }
 function go(){ try{ main(); }catch(e){ console.log('[emit] erro:', e.stack||e); } }

@@ -304,6 +304,12 @@ def main():
     ap.add_argument("--base", default=DEFAULT_BASE, help="pasta base dos .txt H2N")
     ap.add_argument("--tournament", default=None)
     ap.add_argument("--process", default="SupremaPoker.exe")
+    ap.add_argument("--pid", type=int, default=None,
+                    help="PID do cliente Suprema ESPECÍFICO (MULTI-INSTÂNCIA: 2 contas = 2 agentes, um por "
+                         "PID). Sem isso, anexa no maior SupremaPoker.exe (1 instância).")
+    ap.add_argument("--hwnd", type=int, default=None,
+                    help="HWND da janela do cliente (multi-instância: a janela DESTA conta). Sem isso, "
+                         "find_suprema_hwnd escolhe a janela da Suprema.")
     ap.add_argument("--hud-dir", dest="hud_dir", default=None,
                     help="pasta _live p/ a HUD overlay: snapshot por assento, 1 arquivo por SALA "
                          "(table_id=sala). Sem isto NÃO alimenta a HUD (usado quando o launcher sobe o agente).")
@@ -348,7 +354,7 @@ def main():
         except Exception:
             pass
 
-    hwnd = find_suprema_hwnd(args.process)
+    hwnd = args.hwnd if args.hwnd else find_suprema_hwnd(args.process)   # multi-instância: hwnd DESTA conta
     if not hwnd:
         print("[AG] janela da Suprema não encontrada.", flush=True)
         return 1
@@ -591,7 +597,7 @@ def main():
         flush=True)
     try:
         suprema_net.run_live(bb_chips=args.bb, on_message=on_message, on_state=None,
-                             seconds=args.seconds, process=args.process)
+                             seconds=args.seconds, process=args.process, pid=args.pid)
     except KeyboardInterrupt:
         pass
     finally:

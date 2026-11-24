@@ -89,6 +89,39 @@ def find_suprema_hwnd(process='SupremaPoker.exe'):
     return best['hwnd']
 
 
+def find_suprema_instances(process='SupremaPoker.exe'):
+    """[(pid, hwnd), ...] — a janela PRINCIPAL (maior área) de CADA instância da Suprema. MULTI-CONTA
+    (Eduardo 24/11): duas contas = duas instâncias = duas janelas, uma por PID. Cada agente mira uma."""
+    try:
+        import psutil
+        pids = {p.info['pid'] for p in psutil.process_iter(['pid', 'name'])
+                if (p.info.get('name') or '').lower() == process.lower()}
+    except Exception:
+        pids = set()
+    if not pids:
+        return []
+    u = ctypes.windll.user32
+    best = {}   # pid -> (area, hwnd)
+    WNDENUMPROC = ctypes.WINFUNCTYPE(ctypes.c_bool, wt.HWND, wt.LPARAM)
+
+    def _cb(hwnd, _lp):
+        if not u.IsWindowVisible(hwnd):
+            return True
+        pid = wt.DWORD()
+        u.GetWindowThreadProcessId(hwnd, ctypes.byref(pid))
+        if pid.value in pids:
+            r = wt.RECT()
+            u.GetClientRect(hwnd, ctypes.byref(r))
+            area = (r.right - r.left) * (r.bottom - r.top)
+            cur = best.get(pid.value)
+            if cur is None or area > cur[0]:
+                best[pid.value] = (area, hwnd)
+        return True
+
+    u.EnumWindows(WNDENUMPROC(_cb), 0)
+    return [(pid, hw) for pid, (ar, hw) in best.items() if hw]
+
+
 def _fmt_coords(hwnd, plan):
     """Coordenadas de TELA que o plano clicaria (dry-run do executor), p/ o Eduardo validar."""
     try:
