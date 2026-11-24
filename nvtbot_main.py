@@ -21,29 +21,11 @@ for _d in (_HERE, os.path.join(_HERE, 'research', 'ppp_il2cpp')):
 
 
 def _detecta_e_sobe():
-    """Sem subcomando: AUTO-DETECTA a sala aberta e sobe o launcher certo (clicou-abriu).
-    Suprema aberta -> Wizard Suprema; PPPoker aberto -> launcher PPPoker; as duas -> Suprema
-    primeiro (Eduardo joga as outras telas); nenhuma -> painel PPPoker (default histórico)."""
-    sup = ppp = False
-    try:
-        import iniciar_suprema
-        sup = bool(iniciar_suprema._suprema_running())
-    except Exception:
-        pass
-    try:
-        import iniciar_bot
-        ppp = bool(iniciar_bot.discover_hwnd())
-    except Exception:
-        pass
-    if sup:
-        import iniciar_suprema
-        iniciar_suprema.main()
-    elif ppp:
-        import iniciar_bot
-        iniciar_bot.main()
-    else:
-        import painel
-        painel.main()
+    """Sem subcomando: delega ao LAUNCHER ÚNICO MULTI-PLATAFORMA (iniciar_multi) — ele detecta Suprema
+    e/ou PPPoker abertos e sobe AS DUAS (ou a que estiver aberta), com o árbitro de clique coordenando
+    o cursor. É o 'clicou-abriu' da era multi-plataforma (Eduardo 24/11)."""
+    import iniciar_multi
+    iniciar_multi.main()
 
 
 def main():
@@ -73,6 +55,9 @@ def main():
     elif sub == 'suprema-agente':          # AGENTE da Suprema (1 hook) — filho do Wizard quando frozen
         import suprema_agente
         suprema_agente.main()
+    elif sub == 'multi':                   # LAUNCHER ÚNICO: sobe Suprema + PPPoker juntos (árbitro de clique)
+        import iniciar_multi
+        iniciar_multi.main()
     elif sub == 'painel':
         import painel
         painel.main()

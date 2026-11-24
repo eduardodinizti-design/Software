@@ -15,6 +15,7 @@ import time
 
 from action_coordinator import plan_from_buttons, decision_identity
 from cursor_controller import CursorController, Intent
+from click_arbiter import click_lock as _click_lock, ClickBusy as _ClickBusy  # lock GLOBAL do cursor (multi-plataforma)
 from decision_contract import evaluate as evaluate_contract
 
 SINGLE_CLICK_ACTIONS = ('FOLD', 'CALL', 'CHECK')
@@ -136,7 +137,18 @@ class ActionExecutor:
             input_adapter=input_adapter, validator=validator, verifier=verifier,
             bot_control=(self.bot_control if self.armed else None),
             clock=self._clock, arrival_tol=self.arrival_tol)
-        out = ctrl.execute(intent)
+        # ÁRBITRO DE CLIQUE (multi-plataforma): no ARMADO, o clique físico adquire o lock GLOBAL do cursor
+        # -> NÃO colide com a Suprema clicando ao mesmo tempo. Cursor ocupado pela outra plataforma ->
+        # não executa esta decisão agora (a próxima leitura re-propõe; poker dá tempo). Dry-run não toca
+        # o cursor, então não pega o lock. O click_arbiter degrada seguro se não houver win32.
+        if self.armed:
+            try:
+                with _click_lock():
+                    out = ctrl.execute(intent)
+            except _ClickBusy:
+                return dict(acted=False, reason='CURSOR_OCUPADO_OUTRA_PLATAFORMA', dry_run=False)
+        else:
+            out = ctrl.execute(intent)
         clicked = out['state'] != 'CANCELLED'      # chegou a clicar?
         if clicked:
             self._sent.add(sig)

@@ -47,6 +47,7 @@ except Exception:
 import suprema_act as A            # noqa: E402
 import suprema_click as C          # noqa: E402
 import suprema_net                 # noqa: E402
+from click_arbiter import click_lock, ClickBusy  # noqa: E402  (lock GLOBAL do cursor: multi-plataforma)
 from hand_accumulator import HandAccumulator          # noqa: E402
 from hand_text_sink import HandTextSink, DEFAULT_BASE  # noqa: E402
 from suprema_hand_builder import SupremaHandBuilder    # noqa: E402
@@ -159,7 +160,15 @@ def _click_worker(q, stats, stop, *, stale_s=6.0):
             think = _human_delay(posflop, act, tocall)         # timing humanizado (LEI Eduardo)
             if think > 0:
                 time.sleep(think)
-            res = C.execute(plan, hwnd, armed=True, step_delay=delay, room_index=ri, n_rooms=nr)
+            # ÁRBITRO DE CLIQUE (multi-plataforma): lock GLOBAL do cursor -> NÃO colide com o PPPoker
+            # clicando ao mesmo tempo. Se o cursor estiver ocupado pela outra plataforma, PULA (não força).
+            try:
+                with click_lock():
+                    res = C.execute(plan, hwnd, armed=True, step_delay=delay, room_index=ri, n_rooms=nr)
+            except ClickBusy:
+                print("%s %s cursor ocupado (outra plataforma) -> pulo o clique [%s]"
+                      % (tag, time.strftime("%H:%M:%S"), act), flush=True)
+                continue
             stats["acoes"] += 1
             print("%s %s CLIQUE[m%s/%s]: %s" % (tag, time.strftime("%H:%M:%S"), ri, nr, res), flush=True)
         except Exception as e:
