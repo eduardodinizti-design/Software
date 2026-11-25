@@ -21,6 +21,8 @@ roubo, nunca agir errado). Puro: não lê tela, não clica. Caveat NEVER_WALK_SI
 from __future__ import annotations
 
 MAX_TO_CALL_STEAL = 1.0   # first-in: enfrenta no MÁXIMO o big blind (sem raise de um ATIVO)
+_BLINDS = ('SB', 'BB')
+DEFEND_MIN_MIX = 0.10     # só promove o resteal se o GTO já 3beta a mão em >= 10% (borderline)
 
 
 def is_sitout_walk_steal(state):
@@ -52,3 +54,42 @@ def never_walk_sitout(advice, state):
     return dict(advice, recommended='raise',
                 exploit=dict(base='fold', to='raise', reason='NEVER_WALK_SITOUT_STEAL'),
                 caveats=list(advice.get('caveats') or []) + ['NEVER_WALK_SITOUT_STEAL'])
+
+
+def _aggr_in_mix(mix):
+    """Ação AGRESSIVA (three_bet/raise/all_in/four_bet) de MAIOR freq no mix, se >= DEFEND_MIN_MIX."""
+    best, bf = None, 0.0
+    for m in (mix or []):
+        if not isinstance(m, dict) or m.get('action') not in ('three_bet', 'raise', 'all_in', 'four_bet'):
+            continue
+        try:
+            f = float(m.get('frequency') or 0.0)
+        except (TypeError, ValueError):
+            f = 0.0
+        if f > bf:
+            best, bf = m.get('action'), f
+    return best if bf >= DEFEND_MIN_MIX else None
+
+
+def widen_defense_vs_sitout(advice, state):
+    """PONTO 2 do sit-out (LEI Eduardo 24/11): o hero ENFRENTA um OPEN e há um BLIND SIT-OUT na mão
+    (dead money que o opener ROUBA -> ele abre mais LARGO/FRACO). Contra isso o hero RE-STEALA mais
+    largo: promove fold->3bet SE o GTO já 3beta a mão em freq mista (>=DEFEND_MIN_MIX). BOUNDED — nunca
+    inventa um 3bet fora do range; na dúvida NÃO força. Espelha bounty_open.widen_open p/ a DEFESA."""
+    if not isinstance(advice, dict) or advice.get('status') != 'ADVICE':
+        return advice
+    if advice.get('recommended') != 'fold':
+        return advice
+    if (state or {}).get('board'):
+        return advice                                    # só pré-flop
+    tocall = ((state or {}).get('to_call') or {}).get('to_call_bb')
+    if not (isinstance(tocall, (int, float)) and tocall > MAX_TO_CALL_STEAL):
+        return advice                                    # precisa ENFRENTAR um open real (raise > 1bb)
+    if not any(p in _BLINDS for p in ((state or {}).get('sitout_positions') or [])):
+        return advice                                    # sem blind sit-out = sem dead money extra
+    act = _aggr_in_mix(advice.get('mix'))
+    if not act:
+        return advice                                    # GTO nem 3beta misto -> não resteala lixo
+    return dict(advice, recommended=act,
+                exploit=dict(base='fold', to=act, reason='SITOUT_DEAD_MONEY_WIDEN_RESTEAL'),
+                caveats=list(advice.get('caveats') or []) + ['SITOUT_DEAD_MONEY_WIDEN_RESTEAL'])

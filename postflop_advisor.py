@@ -52,6 +52,12 @@ def _hero_in_position(positions):
 # pagar demais. Aposta grande/overbet (pot_odds>0.40) tem range polarizado — o
 # pré-flop erra demais lá, então continua abstendo mesmo com range.
 _CALL_HAIRCUT = 0.05
+# NÃO MATAR A MATEMÁTICA (Eduardo 24/11): x/r light com draw FORTE que toma SHOVE num CAMPO MOLE —
+# o vilão sobre-shova LIGHT (pares fracos/draws piores), então a equity REAL do draw (+overcards) vs
+# esse range largo supera a nominal -> ATOLA. Bônus de equity aplicado SÓ no campo mole + draw forte
+# + aposta grande/shove (pot_odds>=_BIG_BET); o pote capa (overbet gigante ainda folda). Campo duro
+# (value-shove) NÃO ganha bônus -> respeita a aposta. Evita "foldar com equity + comprometido".
+_SOFT_DRAW_SHOVE_BONUS = 0.10
 _BIG_BET_POT_ODDS = 0.40
 # OVERBET: aposta > ~1.2x pote (pot_odds > 0.55 = exige >55% equity). O guia (cap.14) defende
 # BARRIL NORMAL (≤ pote) com top pair/par médio, mas NÃO paga bluff-catcher vs overbet polarizada.
@@ -648,9 +654,16 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
                     caveats.append('REVERSE_IMPLIED_STRAIGHT_NOT_MODELED')
             else:
                 caveats.append('IMPLIED_ODDS_NONE_NO_STACK_BEHIND')
+            # Bônus de "não matar a matemática": draw FORTE vs aposta grande/shove no CAMPO MOLE atola
+            # (vilão sobre-shova light -> equity real maior). Capado pelo pote (overbet gigante folda).
+            _draw_shove_bonus = (_SOFT_DRAW_SHOVE_BONUS
+                                 if (soft_field and has_strong_draw and pot_odds >= _BIG_BET_POT_ODDS)
+                                 else 0.0)
+            if _draw_shove_bonus:
+                caveats.append('DRAW_FORTE_ATOLA_SHOVE_CAMPO_MOLE')
             if equity is not None:
                 info.update(implied_bb=implied, pot_odds_implied=round(po_imp, 4),
-                            recommended=('call' if equity >= po_imp + haircut else 'fold'),
+                            recommended=('call' if equity + _draw_shove_bonus >= po_imp + haircut else 'fold'),
                             caveats=caveats)
                 return info
             clean = draws.get('clean_outs', outs)
@@ -662,7 +675,7 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
                 caveats.append('DIRTY_OUTS_DISCOUNTED_%g_OF_%d' % (round(outs - clean, 1), outs))
             info.update(draw_equity=round(deq, 4), clean_outs=clean, implied_bb=implied,
                         pot_odds_implied=round(po_imp, 4),
-                        recommended=('call' if deq >= po_imp else 'fold'), caveats=caveats)
+                        recommended=('call' if deq + _draw_shove_bonus >= po_imp else 'fold'), caveats=caveats)
             return info
         # EMPATE GARANTIDO / equidade TRAVADA no river com o board JOGADO. Chop quando:
         # (a) há range e a equidade é >= 0.5 (nenhum combo do range bate o board), OU

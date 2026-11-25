@@ -1247,6 +1247,36 @@ class PreflopAdvisor:
                                             basis='4bet-jam premium curto vs 3bet (commit)')
                         co.setdefault('caveats', []).append('PREMIUM_SHORT_4BET_JAM_VS_3BET')
                     return co
+            # PKO — BOUNTY ALARGA O FOLD (Eduardo 24/11, auto-caça): o nó chip-EV mandou FOLD, mas há
+            # um alvo BOUNTIADO que o hero COBRE -> o DROP EQUITY do bounty pode tornar o call +EV. Roda
+            # o call-off COM bounty; se virar CALL, ALARGA fold->call (SHADOW). O call-off já exige que
+            # o hero cubra (table_stacks/villain_stack) e computa equity vs o range de shove -> sem
+            # bounty foldaria; é o bounty que vira. Só vs_open_shove (jam comprovado).
+            if (isinstance(result, dict) and result.get('recommended') == 'fold'
+                    and spot['spot'] == 'vs_open_shove'
+                    and kwargs.get('mode') in ('pko', 'pko_icm') and table_state.get('bounties')):
+                bb_eff, bcav = scale_bounty_bb(bounty_bb, table_state.get('bounties'),
+                                               spot['opener'], positions)
+                if isinstance(bb_eff, (int, float)) and bb_eff > 0:
+                    vseat = next((s for s, p in positions.items() if p == spot['opener']), None)
+                    co = self.advise_call_off(
+                        hero_cards=hero_cards, hero_position=positions['hero'],
+                        villain_position=spot['opener'], stack_bb=hero.get('stack_bb'),
+                        to_call_bb=(table_state.get('to_call') or {}).get('to_call_bb'),
+                        pot_bb=(table_state.get('pot') or {}).get('pot_bb'),
+                        mode=kwargs.get('mode', 'chip_ev'), stage=kwargs.get('stage', 'mid'),
+                        shove_spot='open_shove', villain_vs=(), bounty_bb=bb_eff,
+                        villain_stack_bb=((table_state.get('seats') or {}).get(vseat) or {}).get('stack_bb'),
+                        table_stacks=[(s or {}).get('stack_bb')
+                                      for s in (table_state.get('seats') or {}).values()
+                                      if isinstance((s or {}).get('stack_bb'), (int, float))
+                                      and (s or {}).get('stack_bb') > 0])
+                    if isinstance(co, dict) and co.get('recommended') == 'call':
+                        co.setdefault('caveats', []).append('BOUNTY_ALARGA_CALL_SHOVE')
+                        if bcav:
+                            co.setdefault('caveats', []).append(bcav)
+                        co.setdefault('caveats', []).append('AGGRESSOR_INFERRED_%s' % spot['opener'])
+                        return co
             if isinstance(result, dict):
                 result.setdefault('caveats', []).append('AGGRESSOR_INFERRED_%s' % spot['opener'])
                 if spot.get('callers'):

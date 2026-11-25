@@ -473,6 +473,34 @@ class SupremaTable:
         return state, hero_cards
 
 
+def _table_is_pko(table):
+    """True se a mesa é PKO (caça de bounty faz sentido): o stream expôs bounty_base (de um KO) OU
+    algum assento tem bounty_raw (o servidor só manda 'bounty' em torneio de cabeça)."""
+    try:
+        if isinstance((table.mtt or {}).get('bounty_base'), (int, float)):
+            return True
+        return any(isinstance(p.get('bounty_raw'), (int, float)) for p in table.players.values())
+    except Exception:
+        return False
+
+
+def _auto_calibrate_bounty_scale(table, head_fraction, starting_stack):
+    """Calibra o scale cru->fichas do bounty (se ainda não) pela estrutura: starting_stack + a cabeça
+    FRESCA crua (bounty_base = 2×menor reward de KO). Sem um dos dois (ex. nenhum KO ainda), não força."""
+    try:
+        import suprema_bounty
+        if suprema_bounty.BOUNTY_CHIP_SCALE:
+            return                                         # já calibrado
+        ss = starting_stack if isinstance(starting_stack, (int, float)) else (table.mtt or {}).get('starting_stack')
+        base = (table.mtt or {}).get('bounty_base')        # cabeça fresca crua (precisa de >=1 KO visto)
+        if isinstance(ss, (int, float)) and isinstance(base, (int, float)) and ss > 0 and base > 0:
+            sc = suprema_bounty.scale_from_structure(ss, base, head_fraction=head_fraction)
+            if sc:
+                suprema_bounty.set_scale(sc)
+    except Exception:
+        pass
+
+
 def advise_from_suprema(table, advisor, *, hunt_bounty=False, head_fraction=0.5,
                         starting_stack=None, **kwargs):
     """Decide a partir do estado vivo da Suprema, pelo MESMO roteamento do OCR/protobuf.
@@ -486,6 +514,20 @@ def advise_from_suprema(table, advisor, *, hunt_bounty=False, head_fraction=0.5,
     state, hero_or_reason = table.to_table_state()
     if state is None:
         return dict(status='ABSTAIN', reason=hero_or_reason, source='suprema')
+    # AUTO-ARMA A CAÇA DE BOUNTY (Eduardo 24/11): detecta PKO pelo PRÓPRIO stream e LIGA hunt_bounty +
+    # pko_icm + calibra o scale — sem precisar de flag. Antes a caça ficava PARADA no default (chip_ev,
+    # hunt off): os dados entravam mas o cérebro ignorava. Sinal de PKO = bounty_base (lido de um KO) OU
+    # algum assento com bounty_raw (o stream só manda 'bounty' em PKO). Preserva um pko/pko_icm explícito.
+    if not hunt_bounty and _table_is_pko(table):
+        hunt_bounty = True
+        if kwargs.get('mode') not in ('pko', 'pko_icm'):
+            # STAGE decide (Eduardo 24/11 — "caçar mais wide no early"): early/mid = `pko` (chip-EV +
+            # bounty, SEM aperto de ICM = caça mais larga); bolha/reta final = `pko_icm` (ICM entra).
+            _stg = str(kwargs.get('stage', 'mid')).lower()
+            kwargs['mode'] = 'pko_icm' if _stg in ('ft', 'bubble') else 'pko'
+        if starting_stack is None:
+            starting_stack = table.mtt.get('starting_stack')
+        _auto_calibrate_bounty_scale(table, head_fraction, starting_stack)
     # PÓS-FLOP (board>=3): religa o MOTOR PÓS-FLOP (23/11). ANTES a Suprema decidia TODO pós-flop com
     # lógica PRÉ-FLOP (advise_from_reading) -> supervalorizava underpair (ex. QQ em K-alto virava
     # call-off premium -> perdeu ~50k, H2N #61). Espelha protobuf_state.advise_from_protobuf: board/
@@ -539,6 +581,16 @@ def advise_from_suprema(table, advisor, *, hunt_bounty=False, head_fraction=0.5,
     try:
         import sitout_steal
         advice = sitout_steal.never_walk_sitout(advice, state)
+        # PONTO 2 (Eduardo 24/11): outro jogador abriu com um BLIND sit-out (dead money) -> opener mais
+        # largo -> re-stealamos mais largo (fold->3bet só se o GTO já 3beta misto). Bounded.
+        advice = sitout_steal.widen_defense_vs_sitout(advice, state)
+    except Exception:
+        pass
+    # TRAP pré-flop (LEI Eduardo 24/11): premium (AA/KK/QQ) DEEP vs OPEN com resteal CURTO atrás que o
+    # hero cobre -> FLAT em vez de 3bet (induz o short a shovar fraco; o hero atola dominando). Bounded.
+    try:
+        import trap_premium
+        advice = trap_premium.trap_flat(advice, state, hero_or_reason)
     except Exception:
         pass
     return advice
