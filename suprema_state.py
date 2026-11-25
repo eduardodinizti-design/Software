@@ -586,6 +586,14 @@ def advise_from_suprema(table, advisor, *, hunt_bounty=False, head_fraction=0.5,
         advice = sitout_steal.widen_defense_vs_sitout(advice, state)
     except Exception:
         pass
+    # SB-complete: JAMAIS foldar por poucos blinds (LEI Eduardo 25/11, pós-mortem): foldar KQo/A7o no
+    # SB pagando <=0,75bb (complete vs BB, odds 5:1+) é a atrocidade. Promove fold->raise (se o GTO
+    # abre misto) ou fold->complete. Bounded; só toca um FOLD no SB com to_call irrisório.
+    try:
+        import sb_complete
+        advice = sb_complete.never_fold_sb_complete(advice, state)
+    except Exception:
+        pass
     # TRAP pré-flop (LEI Eduardo 24/11): premium (AA/KK/QQ) DEEP vs OPEN com resteal CURTO atrás que o
     # hero cobre -> FLAT em vez de 3bet (induz o short a shovar fraco; o hero atola dominando). Bounded.
     try:
