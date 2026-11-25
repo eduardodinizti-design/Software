@@ -66,6 +66,20 @@ def _target_chips(advice, table):
     return None
 
 
+def _hero_stack_chips(table):
+    """Fichas do próprio hero (p/ dimensionar o all-in quando o slider não foi lido). None se não der."""
+    try:
+        hs = getattr(table, 'hero_seat', None)
+        players = getattr(table, 'players', None) or {}
+        if hs is not None and hs in players:
+            c = players[hs].get('chips')
+            if isinstance(c, (int, float)) and c > 0:
+                return float(c)
+    except Exception:
+        pass
+    return None
+
+
 def _clamp_and_preset(chips, rr):
     """Clampa `chips` a [min,max] da raise_range e acha o preset (label) mais próximo."""
     lo, hi = rr.get('min'), rr.get('max')
@@ -115,10 +129,13 @@ def plan_action(advice, table):
             return dict(action=CHECK, reason='CALL->CHECK')
         return dict(action=ABSTAIN, reason='CALL_INDISPONIVEL')
 
+    want_jam = False
     if fam == ALL_IN:
         if ALL_IN in legal:
             return dict(action=ALL_IN, reason='all_in')
-        # sem botão all-in: tenta raise no máximo
+        # sem botão all-in: JAMMA pelo slider no MÁXIMO. JAMAIS rebaixa um shove a um flat/min-raise
+        # (bug QQ 25/11: CÉREBRO=all_in caía p/ CALL porque o slider não foi lido -> flatou QQ).
+        want_jam = True
         fam = RAISE
 
     if fam == RAISE:
@@ -126,9 +143,12 @@ def plan_action(advice, table):
         # PÓS-FLOP: quando não há aposta anterior, a ação legal é 'bet' (não 'raise'); é o MESMO
         # botão (Apostar/Aumentar) e o mesmo raise_range. Sem isso, bet pós-flop caía p/ check.
         if (RAISE in legal or 'bet' in legal) and rr:
-            target = _target_chips(advice, table)
-            if target is None:
-                target = rr.get('min')
+            if want_jam:
+                target = rr.get('max')                 # JAM = topo do slider (all-in via Aumentar)
+            else:
+                target = _target_chips(advice, table)
+                if target is None:
+                    target = rr.get('min')
             if target is None:
                 return dict(action=ABSTAIN, reason='RAISE_SEM_SIZE')
             chips, preset = _clamp_and_preset(float(target), rr)
@@ -136,10 +156,18 @@ def plan_action(advice, table):
             hi = rr.get('max')
             if ALL_IN in legal and isinstance(hi, (int, float)) and chips >= hi:
                 return dict(action=ALL_IN, reason='RAISE_NO_TETO->ALL_IN')
-            return dict(action=RAISE, chips=chips, preset=preset, reason='raise')
-        # RAISE pedido mas indisponível -> cai p/ call/check (nunca trava)
+            return dict(action=RAISE, chips=chips, preset=preset,
+                        reason=('jam_slider_max' if want_jam else 'raise'))
+        # Slider NÃO lido, mas há botão de aumentar e o cérebro quer JAMMAR -> usa o STACK do hero
+        # como alvo do all-in (all-in = TODAS as fichas; não inventa size). JAMAIS vira flat silencioso.
+        if want_jam and (RAISE in legal or 'bet' in legal):
+            hs = _hero_stack_chips(table)
+            if isinstance(hs, (int, float)) and hs > 0:
+                return dict(action=RAISE, chips=round(float(hs), 2), reason='JAM_SLIDER_NAO_LIDO->STACK')
+        # RAISE/jam pedido mas SEM botão de aumentar -> call (põe fichas, JAMAIS folda o premium)
         if CALL in legal:
-            return dict(action=CALL, chips=table.prompt.get('call_amount'), reason='RAISE_SEM_BOTAO->CALL')
+            return dict(action=CALL, chips=table.prompt.get('call_amount'),
+                        reason=('JAM_SEM_AUMENTO->CALL' if want_jam else 'RAISE_SEM_BOTAO->CALL'))
         if CHECK in legal:
             return dict(action=CHECK, reason='RAISE_SEM_BOTAO->CHECK')
         return dict(action=ABSTAIN, reason='RAISE_SEM_BOTAO_NEM_CALL')
