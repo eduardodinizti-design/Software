@@ -17,7 +17,27 @@ Schema (do recon):
 """
 from __future__ import annotations
 
-from protobuf_state import assign_positions
+from protobuf_state import assign_positions, _CORE
+
+ROLE_SB, ROLE_BB = 82, 93        # roles do stream na POSTAGEM (ancoram o cross-check de posição)
+
+
+def _positions_from_blinds(ids, sb_seat, bb_seat):
+    """Posições ANCORADAS nos BLINDS VERDADEIROS (role 82/93 do stream = verdade terreno),
+    imune a assento vazio/dealer mal-lido (bug 24/11: vazio deslocava a posição -> a SB que
+    completa 1bb era mal-rotulada e virava LIMPER FANTASMA -> open 2x inflava p/ 3x no first-in).
+    SB=sb_seat (1º, sentido horário por índice de assento), BB logo após; BTN por último.
+    Devolve {} se inconsistente (o caller cai no assign_positions por dealer / abstém)."""
+    ids = sorted(set(ids))
+    n = len(ids)
+    if n < 2 or n > 9 or sb_seat not in ids or bb_seat not in ids:
+        return {}
+    i = ids.index(sb_seat)
+    order = ids[i:] + ids[:i]                      # SB 1º, horário, BTN por último
+    if n >= 3 and order[1] != bb_seat:             # BB tem que ser o próximo ATIVO horário
+        return {}
+    labels = (('SB', 'BB') + _CORE[-n:-2]) if n > 2 else ('SB', 'BB')
+    return dict(zip(order, labels))
 
 _RANKS = {2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7', 8: '8', 9: '9',
           10: 'T', 11: 'J', 12: 'Q', 13: 'K', 14: 'A'}
@@ -129,6 +149,7 @@ class SupremaTable:
         self.prompt = {'actions': set(), 'call_amount': None, 'raise_range': None}
         self.mtt = {}                     # contexto do torneio lido do game_info (p/ ICM + bounty)
         self.mtt_bb = None                # BB EXATO do game_info.blinds (autoridade sobre role-derive)
+        self._street_bet = {}             # por RUA pós-flop (3/4/5): max chips_round visto = detecta check-check (villain_line)
 
     def _reset_hand(self):
         """Nova mão: zera cartas/board/pot/prompt (mantém bb, hero_uid e os stacks)."""
@@ -137,6 +158,16 @@ class SupremaTable:
         self.board, self.pot_chips, self.state, self.hero_seat = [], None, None, None
         self.prompt = {'actions': set(), 'call_amount': None, 'raise_range': None}
         self._hand_seats = set()          # nova mão: reconta os assentos distribuídos
+        # INICIATIVA: quem fez o último RAISE pré-flop = agressor pré-flop. Dá a iniciativa ao
+        # pós-flop (destrava c-bet-range/barril/ataque-scare, que são gated em aggressor='hero').
+        self.preflop_aggressor_seat = None
+        self._pf_max_bet = 0.0
+        self._street_bet = {}             # zera o rastro de ação pós-flop por rua
+        # BLINDS REAIS do stream (role 82=SB, 93=BB no gamestart): ancoram o cross-check de posição
+        # p/ o assign_positions não deslocar (bug 24/11: assento vazio -> BB mal-rotulado -> o post
+        # de 1bb virava LIMPER FANTASMA -> open 2x inflava p/ iso 3x no first-in).
+        self.sb_seat = None
+        self.bb_seat = None
 
     # ---- ingestão ----
     def feed_json(self, msg):
@@ -244,6 +275,28 @@ class SupremaTable:
                 rec['chips'] = float(p['chips'])
             if isinstance(p.get('chips_round'), (int, float)):
                 rec['chips_round'] = float(p['chips_round'])   # aposta da RUA (reseta por street)
+                # INICIATIVA PRÉ-FLOP: o ÚLTIMO a raisar (chips_round acima do BB e do topo visto
+                # nesta mão) é o agressor pré-flop -> iniciativa no pós-flop. Só no pré (board vazio;
+                # no pós o chips_round é da rua corrente e não deve sobrescrever a iniciativa).
+                if not self.board:
+                    _bbv = self.bb()
+                    _cr = rec['chips_round']
+                    if _bbv and _cr > _bbv + 1e-9 and _cr > getattr(self, '_pf_max_bet', 0.0) + 1e-9:
+                        self._pf_max_bet = _cr
+                        self.preflop_aggressor_seat = seat
+                else:
+                    # PÓS-FLOP (Eduardo 24/11): rastreia a aposta da RUA p/ derivar villain_line
+                    # (probe/delayed/bet-check-bet). chips_round reseta por rua, então max==0 no fim
+                    # da rua = CHECK-CHECK (confiável). `first` = 1º assento visto pondo fichas na rua
+                    # (bettor/agressor da rua) — usado só p/ o bet-check-bet.
+                    _st = len(self.board)                 # 3=flop, 4=turn, 5=river
+                    _cr = rec['chips_round']
+                    _sb = self._street_bet.setdefault(_st, {'max': 0.0, 'first': None})
+                    if _cr > 1e-9:
+                        if _cr > _sb['max'] + 1e-9:
+                            _sb['max'] = _cr
+                        if _sb['first'] is None:
+                            _sb['first'] = seat
             # BOUNTY PKO: valor CRU da cabeça (unidade escalada do stream; a TELA mostra em
             # fichas) + nº de KOs do jogador. A conversão cru->fichas é calibrada na tela
             # (suprema_bounty.BOUNTY_CHIP_SCALE). Guarda o cru aqui; a matemática fica fora.
@@ -277,6 +330,12 @@ class SupremaTable:
         for _u, p in game_seat.items():
             if isinstance(p, dict) and p.get('seat') is not None:
                 by_role.setdefault(p.get('role'), []).append(float(p.get('chips') or 0))
+                # captura o assento do SB (82) e BB (93) na POSTAGEM (set-once por mão) p/ ancorar
+                # o cross-check de posição. Os roles mudam quando o jogador age, então pega o 1º.
+                if p.get('role') == ROLE_SB and self.sb_seat is None:
+                    self.sb_seat = p['seat']
+                elif p.get('role') == ROLE_BB and self.bb_seat is None:
+                    self.bb_seat = p['seat']
         ante = min(by_role[0]) if by_role.get(0) else 0.0
         bb_chips = by_role.get(93)                      # role 93 = BB
         if bb_chips:
@@ -332,7 +391,12 @@ class SupremaTable:
         # inclui os ATIVOS no conjunto de posições (senão um assento ativo que não entrou em
         # _hand_seats fica sem posição -> KeyError, engolido pelo run_live -> decisão some).
         dealt = sorted(self._hand_seats | set(active) | set(sitout_others) | {self.hero_seat})
-        pos_by_seat = assign_positions(dealt, self.dealer_seat, None, None)
+        # POSIÇÃO ancorada nos BLINDS VERDADEIROS (role 82/93) primeiro — imune a assento vazio/
+        # dealer mal-lido (mata o limper fantasma -> open 3x do first-in). Só cai no assign_positions
+        # (dealer) se os blinds forem desconhecidos/inconsistentes; esse ainda cross-checa o BB.
+        _sbs, _bbs = getattr(self, 'sb_seat', None), getattr(self, 'bb_seat', None)
+        pos_by_seat = (_positions_from_blinds(dealt, _sbs, _bbs)
+                       or assign_positions(dealt, self.dealer_seat, _sbs, _bbs))
         if not pos_by_seat or self.hero_seat not in pos_by_seat:
             return None, 'POSICOES_INCONSISTENTES'
 
@@ -372,10 +436,36 @@ class SupremaTable:
         # é o flag do PRÓPRIO hero (p/ log/tratamento posterior).
         sitout_positions = sorted({pos_by_seat[s] for s in sitout_others if s in pos_by_seat})
         hero_sitout = bool(self.players.get(self.hero_seat, {}).get('sitout'))
+        # INICIATIVA + TIPO DE POTE p/ o pós-flop: resolve o agressor pré-flop (assento->rótulo
+        # 'hero'/posição) e marca multiway. Sem isto o advise_postflop recebia aggressor=None ->
+        # _hia=None -> TODO o motor de c-bet-range/barril/ataque-scare ficava morto -> passivão.
+        _pfa = getattr(self, 'preflop_aggressor_seat', None)
+        aggressor = ('hero' if _pfa == self.hero_seat else pos_by_seat.get(_pfa)) if _pfa is not None else None
+        pot_type = 'multiway' if len(in_hand) > 2 else None
+        # VILLAIN_LINE (Eduardo 24/11): deriva a LINHA pós-flop p/ LIGAR probe/delayed/bet-check-bet
+        # (antes ficavam MORTAS ao vivo: villain_line=None). Base = CHECK-CHECK por rua (max
+        # chips_round==0, confiável pois reseta por rua) + quem foi o PFR. Conservador: só seta no
+        # padrão CLARO; senão None (comportamento atual). HU só (multiway não entra nessas linhas).
+        villain_line = None
+        _sb = getattr(self, '_street_bet', {})
+        # TRAVA ANTI-SPEW: só afirma "check-check" se a rua foi OBSERVADA (há entrada em _sb[rua]).
+        # Se o estado nunca viu o flop (pulou pro turn), NÃO inventa checked_through -> villain_line
+        # None (seguro). Idem o 'flop teve aposta' do bet-check-bet exige o flop observado com max>0.
+        _flop_cc = (3 in _sb and _sb[3].get('max', 0.0) <= 1e-9)   # flop OBSERVADO e check-check
+        _flop_bet = (3 in _sb and _sb[3].get('max', 0.0) > 1e-9)   # flop OBSERVADO com aposta
+        _turn_cc = (4 in _sb and _sb[4].get('max', 0.0) <= 1e-9)   # turn OBSERVADO e check-check
+        _hero_pfr = (_pfa is not None and _pfa == self.hero_seat)
+        if len(in_hand) <= 2:                                      # só heads-up
+            if street == 'TURN' and _flop_cc:
+                # flop check-check: hero=PFR -> DELAYED c-bet; vilão=PFR (check back) -> PROBE
+                villain_line = 'delayed' if _hero_pfr else 'checked_back'
+            elif street == 'RIVER' and _hero_pfr and _flop_bet and _turn_cc:
+                villain_line = 'checked_turn'                      # hero c-betou flop, checou turn -> valor fino
         state = dict(positions=positions, seats=seats, bets=bets, phase='mid',
                      source='suprema', room='SupremaPoker', hand_id=self._counter, bb_chips=bb,
                      scope=('POSTFLOP_SUPREMA' if n >= 3 else 'PREFLOP_SUPREMA'),
-                     board=list(self.board), street=street,
+                     board=list(self.board), street=street, aggressor=aggressor, pot_type=pot_type,
+                     villain_line=villain_line,
                      legal_actions=sorted(self.legal_actions()),
                      to_call={'to_call_bb': to_call_bb}, pot={'pot_bb': pot_bb},
                      sitout_positions=sitout_positions, hero_sitout=hero_sitout,
@@ -405,8 +495,16 @@ def advise_from_suprema(table, advisor, *, hunt_bounty=False, head_fraction=0.5,
     if len(board) >= 3:
         from postflop_advisor import advise_postflop
         import postflop_sizing
+        # CAMPO MOLE por STAGE (Eduardo 24/11): início (early/mid/pre_itm) = play money ruim que
+        # SOBRE-blefa -> bluff-catch mais largo (paga o lixo deles). Bolha/reta final = ICM +
+        # callstation value-heavy -> conservador. Modula o over-fold sem virar spew.
+        _stage = kwargs.get('stage', 'mid')
+        _soft = _stage in ('early', 'mid', 'pre_itm')
         advice = advise_postflop(state, hero_or_reason, board, street=state.get('street'),
-                                 mode=kwargs.get('mode', 'chip_ev'), stage=kwargs.get('stage', 'mid'))
+                                 mode=kwargs.get('mode', 'chip_ev'), stage=_stage,
+                                 aggressor=state.get('aggressor'), pot_type=state.get('pot_type'),
+                                 villain_line=state.get('villain_line'),
+                                 soft_field=_soft)
         if isinstance(advice, dict):
             _stk = (state.get('seats', {}).get('hero') or {}).get('stack_bb')
             postflop_sizing.enforce(advice, pot_bb=(state.get('pot') or {}).get('pot_bb'),

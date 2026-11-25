@@ -36,6 +36,12 @@ RAISE_FLOOR_BB = 1.5  # a bet above the BB (1.0) is a raise, not a blind post
 SHOVE_MIN_BET_BB = 3.5        # abaixo disso é open/iso normal, nunca shove
 SHOVE_REMAINING_BB = 0.75     # stack atrás <= isso => efetivamente all-in
 SHOVE_SIZE_FALLBACK_BB = 5.0  # sem stack lido, 1ª aposta >= isso é tratada como shove
+# COMMIT: uma aposta que exige PAGAR >= esta fração do stack do hero NÃO é um open normal p/
+# FLATAR — comprometer metade+ do stack é call-off/fold, não cold-call de range de open. Mata o
+# DONKEY de SIZE (bug 24/11: JTo no SB cold-callou 30.71bb de 40 = 77% do stack como se fosse open
+# de 2bb). A range de vs_open assume open de ~2-2.5bb; aposta gigante vira facing-shove (call-off).
+SHOVE_COMMIT_FRACTION = 0.5
+SHOVE_COMMIT_MIN_BB = 15.0    # piso absoluto: só é "commit" uma aposta ACIMA de um 4bet normal
 # Preflop action order (earliest to latest); the opener is the earliest-position
 # player among those at the top bet level, callers having matched that bet later.
 _PREFLOP_ORDER = ('UTG', 'UTG+1', 'UTG+2', 'LJ', 'HJ', 'CO', 'BTN', 'SB', 'BB')
@@ -196,6 +202,15 @@ def _opener_is_shove(table_state, opener_position, opener_bet):
     #    (só call-off all-in ou fold) = facing-all-in. Usa o stack do hero (lido confiável).
     hero_stack = (seats.get('hero') or {}).get('stack_bb')
     if isinstance(hero_stack, (int, float)) and hero_stack > 0 and opener_bet >= hero_stack:
+        return True
+    # 2b) COMMIT (bug 24/11, JTo SB cold-callou 30bb de 40 = 77%): aposta que exige pagar uma
+    #     FRAÇÃO ALTA do stack NÃO é open normal p/ flatar — é call-off/fold. GATED a DEEP (fora
+    #     da zona de jam): no curto um 3bet/open já é fração grande e é tratado pela trilha de jam
+    #     -> aqui só vale quando flatar seria a opção normal (stack >= SHOVE_ZONE_MAX_BB) E a aposta
+    #     é ABSURDA (>= commit da fração E muito acima de um 3bet/4bet normal em bb absoluto).
+    if (isinstance(hero_stack, (int, float)) and hero_stack >= SHOVE_ZONE_MAX_BB
+            and opener_bet >= SHOVE_COMMIT_FRACTION * hero_stack
+            and opener_bet >= SHOVE_COMMIT_MIN_BB):
         return True
     # 3) sem stack do abridor lido: aposta gigante (>= fallback) é shove.
     if remaining is None:
@@ -899,18 +914,63 @@ class PreflopAdvisor:
         # BTN). O BTN deixava TRASH isolar (K6o/Q8o) — Eduardo 23/11 pediu apertar. (P/ apertar mais:
         # 'HJ'/'UTG'.) Demais posições usam a PRÓPRIA range de open.
         ref = 'CO' if position in ('SB', 'BB') else position
-        node = (self._index.get((mode, tf, stage, players, bucket, 'open_raise', ref, (), None))
-                or self._index.get((mode, tf, stage, players, bucket, 'open_raise', 'UTG', (), None)))
-        if node is None or hand not in self.hands:
+        # Régua = o range de ABERTURA AGRESSIVA da posição de referência. DEEP (>=~15bb)
+        # é `open_raise`; no regime de PUSH/FOLD curto (<~15bb) NÃO existe open_raise, só
+        # `open_shove` (ação all_in). Consultar SÓ open_raise cega o curto -> _iso_worthy
+        # devolvia False p/ TODA mão curta -> o upgrade do passivo nunca disparava e KQs/
+        # TT/99/AQs LIMPAVAM a 12bb (bug 24/11, 358 leaks medidos). Agora soma a freq
+        # agressiva (raise+all_in+shove) de open_raise E open_shove -> a mesma régua Nash
+        # vale nos dois regimes, sem inventar range (o nó de shove já separa valor×lixo:
+        # AQo/KQs/TT shove_freq=1, 72o/K6o/Q8o=0).
+        if hand not in self.hands:
+            return not strict
+        i = self.hands.index(hand)
+
+        # SPREAD: os nós ICM/PKO-ICM são gravados com spread 'iguais' (ou curtos_*), NÃO
+        # None (convenção do advise, :609). Buscar só None cegava TODO modo ICM/PKO-ICM
+        # (o nó nunca casava) -> _iso_worthy=False -> KQs/AJs limpando a 20-30bb em
+        # bolha/FT (bug 24/11). Tenta a grade do modo ('iguais' em ICM) e None.
+        _spreads = (['iguais', None] if mode in ('icm', 'pko_icm') else [None, 'iguais'])
+
+        # BUCKETS candidatos: o exato primeiro, depois por proximidade (prefere o maior em
+        # empate) — espelha o borrow do advise. Sem isso, modos com grade esparsa (PKO topa
+        # em 25bb) falham a régua no bucket emprestado (ex.: 20bb PKO -> limp, bug 24/11).
+        _buckets = [bucket] + sorted((b for b in self.STACK_BUCKETS if b != bucket),
+                                     key=lambda b: (abs(b - (bucket or 0)), -b))
+
+        def _node(spot, hero_ref):
+            for b in _buckets:
+                for sp in _spreads:
+                    n = self._index.get((mode, tf, stage, players, b, spot, hero_ref, (), sp))
+                    if n is not None:
+                        return n
+            return None
+
+        def _agg_freq(hero_ref):
+            """(nó_visto, soma_da_freq_agressiva) p/ a posição de referência. Usa o nó de
+            RAISE (deep) se existir; só cai no de SHOVE (curto) quando não há open_raise —
+            nunca mistura uma range de jam curta numa decisão deep."""
+            n = _node('open_raise', hero_ref) or _node('open_shove', hero_ref)
+            if n is None:
+                return False, 0.0
+            if i in (n.get('outOfRange') or []):
+                return True, 0.0
+            agg = 0.0
+            for act in ('raise', 'all_in', 'shove'):
+                fr = n['freq'].get(act) or []
+                if i < len(fr):
+                    agg += fr[i]
+            return True, agg
+
+        seen, agg = _agg_freq(ref)
+        if not seen:
+            seen, agg = _agg_freq('UTG')
+        if not seen:
             # Sem nó p/ confirmar: o DEFAULT (não-estrito) é PERMISSIVO (True) — usado pelo CAP
             # (raise->fold) p/ não foldar demais. Mas o UPGRADE passivo->iso usa strict=True: na
             # DÚVIDA NÃO sobe trash pra raise (bug 23/11: BB pegava K6o/J2o "pra punir" limper).
             return not strict
-        i = self.hands.index(hand)
-        if i in (node.get('outOfRange') or []):
-            return False
-        freq = node['freq'].get('raise') or []
-        return i < len(freq) and freq[i] > 0
+        return agg > 0
 
     # Famílias de árvore (Clone 0.5) que o classificador ÚNICO pode casar ao vivo.
     _TREE_LIVE_SCENARIOS = frozenset({'vs_3bet', 'vs_4bet_or_more', 'open_with_callers', 'limped'})
@@ -1052,6 +1112,33 @@ class PreflopAdvisor:
         bounty_bb = kwargs.pop('bounty_bb', None)
         spot = infer_live_spot(table_state)
         base = dict(hero_cards=hero_cards, hero_position=positions['hero'], stack_bb=hero.get('stack_bb'))
+        # STACK EFETIVO (Eduardo 24/11): shove de stack grande vs um shortie só RISCA o efetivo (o
+        # excedente volta) -> vs um vilão de 6bb a decisão é de 6bb. `seats` já traz só os ATIVOS
+        # (não-foldados), então efetivo = min(hero, maior vilão ATIVO): num blind war vs BB curto dá
+        # curto (shove); num open com fundões atrás dá = hero (raise normal). Só ENCURTA, nunca alarga.
+        _seats = table_state.get('seats', {})
+        _hs = hero.get('stack_bb')
+        _villain_stacks = [v.get('stack_bb') for k, v in _seats.items()
+                           if k != 'hero' and isinstance(v.get('stack_bb'), (int, float)) and v.get('stack_bb') > 0]
+        _effective = (min(_hs, max(_villain_stacks))
+                      if isinstance(_hs, (int, float)) and _villain_stacks else _hs)
+        base['effective_stack_bb'] = _effective
+        # BLIND WAR / STEAL vs SHORTIE -> OPEN-SHOVE pelo EFETIVO (Eduardo 24/11): o hero ABRIRIA
+        # (first-in), mas o EFETIVO está na zona de shove E é MENOR que o stack do hero (um vilão ATIVO
+        # é o curto, ex. BB 6bb) -> a linha é OPEN ALL-IN pela range de push do bucket EFETIVO, NÃO
+        # min-raise (min-raiar e depois pagar o jam do curto = pior; shove aplica fold-equity máxima e,
+        # em PKO, caça o bounty). O range de open_shove por bucket já dá a largura certa (6bb ~any2;
+        # 15bb mais tight). Se o hero TAMBÉM for curto (efetivo==hero), o fluxo de shove-zone por stack
+        # do hero já resolve -> este bloco NÃO duplica (_effective < _hs).
+        if (spot['spot'] == 'first_in' and isinstance(_effective, (int, float))
+                and isinstance(_hs, (int, float)) and _effective < SHOVE_ZONE_MAX_BB
+                and _effective < _hs - 0.5):
+            _eff_base = dict(base, stack_bb=_effective)
+            _eff_sh = self.advise(spot='open_shove', **_eff_base, **kwargs)
+            if isinstance(_eff_sh, dict) and _eff_sh.get('status') == 'ADVICE':
+                _eff_sh.setdefault('caveats', []).append('OPEN_SHOVE_STACK_EFETIVO_vs_SHORTIE')
+                _eff_sh['effective_stack_bb'] = _effective
+                return _eff_sh
         # For ICM/PKO-ICM, classify the table's stack spread from the read stacks
         # instead of always assuming equal stacks; keep the default when unset or
         # too few stacks read (infer_spread returns None).
@@ -1142,6 +1229,23 @@ class PreflopAdvisor:
                     if bcav:
                         co.setdefault('caveats', []).append(bcav)
                     co.setdefault('caveats', []).append('AGGRESSOR_INFERRED_%s' % spot['opener'])
+                    # 4BET-JAM DO PREMIUM CURTO (Eduardo 24/11, "atacar os curtos primeiro"):
+                    # abri, levei um 3bet que NÃO é all-in de verdade (o hero ainda pode
+                    # raisar) num stack CURTO (<20bb) com mão PREMIUM, e o call-off manda
+                    # CONTINUAR (call). Isso é COMMIT -> 4bet-JAMA (não cold-calla passivo
+                    # OOP num SPR mínimo = o leak que o Eduardo viu). Regra já existente:
+                    # short + 3bet = jam/fold. FOLD do call-off continua fold; se o vilão
+                    # JÁ está all-in (spot['allin']) o `call` permanece (não dá p/ raisar).
+                    # SHADOW (validated=False), como o próprio call-off.
+                    if (shove_spot == '3bet_shove' and not spot.get('allin')
+                            and co.get('recommended') == 'call'
+                            and isinstance(_stk, (int, float)) and _stk < SHOVE_ZONE_MAX_BB
+                            and _hand_tier(hero_cards) == 'premium'):
+                        co['recommended'] = 'all_in'
+                        co['mix'] = [dict(action='all_in', frequency=1.0)]
+                        co['sizing'] = dict(size_bb=round(_stk, 1), heuristic=True,
+                                            basis='4bet-jam premium curto vs 3bet (commit)')
+                        co.setdefault('caveats', []).append('PREMIUM_SHORT_4BET_JAM_VS_3BET')
                     return co
             if isinstance(result, dict):
                 result.setdefault('caveats', []).append('AGGRESSOR_INFERRED_%s' % spot['opener'])

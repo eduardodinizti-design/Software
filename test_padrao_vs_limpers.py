@@ -60,5 +60,34 @@ def test_lixo_vs_limpers_nao_e_forcado_a_agredir():
     assert rec not in ('raise', 'all_in'), "72o não deveria ser agredido pelo guard, veio %s" % rec
 
 
+# ---------------------------------------------------------------------------
+# REGRESSÃO DO FIX 24/11 (_iso_worthy cego ao regime de shove + spread ICM):
+# a sonda media 358 LEAKS de default passivo — mão iso-worthy LIMPANDO no SB/CO vs
+# limpers — porque a régua do upgrade (_iso_worthy, strict) só consultava nós
+# `open_raise` com spread=None. No regime CURTO (<~15bb) só existe `open_shove`, e
+# os nós ICM/PKO-ICM moram em spread 'iguais' -> a régua nunca casava -> False ->
+# o upgrade do passivo não disparava. Fix: _iso_worthy soma a freq agressiva de
+# open_raise OU open_shove, tenta spread 'iguais'/None, e empresta bucket vizinho.
+# Estes testes TRAVAM que a classe inteira (não só AQo) nunca joga passivo.
+ISO_WORTHY = {'KQs': ['Ks', 'Qs'], 'AQs': ['As', 'Qs'], 'TT': ['Td', 'Tc'],
+              '99': ['9d', '9c'], 'AJs': ['As', 'Js'], 'AJo': ['Ad', 'Jc']}
+
+
+@pytest.mark.parametrize("mode,stage", [('chip_ev', 'mid'), ('icm', 'bubble'),
+                                        ('icm', 'ft'), ('pko', 'mid'), ('pko_icm', 'bubble')])
+@pytest.mark.parametrize("stk", [12, 15, 20, 25])
+@pytest.mark.parametrize("hlabel", list(ISO_WORTHY))
+def test_isoworthy_classe_sb_vs_limpers_nunca_passivo(mode, stage, stk, hlabel):
+    """A classe toda (KQs/AQs/TT/99/AJs/AJo) no SB vs limper NUNCA completa passivo —
+    isola (deep) ou shova (curto). Era o buraco invisível do auditor (gap #1 real)."""
+    adv = _adv()
+    st = aud._table('SB', stk, 'iguais', [('CO', 1.0), ('BB', 1.0)])
+    r = adv.advise_from_reading(st, ISO_WORTHY[hlabel], mode=mode, stage=stage)
+    rec = r.get('recommended') if isinstance(r, dict) else None
+    assert rec not in PASSIVO, (
+        "%s SB %dbb vs CO-limp %s/%s jogou PASSIVO (%s) — viola o Padrão. caveats=%s"
+        % (hlabel, stk, mode, stage, rec, (r.get('caveats') if isinstance(r, dict) else None)))
+
+
 if __name__ == "__main__":
     sys.exit(pytest.main([__file__, "-q"]))

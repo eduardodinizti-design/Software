@@ -105,7 +105,9 @@ class AdvisorExposureTests(unittest.TestCase):
         # sem HUD o default abstém; com a linha informada, foldamos (pool underbluffa).
         st = self._state(pot=10.0, to_call=9.0, stack=40.0)
         base = advise_postflop(st, ['Ah', 'Qd'], ['Ad', '7s', '2c'], aggressor='hero')
-        self.assertEqual(base['recommended'], 'fold')   # LEI nunca-abstém: fold default sem leitura
+        # GUIA cap.14 (agressão 24/11): top pair DEFENDE o barril normal (≤ pote) no flop/turn -
+        # sem sinal, DEFENDE (call); era o over-fold passivo. Só folda com sinal (pta, abaixo).
+        self.assertEqual(base['recommended'], 'call')
         pooled = advise_postflop(st, ['Ah', 'Qd'], ['Ad', '7s', '2c'], aggressor='hero',
                                  villain_line='passive_turned_aggressive')
         self.assertEqual(pooled['recommended'], 'fold')

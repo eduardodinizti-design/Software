@@ -25,12 +25,18 @@ except Exception:
 
 PACK = r'C:\Meus Projetos\Aplicativos\nvt-ranges-validados.json'
 DEEP = r'C:\Meus Projetos\Aplicativos\nvt-ranges-deep.json'
+# RANGES DO EDUARDO (AUTORIDADE, ordem direta 24/11): as ranges transcritas do Eduardo
+# (GTOWizard) carregam PRIMEIRO -> na colisão de chave (B02, from_files strict=False) o 1º
+# vence, então a range do Eduardo SOBREPÕE o solve GTO onde ela cobre (RFI por posição + blind
+# war). O Henrique joga a ESTRATÉGIA DO EDUARDO, não o GTO que inventava flats.
+EDUARDO = r'C:\Meus Projetos\Aplicativos\nvt-ranges-eduardo.json'
 
 
 def load_advisor():
     from preflop_advisor import PreflopAdvisor
-    return (PreflopAdvisor.from_files(PACK, DEEP) if os.path.exists(DEEP)
-            else PreflopAdvisor.from_file(PACK))
+    packs = [p for p in (EDUARDO, PACK, DEEP) if os.path.exists(p)]
+    return (PreflopAdvisor.from_files(*packs) if len(packs) > 1
+            else PreflopAdvisor.from_file(packs[0]))
 
 
 def decide_and_plan(table, advisor, *, mode='chip_ev', stage='mid', hunt_bounty=False,

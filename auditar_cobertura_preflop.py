@@ -194,6 +194,63 @@ def audit(adv, modes=MODES):
     return covered, total, by_cat_cov, by_cat, gaps
 
 
+# ===========================================================================
+# AUDITORIA DE DEFAULT PASSIVO vs LIMPERS (item #2, Eduardo 24/11).
+# A audit() de COBERTURA acima trata um 'call'/'limp' VALIDADO como coberto — por
+# isso era CEGA ao leak do Padrão de Jogo (mão iso-worthy LIMPANDO vs limper, o bug
+# que derrubou o AQo ao vivo e que medimos em 358 casos). Esta auditoria é a lupa
+# que faltava: enumera mãos ISO-WORTHY × posição (NÃO-BB) × stack × modo enfrentando
+# limpers e FLAGA qualquer recomendação PASSIVA (limp/call/check). Exclui o BB
+# (guerra de blinds = decisão da range vs_limp, autoridade — ver nvt-padrao-de-jogo).
+PASSIVO = ('limp', 'call', 'check')
+ISO_WORTHY_HANDS = {'AQo': ['Ad', 'Qc'], 'AJs': ['As', 'Js'], 'KQs': ['Ks', 'Qs'],
+                    'AQs': ['As', 'Qs'], 'AKo': ['Ad', 'Kc'], 'TT': ['Td', 'Tc'],
+                    '99': ['9d', '9c'], 'AJo': ['Ad', 'Jc'], 'KQo': ['Kd', 'Qc'],
+                    'A5s': ['Ad', '5d'], '77': ['7d', '7c']}
+# hero NÃO-BB isolando sobre limper(es) de posição anterior.
+LIMPER_SCENARIOS = [
+    ('SB_vs_CO', 'SB', ['CO']),
+    ('SB_vs_LJ+CO', 'SB', ['LJ', 'CO']),
+    ('CO_vs_LJ', 'CO', ['LJ']),
+    ('BTN_vs_CO', 'BTN', ['CO']),
+    ('HJ_vs_UTG', 'HJ', ['UTG']),
+]
+
+
+def _table_vs_limpers(hero_pos, hero_stk, limpers, spread='iguais'):
+    """Mesa com o hero em `hero_pos` e limpers (bet 1.0) em `limpers`, blinds postados."""
+    bets = [(p, 1.0) for p in limpers]
+    if hero_pos != 'SB':
+        bets.append(('SB', 0.5))
+    if hero_pos != 'BB':
+        bets.append(('BB', 1.0))
+    return _table(hero_pos, hero_stk, spread, bets)
+
+
+def audit_passive_leaks(adv, modes=MODES):
+    """(leaks, total) — leaks = lista de str de cada mão iso-worthy que jogou PASSIVO
+    vs limpers (viola o Padrão). total = situações checadas."""
+    leaks = []
+    total = 0
+    for mode, stage, bounty in modes:
+        for spread in _spreads_for(mode):
+            for name, hpos, limpers in LIMPER_SCENARIOS:
+                st = _table_vs_limpers(hpos, 0, limpers, spread)  # stk preenchido abaixo
+                for stk in STACKS:
+                    st = _table_vs_limpers(hpos, stk, limpers, spread)
+                    for hlabel, cards in ISO_WORTHY_HANDS.items():
+                        total += 1
+                        kw = dict(mode=mode, stage=stage)
+                        if bounty is not None:
+                            kw['bounty_bb'] = bounty
+                        r = adv.advise_from_reading(st, cards, **kw)
+                        rec = r.get('recommended') if isinstance(r, dict) else None
+                        if rec in PASSIVO:
+                            leaks.append('%s/%s/%s %s %s@%dbb -> %s'
+                                         % (mode, stage, spread, name, hlabel, stk, rec))
+    return leaks, total
+
+
 def main(argv=None):
     import os
     args = list(argv or sys.argv[1:])
@@ -218,6 +275,18 @@ def main(argv=None):
     for (cat, rsn), labels in sorted(gaps.items(), key=lambda kv: -len(kv[1])):
         ex = ', '.join(sorted(set(labels))[:5])
         print('  [%-10s] %-30s x%-4d ex: %s' % (cat, rsn, len(labels), ex))
+    # LUPA DO DEFAULT PASSIVO vs LIMPERS (item #2): o que a cobertura acima NÃO vê.
+    leaks, ltot = audit_passive_leaks(adv)
+    print()
+    print('=' * 72)
+    print('DEFAULT PASSIVO vs LIMPERS (iso-worthy NÃO-BB): %d/%d leaks' % (len(leaks), ltot))
+    print('=' * 72)
+    if leaks:
+        print('  >>> %d VIOLAÇÕES do Padrão (iso-worthy limpou/completou vs limper):' % len(leaks))
+        for x in leaks[:40]:
+            print('    ', x)
+    else:
+        print('  >>> ZERO: nenhuma mão iso-worthy joga passivo vs limpers. <<<')
     return 0
 
 

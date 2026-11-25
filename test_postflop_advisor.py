@@ -87,12 +87,12 @@ class ExploitHudTests(unittest.TestCase):
     FISH = {'vpip': 45, 'pfr': 12, 'cbet': 40, 'foldcbet': 30, 'threebet': 2, 'fold3bet': 70, 'steal': 20, 'cr': 5}
     LAG = {'vpip': 30, 'pfr': 26, 'cbet': 70, 'foldcbet': 40, 'threebet': 11, 'fold3bet': 40, 'steal': 45, 'cr': 8}
 
-    def test_big_bet_folds_default_without_hud(self):
-        # LEI nunca-abstém (Eduardo 19/11): sem HUD, bluffcatch top pair vs aposta grande
-        # = FOLD default (pool underbluffa aposta grande). Antes abstinha.
+    def test_top_pair_defends_barrel_without_hud(self):
+        # GUIA cap.14 (agressão 24/11): sem HUD, top pair DEFENDE o barril normal (≤ pote) no
+        # flop/turn — não folda (era o passivão). pot_odds 0.44 (<0.55 overbet) -> call.
         r = advise_postflop(state(10, 8), ['As', 'Kc'], ['Ad', '9h', '3d'])   # top pair, pot_odds 0.44
-        self.assertEqual(r['recommended'], 'fold')
-        self.assertIn('BLUFFCATCH_BIG_BET_DEFAULT_FOLD_NO_READ', r['caveats'])
+        self.assertEqual(r['recommended'], 'call')
+        self.assertIn('TOP_PAIR_DEFENDE_BARRIL_GUIA_CAP14', r['caveats'])
 
     def test_big_bet_calls_vs_aggressive(self):
         r = advise_postflop(state(10, 8), ['As', 'Kc'], ['Ad', '9h', '3d'], villain_stats=self.LAG)
@@ -184,13 +184,17 @@ class FacingBetTests(unittest.TestCase):
         self.assertEqual(r['recommended'], 'call')
         self.assertIn('BLUFFCATCH_DEFEND_TO_MDF', r['caveats'])
 
-    def test_top_pair_big_bet_folds_no_read(self):
-        # LEI nunca-abstém: fold default (não abstém) sem leitura.
+    def test_top_pair_overbet_folds_no_read(self):
+        # OVERBET (2x pote, pot_odds 0.67 > 0.55): nem top pair paga sem leitura (guia defende
+        # barril normal, não overbet polarizada). Fold.
         r = advise_postflop(state(10, 20), ['As', 'Qc'], ['Ah', '9h', '3d'])
         self.assertEqual(r['recommended'], 'fold')
-        self.assertIn('BLUFFCATCH_BIG_BET_DEFAULT_FOLD_NO_READ', r['caveats'])
+        self.assertIn('BLUFFCATCH_OVERBET_FOLD', r['caveats'])
 
     def test_marginal_pair_folds(self):
+        # Par médio/fraco = bluff-catcher mais fraco: fold default conservador (Eduardo: sem spew;
+        # defender par médio largo arrastava o underpair pro call-off, leak de 50k). Só top pair
+        # defende o barril (guia cap.14). Afrouxar par médio fica p/ o filtro por stage/HUD.
         r = advise_postflop(state(10, 5), ['9s', 'Qc'], ['Ah', '9h', '3d'])  # second pair
         self.assertEqual(r['recommended'], 'fold')
         self.assertIn('MARGINAL_BLUFFCATCH_FOLD_DEFAULT_EXPLOITABLE', r['caveats'])
@@ -248,12 +252,12 @@ class Phase2EquityTests(unittest.TestCase):
         self.assertEqual(r['recommended'], 'fold')
         self.assertLess(r['equity'], r['pot_odds'] + 0.05)
 
-    def test_big_bet_folds_default_with_range(self):
-        # LEI nunca-abstém: fold default (não abstém); equity segue reportada.
+    def test_overbet_folds_default_with_range(self):
+        # OVERBET (2x pote): top pair folda mesmo com range (dominado por KK/QQ/AK); equity reportada.
         r = advise_postflop(state(10, 20), ['As', 'Qc'], ['Ah', '9h', '3d'],
                             villain_range=['KK', 'QQ', 'AK'], iters=2000)
         self.assertEqual(r['recommended'], 'fold')
-        self.assertIn('BLUFFCATCH_BIG_BET_DEFAULT_FOLD_NO_READ', r['caveats'])
+        self.assertIn('BLUFFCATCH_OVERBET_FOLD', r['caveats'])
         self.assertIsNotNone(r['equity'])      # equity reportada
 
     def test_draw_equity_exact_overrides_rule(self):

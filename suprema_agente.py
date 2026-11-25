@@ -288,6 +288,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--armed", action="store_true", help="CLICA de verdade (sem isso = DRY, só salva H2N + loga)")
     ap.add_argument("--rebuy", action="store_true", help="liga o vigia de rebuy (Recompra simples se der tempo)")
+    ap.add_argument("--addon", action="store_true", help="liga o vigia de ADD-ON/re-entrada (confirma o add-on; NÃO clica se o botão estiver cortado pela janela estreita)")
     ap.add_argument("--bb", type=float, default=600.0, help="BB semente (o estado usa o BB exato do game_info)")
     ap.add_argument("--seconds", type=float, default=0.0, help="0 = roda até Ctrl+C")
     ap.add_argument("--mode", default="chip_ev")
@@ -534,6 +535,18 @@ def main():
             print("[AG] guardião NÃO subiu (%s) — sigo sem alarme de crash." % e, flush=True)
     if args.rebuy:
         threading.Thread(target=_rebuy_loop, args=(hwnd, args.armed, args.seconds, stop), daemon=True).start()
+    if args.addon:
+        try:
+            import suprema_addon as ADD
+            threading.Thread(
+                target=ADD.watch_and_addon,
+                args=(hwnd, C),
+                kwargs=dict(armed=args.armed, timeout_s=(args.seconds or 1e9), stop=stop),
+                daemon=True).start()
+            print("[AG] vigia de ADD-ON/re-entrada ATIVO%s (não clica se o botão estiver cortado — "
+                  "alargue a janela)." % ("" if args.armed else " [DRY]"), flush=True)
+        except Exception as e:
+            print("[AG] vigia de add-on NÃO subiu (%s)." % e, flush=True)
 
     # WATCHDOG DE HOOK MUDO: se nenhum evento chega há >15s, o hook pode estar pendurado (religou com
     # a Suprema aberta = o bug recorrente). Em vez de ficar parado em silêncio, AVISA na tela (badge)

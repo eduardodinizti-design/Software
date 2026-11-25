@@ -82,8 +82,10 @@ class BluffRiver(unittest.TestCase):
         self.assertNotIn('RIVER_BLUFF_POLAR', a.get('caveats', []))
 
     def test_nao_blefa_sem_leitura(self):
+        # CAMPO MOLE (início/station) sem leitura: NÃO blefa (conservador). No campo duro (FT/ICM,
+        # soft_field=False) o blefe polar dispara pela fold equity — field-gating (Eduardo 24/11).
         a = advise_postflop(_st(10, 0), ['Qc', 'Jd'], ['Ah', '7h', '2c', 'Ks', '3d'],
-                            street='RIVER', aggressor='hero')
+                            street='RIVER', aggressor='hero', soft_field=True)
         self.assertEqual(a['recommended'], 'check')
         self.assertNotIn('RIVER_BLUFF_POLAR', a.get('caveats', []))
 

@@ -90,8 +90,13 @@ def evaluate(advice, *, action, hero_cards=None, action_available=True,
     # referência; bucket emprestado p/ COBERTURA é OK) é AUTORIDADE em QUALQUER bb. As
     # tabelas/RangeLab/solver são referência, não regra — a range é a verdade. Exclui
     # band-aid (fallback/deep_guard), rótulo premium e pós-flop (trilha própria).
+    # MULTIWAY_APPROX (SB FIX 24/11): uma range HU ARRASTADA p/ multiway (sem nó próprio) NÃO
+    # é autoridade de CALL — o código já marcava multiway_approx com a intenção de não executar,
+    # mas o gate ignorava. Agora o cold-flat multiway perde REFERENCE -> operador FOLDA (piso
+    # seguro); o squeeze de VALOR puro é val=True (não multiway_approx) e segue 3betando.
     reference_authority = (advice.get('status') == 'ADVICE' and has_node
-                           and not is_fallback and not is_premium and not is_postflop)
+                           and not is_fallback and not is_premium and not is_postflop
+                           and not advice.get('multiway_approx'))
 
     source_validated = (advice.get('validated') is True and not borrowed
                         and not is_fallback and not is_premium)

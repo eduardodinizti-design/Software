@@ -53,6 +53,14 @@ def _hero_in_position(positions):
 # pré-flop erra demais lá, então continua abstendo mesmo com range.
 _CALL_HAIRCUT = 0.05
 _BIG_BET_POT_ODDS = 0.40
+# OVERBET: aposta > ~1.2x pote (pot_odds > 0.55 = exige >55% equity). O guia (cap.14) defende
+# BARRIL NORMAL (≤ pote) com top pair/par médio, mas NÃO paga bluff-catcher vs overbet polarizada.
+# Sem leitura, flop/turn DEFENDE o barril normal e FOLDA só a overbet (e o river, que o pool sub-blefa).
+_OVERBET_POT_ODDS = 0.55
+# TETO do HERO-CALL em runout de blefe (Eduardo 24/11): mesmo no campo mole + draw morto, o herói
+# paga só até um overbet MODERADO (~1.7x pote, pot_odds<=0.63). Jam gigante acima disso = mesmo o
+# pior jogador tem mais valor que blefe lá -> folda (disciplina anti-callstation, "não é spew").
+_HERO_CALL_MAX_POT_ODDS = 0.63
 # Equity mínima (vs range) para AUMENTAR por valor com uma mão de categoria forte.
 # Abaixo disso (mas acima das pot odds) paga; se nem as pot odds bater, folda — a
 # categoria não manda sozinha quando a equity contra o range diz o contrário.
@@ -260,7 +268,7 @@ def _board_is_nuts_chop(board):
 def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
                     stage='mid', aggressor=None, villain_range=None, pot_type=None,
                     narrow_range=False, villain_stats=None, villains=None,
-                    villain_line=None, iters=4000, seed=0):
+                    villain_line=None, soft_field=False, iters=4000, seed=0):
     """Conselho pós-flop para uma leitura. `hero`: 2 strings; `board`: 3-5 strings.
 
     `aggressor` (opcional): quem teve a iniciativa no pré-flop ('hero'/posição), para
@@ -439,6 +447,40 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
         board_beats_us = (bclass['straight_on_board']
                           or (bclass['flush_possible'] and made not in
                               ('flush', 'full_house', 'quads', 'straight_flush')))
+        # RUNOUT FAVORÁVEL A BLEFE (river, Eduardo 24/11 — "ser herói em determinados runouts"): os
+        # draws ÓBVIOS do board NÃO fecharam, então o range de barril do vilão fica PESADO em draws
+        # perdidos = blefes. Sinaliza no river onde não há flush/straight FEITO mas havia draw (2-flush
+        # máx. = flush-draw morto, OU 3+ cartas conectadas = straight-draw morto). Alimenta o hero-call.
+        # Sinal REAL de FLUSH-DRAW MORTO: todo river de 5 cartas TEM 2-flush (pigeonhole), então "2-flush
+        # no river" não diz nada. O que importa é se o draw estava VIVO no TURN (board[:4] two-tone = 2 de
+        # um naipe = flush-draw possível) e o river NÃO trouxe o 3º (flush_possible=False). Turn RAINBOW
+        # (sem flush-draw) é corretamente EXCLUÍDO -> ali top pair folda overbet (não há blefe de draw).
+        # Straight-draw morto fica de fora de propósito (o straightish do board é ruidoso em board
+        # desconexo); conservador = não inventa hero-call. Alimenta só o hero-call do campo mole.
+        _turn_sc = [sum(1 for c in board[:4] if len(c) > 1 and c[1] == s) for s in 'cdhs'] if len(board) == 5 else []
+        _missed_draw_river = (street == 'RIVER' and len(board) == 5
+                              and not bclass['flush_possible'] and not bclass['straight_on_board']
+                              and bool(_turn_sc) and max(_turn_sc) >= 2)
+        # CHECK-RAISE DE BLEFE NO RIVER (Eduardo 24/11, "hero-raise em runout de blefe") — a linha mais
+        # arriscada do poker, então CIRÚRGICA. Só dispara com TODAS estas travas: (a) AR PURO — um
+        # bluff-catcher (par) deve PAGAR (hero-call acima), nunca virar blefe; (b) NUT-BLOCKER do flush
+        # FEITO no board (hero segura o Ás do naipe que fechou, sem ter o flush) -> o vilão raramente
+        # tem a nut e o check-raise REPRESENTA a nut de forma crível, foldando o valor marginal dele;
+        # (c) CAMPO DURO (FT/ICM: o vilão dobra valor marginal sob pressão) — campo mole/station paga o
+        # raise, seria spew; (d) vilão NÃO-passivo; (e) aposta RAISEÁVEL (<= aposta grande), não overbet.
+        # Sem blocker = blefe sem representar nada = NUNCA. É o espelho de blefe do check-raise de valor.
+        if (street == 'RIVER' and _defender and made == 'air' and not soft_field
+                and not (profile and profile.get('passive'))
+                and bclass['flush_possible'] and pot_odds <= _BIG_BET_POT_ODDS and cap):
+            _xr_fs = next((s for s in 'cdhs'
+                           if sum(1 for c in board if len(c) > 1 and c[1] == s) >= 3), None)
+            if _xr_fs and any(len(c) > 1 and c[1] == _xr_fs and c[0] == 'A' for c in hero):
+                info.update(recommended='raise',
+                            sizing=dict(size_bb=round(min(to_call * 3, cap), 1),
+                                        basis='check-raise de blefe no river (nut-blocker, campo duro)',
+                                        heuristic=True),
+                            caveats=caveats + ['CHECK_RAISE_BLUFF_RIVER_NUT_BLOCKER_CAMPO_DURO'])
+                return info
         # Mão de categoria forte: a equity (quando há range) manda. Não aumenta —
         # nem paga — contra um range que nos domina, mesmo com categoria boa (#7).
         if strong:
@@ -478,12 +520,31 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
                     info.update(recommended='fold',
                                 caveats=caveats + ['POOL_UNDERBLUFF_FOLD_BIG_BET'])
                     return info
-                # LEI "NUNCA ABSTÉM" (Eduardo 19/11): sem leitura, bluffcatcher de 1 par
-                # vs APOSTA GRANDE tem AÇÃO padrão = FOLD (o pool underbluffa aposta grande;
-                # mesmo princípio do ramo acima). Não abstém: decide o seguro.
-                info.update(recommended='fold',
-                            caveats=caveats + ['BLUFFCATCH_BIG_BET_DEFAULT_FOLD_NO_READ',
-                                               'POOL_UNDERBLUFF_FOLD_BIG_BET'])
+                # GUIA cap.14 (p.83, SOLVER): top pair PAGA o barril de turn 98-100%; o
+                # over-fold do pool é SÓ no RIVER (3º barril grande) e vs RAISE. Sem leitura,
+                # o default FLOP/TURN passa a DEFENDER (o passivão vinha de foldar top pair pra
+                # qualquer aposta ≥2/3); RIVER segue fold seguro. (Agressão 24/11, guia autoridade.)
+                if street == 'RIVER':
+                    # RIVER BEM PROTEGIDO vs campo que SOBRE-blefa (Eduardo 24/11): no campo MOLE o
+                    # pool blefa DEMAIS o river -> top pair é HERÓI e PAGA (não over-folda e vira
+                    # explorável). Paga a aposta grande; e em RUNOUT DE BLEFE (draw morreu) paga até
+                    # overbet (o barril é quase todo draw perdido). Campo DURO (FT/ICM, pool
+                    # underbluffa o river) -> fold seguro (comportamento anterior, intacto).
+                    if soft_field and (pot_odds <= _OVERBET_POT_ODDS
+                                       or (_missed_draw_river and pot_odds <= _HERO_CALL_MAX_POT_ODDS)):
+                        info.update(recommended='call',
+                                    caveats=caveats + ['HERO_CALL_RIVER_CAMPO_MOLE'
+                                                       + ('_RUNOUT_BLEFE' if _missed_draw_river else '')])
+                        return info
+                    info.update(recommended='fold',
+                                caveats=caveats + ['BLUFFCATCH_RIVER_BIGBET_FOLD_POOL_UNDERBLUFF'])
+                    return info
+                if pot_odds > _OVERBET_POT_ODDS:            # overbet polarizada: nem top pair paga
+                    info.update(recommended='fold',
+                                caveats=caveats + ['BLUFFCATCH_OVERBET_FOLD'])
+                    return info
+                info.update(recommended='call',
+                            caveats=caveats + ['TOP_PAIR_DEFENDE_BARRIL_GUIA_CAP14'])
                 return info
             if equity is not None:
                 caveats.append('BLUFFCATCH_EQUITY_DRIVEN')
@@ -505,6 +566,10 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
             # alta). Em MULTIWAY (n_opp>1) OU vs APOSTA GRANDE/ALL-IN (pot_odds>_BIG_BET), o range de
             # VALOR domina -> FOLDA (bluffcatcher atrás), NUNCA paga pela equity otimista. HU vs aposta
             # normal segue decidindo pela equity abaixo. Eduardo (review underpair, alvo #1).
+            # UNDERPAIR DEVALUADO (leak real H2N #61: QQ em K-alto 3-way pagou all-in, -50k):
+            # em MULTIWAY ou vs APOSTA GRANDE -> FOLD SEMPRE, campo mole ou não. É o bluff-catcher
+            # mais FRACO e all-in é commitment de stack -> NÃO entra no "defende o barril" (nem no
+            # campo mole: pagar all-in com underpair é o spew que o Eduardo alertou). Intacto.
             if made == 'underpair' and (n_opp > 1 or pot_odds > _BIG_BET_POT_ODDS):
                 info.update(recommended='fold',
                             caveats=caveats + ['UNDERPAIR_DEVALUED_FOLD_MULTIWAY_OR_BIGBET'])
@@ -513,6 +578,25 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
                 caveats.append('MARGINAL_EQUITY_DRIVEN')
                 info.update(recommended=('call' if equity >= pot_odds + haircut + ex_delta else 'fold'),
                             caveats=caveats)
+                return info
+            # CAMPO MOLE (soft_field, stage inicial): o campo SOBRE-blefa (play money ruim) ->
+            # par médio DEFENDE o barril normal ao MDF (paga o lixo deles, guia cap.14); só folda
+            # vs overbet ou aposta grande de RIVER. Campo duro (FT/ICM callstation) -> fold default.
+            # `made != 'underpair'`: o underpair (bluff-catcher mais fraco, hand do leak de 50k)
+            # NUNCA entra no soft-defense — folda sem range mesmo no campo mole (protege o call-off).
+            # Só o 2º/3º par de verdade defende o barril normal quando o campo sobre-blefa.
+            # HERO em RUNOUT DE BLEFE (Eduardo 24/11): no river onde o draw morreu, o barril do vilão
+            # é quase todo blefe -> o 2º/3º par (NÃO underpair) vira herói e PAGA a aposta grande de
+            # river também (até overbet; acima disso nem o herói paga). Fora do runout de blefe segue a
+            # regra antiga (defende barril normal; folda overbet e aposta grande de river).
+            _hero_runout = _missed_draw_river and pot_odds <= _OVERBET_POT_ODDS
+            if (soft_field and made != 'underpair'
+                    and (_hero_runout
+                         or not (pot_odds > _OVERBET_POT_ODDS
+                                 or (pot_odds > _BIG_BET_POT_ODDS and street == 'RIVER')))):
+                info.update(recommended='call',
+                            caveats=caveats + (['HERO_CALL_2O_PAR_RUNOUT_BLEFE'] if _hero_runout
+                                               else ['MARGINAL_DEFENDE_CAMPO_MOLE_GUIA_CAP14']))
                 return info
             caveats.append('MARGINAL_BLUFFCATCH_FOLD_DEFAULT_EXPLOITABLE')
             info.update(recommended='fold', caveats=caveats)
@@ -538,6 +622,20 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
                                         basis='check-raise semi-blefe (vantagem de nuts ~3x)',
                                         heuristic=True),
                             caveats=caveats + ['CHECK_RAISE_SEMIBLUFF_VANTAGEM_NUTS'])
+                return info
+            # CHECK-RAISE POR BLEFE (guia cap.5-6 + Eduardo 24/11): a metade de BLEFE do
+            # check-raise do defensor com vantagem de nuts. Draw FRACO (gutshot/backdoor) com
+            # fold equity vira check-raise semi-blefe — SÓ no CAMPO DURO (guia: "semi-blefe
+            # quando há fold equity") e vs vilão NÃO-passivo. Balanceia os check-raises de valor.
+            # Campo mole/station -> segue call/fold por equity abaixo (não blefa quem não folda).
+            if (_nuts_hero_def and has_weak_draw and not has_strong_draw and not soft_field
+                    and not (profile and profile.get('passive'))
+                    and pot_odds <= _BIG_BET_POT_ODDS and cap):
+                info.update(recommended='raise',
+                            sizing=dict(size_bb=round(min(to_call * 3, cap), 1),
+                                        basis='check-raise por blefe (campo duro: draw fraco + fold equity)',
+                                        heuristic=True),
+                            caveats=caveats + ['CHECK_RAISE_BLUFF_CAMPO_DURO'])
                 return info
             # Implied odds: o ganho futuro quando o draw completa baixa a equity exigida.
             implied = _implied_bb(street, pot, hero_stack, to_call, draws)
@@ -579,6 +677,18 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
         # Ar / joga o board: folda, salvo equity (vs range) acima das pot odds.
         if equity is not None and equity >= pot_odds + haircut + ex_delta:
             info.update(recommended='call', caveats=caveats + ['WEAK_BUT_EQUITY_OK'])
+            return info
+        # FLOAT (guia cap.7 + Eduardo 24/11): EM POSIÇÃO, mão fraca COM POTENCIAL (overcards ou
+        # backdoor) PAGA o c-bet normal (flutua) em vez de foldar — plano de ROUBAR quando o
+        # agressor DESISTE no turn (probe). SÓ no CAMPO DURO (o agressor c-beta e desiste; guia:
+        # "float em posição com backdoor e aposta") e vs vilão NÃO-passivo. Campo mole/station ->
+        # folda (station não desiste da aposta). Só flop, c-bet não-gigante.
+        if (_hero_in_position(table_state.get('positions')) is True and street == 'FLOP'
+                and made in ('overcards', 'air')
+                and (made == 'overcards' or draws.get('backdoor_flush'))
+                and not soft_field and not (profile and profile.get('passive'))
+                and pot_odds <= _BIG_BET_POT_ODDS):
+            info.update(recommended='call', caveats=caveats + ['FLOAT_IP_CAMPO_DURO'])
             return info
         info.update(recommended='fold', caveats=caveats)
         return info
@@ -633,7 +743,11 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
     # forte (_STRONG) e DRAW forte c-betam OOP; ar/marginal/top-pair dão CHECK (controle de pote,
     # realiza equidade). Mata o leak de c-bet OOP (a lógica de range-bet 1/3, pensada p/ IP vs BB,
     # vazava p/ OOP). Só quando o hero TEM a iniciativa e está COMPROVADAMENTE OOP.
-    if _hia is True and _hero_ip is False and not strong and not has_strong_draw:
+    # NÃO preempta o DELAYED c-bet nem o VALOR FINO de bet-check-bet (villain_line delayed/checked_turn):
+    # nessas linhas o range do vilão está CAPADO (flop check-check / check no turn) e o hero LIDERA mesmo
+    # OOP (Eduardo 24/11) — o check-OOP de c-bet padrão não se aplica.
+    if (_hia is True and _hero_ip is False and not strong and not has_strong_draw
+            and villain_line not in ('delayed', 'checked_turn')):
         info.update(recommended='check',
                     sizing=dict(size_bb=0.0, heuristic=False,
                                 basis='check OOP: PFR fora de posição só c-beta valor/draw forte (guia)'),
@@ -655,7 +769,9 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
     # flush/sequência) -> bet pequeno (o check no turn capou o range, valor fino lucra). Par baixo/
     # A-high/ar vão a showdown (caem no check abaixo). Gated no sinal villain_line='checked_turn'
     # (NÃO afeta o triple-barrel, que não seta esse sinal). Preempta o check de river (perdeu valor).
-    _bcb_value = ('second_pair', 'top_pair', 'overpair', 'two_pair', 'set', 'trips',
+    # VALOR FINO: qualquer par+ com showdown (incl. UNDERPAIR — na linha bet-check-bet o range
+    # está capado, então o par médio/baixo bate as mãos piores que pagam -> valor fino, guia cap.11).
+    _bcb_value = ('second_pair', 'top_pair', 'overpair', 'underpair', 'two_pair', 'set', 'trips',
                   'straight', 'flush', 'full_house', 'quads', 'straight_flush')
     if (_hia is True and street == 'RIVER' and villain_line == 'checked_turn' and n_opp == 1
             and made in _bcb_value and pot_type in (None, 'single_raised', 'unknown')):
@@ -689,6 +805,19 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
                                  'c-bet 1/3 stab: BB overfolda ao c-bet (exploit vs BB)'),
                     caveats=caveats + ['CBET_VS_BB_EXPLOIT_OVERFOLD_STAB'])
         return info
+    # #5 BLEFE DE RIVER em BOARD PAREADO / joga-o-board (guia cap.11 + Eduardo 24/11): o hero NÃO
+    # tem showdown próprio (board tem par/trinca, o hero não pareou) -> a ÚNICA forma de ganhar é
+    # APOSTAR (WWSF). O blefe REPRESENTA a trinca/boat. BLEFA no CAMPO DURO vs vilão NÃO-passivo;
+    # campo mole/station e board de chop (sequência no board) DESISTEM (check abaixo). Mesmo gate
+    # do 3º barril de ar; roda ANTES do check de valor-relativo (que senão daria check nessas).
+    if (_cbet_bb_spot and street == 'RIVER' and made in ('board_pair_only', 'board_trips')
+            and not soft_field and not (profile and profile.get('passive'))
+            and not bclass.get('straight_on_board')):
+        info.update(recommended='bet',
+                    sizing=_size(pot, postflop_texture.BIG, cap,
+                                 'blefe river board pareado (campo duro): sem showdown, representa a trinca/boat'),
+                    caveats=caveats + ['RIVER_BLUFF_PLAYS_BOARD_CAMPO_DURO'])
+        return info
     # PROMOÇÃO RIVER (polarização máxima — Reg-Life): no river IP, mão FEITA que PERDEU VALOR
     # RELATIVO (o board completou draws e ela está abaixo do piso de valor do river — ex.:
     # two pair/overpair/top pair num board de flush/sequência) NÃO value-beta -> CHECK. Mata
@@ -701,6 +830,36 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
                                 basis='check: river completou draws, mão perdeu valor relativo (polariza)',
                                 heuristic=False),
                     caveats=caveats + ['RIVER_CHECK_PERDEU_VALOR_RELATIVO'])
+        return info
+    # 3º BARRIL DE RIVER (guia cap.11 + Eduardo 24/11) — BLEFE com mão SEM showdown, GATED POR
+    # CAMPO. Ar/overcards (não ganham no check) como AGRESSOR no river BLEFAM pelo pote agora
+    # (WWSF: brigar pelos potes sem showdown). SÓ no CAMPO DURO (FT/ICM, há fold equity) e vs
+    # vilão NÃO-passivo — o guia proíbe "terceiro barril contra pagador" e "ar em board ruim":
+    # campo mole/station e board de chop (sequência no board) DESISTEM (check abaixo). Size
+    # grande (polar). Valor já apostou (ramo strong); mão com showdown checou acima.
+    # `not flush_possible`: river de flush vai pro bloco de BLOCKER BLUFF (abaixo), que checa o
+    # bloqueador (não blefa mão que bloqueia o fold do vilão) e libera OVERBET com o nut-blocker.
+    if (_cbet_bb_spot and street == 'RIVER' and made in ('air', 'overcards')
+            and not soft_field and not (profile and profile.get('passive'))
+            and not bclass.get('straight_on_board') and not bclass.get('flush_possible')
+            and postflop_river.river_bluff_blocker_ok(hero, board)):
+        info.update(recommended='bet',
+                    sizing=_size(pot, postflop_texture.BIG, cap,
+                                 '3o barril de river (campo duro): blefe com mao sem showdown (WWSF)'),
+                    caveats=caveats + ['RIVER_THIRD_BARREL_BLUFF_CAMPO_DURO'])
+        return info
+    # VALOR FINO DE RIVER (guia cap.11 + Eduardo 24/11): no river NÃO há pot-control (não vem
+    # carta). Mão FEITA que passou o piso de valor (river_value_ok; as que perderam valor
+    # relativo já checaram acima) EXTRAI valor fino -> value-beta, não checa. O guia: "valor fino
+    # no river" e "Pagador: aumente o size com valor" -> size MAIOR vs station/passivo, fino vs o
+    # resto. Valor forte (dois pares+) já apostou no ramo strong. É VALOR, não blefe (sem spew).
+    if (_cbet_bb_spot and street == 'RIVER' and made and made not in ('air', 'overcards')
+            and not strong and postflop_river.river_value_ok(made, bclass)):
+        _vfrac = (postflop_texture.MEDIUM if (profile and profile.get('passive'))
+                  else postflop_texture.SMALL)
+        info.update(recommended='bet',
+                    sizing=_size(pot, _vfrac, cap, 'valor fino de river (guia cap.11): extrai do pagador'),
+                    caveats=caveats + ['RIVER_THIN_VALUE'])
         return info
     # GATE ANTI-DONK (LEI Eduardo — NÃO temos estratégia de DONK BET): o hero que PAGOU o
     # pré-flop (DEFENSOR), FORA DE POSIÇÃO e PRIMEIRO a agir no FLOP, CHECA — jamais lidera
@@ -851,10 +1010,22 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
         # Manipulação de outs: mão feita mediana -> MANUTENÇÃO (mantém dominadas do vilão).
         _om = out_manipulation(made, draws)
         _om_cv = ['OUT_MANIP_%s' % _om['intent'].upper()] if _om else []
+        # KICKER do top pair (Eduardo 24/11, VALOR): sem range ao vivo o _eq_bucket é None ->
+        # o pot-control checava TODO top pair, inclusive TOP KICKER (AK em A-alto = o melhor par,
+        # tem que BARRILAR valor; station paga Ax pior). Distingue pelo kicker: Q+ = top pair BOM
+        # -> valor (barrila); kicker fraco em board polar -> controle de pote (check).
+        _RK = '23456789TJQKA'
+        try:
+            _btop = max(_RK.index(c[0]) for c in board)
+            _hranks = [_RK.index(c[0]) for c in hero]
+            _kick = next((r for r in sorted(_hranks, reverse=True) if r != _btop), min(_hranks))
+            _tp_strong_kicker = _kick >= _RK.index('Q')
+        except Exception:                                 # noqa: BLE001 — leitura ruim -> conservador
+            _tp_strong_kicker = False
         # Frequência do agressor: checa mão média em board POLAR (baixo não-pareado) OU em
-        # board de PERIGO vs BB (pareado meio — monotone/low-connected já saem deste ramo).
+        # board de PERIGO vs BB (pareado meio). Top pair BOM (kicker Q+) NÃO entra no check -> valor.
         if (_hia is True and (postflop_texture.polarizes(bclass) or _cbet_cat)
-                and _eq_bucket not in ('nuts', 'strong')):   # bucket forte segue apostando
+                and _eq_bucket not in ('nuts', 'strong') and not _tp_strong_kicker):
             info.update(recommended='check',
                         sizing=dict(size_bb=0.0, basis='check: mão média em board de perigo vs BB (controle de pote)',
                                     heuristic=False),
@@ -869,6 +1040,7 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
     # negar/cuidar nessas cartas boas. Só no spot de barril HU single-raised, hero agressor,
     # não multiway-bloqueado. Size médio (polarização de turn). Ar seco segue de check abaixo.
     if (_cbet_bb_spot and street == 'TURN' and not bluff_blocked
+            and not soft_field                              # CAMPO DURO só (FT/ICM, fold equity)
             and not (profile and profile.get('passive'))   # não blefa-barrila um passivo (sticky)
             and (info.get('turn_barrel') or {}).get('turn_type') == 'overcard'
             and made in ('air', 'overcards')
@@ -887,12 +1059,27 @@ def advise_postflop(table_state, hero, board, *, street=None, mode='chip_ev',
             and made in ('air', 'overcards')
             and postflop_river.river_bluff_blocker_ok(hero, board)):
         _rvp = classify_villain(villain_stats) if villain_stats else None
-        _fold_prone = bool(_rvp and _rvp.get('category') not in ('unknown', 'fish')
-                           and 'station' not in _rvp.get('tags', []))
-        if _fold_prone:
+        _read_fold = bool(_rvp and _rvp.get('category') not in ('unknown', 'fish')
+                          and 'station' not in _rvp.get('tags', []))
+        # CAMPO DURO (FT/ICM) assume fold equity mesmo SEM leitura de HUD; vilão passivo/station
+        # ou campo mole -> NÃO blefa (cai no check abaixo, sem spew).
+        _hard_fold = (not soft_field and not (profile and profile.get('passive')))
+        if _read_fold or _hard_fold:
+            # OVERBET/JAM (Eduardo 24/11): quando o hero segura o BLOQUEADOR DA NUTS (Á do naipe
+            # do flush de 3+ no board), REPRESENTA o nut flush e bloqueia o call top -> overbet
+            # polar (jam). Blefe + nuts no MESMO size gigante = range balanceada e máxima fold eq.
+            _fs = next((s for s in 'cdhs' if sum(1 for c in board if c[1] == s) >= 3), None)
+            _nut_blocker = bool(_fs and any(c[1] == _fs and c[0] == 'A' for c in hero))
+            if _nut_blocker and cap:
+                info.update(recommended='all_in',
+                            sizing=dict(size_bb=round(cap, 1), bucket='allin', bucket_enforced=True,
+                                        heuristic=False,
+                                        basis='overbet/jam de blefe: bloqueador de nut flush (polar)'),
+                            caveats=caveats + ['RIVER_BLUFF_OVERBET_NUT_BLOCKER'])
+                return info
             info.update(recommended='bet',
                         sizing=_size(pot, postflop_texture.BIG, cap,
-                                     'blefe polar de river (bottom, bloqueador ok, vilão folda)'),
+                                     'blefe polar de river (bottom, bloqueador ok, campo duro/folda)'),
                         caveats=caveats + ['RIVER_BLUFF_POLAR'])
             return info
     # EXPLOIT (HUD): passaram a vez com AR (sem showdown value) -> normalmente check;

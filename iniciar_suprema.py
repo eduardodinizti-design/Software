@@ -51,6 +51,7 @@ BG, CARD, GOLD, GREEN, FG, MUTED, RED = (
 # flags de CONFIGURAÇÃO da HUD (o overlay lê a cada ciclo; mesmos caminhos do hud_overlay)
 _NVTDIR = os.path.join(os.environ.get("LOCALAPPDATA", os.path.expanduser("~")), "NvtTracker")
 _HIDE_HERO_FILE = os.path.join(_NVTDIR, "hud_hide_hero.flag")   # existe = oculta a caixa do herói
+_HUD_OFF_FILE = os.path.join(_NVTDIR, "hud_off.flag")           # existe = HUD DESLIGADA na mesa (master on/off)
 _ALPHA_FILE = os.path.join(_NVTDIR, "hud_alpha.flag")           # opacidade 0.20–1.0 (slider)
 _LOCK_FILE = os.path.join(_NVTDIR, "hud_locked.flag")           # existe = HUD fixa (não arrasta; segue a mesa)
 _ARMED_FILE = os.path.join(_NVTDIR, "suprema_armed.flag")      # existe = AGENTE ARMADO (joga/clica) no próximo início
@@ -218,9 +219,21 @@ def _ensure_desktop_shortcut():
     """Cria/atualiza 'NVT Suprema.lnk' na Área de Trabalho -> pythonw + este script, com o
     nosso ícone. Idempotente e SEM console (powershell hidden, janela 0)."""
     try:
-        pyw = _find_pythonw()
-        script = os.path.abspath(__file__)
-        icon = ICON_ICO if os.path.exists(ICON_ICO) else pyw
+        # FROZEN (.exe): o atalho aponta p/ o PRÓPRIO Henrique.exe, SEM argumento. Sob
+        # PyInstaller, __file__ resolve p/ _internal\iniciar_suprema.py (fonte empacotado,
+        # NÃO executável solto) e _find_pythonw dá o pythonw do sistema -> o atalho antigo
+        # mandava `pythonw _internal\iniciar_suprema.py`, arquivo que não existe -> clicar
+        # "não fazia nada" (bug 24/11, silencioso no pythonw). FONTE: pythonw + este script.
+        if getattr(sys, "frozen", False):
+            target = sys.executable
+            args = ""
+            workdir = os.path.dirname(sys.executable)
+            icon = ICON_ICO if os.path.exists(ICON_ICO) else target
+        else:
+            target = _find_pythonw()
+            args = '"%s"' % os.path.abspath(__file__)
+            workdir = REPO
+            icon = ICON_ICO if os.path.exists(ICON_ICO) else target
 
         def q(s):
             return str(s).replace("'", "''")
@@ -230,13 +243,13 @@ def _ensure_desktop_shortcut():
             "$d=[Environment]::GetFolderPath('Desktop');"
             "$l=$ws.CreateShortcut((Join-Path $d 'NVT Suprema.lnk'));"
             "$l.TargetPath='%s';"
-            "$l.Arguments='\"%s\"';"
+            "$l.Arguments='%s';"
             "$l.WorkingDirectory='%s';"
             "$l.IconLocation='%s';"
             "$l.WindowStyle=1;"
             "$l.Description='NVT Suprema - dados + banco + HUD';"
             "$l.Save()"
-        ) % (q(pyw), q(script), q(REPO), q(icon))
+        ) % (q(target), q(args), q(workdir), q(icon))
         subprocess.run(
             ["powershell", "-NoProfile", "-NonInteractive", "-WindowStyle", "Hidden", "-Command", ps],
             creationflags=NO_WINDOW, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
@@ -289,14 +302,14 @@ class Wizard:
         self.root = tk.Tk()
         self.root.title("NVT Suprema")
         self.root.configure(bg=BG)
-        self.root.resizable(False, False)
+        self.root.resizable(False, True)   # vertical livre: segurança contra corte do rodapé
         try:
             if os.path.exists(ICON_ICO):
                 self.root.iconbitmap(ICON_ICO)
         except Exception:
             pass
         self._build()
-        self._center(520, 600)
+        self._center(520, 820)   # 600 cortava "Configuração da HUD" + "Parar tudo" embaixo (bug 24/11)
         self.root.protocol("WM_DELETE_WINDOW", self._quit)
         self.root.after(80, self._bringup)
 
@@ -358,6 +371,13 @@ class Wizard:
         cfg.pack(fill="x", padx=24, pady=(2, 2))
         tk.Label(cfg, text="CONFIGURAÇÃO DA HUD", font=("Segoe UI", 8, "bold"),
                  fg=MUTED, bg=BG, anchor="w").pack(fill="x")
+        # MASTER ON/OFF: liga/desliga a HUD inteira na mesa (efeito ao vivo em ~3s, sem reabrir).
+        self.show_hud = tk.BooleanVar(value=not os.path.exists(_HUD_OFF_FILE))
+        tk.Checkbutton(cfg, text="Mostrar HUD na mesa (desmarque p/ ocultar tudo)",
+                       variable=self.show_hud, command=self._toggle_hud,
+                       bg=BG, fg=FG, selectcolor=CARD, activebackground=BG,
+                       activeforeground=GOLD, font=("Segoe UI", 10, "bold"), anchor="w",
+                       bd=0, highlightthickness=0, cursor="hand2").pack(anchor="w", pady=(1, 2))
         self.lock_hud = tk.BooleanVar(value=os.path.exists(_LOCK_FILE))
         tk.Checkbutton(cfg, text="Fixar HUD (trava a posição; segue a mesa ao mover)",
                        variable=self.lock_hud, command=self._toggle_lock,
@@ -416,6 +436,19 @@ class Wizard:
             pass
 
     # ── config da HUD: escreve os flags que o overlay lê a cada ciclo (efeito em ~3s) ──
+    def _toggle_hud(self):
+        """Master ON/OFF da HUD na mesa. Marcado = mostra; desmarcado = grava hud_off.flag
+        -> o overlay some com TODAS as caixas no próximo ciclo (~3s). Religar recria tudo."""
+        try:
+            os.makedirs(_NVTDIR, exist_ok=True)
+            if self.show_hud.get():
+                if os.path.exists(_HUD_OFF_FILE):
+                    os.remove(_HUD_OFF_FILE)
+            else:
+                open(_HUD_OFF_FILE, "w").close()
+        except Exception:
+            pass
+
     def _toggle_lock(self):
         try:
             os.makedirs(_NVTDIR, exist_ok=True)
