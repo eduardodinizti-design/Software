@@ -58,10 +58,29 @@ class StateObserverTest(unittest.TestCase):
         self.assertTrue(any('REGREDIU' in p for p in v['pending']))
 
     def test_table_ref_change_flagged(self):
+        # Troca de ref que COINCIDE com mão nova = possível troca real -> sinaliza.
         obs = StateObserver()
         obs.observe(_result(hand_number=1771, table_ref='T1'), table_key='t#1')
         v = obs.observe(_result(hand_number=1772, table_ref='T2'), table_key='t#1')
         self.assertTrue(any('TABLE_REF_MUDOU' in p for p in v['pending']))
+        self.assertEqual(v['table']['ref'], 'T2')            # aceita o ref novo
+
+    def test_table_ref_flicker_same_hand_suppressed(self):
+        # Mesmo hand_number, ref oscila (watermark OCR) -> NÃO sinaliza e o ref
+        # EXIBIDO segura o aceito (anti-flicker ...136650<->...135650 visto ao vivo).
+        obs = StateObserver()
+        obs.observe(_result(hand_number=1771, table_ref='261116136650-14458401'), table_key='t#1')
+        v = obs.observe(_result(hand_number=1771, table_ref='261116135650-14458481'), table_key='t#1')
+        self.assertFalse(any('TABLE_REF_MUDOU' in p for p in v['pending']))
+        self.assertEqual(v['table']['ref'], '261116136650-14458401')   # segura o aceito
+
+    def test_table_ref_illegible_holds_accepted(self):
+        # ref None (ilegível) não derruba o aceito nem sinaliza troca.
+        obs = StateObserver()
+        obs.observe(_result(hand_number=1771, table_ref='T1'), table_key='t#1')
+        v = obs.observe(_result(hand_number=1771, table_ref=None), table_key='t#1')
+        self.assertFalse(any('TABLE_REF_MUDOU' in p for p in v['pending']))
+        self.assertEqual(v['table']['ref'], 'T1')
 
     def test_absence_not_invented_tocall_and_stacks(self):
         obs = StateObserver()

@@ -1,0 +1,94 @@
+================================================================================
+  NVT BOT — GUIA DE INSTALAÇÃO EM QUALQUER COMPUTADOR (Windows)
+  Objetivo: rodar standalone (abrir e funcionar) num PC novo, ex. o notebook.
+  Siga na ORDEM. Tudo é Windows 64-bit.
+================================================================================
+
+--------------------------------------------------------------------------------
+RESUMO DO QUE PRECISA (os "requisitos")
+--------------------------------------------------------------------------------
+  1) Python 3.12 (64-bit)
+  2) Bibliotecas Python (um comando: pip install -r requirements.txt)
+  3) Tesseract OCR (motor de leitura de texto da tela)
+  4) PPPoker instalado e logado
+  5) A pasta do bot (_repo_software) + os 3 arquivos de dados:
+       nvt-ranges-validados.json, nvt-ranges-deep.json, logs/exploit_db.json
+Depois disso: duplo-clique em INICIAR_BOT.bat e pronto.
+
+--------------------------------------------------------------------------------
+PASSO 1 — PYTHON 3.12 (64-bit)
+--------------------------------------------------------------------------------
+  - Baixe em https://www.python.org/downloads/windows/  -> "Python 3.12.x"
+    (Windows installer 64-bit).
+  - No instalador, MARQUE "Add python.exe to PATH" ANTES de clicar Install.
+  - Confirme (abra o Prompt de Comando e digite):
+        python --version        -> tem que mostrar Python 3.12.x
+        pip --version           -> tem que responder
+
+--------------------------------------------------------------------------------
+PASSO 2 — BIBLIOTECAS PYTHON
+--------------------------------------------------------------------------------
+  - Copie a pasta do bot (_repo_software) para o PC (ex. C:\NVTBot\_repo_software).
+  - Abra o Prompt de Comando NESSA pasta e rode:
+        cd C:\NVTBot\_repo_software
+        pip install -r requirements.txt
+  - Isso instala: numpy, opencv-python, psutil, pytesseract, pywin32, Pillow,
+    tesserocr e frida (tudo com as versões travadas).
+  - Se der erro no tesserocr: veja o PASSO 3 (Tesseract) e tente de novo; se ainda
+    falhar, o bot funciona com o pytesseract (mais lento), já incluído.
+
+--------------------------------------------------------------------------------
+PASSO 3 — TESSERACT OCR (motor de leitura)
+--------------------------------------------------------------------------------
+  - Baixe o instalador (build UB Mannheim, 64-bit):
+        https://github.com/UB-Mannheim/tesseract/wiki
+  - Instale em C:\Program Files\Tesseract-OCR (padrão). MARQUE "Add to PATH" se
+    houver a opção; senão, adicione C:\Program Files\Tesseract-OCR ao PATH do
+    Windows manualmente.
+  - Confirme:  tesseract --version
+  - (O bot lê em inglês/padrão; não precisa de idioma extra.)
+
+--------------------------------------------------------------------------------
+PASSO 4 — PPPOKER
+--------------------------------------------------------------------------------
+  - Instale o PPPoker (mesmo cliente que você usa) e FAÇA LOGIN.
+  - Deixe a MESA aberta ao rodar o bot (ele acha o PPPoker.exe sozinho).
+
+--------------------------------------------------------------------------------
+PASSO 5 — ARQUIVOS DE DADOS (ranges + DB do field)
+--------------------------------------------------------------------------------
+  O bot procura estes arquivos sozinho (ao lado da pasta, dentro dela, ou em
+  data/). O jeito mais simples: coloque-os DENTRO de _repo_software:
+        _repo_software\nvt-ranges-validados.json
+        _repo_software\nvt-ranges-deep.json
+        _repo_software\logs\exploit_db.json     (crie a pasta logs se não houver)
+  (Se preferir, pode deixá-los na pasta-PAI de _repo_software, como está hoje.)
+
+--------------------------------------------------------------------------------
+PASSO 6 — RODAR
+--------------------------------------------------------------------------------
+  - Com o PPPoker aberto na mesa, dê DUPLO-CLIQUE em:
+        INICIAR_BOT.bat
+  - Devem abrir 3 janelas: OPERADOR (joga), CAPTURA (salva mãos), SEATS (lê o
+    field). A janela do OPERADOR mostra o bot ativo.
+  - Para PARAR: feche as janelas (ou Ctrl+C nelas).
+  - DICA: para o bot EXPLORAR o field pela nossa DB, troque/entre numa mesa uma
+    vez com o SEATS rodando (ele "semeia" o mapa dos vilões).
+
+--------------------------------------------------------------------------------
+SE DER PROBLEMA (checagem rápida)
+--------------------------------------------------------------------------------
+  - "python não é reconhecido": o PASSO 1 não marcou "Add to PATH". Reinstale
+    marcando, ou adicione o Python ao PATH.
+  - Frida não anexa / erro de permissão: rode o INICIAR_BOT.bat como
+    Administrador (botão direito -> Executar como administrador).
+  - "PPPoker não encontrado": abra o PPPoker (com a mesa) antes de rodar.
+  - Ranges não encontradas: confira o PASSO 5 (os 3 arquivos na pasta certa).
+  - Teste rápido de que está tudo ok (no Prompt, dentro de _repo_software):
+        python -m table_discovery.pppoker      (deve listar a janela do PPPoker)
+        python auditoria_preflop_completa.py    (deve dar cobertura 100%)
+
+--------------------------------------------------------------------------------
+OBS: versões testadas = Python 3.12.10, frida 17.26.2, opencv 4.11, numpy 2.2.6,
+Windows 11 64-bit. Mantenha as versões do requirements.txt p/ evitar surpresa.
+================================================================================

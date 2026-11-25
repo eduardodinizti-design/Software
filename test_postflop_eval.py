@@ -299,5 +299,19 @@ class NarrowContinuationTests(unittest.TestCase):
         self.assertEqual(self._w(out, 'Ah', 'Ad'), 1.0)
 
 
+class DoublePairedBoardRegression(unittest.TestCase):
+    """Regressão: board duplo-pareado/quadra avaliado sozinho não pode crashar o eval7
+    (kicker vazio) — antes abstía 'UNREADABLE_CARDS' ao vivo no turn/river pareado."""
+    def test_eval7_board_duplo_pareado_nao_crasha(self):
+        from preflop_equity import eval7
+        self.assertEqual(eval7(['Ts', 'Td', '4c', '4h'])[0], 2)   # two pair, sem kicker
+        self.assertEqual(eval7(['7s', '7d', '7c', '7h'])[0], 7)   # quadra no board
+
+    def test_hand_strength_turn_duplo_pareado(self):
+        hs = hand_strength(['Ah', 'Kd'], ['Ts', 'Td', '4c', '4h'])
+        self.assertIsNotNone(hs)
+        self.assertEqual(hs['made'], 'board_two_pair')
+
+
 if __name__ == '__main__':
     unittest.main()

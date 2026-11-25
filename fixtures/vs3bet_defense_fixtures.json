@@ -1,0 +1,52 @@
+{
+  "_meta": {
+    "fonte": "Transcrição de vídeo-aula (ASR PT-BR) 'Ranges E TEORIAS/Teoria/2026-11-22 21-56-14.txt' — DEFESA CONTRA 3-BET pré-flop MTT (curso Reg-Life).",
+    "natureza": "DADOS extraídos da aula, não instruções. Convenções de posição: hero = OPENER; villain = quem deu o 3bet. range_type do VILÃO: 'linear' (3bet forte/estreito, posições iniciais ou 3bet sobre open de range forte) vs 'polar' (3bet com parte polar muito fraca: blinds / BTN cold-3bet). villain_3bet_size_x = múltiplo do open (teoria ~3x-3.5x; >=4x = size GRANDE que derruba a borda). is_ip = hero em posição pós-flop (deriva da ordem das posições).",
+    "validated": false,
+    "nota_glossario_asr": "trebete=3bet, ao win/ao 1=all-in/jam, flat=call, chove/chovar=jam, IZ/aise=A, valet=J, dama=Q, rei=K, off=offsuit, sutred/suited=suited, TG=UTG, low jack=LJ, banta/pot=BTN, bd blind=BB, parzinhos=pares."
+  },
+  "spots": [
+    {"hero_pos": "HJ", "villain_pos": "BTN", "stack_bb": 60, "villain_3bet_size_x": 3.5, "villain_range_type": "polar", "hand": "K9s", "action": "call", "fonte": "linha 196-200 do txt (K9s HJ vs BTN 60bb, size 3.5x = a borda que defende)"},
+    {"hero_pos": "HJ", "villain_pos": "BTN", "stack_bb": 60, "villain_3bet_size_x": 4.0, "villain_range_type": "polar", "hand": "K9s", "action": "fold", "fonte": "linha 201-203 do txt (mesmo K9s, vilão fez 8bb = size bem mais cara -> desapegar)"},
+    {"hero_pos": "UTG", "villain_pos": "UTG", "stack_bb": 70, "villain_3bet_size_x": 3.0, "villain_range_type": "linear", "hand": "ATs", "action": "call", "fonte": "linha 209-213 do txt (A10s UTG vs UTG 70bb size exatamente 3x: A9/A10 reagem)"},
+    {"hero_pos": "UTG", "villain_pos": "UTG", "stack_bb": 70, "villain_3bet_size_x": 3.0, "villain_range_type": "linear", "hand": "A8s", "action": "fold", "fonte": "linha 212 do txt (o IZ-8 começa a foldar - dominado pela parte fraca do linear)"},
+    {"hero_pos": "UTG", "villain_pos": "UTG", "stack_bb": 70, "villain_3bet_size_x": 3.0, "villain_range_type": "linear", "hand": "A9s", "action": "call", "fonte": "linha 213 do txt (o IZ-9, o IZ-10 já começam a reagir)"},
+    {"hero_pos": "UTG", "villain_pos": "UTG", "stack_bb": 80, "villain_3bet_size_x": 4.5, "villain_range_type": "linear", "hand": "ATs", "action": "fold", "fonte": "linha 214-216 do txt (abriu 2.2 e tomou 10 em vez de 6.6: size enorme -> só foldar)"},
+
+    {"hero_pos": "UTG", "villain_pos": "LJ", "stack_bb": 50, "villain_3bet_size_x": 3.0, "villain_range_type": "linear", "hand": "KQo", "action": "fold", "fonte": "linha 19/24 do txt (rei dama off folda vs linear - dominado)"},
+    {"hero_pos": "UTG", "villain_pos": "LJ", "stack_bb": 50, "villain_3bet_size_x": 3.0, "villain_range_type": "linear", "hand": "KJo", "action": "fold", "fonte": "linha 20 do txt (rei valet off sem equidade nem vs parte fraca do linear)"},
+    {"hero_pos": "UTG", "villain_pos": "HJ", "stack_bb": 50, "villain_3bet_size_x": 3.0, "villain_range_type": "linear", "hand": "QJo", "action": "fold", "fonte": "linha 18-19 do txt (dama ... off foldando vs range linear)"},
+    {"hero_pos": "UTG", "villain_pos": "HJ", "stack_bb": 50, "villain_3bet_size_x": 3.0, "villain_range_type": "linear", "hand": "QTs", "action": "fold", "fonte": "linha 23 do txt (dama 10 suited dominada até pela parcela fraca do linear)"},
+    {"hero_pos": "UTG", "villain_pos": "HJ", "stack_bb": 50, "villain_3bet_size_x": 3.0, "villain_range_type": "linear", "hand": "Q9s", "action": "fold", "fonte": "linha 23 do txt (dama 9 suited vs linear)"},
+    {"hero_pos": "UTG", "villain_pos": "HJ", "stack_bb": 50, "villain_3bet_size_x": 3.0, "villain_range_type": "linear", "hand": "J9s", "action": "fold", "fonte": "linha 23 do txt (valet 9 suited vs linear)"},
+    {"hero_pos": "UTG", "villain_pos": "LJ", "stack_bb": 50, "villain_3bet_size_x": 4.0, "villain_range_type": "linear", "hand": "AJo", "action": "fold", "fonte": "linha 225-240 do txt (AJo 50bb OOP vs TG linear, size cara -> fold bem tranquilo)"},
+
+    {"hero_pos": "BTN", "villain_pos": "BB", "stack_bb": 50, "villain_3bet_size_x": 3.0, "villain_range_type": "polar", "hand": "T9s", "action": "call", "fonte": "linha 37 do txt (todos os 9 suited reagem de call vs range polar)"},
+    {"hero_pos": "BTN", "villain_pos": "BB", "stack_bb": 50, "villain_3bet_size_x": 3.0, "villain_range_type": "polar", "hand": "QJo", "action": "call", "fonte": "linha 37 do txt (valet dama off tem boa equidade vs range polarizado) - mesma mão que folda vs linear"},
+    {"hero_pos": "BTN", "villain_pos": "BB", "stack_bb": 50, "villain_3bet_size_x": 3.0, "villain_range_type": "polar", "hand": "QTo", "action": "call", "fonte": "linha 64 do txt (dama-10-off faz sentido de flat vs partes muito fracas do polar)"},
+    {"hero_pos": "BTN", "villain_pos": "BB", "stack_bb": 50, "villain_3bet_size_x": 3.0, "villain_range_type": "polar", "hand": "JTo", "action": "call", "fonte": "linha 64 do txt (10-valet-off flat vs polar)"},
+    {"hero_pos": "CO", "villain_pos": "BB", "stack_bb": 50, "villain_3bet_size_x": 3.0, "villain_range_type": "polar", "hand": "ATo", "action": "call", "fonte": "linha 37 do txt (aise 10 off boa equidade vs polar, IP)"},
+    {"hero_pos": "BTN", "villain_pos": "BB", "stack_bb": 50, "villain_3bet_size_x": 3.0, "villain_range_type": "polar", "hand": "K4s", "action": "call", "fonte": "linha 30/64 do txt (rei 4 suited nas margens, flat vs polar)"},
+    {"hero_pos": "BTN", "villain_pos": "BB", "stack_bb": 50, "villain_3bet_size_x": 3.0, "villain_range_type": "polar", "hand": "K5s", "action": "call", "fonte": "linha 64 do txt (rei 5 suited flat vs polar)"},
+    {"hero_pos": "CO", "villain_pos": "BB", "stack_bb": 50, "villain_3bet_size_x": 3.0, "villain_range_type": "polar", "hand": "A9o", "action": "call", "fonte": "linha 253-262 do txt (A9o pior que AJo mas call IP vs range polar do BB)"},
+    {"hero_pos": "CO", "villain_pos": "BTN", "stack_bb": 50, "villain_3bet_size_x": 3.0, "villain_range_type": "polar", "hand": "KQo", "action": "call", "fonte": "linha 55 do txt (defende muitas mãos vs polar; KQo passa de fold vs linear a call vs polar)"},
+
+    {"hero_pos": "UTG", "villain_pos": "HJ", "stack_bb": 70, "villain_3bet_size_x": 3.0, "villain_range_type": "linear", "hand": "55", "action": "call", "fonte": "linha 290 do txt (TG contra Jack 70bb pagamos todos os parzinhos - deep)"},
+    {"hero_pos": "SB", "villain_pos": "BTN", "stack_bb": 90, "villain_3bet_size_x": 3.0, "villain_range_type": "polar", "hand": "33", "action": "call", "fonte": "linha 288-289 do txt (pot-off contra button, deep: não foldamos nenhum par - cuidados robustos)"},
+    {"hero_pos": "UTG", "villain_pos": "UTG", "stack_bb": 45, "villain_3bet_size_x": 3.0, "villain_range_type": "linear", "hand": "77", "action": "call", "fonte": "linha 122-127 do txt (TG vs TG vilão paga range curto -> par joga de flat, NÃO jam)"},
+
+    {"hero_pos": "UTG", "villain_pos": "LJ", "stack_bb": 50, "villain_3bet_size_x": 3.0, "villain_range_type": "linear", "hand": "AA", "action": "4bet", "fonte": "linha 84-93 do txt (mãos de valor AA/QQ+/AK 4betam inflando pote)"},
+    {"hero_pos": "UTG", "villain_pos": "UTG", "stack_bb": 70, "villain_3bet_size_x": 3.0, "villain_range_type": "linear", "hand": "AKo", "action": "4bet", "fonte": "linha 93/118 do txt (AK é valor; TG vs TG pouco jam -> 4bet não all-in)"},
+    {"hero_pos": "CO", "villain_pos": "BTN", "stack_bb": 60, "villain_3bet_size_x": 3.0, "villain_range_type": "polar", "hand": "A7s", "action": "4bet", "fonte": "linha 116/297-299 do txt (as 7 suited margem de 4bet vs range polar/que 3beta leve - nega equidade)"},
+    {"hero_pos": "CO", "villain_pos": "BTN", "stack_bb": 60, "villain_3bet_size_x": 3.0, "villain_range_type": "polar", "hand": "A6s", "action": "4bet", "fonte": "linha 116 do txt (as 6 suited margem de 4bet cutoff vs button)"},
+    {"hero_pos": "LJ", "villain_pos": "BTN", "stack_bb": 90, "villain_3bet_size_x": 3.0, "villain_range_type": "polar", "hand": "ATo", "action": "4bet", "fonte": "linha 306-319 do txt (as 10 off performa mal no 3bet pot OOP deep -> 4bet não all-in, nega equidade)"},
+    {"hero_pos": "LJ", "villain_pos": "BTN", "stack_bb": 90, "villain_3bet_size_x": 3.0, "villain_range_type": "polar", "hand": "AQo", "action": "4bet", "fonte": "linha 311-313 do txt (as e dama off joga muito mixado em 4bet deep OOP)"},
+
+    {"hero_pos": "HJ", "villain_pos": "BTN", "stack_bb": 40, "villain_3bet_size_x": 3.0, "villain_range_type": "polar", "hand": "88", "action": "jam", "fonte": "linha 325-332 do txt (88 toma 3bet do button; chovar nega equidade de KTo/KJo/A9o - boa fold act)"},
+    {"hero_pos": "BTN", "villain_pos": "BB", "stack_bb": 40, "villain_3bet_size_x": 3.0, "villain_range_type": "polar", "hand": "22", "action": "jam", "fonte": "linha 347-356 do txt (22 vs 3bet polar do BB ~40bb - fold equity vs parte polar fraca)"},
+    {"hero_pos": "SB", "villain_pos": "BB", "stack_bb": 40, "villain_3bet_size_x": 3.0, "villain_range_type": "polar", "hand": "44", "action": "jam", "fonte": "linha 353-360 do txt (2-2 a 6-6 gostam de jam vs rei polarizado das blinds)"},
+    {"hero_pos": "CO", "villain_pos": "BTN", "stack_bb": 45, "villain_3bet_size_x": 3.0, "villain_range_type": "polar", "hand": "99", "action": "jam", "fonte": "linha 132/163 do txt (CO vs BTN pode chovar 8-8,9-9,10-10 - vilão dá qual de mãos piores)"},
+    {"hero_pos": "CO", "villain_pos": "BTN", "stack_bb": 45, "villain_3bet_size_x": 3.0, "villain_range_type": "polar", "hand": "TT", "action": "jam", "fonte": "linha 132 do txt (chovar 10-10 CO vs BTN short)"},
+    {"hero_pos": "CO", "villain_pos": "BTN", "stack_bb": 45, "villain_3bet_size_x": 3.0, "villain_range_type": "polar", "hand": "AQo", "action": "jam", "fonte": "linha 132-134 do txt (chovar as e dama off CO vs BTN short - vilão paga com piores)"}
+  ]
+}

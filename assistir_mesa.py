@@ -15,31 +15,43 @@ from table_reading.automatic_table_crops import detect_table_crops
 from preflop_advisor import PreflopAdvisor
 from preflop_context import PreflopAggressorTracker
 from reader_cache import ReaderCache
+from field_stabilizer import FieldStabilizer
+from board_memory import BoardMemory
 from table_advisor import advise_table, _summary
 from bot_control import BotControl, HotkeyListener, RUNNING, PAUSED, DISABLED
 from state_observer import StateObserver, render
+from hand_recorder import HandRecorder
+from hand_logger import LiveHandLogger
 
 
 def advise_frame(frame_bgr, meta, advisor, max_tables=6, tracker=None, bounty_bb=None,
-                 mode=None, stage=None, enable_hud=False, read_cache=None):
+                 mode=None, stage=None, enable_hud=False, read_cache=None, field_memory=None,
+                 board_memory=None):
     """Detect the tables in one captured frame and advise each. Returns a list of
     {table_index, table_key, box, result}. Pure read; the full table identity still
     comes from the capture metadata upstream.
 
     `tracker` (opcional, PreflopAggressorTracker) dá CONTEXTO entre frames: o conselho
     pós-flop passa a usar pot_type/iniciativa/range do vilão em vez do frame isolado. A
-    chave por mesa (`table_key`) é estável por posição de detecção dentro da captura."""
+    chave por mesa (`table_key`) vem da POSIÇÃO do crop na captura (origem quantizada),
+    não da ordem de detecção, para não transferir contexto entre mesas (#A6)."""
     proposals = detect_table_crops(cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB),
                                    blockers=meta.get('blockers', ()), max_tables=max_tables)
     out = []
     for proposal in [p for p in proposals if p.status == 'COMPLETE_CANDIDATE']:
         x, y, w, h = map(int, proposal.box)
         crop = frame_bgr[y:y + h, x:x + w]
-        tkey = '%s#%d' % (meta.get('source_key') or 'cap', len(out) + 1)
+        # Identidade da mesa por POSIÇÃO (origem quantizada em 100px), não pela ordem de
+        # detecção (#A6): se uma mesa some/é rejeitada, as outras NÃO herdam a chave
+        # #índice dela (e com ela o contexto do tracker e o cache de HUD/bounty). Mesmo
+        # esquema do operar_mesa (HWND+origem). Limitação conhecida: rearranjo/troca de
+        # mesa dentro da mesma célula de 100px ainda não é distinguível sem id real.
+        tkey = '%s#%dx%d' % (meta.get('source_key') or 'cap', x // 100, y // 100)
         with ocr_frame():
             result = advise_table(crop, advisor, table_key=tkey, tracker=tracker,
                                   bounty_bb=bounty_bb, mode=mode, stage=stage, enable_hud=enable_hud,
-                                  read_cache=read_cache)
+                                  read_cache=read_cache, field_memory=field_memory,
+                                  board_memory=board_memory)
         if result.get('is_table'):   # skip lobby/non-table false positives
             out.append(dict(table_index=len(out) + 1, table_key=tkey, box=[x, y, w, h], result=result))
     return out
@@ -47,7 +59,8 @@ def advise_frame(frame_bgr, meta, advisor, max_tables=6, tracker=None, bounty_bb
 
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument('--hwnd', type=lambda s: int(s, 0), required=True, help='HWND da janela PPPoker')
+    p.add_argument('--hwnd', type=lambda s: int(s, 0), default=None,
+                   help='HWND da janela PPPoker (auto-descoberto se omitido)')
     p.add_argument('--ranges', required=True, help='nvt-ranges-validados.json')
     p.add_argument('--deep', default=None, help='Pacote deep 40/100bb opcional (reference, nao validado)')
     p.add_argument('--intervalo', type=float, default=2.0, help='Segundos entre leituras')
@@ -61,14 +74,30 @@ def main(argv=None):
     p.add_argument('--hud', action='store_true', help='Le o HUD VIP p/ exploit no pos-flop')
     p.add_argument('--no-hotkeys', dest='hotkeys', action='store_false',
                    help='Desliga as hotkeys de pausa/takeover (Ctrl+Alt+P/R/D)')
+    p.add_argument('--record', action='store_true',
+                   help='GRAVA as maos observadas (tracker: heroi+cartas+decisao, adversarios '
+                        'por nick, board, torneio) no padrao <base>\\ANO\\MES\\DIA\\<torneio>.jsonl')
+    p.add_argument('--record-base', default=None,
+                   help='Base do historico (default C:\\Hand2Note4Hh\\PPPoker): pasta por dia, '
+                        'arquivo por torneio')
+    p.add_argument('--record-path', default=None,
+                   help='(opcional) tambem grava tudo num JSONL unico neste caminho')
     args = p.parse_args(argv)
+    if args.hwnd is None:                       # auto-descobre a janela do PPPoker
+        from table_discovery.pppoker import discover_pppoker
+        wins = discover_pppoker().get('windows', [])
+        if not wins:
+            print('Nenhuma janela PPPoker encontrada. Abra o cliente e tente de novo.', flush=True)
+            return 1
+        args.hwnd = wins[0]['hwnd']
+        print('PPPoker auto-descoberto: HWND %#x' % args.hwnd, flush=True)
     advisor = PreflopAdvisor.from_files(args.ranges, args.deep) if args.deep else PreflopAdvisor.from_file(args.ranges)
     from window_capture_engine import WindowCaptureEngine
     engine = WindowCaptureEngine()
     configure_ocr()
     # Pause/takeover control. The observer only reads, but the same gate is what a
     # future executor must consult before sending any input. Start armed (RUNNING).
-    control = BotControl(on_change=lambda s: print('\n>>> BOT %s%s <<<\n' % (
+    control = BotControl(on_change=lambda s: print('\n>>> HENRIQUE %s%s <<<\n' % (
         s, {'PAUSED': ' (voce no controle; Ctrl+Alt+R reativa)',
             'DISABLED': ' (desabilitado; Ctrl+Alt+R reativa)'}.get(s, '')), flush=True))
     control.resume()
@@ -81,11 +110,20 @@ def main(argv=None):
     observer = StateObserver()   # estado temporal integrado (Camada A); sem cliques
     aggr_tracker = PreflopAggressorTracker()   # agressor pré-flop p/ pós-flop em contexto
     read_cache = ReaderCache()                 # cache de HUD/bounty (latência)
+    field_memory = FieldStabilizer()           # preenche buracos de pot/to_call/stack na mesma mão
+    board_memory = BoardMemory()               # segura o board confirmado na mão
+    hand_logger = None
+    if args.record:
+        from hand_sink import DayTournamentSink, DEFAULT_BASE
+        base = args.record_base or DEFAULT_BASE
+        rec = HandRecorder(path=args.record_path, sink=DayTournamentSink(base))
+        hand_logger = LiveHandLogger(rec)
+        print('TRACKER LIGADO: %s\\ANO\\MES\\DIA\\<torneio>.jsonl' % base, flush=True)
     try:
         while True:
             started = time.monotonic()
             if control.state == DISABLED:
-                print('Bot desabilitado. Encerrando. Nenhum clique foi enviado.', flush=True)
+                print('Henrique desabilitado. Encerrando. Nenhum clique foi enviado.', flush=True)
                 break
             if control.state == PAUSED:
                 # You have the tables: stay quiet (no advice). A future executor
@@ -104,18 +142,25 @@ def main(argv=None):
                 last.pop('_capture', None)
                 for row in advise_frame(frame, meta, advisor, max_tables=args.max_tables,
                                         tracker=aggr_tracker, bounty_bb=args.bounty_bb,
-                                        mode=args.mode, stage=args.stage, enable_hud=args.hud,
-                                        read_cache=read_cache):
+                                        mode=args.mode, stage=args.stage,
+                                        enable_hud=args.hud or hand_logger is not None,
+                                        read_cache=read_cache, field_memory=field_memory,
+                                        board_memory=board_memory):
                     # Estado temporal integrado: amarra mesa/mão/campos e explica
                     # o que mudou/ficou pendente. Imprime só quando o estado muda.
                     # Mesma chave usada no tracker (consistência entre contexto e estado).
                     view = observer.observe(row['result'], table_key=row['table_key'])
                     if view.get('changed'):
                         print(render(view), flush=True)
+                    if hand_logger is not None:     # tracker: agrega a mao e grava ao fechar
+                        hand_logger.observe(row['table_key'], row['result'])
             time.sleep(max(0.1, args.intervalo - (time.monotonic() - started)))
     except KeyboardInterrupt:
         print('Encerrado. Nenhuma imagem salva, nenhum clique enviado.', flush=True)
     finally:
+        if hand_logger is not None:
+            hand_logger.flush()                     # fecha as maos abertas (grava as ultimas)
+            print('TRACKER: maos abertas gravadas.', flush=True)
         if listener:
             listener.stop()
     return 0

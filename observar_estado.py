@@ -21,12 +21,15 @@ from table_advisor import advise_table
 from preflop_advisor import PreflopAdvisor
 from preflop_context import PreflopAggressorTracker
 from reader_cache import ReaderCache
+from field_stabilizer import FieldStabilizer
+from board_memory import BoardMemory
 from state_observer import StateObserver, render
 from action_coordinator import plan_action, describe_plan
 from window_capture_engine import WindowCaptureEngine
 
-DEFAULT_RANGES = r'C:\Meus Projetos\Aplicativos\nvt-ranges-validados.json'
-DEFAULT_DEEP = r'C:\Meus Projetos\Aplicativos\nvt-ranges-deep.json'
+from app_paths import find_data
+DEFAULT_RANGES = find_data('nvt-ranges-validados.json')
+DEFAULT_DEEP = find_data('nvt-ranges-deep.json')
 
 
 def main(argv=None):
@@ -59,6 +62,8 @@ def main(argv=None):
     obs = StateObserver()
     aggr_tracker = PreflopAggressorTracker()   # agressor pré-flop p/ pós-flop em contexto
     read_cache = ReaderCache()                 # cache de HUD/bounty (latência)
+    field_memory = FieldStabilizer()           # anti POT_UNKNOWN/STACK_UNKNOWN (preenche na mesma mão)
+    board_memory = BoardMemory()               # anti BOARD_PRESENT_BUT_UNREADABLE (segura o board da mão)
     outdir = args.out or os.path.join('logs', 'estado',
                                       'sessao-' + time.strftime('%Y%m%d-%H%M%S'))
     os.makedirs(outdir, exist_ok=True)
@@ -79,13 +84,15 @@ def main(argv=None):
             for prop in detect_table_crops(rgb, max_tables=args.max_tables):
                 x, y, w, h = map(int, prop.box)
                 crop = frame[y:y + h, x:x + w]
-                # Chave estável por mesa aceita; crops rejeitados (não-mesa) retornam
-                # cedo no advise_table e NÃO tocam o tracker, então reusar o idx é seguro.
-                key = '%s#%d' % (meta.get('source_key', args.hwnd), idx)
+                # Identidade da mesa por POSIÇÃO (origem quantizada em 100px), não pela
+                # ordem de detecção (#A6): se uma mesa some, as outras não herdam a chave
+                # #índice dela (e o contexto/cache junto). Igual ao operar_mesa.
+                key = '%s#%dx%d' % (meta.get('source_key', args.hwnd), x // 100, y // 100)
                 try:
                     result = advise_table(crop, advisor, table_key=key, tracker=aggr_tracker,
                                           bounty_bb=args.bounty_bb, mode=args.mode, stage=args.stage,
-                                          enable_hud=args.hud, read_cache=read_cache)
+                                          enable_hud=args.hud, read_cache=read_cache,
+                                          field_memory=field_memory, board_memory=board_memory)
                 except Exception:                      # noqa: BLE001
                     continue
                 if not result.get('is_table'):

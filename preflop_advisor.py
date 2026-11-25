@@ -5,19 +5,29 @@ validator; this one turns the live table reading into a usable recommendation by
 consulting the validated range pack at the nearest stack bucket. It is labelled
 EXPLORATORY and never authorises execution.
 
-The NVT pack is a reference, optimised for short stacks: it covers discrete
-stacks 5-25bb, 9-max, chip EV + ICM + PKO. Deep stacks (>25bb) and post-flop are
-out of coverage and abstain here, to be developed into the bot's own engine.
+The NVT pack is a reference, optimised for short stacks. VALIDATED buckets are
+5-25bb (9-max, chip EV + ICM + PKO). Buckets 30/40bb exist as UNVALIDATED REFERENCE
+(advise, never auto-execute; flagged UNVALIDATED_REFERENCE_RANGE). Deep buckets
+50/60/80/100bb are the DEEP ladder: 100bb is HRC-solved (chip EV + PKO early/mid,
+9-max, bounty 0.53/0.71), the intermediate rungs 50/60/80 have no solve yet and
+BORROW the nearest populated bucket (flagged), so a deep table advises instead of
+abstaining. Stacks above the top bucket (100bb) reuse the 100bb range as a flagged
+reference (STACK_ABOVE_SOLVED_DEPTH). Post-flop is out of coverage here.
 
 No capture, no clicks. Stack bucketing and the 9-max table are explicit
 approximations, reported in every answer.
 """
+import hashlib
 import json
 from pathlib import Path
 
 from preflop_study import hand_key, Blocked
 from preflop_equity import range_from_node, equity_vs_range, required_equity
 from hud_exploit import classify_villain, shove_calloff_delta, exploit_caveats
+import preflop_exploit
+import icm_rp
+from strategy.scenarios import classify as classify_scenario, from_table_state
+from preflop_tree_book import TreeBook
 
 RAISE_FLOOR_BB = 1.5  # a bet above the BB (1.0) is a raise, not a blind post
 # Detecção de open-shove (all-in de primeira aposta): separa o open/iso normal
@@ -26,6 +36,12 @@ RAISE_FLOOR_BB = 1.5  # a bet above the BB (1.0) is a raise, not a blind post
 SHOVE_MIN_BET_BB = 3.5        # abaixo disso é open/iso normal, nunca shove
 SHOVE_REMAINING_BB = 0.75     # stack atrás <= isso => efetivamente all-in
 SHOVE_SIZE_FALLBACK_BB = 5.0  # sem stack lido, 1ª aposta >= isso é tratada como shove
+# COMMIT: uma aposta que exige PAGAR >= esta fração do stack do hero NÃO é um open normal p/
+# FLATAR — comprometer metade+ do stack é call-off/fold, não cold-call de range de open. Mata o
+# DONKEY de SIZE (bug 24/11: JTo no SB cold-callou 30.71bb de 40 = 77% do stack como se fosse open
+# de 2bb). A range de vs_open assume open de ~2-2.5bb; aposta gigante vira facing-shove (call-off).
+SHOVE_COMMIT_FRACTION = 0.5
+SHOVE_COMMIT_MIN_BB = 15.0    # piso absoluto: só é "commit" uma aposta ACIMA de um 4bet normal
 # Preflop action order (earliest to latest); the opener is the earliest-position
 # player among those at the top bet level, callers having matched that bet later.
 _PREFLOP_ORDER = ('UTG', 'UTG+1', 'UTG+2', 'LJ', 'HJ', 'CO', 'BTN', 'SB', 'BB')
@@ -35,7 +51,94 @@ _PREFLOP_ORDER = ('UTG', 'UTG+1', 'UTG+2', 'LJ', 'HJ', 'CO', 'BTN', 'SB', 'BB')
 # vs_3bet / vs_open_shove ficam de FORA (território de call-off por equity, que é mais
 # preciso que emprestar). open_shove entra para o push/fold curto.
 BORROWABLE_SPOTS = frozenset({'open_raise', 'open_shove', 'vs_open', 'vs_limp'})
+SHOVE_SPOTS = frozenset({'open_shove', 'vs_open_shove'})   # tabelas puras de push/fold
+# Spots de PUSH/FOLD onde, faltando o nó exato do contexto (tipicamente spreads
+# enviesados curtos_ini/curtos_fim ou PKO), cabe uma REFERÊNCIA Nash SOMBRA: reusa a
+# MESMA tabela Nash de um contexto vizinho (spread 'iguais' do mesmo modo/stage, ou
+# Nash chip-EV), marcada validated=False. Não inventa range; só sinaliza a aproximação.
+NASH_SHADOW_SPOTS = frozenset({'open_shove', 'vs_open_shove', '3bet_shove'})
+# ICM-TIGHTENING do jam Nash (Eduardo 20/11, opção A): a sombra Nash é chip-EV; sob ICM
+# o jam é LARGO demais (bustar na bolha custa caro). Eleva o piso de chip-EV exigido p/
+# jamar pelo risk premium da fase, dropando os jams marginais (EV perto de 0) e mantendo
+# os sólidos. Piso_bb = stage_rp * stack_bb * PROXY (fração de fichas em risco ao ser
+# pago). Só modos com ICM; nunca toca chip_ev/pko-puro nem nó validado.
+ICM_JAM_MODES = frozenset({'icm', 'pko_icm'})
+ICM_JAM_CALLED_PROXY = 0.30
 PUSHFOLD_MAX_BB = 12   # <= isso, first-in tenta SHOVE antes de open-raise
+# ZONA DE SHOVE: abaixo disso o hero está em regime de push/fold. NÃO se pega range
+# emprestada por proximidade de stack para spots de RAISE (open_raise/vs_open/
+# vs_limp) — emprestar uma range de open aqui produz MINI-RAISES SUICIDAS. Só
+# tabelas puras de push/fold (open_shove/vs_open_shove) valem. Além disso, o
+# first-in tenta o SHOVE antes do open-raise nessa zona.
+SHOVE_ZONE_MAX_BB = 20
+# Até este stack um 3bet enfrentado é efetivamente COMMIT (4bet-jam/call-off), mesmo sem
+# nó validado (o pack só tem vs_3bet a 25bb). Cobre a fresta 20-25bb em pko/icm.
+VS3BET_JAM_MAX_BB = 25
+
+_RANKS = '23456789TJQKA'
+
+
+def _hand_tier(cards):
+    """Tier de força pré-flop (teoria mais próxima p/ o fallback "nunca abstém"):
+    premium / strong / playable / trash. Grosso mas SEMPRE classifica (nunca None)."""
+    try:
+        a, b = cards[0], cards[1]
+        ra, rb = _RANKS.index(a[0].upper()), _RANKS.index(b[0].upper())
+        suited = a[1].lower() == b[1].lower()
+    except Exception:                                # noqa: BLE001
+        return 'trash'
+    hi, lo = max(ra, rb), min(ra, rb)
+    pair = ra == rb
+    T, N, S, A_ = _RANKS.index('T'), _RANKS.index('9'), _RANKS.index('7'), _RANKS.index('A')
+    if pair and hi >= T:
+        return 'premium'                             # TT+
+    if hi == A_ and lo == _RANKS.index('K'):
+        return 'premium'                             # AK
+    if pair and hi >= S:
+        return 'strong'                              # 77-99
+    if hi == A_ and lo >= _RANKS.index('Q'):
+        return 'strong'                              # AQ+
+    if suited and hi >= _RANKS.index('K') and lo >= _RANKS.index('T'):
+        return 'strong'                              # KTs+/KQs/QJs-ish
+    if pair:
+        return 'playable'                            # 22-66
+    if hi == A_:
+        return 'playable'                            # qualquer Ax
+    if hi >= T and lo >= T:
+        return 'playable'                            # broadways offsuit
+    if suited and (hi - lo) <= 1 and lo >= _RANKS.index('5'):
+        return 'playable'                            # suited connectors médios+
+    if suited and hi >= _RANKS.index('K'):
+        return 'playable'                            # Kxs
+    return 'trash'
+
+
+_GAP_SEEN = set()
+
+
+def _log_gap(flag):
+    """APONTA o gap de cobertura (p/ cobertura real posterior com solver). Append em
+    logs/gaps_cobertura.jsonl, dedup em memória por (reason,spot,heroPos,bucket,tier,facing).
+    Passivo; nunca quebra o cérebro."""
+    try:
+        bucket = None
+        stk = flag.get('stack_bb')
+        if isinstance(stk, (int, float)):
+            bucket = min((5, 8, 10, 12, 15, 20, 25, 30, 40, 50, 60, 80, 100),
+                         key=lambda s: abs(s - stk))
+        key = (flag.get('reason'), flag.get('spot'), flag.get('hero_pos'), bucket,
+               flag.get('tier'), flag.get('facing'))
+        if key in _GAP_SEEN:
+            return
+        _GAP_SEEN.add(key)
+        import json as _j
+        import os as _os
+        d = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), 'logs')
+        _os.makedirs(d, exist_ok=True)
+        with open(_os.path.join(d, 'gaps_cobertura.jsonl'), 'a', encoding='utf-8') as fh:
+            fh.write(_j.dumps(dict(flag, bucket=bucket), ensure_ascii=False) + '\n')
+    except Exception:                                # noqa: BLE001
+        pass
 
 
 # Catalog stack-distribution profiles by position (UTG..BB), from the engine's
@@ -91,58 +194,67 @@ def _opener_is_shove(table_state, opener_position, opener_bet):
     seats = table_state.get('seats') or {}
     seat = next((s for s, p in positions.items() if p == opener_position), None)
     remaining = (seats.get(seat) or {}).get('stack_bb') if seat else None
-    if isinstance(remaining, (int, float)):
-        return remaining <= SHOVE_REMAINING_BB
-    return opener_bet >= SHOVE_SIZE_FALLBACK_BB
+    # 1) stack ATRÁS do abridor ~0 => all-in dele.
+    if isinstance(remaining, (int, float)) and remaining <= SHOVE_REMAINING_BB:
+        return True
+    # 2) ROBUSTO (não depende de ler o stack do ABRIDOR, que falha — causou o KK vs 3bet-shove
+    #    virar four_bet): se a aposta do abridor >= o stack do HERO, o hero NÃO consegue raisar
+    #    (só call-off all-in ou fold) = facing-all-in. Usa o stack do hero (lido confiável).
+    hero_stack = (seats.get('hero') or {}).get('stack_bb')
+    if isinstance(hero_stack, (int, float)) and hero_stack > 0 and opener_bet >= hero_stack:
+        return True
+    # 2b) COMMIT (bug 24/11, JTo SB cold-callou 30bb de 40 = 77%): aposta que exige pagar uma
+    #     FRAÇÃO ALTA do stack NÃO é open normal p/ flatar — é call-off/fold. GATED a DEEP (fora
+    #     da zona de jam): no curto um 3bet/open já é fração grande e é tratado pela trilha de jam
+    #     -> aqui só vale quando flatar seria a opção normal (stack >= SHOVE_ZONE_MAX_BB) E a aposta
+    #     é ABSURDA (>= commit da fração E muito acima de um 3bet/4bet normal em bb absoluto).
+    if (isinstance(hero_stack, (int, float)) and hero_stack >= SHOVE_ZONE_MAX_BB
+            and opener_bet >= SHOVE_COMMIT_FRACTION * hero_stack
+            and opener_bet >= SHOVE_COMMIT_MIN_BB):
+        return True
+    # 3) sem stack do abridor lido: aposta gigante (>= fallback) é shove.
+    if remaining is None:
+        return opener_bet >= SHOVE_SIZE_FALLBACK_BB
+    return False
 
 
 def infer_live_spot(table_state):
-    """Guess the preflop spot from the bets on the table (approximate, by the
-    nearest-seat bet attribution). If the hero has not raised: no non-hero raiser
-    -> first_in; exactly one -> vs_open (ou vs_open_shove se o open for all-in);
-    else abstain. If the hero already opened:
-    exactly one bet above the hero's -> vs_3bet against that position; else
-    abstain (4bet/multiway). `opener` holds the aggressor (opener or 3bettor)."""
-    positions = table_state.get('positions') or {}
-    hero_bet = 0.0
-    raisers = {}
-    for bet in (table_state.get('bets') or []):
-        seat, amount = bet.get('seat'), bet.get('bet_bb')
-        if not isinstance(amount, (int, float)):
-            continue
-        if seat == 'hero':
-            hero_bet = max(hero_bet, amount)
-            continue
-        if amount > RAISE_FLOOR_BB and seat in positions:
-            raisers[positions[seat]] = max(raisers.get(positions[seat], 0.0), amount)
-    if hero_bet > RAISE_FLOOR_BB:                       # hero has already opened
-        rereraisers = {p: a for p, a in raisers.items() if a > hero_bet + 0.4}
-        if len(rereraisers) == 1:
-            opener = next(iter(rereraisers))
-            # Marca se o re-raise é all-in PROVADO (stack do vilão ~0 ou tamanho de
-            # jam). Um min-3bet com stack atrás NÃO é shove -> allin=False, e o
-            # call-off por equity (que assume shove até o showdown) não é aplicado.
-            allin = _opener_is_shove(table_state, opener, rereraisers[opener])
-            return dict(spot='vs_3bet', opener=opener, allin=allin)
-        return dict(spot='abstain', opener=None,
-                    reason='HERO_OPENED_NO_RERAISE' if not rereraisers else 'MULTIWAY_OR_4BET_NOT_COVERED')
-    if not raisers:
-        return dict(spot='first_in', opener=None)
-    # Group the raises into levels. Callers of a single open sit on one level with
-    # it, so a single level is a (possibly multiway) open the hero can face as
-    # vs_open; two or more levels mean a reraise the pack does not cover cold.
-    levels = _bet_levels(raisers.values())
-    if len(levels) >= 2:
-        return dict(spot='abstain', opener=None, reason='MULTIWAY_OR_3BET_NOT_COVERED')
-    top = levels[-1]
-    at_top = [p for p, a in raisers.items() if a > top - max(0.5, 0.15 * top)]
-    opener = min(at_top, key=lambda p: _PREFLOP_ORDER.index(p) if p in _PREFLOP_ORDER else 99)
-    callers = len(at_top) - 1
-    # Open all-in (jam de primeira aposta): a decisão do hero é pagar/foldar o
-    # shove, não o vs_open normal (que assume flat/3bet). Roteia p/ vs_open_shove.
-    if _opener_is_shove(table_state, opener, top):
-        return dict(spot='vs_open_shove', opener=opener, callers=callers, allin=True)
-    return dict(spot='vs_open', opener=opener, callers=callers)
+    """Spot pré-flop para o roteamento ao vivo, DELEGADO ao classificador ÚNICO do
+    B08 (`strategy.scenarios.classify`). Esta função é um ADAPTADOR: converte o
+    cenário explícito (com limpers/callers) para o shape legado usado por
+    `advise_from_reading` ({spot, opener, callers, allin, reason}). Assim há UM só
+    caminho de classificação (laboratório e ao vivo) — limps deixam de virar
+    first_in e os callers não somem. A detecção de SHOVE (stack atrás ~0) segue
+    via `_opener_is_shove`, que o classificador de estrutura não faz."""
+    c = classify_scenario(from_table_state(table_state))
+    scen = c['scenario']
+    opener = c.get('aggressor')
+    top = max(c['raise_levels']) if c.get('raise_levels') else 0.0
+
+    if scen in ('unopened', 'limped'):
+        # Pote não aberto OU só limpado: o hero abre/isola. O roteamento first_in já
+        # trata os limpers (iso) na camada seguinte; o cenário 'limped' é marcado.
+        return dict(spot='first_in', opener=None, limpers=c['n_limpers'])
+    if scen in ('open', 'open_with_callers', 'limp_then_iso'):
+        if _opener_is_shove(table_state, opener, top):
+            return dict(spot='vs_open_shove', opener=opener, callers=c['n_callers'], allin=True)
+        return dict(spot='vs_open', opener=opener, callers=c['n_callers'])
+    if scen == 'vs_3bet':
+        # min-3bet com stack atrás NÃO é shove (allin=False) -> sem call-off por equity.
+        return dict(spot='vs_3bet', opener=opener,
+                    allin=_opener_is_shove(table_state, opener, top))
+    if scen == 'threebet_cold':
+        # hero enfrenta open + 3bet (cold). Sem nó -> advise_from_reading decide no
+        # short (jam/call premium, resto fold); deep segue abstendo. allin=3bettor shovou.
+        return dict(spot='threebet_cold', opener=opener,
+                    allin=_opener_is_shove(table_state, opener, top),
+                    reason='MULTIWAY_OR_3BET_NOT_COVERED')
+    if scen == 'vs_4bet_or_more':
+        return dict(spot='abstain', opener=None, reason='MULTIWAY_OR_4BET_NOT_COVERED')
+    # pending: hero abriu sem reraise, ou sequência ambígua -> abstém (motivo legado).
+    reason = 'HERO_OPENED_NO_RERAISE' if c.get('reason') == 'HERO_RAISED_NO_RERAISE' \
+        else (c.get('reason') or 'NOT_COVERED')
+    return dict(spot='abstain', opener=None, reason=reason)
 
 
 def _sb_limped(table_state):
@@ -201,11 +313,26 @@ def scale_bounty_bb(base_bb, bounties, villain_position, positions):
 
 
 class PreflopAdvisor:
-    # Short stacks (5-25) come from the validated NVT pack; 40/100 from the deep
-    # reference pack (not HRC-validated, flagged in every answer).
-    STACK_BUCKETS = (5, 8, 10, 12, 15, 20, 25, 40, 100)
+    # Short stacks (5-25) come from the validated NVT pack; 30/40 from the deep
+    # reference pack (not HRC-validated, flagged in every answer). 100 is HRC-solved
+    # deep (chip EV + PKO early/mid). 50/60/80 are ladder rungs with no solve yet:
+    # they borrow the nearest populated bucket (flagged). 100 is the top bucket;
+    # deeper stacks reuse it as a flagged reference (see bucket_stack).
+    STACK_BUCKETS = (5, 8, 10, 12, 15, 20, 25, 30, 40, 50, 60, 80, 100)
+    # ALINHAMENTO DE BUCKET POR MODO: cada modo tem sua GRADE NATIVA de solves
+    # (chip_ev/icm cobrem 30/40; PKO topa em 25; PKO-ICM usa 25/35/100 — grades
+    # DIFERENTES). Quando o stack real cai ENTRE os buckets nativos do modo (ex.:
+    # 40bb PKO-ICM, cujo solve mora em 35bb), o lookup exato falha. Se o bucket
+    # nativo mais próximo COM nó validado do MESMO contexto estiver a <= ALIGN_TOL
+    # do stack real, é um ALINHAMENTO de grade (não um empréstimo heurístico): conta
+    # como VALIDADO, exatamente como chip_ev 33bb->30bb já conta hoje. Fora da
+    # tolerância cai no borrow flagged (validated=False) — honesto: 40bb PKO (nativo
+    # só até 25bb = 38%) NÃO vira coberto, é range genuinamente faltando.
+    ALIGN_TOL = 0.20
+    # Clone 0.5: nossos cenários (strategy.scenarios) vs os nomes das árvores solved.
+    _TREE_SCENARIO_ALIASES = {'vs_4bet_or_more': 'vs_4bet'}
 
-    def __init__(self, pack):
+    def __init__(self, pack, *, sources=None, strict=True, tree_book=None):
         if pack.get('format') != 'nvt-range-export' or pack.get('version') != 1:
             raise Blocked('UNSUPPORTED_RANGE_FORMAT')
         self.hands = pack['hands']
@@ -213,30 +340,99 @@ class PreflopAdvisor:
             raise Blocked('INVALID_HAND_INDEX')
         self.nodes = list(pack['nodes'])   # includes unvalidated reference (deep) nodes
         self.engine_commit = pack.get('engineCommit')
+        self.sources = list(sources or [])  # B01: origem(ns) por sha256 (ver manifest())
+        self.strict = strict
+        # Clone 0.5: livro de árvores de EV solved (deep/multiway) para spots específicos.
+        # Fonte de ESTUDO (validated=False/execution_allowed=False) — ver advise().
+        # Carga PREGUIÇOSA (só no 1º consult opt-in) p/ não pesar construções em testes.
+        self.tree_book = tree_book
+        # B02 — índice de lookup SEM sombra silenciosa. Nós que compartilham a mesma
+        # chave são uma COLISÃO: um nó velho JAMAIS pode esconder calado um nó
+        # atualizado. Precedência explícita: um nó VALIDADO sempre vence um de
+        # referência não-validado (qualquer que seja a ordem de carga) -> um update
+        # validado nunca é sombreado por uma range de referência. Dois nós do MESMO
+        # nível de validação com uma chave só é ambiguidade real: em strict é FATAL
+        # no load (conserta-se a fonte/manifesto, B01), no laboratório e não com ficha;
+        # fora do strict, mantém o primeiro e REGISTRA o descarte em self.collisions.
         self._index = {}
+        self.collisions = []
+        grouped = {}
         for n in self.nodes:
-            self._index.setdefault(self._key_of(n), n)
+            grouped.setdefault(self._key_of(n), []).append(n)
+        for key, group in grouped.items():
+            if len(group) == 1:
+                self._index[key] = group[0]
+                continue
+            validated = [n for n in group if n.get('validated') is True]
+            pool = validated or group
+            if len(pool) > 1 and strict:
+                raise Blocked('AMBIGUOUS_RANGE_NODE:%s' %
+                              ','.join(sorted(str(n.get('id')) for n in pool)))
+            chosen = pool[0]
+            self._index[key] = chosen
+            self.collisions.append(dict(
+                key=key, count=len(group), chosen=chosen.get('id'),
+                dropped=[n.get('id') for n in group if n is not chosen],
+                resolved_by=('validated_over_reference'
+                             if validated and len(validated) < len(group) else 'first_kept')))
         self._shove_cache = {}
         self._equity_cache = {}          # (node_id, cartas, iters, seed) -> equity bruta
 
-    @classmethod
-    def from_file(cls, path):
-        return cls(json.loads(Path(path).read_text(encoding='utf-8')))
+    @staticmethod
+    def _source_entry(path, raw, pack):
+        """Entrada do manifesto de fontes (B01): path + sha256 dos BYTES exatos do
+        pack + contagem de nós/validados + proveniência do motor. É a ponte
+        auditável da decisão ao vivo de volta à fonte exata."""
+        nodes = pack.get('nodes') or []
+        return dict(path=str(path), sha256=hashlib.sha256(raw).hexdigest(),
+                    nodes=len(nodes),
+                    validated=sum(1 for n in nodes if n.get('validated') is True),
+                    engine_commit=pack.get('engineCommit'),
+                    generated_at=pack.get('generatedAt'))
+
+    def manifest(self):
+        """Manifesto de proveniência (B01): quais pack(s), por sha256, alimentam o
+        lookup; cobertura de nós; e colisões de chave resolvidas no load. Liga uma
+        decisão ao vivo às fontes exatas (bytes)."""
+        return dict(sources=list(self.sources), engine_commit=self.engine_commit,
+                    total_nodes=len(self.nodes),
+                    validated_nodes=sum(1 for n in self.nodes if n.get('validated') is True),
+                    index_keys=len(self._index), collisions=list(self.collisions),
+                    strict=self.strict)
 
     @classmethod
-    def from_files(cls, *paths):
+    def from_file(cls, path, *, strict=True):
+        raw = Path(path).read_bytes()
+        pack = json.loads(raw.decode('utf-8'))
+        return cls(pack, sources=[cls._source_entry(path, raw, pack)], strict=strict)
+
+    @classmethod
+    def from_files(cls, *paths, strict=False):
         """Merge several packs (e.g. the validated short pack plus the deep
-        reference pack). They must share format/version and the 169-hand index."""
+        reference pack). They must share format/version and the 169-hand index.
+        Cada fonte entra no manifesto por sha256 (B01); colisões de chave entre os
+        packs são resolvidas sem sombra silenciosa (B02, ver __init__).
+
+        strict=False por padrão (ao contrário de __init__/from_file): um merge é,
+        por natureza, onde fontes distintas se sobrepõem — ex.: o pack `deep`
+        reexporta nós de bucket curto que também estão no pack validado. Em vez de
+        QUEBRAR o operador no startup, o merge resolve de forma determinística pela
+        ORDEM do manifesto (a 1ª fonte passada é a autoritária: passe o pack
+        validado PRIMEIRO) e REGISTRA cada colisão em self.collisions / manifest()
+        para auditoria. Passe strict=True para exigir fontes sem sobreposição."""
         merged = None
+        sources = []
         for path in paths:
-            pack = json.loads(Path(path).read_text(encoding='utf-8'))
+            raw = Path(path).read_bytes()
+            pack = json.loads(raw.decode('utf-8'))
+            sources.append(cls._source_entry(path, raw, pack))
             if merged is None:
                 merged = dict(pack)
             elif pack.get('hands') != merged['hands']:
                 raise Blocked('HAND_INDEX_MISMATCH_BETWEEN_PACKS')
             else:
                 merged = dict(merged, nodes=merged['nodes'] + pack['nodes'])
-        return cls(merged)
+        return cls(merged, sources=sources, strict=strict)
 
     @staticmethod
     def _key_of(node):
@@ -248,11 +444,11 @@ class PreflopAdvisor:
     def bucket_stack(self, stack_bb):
         """Nearest covered stack bucket, or (None, reason) when out of coverage.
 
-        The HRC solutions top out at 100bb, but real tournaments play deeper,
-        especially early. Preflop open/3bet ranges change little above 100bb, so
-        a stack at or beyond the top bucket uses the 100bb range as the best
-        available reference (the extrapolation is flagged in the caveats), rather
-        than abstaining and leaving a common deep table without advice."""
+        The solved solutions top out at the 100bb bucket, but real tournaments
+        play deeper, especially early. Preflop open/3bet ranges change slowly when
+        deep, so a stack at or beyond the top bucket (100bb) uses the 100bb range as
+        the best available reference (the extrapolation is flagged in the caveats),
+        rather than abstaining and leaving a common deep table without advice."""
         if not isinstance(stack_bb, (int, float)) or stack_bb <= 0:
             return None, 'STACK_UNKNOWN'
         if stack_bb >= self.STACK_BUCKETS[-1]:
@@ -274,6 +470,9 @@ class PreflopAdvisor:
             table_format = 'pko' if mode in ('pko', 'pko_icm') else 'regular'
         node = self._index.get((mode, table_format, stage, players, bucket,
                                 'open_raise', position, (), spread))
+        if node is None:                         # degrau vazio (ex.: 60bb) -> empresta o solved mais próximo
+            node, _ = self._nearest_stack_node(
+                mode, table_format, stage, players, 'open_raise', position, (), spread, bucket)
         if node is None:
             return None, 'NO_OPEN_NODE_FOR_CONTEXT'
         combos = range_from_node(node, self.hands, actions=('raise',))
@@ -292,6 +491,10 @@ class PreflopAdvisor:
             table_format = 'pko' if mode in ('pko', 'pko_icm') else 'regular'
         node = self._index.get((mode, table_format, stage, players, bucket,
                                 'vs_open', caller_position, (opener_position,), spread))
+        if node is None:                         # degrau vazio -> empresta o solved mais próximo
+            node, _ = self._nearest_stack_node(
+                mode, table_format, stage, players, 'vs_open', caller_position,
+                (opener_position,), spread, bucket)
         if node is None:
             return None, 'NO_VS_OPEN_NODE_FOR_CONTEXT'
         combos = range_from_node(node, self.hands, actions=('call',))
@@ -309,14 +512,107 @@ class PreflopAdvisor:
                 return node, s
         return None, None
 
+    def _nash_shadow_node(self, mode, table_format, stage, players, bucket, spot, hero, vs, spread):
+        """Referência Nash SOMBRA para a zona de shove quando o nó EXATO do contexto
+        não existe. NÃO inventa range: devolve a MESMA tabela Nash de um contexto
+        vizinho já validado no pack, com o caveat que explicita a aproximação:
+          1) mesmo modo/stage/bucket, spread 'iguais' (assume stacks parelhos) — é o
+             nó ICM/PKO-ICM correto do stage, só sem o viés de spread;
+          2) Nash chip-EV do mesmo (bucket, spot, hero, vs) — sem ajuste ICM/PKO.
+        Só para NASH_SHADOW_SPOTS (push/fold puro). Devolve (node, caveat) ou (None,
+        None). O chamador marca validated=False (nunca auto-executa)."""
+        if spot not in NASH_SHADOW_SPOTS:
+            return None, None
+        if spread != 'iguais':                           # (1) mesmo modo/stage, spread parelho
+            n = self._index.get((mode, table_format, stage, players, bucket, spot, hero, vs, 'iguais'))
+            if n is not None:
+                return n, 'NASH_SHADOW_SPREAD_IGUAIS_APPROX'
+        if not (mode == 'chip_ev' and table_format == 'regular'  # (2) Nash chip-EV
+                and stage == 'mid' and spread is None):
+            n = self._index.get(('chip_ev', 'regular', 'mid', players, bucket, spot, hero, vs, None))
+            if n is not None:
+                return n, 'NASH_SHADOW_CHIP_EV_REF_ICM_PKO_ADJ_NOT_APPLIED'
+        # (3) COBERTURA DO CONTEXTO (não da mão): nenhum nó no bucket exato -> empresta o
+        # BUCKET mais próximo que TENHA a tabela de push/fold (preferindo 'iguais' do
+        # mesmo modo/stage; senão o Nash chip-EV). Push/fold só ALARGA com stack menor,
+        # então a range do bucket vizinho é aproximação SEGURA. Garante que TODA a zona
+        # de shove tenha decisão (shove/fold) — qualquer mão, qualquer short — em vez de
+        # abster (Eduardo 19/11: atacar o contexto do range, não a mão específica).
+        best = None
+        for b in self.STACK_BUCKETS:
+            for key in ((mode, table_format, stage, players, b, spot, hero, vs, 'iguais'),
+                        ('chip_ev', 'regular', 'mid', players, b, spot, hero, vs, None)):
+                n = self._index.get(key)
+                if n is not None:
+                    d = abs(b - (bucket or 0))
+                    if best is None or d < best[0]:
+                        best = (d, n)
+                    break
+        if best is not None:
+            return best[1], 'NASH_SHADOW_NEAREST_BUCKET_APPROX'
+        return None, None
+
+    def _aligned_stack_node(self, mode, table_format, stage, players, spot, hero, vs, spread, stack_bb):
+        """Nó VALIDADO do MESMO contexto no bucket NATIVO do modo mais próximo, quando
+        o stack real cai ENTRE os buckets nativos (grades diferentes por modo — ver
+        ALIGN_TOL). DIFERE de _nearest_stack_node: aqui só vale se o bucket nativo
+        mais próximo COM nó VALIDADO estiver a <= ALIGN_TOL do stack real (adjacente
+        na grade do modo) -> o nó conta como VALIDADO (alinhamento de grade, não
+        empréstimo de regime). Devolve (node, bucket_alinhado) ou (None, None)."""
+        if not isinstance(stack_bb, (int, float)) or stack_bb <= 0:
+            return None, None
+        best = None
+        for b in self.STACK_BUCKETS:
+            node = self._index.get((mode, table_format, stage, players, b, spot, hero, vs, spread))
+            if node is None or node.get('validated') is not True:
+                continue
+            d = abs(b - stack_bb)
+            if best is None or d < best[0]:
+                best = (d, b, node)
+        if best is None:
+            return None, None
+        d, b, node = best
+        if d / stack_bb <= self.ALIGN_TOL:
+            return node, b
+        return None, None
+
+    def _trees(self):
+        """TreeBook (Clone 0.5) carregado sob demanda. Diretório ausente -> livro
+        vazio (glob não acha nada), nunca erro. Cacheado (inclusive vazio)."""
+        if self.tree_book is None:
+            try:
+                self.tree_book = TreeBook.from_directory()
+            except Exception:                        # noqa: BLE001 — árvore é opcional
+                self.tree_book = TreeBook()
+        return self.tree_book
+
     def advise(self, *, hero_cards, hero_position, stack_bb, mode='chip_ev',
-               table_format=None, stage='mid', players=9, spot='open_raise', vs=(), spread=None):
+               table_format=None, stage='mid', players=9, spot='open_raise', vs=(), spread=None,
+               scenario=None, aggressor=None, limpers=(), callers=(), effective_stack_bb=None,
+               to_beat=None, to_call=None, facing_all_in=False, tournament_profile=None,
+               reference_tree_study=False, _nash_shadow_ok=False):
         """An exploratory recommendation for one preflop spot, or an abstention.
 
         Returns status ADVICE | ABSTAIN | OUT_OF_RANGE with the action mix, EVs,
         the recommended (most frequent) action, and the approximations made. ICM/
         PKO nodes carry a stack spread; absent one, equal stacks ('iguais') are
-        assumed and flagged."""
+        assumed and flagged.
+
+        Camada de ÁRVORE DE REFERÊNCIA (Clone 0.5): para spots específicos deep/
+        multiway (vs_3bet, vs_4bet, open_with_callers, limped) existe uma árvore
+        solved offline. Consulta OPT-IN: só quando o caller informa `scenario`.
+        NUNCA auto-executável (validated=False/execution_allowed=False); se não
+        casar, segue EXATAMENTE o fluxo normal (callers sem `scenario` não mudam)."""
+        if scenario is not None:
+            tree_adv = self._tree_consult(
+                hero_cards=hero_cards, scenario=scenario, hero_position=hero_position,
+                aggressor=aggressor, limpers=limpers, callers=callers, mode=mode, stage=stage,
+                stack_bb=stack_bb,
+                effective_stack_bb=effective_stack_bb if effective_stack_bb is not None else stack_bb,
+                to_beat=to_beat, to_call=to_call, facing_all_in=facing_all_in,
+                tournament_profile=tournament_profile, reference_tree_study=reference_tree_study)
+            if tree_adv is not None:
+                return tree_adv
         bucket, why = self.bucket_stack(stack_bb)
         if bucket is None:
             return self._abstain(why, stack_bb=stack_bb)
@@ -324,27 +620,92 @@ class PreflopAdvisor:
             hand = hand_key(hero_cards)
         except Blocked as exc:
             return self._abstain(str(exc))
+        spread_was_default = spread is None and mode in ('icm', 'pko_icm')
         spread = spread if spread is not None else ('iguais' if mode in ('icm', 'pko_icm') else None)
         if table_format is None:
             table_format = 'pko' if mode in ('pko', 'pko_icm') else 'regular'
         node = self._index.get((mode, table_format, stage, players, bucket, spot, hero_position, tuple(vs), spread))
+        # Convenção de spread: os solves PKO early/mid do tipo tournament-model
+        # (pkoearly/pkomid) são gravados SEM spread (spread=None), ao contrário dos
+        # ICM-staged (bubble/ft/preitm, que são 'iguais'/'curtos'). Quando o caller
+        # não informou spread e o nó 'iguais' não existe, tenta o nó sem-spread do
+        # MESMO contexto ANTES de emprestar range de outro stack — senão um PKO mid
+        # de 100bb responderia (errado) com um range de pre-ITM 25bb emprestado.
+        if node is None and spread_was_default:
+            alt = self._index.get((mode, table_format, stage, players, bucket, spot,
+                                   hero_position, tuple(vs), None))
+            if alt is not None:
+                node, spread = alt, None
+        aligned_bucket = None
+        # ALINHAMENTO DE GRADE POR MODO: o bucket global snapou para um degrau que o
+        # MODO não solva (ex.: 40bb PKO-ICM -> solve mora em 35bb). Antes do borrow
+        # heurístico, procura o bucket NATIVO validado do MESMO contexto a <=ALIGN_TOL
+        # do stack real. Gated a >= SHOVE_ZONE_MAX_BB: abaixo disso o regime é
+        # push/fold e NÃO se realinha spot de raise (preserva a guarda anti mini-raise).
+        if node is None and isinstance(stack_bb, (int, float)) and stack_bb >= SHOVE_ZONE_MAX_BB:
+            anode, ab = self._aligned_stack_node(
+                mode, table_format, stage, players, spot, hero_position, tuple(vs), spread, stack_bb)
+            if anode is not None:
+                node, aligned_bucket, bucket = anode, ab, ab
+        # FALLBACK DE SPREAD (ICM/PKO-ICM): sem nó no spread específico (curtos_ini/curtos_fim),
+        # reusa o nó 'iguais' do MESMO modo/stage/bucket/spot como REFERÊNCIA. O spread descreve a
+        # distribuição dos OUTROS stacks — pesa pouco num pote heads-up (ex.: vs_3bet). node_id
+        # setado -> contrato dá REFERENCE executável. Fecha os gaps de spread (vs_3bet pko_icm/
+        # curtos_fim @40bb etc.) sem inventar range. validated=False (é aproximação de spread).
+        # NÃO p/ shove-spots (NASH_SHADOW_SPOTS): esses têm a trilha Nash sombra, que já faz
+        # o spread->iguais E aplica o ICM-tightening. Aqui é só p/ os demais (vs_3bet etc.).
+        spread_ref = False
+        if node is None and spread not in (None, 'iguais') and spot not in NASH_SHADOW_SPOTS:
+            n = self._index.get((mode, table_format, stage, players, bucket, spot,
+                                 hero_position, tuple(vs), 'iguais'))
+            if n is not None:
+                node, spread_ref = n, True
         borrowed_from = None
-        if node is None and spot in BORROWABLE_SPOTS:
+        # GUARDA DA ZONA DE SHOVE (<20BB): não empresta range de RAISE por proximidade
+        # de stack — isso gerava mini-raises suicidas. Só push/fold puro vale aqui.
+        shove_zone = isinstance(stack_bb, (int, float)) and stack_bb < SHOVE_ZONE_MAX_BB
+        blocked_borrow = shove_zone and spot in BORROWABLE_SPOTS and spot not in SHOVE_SPOTS
+        if node is None and spot in BORROWABLE_SPOTS and not blocked_borrow:
             # Camada heurística: sem nó no bucket exato, PEGA EMPRESTADA a range
             # validada do stack mais próximo (flagged). Vira conselho em vez de
             # abstenção — mas NÃO é auto-executável (validated=False abaixo).
             node, borrowed_from = self._nearest_stack_node(
                 mode, table_format, stage, players, spot, hero_position, tuple(vs), spread, bucket)
+        # CAMADA NASH SOMBRA (ÚLTIMO RECURSO, só push/fold): sem nó no contexto exato
+        # nem empréstimo de stack, reusa a tabela Nash de um contexto vizinho como
+        # REFERÊNCIA (validated=False). Fecha a ABSTENÇÃO em spreads enviesados/PKO
+        # curtos sem inventar range. GATED por `_nash_shadow_ok`: só o re-try explícito
+        # de último recurso (fim de advise_from_reading, quando o fluxo normal já
+        # abstém) a liga — assim a sombra NUNCA preempta um nó validado/melhor.
+        # HOMOLOGADO (Eduardo 20/11, opção 1): a camada Nash arma nos spots de SHOVE
+        # (open_shove/vs_open_shove/3bet_shove) quando NÃO há nó validado — puro gap-fill, nunca
+        # preempta (só quando node is None). node_id setado -> contrato dá autoridade REFERENCE
+        # -> EXECUTÁVEL. Fecha ~3000+ abstenções de shove curto. RESSALVA: ICM/PKO usa a tabela
+        # chip-EV (caveat NASH_SHADOW_CHIP_EV_REF_ICM_PKO_ADJ_NOT_APPLIED) — um pouco largo em
+        # bolha; ICM-tightening é refino futuro. `_nash_shadow_ok` segue valendo p/ re-try externo.
+        nash_shadow = None
+        if node is None and (_nash_shadow_ok or spot in NASH_SHADOW_SPOTS):
+            node, nash_shadow = self._nash_shadow_node(
+                mode, table_format, stage, players, bucket, spot, hero_position, tuple(vs), spread)
         if node is None:
-            return self._abstain('NO_VALIDATED_NODE_FOR_CONTEXT',
+            reason = 'SHOVE_ZONE_PUSHFOLD_ONLY_NO_BORROW' if blocked_borrow \
+                else 'NO_VALIDATED_NODE_FOR_CONTEXT'
+            return self._abstain(reason,
                                  context=dict(mode=mode, stage=stage, stack=bucket, spot=spot,
                                               hero=hero_position, players=players))
         i = self.hands.index(hand)
         raw_validated = bool(node.get('validated'))
-        validated = raw_validated and borrowed_from is None   # stack emprestado não auto-executa
+        # stack emprestado OU sombra Nash OU ref de spread de outro contexto não auto-executam
+        validated = raw_validated and borrowed_from is None and nash_shadow is None and not spread_ref
         caveats = self._caveats(bucket, stack_bb, players, mode, spread)
         if not raw_validated:
             caveats.append('UNVALIDATED_REFERENCE_RANGE')
+        if spread_ref:
+            caveats.append('SPREAD_REF_IGUAIS_APPROX_%s' % spread)
+        if nash_shadow is not None:
+            caveats.append(nash_shadow)
+        if aligned_bucket is not None:
+            caveats.append('BUCKET_ALIGNED_%gBB_TO_%dBB_NATIVE_GRID' % (stack_bb, aligned_bucket))
         if borrowed_from is not None:
             caveats.append('STACK_BORROWED_%dBB_TO_%dBB_HEURISTIC' % (borrowed_from, bucket))
         base = dict(spot=spot, hero_position=hero_position, hand=hand, node_id=node['id'],
@@ -362,17 +723,158 @@ class PreflopAdvisor:
             values = (node.get('ev') or {}).get(act)
             ev[act] = values[i] if values is not None and len(values) == 169 else None
         recommended = max(mix, key=lambda m: m['frequency'])['action'] if mix else None
+        # ICM push/fold do jam Nash sombra (Eduardo 20/11, opção A): o nó Nash vizinho que a
+        # sombra reusa VARIA por fase (ruído do bucket) -> comparar EV do nó daria aperto
+        # NÃO-monotônico. Em vez disso, p/ shove-spot sombra em modo ICM, a decisão jam/fold é
+        # DERIVADA de forma monotônica: jam ⇔ chip-EV de REFERÊNCIA do jam ≥ piso escalado pelo
+        # risk premium da fase (bolha>FT>normal). É o push/fold ICM padrão (Nash chip-EV + RP).
+        jam_act = recommended if recommended in ('all_in', 'jam', 'shove') else None
+        if (nash_shadow is not None and spot in NASH_SHADOW_SPOTS
+                and (jam_act or recommended == 'fold')):
+            floor = self._icm_jam_floor_bb(mode, stage, stack_bb)
+            if floor is not None:
+                edge = self._nash_chip_ev_jam(table_format, stage, players, bucket, spot,
+                                              hero_position, tuple(vs), spread, i,
+                                              jam_act or 'all_in')
+                if isinstance(edge, (int, float)):
+                    new_rec = (jam_act or 'all_in') if edge >= floor else 'fold'
+                    if new_rec != recommended:
+                        caveats.append('NASH_ICM_%s_ev%.2f_floor%.2f_%s' % (
+                            'JAM' if new_rec != 'fold' else 'FOLD', edge, floor, stage))
+                        recommended = new_rec
         return dict(base, status='ADVICE', mix=mix, ev=ev, ev_unit=node['evUnit'], recommended=recommended)
 
+    @staticmethod
+    def _icm_jam_floor_bb(mode, stage, stack_bb):
+        """Piso de chip-EV (bb) p/ um jam valer sob ICM: eleva o boundary chip-EV (~0)
+        pelo risk premium da fase. Stack-aware e monotônico (bolha>FT>normal). Devolve
+        None (sem aperto) p/ modo sem ICM ou dado faltando."""
+        if mode not in ICM_JAM_MODES:
+            return None
+        if not isinstance(stack_bb, (int, float)) or stack_bb <= 0:
+            return None
+        rp = icm_rp.stage_base_rp(stage)
+        if not rp:
+            return None
+        return rp * stack_bb * ICM_JAM_CALLED_PROXY
+
+    def _nash_chip_ev_jam(self, table_format, stage, players, bucket, spot, hero, vs, spread, i, act):
+        """chip-EV do jam (mão índice i, ação act) no nó Nash chip-EV do MESMO contexto —
+        baseline consistente p/ o ICM-tightening ser monotônico entre fases. None se faltar."""
+        node, _ = self._nash_shadow_node('chip_ev', table_format, stage, players, bucket,
+                                         spot, hero, vs, spread)
+        if not node:
+            return None
+        vals = (node.get('ev') or {}).get(act)
+        return vals[i] if vals is not None and len(vals) == 169 else None
+
+    def _tree_consult(self, *, hero_cards, scenario, hero_position, aggressor, limpers,
+                      callers, mode, stage, stack_bb, effective_stack_bb, to_beat, to_call,
+                      facing_all_in, tournament_profile, reference_tree_study):
+        """Consulta o TreeBook (Clone 0.5) e devolve um conselho NÃO-executável, ou
+        None (sem árvore -> o advise segue o fluxo normal). Cenário traduzido dos
+        nossos nomes (strategy.scenarios) p/ os das árvores."""
+        book = self._trees()
+        if not getattr(book, 'records', None):
+            return None
+        tree_scenario = self._TREE_SCENARIO_ALIASES.get(scenario, scenario)
+        try:
+            hand = hand_key(hero_cards)
+        except Blocked:
+            return None            # cartas inválidas: deixa o fluxo normal abster
+        ctx = dict(scenario=tree_scenario, hero_position=hero_position, aggressor=aggressor,
+                   limpers=list(limpers or ()), callers=list(callers or ()),
+                   mode=mode, stage=stage, effective_stack_bb=effective_stack_bb,
+                   to_beat=to_beat, to_call=to_call, facing_all_in=facing_all_in,
+                   tournament_profile=tournament_profile,
+                   reference_tree_study=reference_tree_study)
+        node = book.lookup(hero_cards, ctx)
+        if node is None:
+            return None
+        return self._tree_answer(node, hero_cards, hand, scenario, hero_position,
+                                 stack_bb, effective_stack_bb)
+
+    def _tree_answer(self, node, hero_cards, hand, scenario, hero_position,
+                     stack_bb, effective_stack_bb):
+        """Monta o conselho de árvore no MESMO contrato do advise(). SEMPRE
+        validated=False e execution_allowed=False: o operador trata como estudo
+        (sombra) e NÃO clica. NÃO projeta all-in de árvore curta em stack fundo
+        (reinterpretação fica no executor, que aqui nunca roda)."""
+        options = node['options']
+        active = [o for o in options if o['frequency'] > 0]
+        recommended = max(options, key=lambda o: o['frequency'])['action'] if options else None
+        tree_depth = node['context']['effective_stack_bb']
+        caveats = ['CONTEXTUAL_TREE_REFERENCE', 'UNVALIDATED_REFERENCE_RANGE']
+        if node.get('research_only'):
+            caveats.append('STUDY_ONLY_TREE_NOT_CONVERGED')
+        if tree_depth != effective_stack_bb:
+            caveats.append('TREE_DEPTH_%gBB_OBSERVED_%gBB' % (tree_depth, effective_stack_bb))
+        return dict(
+            status='ADVICE', phase='preflop', origin='CONTEXTUAL_TREE_REFERENCE',
+            spot=scenario, hero_position=hero_position, hand=hand, hero_cards=list(hero_cards),
+            node_id=node['id'], source=node['source'], source_sha256=node['sha256'],
+            validated=False, solver_validated=False, source_validated=False,
+            execution_allowed=False, exploratory=True,
+            stack_bb=stack_bb, stack_bucket=tree_depth, effective_stack_bb=effective_stack_bb,
+            bucketed=tree_depth != effective_stack_bb,
+            mix=[dict(action=o['action'], frequency=o['frequency']) for o in active],
+            recommended=recommended,
+            ev={o['action']: o.get('reference_ev_bb') for o in options},
+            ev_unit='reference_bb_relative_to_fold',
+            reference_reasons=node.get('reference_reasons'),
+            tree_quality=node.get('quality'), research_only=node.get('research_only'),
+            caveats=caveats)
+
+    def explain(self, *, hero_cards, hero_position, stack_bb, mode='chip_ev',
+                table_format=None, stage='mid', players=9, spot='open_raise', vs=(), spread=None):
+        """B03 — consulta EXPLICÁVEL. Roda advise() e devolve uma explicação
+        estruturada que LIGA a recomendação à FONTE (sha256 do(s) pack(s) + nó) e
+        mostra EXATAMENTE as aproximações feitas (bucket de stack, stack emprestado,
+        mesa 9-max de referência, profundidade acima do solve). Diagnóstico offline;
+        não captura nem clica. Critério B04/B05: cada recomendação tem fonte, hash e
+        nó; toda aproximação mostra a diferença."""
+        if table_format is None:
+            table_format = 'pko' if mode in ('pko', 'pko_icm') else 'regular'
+        try:
+            hand = hand_key(hero_cards)
+        except Blocked:
+            hand = None
+        adv = self.advise(hero_cards=hero_cards, hero_position=hero_position, stack_bb=stack_bb,
+                          mode=mode, table_format=table_format, stage=stage, players=players,
+                          spot=spot, vs=tuple(vs), spread=spread)
+        node = next((n for n in self.nodes if n.get('id') == adv.get('node_id')), None)
+        requested = dict(mode=mode, table_format=table_format, stage=stage, players=players,
+                         stack_bb=stack_bb, spot=spot, hero=hero_position, vs=list(vs),
+                         spread=spread, hand=hand)
+        source = dict(node_id=adv.get('node_id'), source=adv.get('source'),
+                      validated=adv.get('validated'),
+                      pack_sha256=[s.get('sha256') for s in self.sources] or None,
+                      node_context=(node or {}).get('context'))
+        # DIFERENÇAS exatas entre o contexto pedido e o nó de fonte usado.
+        diffs = {}
+        if adv.get('stack_bucket') is not None and adv.get('stack_bucket') != stack_bb:
+            diffs['stack_bucketed'] = dict(from_bb=stack_bb, to_bucket=adv.get('stack_bucket'))
+        if adv.get('stack_borrowed_from') is not None:
+            diffs['stack_borrowed_from_bb'] = adv.get('stack_borrowed_from')
+        if players != 9:
+            diffs['players_requested_vs_9max_ref'] = players
+        if isinstance(stack_bb, (int, float)) and stack_bb > self.STACK_BUCKETS[-1]:
+            diffs['above_solved_depth_top_bucket'] = self.STACK_BUCKETS[-1]
+        return dict(requested=requested, source=source, differences=diffs,
+                    answer=dict(status=adv.get('status'), recommended=adv.get('recommended'),
+                                mix=adv.get('mix'), ev=adv.get('ev'), reason=adv.get('reason'),
+                                caveats=adv.get('caveats')),
+                    exploratory=True, execution_allowed=adv.get('execution_allowed'))
+
     def advise_first_in(self, **kwargs):
-        """First-in (unopened): respeita o REGIME por stack. Curto (<=PUSHFOLD_MAX_BB)
-        tenta SHOVE antes do open-raise; mais fundo, open-raise antes do shove. Cada
-        tentativa pode pegar o stack emprestado (camada heurística) — a ordem evita
-        recomendar min-raise onde o certo é jam."""
+        """First-in (unopened): respeita o REGIME por stack. Na ZONA DE SHOVE
+        (<SHOVE_ZONE_MAX_BB) tenta SHOVE antes do open-raise (push/fold puro); mais
+        fundo, open-raise antes do shove. A guarda de zona de shove já impede o
+        empréstimo de ranges de raise aqui — juntas eliminam o mini-raise suicida."""
         kwargs.pop('spot', None)
         kwargs.pop('vs', None)
         stack = kwargs.get('stack_bb')
-        short = isinstance(stack, (int, float)) and stack <= PUSHFOLD_MAX_BB
+        short = isinstance(stack, (int, float)) and stack < SHOVE_ZONE_MAX_BB
         order = ('open_shove', 'open_raise') if short else ('open_raise', 'open_shove')
         result = None
         for spot in order:
@@ -380,22 +882,263 @@ class PreflopAdvisor:
             if not (result['status'] == 'ABSTAIN'
                     and result.get('reason') == 'NO_VALIDATED_NODE_FOR_CONTEXT'):
                 return result
+        # SB/BB NÃO têm range de OPEN (não abrem). Mas com LIMPER o hero ISOLA (não é blind
+        # battle) — usa a range de REFERÊNCIA do BTN (mesma régua do `_iso_worthy`) p/ ter um
+        # NÓ REAL executável, em vez de cair na aproximação sem nó (bug do AQ/AA no BB vs
+        # limpers: advise_from_reading dava raise não-executável -> operador abstinha).
+        pos = kwargs.get('hero_position')
+        if pos in ('SB', 'BB'):
+            ref_kwargs = dict(kwargs, hero_position='BTN')
+            for spot in order:
+                r2 = self.advise(spot=spot, vs=(), **ref_kwargs)
+                if not (r2['status'] == 'ABSTAIN'
+                        and r2.get('reason') == 'NO_VALIDATED_NODE_FOR_CONTEXT'):
+                    # no BB o fold é de graça -> CHECK (nunca foldar com check disponível).
+                    if pos == 'BB' and r2.get('recommended') == 'fold':
+                        r2['recommended'] = 'check'
+                        r2.setdefault('caveats', []).append('BB_CHECK_GRATIS_EM_VEZ_DE_FOLD')
+                    r2.setdefault('caveats', []).append('ISO_REF_BTN_PARA_%s' % pos)
+                    return r2
         return result
 
+    def _iso_worthy(self, hand, bucket, *, mode='chip_ev', stage='mid', players=9, position='UTG',
+                    strict=False):
+        """Mão vale um ISO sobre limper? Régua = o range de OPEN DA POSIÇÃO DO HERÓI
+        (BTN/CO isola LARGO; EP isola apertado). Antes usava UTG fixo em toda posição,
+        o que foldava iso ÓBVIO de posição tardia (44 no BTN, A4o no CO — bug relatado
+        pelo Eduardo 18/11). Folda só o que a PRÓPRIA posição não abriria (lixo).
+        O range de blind-battle do SB (~91%) não serve de régua: com limper não é blind
+        battle. Sem nó p/ a posição, cai no UTG; sem nada -> não bloqueia."""
+        tf = 'pko' if mode in ('pko', 'pko_icm') else 'regular'
+        # SB/BB: a régua do ISO vs limpers usa a range de open do CO (sólida, mais APERTADA que o
+        # BTN). O BTN deixava TRASH isolar (K6o/Q8o) — Eduardo 23/11 pediu apertar. (P/ apertar mais:
+        # 'HJ'/'UTG'.) Demais posições usam a PRÓPRIA range de open.
+        ref = 'CO' if position in ('SB', 'BB') else position
+        # Régua = o range de ABERTURA AGRESSIVA da posição de referência. DEEP (>=~15bb)
+        # é `open_raise`; no regime de PUSH/FOLD curto (<~15bb) NÃO existe open_raise, só
+        # `open_shove` (ação all_in). Consultar SÓ open_raise cega o curto -> _iso_worthy
+        # devolvia False p/ TODA mão curta -> o upgrade do passivo nunca disparava e KQs/
+        # TT/99/AQs LIMPAVAM a 12bb (bug 24/11, 358 leaks medidos). Agora soma a freq
+        # agressiva (raise+all_in+shove) de open_raise E open_shove -> a mesma régua Nash
+        # vale nos dois regimes, sem inventar range (o nó de shove já separa valor×lixo:
+        # AQo/KQs/TT shove_freq=1, 72o/K6o/Q8o=0).
+        if hand not in self.hands:
+            return not strict
+        i = self.hands.index(hand)
+
+        # SPREAD: os nós ICM/PKO-ICM são gravados com spread 'iguais' (ou curtos_*), NÃO
+        # None (convenção do advise, :609). Buscar só None cegava TODO modo ICM/PKO-ICM
+        # (o nó nunca casava) -> _iso_worthy=False -> KQs/AJs limpando a 20-30bb em
+        # bolha/FT (bug 24/11). Tenta a grade do modo ('iguais' em ICM) e None.
+        _spreads = (['iguais', None] if mode in ('icm', 'pko_icm') else [None, 'iguais'])
+
+        # BUCKETS candidatos: o exato primeiro, depois por proximidade (prefere o maior em
+        # empate) — espelha o borrow do advise. Sem isso, modos com grade esparsa (PKO topa
+        # em 25bb) falham a régua no bucket emprestado (ex.: 20bb PKO -> limp, bug 24/11).
+        _buckets = [bucket] + sorted((b for b in self.STACK_BUCKETS if b != bucket),
+                                     key=lambda b: (abs(b - (bucket or 0)), -b))
+
+        def _node(spot, hero_ref):
+            for b in _buckets:
+                for sp in _spreads:
+                    n = self._index.get((mode, tf, stage, players, b, spot, hero_ref, (), sp))
+                    if n is not None:
+                        return n
+            return None
+
+        def _agg_freq(hero_ref):
+            """(nó_visto, soma_da_freq_agressiva) p/ a posição de referência. Usa o nó de
+            RAISE (deep) se existir; só cai no de SHOVE (curto) quando não há open_raise —
+            nunca mistura uma range de jam curta numa decisão deep."""
+            n = _node('open_raise', hero_ref) or _node('open_shove', hero_ref)
+            if n is None:
+                return False, 0.0
+            if i in (n.get('outOfRange') or []):
+                return True, 0.0
+            agg = 0.0
+            for act in ('raise', 'all_in', 'shove'):
+                fr = n['freq'].get(act) or []
+                if i < len(fr):
+                    agg += fr[i]
+            return True, agg
+
+        seen, agg = _agg_freq(ref)
+        if not seen:
+            seen, agg = _agg_freq('UTG')
+        if not seen:
+            # Sem nó p/ confirmar: o DEFAULT (não-estrito) é PERMISSIVO (True) — usado pelo CAP
+            # (raise->fold) p/ não foldar demais. Mas o UPGRADE passivo->iso usa strict=True: na
+            # DÚVIDA NÃO sobe trash pra raise (bug 23/11: BB pegava K6o/J2o "pra punir" limper).
+            return not strict
+        return agg > 0
+
+    # Famílias de árvore (Clone 0.5) que o classificador ÚNICO pode casar ao vivo.
+    _TREE_LIVE_SCENARIOS = frozenset({'vs_3bet', 'vs_4bet_or_more', 'open_with_callers', 'limped'})
+
+    def _tree_from_reading(self, table_state, hero_cards, positions, hero, kwargs):
+        """Consulta a árvore de referência a partir da leitura ao vivo, pelo mesmo
+        classificador (strategy.scenarios). Devolve o conselho de ESTUDO (nunca
+        executável) ou None (sem árvore -> roteamento normal). Shove -> facing_all_in
+        True, então a árvore NÃO-terminal não é usada num all-in."""
+        if not getattr(self._trees(), 'records', None):
+            return None
+        try:
+            c = classify_scenario(from_table_state(table_state))
+        except Exception:                                # noqa: BLE001 — leitura ruim -> fluxo normal
+            return None
+        scen = c.get('scenario')
+        if scen not in self._TREE_LIVE_SCENARIOS or c.get('hero_position') is None:
+            return None
+        top = max(c['raise_levels']) if c.get('raise_levels') else 0.0
+        facing_all_in = bool(c.get('aggressor')) and _opener_is_shove(table_state, c['aggressor'], top)
+        stack_bb = hero.get('stack_bb')
+        return self._tree_consult(
+            hero_cards=hero_cards, scenario=scen, hero_position=c['hero_position'],
+            aggressor=c.get('aggressor'), limpers=c.get('limpers') or (),
+            callers=c.get('callers') or (), mode=kwargs.get('mode', 'chip_ev'),
+            stage=kwargs.get('stage', 'mid'), stack_bb=stack_bb,
+            effective_stack_bb=stack_bb, to_beat=top or None,
+            to_call=(table_state.get('to_call') or {}).get('to_call_bb'),
+            facing_all_in=facing_all_in, tournament_profile=kwargs.get('tournament_profile'),
+            reference_tree_study=kwargs.get('reference_tree_study', False))
+
+    # Abstenções de PERCEPÇÃO (leitura falhou): o fallback não inventa ação em cima de
+    # leitura ruim -> fica ABSTAIN e o operador joga o seguro (anti-freeze). As demais
+    # (COBERTURA) NUNCA abstêm: viram ação pela teoria mais próxima (Eduardo 19/11).
+    _PERCEPTION_ABSTAINS = frozenset({
+        'HERO_POSITION_UNKNOWN', 'HERO_CARDS_UNKNOWN', 'STACK_UNKNOWN'})
+
     def advise_from_reading(self, table_state, hero_cards, **kwargs):
-        """Pull hero's position/stack from a read_table_state result, infer the
-        spot from the bets (first_in or vs_open), advise, and attach a founded
-        raise size for the recommended action. The spot inference is approximate
-        (it rides on the nearest-seat bet attribution)."""
+        """LEI "NUNCA ABSTÉM" (Eduardo 19/11): nunca devolve ABSTAIN por falta de
+        cobertura. Roda o núcleo; se abstiver por COBERTURA, tapa com a teoria mais
+        próxima (tier de mão: push/fold curto, open/call fundo) e FLAGGA o gap
+        (caveats GAP_COBERTURA_APROX/APONTAR_PARA_SOLVER + `gap_flag`) p/ cobertura real
+        posterior com solver. Só ABSTÉM em falha de PERCEPÇÃO (leitura)."""
+        table_state = self._derive_to_call(table_state)   # deriva to_call dos bets se OCR não leu
+        r = self._advise_from_reading_core(table_state, hero_cards, **kwargs)
+        if (isinstance(r, dict) and r.get('status') == 'ABSTAIN'
+                and r.get('reason') not in self._PERCEPTION_ABSTAINS):
+            try:
+                fb = self._never_abstain_fallback(table_state, hero_cards, r)
+            except Exception:                       # noqa: BLE001 — fallback nunca quebra
+                fb = None
+            if isinstance(fb, dict):
+                return fb
+        return r
+
+    @staticmethod
+    def _derive_to_call(table_state):
+        """Se o OCR NÃO leu o to_call (None) mas há bets por assento, deriva
+        to_call = max(0, maior aposta do vilão - aposta do hero). Evita o `to_call=0.0`
+        enganoso num spot facing-a-bet (pot-odds / call-off errados = "acha que é de graça").
+        Só age quando None (não sobrescreve leitura real); marca derived=True p/ auditoria."""
+        tc = (table_state.get('to_call') or {}).get('to_call_bb')
+        if tc is not None:
+            return table_state
+        bets = table_state.get('bets') or []
+        vals = [b.get('bet_bb') for b in bets if isinstance(b.get('bet_bb'), (int, float))]
+        if not vals:
+            return table_state
+        maxbet = max(vals)
+        herobet = next((b.get('bet_bb') for b in bets
+                        if b.get('seat') == 'hero' and isinstance(b.get('bet_bb'), (int, float))), 0.0)
+        derived = max(0.0, round(maxbet - herobet, 2))
+        new = dict(table_state)
+        new['to_call'] = dict(table_state.get('to_call') or {}, to_call_bb=derived, derived=True)
+        return new
+
+    def _never_abstain_fallback(self, table_state, hero_cards, prev):
+        """Ação pela TEORIA MAIS PRÓXIMA p/ um abstém de cobertura. Sempre devolve uma
+        decisão (nunca None). Flagga o gap p/ cobertura real posterior."""
+        positions = table_state.get('positions') or {}
+        hero_pos = positions.get('hero')
+        hero = table_state.get('seats', {}).get('hero', {})
+        stack = hero.get('stack_bb')
+        to_call = (table_state.get('to_call') or {}).get('to_call_bb') or 0.0
+        bets = [b.get('bet_bb') for b in (table_state.get('bets') or [])
+                if isinstance(b.get('bet_bb'), (int, float))]
+        facing = any(b and b > 1.5 for b in bets) or (isinstance(to_call, (int, float)) and to_call > 1.0)
+        tier = _hand_tier(hero_cards)
+        short = isinstance(stack, (int, float)) and stack <= SHOVE_ZONE_MAX_BB
+        allin = bool(prev.get('allin') or (facing and any(b and b >= (stack or 1e9) - 1e-6 for b in bets)))
+        if facing:
+            if tier == 'premium':
+                rec = 'all_in' if (short or allin) else 'call'
+            elif tier == 'strong' and not short and isinstance(to_call, (int, float)) and to_call <= 3.0:
+                rec = 'call'
+            else:
+                rec = 'fold'
+        else:                                        # sem aposta p/ pagar (first-in-ish)
+            if tier in ('premium', 'strong'):
+                rec = 'all_in' if short else 'raise'
+            elif tier == 'playable' and not short:
+                rec = 'raise'
+            elif hero_pos == 'BB':
+                rec = 'check'                        # BB de graça -> check, nunca fold
+            else:
+                rec = 'fold'
+        reason = prev.get('reason') or 'UNKNOWN'
+        out = dict(status='ADVICE', recommended=rec, validated=False,
+                   execution_allowed=False, exploratory=True,
+                   mix=[{'action': rec, 'frequency': 1.0}],
+                   spot=prev.get('spot'),
+                   caveats=['GAP_COBERTURA_APROX', 'GAP_APROX_%s' % reason,
+                            'NEAREST_THEORY_HAND_TIER_%s' % tier.upper(),
+                            'APONTAR_PARA_SOLVER'],
+                   gap_flag=dict(reason=reason, spot=prev.get('spot'),
+                                 hero_pos=hero_pos, stack_bb=stack, tier=tier, facing=facing))
+        if rec == 'all_in' and isinstance(stack, (int, float)):
+            out['sizing'] = dict(size_bb=round(stack, 1), basis='nearest-theory shove', heuristic=True)
+        _log_gap(out['gap_flag'])
+        return out
+
+    def _advise_from_reading_core(self, table_state, hero_cards, **kwargs):
+        """Núcleo (antigo advise_from_reading). Pode devolver ABSTAIN; o wrapper
+        público converte abstém de cobertura em ação."""
         positions = table_state.get('positions') or {}
         hero = table_state.get('seats', {}).get('hero', {})
         if 'hero' not in positions:
             return self._abstain('HERO_POSITION_UNKNOWN')
+        # ÁRVORE DE REFERÊNCIA (Clone 0.5): consulta ANTES do roteamento normal, pelo
+        # MESMO classificador único (strategy.scenarios). Fonte de ESTUDO/sombra
+        # (validated=False/execution_allowed=False) p/ spots deep/multiway que o pack
+        # não cobre. Se casar uma árvore, devolve o conselho dela; senão -> None e o
+        # fluxo normal segue INALTERADO. Só aparece ao vivo o nó NÃO-study-only.
+        tree_adv = self._tree_from_reading(table_state, hero_cards, positions, hero, kwargs)
+        if tree_adv is not None:
+            return tree_adv
         # `bounty_bb` (PKO) só serve ao call-off; tira do kwargs p/ não vazar nos nós
         # de range (self.advise não o aceita).
         bounty_bb = kwargs.pop('bounty_bb', None)
         spot = infer_live_spot(table_state)
         base = dict(hero_cards=hero_cards, hero_position=positions['hero'], stack_bb=hero.get('stack_bb'))
+        # STACK EFETIVO (Eduardo 24/11): shove de stack grande vs um shortie só RISCA o efetivo (o
+        # excedente volta) -> vs um vilão de 6bb a decisão é de 6bb. `seats` já traz só os ATIVOS
+        # (não-foldados), então efetivo = min(hero, maior vilão ATIVO): num blind war vs BB curto dá
+        # curto (shove); num open com fundões atrás dá = hero (raise normal). Só ENCURTA, nunca alarga.
+        _seats = table_state.get('seats', {})
+        _hs = hero.get('stack_bb')
+        _villain_stacks = [v.get('stack_bb') for k, v in _seats.items()
+                           if k != 'hero' and isinstance(v.get('stack_bb'), (int, float)) and v.get('stack_bb') > 0]
+        _effective = (min(_hs, max(_villain_stacks))
+                      if isinstance(_hs, (int, float)) and _villain_stacks else _hs)
+        base['effective_stack_bb'] = _effective
+        # BLIND WAR / STEAL vs SHORTIE -> OPEN-SHOVE pelo EFETIVO (Eduardo 24/11): o hero ABRIRIA
+        # (first-in), mas o EFETIVO está na zona de shove E é MENOR que o stack do hero (um vilão ATIVO
+        # é o curto, ex. BB 6bb) -> a linha é OPEN ALL-IN pela range de push do bucket EFETIVO, NÃO
+        # min-raise (min-raiar e depois pagar o jam do curto = pior; shove aplica fold-equity máxima e,
+        # em PKO, caça o bounty). O range de open_shove por bucket já dá a largura certa (6bb ~any2;
+        # 15bb mais tight). Se o hero TAMBÉM for curto (efetivo==hero), o fluxo de shove-zone por stack
+        # do hero já resolve -> este bloco NÃO duplica (_effective < _hs).
+        if (spot['spot'] == 'first_in' and isinstance(_effective, (int, float))
+                and isinstance(_hs, (int, float)) and _effective < SHOVE_ZONE_MAX_BB
+                and _effective < _hs - 0.5):
+            _eff_base = dict(base, stack_bb=_effective)
+            _eff_sh = self.advise(spot='open_shove', **_eff_base, **kwargs)
+            if isinstance(_eff_sh, dict) and _eff_sh.get('status') == 'ADVICE':
+                _eff_sh.setdefault('caveats', []).append('OPEN_SHOVE_STACK_EFETIVO_vs_SHORTIE')
+                _eff_sh['effective_stack_bb'] = _effective
+                return _eff_sh
         # For ICM/PKO-ICM, classify the table's stack spread from the read stacks
         # instead of always assuming equal stacks; keep the default when unset or
         # too few stacks read (infer_spread returns None).
@@ -405,7 +1148,38 @@ class PreflopAdvisor:
                                    for seat, pos in positions.items()})
             if spread is not None:
                 kwargs['spread'] = spread
-        if spot['spot'] in ('vs_open', 'vs_3bet', 'vs_open_shove'):
+        # SHOVE ZONE vs OPEN = 3BET-JAM (resteal/squeeze). Short stack enfrentando um
+        # open: a linha é 3bet ALL-IN pela range validada `3bet_shove`, NÃO o 3bet/call
+        # de stack fundo (que não tem nó curto -> abstinha, e com caller virava range HU
+        # larga não-validada). Regra do Eduardo: short + open (+caller = squeeze) = 3bet
+        # all-in. Tenta o nó de JAM ANTES; só casa com nó validado (buckets 12-25), senão
+        # cai no fluxo vs_open normal (sub-12bb / fundo).
+        # vs_open SEM caller: jam no shove zone (<20bb); 20bb+ usa o vs_open MISTO.
+        # SQUEEZE (com caller): não há nó multiway validado, então o 3bet-JAM validado
+        # vale em TODO o alcance do nó 3bet_shove (12-25bb), não só <20.
+        _stk = hero.get('stack_bb')
+        _in_jam_zone = isinstance(_stk, (int, float)) and (
+            _stk < SHOVE_ZONE_MAX_BB or (spot.get('callers') and _stk <= 25))
+        _short_vs_open = spot['spot'] == 'vs_open' and spot.get('opener') and _in_jam_zone
+        _jam = (self.advise(spot='3bet_shove', vs=(spot['opener'],), **base, **kwargs)
+                if _short_vs_open else None)
+        # Abaixo do menor bucket de 3bet_shove (12bb) não há nó. A range de JAM só
+        # ALARGA com stack menor, então usar a range de 12bb num stack <12bb é
+        # ESTRITAMENTE SEGURO (jama mais TIGHT que o ótimo, nunca jama demais). Dá
+        # decisão validada em vez de abster. Flag honesto marca a aproximação.
+        if (_short_vs_open and isinstance(_stk, (int, float)) and _stk < 12
+                and not (isinstance(_jam, dict) and _jam.get('status') == 'ADVICE')):
+            base12 = dict(base, stack_bb=12)
+            _j12 = self.advise(spot='3bet_shove', vs=(spot['opener'],), **base12, **kwargs)
+            if isinstance(_j12, dict) and _j12.get('status') == 'ADVICE':
+                _j12.setdefault('caveats', []).append('JAM_CURTO_SUB12BB_RANGE12BB_TIGHTER_SAFE')
+                _jam = _j12
+        if isinstance(_jam, dict) and _jam.get('status') == 'ADVICE':
+            if spot.get('callers'):
+                _jam.setdefault('caveats', []).append('SQUEEZE_VIA_3BET_SHOVE_%dC' % spot['callers'])
+            _jam.setdefault('caveats', []).append('AGGRESSOR_INFERRED_%s' % spot['opener'])
+            result = _jam
+        elif spot['spot'] in ('vs_open', 'vs_3bet', 'vs_open_shove'):
             result = self.advise(spot=spot['spot'], vs=(spot['opener'],), **base, **kwargs)
             # Faltou o nó validado da decisão vs shove -> sintetiza o call-off por
             # equity vs o range Nash do vilão. vs_3bet: abri e levei re-shove num
@@ -413,10 +1187,19 @@ class PreflopAdvisor:
             # shove. vs_open_shove: enfrento open-shove mais fundo que 15bb (sem nó).
             # O call-off (equity até o showdown) só vale para all-in COMPROVADO:
             # vs_open_shove já é um jam por construção; vs_3bet só se `allin`.
+            # vs_3bet CURTO (<20bb): um 3bet nesse stack é efetivamente COMMIT -> a
+            # continuação é 4bet-JAM, então sintetiza o call-off por equity mesmo sem
+            # allin explícito (não há nó vs_3bet <20bb). Regra: short + 3bet = jam/fold.
+            # Zona de COMMIT vs 3bet: até ~25bb um 3bet é efetivamente all-in -> a
+            # continuação é 4bet-JAM/call-off. Inclusivo no limite (20bb EXATO caía na
+            # fresta: `< 20` é falso) e cobre 20-25 (o nó validado vs_3bet só existe a
+            # 25bb; em pko/icm sem esse nó o Henrique ABSTINHA = morria). Lei de cobertura.
+            _vs3b_short = (spot['spot'] == 'vs_3bet'
+                           and isinstance(_stk, (int, float)) and _stk <= VS3BET_JAM_MAX_BB)
             if (isinstance(result, dict) and result.get('status') == 'ABSTAIN'
                     and result.get('reason') == 'NO_VALIDATED_NODE_FOR_CONTEXT'
                     and (spot['spot'] == 'vs_open_shove'
-                         or (spot['spot'] == 'vs_3bet' and spot.get('allin')))):
+                         or (spot['spot'] == 'vs_3bet' and (spot.get('allin') or _vs3b_short)))):
                 shove_spot, villain_vs = (('3bet_shove', (positions['hero'],))
                                           if spot['spot'] == 'vs_3bet' else ('open_shove', ()))
                 # PKO: escala o bounty base pelo bounty do vilão (alvo acumulado = caça
@@ -436,37 +1219,204 @@ class PreflopAdvisor:
                     pot_bb=(table_state.get('pot') or {}).get('pot_bb'),
                     mode=kwargs.get('mode', 'chip_ev'), stage=kwargs.get('stage', 'mid'),
                     shove_spot=shove_spot, villain_vs=villain_vs, bounty_bb=bb_eff,
-                    villain_stats=vstats)
+                    villain_stats=vstats,
+                    villain_stack_bb=((table_state.get('seats') or {}).get(vseat) or {}).get('stack_bb'),
+                    table_stacks=[(s or {}).get('stack_bb')
+                                  for s in (table_state.get('seats') or {}).values()
+                                  if isinstance((s or {}).get('stack_bb'), (int, float))
+                                  and (s or {}).get('stack_bb') > 0])
                 if isinstance(co, dict):
                     if bcav:
                         co.setdefault('caveats', []).append(bcav)
                     co.setdefault('caveats', []).append('AGGRESSOR_INFERRED_%s' % spot['opener'])
+                    # 4BET-JAM DO PREMIUM CURTO (Eduardo 24/11, "atacar os curtos primeiro"):
+                    # abri, levei um 3bet que NÃO é all-in de verdade (o hero ainda pode
+                    # raisar) num stack CURTO (<20bb) com mão PREMIUM, e o call-off manda
+                    # CONTINUAR (call). Isso é COMMIT -> 4bet-JAMA (não cold-calla passivo
+                    # OOP num SPR mínimo = o leak que o Eduardo viu). Regra já existente:
+                    # short + 3bet = jam/fold. FOLD do call-off continua fold; se o vilão
+                    # JÁ está all-in (spot['allin']) o `call` permanece (não dá p/ raisar).
+                    # SHADOW (validated=False), como o próprio call-off.
+                    if (shove_spot == '3bet_shove' and not spot.get('allin')
+                            and co.get('recommended') == 'call'
+                            and isinstance(_stk, (int, float)) and _stk < SHOVE_ZONE_MAX_BB
+                            and _hand_tier(hero_cards) == 'premium'):
+                        co['recommended'] = 'all_in'
+                        co['mix'] = [dict(action='all_in', frequency=1.0)]
+                        co['sizing'] = dict(size_bb=round(_stk, 1), heuristic=True,
+                                            basis='4bet-jam premium curto vs 3bet (commit)')
+                        co.setdefault('caveats', []).append('PREMIUM_SHORT_4BET_JAM_VS_3BET')
                     return co
+            # PKO — BOUNTY ALARGA O FOLD (Eduardo 24/11, auto-caça): o nó chip-EV mandou FOLD, mas há
+            # um alvo BOUNTIADO que o hero COBRE -> o DROP EQUITY do bounty pode tornar o call +EV. Roda
+            # o call-off COM bounty; se virar CALL, ALARGA fold->call (SHADOW). O call-off já exige que
+            # o hero cubra (table_stacks/villain_stack) e computa equity vs o range de shove -> sem
+            # bounty foldaria; é o bounty que vira. Só vs_open_shove (jam comprovado).
+            if (isinstance(result, dict) and result.get('recommended') == 'fold'
+                    and spot['spot'] == 'vs_open_shove'
+                    and kwargs.get('mode') in ('pko', 'pko_icm') and table_state.get('bounties')):
+                bb_eff, bcav = scale_bounty_bb(bounty_bb, table_state.get('bounties'),
+                                               spot['opener'], positions)
+                if isinstance(bb_eff, (int, float)) and bb_eff > 0:
+                    vseat = next((s for s, p in positions.items() if p == spot['opener']), None)
+                    co = self.advise_call_off(
+                        hero_cards=hero_cards, hero_position=positions['hero'],
+                        villain_position=spot['opener'], stack_bb=hero.get('stack_bb'),
+                        to_call_bb=(table_state.get('to_call') or {}).get('to_call_bb'),
+                        pot_bb=(table_state.get('pot') or {}).get('pot_bb'),
+                        mode=kwargs.get('mode', 'chip_ev'), stage=kwargs.get('stage', 'mid'),
+                        shove_spot='open_shove', villain_vs=(), bounty_bb=bb_eff,
+                        villain_stack_bb=((table_state.get('seats') or {}).get(vseat) or {}).get('stack_bb'),
+                        table_stacks=[(s or {}).get('stack_bb')
+                                      for s in (table_state.get('seats') or {}).values()
+                                      if isinstance((s or {}).get('stack_bb'), (int, float))
+                                      and (s or {}).get('stack_bb') > 0])
+                    if isinstance(co, dict) and co.get('recommended') == 'call':
+                        co.setdefault('caveats', []).append('BOUNTY_ALARGA_CALL_SHOVE')
+                        if bcav:
+                            co.setdefault('caveats', []).append(bcav)
+                        co.setdefault('caveats', []).append('AGGRESSOR_INFERRED_%s' % spot['opener'])
+                        return co
             if isinstance(result, dict):
                 result.setdefault('caveats', []).append('AGGRESSOR_INFERRED_%s' % spot['opener'])
                 if spot.get('callers'):
                     # vs_open is heads-up vs the opener; with callers the pot is
-                    # multiway and the pack has no multiway node, so this is an
-                    # approximation (usually tighter in reality), flagged as such.
+                    # multiway and the pack has NO multiway node, so a HU range aqui é
+                    # LARGA demais (leak executável). A4/A5: marca como NÃO-validado +
+                    # multiway_approx -> o operador NÃO auto-executa a range HU (vira
+                    # estudo/seguro; premium segue protegido pela blindagem). Direção
+                    # correta multiway = mais apertado. Sem inventar range multiway.
                     result.setdefault('caveats', []).append('MULTIWAY_%d_CALLERS_APPROX_VS_OPEN' % spot['callers'])
+                    if result.get('status') == 'ADVICE':
+                        # Squeeze multiway deep (sem nó próprio): a range HU é larga demais
+                        # p/ blefar, MAS o VALOR PURO (raise com freq ~1.0) squeeze com
+                        # segurança. Mantém só o valor puro como validado; mistos/blefes
+                        # viram piso seguro (não auto-executa). Assim premium NUNCA larga
+                        # (sem fold de AA no squeeze) e não se blefa-squeeze multiway.
+                        _rec = result.get('recommended')
+                        _freq = 0.0
+                        for _it in (result.get('mix') or []):
+                            if isinstance(_it, dict) and _it.get('action') == _rec:
+                                _freq = float(_it.get('frequency') or 0.0)
+                                break
+                        _aggr = _rec in ('three_bet', 'raise', 'all_in', 'bet', 'four_bet')
+                        if _aggr and _freq >= 0.9:
+                            result.setdefault('caveats', []).append('SQUEEZE_VALOR_PURO')
+                        else:
+                            result['validated'] = False
+                            result['multiway_approx'] = True
         elif spot['spot'] == 'first_in':
             import sizing
             # O nó vs_limp do pack é BB vs limp do SB (batalha de blinds). Só roteia
             # nesse caso HU: hero no BB, SB completou (~1bb) e NENHUM limper fora do
             # blind. Limps de outras posições não têm nó validado -> first_in (iso
             # aproximado), e não o nó SB×BB errado.
-            if (base['hero_position'] == 'BB' and _sb_limped(table_state)
-                    and sizing.count_limpers(table_state) == 0):
+            # BB enfrentando limp. DEEP: só o SB-limp HU puro usa o nó vs_limp (como
+            # antes — limp de outra posição deep segue first_in/iso). ZONA DE SHOVE
+            # (<20bb): QUALQUER limp (SB ou outra posição) usa a range vs_limp (nó BB-vs-
+            # limp, vs=(), independe de quem limpou) — senão caía em open_shove|BB
+            # (inexistente, o BB nunca "abre") e ABSTINHA. Eduardo 19/11: cobrir o
+            # CONTEXTO da zona de shove (qualquer mão/limp no BB tem decisão).
+            _sb_hu_limp = _sb_limped(table_state) and sizing.count_limpers(table_state) == 0
+            _short = isinstance(base.get('stack_bb'), (int, float)) and base['stack_bb'] < SHOVE_ZONE_MAX_BB
+            _short_any_limp = _short and (_sb_limped(table_state) or sizing.count_limpers(table_state) >= 1)
+            if base['hero_position'] == 'BB' and (_sb_hu_limp or _short_any_limp):
                 result = self.advise(spot='vs_limp', vs=(), **base, **kwargs)
-                if (isinstance(result, dict) and result.get('status') == 'ABSTAIN'
-                        and result.get('reason') == 'NO_VALIDATED_NODE_FOR_CONTEXT'):
-                    result = self.advise_first_in(**base, **kwargs)
+                _rr = result if isinstance(result, dict) else {}
+                # vs_limp só tem nó em 25bb. A batalha BB vs limp do SB é estável o
+                # suficiente p/ usar a range de 25bb em QUALQUER stack (aproximacao
+                # rotulada) sempre que o stack real não deu decisao validada (abstém OU
+                # borra não-validado) -> sempre uma decisao (iso/check/fold), nunca buraco.
+                if _rr.get('status') != 'ADVICE' or _rr.get('validated') is not True:
+                    r25 = self.advise(spot='vs_limp', vs=(), **dict(base, stack_bb=25), **kwargs)
+                    if isinstance(r25, dict) and r25.get('status') in ('ADVICE', 'OUT_OF_RANGE'):
+                        r25.setdefault('caveats', []).append('VS_LIMP_RANGE25BB_APROX')
+                        result = r25
+                    elif _rr.get('status') != 'ABSTAIN':
+                        pass                              # mantém o borrow (já é uma decisao)
+                    else:
+                        result = self.advise_first_in(**base, **kwargs)
                 elif isinstance(result, dict):
                     result.setdefault('caveats', []).append('VS_LIMP_SB_BLIND_BATTLE')
+                # DEEP (>=20bb) no blind war BB vs limp: shove é SÓ <20bb. all_in aqui = REGIME
+                # ERRADO (empresta a range curta de 25bb -> vira jam de 40bb com K6o). E o ATAQUE
+                # usa régua SÓLIDA (CO via _iso_worthy), não a range larga do blind-battle:
+                # worthy -> raise (sizing.recommend_size dá 3X/4X); senão CHECK de graça (é o BB).
+                # Eduardo 23/11: apertar o blind war + matar o jam deep.
+                if (not _short and isinstance(result, dict)
+                        and result.get('recommended') in ('all_in', 'raise')):
+                    if self._iso_worthy(hand_key(hero_cards), result.get('stack_bucket'),
+                                        mode=kwargs.get('mode', 'chip_ev'),
+                                        stage=kwargs.get('stage', 'mid'),
+                                        players=kwargs.get('players', 9),
+                                        position=base['hero_position'], strict=True):
+                        # Isolar o complete do SB = 1 limper (count_limpers exclui blinds) -> 3X
+                        # pela regra do Eduardo (1 limper=3X). Vale p/ all_in->raise e raise->raise.
+                        result['recommended'] = 'raise'
+                        result['sizing'] = sizing.recommend_size(
+                            'raise', hero_stack_bb=base.get('stack_bb'), limpers=1)
+                        result.setdefault('caveats', []).append('BLIND_WAR_DEEP_ISO_SOLIDO')
+                    else:
+                        result['recommended'] = 'check'
+                        result['sizing'] = dict(action='check', size_bb=0.0, basis='check', heuristic=False)
+                        result.setdefault('caveats', []).append('BLIND_WAR_DEEP_TRASH_CHECK')
+                    result['status'] = 'ADVICE'
             else:
                 result = self.advise_first_in(**base, **kwargs)
+        elif spot['spot'] == 'threebet_cold':
+            # Enfrenta open + 3bet COLD, sem nó validado. ZONA DE SHOVE = jam/fold
+            # TIGHT-SAFE (QQ+/AK): se o 3bet é all-in -> CALL-off (premium paga); senão
+            # 4bet-JAM; resto FOLD. Decisão conservadora de ICM, nunca abstém no short
+            # (Eduardo 19/11: cobrir o contexto). DEEP sem nó -> segue abstendo.
+            if isinstance(_stk, (int, float)) and _stk < SHOVE_ZONE_MAX_BB:
+                try:
+                    hand = hand_key(hero_cards)
+                except Blocked as exc:
+                    return self._abstain(str(exc))
+                _jam = hand in {'AA', 'KK', 'QQ', 'AKs', 'AKo'}
+                if _jam and spot.get('allin'):
+                    rec, flags = 'call', dict(safety_premium=True)      # call-off vs shove
+                elif _jam:
+                    rec, flags = 'all_in', dict(safety_premium_shove=True)  # 4bet-jam
+                else:
+                    rec, flags = 'fold', {}
+                result = dict(status='ADVICE', recommended=rec, validated=False,
+                              spot='threebet_cold', hero_position=base['hero_position'],
+                              hand=hand, hero_cards=list(hero_cards), stack_bb=base.get('stack_bb'),
+                              caveats=['COLD_3BET_PUSHFOLD_TIGHT_SAFE'], **flags)
+            else:
+                return self._abstain(spot.get('reason', 'MULTIWAY_OR_3BET_NOT_COVERED'))
         else:
             return self._abstain(spot.get('reason', 'SPOT_NOT_COVERED'))
+        # ÚLTIMO RECURSO — CAMADA NASH SOMBRA: o fluxo normal ABSTEVE num spot de ZONA
+        # DE SHOVE (tipicamente spread enviesado curtos_ini/curtos_fim ou PKO curto sem
+        # nó). Re-tenta o spot de PUSH/FOLD correspondente com a sombra Nash LIGADA
+        # (reusa a tabela Nash de um contexto vizinho — mesmo modo/stage spread 'iguais',
+        # senão chip-EV — marcada validated=False). Só substitui uma ABSTENÇÃO, então
+        # NUNCA rebaixa um nó validado/decisão melhor. Conselho/sombra até homologar.
+        if (isinstance(result, dict) and result.get('status') == 'ABSTAIN'
+                and isinstance(_stk, (int, float)) and _stk < SHOVE_ZONE_MAX_BB):
+            # ZONA DE SHOVE = regime PUSH/FOLD: NUNCA abster (Eduardo 19/11, contexto do
+            # range inteiro). Enfrenta um raise -> 3bet-shove (resteal/squeeze); senão
+            # (first-in OU pote só limpado) -> open-shove. A Nash-sombra cobre o CONTEXTO
+            # (empresta bucket vizinho), então vale p/ QUALQUER mão naquele spot.
+            _opener = spot.get('opener')
+            if _opener:
+                _b = dict(base, stack_bb=max(_stk, 12))   # 3bet_shove mora em 12-25bb
+                _sh = self.advise(spot='3bet_shove', vs=(_opener,), **_b, **kwargs,
+                                  _nash_shadow_ok=True)
+                if isinstance(_sh, dict) and _sh.get('status') == 'ADVICE':
+                    if spot.get('callers'):
+                        _sh.setdefault('caveats', []).append('SQUEEZE_VIA_3BET_SHOVE_%dC' % spot['callers'])
+                    _sh.setdefault('caveats', []).append('AGGRESSOR_INFERRED_%s' % _opener)
+                    if _stk < 12:
+                        _sh.setdefault('caveats', []).append('JAM_CURTO_SUB12BB_RANGE12BB_TIGHTER_SAFE')
+            else:
+                _sh = self.advise(spot='open_shove', vs=(), **base, **kwargs, _nash_shadow_ok=True)
+                if isinstance(_sh, dict) and _sh.get('status') == 'ADVICE' and spot.get('limpers'):
+                    _sh.setdefault('caveats', []).append('SHOVE_OVER_LIMPERS')
+            if isinstance(_sh, dict) and _sh.get('status') == 'ADVICE':
+                result = _sh
         if isinstance(result, dict) and result.get('status') in ('ADVICE', 'OUT_OF_RANGE'):
             import sizing
             # The pack is 9-max only; a shorter table uses it as a reference. Flag it
@@ -478,9 +1428,82 @@ class PreflopAdvisor:
                 result.setdefault('caveats', []).append('TABLE_%dHANDED_USING_9MAX_REF' % occupied)
             if spot['spot'] == 'first_in' and sizing.count_limpers(table_state) > 0:
                 result.setdefault('caveats', []).append('LIMPERS_PRESENT_OPEN_AS_ISO_APPROX')
+                # CAP DO ISO: com limper, NÃO abrir a range larga de blind-battle (SB
+                # 91%). Só iso VALOR (mão que abriria de UTG); senão FOLD. Mata o
+                # iso de lixo (ex.: 85o SB com BTN limpando).
+                if (result.get('recommended') == 'raise'
+                        and not self._iso_worthy(result.get('hand'), result.get('stack_bucket'),
+                                                 mode=kwargs.get('mode', 'chip_ev'),
+                                                 stage=kwargs.get('stage', 'mid'),
+                                                 players=kwargs.get('players', 9),
+                                                 position=base.get('hero_position', 'UTG'))):
+                    result['recommended'] = 'fold'
+                    result['status'] = 'ADVICE'
+                    result.setdefault('caveats', []).append('ISO_CAP_FOLD_FORA_DO_RANGE_TIGHT')
+                # UPGRADE DO PASSIVO (Padrão de Jogo, Eduardo 23/11): com limper, mão ISO-WORTHY
+                # NUNCA completa/limpa passivo (bug ao vivo: AQo no SB vs limpers virou limp/flat).
+                # Vira ISO-RAISE (deep) ou SHOVE (curto). Régua = _iso_worthy (range de open do BTN
+                # p/ SB/BB — a mesma do cap). Size do iso = o nó REAL de open do BTN (sem inventar).
+                # SHADOW (validated=False) até homologar ao vivo.
+                elif (result.get('recommended') in ('limp', 'call', 'check')
+                      and self._iso_worthy(result.get('hand'), result.get('stack_bucket'),
+                                           mode=kwargs.get('mode', 'chip_ev'),
+                                           stage=kwargs.get('stage', 'mid'),
+                                           players=kwargs.get('players', 9),
+                                           position=base.get('hero_position', 'UTG'),
+                                           strict=True)):   # na DÚVIDA (sem nó) NÃO sobe trash
+                    _stk = base.get('stack_bb')
+                    if isinstance(_stk, (int, float)) and _stk < SHOVE_ZONE_MAX_BB:
+                        result['recommended'] = 'all_in'
+                        result['sizing'] = dict(size_bb=round(_stk, 1),
+                                                basis='iso-vs-limpers shove', heuristic=True)
+                        result.setdefault('caveats', []).append('ISO_VS_LIMPERS_SHOVE_CURTO')
+                    else:
+                        _ref = self.advise(spot='open_raise', vs=(),
+                                           **dict(base, hero_position='BTN'), **kwargs)
+                        result['recommended'] = 'raise'
+                        if isinstance(_ref, dict) and _ref.get('sizing'):
+                            result['sizing'] = _ref['sizing']   # size do nó real do BTN (autoridade)
+                        result.setdefault('caveats', []).append('ISO_VS_LIMPERS_UPGRADE_DO_PASSIVO')
+                    result['status'] = 'ADVICE'
+                    result['validated'] = False
+                # UNDER 20bb vs limpers (Eduardo 23/11): o raise do iso vira SHOVE (nada de mini-raise;
+                # o fold já foi tratado pelo cap). O SIZE 3X/4X do iso DEEP é feito no sizing.py
+                # (recommend_size: +1bb/limper, cap 4X) -> não precisa setar size aqui.
+                if (result.get('recommended') == 'raise'
+                        and isinstance(base.get('stack_bb'), (int, float))
+                        and base['stack_bb'] < SHOVE_ZONE_MAX_BB):
+                    result['recommended'] = 'all_in'
+                    result['sizing'] = dict(size_bb=round(base['stack_bb'], 1),
+                                            basis='iso-vs-limpers shove <20bb', heuristic=True)
+                    result.setdefault('caveats', []).append('ISO_VS_LIMPERS_SHOVE_SUB20')
+                    result['status'] = 'ADVICE'
+            # EXPLOIT PRÉ-FLOP (delta por cima do GTO, bounded): usa o perfil do OPENER
+            # (HUD/DB, só com leitura CONFIÁVEL). ANTES do sizing -> o 3bet-blefe sai com
+            # size. Só vs_open por ora (o opener é o vilão inequívoco); steal (perfil dos
+            # blinds) fica p/ a próxima leva.
+            _hud = table_state.get('hud') or {}
+
+            def _stats_of(_pos):
+                _s = next((ss for ss, pp in positions.items() if pp == _pos), None)
+                _h = _hud.get(_s) if _s else None
+                return _h['stats'] if (_h and _h.get('confidence') == 'high') else None
+            if result.get('status') == 'ADVICE' and spot['spot'] == 'vs_open':
+                _vstats = _stats_of(spot.get('opener'))
+                if _vstats:
+                    result = preflop_exploit.exploit_preflop(result, _vstats, spot='vs_open')
+            elif (result.get('status') == 'ADVICE' and spot['spot'] in ('first_in', 'open_raise')
+                  and positions.get('hero') in preflop_exploit.LATE):
+                # STEAL: perfil dos BLINDS que defendem (SB/BB), só os com leitura confiável.
+                _defs = [s for s in (_stats_of('SB'), _stats_of('BB')) if s]
+                if _defs:
+                    result = preflop_exploit.exploit_preflop(
+                        result, None, spot='first_in', defenders=_defs,
+                        hero_position=positions.get('hero'))
             if result.get('recommended'):
                 result['sizing'] = sizing.size_from_reading(result['recommended'], table_state,
-                                                            positions['hero'], spot.get('opener'))
+                                                            positions['hero'], spot.get('opener'),
+                                                            stage=kwargs.get('stage'))
         return result
 
     def _shove_range_node(self, spot, shover, vs_tuple, bucket):
@@ -510,7 +1533,8 @@ class PreflopAdvisor:
 
     def advise_call_off(self, *, hero_cards, hero_position, villain_position, stack_bb,
                         to_call_bb, pot_bb, mode='chip_ev', stage='mid', shove_spot='3bet_shove',
-                        villain_vs=None, bounty_bb=None, villain_stats=None, iters=6000, seed=0):
+                        villain_vs=None, bounty_bb=None, villain_stats=None,
+                        villain_stack_bb=None, table_stacks=None, iters=6000, seed=0):
         """Call-off SINTETIZADO por equity quando falta o nó validado da decisão.
 
         Pago se a equity da minha mão contra o range de shove (Nash) do vilão >=
@@ -569,7 +1593,17 @@ class PreflopAdvisor:
                 self._equity_cache[ekey] = eq
         if eq is None:
             return self._abstain('EQUITY_UNAVAILABLE')
-        rp = _icm_risk_premium(mode, stage, to_call_bb, stack_bb)
+        # RP: com o stack do VILÃO conhecido, usa o modelo de RISK ADVANTAGE (quem cobre
+        # tem RP menor — icm_rp, calibrado pela skill ICM); senão, o proxy antigo por fase.
+        risk_adv = None
+        if villain_stack_bb is not None and mode in ('icm', 'pko_icm'):
+            import icm_rp
+            rp = icm_rp.risk_premium(mode, stage, hero_stack=stack_bb,
+                                     villain_stack=villain_stack_bb, to_call_bb=to_call_bb,
+                                     table_stacks=table_stacks)
+            risk_adv = icm_rp.risk_advantage(stage, stack_bb, villain_stack_bb)
+        else:
+            rp = _icm_risk_premium(mode, stage, to_call_bb, stack_bb)
         # Exploit do HUD: o shover loose-agressivo shova mais largo que o Nash -> paga
         # mais largo (delta −); passivo/nit shova valor -> folda mais (+). Bounded.
         profile = classify_villain(villain_stats) if villain_stats else None
@@ -582,6 +1616,10 @@ class PreflopAdvisor:
             caveats.append('SHORT_STACK_3BET_TREATED_AS_SHOVE')
         if rp > 0:
             caveats.append('ICM_RP_APPROX_BY_STAGE_%s_%dPCT' % (stage, round(rp * 100)))
+        if risk_adv is not None:
+            caveats.append('ICM_RISK_ADV_%+dPCT_%s' % (
+                round(risk_adv['advantage'] * 100),
+                'HERO_COBRE_PRESSIONA' if risk_adv['advantage'] > 0 else 'HERO_COBERTO_APERTA'))
         if bounty > 0:
             caveats += ['PKO_BOUNTY_OVERLAY_%gBB' % bounty, 'BOUNTY_VALUE_IS_INPUT_NOT_READ',
                         'HERO_COVERS_SHOVE_CAN_ELIMINATE']
@@ -593,7 +1631,7 @@ class PreflopAdvisor:
                     hand=hand, recommended=action, mix=[dict(action=action, frequency=1.0)],
                     equity=round(eq, 4), required_equity=round(req, 4),
                     required_equity_effective=round(req_eff, 4), bounty_bb=round(bounty, 2),
-                    risk_premium=rp, required_equity_icm=round(req_icm, 4),
+                    risk_premium=rp, risk_advantage=risk_adv, required_equity_icm=round(req_icm, 4),
                     villain_shove_node=node['id'], villain_position=villain_position,
                     stack_bb=stack_bb, stack_bucket=bucket, exploratory=True,
                     execution_allowed=False, validated=False, caveats=caveats)
@@ -603,8 +1641,9 @@ class PreflopAdvisor:
         if bucket != stack_bb:
             out.append('STACK_BUCKETED_%s_TO_%sBB' % (stack_bb, bucket))
         if isinstance(stack_bb, (int, float)) and stack_bb > self.STACK_BUCKETS[-1]:
-            # Beyond the deepest solved stack: the 100bb range is a reference, not a solution.
-            out.append('STACK_ABOVE_SOLVED_DEPTH_100BB_REFERENCE')
+            # Beyond the deepest solved stack: the top-bucket range is a reference,
+            # not a solution. Report the ACTUAL top bucket so the flag never lies.
+            out.append('STACK_ABOVE_SOLVED_DEPTH_%sBB_REFERENCE' % self.STACK_BUCKETS[-1])
         if players != 9:
             out.append('TABLE_IS_9MAX_REFERENCE')
         if mode != 'chip_ev':

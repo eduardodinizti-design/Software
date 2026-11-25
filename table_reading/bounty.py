@@ -111,12 +111,17 @@ def read_seat_bounties(crop, *, seats=None, profile=None):
     Abstém no assento ilegível. Devolve {seat: {value, unit, confidence, raw}}."""
     from .seat_layout import SEAT_ANCHORS, bounty_box
     out = {}
-    if profile is not None:
-        for seat, roi in profile.items():
-            r = read_bounty(crop, roi=roi)
-            out[seat] = dict(value=r['value'], unit=r['unit'], confidence=r['confidence'], raw=r['raw'])
-        return out
     h, w = crop.shape[:2]
+    if profile is not None:
+        # Mesma robustez do caminho automático: jitter + votação + whitelist + upscale do
+        # pill (#A3). Antes o profile fazia leitura ÚNICA (read_bounty, sem whitelist/
+        # jitter), e num backend OCR frágil o dígito fino das centenas sumia (135->35,
+        # confiante-errado). Agora lê 135 ou ABSTÉM, nunca um número errado.
+        for seat, roi in profile.items():
+            fx0, fy0, fx1, fy1 = roi
+            box = (int(fx0 * w), int(fy0 * h), int(fx1 * w), int(fy1 * h))
+            out[seat] = _vote_seat_bounty(crop, w, h, box)
+        return out
     for seat in (seats if seats is not None else SEAT_ANCHORS):
         out[seat] = _vote_seat_bounty(crop, w, h, bounty_box(w, h, seat))
     return out

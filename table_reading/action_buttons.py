@@ -10,8 +10,20 @@ from .button_templates import read_static_label,read_exact_call
 
 def parse_label(text):
     text=' '.join(text.strip().split())
-    if text.casefold() in {'f/c','fold/check','check/fold'}:
+    low=text.casefold()
+    if low in {'f/c','fold/check','check/fold'}:
         return dict(kind='PRESELECT',action=None,amount=None,unit=None)
+    # "Pagar qualquer" / "Call Any" = checkbox de PRE-ACAO (pagar QUALQUER aposta
+    # futura); so aparece junto do "F/C" e NUNCA e botao da vez real -> PRESELECT.
+    low_ns=low.replace(' ','')
+    if 'callany' in low_ns or 'pagarqualquer' in low_ns or 'pagartudo' in low_ns:
+        return dict(kind='PRESELECT',action=None,amount=None,unit=None,preaction='CALL_ANY')
+    # "Pagar" (pagar/pay) = CALL na VEZ REAL. Ex. classico: short-stack enfrentando
+    # all-in mostra SO 2 botoes [Fold | Pagar] -> "Pagar" paga (call), decidido pelo
+    # range. Na PRE-ACAO o "Pagar" vem junto do "F/C", que marca a linha inteira como
+    # PRESELECTION_ROW (abaixo) e nula TODAS as acoes -> ali o Pagar nunca e clicado.
+    if 'pagar' in low:
+        return dict(kind='ACTION_LABEL',action='CALL',amount=None,unit=None)
     match=re.fullmatch(r'(Fold|Check|Call|Bet|Raise)(?:\s+(\d+(?:[.,]\d+)?)\s*(BB)?)?',text,re.I)
     if not match:return None
     action=match[1].upper()
@@ -36,10 +48,14 @@ def read_action_buttons(crop, *, _ocr=None):
     boxes=[]
     for contour in contours:
         x,y,bw,bh=cv2.boundingRect(contour)
-        if .22*w<=bw<=.38*w and .025*h<=bh<=.08*h and cv2.contourArea(contour)/(bw*bh)>.55:
+        # Largura: 3 botoes ~0.28w cada; no STACK CURTO so ha 2 botoes (Fold|Pagar/
+        # Call) e cada um fica MAIS LARGO (~0.45w). Aceitar ate ~0.49w cobre os dois
+        # layouts (antes o teto 0.38w descartava a linha de 2 botoes -> hero curto
+        # enfrentando all-in nao era reconhecido e o K6 nao pagava).
+        if .22*w<=bw<=.49*w and .025*h<=bh<=.08*h and cv2.contourArea(contour)/(bw*bh)>.55:
             boxes.append((x,y,bw,bh))
     boxes.sort()
-    if len(boxes)!=3:return result
+    if len(boxes) not in (2,3):return result       # vez real: 2 (short all-in) ou 3 botoes
     if max(b[1] for b in boxes)-min(b[1] for b in boxes)>.015*h:return result
     if any(a[0]+a[2]>=b[0] for a,b in zip(boxes,boxes[1:])):return result
     result['status']='EXPERIMENTAL_BUTTON_ROW'

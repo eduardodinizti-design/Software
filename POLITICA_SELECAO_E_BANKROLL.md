@@ -5,7 +5,7 @@ Versão: 0.1 · Natureza: política estratégica (camada de DECISÃO, não de ex
 > escopo** (seleção por EV/field/estrutura e bankroll). Ela **decide o quê/quando**;
 > a spec de inscrição governa **como clicar com segurança** (supervisionado).
 >
-> **O bot não executa inscrição.** Não há registrador no código. Tudo abaixo é
+> **O Henrique não executa inscrição.** Não há registrador no código. Tudo abaixo é
 > **recomendação para o operador (você) executar manualmente**, de forma
 > supervisionada. Valores absolutos em moeda/fichas são preenchidos por você;
 > esta política trabalha em **unidades de buy-in (BI)** e **% da banca**, nunca
@@ -28,18 +28,18 @@ orçamento diário de 10%) existem para compensar. Rever a cada subida/descida d
 
 ---
 
-## 1. ENCAIXE COM A CAPACIDADE ATUAL DO BOT
-O bot é um **conselheiro pré-flop** (observação, sem pós-flop, sem execução), com
+## 1. ENCAIXE COM A CAPACIDADE ATUAL DO HENRIQUE
+O Henrique é um **conselheiro pré-flop** (observação, sem pós-flop, sem execução), com
 leitura validada na Evolution e **consciência de torneio (ICM/PKO/MKO) ativa**.
 Logo o edge é **maior onde o pré-flop decide** (fases média/curta, push-fold,
 bolha/ITM) e **menor em jogo deep pós-flop**.
 
-| Modalidade | Fit com o bot hoje | Observação |
+| Modalidade | Fit com o Henrique hoje | Observação |
 |---|---|---|
 | **Freezeout** | ✅ Melhor | Menor variância; edge pré-flop + ICM compõem bem. |
-| **MKO (Mystery)** | ✅ Bom | Vanilla até o ITM (bot trata o timing); bounty só no dinheiro. |
+| **MKO (Mystery)** | ✅ Bom | Vanilla até o ITM (Henrique trata o timing); bounty só no dinheiro. |
 | **PKO** | ⚠️ OK com banca | Motor PKO ajuda, mas variância alta → exige ≥150 BI. |
-| **Rebuy / Add-on** | 🔴 Cautela | **Bot não tem lógica de rebuy nem pós-flop.** Ver §4. |
+| **Rebuy / Add-on** | 🔴 Cautela | **Henrique não tem lógica de rebuy nem pós-flop.** Ver §4. |
 
 ---
 
@@ -79,7 +79,7 @@ superior (≥150 BI); turbo-PKO só ≥200 BI.**
    piloto de *inscrição* a 1 compromisso; isto é a meta operacional de jogo.)
 3. **Sem stop-loss por perda intradiária** em MTT (resultado é "lumpy"): o
    **orçamento diário É o controle**. Stop de disciplina: se notar erro de
-   leitura ou se você desviar do conselho do bot, **parar**.
+   leitura ou se você desviar do conselho do Henrique, **parar**.
 4. **Horário-limite de registro:** definir um relógio de corte diário para não
    iniciar torneio que você não termina na sessão.
 5. **Revisão semanal:** reavaliar stake vs. banca e as faixas da §2.
@@ -87,8 +87,8 @@ superior (≥150 BI); turbo-PKO só ≥200 BI.**
 ---
 
 ## 4. REBUY / ADD-ON (regra decidida pelo operador)
-O bot ainda não tem pós-flop; a decisão de rebuy é uma **regra fixa**, não um
-julgamento do bot. Decisão do Eduardo (08/11/2026) para a versão final:
+O Henrique ainda não tem pós-flop; a decisão de rebuy é uma **regra fixa**, não um
+julgamento do Henrique. Decisão do Eduardo (08/11/2026) para a versão final:
 
 - **Rebuy liberado SOMENTE em PKO.** Freezeout/MKO: sem rebuy (são o default).
 - **Gatilho:** fazer rebuy **quando o stack cair a ≤ 40 BB** (re-entrada/rebuy
@@ -109,7 +109,7 @@ true, trigger_bb: 40}`) no contrato da §7, consumido pelo futuro operador.
   mais cedo, menos fadiga) e dentro do teto de simultâneas (§3.2).
 - **No início ou late-reg cedo** para pegar estrutura — o edge pré-flop compõe
   em mais mãos.
-- **Late-reg curto (entrar em ~15–20 BB) é aceitável/bom pro bot**: vira
+- **Late-reg curto (entrar em ~15–20 BB) é aceitável/bom pro Henrique**: vira
   push-fold, a força dele. Evitar reg deep onde o pós-flop pesa.
 - **Corte duro:** nada depois do late-reg fechar; **não perseguir** por nome
   parecido, prêmio maior ou buy-in baixo (igual à spec, §4).
@@ -170,11 +170,11 @@ BLOQUEADO, conforme a spec de inscrição.
 ---
 
 ## 8. VISÃO FINAL — OPERADOR AUTÔNOMO (roadmap por fases)
-Objetivo (Eduardo): iniciar o bot → ele lê a **grade** (pré-estabelecida antes do
+Objetivo (Eduardo): iniciar o Henrique → ele lê a **grade** (pré-estabelecida antes do
 grind nas primeiras operações reais) → **registra sozinho** conforme as regras
 (buy-in máx do dia, nº de torneios, rebuy PKO≤40bb, horário/torneio limite) →
 **abre as mesas registradas** e **opera** → com **PAUSA/TAKEOVER** a qualquer
-momento (você assume ao vivo; depois reativa ou desabilita o bot).
+momento (você assume ao vivo; depois reativa ou desabilita o Henrique).
 
 Construção incremental, por risco crescente (cada fase valida antes da próxima):
 

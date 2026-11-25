@@ -1,0 +1,75 @@
+# GERADO por make_dataset_yaml.py a partir de classes.py — NÃO editar à mão.
+# Estrutura esperada (preenchida no F1):
+#   vision_yolo/data/images/{train,val}/*.png
+#   vision_yolo/data/labels/{train,val}/*.txt  (YOLO: cls cx cy w h normalizados)
+path: data
+train: images/train
+val: images/val
+
+names:
+  0: 2c
+  1: 2d
+  2: 2h
+  3: 2s
+  4: 3c
+  5: 3d
+  6: 3h
+  7: 3s
+  8: 4c
+  9: 4d
+  10: 4h
+  11: 4s
+  12: 5c
+  13: 5d
+  14: 5h
+  15: 5s
+  16: 6c
+  17: 6d
+  18: 6h
+  19: 6s
+  20: 7c
+  21: 7d
+  22: 7h
+  23: 7s
+  24: 8c
+  25: 8d
+  26: 8h
+  27: 8s
+  28: 9c
+  29: 9d
+  30: 9h
+  31: 9s
+  32: Tc
+  33: Td
+  34: Th
+  35: Ts
+  36: Jc
+  37: Jd
+  38: Jh
+  39: Js
+  40: Qc
+  41: Qd
+  42: Qh
+  43: Qs
+  44: Kc
+  45: Kd
+  46: Kh
+  47: Ks
+  48: Ac
+  49: Ad
+  50: Ah
+  51: As
+  52: card_back
+  53: btn_fold
+  54: btn_check
+  55: btn_call
+  56: btn_raise
+  57: btn_allin
+  58: btn_confirm
+  59: dealer_button
+  60: hero_indicator
+  61: chip_stack
+  62: bet_chips
+  63: pot
+
+# nc (número de classes) = 64

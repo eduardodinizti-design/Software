@@ -82,7 +82,7 @@ def eval7(cards):
 
     if quads:
         q = quads[0]
-        kicker = max(r for r in ranks if r != q)
+        kicker = max((r for r in ranks if r != q), default=0)
         return (7, q, kicker)
     if trips and (len(trips) >= 2 or pairs):          # full house
         t = trips[0]
@@ -100,7 +100,7 @@ def eval7(cards):
         return (3, t, tuple(kick))
     if len(pairs) >= 2:
         hi, lo = pairs[0], pairs[1]
-        kicker = max(r for r in ranks if r != hi and r != lo)
+        kicker = max((r for r in ranks if r != hi and r != lo), default=0)
         return (2, hi, lo, kicker)
     if pairs:
         p = pairs[0]

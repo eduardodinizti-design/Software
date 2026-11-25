@@ -27,9 +27,17 @@ class EvaluateTests(unittest.TestCase):
         d = evaluate_card(_card(), SessionConfig(), club='Karekas')  # no currency/caps
         self.assertIn('MISSING_FINANCIAL_CONFIG', d['reasons'])
 
-    def test_club_not_authorized(self):
-        d = evaluate_card(_card(), _ready_cfg(), club='OutroClube')
-        self.assertIn('CLUB_NOT_AUTHORIZED', d['reasons'])
+    def test_all_clubs_allowed_by_default(self):
+        # Novo padrao: clubs_authorized vazio = TODOS os clubes liberados (a selecao e a grade).
+        for club in ('AK Ahakha club2', 'Karekas', 'Veneza', 'QualquerClube', None):
+            d = evaluate_card(_card(), _ready_cfg(), club=club)
+            self.assertNotIn('CLUB_NOT_AUTHORIZED', d['reasons'])
+
+    def test_club_blocked_only_when_a_whitelist_is_set(self):
+        # Mecanismo preservado: se o operador FIXA uma lista de clubes, os de fora bloqueiam.
+        cfg = _ready_cfg(clubs_authorized=('Karekas', 'Veneza'))
+        self.assertIn('CLUB_NOT_AUTHORIZED', evaluate_card(_card(), cfg, club='OutroClube')['reasons'])
+        self.assertNotIn('CLUB_NOT_AUTHORIZED', evaluate_card(_card(), cfg, club='Karekas')['reasons'])
 
     def test_preset_grade_filters(self):
         d = evaluate_card(_card('MINI FREEZE'), _ready_cfg(grade_preset=('SUPER DEEP',)), club='Karekas')
@@ -108,8 +116,11 @@ class ValidationTests(unittest.TestCase):
         self.assertIn('REGISTRATION_TIME_UNKNOWN',
                       evaluate_card(_card(), cfg, club='Karekas', now_hhmm='99:99')['reasons'])
 
-    def test_unknown_club_is_blocked(self):
-        self.assertIn('CLUB_NOT_AUTHORIZED', evaluate_card(_card(), _ready_cfg(), club=None)['reasons'])
+    def test_club_none_blocked_only_when_whitelist_set(self):
+        # Com lista fixada, clube desconhecido (None) bloqueia; sem lista (padrao), nao.
+        cfg = _ready_cfg(clubs_authorized=('Karekas',))
+        self.assertIn('CLUB_NOT_AUTHORIZED', evaluate_card(_card(), cfg, club=None)['reasons'])
+        self.assertNotIn('CLUB_NOT_AUTHORIZED', evaluate_card(_card(), _ready_cfg(), club=None)['reasons'])
 
     def test_confirm_moves_reserve_without_double_counting(self):
         st = SessionState(committed=[{'name': 'A', 'buyin': 5}])

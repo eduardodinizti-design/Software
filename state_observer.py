@@ -60,7 +60,7 @@ class StateObserver:
     def __init__(self):
         self.tracker = HandTracker()
         self._prev = {}          # table_key -> visão anterior
-        self._last_ref = {}      # table_key -> ultimo table_ref visto
+        self._last_ref = {}      # table_key -> table_ref ACEITO (estável; ver _stable_ref)
         self._recon = {}         # table_key -> HandReconciler da mão atual (Camada B)
 
     def observe(self, result, *, table_key):
@@ -92,12 +92,21 @@ class StateObserver:
         reconcile = dict(street=recon.street(), step=step,
                          total_events=len(recon.events))
 
+        # table_ref é o ID da mesa (lido de um watermark minúsculo no feltro, baixo
+        # contraste -> OCR oscila). É INVARIANTE dentro da mesma mão, então uma troca
+        # na MESMA mão é misread (segura o aceito); só uma troca que coincide com mão
+        # nova é possível troca real de mesa/torneio (sinaliza). Mata o flicker
+        # ...136650<->...135650 visto ao vivo sem latência de debounce.
+        same_hand = event['event'] in ('same_hand', 'pending_id', 'suspect_id')
+        stable_ref, ref_changed, ref_prev = self._stable_ref(table_key, ref, same_hand)
+
         fields = self._fields(result, state)
-        pending = self._pending(event, result, state, fields, table_key, ref, step)
+        pending = self._pending(event, result, state, fields,
+                                (ref_prev, stable_ref) if ref_changed else None, step)
         view = dict(
             is_table=True,
-            table=dict(key=table_key, ref=ref,
-                       ref_confirmed=ref is not None,
+            table=dict(key=table_key, ref=stable_ref,
+                       ref_confirmed=stable_ref is not None,
                        number=cur.get('hand_number')),
             hand=dict(event=event['event'], number=event.get('hand_number'),
                       id=event.get('hand_id'), frame=event.get('frame')),
@@ -110,9 +119,24 @@ class StateObserver:
         )
         view['changed'] = self._changed(table_key, view)
         self._prev[table_key] = view
-        if ref is not None:
-            self._last_ref[table_key] = ref
         return view
+
+    # ---- table_ref estável: invariante na mão, troca só com mão nova ----
+    def _stable_ref(self, table_key, ref, same_hand):
+        """Devolve (ref_estável, mudou, ref_anterior). Segura o ref aceito quando o
+        frame lê None (ilegível) ou quando um ref diferente aparece na MESMA mão
+        (misread do watermark). Aceita e sinaliza um ref novo só quando NÃO é a
+        mesma mão (troca de mesa/torneio coincide com mão nova)."""
+        acc = self._last_ref.get(table_key)
+        if ref is None:
+            return acc, False, None                 # ilegível: segura o aceito
+        if acc is None or ref == acc:
+            self._last_ref[table_key] = ref
+            return ref, False, None
+        if same_hand:
+            return acc, False, None                 # invariante na mão: misread
+        self._last_ref[table_key] = ref             # mão nova + ref novo: troca real
+        return ref, True, acc
 
     # ---- montagem dos campos (proveniência por campo) -------------------
     def _fields(self, result, state):
@@ -156,17 +180,18 @@ class StateObserver:
                     bets_bb=(round(sum(vals), 2) if vals else None))
 
     # ---- por que pendente (ausência NUNCA inventada) --------------------
-    def _pending(self, event, result, state, fields, table_key, ref, step=()):
+    def _pending(self, event, result, state, fields, ref_change, step=()):
         pending = []
         ev = event['event']
         if ev == 'pending_id':
             pending.append('HAND_ID_PENDING: ID ilegivel; mantida a mao atual')
         elif ev == 'suspect_id':
             pending.append('HAND_ID_REGREDIU: ignorado (ids so crescem)')
-        last_ref = self._last_ref.get(table_key)
-        if ref is not None and last_ref is not None and ref != last_ref:
+        # Troca de table_ref já filtrada por _stable_ref: só chega aqui uma mudança
+        # legítima (ref novo com mão nova), não o flicker do watermark na mesma mão.
+        if ref_change is not None:
             pending.append('TABLE_REF_MUDOU: possivel troca de mesa/torneio (%s->%s)'
-                           % (last_ref, ref))
+                           % ref_change)
         # Board com candidatos de carta mas não confirmado = ilegível (pendente);
         # centro vazio é pré-flop (não pendente).
         board = result.get('board')

@@ -110,12 +110,36 @@ class TrackerTests(unittest.TestCase):
         self.assertEqual(ctx['villain_stack'], 25.0)
 
     def test_unreadable_id_suspends_context(self):
-        # #2/#4: hand_key ilegivel (None) nao apaga o contexto da mao em curso
+        # #2/#4/#A5: hand_key ilegivel (None) nao apaga a memoria da mao em curso, mas
+        # marca o contexto como PENDENTE (nao deve ser aplicado como confirmado).
         t = PreflopAggressorTracker()
         t.update(table_key='t', hand_key=1, table_state=HU_VS_OPEN, has_board=False)
         ctx = t.update(table_key='t', hand_key=None,
                        table_state=mk({'hero': 'BB'}, [], {'hero'}), has_board=True)
-        self.assertEqual(ctx['aggressor'], 'BTN')
+        self.assertEqual(ctx['aggressor'], 'BTN')   # memoria preservada internamente
+        self.assertTrue(ctx['pending'])             # mas sinalizada pendente (#A5)
+
+    def test_legible_frame_clears_pending(self):
+        # #A5: quando o ID volta legivel na MESMA mao, o contexto deixa de ser pendente.
+        t = PreflopAggressorTracker()
+        t.update(table_key='t', hand_key=1, table_state=HU_VS_OPEN, has_board=False)
+        t.update(table_key='t', hand_key=None,
+                 table_state=mk({'hero': 'BB'}, [], {'hero'}), has_board=False)
+        ctx = t.update(table_key='t', hand_key=1, table_state=HU_VS_OPEN, has_board=False)
+        self.assertFalse(ctx['pending'])
+
+    def test_two_seats_across_frames_is_not_heads_up(self):
+        # #A4: assento A aposta num frame, B em outro (A momentaneamente ilegivel). A
+        # UNIAO dos assentos vistos na mao e 2 -> multiway, nao heads-up (antes o maximo
+        # por frame era 1 e virava HU indevidamente).
+        t = PreflopAggressorTracker()
+        pos = {'hero': 'BB', 'a': 'UTG', 'b': 'BTN'}
+        f1 = mk(pos, [{'seat': 'a', 'bet_bb': 2.5}], set(pos), {'a': 25, 'b': 25, 'hero': 25})
+        f2 = mk(pos, [{'seat': 'b', 'bet_bb': 2.5}], set(pos), {'a': 25, 'b': 25, 'hero': 25})
+        t.update(table_key='t', hand_key=1, table_state=f1, has_board=False)
+        ctx = t.update(table_key='t', hand_key=1, table_state=f2, has_board=False)
+        self.assertFalse(ctx['heads_up'])
+        self.assertEqual(ctx['raises'], 1)          # segue pote de um raise so
 
     def test_new_hand_first_frame_postflop_has_no_stale_context(self):
         # #2: 1o frame legivel da nova mao ja no flop -> contexto da mao anterior some

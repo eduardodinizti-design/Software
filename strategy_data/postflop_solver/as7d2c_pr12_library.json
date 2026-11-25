@@ -1,0 +1,122 @@
+{
+  "complete_flops": 1,
+  "context": {
+    "arrival_id": "public-NVT-356340d-25bb-illustrative-2.5-open-no-ante",
+    "dealt_players": 9,
+    "mode": "chip_ev",
+    "positions": [
+      "BTN",
+      "BB"
+    ],
+    "pot_type": "single_raised",
+    "stage": "mid",
+    "tournament_format": "regular"
+  },
+  "entries": [
+    {
+      "board": [
+        "As",
+        "7d",
+        "2c"
+      ],
+      "case_id": "0fa9d9ebbf6ad9c01085",
+      "file_sha256": "74c5b5a5ff1c2455aacf2f1a21a38d1efc4d561ed35494b9b6e4e5570d8903db",
+      "path": "policies/0fa9d9ebbf6ad9c01085.sqlite",
+      "policy_sha256": "70b17cc7e89c5d2da9eb490718e698e492d25e9bbff9c9dfd190b4de5022e6a3",
+      "quality": {
+        "action_ev_available": false,
+        "actual_sizes": "native_rounding_to_one_unit_then_legality_checked",
+        "converged": true,
+        "export_depth_in_streets": 3,
+        "exported_depth_is_not_full_tree_coverage": false,
+        "gap_scope": "native_full_tree_declared_menu_and_ranges",
+        "global_gap_bb": 0.046181640326976775,
+        "iterations": 91,
+        "method": "texassolver_discounted_cfr",
+        "native_metric_independently_verified": false,
+        "nodes_by_street": {
+          "FLOP": 10,
+          "RIVER": 343392,
+          "TURN": 2254
+        },
+        "provenance": {
+          "binary_sha256": "b2341618e15cf15ba242e2bf7b4cd2c760fc968ecfed24fd2c0cbd76a01af8ee",
+          "command_sha256": "ed7a932345b7ef5387254bdcf3874984b81fc7c1eec1f2f6314ccd172bc0e529",
+          "evaluator_dictionary_sha256": "13e0f4bd3cb99388caec49b36f98b98b70ae30407cbd740d880db65ed4db5e7b",
+          "license": "AGPL-3.0 backend installed separately; not bundled with Software",
+          "repository": "https://github.com/bupticybee/TexasSolver",
+          "reused_export": false,
+          "stream_generated_sha256": {
+            "solver-stream.CommandLineTool.cpp": "ab5b0075bc925033a86b4b3f0934932894245a80e0b72e18bdd1c4b47e627a3c",
+            "solver-stream.PCfrSolver.cpp": "04e09c274aa302ffe765a76c1558c5617fa136add76178e2ac52b7716d357109",
+            "solver-stream.PokerSolver.cpp": "e704576c6982e476c97df32e08de3dba5b425daa96d8b682e86546c50e2b5a31"
+          },
+          "tested_source_commit": "02c8021ee1307c18aa1e76b772c6ae1451601bc6"
+        },
+        "public_nodes": 345656,
+        "settings": {
+          "dump_rounds": 3,
+          "export_format": "street_jsonl_gzip",
+          "ip_range_common_scale": 1.0,
+          "iterations": 501,
+          "memory_budget_mb": 8192,
+          "memory_limit_enforced": true,
+          "native_raise_limit": 2,
+          "oop_range_common_scale": 1.0,
+          "python_menu_raise_limit_not_used": false,
+          "raise_fractions": [
+            1.0
+          ],
+          "root_effective_stack_bb": 22.5,
+          "suit_isomorphism": true,
+          "suit_symmetry_verified_on_both_priors": true,
+          "target_exploitability_pct_pot": 0.5,
+          "threads": 4,
+          "units_per_bb": 1000
+        },
+        "stream_chunks": 49834,
+        "structurally_complete": true,
+        "terminal_edges": 541364,
+        "validation": "ALL_ACTIONS_AND_ALL_PHYSICALLY_POSSIBLE_RUNOUTS",
+        "windows_validated": false
+      }
+    }
+  ],
+  "max_simultaneous_workers": 1,
+  "plan_sha256": "64c883c2cefec654b8f660d8013d21a2ba0ba53ae66f8d56a92caf90e029f583",
+  "planned_flops": 1,
+  "root_template": {
+    "acted": [
+      false,
+      false
+    ],
+    "actor": 1,
+    "board": [
+      "As",
+      "7d",
+      "2c"
+    ],
+    "committed": [
+      0.0,
+      0.0
+    ],
+    "history": [],
+    "last_full_raise_bb": 1.0,
+    "min_bet_bb": 1.0,
+    "needs_cards": 0,
+    "oop": 1,
+    "pot_bb": 5.5,
+    "raise_rights": [
+      true,
+      true
+    ],
+    "raises": 0,
+    "stacks": [
+      22.5,
+      22.5
+    ],
+    "terminal": "",
+    "winner": -1
+  },
+  "schema": "software.hu-policy-library.v1"
+}

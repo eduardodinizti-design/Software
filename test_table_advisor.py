@@ -22,7 +22,7 @@ def _patch(hero, board_cards):
             pot={'pot_bb': 2.5}, to_call={'to_call_bb': 1.0}, dealer={'seat': 'bot_left'})),
         patch('table_advisor.read_hand_id', return_value=dict(hand_number=10)),
         patch('table_advisor.read_board', return_value=dict(cards=board_cards)),
-        patch('table_advisor.read_hero_cards', return_value=hero),
+        patch('table_advisor.read_hero_card_slots', return_value=list(hero) if hero else [None, None]),
         patch('table_advisor.read_tournament', return_value=dict(paid=20, players_left=55, confidence='high')),
     ]
 
@@ -109,7 +109,7 @@ class AdviseTableTests(unittest.TestCase):
                 pot={'pot_bb': 2.5}, to_call={'to_call_bb': 1.0}, dealer={'seat': 'bot_left'})),
             patch('table_advisor.read_hand_id', return_value=dict(hand_number=10)),
             patch('table_advisor.read_board', return_value=board),
-            patch('table_advisor.read_hero_cards', return_value=['As', 'Ks']),
+            patch('table_advisor.read_hero_card_slots', return_value=['As', 'Ks']),
             patch('table_advisor.read_tournament', return_value=dict(paid=20, players_left=55, confidence='high')),
         ]
         for p in patches:
@@ -150,7 +150,7 @@ class AdviseTableTests(unittest.TestCase):
             dealer={'seat': 'bot_left'})
         tracker = PreflopAggressorTracker()
         with patch('table_advisor.read_hand_id', return_value=dict(hand_number=10)), \
-             patch('table_advisor.read_hero_cards', return_value=['As', 'Ks']), \
+             patch('table_advisor.read_hero_card_slots', return_value=['As', 'Ks']), \
              patch('table_advisor.read_tournament', return_value=dict(paid=20, players_left=55, confidence='high')):
             with patch('table_advisor.read_table_state', return_value=pre_state), \
                  patch('table_advisor.read_board', return_value=dict(cards=[])):
@@ -161,7 +161,10 @@ class AdviseTableTests(unittest.TestCase):
                 noctx = table_advisor.advise_table(self.crop, FakeAdvisor(), table_key='t2')
         self.assertEqual(noctx['advice']['status'], 'ADVICE')          # frame isolado: aconselha
         self.assertEqual(withctx['advice']['phase'], 'postflop')
-        self.assertEqual(withctx['advice']['reason'], 'POSTFLOP_MULTIWAY_NOT_COVERED')
+        # Multiway agora JOGA com penalidade (não abstém): rótulo + nº de oponentes.
+        self.assertEqual(withctx['advice']['opponents'], 2)
+        self.assertTrue(any('MULTIWAY' in c and 'PENALTY' in c
+                            for c in withctx['advice']['caveats']))
         self.assertEqual(withctx['advice']['villain_range_source'], {'reason': 'NOT_HEADS_UP'})
 
     def test_enable_hud_attaches_villain_stats(self):
@@ -199,6 +202,76 @@ class AdviseTableTests(unittest.TestCase):
         r = table_advisor.advise_table(self.crop, FakeAdvisor())
         self.assertFalse(r['is_table'])
         self.assertEqual(r['advice']['status'], 'SKIP')
+
+
+class PreferSolverSrpTests(unittest.TestCase):
+    """Driving do solver srp (lei 'nao morrer no pos-flop'): no FLOP coberto e decisivo, a
+    recomendacao vira a do solver — inclusive BET onde o solver aposta."""
+
+    def test_flop_decisivo_bet_troca_check_da_heuristica(self):
+        advice = dict(recommended='check', pot_bb=5.5, caveats=[])
+        srp = dict(street='flop', side='agg', per_combo=True, combo_in_range=True,
+                   decisive=True, recommended_shadow='bet', bet_size='t33')
+        table_advisor._prefer_solver_srp(advice, srp)
+        self.assertEqual(advice['recommended'], 'bet')
+        self.assertEqual(advice['heuristic_recommended'], 'check')
+        self.assertEqual(advice['recommended_source'], 'solver_shadow_srp')
+        self.assertFalse(advice['execution_allowed'])
+        self.assertAlmostEqual(advice['sizing']['size_bb'], round(5.5 / 3.0, 1))
+        self.assertIn('SOLVER_SRP_PREFERRED', advice['caveats'])
+        self.assertTrue(any('OVERRODE_HEURISTIC_CHECK_TO_BET' in c for c in advice['caveats']))
+
+    def test_turn_agregado_nao_dirige(self):
+        advice = dict(recommended='check', pot_bb=9.5, caveats=[])
+        srp = dict(street='turn', side='agg', per_combo=False, combo_in_range=True,
+                   decisive=True, recommended_shadow='bet', bet_size='t66')
+        table_advisor._prefer_solver_srp(advice, srp)
+        self.assertEqual(advice['recommended'], 'check')     # turn é só guia
+
+    def test_no_misto_nao_dirige(self):
+        advice = dict(recommended='check', pot_bb=5.5, caveats=[])
+        srp = dict(street='flop', side='agg', per_combo=True, combo_in_range=True,
+                   decisive=False, recommended_shadow='bet', bet_size='t33')
+        table_advisor._prefer_solver_srp(advice, srp)
+        self.assertEqual(advice['recommended'], 'check')     # coinflip não vira regra
+
+
+class BarrelTurnWithSolverTests(unittest.TestCase):
+    """Turn barrel: hero com iniciativa + solver agregado DECISIVO 'bet' -> não morre de
+    check, barrela (lei 'não morrer no pós-flop')."""
+
+    def test_barrela_turn_decisivo(self):
+        advice = dict(recommended='check', pot_bb=9.5, to_call_bb=0, caveats=[])
+        srp = dict(node='ip_turn_barrel', street='turn', recommended_shadow='bet',
+                   decisive=True, bet_size='t50')
+        table_advisor._barrel_turn_with_solver(advice, srp)
+        self.assertEqual(advice['recommended'], 'bet')
+        self.assertEqual(advice['heuristic_recommended'], 'check')
+        self.assertEqual(advice['recommended_source'], 'solver_shadow_srp_turn')
+        self.assertAlmostEqual(advice['sizing']['size_bb'], round(9.5 * 0.5, 1))
+        self.assertIn('SOLVER_SRP_TURN_BARREL', advice['caveats'])
+
+    def test_turn_misto_nao_barrela(self):
+        advice = dict(recommended='check', pot_bb=9.5, to_call_bb=0, caveats=[])
+        srp = dict(node='ip_turn_barrel', street='turn', recommended_shadow='bet',
+                   decisive=False, bet_size='t50')
+        table_advisor._barrel_turn_with_solver(advice, srp)
+        self.assertEqual(advice['recommended'], 'check')
+
+    def test_nao_mexe_se_ja_aposta(self):
+        advice = dict(recommended='bet', pot_bb=9.5, to_call_bb=0, caveats=[],
+                      sizing=dict(size_bb=3.0))
+        srp = dict(node='ip_turn_barrel', street='turn', recommended_shadow='bet',
+                   decisive=True, bet_size='t66')
+        table_advisor._barrel_turn_with_solver(advice, srp)
+        self.assertEqual(advice['sizing']['size_bb'], 3.0)   # intacto
+
+    def test_nao_barrela_enfrentando_aposta(self):
+        advice = dict(recommended='check', pot_bb=9.5, to_call_bb=4.0, caveats=[])
+        srp = dict(node='ip_turn_barrel', street='turn', recommended_shadow='bet',
+                   decisive=True, bet_size='t50')
+        table_advisor._barrel_turn_with_solver(advice, srp)
+        self.assertEqual(advice['recommended'], 'check')     # to_call>0 não é barrel
 
 
 if __name__ == '__main__':

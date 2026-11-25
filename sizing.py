@@ -11,26 +11,41 @@ calls, limps and all-ins are exact.
 OPEN_RAISE_BB = 2.0           # first-in open at <=40bb
 OPEN_RAISE_DEEP_BB = 2.5      # first-in open at 100bb
 OPEN_DEEP_THRESHOLD_BB = 40   # above this, use the deep open size
-ISO_ADD_PER_LIMPER_BB = 1.0   # heuristic add per limper (iso is not in the solved tree)
-THREEBET_IP_MULT = 2.5        # 3bet-to as a multiple of the open, in position
-THREEBET_SB_MULT = 2.9        # from the SB
-THREEBET_BB_MULT = 3.4        # from the BB
+# OPEN sem limper = 2x SEMPRE (2.5x só deep+reg) — LEI open=2x INTACTA (limpers==0).
+# ISO vs LIMPERS (Eduardo 23/11 REVERTEU a regra do 21/11): isolar limper INFLA o size — +1bb por
+# limper a partir do open 2x => 1 limper=3X, 2 limpers=4X, CAPADO em 4X (ISO_MAX_BB) p/ não voltar ao
+# runaway 5X. Só vale quando há limper; o open puro continua 2x. Ver nvt-padrao-de-jogo-henrique.
+ISO_ADD_PER_LIMPER_BB = 1.0
+ISO_MAX_BB = 4.0              # teto do iso vs limpers = 4X (Eduardo 23/11)
+# 3bet-to como múltiplo do open (REGRA do Eduardo, 19/11): 3x em posição, 4x fora de
+# posição. SÓ na RETA FINAL do torneio (stage 'ft') diminui p/ 2.5x IP e 3.5x OOP.
+THREEBET_IP_MULT = 3.0        # IP, torneio normal
+THREEBET_OOP_MULT = 4.0       # OOP, torneio normal
+THREEBET_IP_FT_MULT = 2.5     # IP, reta final (FT)
+THREEBET_OOP_FT_MULT = 3.5    # OOP, reta final (FT)
+# SQUEEZE (Eduardo 24/11): o 3bet sobre open + CALLER(es) deve INFLAR — cada caller é dinheiro
+# morto que o squeeze cobra/nega odds. +1 open por caller sobre o mult do 3bet normal. Ex. (IP):
+# 0 caller=3x; 1 caller=4x; 2=5x. (OOP): 0=4x; 1=5x; 2=6x. Quanto mais gente, maior o squeeze.
+SQUEEZE_ADD_PER_CALLER_MULT = 1.0
 
 
-def open_size_bb(hero_stack_bb):
-    """Solver open size: 2.0bb normally, 2.5bb at 100bb-deep."""
-    if isinstance(hero_stack_bb, (int, float)) and hero_stack_bb > OPEN_DEEP_THRESHOLD_BB:
+def open_size_bb(hero_stack_bb, registration_open=False):
+    """Tamanho do open (regra do Eduardo, 15/11): 2.0bb SEMPRE, exceto 2.5bb só no
+    INÍCIO DO TORNEIO — enquanto a INSCRIÇÃO (late reg) ainda está ABERTA E o stack
+    é deep (>40bb). Fechada a inscrição, ou stack curto -> 2.0bb. Sem o sinal de
+    inscrição (default), assume FECHADA = 2.0bb (default seguro pedido pelo Eduardo)."""
+    if (registration_open and isinstance(hero_stack_bb, (int, float))
+            and hero_stack_bb > OPEN_DEEP_THRESHOLD_BB):
         return OPEN_RAISE_DEEP_BB
     return OPEN_RAISE_BB
 
 
-def three_bet_mult(hero_position, ip):
-    """3bet-to multiple of the open: BB 3.4x, SB 2.9x, else 2.5x (in position)."""
-    if hero_position == 'BB':
-        return THREEBET_BB_MULT
-    if hero_position == 'SB':
-        return THREEBET_SB_MULT
-    return THREEBET_IP_MULT
+def three_bet_mult(ip, final_table=False):
+    """3bet-to ×open (Eduardo 19/11): IP 3x, OOP 4x; na RETA FINAL (FT) IP 2.5x, OOP 3.5x.
+    SB/BB vs um abridor mais tarde são OOP (o flag `ip` já resolve isso)."""
+    if ip:
+        return THREEBET_IP_FT_MULT if final_table else THREEBET_IP_MULT
+    return THREEBET_OOP_FT_MULT if final_table else THREEBET_OOP_MULT
 
 # Postflop action order (SB first, BTN last = in position).
 _POSTFLOP_ORDER = ('SB', 'BB', 'UTG', 'UTG+1', 'UTG+2', 'LJ', 'HJ', 'CO', 'BTN')
@@ -68,8 +83,9 @@ def in_position(hero_position, opener_position):
     return _POSTFLOP_ORDER.index(hero_position) > _POSTFLOP_ORDER.index(opener_position)
 
 
-def recommend_size(action, *, hero_stack_bb=None, to_call_bb=None, limpers=0,
-                   opener_bb=None, ip=True, hero_position=None):
+def recommend_size(action, *, hero_stack_bb=None, to_call_bb=None, limpers=0, callers=0,
+                   opener_bb=None, ip=True, hero_position=None, registration_open=False,
+                   final_table=False):
     """{action, size_bb, basis, heuristic} for one action, or None for fold.
 
     Open/3bet/4bet sizes come from the solver betting tree; isolating limpers is a
@@ -90,28 +106,79 @@ def recommend_size(action, *, hero_stack_bb=None, to_call_bb=None, limpers=0,
     if action in ('all_in', 'open_shove', 'vs_open_shove', 'three_bet_shove', 'four_bet_shove'):
         return dict(action=action, size_bb=cap, basis='all-in', heuristic=False)
     if action in ('raise', 'open_raise'):
-        open_bb = open_size_bb(hero_stack_bb)
-        size = open_bb + ISO_ADD_PER_LIMPER_BB * limpers
-        basis = 'open %.1fbb (solver)' % open_bb
+        open_bb = open_size_bb(hero_stack_bb, registration_open)
         if limpers:
-            basis += ' + %d limper(s) (heuristica)' % limpers
-        return dict(action='raise', size_bb=capped(size), heuristic=bool(limpers), basis=basis)
+            # ISO vs LIMPERS (Eduardo 23/11): +1bb por limper sobre o open 2x, CAPADO em 4X ->
+            # 1 limper=3X, 2 limpers=4X, 3+ = 4X. (Reverteu o "não inflar" do 21/11.)
+            size = min(open_bb + ISO_ADD_PER_LIMPER_BB * limpers, ISO_MAX_BB)
+            return dict(action='raise', size_bb=capped(size), heuristic=True,
+                        basis='iso %.1fbb vs %d limper(s) (3X/4X cap, Eduardo 23/11)' % (size, limpers))
+        # OPEN puro (sem limper) = tamanho do open SEMPRE (LEI open=2x).
+        return dict(action='raise', size_bb=capped(open_bb), heuristic=False,
+                    basis='open %.1fbb (solver)' % open_bb)
     if action == 'three_bet':
         base = opener_bb if isinstance(opener_bb, (int, float)) else open_size_bb(hero_stack_bb)
-        mult = three_bet_mult(hero_position, ip)
-        pos = hero_position if hero_position in ('BB', 'SB') else ('IP' if ip else 'OOP')
+        mult = three_bet_mult(ip, final_table)
+        _nc = callers if isinstance(callers, int) and callers > 0 else 0
+        if _nc:                                      # SQUEEZE: +1 open por caller (dinheiro morto)
+            mult += SQUEEZE_ADD_PER_CALLER_MULT * _nc
+        pos = 'IP' if ip else 'OOP'
+        _sq = (' SQUEEZE %dcaller(s)' % _nc) if _nc else ''
         return dict(action='three_bet', size_bb=capped(base * mult), heuristic=False,
-                    basis='3bet %.1fx open (%s, solver)' % (mult, pos))
+                    basis='3bet %.1fx open (%s%s%s)' % (mult, pos, ' reta-final' if final_table else '', _sq))
     if action == 'four_bet':
         return dict(action='four_bet', size_bb=cap, basis='4bet all-in (solver)', heuristic=False)
     return None
 
 
-def size_from_reading(action, table_state, hero_position, opener_position=None):
-    """Convenience: build the context from a read_table_state result and size the action."""
+def _sb_completed(table_state):
+    """SB completou (~1bb) = o 'limper' da BATALHA DE BLINDS. count_limpers() exclui blinds, então
+    o complete do SB não entra lá; aqui ele conta como 1 limper p/ o BB isolar a 3X (regra Eduardo)."""
+    positions = table_state.get('positions') or {}
+    sb = next((s for s, p in positions.items() if p == 'SB'), None)
+    if sb is None:
+        return False
+    for bet in (table_state.get('bets') or []):
+        if bet.get('seat') == sb and isinstance(bet.get('bet_bb'), (int, float)):
+            return 0.9 <= bet['bet_bb'] <= 1.1
+    return False
+
+
+def count_callers(table_state, opener_position, opener_bb):
+    """Nº de COLD-CALLERS do open (seats que FLATARAM a aposta do opener), excluindo o próprio
+    opener, o hero e os blinds. É o nº de jogadores extras na mão que o SQUEEZE tem que cobrar."""
+    if not isinstance(opener_bb, (int, float)) or opener_bb <= 1.5:
+        return 0
+    positions = table_state.get('positions') or {}
+    opener_seat = next((s for s, p in positions.items() if p == opener_position), None)
+    tol = max(0.3, 0.15 * opener_bb)
+    n = 0
+    for bet in (table_state.get('bets') or []):
+        seat, amt = bet.get('seat'), bet.get('bet_bb')
+        if seat in ('hero', opener_seat) or positions.get(seat) in ('SB', 'BB'):
+            continue
+        if isinstance(amt, (int, float)) and abs(amt - opener_bb) <= tol:
+            n += 1
+    return n
+
+
+def size_from_reading(action, table_state, hero_position, opener_position=None, stage=None):
+    """Convenience: build the context from a read_table_state result and size the action.
+    `stage=='ft'` (reta final) reduz os 3bets (2.5x IP / 3.5x OOP)."""
     hero = (table_state.get('seats') or {}).get('hero', {})
+    limpers = count_limpers(table_state)
+    _opener_bb = opener_raise_bb(table_state)
+    _callers = count_callers(table_state, opener_position, _opener_bb) if action == 'three_bet' else 0
+    # BLIND WAR: o BB isolando o complete do SB conta como 1 limper (iso 3X) — count_limpers
+    # exclui blinds, então sem isto o raise sairia 2x (o "mini raise 2x" que o Eduardo reclamou).
+    if (action in ('raise', 'open_raise') and hero_position == 'BB'
+            and limpers == 0 and _sb_completed(table_state)):
+        limpers = 1
     return recommend_size(action, hero_stack_bb=hero.get('stack_bb'),
                           to_call_bb=(table_state.get('to_call') or {}).get('to_call_bb'),
-                          limpers=count_limpers(table_state),
-                          opener_bb=opener_raise_bb(table_state), hero_position=hero_position,
-                          ip=in_position(hero_position, opener_position) if opener_position else True)
+                          limpers=limpers, callers=_callers,
+                          opener_bb=_opener_bb, hero_position=hero_position,
+                          ip=in_position(hero_position, opener_position) if opener_position else True,
+                          # 2.5x só com late reg ABERTA (início). Sem o sinal -> 2x (default).
+                          registration_open=bool(table_state.get('registration_open')),
+                          final_table=(str(stage).lower() == 'ft'))

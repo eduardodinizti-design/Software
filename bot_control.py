@@ -1,8 +1,8 @@
 """Pause / takeover control plane — the safety gate that must exist BEFORE any
 input is ever sent to the client.
 
-Three states: RUNNING (the bot operates), PAUSED (you took over the tables; the
-bot sends no input), DISABLED (the bot is off). The default is PAUSED: the bot is
+Three states: RUNNING (the Henrique operates), PAUSED (you took over the tables; the
+Henrique sends no input), DISABLED (the Henrique is off). The default is PAUSED: the Henrique is
 never operating until it is explicitly armed. Any future executor MUST call
 `execution_allowed()` immediately before every action and send nothing unless it
 returns True; pause is therefore instant and always wins.
@@ -59,7 +59,7 @@ class BotControl:
 
     def resume(self):
         """Step up one level of activity: DISABLED -> PAUSED, PAUSED -> RUNNING.
-        Reactivating a disabled bot only arms it (PAUSED); a second resume is
+        Reactivating a disabled Henrique only arms it (PAUSED); a second resume is
         needed to actually run, so it never jumps straight from off to operating.
         A no-op when already RUNNING."""
         return self._apply(lambda s: PAUSED if s == DISABLED else (RUNNING if s == PAUSED else s))
@@ -70,7 +70,7 @@ class BotControl:
         return self._apply(lambda s: s if s == DISABLED else PAUSED)
 
     def disable(self):
-        """Turn the bot off from any state. Only resume() brings it back."""
+        """Turn the Henrique off from any state. Only resume() brings it back."""
         return self._apply(lambda s: DISABLED)
 
 

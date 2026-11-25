@@ -4,7 +4,7 @@ Uses a tiny synthetic pack so it runs without the reference file; the real pack
 is consulted live, not committed."""
 import unittest
 
-from preflop_study import RANKS
+from preflop_study import RANKS, Blocked
 from preflop_advisor import (PreflopAdvisor, infer_live_spot, infer_spread,
                              _icm_risk_premium, scale_bounty_bb)
 
@@ -207,8 +207,33 @@ class CallOffTests(unittest.TestCase):
         self.assertFalse(spot['allin'])
         a = PreflopAdvisor(pack_with_3bet_shove(list(HANDS), hero='BTN', vs=('CO',), stack=15))
         r = a.advise_from_reading(state, ['Ah', '7d'])
-        self.assertEqual(r['status'], 'ABSTAIN')           # abstém, não call-off falso
+        # LEI "nunca abstém" (Eduardo 19/11): 13bb vs 3bet é zona de COMMIT -> DECIDE.
+        # A7o é lixo p/ 4bet-jam -> FOLD (não é call-off falso, não abstém).
+        self.assertEqual(r['status'], 'ADVICE')
+        self.assertEqual(r['recommended'], 'fold')
         self.assertNotEqual(r.get('spot'), 'call_off_vs_3bet_shove')
+
+    def test_shove_zone_vs_open_squeeze_routes_to_3bet_shove(self):
+        # REGRA do Eduardo (15/11): short stack enfrentando um OPEN (+caller = SQUEEZE)
+        # = 3BET ALL-IN pela range validada 3bet_shove, NUNCA o 3bet/call de stack fundo
+        # (que abstinha no shove zone e, com caller, virava range HU larga não-validada).
+        pack = pack_with_3bet_shove(['AQo', 'A5s'], hero='SB', vs=('LJ',), stack=12)
+        a = PreflopAdvisor(pack)
+        state = dict(positions={'hero': 'SB', 's_lj': 'LJ', 's_btn': 'BTN'},
+                     seats={'hero': dict(stack_bb=12, occupied=True),
+                            's_lj': dict(stack_bb=30, occupied=True),
+                            's_btn': dict(stack_bb=25, occupied=True)},
+                     bets=[dict(seat='s_lj', bet_bb=2.0), dict(seat='s_btn', bet_bb=2.0)])
+        sp = infer_live_spot(state)
+        self.assertEqual(sp['spot'], 'vs_open')
+        self.assertEqual(sp['opener'], 'LJ')
+        self.assertEqual(sp.get('callers'), 1)             # squeeze: LJ abre, BTN paga
+        r = a.advise_from_reading(state, ['Ad', 'Qh'], mode='chip_ev')
+        self.assertEqual(r['recommended'], 'all_in')       # JAM, não call
+        self.assertTrue(r['validated'])                    # nó 3bet_shove validado
+        self.assertIn('SQUEEZE_VIA_3BET_SHOVE_1C', r.get('caveats', []))
+        r2 = a.advise_from_reading(state, ['7c', '2d'], mode='chip_ev')
+        self.assertEqual(r2['recommended'], 'fold')        # fora da range -> fold (validado)
 
     def test_reshove_all_in_still_synthesizes_calloff(self):
         state = dict(positions={'hero': 'CO', 's2': 'BTN'},
@@ -344,9 +369,9 @@ class AdvisorTests(unittest.TestCase):
     def test_bucket_stack(self):
         self.assertEqual(self.a.bucket_stack(20.8)[0], 20)
         self.assertEqual(self.a.bucket_stack(26)[0], 25)
-        self.assertEqual(self.a.bucket_stack(65)[0], 40)        # deep bucket now exists
-        self.assertEqual(self.a.bucket_stack(90)[0], 100)
-        self.assertEqual(self.a.bucket_stack(150), (100, 'OK'))   # HRC caps at 100bb; deeper uses it
+        self.assertEqual(self.a.bucket_stack(65)[0], 60)        # deep ladder: nearest rung (empty rungs borrow)
+        self.assertEqual(self.a.bucket_stack(90)[0], 80)
+        self.assertEqual(self.a.bucket_stack(150), (100, 'OK'))  # top solved bucket is 100bb; deeper uses it
         self.assertEqual(self.a.bucket_stack(200), (100, 'OK'))
         self.assertEqual(self.a.bucket_stack(0), (None, 'STACK_UNKNOWN'))
 
@@ -364,9 +389,10 @@ class AdvisorTests(unittest.TestCase):
         self.assertTrue(r['bucketed'])
         self.assertIn('STACK_BUCKETED_24_TO_25BB', r['caveats'])
 
-    def test_above_solved_depth_uses_100bb_reference(self):
-        # HRC tops out at 100bb; a deeper stack (common early in tournaments) uses
-        # the 100bb range as a flagged reference instead of abstaining.
+    def test_above_solved_depth_uses_top_bucket_reference(self):
+        # The solved pack tops out at the deepest bucket (100bb); a deeper stack
+        # (common early in tournaments) uses that top range as a flagged reference
+        # instead of abstaining.
         idx_aa = HANDS.index('AA')
         node100 = dict(id='n100', context=dict(mode='chip_ev', format='regular', stage='mid', players=9, stack=100),
                        spot='open_raise', hero='BTN', vs=[], validated=True, evUnit='bb',
@@ -457,7 +483,13 @@ def pack_vs_limp(raise_hands, stack=25):
                 spot='vs_limp', hero='BB', vs=[], validated=True, evUnit='bb',
                 legalActions=['check', 'raise', 'all_in'], actions=['all_in', 'raise', 'check'],
                 freq={'all_in': z, 'raise': raise_v, 'check': check_v}, ev={}, outOfRange=[], source='t')
-    return dict(format='nvt-range-export', version=1, engineCommit='t', hands=HANDS, nodes=[node])
+    # CO open node: régua do gate BLIND_WAR_DEEP (Eduardo 23/11) que CONFIRMA o ataque sólido antes
+    # de isolar (sem ele, strict=True derruba tudo pra check). Em produção o pack real tem CO (+UTG).
+    co = dict(id='co', context=dict(mode='chip_ev', format='regular', stage='mid', players=9, stack=stack),
+              spot='open_raise', hero='CO', vs=[], validated=True, evUnit='bb',
+              legalActions=['fold', 'raise'], actions=['raise', 'fold'],
+              freq={'raise': raise_v, 'fold': check_v}, ev={}, outOfRange=[], source='t')
+    return dict(format='nvt-range-export', version=1, engineCommit='t', hands=HANDS, nodes=[node, co])
 
 
 class VsLimpTests(unittest.TestCase):
@@ -489,21 +521,28 @@ class VsLimpTests(unittest.TestCase):
         self.assertEqual(r['recommended'], 'check')
 
     def test_non_sb_limper_does_not_use_sb_node(self):
-        # #1: limp de CO não deve usar o nó SB×BB -> cai no first_in (aqui, abstém)
+        # #1: limp de CO NÃO deve usar o nó SB×BB. LEI "nunca abstém" (Eduardo 19/11):
+        # cai no fallback de COBERTURA (GAP flaggeado) e DECIDE — nunca abstém, e não
+        # usa o nó da batalha de blinds (SB).
         a = PreflopAdvisor(pack_vs_limp(['AKs']))
         r = a.advise_from_reading(self._co_limp(), ['As', 'Ks'], mode='chip_ev', stage='mid')
-        self.assertEqual(r['status'], 'ABSTAIN')
-        self.assertEqual(r['reason'], 'NO_VALIDATED_NODE_FOR_CONTEXT')
+        self.assertEqual(r['status'], 'ADVICE')
+        self.assertIn('GAP_COBERTURA_APROX', r['caveats'])
+        self.assertNotIn('VS_LIMP_SB_BLIND_BATTLE', r.get('caveats', []))
 
-    def test_vs_limp_borrows_nearest_stack(self):
-        # vs_limp só existe a 25bb; a 10bb a camada heurística empresta o de 25bb
-        # (conselho flagged, não auto-executável) em vez de abster.
+    def test_vs_limp_usa_range_25bb_noutros_stacks(self):
+        # vs_limp só existe a 25bb. A batalha BB vs limp do SB é estável -> usa a
+        # range de 25bb (que É validada) em qualquer stack, com caveat de aproximacao,
+        # em vez de abster/borrar não-validado. Sempre dá decisao executável.
         a = PreflopAdvisor(pack_vs_limp(['AKs'], stack=25))
-        r = a.advise_from_reading(self._sb_limp(hero_stack=10.0), ['As', 'Ks'],
+        r = a.advise_from_reading(self._sb_limp(hero_stack=30.0), ['As', 'Ks'],
                                   mode='chip_ev', stage='mid')
         self.assertEqual(r['status'], 'ADVICE')
-        self.assertFalse(r['validated'])
-        self.assertTrue(any('STACK_BORROWED' in c for c in r['caveats']))
+        self.assertTrue(r['validated'])                 # a range de 25bb é validada
+        # 30->25 (16.7%) agora resolve pelo ALINHAMENTO de grade (caveat BUCKET_ALIGNED);
+        # o caveat específico de vs_limp também é aceito (ambos marcam a aproximação 25bb).
+        self.assertTrue(any(('VS_LIMP_RANGE25BB_APROX' in c) or c.startswith('BUCKET_ALIGNED')
+                            for c in r['caveats']))
 
 
 class FirstInTests(unittest.TestCase):
@@ -516,19 +555,34 @@ class FirstInTests(unittest.TestCase):
         self.assertEqual((r['status'], r['recommended']), ('ADVICE', 'all_in'))
 
     def test_borrows_nearest_stack_when_bucket_missing(self):
-        # Camada heurística: sem nó de open em 10bb, pega emprestado o de 25bb —
-        # vira conselho (flagged), mas validated=False (não auto-executável).
-        r = PreflopAdvisor(pack_with_node()).advise_first_in(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=10)
+        # Camada heurística ACIMA da zona de shove, gap DISTANTE (fora da tolerância
+        # de alinhamento): sem nó de open em 40bb e o nativo mais próximo é 25bb
+        # (37.5% > ALIGN_TOL) -> NÃO alinha, empresta o de 25bb — conselho flagged,
+        # validated=False. (Gap adjacente <=20%, ex. 30->25, vira alinhamento VALIDADO:
+        # ver AlignTests. <20bb NÃO empresta raise: ver ShoveZoneGuardTests.)
+        r = PreflopAdvisor(pack_with_node()).advise_first_in(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=40)
         self.assertEqual(r['status'], 'ADVICE')
         self.assertFalse(r['validated'])
         self.assertTrue(any('STACK_BORROWED' in c for c in r['caveats']))
+
+    def test_adjacent_bucket_aligns_validated(self):
+        # ALINHAMENTO DE GRADE: 30bb sem nó, nativo mais próximo 25bb (16.7% <= TOL)
+        # -> conta como VALIDADO (não é empréstimo), com caveat BUCKET_ALIGNED. É a
+        # correção do mismatch de grade por modo (PKO/ICM 25/35 vs grade global 30/40).
+        r = PreflopAdvisor(pack_with_node()).advise(
+            hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=30, spot='open_raise')
+        self.assertEqual(r['status'], 'ADVICE')
+        self.assertTrue(r['validated'])
+        self.assertIsNone(r['stack_borrowed_from'])
+        self.assertEqual(r['stack_bucket'], 25)
+        self.assertTrue(any(c.startswith('BUCKET_ALIGNED') for c in r['caveats']))
 
 
 def pack_with_reference():
     idx = HANDS.index('AA')
     freq = {'raise': [1.0 if k == idx else 0.0 for k in range(169)],
             'fold': [0.0 if k == idx else 1.0 for k in range(169)]}
-    node = dict(id='d1', context=dict(mode='chip_ev', format='regular', stage='mid', players=9, stack=100),
+    node = dict(id='d1', context=dict(mode='chip_ev', format='regular', stage='mid', players=9, stack=40),
                 spot='open_raise', hero='BTN', vs=[], validated=False, evUnit='bb',
                 legalActions=['fold', 'raise'], actions=['raise', 'fold'], freq=freq, ev=None,
                 outOfRange=[], source='reference')
@@ -578,11 +632,12 @@ class SpotInferenceTests(unittest.TestCase):
         s = infer_live_spot(self._state([{'seat': 'x', 'bet_bb': 2.5}]))
         self.assertEqual((s['spot'], s['opener']), ('vs_open', 'BTN'))
 
-    def test_two_distinct_levels_abstain(self):
-        # An open (2.5) and a reraise (7.0): two levels -> a 3bet pot the hero
-        # faces cold, which the pack does not cover.
+    def test_two_distinct_levels_threebet_cold(self):
+        # An open (2.5) and a reraise (7.0): two levels -> a 3bet pot the hero faces
+        # cold (threebet_cold). O pack nao cobre; advise_from_reading decide no SHORT
+        # (jam QQ+/AK, call-off se all-in, resto fold) e abstem no DEEP. Aqui so o spot.
         s = infer_live_spot(self._state([{'seat': 'x', 'bet_bb': 2.5}, {'seat': 'y', 'bet_bb': 7.0}]))
-        self.assertEqual((s['spot'], s['reason']), ('abstain', 'MULTIWAY_OR_3BET_NOT_COVERED'))
+        self.assertEqual((s['spot'], s['reason']), ('threebet_cold', 'MULTIWAY_OR_3BET_NOT_COVERED'))
 
     def test_open_with_caller_is_vs_open_against_the_opener(self):
         # Open (BTN 2.5) plus a caller at the same level (CO 2.5): one raise level,
@@ -626,6 +681,144 @@ class SpotInferenceTests(unittest.TestCase):
         r = a.advise_from_reading(state, ['As', 'Ac'])
         self.assertEqual((r['status'], r['spot'], r['recommended']), ('ADVICE', 'vs_open', 'call'))
         self.assertIn('AGGRESSOR_INFERRED_BTN', r['caveats'])
+
+
+class SourceAndCollisionTests(unittest.TestCase):
+    """B01/B02: manifesto por sha256 + colisão de lookup sem sombra silenciosa."""
+
+    def _open_node(self, node_id, *, validated, raise_hand, stack=25, source='test'):
+        idx = HANDS.index(raise_hand)
+        freq = {'raise': [1.0 if k == idx else 0.0 for k in range(169)],
+                'fold': [0.0 if k == idx else 1.0 for k in range(169)]}
+        return dict(id=node_id, context=dict(mode='chip_ev', format='regular', stage='mid',
+                    players=9, stack=stack), spot='open_raise', hero='BTN', vs=[],
+                    validated=validated, evUnit='bb', legalActions=['fold', 'raise'],
+                    actions=['raise', 'fold'], freq=freq, ev=None, outOfRange=[], source=source)
+
+    def _pack(self, nodes):
+        return dict(format='nvt-range-export', version=1, engineCommit='test', hands=HANDS, nodes=nodes)
+
+    def test_validated_wins_over_reference_regardless_of_order(self):
+        # Nó de REFERÊNCIA (stale) ANTES do validado, MESMA chave: o validado tem de
+        # vencer -> um update validado nunca é sombreado por uma range de referência.
+        ref = self._open_node('stale', validated=False, raise_hand='22', source='reference')
+        good = self._open_node('good', validated=True, raise_hand='AA')
+        a = PreflopAdvisor(self._pack([ref, good]))   # strict; só 1 validado -> não é fatal
+        r = a.advise(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=25)
+        self.assertEqual(r['node_id'], 'good')
+        self.assertTrue(r['validated'])
+        self.assertEqual(len(a.collisions), 1)
+        self.assertEqual(a.collisions[0]['chosen'], 'good')
+        self.assertIn('stale', a.collisions[0]['dropped'])
+        self.assertEqual(a.collisions[0]['resolved_by'], 'validated_over_reference')
+
+    def test_two_validated_same_key_is_fatal_in_strict(self):
+        n1 = self._open_node('v1', validated=True, raise_hand='AA')
+        n2 = self._open_node('v2', validated=True, raise_hand='KK')
+        with self.assertRaises(Blocked) as cm:
+            PreflopAdvisor(self._pack([n1, n2]))
+        self.assertIn('AMBIGUOUS_RANGE_NODE', str(cm.exception))
+
+    def test_two_validated_same_key_recorded_when_not_strict(self):
+        n1 = self._open_node('v1', validated=True, raise_hand='AA')
+        n2 = self._open_node('v2', validated=True, raise_hand='KK')
+        a = PreflopAdvisor(self._pack([n1, n2]), strict=False)
+        self.assertEqual(a.collisions[0]['chosen'], 'v1')
+        self.assertIn('v2', a.collisions[0]['dropped'])
+        self.assertEqual(a.advise(hero_cards=['As', 'Ac'], hero_position='BTN',
+                                  stack_bb=25)['node_id'], 'v1')
+
+    def test_manifest_reports_sha256_and_counts(self):
+        import json
+        import os
+        import tempfile
+        d = tempfile.mkdtemp()
+        p = os.path.join(d, 'pack.json')
+        with open(p, 'w', encoding='utf-8') as fh:
+            json.dump(pack_with_node(), fh)
+        a = PreflopAdvisor.from_file(p)
+        m = a.manifest()
+        self.assertEqual(len(m['sources']), 1)
+        self.assertEqual(len(m['sources'][0]['sha256']), 64)
+        self.assertEqual(m['sources'][0]['nodes'], 1)
+        self.assertEqual(m['validated_nodes'], 1)
+        self.assertEqual(m['collisions'], [])
+
+    def test_clean_single_pack_has_no_collision(self):
+        self.assertEqual(PreflopAdvisor(pack_with_node()).collisions, [])
+
+    def test_from_files_validated_wins_even_when_reference_loaded_first(self):
+        # Merge tolerante (strict=False): mesmo com o pack de REFERÊNCIA passado
+        # PRIMEIRO, o nó validado vence (resolução independente da ordem) e a colisão
+        # é registrada — nunca um downgrade silencioso validado->referência.
+        import json
+        import os
+        import tempfile
+        d = tempfile.mkdtemp()
+        ref = self._pack([self._open_node('stale', validated=False, raise_hand='22',
+                                           source='reference')])
+        good = self._pack([self._open_node('good', validated=True, raise_hand='AA')])
+        pr, pg = os.path.join(d, 'ref.json'), os.path.join(d, 'good.json')
+        with open(pr, 'w', encoding='utf-8') as fh:
+            json.dump(ref, fh)
+        with open(pg, 'w', encoding='utf-8') as fh:
+            json.dump(good, fh)
+        a = PreflopAdvisor.from_files(pr, pg)            # referência PRIMEIRO
+        r = a.advise(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=25)
+        self.assertEqual((r['node_id'], r['validated']), ('good', True))
+        self.assertEqual(a.collisions[0]['resolved_by'], 'validated_over_reference')
+
+
+class ShoveZoneGuardTests(unittest.TestCase):
+    """<20BB: não empresta range de RAISE por proximidade (mini-raise suicida);
+    só push/fold puro. First-in tenta shove antes do open-raise."""
+
+    def test_open_raise_below_20bb_does_not_borrow(self):
+        a = PreflopAdvisor(pack_with_node())      # só BTN open_raise @25 validado
+        r = a.advise(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=15, spot='open_raise')
+        self.assertEqual(r['status'], 'ABSTAIN')
+        self.assertEqual(r['reason'], 'SHOVE_ZONE_PUSHFOLD_ONLY_NO_BORROW')
+
+    def test_open_raise_above_20bb_still_borrows(self):
+        a = PreflopAdvisor(pack_with_node())      # BTN open_raise @25
+        # 40bb: nativo 25 está a 37.5% (> ALIGN_TOL) -> não alinha, empresta flagged.
+        r = a.advise(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=40, spot='open_raise')
+        self.assertEqual(r['status'], 'ADVICE')
+        self.assertEqual(r['stack_borrowed_from'], 25)   # empréstimo permitido fundo
+        self.assertFalse(r['validated'])
+
+    def test_shove_spot_below_20bb_may_borrow(self):
+        a = PreflopAdvisor(shove_pack('open_shove', list(HANDS), 'BTN', (), 25, 'all_in'))
+        r = a.advise(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=15, spot='open_shove')
+        self.assertEqual(r['status'], 'ADVICE')          # push/fold puro pode emprestar
+        self.assertEqual(r['stack_borrowed_from'], 25)
+
+    def test_first_in_below_20bb_without_pushfold_abstains_no_miniraise(self):
+        a = PreflopAdvisor(pack_with_node())      # só open_raise @25, sem nó de shove
+        r = a.advise_first_in(hero_cards=['As', 'Ac'], hero_position='BTN', stack_bb=15)
+        self.assertEqual(r['status'], 'ABSTAIN')         # nunca um mini-raise emprestado
+
+
+class B08DelegationTests(unittest.TestCase):
+    """infer_live_spot delega ao classificador único (B08): limps deixam de virar
+    first_in cego e os callers não somem."""
+
+    def test_two_limps_are_seen_not_ignored(self):
+        # Dois limps (bet==1.0), sem raise: antes virava first_in 'cego'; agora o
+        # spot é first_in mas com limpers=2 explícito (a camada de iso trata).
+        s = infer_live_spot(dict(
+            positions={'hero': 'BTN', 'a': 'UTG', 'b': 'CO', 'c': 'SB', 'd': 'BB'},
+            bets=[{'seat': 'a', 'bet_bb': 1.0}, {'seat': 'b', 'bet_bb': 1.0},
+                  {'seat': 'c', 'bet_bb': 0.5}, {'seat': 'd', 'bet_bb': 1.0}]))
+        self.assertEqual(s['spot'], 'first_in')
+        self.assertEqual(s.get('limpers'), 2)
+
+    def test_open_with_two_callers_preserves_callers(self):
+        s = infer_live_spot(dict(
+            positions={'hero': 'BB', 'a': 'UTG', 'b': 'HJ', 'c': 'CO', 'd': 'SB'},
+            bets=[{'seat': 'a', 'bet_bb': 2.5}, {'seat': 'b', 'bet_bb': 2.5},
+                  {'seat': 'c', 'bet_bb': 2.5}, {'seat': 'd', 'bet_bb': 0.5}]))
+        self.assertEqual((s['spot'], s['opener'], s['callers']), ('vs_open', 'UTG', 2))
 
 
 if __name__ == '__main__':

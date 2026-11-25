@@ -23,9 +23,19 @@ import cv2
 
 from table_reading.automatic_table_crops import detect_table_crops
 from table_reading.action_buttons import read_action_buttons
-from raise_panel import read_raise_panel, map_multiplier_to_preset
-from screen_coords import rect_frame_to_screen
+from table_reading.hand_tracking import read_hand_id
+from raise_panel import (read_raise_panel, map_multiplier_to_preset,
+                         read_raise_slider, is_shove_target)
+from raise_plan import plan_raise, verify_selected_preset
+from screen_coords import rect_frame_to_screen, frame_to_screen
 from cursor_controller import CursorController, Intent
+
+# Leituras que PROVAM positivamente que a linha de ação sumiu numa mesa legível (a
+# aposta entrou / não é mais a vez do hero). Erros de leitura (INVALID_CROP/
+# CROP_TOO_SMALL) e a linha ainda presente NÃO contam — ausência por OCR/cobertura
+# não é prova de que o clique de confirmar teve efeito (auditoria A2). Mesma regra
+# do verifier de operar_mesa.py.
+_ROW_GONE_STATUSES = ('NO_BUTTON_ROW', 'PRESELECTION_ROW')
 
 
 def _table_key(x, y):
@@ -37,7 +47,8 @@ class RaiseSequencer:
                  bot_control=None, table_key=None, hand=None, max_tables=6,
                  sleep=time.sleep, clock=time.monotonic, step_deadline=5.0,
                  read_actions=read_action_buttons, read_panel=read_raise_panel,
-                 detect=detect_table_crops):
+                 detect=detect_table_crops, read_hand=read_hand_id,
+                 read_slider=read_raise_slider):
         self.capture = capture
         self._geom = window_rect if callable(window_rect) else (lambda: window_rect)
         self.input = input_adapter
@@ -52,6 +63,8 @@ class RaiseSequencer:
         self._ra = read_actions
         self._rp = read_panel
         self._detect = detect
+        self._read_hand = read_hand
+        self._rs = read_slider
         self.log = []
         self._crop_box = None
         self._win0 = None
@@ -99,6 +112,29 @@ class RaiseSequencer:
         crop = self._crop(frame)
         return self._rp(crop) if crop is not None else None
 
+    def _read_panel_slider_fresh(self):
+        """Relê painel + slider FRESCOS juntos. (panel, slider) ou (None, None)."""
+        if not self._geom_ok():
+            return None, None
+        frame, _ = self.capture()
+        crop = self._crop(frame)
+        if crop is None:
+            return None, None
+        return self._rp(crop), self._rs(crop)
+
+    @staticmethod
+    def _panel_open(panel, slider):
+        """Painel de aumento ABERTO. Normal: EXPERIMENTAL_RAISE_PANEL (3-5 presets).
+        STACK CURTO (all-in): a PPPoker mostra 1 preso ("2x") + slider + "Raise", o
+        que read_raise_panel marca NO_RAISE_PANEL (exige 3-5). Validado no painel REAL
+        (hero 2,2BB): confirm presente + slider SLIDER_FOUND = painel aberto. Sem isto
+        o shove curto abortava com PAINEL_NAO_ABRIU (so o teste ao vivo revelou)."""
+        if not panel:
+            return False
+        if panel.get('status') == 'EXPERIMENTAL_RAISE_PANEL':
+            return True
+        return bool(panel.get('confirm')) and (slider or {}).get('status') == 'SLIDER_FOUND'
+
     # ---- alvos (lidos FRESCOS dentro do validator) ----------------------
     def _tf_raise(self, crop):
         br = self._ra(crop)
@@ -116,15 +152,28 @@ class RaiseSequencer:
 
     def _tf_confirm(self, crop):
         panel = self._rp(crop)
-        if panel.get('status') != 'EXPERIMENTAL_RAISE_PANEL':
-            return None
         c = panel.get('confirm')
-        return c['box'] if c else None
+        if not c:
+            return None
+        # Normal (3-5 presets) OU painel de STACK CURTO (confirm + slider): o "Raise"
+        # de confirmar existe nos dois -> clica nele. Sem isto o confirm do shove
+        # curto nunca era achado e o all-in nao fechava.
+        if panel.get('status') == 'EXPERIMENTAL_RAISE_PANEL' \
+                or self._rs(crop).get('status') == 'SLIDER_FOUND':
+            return c['box']
+        return None
 
-    def _validator(self, target_fn, identity):
+    def _validator(self, target_fn, what, *, lock_hand=False):
         """Revalida NA CHEGADA (e no início): geometria estável, mesa ligada, alvo
-        presente FRESCO. Devolve target_rect (tela atual) + identity -> o controlador
-        cancela em TARGET_MOVED/IDENTITY_CHANGED."""
+        presente FRESCO. Na ABERTURA do painel (lock_hand=False) RELÊ a mão: se a
+        mão trocou/ilegível, identidade diverge → CursorController cancela (não abre
+        painel numa mão nova). JÁ com o painel ABERTO (lock_hand=True, passos PRESET/
+        CONFIRMAR) a mão está TRAVADA — não dá pra começar outra mão com o painel de
+        aumento aberto — e o painel TAPA a leitura da mão (read_hand_id falha/muda),
+        então reler a mão aqui causava IDENTITY_CHANGED e MATAVA o raise (feedback do
+        Eduardo: "clica Raise e morre"). Com o painel aberto usamos a mão TRAVADA
+        (self.hand); a segurança vem de: geometria estável + alvo (preset/confirmar)
+        presente FRESCO no painel + prazo/arme do CursorController."""
         def v(intent, now):
             if not self._geom_ok():
                 return dict(ok=False, reasons=['GEOMETRIA_MUDOU'])
@@ -135,31 +184,69 @@ class RaiseSequencer:
             box = target_fn(crop)
             if box is None:
                 return dict(ok=False, reasons=['ALVO_AUSENTE'])
+            if lock_hand:
+                hand = self.hand                      # painel aberto -> mão travada
+            else:
+                cur = (self._read_hand(crop) if self._read_hand else {}) or {}
+                hand = cur.get('hand_id') or cur.get('hand_number')
             bx, by, bw, bh = box
             cx0, cy0, _, _ = self._crop_box
             rect = rect_frame_to_screen((cx0 + bx, cy0 + by, bw, bh),
                                         window_rect=self._win(),
                                         frame_size=(frame.shape[1], frame.shape[0]))
-            return dict(ok=True, target_rect=rect, identity=identity)
+            return dict(ok=True, target_rect=rect,
+                        identity=(self.table_key, hand, what))
         return v
 
+    def _allin_via_slider(self):
+        """ALL-IN: arrasta o handle da BARRA até o topo (máximo). Gated (armado) +
+        geometria estável + leitura FRESCA do slider imediatamente antes do arrasto.
+        O arrasto não passa pelo clique do CursorController (é drag, não clique);
+        a segurança vem do gate + geometria + leitura fresca. Retorna {state}."""
+        if not self._geom_ok():
+            return dict(state='CANCELLED', reasons=['GEOMETRIA_MUDOU'])
+        if not self._armed():
+            return dict(state='CANCELLED', reasons=['BOT_PAUSADO'])
+        frame, _ = self.capture()
+        crop = self._crop(frame)
+        if crop is None:
+            return dict(state='CANCELLED', reasons=['RECAPTURE_FAILED'])
+        sl = self._rs(crop)
+        if sl.get('status') != 'SLIDER_FOUND':
+            return dict(state='CANCELLED', reasons=['SEM_SLIDER'])
+        cx0, cy0, _, _ = self._crop_box
+        hx, hy = sl['handle']['center']
+        tx, ty = sl['allin_to']
+        wr, fs = self._win(), (frame.shape[1], frame.shape[0])
+        sx0, sy0 = frame_to_screen((cx0 + hx, cy0 + hy), window_rect=wr, frame_size=fs)
+        sx1, sy1 = frame_to_screen((cx0 + tx, cy0 + ty), window_rect=wr, frame_size=fs)
+        if not self._armed():                         # recheca imediatamente antes
+            return dict(state='CANCELLED', reasons=['BOT_PAUSADO'])
+        rep = self.input.drag(sx0, sy0, sx1, sy1)
+        self.log.append(('ALLIN_SLIDER', 'released=%s' % rep.get('released')))
+        if not rep.get('released'):
+            return dict(state='UNKNOWN_RESULT', reasons=['DRAG_NAO_SOLTOU'])
+        return dict(state='DONE')
+
     def _verify_bet(self, intent, now):
-        """Indício do efeito na MESMA mesa: a linha de botões sumiu. Ausência não é
-        prova (#8) -> sem isso, confirmed=False e o controlador devolve UNKNOWN."""
+        """Indício POSITIVO do efeito na MESMA mesa: a linha de botões sumiu num read
+        LIMPO (NO_BUTTON_ROW/PRESELECTION_ROW). Erro de leitura (INVALID_CROP) ou linha
+        ainda presente NÃO confirmam (#8/A2) -> confirmed=False e o controlador devolve
+        UNKNOWN; não se declara aposta entrada sobre leitura falha."""
         frame, _ = self.capture()
         crop = self._crop(frame)
         if crop is None:
             return dict(confirmed=False)
-        return dict(confirmed=(self._ra(crop)['status'] != 'EXPERIMENTAL_BUTTON_ROW'))
+        return dict(confirmed=(self._ra(crop)['status'] in _ROW_GONE_STATUSES))
 
-    def _step(self, what, target_fn, verifier=None):
+    def _step(self, what, target_fn, verifier=None, *, lock_hand=False):
         identity = (self.table_key, self.hand, what)
         intent = Intent(id='raise-%s-%s-%s' % (self.table_key, self.hand, what),
                         action='RAISE_%s' % what, source_key=identity,
                         target_rect=(0, 0, 1, 1), deadline=self._clock() + self.step_deadline,
                         hand=self.hand, expected=dict(step=what, table_key=self.table_key))
         ctrl = CursorController(input_adapter=self.input,
-                                validator=self._validator(target_fn, identity),
+                                validator=self._validator(target_fn, what, lock_hand=lock_hand),
                                 verifier=verifier, bot_control=self.bot,
                                 clock=self._clock, sleep=self._sleep)
         out = ctrl.execute(intent)
@@ -168,6 +255,8 @@ class RaiseSequencer:
 
     # ---- fluxo ----------------------------------------------------------
     def run(self):
+        if self.hand is None:
+            return self._fail('MAO_DESCONHECIDA')   # identidade desconhecida: não age (A2)
         frame, _ = self.capture()
         if frame is None:
             return self._fail('SEM_CAPTURA')
@@ -192,26 +281,46 @@ class RaiseSequencer:
         if out_a['state'] == 'CANCELLED':
             return self._fail('ABRIR_CANCELADO')          # não clicou (ou revalidação barrou)
         self._sleep(0.3)
-        panel = self._read_panel_fresh()
-        if not panel or panel.get('status') != 'EXPERIMENTAL_RAISE_PANEL':
+        panel, slider = self._read_panel_slider_fresh()
+        if not self._panel_open(panel, slider):
             return self._unknown('PAINEL_NAO_ABRIU', out_a)
 
-        # B) escolher o preset (com tolerância; sem preset compatível -> abster)
-        preset = map_multiplier_to_preset(self.target_mult, panel['presets'])
-        if preset is None:
-            return self._fail('SEM_PRESET_PARA_ALVO:%s' % self.target_mult)
-        out_b = self._step('PRESET_%sx' % preset['mult'], self._tf_preset)
-        if out_b['state'] == 'CANCELLED':
-            return self._unknown('PRESET_CANCELADO', out_b)   # o abrir já saiu -> desconhecido
+        # B) escolher o TAMANHO via contrato discreto (A4): PRESET | SHOVE | ABSTAIN.
+        # Preset compatível -> clica o preset; SHOVE -> barra (all-in); sem tamanho
+        # SEGURO/conferível -> ABSTAIN (não clica, com razão explícita).
+        plan = plan_raise(self.target_mult, panel['presets'])
+        preset = plan['preset'] if plan['kind'] == 'PRESET' else None
+        if plan['kind'] == 'ABSTAIN':
+            return self._fail('SEM_PRESET_SEGURO:%s:%s' % (plan.get('reason'), self.target_mult))
+        if plan['kind'] == 'SHOVE':
+            out_b = self._allin_via_slider()
+            if out_b['state'] == 'CANCELLED':
+                return self._unknown('ALLIN_SLIDER_CANCELADO', out_b)
+        else:
+            out_b = self._step('PRESET_%sx' % preset['mult'], self._tf_preset, lock_hand=True)
+            if out_b['state'] == 'CANCELLED':
+                return self._unknown('PRESET_CANCELADO', out_b)   # o abrir já saiu -> desconhecido
         self._sleep(0.25)
 
-        # C) confirmar — relê o painel FRESCO; NUNCA reusa o anterior
-        panel2 = self._read_panel_fresh()
-        if not panel2 or panel2.get('status') != 'EXPERIMENTAL_RAISE_PANEL' \
-                or not panel2.get('confirm'):
+        # C) confirmar — relê painel+slider FRESCOS; NUNCA reusa o anterior.
+        # ACEITA o painel de STACK CURTO (shove): confirm + slider SLIDER_FOUND, com
+        # status != EXPERIMENTAL_RAISE_PANEL (mesmo critério do _panel_open). Antes aqui
+        # exigia EXPERIMENTAL_RAISE_PANEL e o all-in (depois de arrastar a barra) morria
+        # em CONFIRMAR_SEM_PAINEL sem clicar o confirmar (feedback do Eduardo: "arrastou
+        # a barra e não concluiu"). O _tf_confirm já clica o confirmar nos dois layouts.
+        panel2, slider2 = self._read_panel_slider_fresh()
+        if not self._panel_open(panel2, slider2) or not panel2.get('confirm'):
             return self._unknown('CONFIRMAR_SEM_PAINEL', out_b)
-        out_c = self._step('CONFIRMAR', self._tf_confirm, verifier=self._verify_bet)
+        # A4: antes de confirmar, confere que o preset pretendido ainda está no painel
+        # relido (pega painel trocado / rótulo mis-OCR entre etapas). Só BARRA, nunca
+        # adiciona clique. Shove (sem preset) não tem o que conferir aqui.
+        if preset is not None:
+            ok_sel, why_sel = verify_selected_preset(panel2, plan['expected_mult'])
+            if not ok_sel:
+                return self._unknown('PRESET_MUDOU_ANTES_DE_CONFIRMAR:%s' % why_sel, out_b)
+        out_c = self._step('CONFIRMAR', self._tf_confirm, verifier=self._verify_bet, lock_hand=True)
         if out_c['state'] == 'CANCELLED':
             return self._unknown('CONFIRMAR_CANCELADO', out_c)
-        return dict(ok=True, confirmed=(out_c['state'] == 'DONE'), preset=preset['mult'],
+        return dict(ok=True, confirmed=(out_c['state'] == 'DONE'),
+                    preset=(preset['mult'] if preset else 'ALL_IN'),
                     target_mult=self.target_mult, result_state=out_c['state'], log=self.log)

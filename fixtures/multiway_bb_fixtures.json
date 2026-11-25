@@ -1,0 +1,832 @@
+[
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "UTG",
+    "callers": [
+      "LJ"
+    ],
+    "n_players": 3,
+    "stack_bb": 25,
+    "hero_rel_position": "OOP",
+    "opp_strength": "tight",
+    "hand": "A8o",
+    "action": "jam",
+    "fonte": "linha 164"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "UTG",
+    "callers": [
+      "LJ"
+    ],
+    "n_players": 3,
+    "stack_bb": 25,
+    "hero_rel_position": "OOP",
+    "opp_strength": "tight",
+    "hand": "A7o",
+    "action": "jam",
+    "fonte": "linha 164"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "UTG",
+    "callers": [
+      "LJ"
+    ],
+    "n_players": 3,
+    "stack_bb": 25,
+    "hero_rel_position": "OOP",
+    "opp_strength": "tight",
+    "hand": "A6o",
+    "action": "jam",
+    "fonte": "linha 145"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "UTG",
+    "callers": [
+      "LJ"
+    ],
+    "n_players": 3,
+    "stack_bb": 25,
+    "hero_rel_position": "OOP",
+    "opp_strength": "tight",
+    "hand": "Q9o",
+    "action": "jam",
+    "fonte": "linha 165"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "UTG",
+    "callers": [
+      "LJ"
+    ],
+    "n_players": 3,
+    "stack_bb": 100,
+    "hero_rel_position": "OOP",
+    "opp_strength": "tight",
+    "hand": "A9o",
+    "action": "fold",
+    "fonte": "linha 198"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "UTG",
+    "callers": [
+      "LJ"
+    ],
+    "n_players": 3,
+    "stack_bb": 100,
+    "hero_rel_position": "OOP",
+    "opp_strength": "tight",
+    "hand": "K9o",
+    "action": "fold",
+    "fonte": "linha 199"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "UTG",
+    "callers": [
+      "LJ"
+    ],
+    "n_players": 3,
+    "stack_bb": 100,
+    "hero_rel_position": "OOP",
+    "opp_strength": "tight",
+    "hand": "K8o",
+    "action": "fold",
+    "fonte": "linha 199"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "UTG",
+    "callers": [
+      "LJ"
+    ],
+    "n_players": 3,
+    "stack_bb": 100,
+    "hero_rel_position": "OOP",
+    "opp_strength": "tight",
+    "hand": "Q9o",
+    "action": "fold",
+    "fonte": "linha 199"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "UTG",
+    "callers": [
+      "LJ"
+    ],
+    "n_players": 3,
+    "stack_bb": 100,
+    "hero_rel_position": "OOP",
+    "opp_strength": "tight",
+    "hand": "92s",
+    "action": "fold",
+    "fonte": "linha 214"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "UTG",
+    "callers": [
+      "LJ"
+    ],
+    "n_players": 3,
+    "stack_bb": 100,
+    "hero_rel_position": "OOP",
+    "opp_strength": "tight",
+    "hand": "T5s",
+    "action": "fold",
+    "fonte": "linha 214"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "UTG",
+    "callers": [
+      "LJ"
+    ],
+    "n_players": 3,
+    "stack_bb": 100,
+    "hero_rel_position": "OOP",
+    "opp_strength": "tight",
+    "hand": "A2o",
+    "action": "fold",
+    "fonte": "linha 216"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "UTG",
+    "callers": [
+      "LJ",
+      "BTN"
+    ],
+    "n_players": 4,
+    "stack_bb": 100,
+    "hero_rel_position": "OOP",
+    "opp_strength": "tight",
+    "hand": "AJo",
+    "action": "fold",
+    "fonte": "linha 241"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "CO",
+    "callers": [
+      "BTN"
+    ],
+    "n_players": 3,
+    "stack_bb": 100,
+    "hero_rel_position": "OOP",
+    "opp_strength": "wide",
+    "hand": "AJs",
+    "action": "squeeze",
+    "fonte": "linha 364"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "CO",
+    "callers": [
+      "BTN"
+    ],
+    "n_players": 3,
+    "stack_bb": 100,
+    "hero_rel_position": "OOP",
+    "opp_strength": "wide",
+    "hand": "KJs",
+    "action": "squeeze",
+    "fonte": "linha 365"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "CO",
+    "callers": [
+      "BTN"
+    ],
+    "n_players": 3,
+    "stack_bb": 100,
+    "hero_rel_position": "OOP",
+    "opp_strength": "wide",
+    "hand": "QJs",
+    "action": "squeeze",
+    "fonte": "linha 369"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "CO",
+    "callers": [
+      "BTN"
+    ],
+    "n_players": 3,
+    "stack_bb": 100,
+    "hero_rel_position": "OOP",
+    "opp_strength": "wide",
+    "hand": "67s",
+    "action": "squeeze",
+    "fonte": "linha 372",
+    "note": "cobertura de board"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "CO",
+    "callers": [
+      "BTN"
+    ],
+    "n_players": 3,
+    "stack_bb": 100,
+    "hero_rel_position": "OOP",
+    "opp_strength": "wide",
+    "hand": "56s",
+    "action": "squeeze",
+    "fonte": "linha 371",
+    "note": "cobertura de board"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "CO",
+    "callers": [
+      "BTN"
+    ],
+    "n_players": 3,
+    "stack_bb": 25,
+    "hero_rel_position": "OOP",
+    "opp_strength": "wide",
+    "hand": "KK",
+    "action": "squeeze",
+    "fonte": "linha 388",
+    "note": "3bet induz (topo)"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "CO",
+    "callers": [
+      "BTN"
+    ],
+    "n_players": 3,
+    "stack_bb": 25,
+    "hero_rel_position": "OOP",
+    "opp_strength": "wide",
+    "hand": "A9o",
+    "action": "jam",
+    "fonte": "linha 392"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "CO",
+    "callers": [
+      "BTN"
+    ],
+    "n_players": 3,
+    "stack_bb": 25,
+    "hero_rel_position": "OOP",
+    "opp_strength": "wide",
+    "hand": "88",
+    "action": "jam",
+    "fonte": "linha 392"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "CO",
+    "callers": [
+      "BTN"
+    ],
+    "n_players": 3,
+    "stack_bb": 25,
+    "hero_rel_position": "OOP",
+    "opp_strength": "wide",
+    "hand": "A5s",
+    "action": "jam",
+    "fonte": "linha 392"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "CO",
+    "callers": [
+      "BTN"
+    ],
+    "n_players": 3,
+    "stack_bb": 25,
+    "hero_rel_position": "OOP",
+    "opp_strength": "wide",
+    "hand": "A7o",
+    "action": "squeeze",
+    "fonte": "linha 389",
+    "note": "3bet blefe (blocker)"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "BTN",
+    "callers": [
+      "SB"
+    ],
+    "n_players": 3,
+    "stack_bb": 100,
+    "hero_rel_position": "IP",
+    "opp_strength": "capped",
+    "hand": "AJs",
+    "action": "squeeze",
+    "fonte": "linha 446"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "BTN",
+    "callers": [
+      "SB"
+    ],
+    "n_players": 3,
+    "stack_bb": 100,
+    "hero_rel_position": "IP",
+    "opp_strength": "capped",
+    "hand": "ATo",
+    "action": "squeeze",
+    "fonte": "linha 446"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "BTN",
+    "callers": [
+      "SB"
+    ],
+    "n_players": 3,
+    "stack_bb": 100,
+    "hero_rel_position": "IP",
+    "opp_strength": "capped",
+    "hand": "88",
+    "action": "squeeze",
+    "fonte": "linha 444"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "BTN",
+    "callers": [
+      "SB"
+    ],
+    "n_players": 3,
+    "stack_bb": 100,
+    "hero_rel_position": "IP",
+    "opp_strength": "capped",
+    "hand": "Q5s",
+    "action": "squeeze",
+    "fonte": "linha 448",
+    "note": "blocker polar"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "BTN",
+    "callers": [
+      "SB"
+    ],
+    "n_players": 3,
+    "stack_bb": 25,
+    "hero_rel_position": "IP",
+    "opp_strength": "capped",
+    "hand": "AA",
+    "action": "squeeze",
+    "fonte": "linha 454",
+    "note": "3bet induz"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "BTN",
+    "callers": [
+      "SB"
+    ],
+    "n_players": 3,
+    "stack_bb": 25,
+    "hero_rel_position": "IP",
+    "opp_strength": "capped",
+    "hand": "AKo",
+    "action": "squeeze",
+    "fonte": "linha 454"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "BTN",
+    "callers": [
+      "SB"
+    ],
+    "n_players": 3,
+    "stack_bb": 25,
+    "hero_rel_position": "IP",
+    "opp_strength": "capped",
+    "hand": "AQo",
+    "action": "squeeze",
+    "fonte": "linha 454"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "BTN",
+    "callers": [
+      "SB"
+    ],
+    "n_players": 3,
+    "stack_bb": 25,
+    "hero_rel_position": "IP",
+    "opp_strength": "capped",
+    "hand": "A7o",
+    "action": "squeeze",
+    "fonte": "linha 458",
+    "note": "3bet blefe"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "BTN",
+    "callers": [
+      "SB"
+    ],
+    "n_players": 3,
+    "stack_bb": 25,
+    "hero_rel_position": "IP",
+    "opp_strength": "capped",
+    "hand": "88",
+    "action": "jam",
+    "fonte": "linha 459"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "BTN",
+    "callers": [
+      "SB"
+    ],
+    "n_players": 3,
+    "stack_bb": 25,
+    "hero_rel_position": "IP",
+    "opp_strength": "capped",
+    "hand": "KTo",
+    "action": "jam",
+    "fonte": "linha 464"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "UTG",
+    "callers": [
+      "HJ"
+    ],
+    "n_players": 3,
+    "stack_bb": 100,
+    "hero_rel_position": "OOP",
+    "opp_strength": "tight",
+    "hand": "AJs",
+    "action": "squeeze",
+    "fonte": "linha 480"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "UTG",
+    "callers": [
+      "HJ"
+    ],
+    "n_players": 3,
+    "stack_bb": 100,
+    "hero_rel_position": "OOP",
+    "opp_strength": "tight",
+    "hand": "KJs",
+    "action": "squeeze",
+    "fonte": "linha 478"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "UTG",
+    "callers": [
+      "HJ"
+    ],
+    "n_players": 3,
+    "stack_bb": 100,
+    "hero_rel_position": "OOP",
+    "opp_strength": "tight",
+    "hand": "78s",
+    "action": "squeeze",
+    "fonte": "linha 482",
+    "note": "cobertura de board"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "UTG",
+    "callers": [
+      "HJ"
+    ],
+    "n_players": 3,
+    "stack_bb": 25,
+    "hero_rel_position": "OOP",
+    "opp_strength": "tight",
+    "hand": "AKo",
+    "action": "squeeze",
+    "fonte": "linha 494"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "UTG",
+    "callers": [
+      "HJ"
+    ],
+    "n_players": 3,
+    "stack_bb": 25,
+    "hero_rel_position": "OOP",
+    "opp_strength": "tight",
+    "hand": "AQo",
+    "action": "squeeze",
+    "fonte": "linha 494"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "UTG",
+    "callers": [
+      "HJ"
+    ],
+    "n_players": 3,
+    "stack_bb": 25,
+    "hero_rel_position": "OOP",
+    "opp_strength": "tight",
+    "hand": "A9s",
+    "action": "jam",
+    "fonte": "linha 492",
+    "note": "blefe com blocker"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "UTG",
+    "callers": [
+      "HJ"
+    ],
+    "n_players": 3,
+    "stack_bb": 25,
+    "hero_rel_position": "OOP",
+    "opp_strength": "tight",
+    "hand": "99",
+    "action": "squeeze",
+    "fonte": "linha 495"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "UTG",
+    "callers": [
+      "HJ"
+    ],
+    "n_players": 3,
+    "stack_bb": 25,
+    "hero_rel_position": "OOP",
+    "opp_strength": "tight",
+    "hand": "QQ",
+    "action": "squeeze",
+    "fonte": "linha 495"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "BTN",
+    "callers": [
+      "SB"
+    ],
+    "n_players": 3,
+    "stack_bb": 25,
+    "hero_rel_position": "IP",
+    "opp_strength": "capped",
+    "hand": "J5o",
+    "action": "fold",
+    "fonte": "linha 503"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "BTN",
+    "callers": [
+      "SB"
+    ],
+    "n_players": 3,
+    "stack_bb": 25,
+    "hero_rel_position": "IP",
+    "opp_strength": "capped",
+    "hand": "K4o",
+    "action": "call",
+    "fonte": "linha 505"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "BTN",
+    "callers": [
+      "SB"
+    ],
+    "n_players": 3,
+    "stack_bb": 25,
+    "hero_rel_position": "IP",
+    "opp_strength": "capped",
+    "hand": "T8o",
+    "action": "call",
+    "fonte": "linha 507"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "BTN",
+    "callers": [
+      "SB"
+    ],
+    "n_players": 3,
+    "stack_bb": 25,
+    "hero_rel_position": "IP",
+    "opp_strength": "capped",
+    "hand": "53s",
+    "action": "call",
+    "fonte": "linha 509"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "BTN",
+    "callers": [
+      "SB"
+    ],
+    "n_players": 3,
+    "stack_bb": 25,
+    "hero_rel_position": "IP",
+    "opp_strength": "capped",
+    "hand": "79s",
+    "action": "call",
+    "fonte": "linha 509"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "BTN",
+    "callers": [
+      "SB"
+    ],
+    "n_players": 3,
+    "stack_bb": 25,
+    "hero_rel_position": "IP",
+    "opp_strength": "capped",
+    "hand": "Q5o",
+    "action": "fold",
+    "fonte": "linha 510"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "BTN",
+    "callers": [
+      "SB"
+    ],
+    "n_players": 3,
+    "stack_bb": 25,
+    "hero_rel_position": "IP",
+    "opp_strength": "capped",
+    "hand": "Q8o",
+    "action": "call",
+    "fonte": "linha 512"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "BTN",
+    "callers": [
+      "SB"
+    ],
+    "n_players": 3,
+    "stack_bb": 25,
+    "hero_rel_position": "IP",
+    "opp_strength": "capped",
+    "hand": "K6o",
+    "action": "call",
+    "fonte": "linha 513"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "BTN",
+    "callers": [
+      "SB"
+    ],
+    "n_players": 3,
+    "stack_bb": 25,
+    "hero_rel_position": "IP",
+    "opp_strength": "capped",
+    "hand": "T3o",
+    "action": "fold",
+    "fonte": "linha 513"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "BTN",
+    "callers": [
+      "SB"
+    ],
+    "n_players": 3,
+    "stack_bb": 25,
+    "hero_rel_position": "IP",
+    "opp_strength": "capped",
+    "hand": "78o",
+    "action": "call",
+    "fonte": "linha 513"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "BTN",
+    "callers": [
+      "SB"
+    ],
+    "n_players": 3,
+    "stack_bb": 25,
+    "hero_rel_position": "IP",
+    "opp_strength": "capped",
+    "hand": "K7o",
+    "action": "call",
+    "fonte": "linha 513"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "BTN",
+    "callers": [
+      "SB"
+    ],
+    "n_players": 3,
+    "stack_bb": 25,
+    "hero_rel_position": "IP",
+    "opp_strength": "capped",
+    "hand": "T5o",
+    "action": "fold",
+    "fonte": "linha 515"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "BTN",
+    "callers": [
+      "SB"
+    ],
+    "n_players": 3,
+    "stack_bb": 25,
+    "hero_rel_position": "IP",
+    "opp_strength": "capped",
+    "hand": "Q2o",
+    "action": "fold",
+    "fonte": "linha 516"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "BTN",
+    "callers": [
+      "SB"
+    ],
+    "n_players": 3,
+    "stack_bb": 25,
+    "hero_rel_position": "IP",
+    "opp_strength": "capped",
+    "hand": "A8o",
+    "action": "jam",
+    "fonte": "linha 517"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "BTN",
+    "callers": [
+      "SB"
+    ],
+    "n_players": 3,
+    "stack_bb": 25,
+    "hero_rel_position": "IP",
+    "opp_strength": "capped",
+    "hand": "A2o",
+    "action": "jam",
+    "fonte": "linha 520",
+    "mixed": true,
+    "note": "professor esperava call; solver mostra chove+raise 25bb"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "BTN",
+    "callers": [
+      "SB"
+    ],
+    "n_players": 3,
+    "stack_bb": 25,
+    "hero_rel_position": "IP",
+    "opp_strength": "capped",
+    "hand": "34s",
+    "action": "jam",
+    "fonte": "linha 537",
+    "mixed": true,
+    "note": "marginal: chove ou call viaveis em 25bb"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "HJ",
+    "callers": [
+      "CO"
+    ],
+    "n_players": 3,
+    "stack_bb": 100,
+    "hero_rel_position": "OOP",
+    "opp_strength": "wide",
+    "hand": "73s",
+    "action": "call",
+    "fonte": "linha 279",
+    "mixed": true,
+    "note": "deep HJ+CO, voos baixos; stack nao especificado na aula"
+  },
+  {
+    "hero_pos": "BB",
+    "raiser_pos": "UTG",
+    "callers": [
+      "BTN"
+    ],
+    "n_players": 3,
+    "stack_bb": 25,
+    "hero_rel_position": "OOP",
+    "opp_strength": "tight",
+    "hand": "QTo",
+    "action": "call",
+    "fonte": "linha 326",
+    "mixed": true,
+    "note": "25bb sem ICM, close entre call e fold"
+  }
+]

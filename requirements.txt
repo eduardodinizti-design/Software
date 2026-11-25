@@ -9,3 +9,6 @@ Pillow==13.0.0
 # tesseract.exe subprocess, byte-identical output. Optional: without it OCR stays on
 # pytesseract. The Windows wheel bundles libtesseract; the lab (Linux) skips it.
 tesserocr==2.12.0; platform_system == "Windows"
+# Injeção read-only no PPPoker (il2cpp): emissor de assentos (seat->uid+nick) e
+# captura de mãos. Obrigatório p/ o exploit do field e o salvamento de mãos.
+frida==17.26.2; platform_system == "Windows"

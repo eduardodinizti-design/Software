@@ -1,7 +1,7 @@
 """Registrador supervisionado — demo em modo OBSERVAÇÃO (Fase 3A).
 
 Percorre UMA rodada da máquina de estados sobre um alvo autorizado e PARA em
-AGUARDANDO CONFIRMAÇÃO. O bot NÃO clica em nada: se você quiser de fato se
+AGUARDANDO CONFIRMAÇÃO. O Henrique NÃO clica em nada: se você quiser de fato se
 inscrever, o clique de confirmação é SEU, no cliente (spec §2 / Etapa F).
 
 Esta demo usa dados de exemplo (não lê o lobby real). Ela existe para mostrar a
@@ -53,7 +53,7 @@ def main(argv=None):
     ledger = RegistrationLedger(args.db)
 
     print('=' * 68)
-    print('REGISTRADOR SUPERVISIONADO — MODO OBSERVAÇÃO (o bot NÃO clica)')
+    print('REGISTRADOR SUPERVISIONADO — MODO OBSERVAÇÃO (o Henrique NÃO clica)')
     print('=' * 68)
 
     r = RegistrationRound(

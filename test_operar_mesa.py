@@ -82,5 +82,26 @@ class VerifierPositiveEvidence(unittest.TestCase):
         self.assertFalse(self._verify('CROP_TOO_SMALL'))
 
 
+class ShoveExecutionWiring(unittest.TestCase):
+    """O operador PRECISA shovar (push/fold). O conselho 'all_in' é RAISE multi-etapa
+    com o caveat ALL_IN; como all-in não tem multiplicador de sizing, o operador usa
+    um alvo-sentinela que roteia o sequenciador pro SHOVE (slider all-in). Sem isso
+    ele abstinha (caía no fold/check) e nunca jammava A3s 8bb."""
+
+    def test_all_in_e_raise_multietapa_com_caveat_allin(self):
+        from action_coordinator import map_advice_to_action
+        action, caveats = map_advice_to_action('all_in')
+        self.assertEqual(action, 'RAISE')
+        self.assertIn('REQUIRES_SIZING_MULTISTEP', caveats)   # dispara o sequenciador
+        self.assertIn('ALL_IN', caveats)                      # sinaliza o shove
+
+    def test_alvo_sentinela_roteia_plan_raise_pro_shove(self):
+        from raise_plan import plan_raise
+        presets = [dict(mult=2.0, label='2x', box=[0, 0, 10, 10]),
+                   dict(mult=3.0, label='3x', box=[0, 0, 10, 10])]
+        plan = plan_raise(operar_mesa._SHOVE_TARGET_MULT, presets)
+        self.assertEqual(plan['kind'], 'SHOVE')               # slider all-in, não preset
+
+
 if __name__ == '__main__':
     unittest.main()

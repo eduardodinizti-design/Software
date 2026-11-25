@@ -15,19 +15,30 @@ import time
 
 from action_coordinator import plan_from_buttons, decision_identity
 from cursor_controller import CursorController, Intent
+from click_arbiter import click_lock as _click_lock, ClickBusy as _ClickBusy  # lock GLOBAL do cursor (multi-plataforma)
+from decision_contract import evaluate as evaluate_contract
 
 SINGLE_CLICK_ACTIONS = ('FOLD', 'CALL', 'CHECK')
 
 
 class ActionExecutor:
     def __init__(self, *, window_rect, bot_control=None, armed=False,
-                 arrival_tol=10.0, clock=time.monotonic, call_margin=0.04):
+                 arrival_tol=10.0, clock=time.monotonic, call_margin=0.04,
+                 allow_commit=True):
         self.window_rect = window_rect
         self.bot_control = bot_control
         self.armed = bool(armed)
         self.arrival_tol = float(arrival_tol)
         self._clock = clock
         self.call_margin = float(call_margin)   # folga mínima de equity p/ auto-CALL de call-off
+        # TRAVA ABSOLUTA (regra do Eduardo, 15/11): com allow_commit=False o operador
+        # SÓ clica FOLD/CHECK (não-commit, grátis/seguro) e CALL (= pagar) fica
+        # BLOQUEADO na origem — defesa em profundidade contra uma linha de PRÉ-AÇÃO
+        # mal lida escapar como "a vez do hero" e o clique tocar o "Pagar"/Call-Any.
+        # O núcleo mantém default True (preserva call-off/call-validado p/ os testes);
+        # é o OPERADOR AO VIVO que sobe com allow_commit=False no teste de dinheiro
+        # real, reabrindo só quando a detecção de pré-ação for 100% confiável.
+        self.allow_commit = bool(allow_commit)
         self._sent = set()               # ASSINATURAS de decisão já enviadas
 
     def plan(self, result, buttons_result, *, origin, frame_size):
@@ -41,32 +52,40 @@ class ActionExecutor:
         if action not in SINGLE_CLICK_ACTIONS:
             return dict(ok=False, plan=None,
                         reason='ACAO_MULTI_ETAPA_NAO_ARMADA:%s' % action)
+        # TRAVA ABSOLUTA anti-Pagar: CALL = pagar ficha. Só passa com allow_commit.
+        # Fora disso, NUNCA clica CALL/Pagar — nem como call-off, nem como premium.
+        if action == 'CALL' and not self.allow_commit:
+            return dict(ok=False, plan=None, reason='PAGAR_BLOQUEADO:TRAVA_ABSOLUTA')
         return p
 
-    def _eligible(self, advice, action):
-        """AUTORIZAÇÃO estratégica única p/ auto-clique (só no armado): status ADVICE
-        sozinho NÃO basta. FOLD/CHECK não arriscam fichas -> sempre elegíveis. Ações
-        que comprometem fichas (CALL) exigem: ou nó VALIDADO, ou um call-off
-        sintetizado com folga de equity suficiente. Conselho de referência/não
-        validado NÃO auto-clica (só estuda em dry-run)."""
-        if action in ('FOLD', 'CHECK'):
+    def _contract(self, advice, action, hero_cards):
+        """Contrato de validade B04 da ação (decision_contract): autorização de
+        execução decomposta em requisitos explícitos e separados."""
+        return evaluate_contract(advice or {}, action=action, hero_cards=hero_cards,
+                                 action_available=True, call_margin=self.call_margin)
+
+    @staticmethod
+    def _authorize(contract):
+        """Mapeia o contrato p/ (ok, motivo_legado). Preserva as razões históricas
+        (CALLOFF_NA_FRONTEIRA/CALLOFF_SEM_MARGEM/NAO_VALIDADO) p/ não quebrar logs/
+        testes a jusante."""
+        if contract['execution_allowed']:
             return True, None
-        advice = advice or {}
-        spot = str(advice.get('spot') or '')
-        if spot.startswith('call_off_'):
-            # Call-off é validated=False por construção (equity/ICM aproximados):
-            # elegível só com folga sobre a equity exigida (borda ruidosa de MC).
-            eq = advice.get('equity')
-            req = advice.get('required_equity_icm', advice.get('required_equity'))
-            if not isinstance(eq, (int, float)) or not isinstance(req, (int, float)):
-                return False, 'CALLOFF_SEM_MARGEM'
-            if eq - req < self.call_margin:
-                return False, 'CALLOFF_NA_FRONTEIRA'
-            return True, None
-        # Demais CALL/agressões: exige nó validado (não auto-clica referência/deep).
-        if not advice.get('validated'):
+        b = contract['blockers']
+        for key in ('CALLOFF_NA_FRONTEIRA', 'CALLOFF_SEM_MARGEM'):
+            if key in b:
+                return False, key
+        if 'SEM_AUTORIDADE_VALIDADA' in b:
             return False, 'NAO_VALIDADO'
-        return True, None
+        return False, (b[0] if b else 'NAO_ELEGIVEL')
+
+    def _eligible(self, advice, action, *, hero_cards=None):
+        """AUTORIZAÇÃO estratégica única p/ auto-clique (só no armado), delegada ao
+        contrato de validade B04. FOLD/CHECK = piso de segurança (não arriscam
+        ficha). Commit (CALL) exige uma AUTORIDADE (nó validado, call-off com
+        margem, ou premium-safety explícito) E observação/legalidade/sizing — rótulo
+        ou margem não substituem os demais requisitos. Referência/deep não valida."""
+        return self._authorize(self._contract(advice, action, hero_cards))
 
     def execute(self, result, buttons_result, *, origin, frame_size, input_adapter,
                 validator, verifier=None, hand_id=None, table_key=None):
@@ -94,11 +113,18 @@ class ActionExecutor:
         # #5: identidade desconhecida bloqueia a execução real (dry-run só estuda).
         if self.armed and hand_id is None:
             return dict(acted=False, reason='IDENTIDADE_DESCONHECIDA_BLOQUEIA', dry_run=False)
-        # #6-exec: gate de elegibilidade estratégica no armado.
-        if self.armed:
-            ok_elig, why = self._eligible(result.get('advice') or {}, action)
+        # #6-exec: gate de elegibilidade estratégica no armado, via contrato B04.
+        advice = result.get('advice') or {}
+        contract = self._contract(advice, action, result.get('hero_cards'))
+        # Pós-flop EXPLORATÓRIO (--posflop): o OPERADOR já decidiu executar a
+        # recomendação heurística; o gate de validação (nó validado) é dispensado
+        # p/ essa decisão. A trava de COMMIT (allow_commit no plan(): CALL só com
+        # --não-pagar desligado) e o clique-único continuam valendo.
+        if self.armed and not advice.get('posflop_exec'):
+            ok_elig, why = self._authorize(contract)
             if not ok_elig:
-                return dict(acted=False, reason='NAO_ELEGIVEL:%s' % why, dry_run=False)
+                return dict(acted=False, reason='NAO_ELEGIVEL:%s' % why,
+                            authority=contract['authority'], contract=contract, dry_run=False)
 
         identity = decision_identity(table_key, hand_id, action, value[0], value[1])
         intent = Intent(id='act-%s-%s-%s' % (table_key, hand_id, action),
@@ -111,9 +137,21 @@ class ActionExecutor:
             input_adapter=input_adapter, validator=validator, verifier=verifier,
             bot_control=(self.bot_control if self.armed else None),
             clock=self._clock, arrival_tol=self.arrival_tol)
-        out = ctrl.execute(intent)
+        # ÁRBITRO DE CLIQUE (multi-plataforma): no ARMADO, o clique físico adquire o lock GLOBAL do cursor
+        # -> NÃO colide com a Suprema clicando ao mesmo tempo. Cursor ocupado pela outra plataforma ->
+        # não executa esta decisão agora (a próxima leitura re-propõe; poker dá tempo). Dry-run não toca
+        # o cursor, então não pega o lock. O click_arbiter degrada seguro se não houver win32.
+        if self.armed:
+            try:
+                with _click_lock():
+                    out = ctrl.execute(intent)
+            except _ClickBusy:
+                return dict(acted=False, reason='CURSOR_OCUPADO_OUTRA_PLATAFORMA', dry_run=False)
+        else:
+            out = ctrl.execute(intent)
         clicked = out['state'] != 'CANCELLED'      # chegou a clicar?
         if clicked:
             self._sent.add(sig)
         return dict(acted=clicked, state=out['state'], reasons=out['reasons'],
-                    plan=plan, intent_id=intent.id, dry_run=not self.armed)
+                    plan=plan, intent_id=intent.id, authority=contract['authority'],
+                    contract=contract, dry_run=not self.armed)

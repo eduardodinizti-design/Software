@@ -87,9 +87,12 @@ class ExploitHudTests(unittest.TestCase):
     FISH = {'vpip': 45, 'pfr': 12, 'cbet': 40, 'foldcbet': 30, 'threebet': 2, 'fold3bet': 70, 'steal': 20, 'cr': 5}
     LAG = {'vpip': 30, 'pfr': 26, 'cbet': 70, 'foldcbet': 40, 'threebet': 11, 'fold3bet': 40, 'steal': 45, 'cr': 8}
 
-    def test_big_bet_abstains_without_hud(self):
+    def test_top_pair_defends_barrel_without_hud(self):
+        # GUIA cap.14 (agressão 24/11): sem HUD, top pair DEFENDE o barril normal (≤ pote) no
+        # flop/turn — não folda (era o passivão). pot_odds 0.44 (<0.55 overbet) -> call.
         r = advise_postflop(state(10, 8), ['As', 'Kc'], ['Ad', '9h', '3d'])   # top pair, pot_odds 0.44
-        self.assertEqual(r['reason'], 'BLUFFCATCH_VS_BIG_BET_NEEDS_READS')
+        self.assertEqual(r['recommended'], 'call')
+        self.assertIn('TOP_PAIR_DEFENDE_BARRIL_GUIA_CAP14', r['caveats'])
 
     def test_big_bet_calls_vs_aggressive(self):
         r = advise_postflop(state(10, 8), ['As', 'Kc'], ['Ad', '9h', '3d'], villain_stats=self.LAG)
@@ -181,12 +184,17 @@ class FacingBetTests(unittest.TestCase):
         self.assertEqual(r['recommended'], 'call')
         self.assertIn('BLUFFCATCH_DEFEND_TO_MDF', r['caveats'])
 
-    def test_top_pair_big_bet_abstains(self):
+    def test_top_pair_overbet_folds_no_read(self):
+        # OVERBET (2x pote, pot_odds 0.67 > 0.55): nem top pair paga sem leitura (guia defende
+        # barril normal, não overbet polarizada). Fold.
         r = advise_postflop(state(10, 20), ['As', 'Qc'], ['Ah', '9h', '3d'])
-        self.assertEqual(r['status'], 'ABSTAIN')
-        self.assertEqual(r['reason'], 'BLUFFCATCH_VS_BIG_BET_NEEDS_READS')
+        self.assertEqual(r['recommended'], 'fold')
+        self.assertIn('BLUFFCATCH_OVERBET_FOLD', r['caveats'])
 
     def test_marginal_pair_folds(self):
+        # Par médio/fraco = bluff-catcher mais fraco: fold default conservador (Eduardo: sem spew;
+        # defender par médio largo arrastava o underpair pro call-off, leak de 50k). Só top pair
+        # defende o barril (guia cap.14). Afrouxar par médio fica p/ o filtro por stage/HUD.
         r = advise_postflop(state(10, 5), ['9s', 'Qc'], ['Ah', '9h', '3d'])  # second pair
         self.assertEqual(r['recommended'], 'fold')
         self.assertIn('MARGINAL_BLUFFCATCH_FOLD_DEFAULT_EXPLOITABLE', r['caveats'])
@@ -198,7 +206,7 @@ class FacingBetTests(unittest.TestCase):
     def test_mdf_and_pot_odds_reported(self):
         r = advise_postflop(state(10, 5), ['9s', 'Qc'], ['Ah', '9h', '3d'])
         self.assertAlmostEqual(r['pot_odds'], 5 / 15, places=3)
-        self.assertAlmostEqual(r['mdf'], 10 / 15, places=3)
+        self.assertAlmostEqual(r['mdf'], (10 - 5) / 10, places=3)   # P0/(P0+B)=(pot-call)/pot=0,5
 
 
 class CheckedToTests(unittest.TestCase):
@@ -244,12 +252,13 @@ class Phase2EquityTests(unittest.TestCase):
         self.assertEqual(r['recommended'], 'fold')
         self.assertLess(r['equity'], r['pot_odds'] + 0.05)
 
-    def test_big_bet_still_abstains_with_range(self):
+    def test_overbet_folds_default_with_range(self):
+        # OVERBET (2x pote): top pair folda mesmo com range (dominado por KK/QQ/AK); equity reportada.
         r = advise_postflop(state(10, 20), ['As', 'Qc'], ['Ah', '9h', '3d'],
                             villain_range=['KK', 'QQ', 'AK'], iters=2000)
-        self.assertEqual(r['status'], 'ABSTAIN')
-        self.assertEqual(r['reason'], 'BLUFFCATCH_VS_BIG_BET_NEEDS_READS')
-        self.assertIsNotNone(r['equity'])      # equity reportada, mas abstém
+        self.assertEqual(r['recommended'], 'fold')
+        self.assertIn('BLUFFCATCH_OVERBET_FOLD', r['caveats'])
+        self.assertIsNotNone(r['equity'])      # equity reportada
 
     def test_draw_equity_exact_overrides_rule(self):
         r = advise_postflop(state(6, 1), ['As', 'Ks'], ['Qs', '7s', '2d'],
@@ -293,7 +302,8 @@ class Phase2EquityTests(unittest.TestCase):
 
 
 class PotTypeGatingTests(unittest.TestCase):
-    """3bet pot HU dá HEURÍSTICA (SPR baixo/range mais forte); multiway abstém."""
+    """3bet pot HU dá HEURÍSTICA (SPR baixo); multiway joga COM penalidade de equity
+    por vilão extra e bloqueio de blefe de c-bet (>2 oponentes)."""
 
     def test_three_bet_pot_gives_heuristic(self):
         # Set em 3bet pot (SPR baixo): comete -> raise, com o rótulo de heurística 3bet.
@@ -304,10 +314,14 @@ class PotTypeGatingTests(unittest.TestCase):
         self.assertIn('POSTFLOP_THREE_BET_POT_HEURISTIC', r['caveats'])
         self.assertFalse(r['execution_allowed'])
 
-    def test_multiway_abstains_labeled(self):
+    def test_multiway_plays_with_penalty_label(self):
+        # Multiway já NÃO abstém: joga (set -> raise) com o rótulo de penalidade e
+        # a contagem de oponentes (default 2 quando não informado).
         r = advise_postflop(state(10, 4), ['3c', '3h'], ['As', '9h', '3d'], pot_type='multiway')
-        self.assertEqual(r['reason'], 'POSTFLOP_MULTIWAY_NOT_COVERED')
-        self.assertIsNotNone(r['pot_odds'])         # leitura preservada
+        self.assertEqual(r['status'], 'ADVICE')
+        self.assertEqual(r['made'], 'set')
+        self.assertEqual(r['opponents'], 2)
+        self.assertTrue(any('MULTIWAY' in c and 'PENALTY' in c for c in r['caveats']))
 
     def test_single_raised_still_advises(self):
         r = advise_postflop(state(10, 4), ['3c', '3h'], ['As', '9h', '3d'], pot_type='single_raised')
@@ -322,19 +336,36 @@ class PotTypeGatingTests(unittest.TestCase):
         r = advise_postflop(state(10, 4), ['3c', '3h'], ['As', '9h', '3d'])
         self.assertEqual(r['status'], 'ADVICE')
 
-    def test_three_bet_heuristic_is_tier_based_no_equity(self):
-        # A heurística de 3bet é por TIER+SPR (não há range de 3bet) -> não roda Monte
-        # Carlo mesmo com um range dado; equity fica None.
+    def test_three_bet_uses_supplied_range(self):
+        # CONSERTADO (antes ignorava a range): o ramo 3bet agora COMPUTA a equidade vs o
+        # range dado p/ não comprometer um monstro DOMINADO. Set de 3s vs [AK,KQ] domina
+        # -> equity alta, segue cometendo (não folda).
         r = advise_postflop(state(10, 4), ['3c', '3h'], ['As', '9h', '3d'],
                             villain_range=['AK', 'KQ'], pot_type='three_bet')
         self.assertEqual(r['status'], 'ADVICE')
-        self.assertIsNone(r.get('equity'))
+        self.assertIsNotNone(r.get('equity'))            # usa a range fornecida
+        self.assertNotEqual(r['recommended'], 'fold')    # set domina -> comete
 
-    def test_multiway_skips_equity(self):
-        r = advise_postflop(state(10, 4), ['3c', '3h'], ['As', '9h', '3d'],
-                            villain_range=['AK', 'KQ'], pot_type='multiway')
-        self.assertEqual(r['status'], 'ABSTAIN')
-        self.assertIsNone(r.get('equity'))
+    def test_multiway_applies_equity_penalty(self):
+        # Multiway com range: roda equity COM a penalidade de -12% por vilão extra.
+        full = advise_postflop(state(10, 4), ['3c', '3h'], ['As', '9h', '3d'],
+                               villain_range=['AK', 'KQ'], pot_type='single_raised', villains=1)
+        pen = advise_postflop(state(10, 4), ['3c', '3h'], ['As', '9h', '3d'],
+                              villain_range=['AK', 'KQ'], pot_type='multiway', villains=3)
+        self.assertEqual(pen['status'], 'ADVICE')
+        self.assertIsNotNone(pen.get('equity'))
+        self.assertLess(pen['equity'], full['equity'])     # penalizada < crua
+        self.assertTrue(any('EQUITY_PENALTY_24PCT' in c for c in pen['caveats']))
+
+    def test_multiway_blocks_cbet_bluff_over_two_opponents(self):
+        # Hero com draw forte passando a vez (to_call=0): em HU/3-way semi-blefa;
+        # com 3 oponentes (>2) o blefe de c-bet é BLOQUEADO -> check.
+        s = state(10, 0)                               # to_call = 0 (passaram a vez)
+        bet = advise_postflop(s, ['Jh', 'Th'], ['Qh', '9h', '2c'], pot_type='single_raised', villains=1)
+        blocked = advise_postflop(s, ['Jh', 'Th'], ['Qh', '9h', '2c'], pot_type='multiway', villains=3)
+        self.assertEqual(bet['recommended'], 'bet')    # semi-blefe HU
+        self.assertEqual(blocked['recommended'], 'check')
+        self.assertTrue(any('CBET_BLUFF_BLOCKED' in c for c in blocked['caveats']))
 
 
 class ThreeBetPotTests(unittest.TestCase):
@@ -440,6 +471,51 @@ class ContractTests(unittest.TestCase):
         self.assertEqual(advise_postflop(state(8, 0), ['As', 'Qc'], ['Ah', '9c', '3d'])['street'], 'FLOP')
         self.assertEqual(advise_postflop(state(8, 0), ['As', 'Qc'], ['Ah', '9c', '3d', '5s'])['street'], 'TURN')
         self.assertEqual(advise_postflop(state(8, 0), ['As', 'Qc'], ['Ah', '9c', '3d', '5s', 'Jd'])['street'], 'RIVER')
+
+
+class NoDonkBetTests(unittest.TestCase):
+    """LEI Eduardo (sem donk bet): o DEFENSOR fora de posição, PRIMEIRO a agir no FLOP,
+    NÃO lidera apostando (donk) — mesmo com mão feita e agressor DESCONHECIDO (o caso
+    do Q9 ao vivo na Suprema, onde aggressor chega None). Hero=agressor ainda c-beta."""
+
+    @staticmethod
+    def _oop_state(pot, to_call, stack=40.0, hero_pos='BB', vill_pos='BTN'):
+        return dict(pot=dict(pot_bb=pot), to_call=dict(to_call_bb=to_call),
+                    seats={'hero': dict(stack_bb=stack, occupied=True),
+                           'v1': dict(stack_bb=stack, occupied=True)},
+                    positions={'hero': hero_pos, 'v1': vill_pos})
+
+    def test_defender_oop_made_hand_checks_aggressor_unknown(self):
+        # Top pair OOP, agressor DESCONHECIDO (None), to_call=0, FLOP -> CHECK (não donk).
+        r = advise_postflop(self._oop_state(6, 0), ['As', 'Qc'], ['Ah', '9c', '3d'])
+        self.assertEqual(r['recommended'], 'check')
+        self.assertIn('NO_DONK_CHECK_AS_DEFENDER', r['caveats'])
+
+    def test_defender_oop_strong_hand_checks_villain_aggressor(self):
+        # Set OOP, agressor = vilão (defensor confirmado) -> CHECK (não lidera/donk).
+        r = advise_postflop(self._oop_state(6, 0), ['3c', '3h'], ['As', '9c', '3d'],
+                            aggressor='BTN')
+        self.assertEqual(r['recommended'], 'check')
+        self.assertIn('NO_DONK_CHECK_AS_DEFENDER', r['caveats'])
+
+    def test_hero_aggressor_still_cbets_oop(self):
+        # Hero = agressor (iniciativa) OOP com mão forte -> AINDA c-beta (não vira donk-check).
+        r = advise_postflop(self._oop_state(6, 0), ['3c', '3h'], ['As', '9c', '3d'],
+                            aggressor='hero')
+        self.assertEqual(r['recommended'], 'bet')
+        self.assertNotIn('NO_DONK_CHECK_AS_DEFENDER', r['caveats'])
+
+    def test_in_position_known_bets_unchanged(self):
+        # Posição conhecida e EM posição (BTN) sem vilão no mapa (como os demais testes):
+        # NÃO é donk -> o tier de lead segue apostando (preserva a suíte existente).
+        r = advise_postflop(state(8, 0), ['3c', '3h'], ['As', '9h', '3d'])
+        self.assertEqual(r['recommended'], 'bet')
+        self.assertNotIn('NO_DONK_CHECK_AS_DEFENDER', r['caveats'])
+
+    def test_facing_bet_not_gated(self):
+        # Enfrentando aposta (to_call>0) NÃO é lead/donk: o gate não dispara.
+        r = advise_postflop(self._oop_state(10, 4), ['3c', '3h'], ['As', '9c', '3d'])
+        self.assertNotIn('NO_DONK_CHECK_AS_DEFENDER', r['caveats'])
 
 
 if __name__ == '__main__':

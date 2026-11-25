@@ -9,7 +9,7 @@ Projeto de automação distribuída para jogo de poker online (PPPoke), com dois
 - **Coletor (PC):** captura as mesas de jogo na tela, processa imagens e transmite dados.  
 - **Painel (Notebook):** recebe dados, reconhece cartas e estados, toma decisões e executa ações (automaticidade e controle manual).
 
-Objetivo final: bot autônomo com controle manual, estável e robusto.
+Objetivo final: Henrique autônomo com controle manual, estável e robusto.
 
 ---
 

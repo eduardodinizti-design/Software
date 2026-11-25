@@ -1,7 +1,7 @@
 """End-to-end: read one PPPoker table crop and produce an exploratory read-out.
 
 Ties together the readers (hero cards, table state, hand id, board) and the
-PreflopAdvisor so that, for one frame, the bot prints what it sees and what it
+PreflopAdvisor so that, for one frame, the Henrique prints what it sees and what it
 would do. Observation only: no capture, no clicks, execution never allowed.
 Preflop advice comes from the PreflopAdvisor (spot inferred from the bets); from
 the flop on, the postflop_advisor attaches a founded-heuristic read (phase
@@ -21,25 +21,42 @@ from table_reading.hand_tracking import read_hand_id
 from table_reading.tournament import read_tournament, tournament_context
 from preflop_advisor import PreflopAdvisor, infer_spread
 from postflop_advisor import advise_postflop
+import postflop_sizing
 from preflop_context import villain_postflop_range
+import solver_cbet_shadow
+import solver_pr12_shadow
+import solver_sb40_shadow
+import solver_srp_shadow
+
+
+def read_hero_card_slots(crop):
+    """Candidatos por slot do hero: 2 entradas (card_candidate ou None cada). Base
+    da leitura por frame E da memória temporal por-slot, que recupera o par quando
+    um slot pisca AMBÍGUO num frame mas lê no outro ([[hero_card_memory]])."""
+    from table_reading.inspect_cards import inspect
+    reading = inspect(crop, (0, 0, crop.shape[1], crop.shape[0]))
+    slots = [c.get('card_candidate') for c in reading.get('hero_rank_candidates', [])]
+    return slots if len(slots) == 2 else [None, None]
+
+
+def _pair_from_slots(slots):
+    """Par válido (2 cartas distintas e lidas) ou None."""
+    if len(slots) != 2 or not all(slots) or slots[0] == slots[1]:
+        return None
+    return list(slots)
 
 
 def read_hero_cards(crop):
     """Hero's two face-up cards, or None when not readable/duplicate."""
-    from table_reading.inspect_cards import inspect
-    reading = inspect(crop, (0, 0, crop.shape[1], crop.shape[0]))
-    cards = [c.get('card_candidate') for c in reading.get('hero_rank_candidates', [])]
-    if len(cards) != 2 or not all(cards) or cards[0] == cards[1]:
-        return None
-    return cards
+    return _pair_from_slots(read_hero_card_slots(crop))
 
 
 def _pot_type_from_context(ctx):
     """Tipo de pote a partir do contexto do rastreador, p/ o gating honesto do
     pós-flop: sem contexto/sem raise -> 'unknown'; não-HU -> 'multiway'; >=2 níveis de
     raise -> 'three_bet'; 1 nível -> 'single_raised' (pote de um raise só)."""
-    if ctx is None:
-        return 'unknown'
+    if ctx is None or ctx.get('pending'):
+        return 'unknown'                     # sem contexto ou ID pendente (#A5): não arrisca
     if not ctx['heads_up']:
         return 'multiway'
     if ctx['raises'] >= 2:
@@ -55,6 +72,8 @@ def _postflop_in_context(advisor, tracker, state, hero, board, *, mode, stage, t
     um raise só) e rechama advise_postflop. Espelha o que o operador armado já fazia,
     agora disponível a qualquer observador contínuo que passe um `tracker`."""
     ctx = tracker.context(table_key)
+    if ctx and ctx.get('pending'):
+        ctx = None                           # ID ilegível: não aplica range/iniciativa antigos (#A5)
     seats = state.get('seats') or {}
     spread = (infer_spread({p: (seats.get(s) or {}).get('stack_bb')
                             for s, p in (state.get('positions') or {}).items()})
@@ -73,9 +92,12 @@ def _postflop_in_context(advisor, tracker, state, hero, board, *, mode, stage, t
         if vseat is None and len(hud) == 1:
             vseat = next(iter(hud))
         ventry = hud.get(vseat) if vseat else None
-        # Só exploita com leitura CONFIÁVEL (8/8 high); 'partial' pode ter campo mal-lido
-        # ou linha trocada num skin/escala não calibrado -> não alimenta o exploit.
-        vstats = ventry['stats'] if (ventry and ventry.get('confidence') == 'high') else None
+        # Só exploita com leitura CONFIÁVEL (8/8 high) E RECÉM-RECONFIRMADA (_age 0, #A7):
+        # 'partial' pode ter campo mal-lido/linha trocada num skin não calibrado, e um
+        # refresh que falhou (valor velho mantido p/ continuidade) não deve alimentar o
+        # exploit como se fosse fresco.
+        vstats = (ventry['stats'] if (ventry and ventry.get('confidence') == 'high'
+                                      and not ventry.get('_age')) else None)
     advice = advise_postflop(state, hero, board['cards'], street=board.get('street'),
                              mode=mode, stage=stage, aggressor=(ctx or {}).get('aggressor'),
                              villain_range=(combos or None), pot_type=ptype, narrow_range=True,
@@ -83,12 +105,215 @@ def _postflop_in_context(advisor, tracker, state, hero, board, *, mode, stage, t
     if isinstance(advice, dict):
         # Observabilidade: qual range foi usado (ou o motivo de ter ficado na Fase 1).
         advice['villain_range_source'] = meta if combos else {'reason': meta}
+        _attach_solver_shadow(advice, ctx, seats, state, hero, board, ptype, mode)
     return advice
+
+
+def _attach_solver_shadow(advice, ctx, seats, state, hero, board, ptype, mode):
+    """Anexa a SOMBRA do solver (pacote btn_vs_bb_25) quando o spot ao vivo é o que o
+    TexasSolver resolveu: FLOP, pote de um raise só, BTN vs BB ~25bb, chip EV, e o board
+    cai num dos 100 flops (por isomorfismo). PURO overlay de estudo/auditoria: não troca
+    `recommended` nem libera execução (segue o gate — solver em sombra até homologação).
+    Fora da cobertura não faz nada."""
+    if advice.get('phase') != 'postflop' or advice.get('street') != 'FLOP':
+        return
+    if ptype != 'single_raised':
+        return                                   # só pote de um raise só (HU)
+    positions = state.get('positions') or {}
+    hero_pos = positions.get('hero')
+    vseat = next((s for s in (seats or {})
+                  if s != 'hero' and (seats.get(s) or {}).get('occupied')), None)
+    villain_pos = positions.get(vseat) if vseat else None
+    try:
+        shadow = solver_cbet_shadow.lookup(
+            hero, board.get('cards'), hero_pos=hero_pos, villain_pos=villain_pos,
+            to_call_bb=advice.get('to_call_bb'), pot_bb=advice.get('pot_bb'),
+            hero_stack_bb=(seats.get('hero') or {}).get('stack_bb'),
+            villain_stack_bb=(seats.get(vseat) or {}).get('stack_bb') if vseat else None,
+            mode=mode, aggressor=(ctx or {}).get('aggressor'))
+    except Exception:                            # noqa: BLE001 — sombra nunca quebra o conselho
+        shadow = None
+    if shadow:
+        advice['solver_shadow'] = shadow
+        advice.setdefault('caveats', [])
+        for cav in shadow.get('caveats', []):
+            if cav not in advice['caveats']:
+                advice['caveats'].append(cav)
+        _prefer_solver_on_covered_spot(advice, shadow)
+    # Cross-check PR#12 (2ª referência, mais convergida, árvore bet-1/3): no flop As7d2c
+    # da c-bet do BTN, anexa a opinião independente p/ ESTUDO (não vira recomendação —
+    # evita duas fontes brigando; o pacote de 100 flops é a fonte preferida sistemática).
+    if (advice.get('street') == 'FLOP' and hero_pos == 'BTN'
+            and (advice.get('to_call_bb') in (0, None))):
+        try:
+            pr12 = solver_pr12_shadow.flop_cbet(hero, board.get('cards'))
+        except Exception:                        # noqa: BLE001
+            pr12 = None
+        if pr12:
+            advice['solver_shadow_pr12'] = pr12
+            advice.setdefault('caveats', [])
+            if 'SOLVER_CROSSCHECK_PR12_AS7D2C' not in advice['caveats']:
+                advice['caveats'].append('SOLVER_CROSSCHECK_PR12_AS7D2C')
+    # Cross-check SB x BB 40bb SRP (estudo do outro agente, AMOSTRAGEM INCREMENTAL):
+    # a sombra é PARCIAL (cresce leva a leva), então é ESTUDO/auditoria — anexa a opinião
+    # do solver no flop-lead do SB (OOP, 1º a agir), sem trocar `recommended` nem liberar
+    # execução. Só engata no contexto exato: SB OOP, BB, ~40bb, pote single-raised, chip-EV.
+    if (advice.get('street') == 'FLOP' and hero_pos == 'SB'
+            and (advice.get('to_call_bb') in (0, None))
+            and solver_sb40_shadow.context_matches(
+                (hero_pos, villain_pos), ptype, mode,
+                (seats.get('hero') or {}).get('stack_bb'))):
+        try:
+            sb40 = solver_sb40_shadow.flop_policy(hero, board.get('cards'))
+        except Exception:                        # noqa: BLE001 — sombra nunca quebra o conselho
+            sb40 = None
+        if sb40:
+            advice['solver_shadow_sb40'] = sb40
+            advice.setdefault('caveats', [])
+            if 'SOLVER_CROSSCHECK_SB40_SRP' not in advice['caveats']:
+                advice['caveats'].append('SOLVER_CROSSCHECK_SB40_SRP')
+    # Cross-check IP x BB SRP deep (packs btn_vs_bb_40/100, estudo TexasSolver no PC do
+    # Eduardo): FLOP (c-bet per-combo) e TURN (2ª barrela agregada), BTN nativo e CO/HJ...
+    # por APROXIMAÇÃO de família. Sizes já no vocabulário do nosso slider (1/3,1/2,2/3,
+    # allin) e, no turn, nota de Plano Geométrico por SPR. ESTUDO/auditoria: anexa a
+    # opinião do solver + caveats, NÃO troca `recommended` (promover exige homologar este
+    # bucket, como fizemos no btn_vs_bb_25). Engata só no spot/stack/flop cobertos.
+    _fam = solver_srp_shadow.POS_FAMILY
+    if (ptype == 'single_raised' and advice.get('street') in ('FLOP', 'TURN')
+            and ((hero_pos in _fam and villain_pos == 'BB')
+                 or (hero_pos == 'BB' and villain_pos in _fam))):
+        bcards = board.get('cards') or []
+        try:
+            srp = solver_srp_shadow.lookup(
+                hero, bcards, hero_pos=hero_pos, villain_pos=villain_pos,
+                to_call_bb=advice.get('to_call_bb'), pot_bb=advice.get('pot_bb'),
+                hero_stack_bb=(seats.get('hero') or {}).get('stack_bb'),
+                villain_stack_bb=(seats.get(vseat) or {}).get('stack_bb') if vseat else None,
+                street=(advice.get('street') or '').lower(), mode=mode,
+                turn_card=(bcards[3] if len(bcards) > 3 else None))
+        except Exception:                        # noqa: BLE001 — sombra nunca quebra o conselho
+            srp = None
+        if srp:
+            advice['solver_shadow_srp'] = srp
+            advice.setdefault('caveats', [])
+            for cav in srp.get('caveats', []):
+                if cav not in advice['caveats']:
+                    advice['caveats'].append(cav)
+            _prefer_solver_srp(advice, srp)
+            _barrel_turn_with_solver(advice, srp)
+
+
+# Mapa size do solver -> fração de pote (p/ o sizing quando a sombra manda apostar).
+# b33/b50/b70 = vocabulário do pack btn_vs_bb_25; t33/t50/t66 = NOSSO slider (packs srp).
+_SOLVER_BET_FRACTION = {'b33': 0.33, 'b50': 0.50, 'b70': 0.70, 'allin': None,
+                        't33': 1.0 / 3.0, 't50': 0.50, 't66': 2.0 / 3.0}
+
+
+def _prefer_solver_on_covered_spot(advice, shadow):
+    """Homologação: onde há VERDADE do solver (nó per-combo DECISIVO), a recomendação
+    passa a ser a do SOLVER, não a da heurística — que, medida contra o solver neste
+    spot, acerta ~42%% (postflop_homologation). NÃO libera execução (segue gated) e NÃO
+    toca nó misto (coinflip não vira regra) nem o lado `def` (agregado de range, não é
+    específico da mão). Preserva a leitura da heurística em `heuristic_recommended`."""
+    if shadow.get('side') != 'agg' or not shadow.get('combo_in_range') or not shadow.get('decisive'):
+        return
+    coarse = shadow.get('coarse')             # 'check' ou 'bet'
+    if coarse not in ('check', 'bet'):
+        return
+    prev = (advice.get('recommended') or '').lower()
+    advice['heuristic_recommended'] = advice.get('recommended')
+    advice['recommended'] = coarse
+    advice['recommended_source'] = 'solver_shadow'
+    advice['execution_allowed'] = False       # reafirma o gate: sombra homologada NÃO executa
+    if coarse == 'bet':
+        frac = _SOLVER_BET_FRACTION.get(shadow.get('bet_size'))
+        pot = advice.get('pot_bb')
+        size_bb = (round(pot * frac, 1) if isinstance(pot, (int, float)) and frac
+                   else (advice.get('spr') and None))
+        advice['sizing'] = dict(size_bb=size_bb, solver_size=shadow.get('bet_size'),
+                                basis='solver c-bet (%s)' % shadow.get('bet_size'),
+                                heuristic=False)
+    else:
+        advice['sizing'] = dict(size_bb=0.0, basis='solver check', heuristic=False)
+    tag = 'SOLVER_PREFERRED_ON_COVERED_SPOT'
+    if tag not in advice['caveats']:
+        advice['caveats'].append(tag)
+    if prev and prev != coarse:
+        advice['caveats'].append('SOLVER_OVERRODE_HEURISTIC_%s_TO_%s' % (prev.upper(), coarse.upper()))
+
+
+def _prefer_solver_srp(advice, srp):
+    """LEI "nao morrer no pos-flop" (Eduardo 19/11): nos spots IP-vs-BB SRP cobertos pelos
+    packs TexasSolver (btn_vs_bb_40/100), onde o solver é DECISIVO e a mão do hero está no
+    range, a recomendação do FLOP passa a ser a do solver — inclusive APOSTAR onde ele
+    aposta, matando o "só check". Sizes já no NOSSO slider (t33/t50/t66). Mesma barra do
+    btn_vs_bb_25 homologado: só nó per-combo DECISIVO do lado `agg`; nó misto e lado
+    agregado (turn) ficam como GUIA (não dirigem a mão específica). Gate: execution_allowed
+    segue False. Preserva a leitura da heurística em `heuristic_recommended`."""
+    if advice.get('solver_shadow'):
+        return                                    # btn_vs_bb_25 (homologado) é a AUTORIDADE na
+        # sua faixa (20-30bb), mesmo quando conclui "misto/não dirige". O srp só dirige FORA
+        # dela (onde o 25bb nem cobre -> sem chave solver_shadow). Cobertura sem conflito.
+    if srp.get('street') != 'flop' or srp.get('side') != 'agg':
+        return                                    # turn é agregado -> só guia, não dirige
+    if not srp.get('per_combo') or not srp.get('combo_in_range') or not srp.get('decisive'):
+        return
+    coarse = srp.get('recommended_shadow')        # 'check' ou 'bet'
+    if coarse not in ('check', 'bet'):
+        return
+    prev = (advice.get('recommended') or '').lower()
+    advice['heuristic_recommended'] = advice.get('recommended')
+    advice['recommended'] = coarse
+    advice['recommended_source'] = 'solver_shadow_srp'
+    advice['execution_allowed'] = False
+    if coarse == 'bet':
+        frac = _SOLVER_BET_FRACTION.get(srp.get('bet_size'))
+        pot = advice.get('pot_bb')
+        size_bb = (round(pot * frac, 1) if isinstance(pot, (int, float)) and frac else None)
+        advice['sizing'] = dict(size_bb=size_bb, solver_size=srp.get('bet_size'),
+                                basis='solver srp c-bet (%s)' % srp.get('bet_size'),
+                                heuristic=False)
+    else:
+        advice['sizing'] = dict(size_bb=0.0, basis='solver srp check', heuristic=False)
+    for tag in ('SOLVER_PREFERRED_ON_COVERED_SPOT', 'SOLVER_SRP_PREFERRED'):
+        if tag not in advice['caveats']:
+            advice['caveats'].append(tag)
+    if prev and prev != coarse:
+        advice['caveats'].append('SOLVER_OVERRODE_HEURISTIC_%s_TO_%s' % (prev.upper(), coarse.upper()))
+
+
+def _barrel_turn_with_solver(advice, srp):
+    """TURN BARREL pela REFERÊNCIA (Eduardo: "não morrer no pós-flop"; o solver manda).
+    Quando o hero tem INICIATIVA no turn (to_call==0) e o solver — agregado da 2ª barrela
+    do IP naquela carta — é DECISIVAMENTE 'bet', a heurística NÃO morre de check: barrela,
+    com size do nosso slider (ou Plano Geométrico). É agregado de range (não per-combo) ->
+    caveat honesto; preserva a leitura heurística em `heuristic_recommended`. O
+    postflop_sizing.enforce (passo final) normaliza o size ao slider/geométrico."""
+    if srp.get('node') != 'ip_turn_barrel' or srp.get('street') != 'turn':
+        return
+    if srp.get('recommended_shadow') != 'bet' or not srp.get('decisive'):
+        return
+    if (advice.get('recommended') or '').lower() != 'check':
+        return                                    # só converte GIVE-UP (não mexe em valor já apostando)
+    if advice.get('to_call_bb') not in (0, None):
+        return
+    advice['heuristic_recommended'] = advice.get('recommended')
+    advice['recommended'] = 'bet'
+    advice['recommended_source'] = 'solver_shadow_srp_turn'
+    frac = _SOLVER_BET_FRACTION.get(srp.get('bet_size'))
+    pot = advice.get('pot_bb')
+    advice['sizing'] = dict(
+        size_bb=(round(pot * frac, 1) if isinstance(pot, (int, float)) and frac else None),
+        solver_size=srp.get('bet_size'), basis='turn barrel (solver agg)', heuristic=False)
+    for tag in ('SOLVER_SRP_TURN_BARREL', 'SOLVER_TURN_RANGE_AGGREGATE_BARREL'):
+        if tag not in advice['caveats']:
+            advice['caveats'].append(tag)
 
 
 def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table_key='default',
                  villain_range=None, hero_override=None, tracker=None, bounty_bb=None,
-                 enable_hud=False, read_cache=None):
+                 enable_hud=False, read_cache=None, field_memory=None, board_memory=None,
+                 field_hud=None, field_players=None, field_db=None, tag_store=None):
     """Read the table and attach an exploratory recommendation. The tournament
     phase chooses chip EV vs ICM unless mode/stage are forced. Pure read; the
     caller wraps it in an ocr_frame so one snapshot reuses OCR.
@@ -96,12 +321,15 @@ def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table
     `stabilizer` (opcional, PositionStabilizer): suaviza as POSIÇÕES ao longo dos
     frames — o leitor é stateless e os rótulos oscilam quando a ocupação/dealer
     pisca; o estabilizador trava o dealer (debounce) e usa ocupação por maioria.
-    `table_key` identifica a mesa p/ o estado por-mesa do estabilizador."""
+    `table_key` identifica a mesa p/ o estado por-mesa do estabilizador.
+    `field_memory` (opcional, FieldStabilizer): preenche buracos de 1+ frame em
+    pot/to_call/stack com o último valor confirmado da MESMA mão (fill-only,
+    marcado held) — evita POT_UNKNOWN/STACK_UNKNOWN por falha pontual de OCR."""
     state = read_table_state(crop)
     hand = read_hand_id(crop)
+    hkey = (hand or {}).get('hand_id') or (hand or {}).get('hand_number')
     if stabilizer is not None:
         occ = [s for s, d in (state.get('seats') or {}).items() if d.get('occupied')]
-        hkey = (hand or {}).get('hand_id') or (hand or {}).get('hand_number')
         sdealer, spos = stabilizer.update(table_key=table_key, hand_key=hkey,
                                           dealer_seat=state['dealer'].get('seat'),
                                           occupied_seats=occ)
@@ -112,13 +340,30 @@ def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table
         if sdealer is not None:
             new_dealer['seat'] = sdealer
         state = dict(state, positions=spos, dealer=new_dealer)
-    hero = read_hero_cards(crop)
+    # Memória temporal de pot/to_call/stack: preenche o que o OCR perdeu neste
+    # frame com o último confirmado da mesma mão. Após o stabilizer (que pode ter
+    # trocado o dict de seats) e antes do is_table/advisors. [[field_stabilizer]]
+    if field_memory is not None:
+        state = field_memory.apply(table_key=table_key, hand_key=hkey, state=state)
+    hero_slots = read_hero_card_slots(crop)
+    hero = _pair_from_slots(hero_slots)
     # As cartas do hero são imutáveis na mão: se este frame não leu mas o chamador
     # tem uma leitura confiável da MESMA mão (hero_override), reusa — evita abster
-    # (HERO_CARDS_UNKNOWN) por falha pontual de leitura/animação num frame.
+    # (HERO_CARDS_UNKNOWN) por falha pontual de leitura/animação num frame. O
+    # override vem da memória temporal por-slot ([[hero_card_memory]]).
     if hero is None and hero_override and len(hero_override) == 2:
         hero = list(hero_override)
     board = read_board(crop, hero_cards=hero or [None, None])
+    # Memória temporal do board: vota nas cartas lidas e, se o OCR falhou NESTE frame
+    # mas um board FOI detectado (candidatos presentes) e a mão já tinha board
+    # confirmado, injeta o board segurado — evita BOARD_PRESENT_BUT_UNREADABLE por
+    # falha pontual. Imutável/monotônico na mão; nunca inventa no pré-flop. [[board_memory]]
+    if board_memory is not None:
+        held_board = board_memory.observe(table_key, hkey, board.get('cards') or [])
+        if not board.get('cards') and held_board and board.get('candidates'):
+            board = dict(board, cards=held_board,
+                         street={3: 'FLOP', 4: 'TURN', 5: 'RIVER'}[len(held_board)],
+                         status='BOARD_HELD', held=True, source='board_memory')
     tourney = read_tournament(crop)
     auto_mode, auto_stage = tournament_context(tourney)
     use_mode, use_stage = mode or auto_mode, stage or auto_stage
@@ -128,7 +373,7 @@ def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table
                 or tourney.get('paid') is not None or hero is not None
                 or any(s['stack_bb'] is not None for s in state['seats'].values()))
     if not is_table:
-        return dict(hand=hand, hero_cards=hero, board=board, table_state=state, tournament=tourney,
+        return dict(hand=hand, hero_cards=hero, hero_slots=hero_slots, board=board, table_state=state, tournament=tourney,
                     context=dict(mode=use_mode, stage=use_stage), is_table=False,
                     advice=dict(status='SKIP', reason='NAO_PARECE_MESA_LOBBY', exploratory=True, execution_allowed=False))
     # PKO: lê o bounty por assento e anexa ao estado (p/ o call-off escalar a caça pelo
@@ -151,6 +396,20 @@ def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table
         else:
             from table_reading.hud_reader import read_seat_huds
             state = dict(state, hud=read_seat_huds(crop, occ))
+    # PONTE field->decisao: injeta o exploit da NOSSA DB em state['hud'], no MESMO
+    # formato do HUD. Com field_players (do emissor: uid+nick), casa por NICK contra
+    # o nameplate (raw) de cada assento -> chaveado pelos assentos do operador (sem
+    # geometria _seatId->tela). Instantaneo (sem OCR); DB tem precedencia.
+    if field_hud is None and field_players and field_db:
+        import field_live
+        field_hud = field_live.hud_from_table(state.get('seats') or {}, field_players, field_db)
+    if field_hud:
+        state = dict(state, hud={**(state.get('hud') or {}), **field_hud})
+    # TAGS MANUAIS (shadow): anota tag/plano/sugestão por assento no HUD. Sem tag_store,
+    # não faz nada (seguro). [[nvt-exploit-anti-bot-pppoker]]
+    if tag_store is not None and state.get('hud'):
+        import tag_live
+        tag_live.annotate_hud(state['hud'], tag_store)
     # Postflop guard. A read board (cards) is clearly postflop. A board that was
     # DETECTED but not fully read (incomplete, duplicate, or obstructed with the
     # anchor found) is also postflop and must abstain, not be treated as preflop.
@@ -177,6 +436,13 @@ def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table
                                              bounty_bb=bounty_bb)
         if isinstance(advice, dict):
             advice.setdefault('caveats', []).append('SPOT_INFERRED_FROM_BETS')
+        # ALARGAR O OPEN pra caçar bounty (bounded): alvo curto bountiado coberto + GTO abre misto.
+        if bounty_bb and use_mode in ('pko', 'pko_icm') and (state.get('bounties')):
+            try:
+                import bounty_open
+                advice = bounty_open.widen_open(advice, state)
+            except Exception:
+                pass
     # Contexto ENTRE frames (opcional): atualiza o rastreador do agressor pré-flop e,
     # no pós-flop, recalcula o conselho com pot_type/iniciativa/range do vilão. Só é
     # útil a observadores CONTÍNUOS (um frame único não tem histórico pré-flop).
@@ -187,7 +453,18 @@ def advise_table(crop, advisor, *, mode=None, stage=None, stabilizer=None, table
         if has_board and hero is not None and isinstance(advice, dict) and advice.get('phase') == 'postflop':
             advice = _postflop_in_context(advisor, tracker, state, hero, board,
                                           mode=use_mode, stage=use_stage, table_key=table_key)
-    return dict(hand=hand, hero_cards=hero, board=board, table_state=state, is_table=True,
+    # Passo FINAL: encaixa o size de QUALQUER aposta pós-flop no nosso slider
+    # (1/3,1/2,2/3,allin) ou no Plano Geométrico do turn. Depois do solver driving, p/ o
+    # alvo executável (size_bb) sair sempre certo e o Henrique nunca "morrer" sem size. Pós-flop.
+    if isinstance(advice, dict) and advice.get('phase') == 'postflop':
+        _hero_stack = (state.get('seats', {}).get('hero') or {}).get('stack_bb')
+        postflop_sizing.enforce(advice, pot_bb=advice.get('pot_bb'),
+                                stack_bb=_hero_stack, spr=advice.get('spr'))
+    # SOMBRA das tags manuais no conselho: o que o plano FARIA por vilão taggeado (não arma).
+    if tag_store is not None and isinstance(advice, dict):
+        import tag_live
+        tag_live.attach_shadow(advice, state.get('hud') or {})
+    return dict(hand=hand, hero_cards=hero, hero_slots=hero_slots, board=board, table_state=state, is_table=True,
                 tournament=tourney, context=dict(mode=use_mode, stage=use_stage), advice=advice)
 
 
@@ -229,6 +506,13 @@ def _summary(result):
             adv.get('street'), str(adv['recommended']).upper(), size_txt,
             adv.get('made'), adv.get('category'), adv.get('outs'),
             (' | ' + ', '.join(extra)) if extra else ''))
+        sh = adv.get('solver_shadow')
+        if sh:
+            mixtxt = ', '.join('%s %d%%' % (m['action'], round(m['frequency'] * 100))
+                               for m in (sh.get('mix') or [])) or '(mao fora do range de open)'
+            lines.append('  SOMBRA solver [%s %s%s]: %s -> %s (freq, nao-executar)' % (
+                sh.get('spot'), sh.get('node'), ' iso' if sh.get('iso') else '',
+                str(sh.get('recommended_shadow')).upper(), mixtxt))
     elif adv.get('status') == 'ADVICE':
         mix = ', '.join('%s %d%%' % (m['action'], round(m['frequency'] * 100)) for m in adv['mix'])
         sz = adv.get('sizing') or {}

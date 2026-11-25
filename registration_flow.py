@@ -52,7 +52,7 @@ class RegistrationRound:
         self.mode = mode
         self._clock = clock
 
-        self.execution_allowed = False      # invariante: o bot NUNCA clica
+        self.execution_allowed = False      # invariante: o Henrique NUNCA clica
         self.flow_state = 'OBSERVATION'
         self.attempts = 0
         self.token = None
@@ -126,6 +126,23 @@ class RegistrationRound:
             return self._block(['INVALID_FLOW_STATE_FOR_DETAILS'])
         reasons = []
         card = self.observed['card']
+
+        # Identidade deve ser a do ALVO autorizado e bater com o lobby observado (§4).
+        # make_identity() só deriva a identidade DOS DETALHES; sozinha ela não confere
+        # que a tela de detalhes é o mesmo torneio que o usuário autorizou. Sem esta
+        # comparação, uma oferta de OUTRO torneio/clube com o mesmo custo passava a
+        # conferência e chegava à autorização (auditoria A1). A autorização é para
+        # ESTE alvo e não se transfere para outro evento.
+        dname = (details.get('name') or '').strip()
+        if not self.target_name or dname != self.target_name:
+            reasons.append('DETAILS_NOT_THE_AUTHORIZED_TARGET')
+        cname = (card.get('name') or '').strip()
+        if cname and dname and cname != dname:
+            reasons.append('NAME_DIVERGENCE_LOBBY_VS_DETAILS')
+        lclub = (self.observed.get('club') or '').strip() or None
+        dclub = (details.get('club') or '').strip() or None
+        if lclub and dclub and lclub != dclub:
+            reasons.append('CLUB_DIVERGENCE_LOBBY_VS_DETAILS')
 
         # Identidade verificável (§4): nome + buy-in/horário; nome só não basta.
         ident, basis = make_identity(
@@ -259,7 +276,7 @@ class RegistrationRound:
             start_time=d.get('start_time'),
             budget_remaining_after_reserve=avail,
             active_commitments=active,
-            note='O bot NÃO envia o clique; a confirmação no cliente é do usuário.')
+            note='O Henrique NÃO envia o clique; a confirmação no cliente é do usuário.')
 
     # ---- ETAPA E/F: autorização explícita + ação do usuário --------------
     def authorize(self, *, confirm, revalidation_snapshot=None):
@@ -310,7 +327,7 @@ class RegistrationRound:
     def record_user_action(self):
         """Registra que o USUÁRIO enviou a confirmação no cliente (modo real).
 
-        O bot não clicou — isto só marca CONFIRMATION_SENT para a reconciliação.
+        O Henrique não clicou — isto só marca CONFIRMATION_SENT para a reconciliação.
         """
         if self.mode != 'real_supervised':
             return self._block(['USER_ACTION_ONLY_IN_REAL_MODE'])

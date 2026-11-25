@@ -3,12 +3,20 @@
 Mundo com ESTADO (fases BUTTONS -> PANEL -> DONE), compatível com a dupla
 revalidação do controlador (inicial + na chegada leem a mesma fase). O adaptador
 de input avança a fase a cada clique: 1 abre o painel; 3 fecha (aposta entrou)."""
+import os
 import unittest
 
 import numpy as np
 
+try:
+    import cv2
+except Exception:                       # pragma: no cover
+    cv2 = None
+
 from raise_sequencer import RaiseSequencer
 from action_coordinator import DryRunInput
+from raise_panel import read_raise_panel, read_raise_slider
+from raise_plan import plan_raise
 
 WIN = (-1280, 0, 3840, 1440)
 _PRESETS = [dict(box=[18, 1240, 122, 70], label='2x', mult=2.0),
@@ -42,6 +50,10 @@ class WInput(DryRunInput):
         self.world.clicks += 1
         return r
 
+    def drag(self, x0, y0, x1, y1, **kw):
+        self.world.clicks += 1          # arrasto da barra conta como ação (avança o mundo)
+        return dict(released=True, down_accepted=1, up_accepted=1)
+
 
 def _capture_of(world):
     def cap():
@@ -72,6 +84,18 @@ def _rp_of(world):
     return rp
 
 
+def _rp_short(world):
+    """read_panel do painel de STACK CURTO (shove): status NÃO-experimental, mas com
+    confirm presente + 1 preset ('2x'). Com slider SLIDER_FOUND, _panel_open aceita."""
+    def rp(crop):
+        if world.phase() == 'PANEL':
+            return dict(status='NO_RAISE_PANEL',
+                        confirm=dict(box=[555, 1240, 180, 70]),
+                        presets=[dict(mult=2.0, label='2x', box=[400, 1139, 80, 50])])
+        return dict(status='NO_RAISE_PANEL', presets=[], confirm=None)
+    return rp
+
+
 class _Control:
     def __init__(self, running=True):
         self.running = running
@@ -80,11 +104,24 @@ class _Control:
         return self.running
 
 
-def _seq(world, inp, target=2.5, bot_control=None):
+def _slider_of(found=True):
+    def rs(crop):
+        if found:
+            return dict(status='SLIDER_FOUND',
+                        handle=dict(box=[598, 1139, 94, 52], center=[645, 1165]),
+                        allin_to=[645, 600])
+        return dict(status='NO_SLIDER', handle=None, allin_to=None)
+    return rs
+
+
+def _seq(world, inp, target=2.5, bot_control=None, hand='H1', read_hand=None,
+         read_slider=None):
     return RaiseSequencer(capture=_capture_of(world), window_rect=WIN, input_adapter=inp,
                           target_mult=target, bot_control=bot_control, max_tables=6,
                           sleep=lambda s: None, read_actions=_ra_of(world),
-                          read_panel=_rp_of(world), detect=_detect)
+                          read_panel=_rp_of(world), detect=_detect, hand=hand,
+                          read_hand=read_hand or (lambda crop: {'hand_id': 'H1'}),
+                          read_slider=read_slider or _slider_of(found=False))
 
 
 class RaiseSequencerTest(unittest.TestCase):
@@ -106,13 +143,29 @@ class RaiseSequencerTest(unittest.TestCase):
         out = _seq(world, WInput(world), target=3.4).run()  # 3bet ~3.4x -> 3x
         self.assertEqual(out['preset'], 3.0)
 
-    def test_large_target_abstains_no_preset(self):
-        # alvo 25x (all-in) sem preset compatível -> abstém APÓS abrir (1 clique)
+    def test_large_target_allin_via_slider(self):
+        # alvo 25x (shove): NÃO vira 4x; abre o painel e ALL-IN pela BARRA -> confirma.
+        # Cliques: ABRIR + (drag da barra) + CONFIRMAR = 3 ações.
         world = World()
         inp = WInput(world)
-        out = _seq(world, inp, target=25.0).run()
+        out = _seq(world, inp, target=25.0, read_slider=_slider_of(found=True)).run()
+        self.assertTrue(out['ok'])
+        self.assertEqual(out['preset'], 'ALL_IN')
+        self.assertTrue(out['confirmed'])
+        whats = [e[0] for e in out['log'] if isinstance(e[0], str)]
+        self.assertIn('ABRIR', whats)
+        self.assertIn('ALLIN_SLIDER', whats)
+        self.assertIn('CONFIRMAR', whats)
+
+    def test_large_target_shove_without_slider_is_unknown(self):
+        # shove mas a BARRA não foi localizada -> resultado DESCONHECIDO (não some em
+        # silêncio deixando o painel aberto); 1 clique (só o abrir), sem drag.
+        world = World()
+        inp = WInput(world)
+        out = _seq(world, inp, target=25.0, read_slider=_slider_of(found=False)).run()
         self.assertFalse(out['ok'])
-        self.assertIn('SEM_PRESET_PARA_ALVO', out['reason'])
+        self.assertTrue(out['unknown'])
+        self.assertEqual(out['reason'], 'ALLIN_SLIDER_CANCELADO')
         self.assertEqual(len(inp.clicks), 1)
 
     def test_paused_does_not_click(self):
@@ -149,9 +202,108 @@ class RaiseSequencerTest(unittest.TestCase):
             return rects.pop(0) if len(rects) > 1 else rects[0]
         seq = RaiseSequencer(capture=_capture_of(world), window_rect=geom, input_adapter=inp,
                              target_mult=2.5, max_tables=6, sleep=lambda s: None,
-                             read_actions=_ra_of(world), read_panel=_rp_of(world), detect=_detect)
+                             read_actions=_ra_of(world), read_panel=_rp_of(world), detect=_detect,
+                             hand='H1', read_hand=lambda c: {'hand_id': 'H1'})
         out = seq.run()
         self.assertFalse(out['ok'])                        # não conclui com geometria instável
+
+    def test_unknown_hand_aborts_no_click(self):
+        # A2: identidade da mão desconhecida (hand=None) -> não age, zero cliques.
+        world = World()
+        inp = WInput(world)
+        out = _seq(world, inp, hand=None).run()
+        self.assertFalse(out['ok'])
+        self.assertEqual(out['reason'], 'MAO_DESCONHECIDA')
+        self.assertEqual(len(inp.clicks), 0)
+
+    def test_hand_mismatch_aborts_no_click(self):
+        # A2: a mão relida na mesa diverge da mão da decisão -> cancela antes de clicar.
+        world = World()
+        inp = WInput(world)
+        out = _seq(world, inp, hand='H1', read_hand=lambda c: {'hand_id': 'H2'}).run()
+        self.assertFalse(out['ok'])
+        self.assertEqual(out['reason'], 'ABRIR_CANCELADO')
+        self.assertEqual(len(inp.clicks), 0)
+
+    def test_read_failure_in_verify_is_not_confirmed(self):
+        # A2: INVALID_CROP na verificação final NÃO é "aposta entrou" (antes confirmava).
+        world = World()
+        inp = WInput(world)
+
+        def ra(crop):
+            ph = world.phase()
+            if ph == 'BUTTONS' and world.hero_turn:
+                return dict(status='EXPERIMENTAL_BUTTON_ROW',
+                            buttons=[dict(box=[500, 1240, 100, 44], action='RAISE', label='Raise')])
+            if ph == 'DONE':
+                return dict(status='INVALID_CROP', buttons=[])   # falha de leitura, não "sumiu"
+            return dict(status='NO_BUTTON_ROW', buttons=[])
+        seq = RaiseSequencer(capture=_capture_of(world), window_rect=WIN, input_adapter=inp,
+                             target_mult=2.5, max_tables=6, sleep=lambda s: None,
+                             read_actions=ra, read_panel=_rp_of(world), detect=_detect,
+                             hand='H1', read_hand=lambda c: {'hand_id': 'H1'})
+        out = seq.run()
+        self.assertFalse(out.get('confirmed'))              # leitura falha != aposta confirmada
+
+
+class ShortStackShovePanelReal(unittest.TestCase):
+    """REGRESSAO (captura ao vivo 15/11, pixel REAL, hero 2,2BB): o painel de aumento
+    de STACK CURTO tem SO 1 preset ('2x') + slider + 'Raise', entao read_raise_panel
+    marca NO_RAISE_PANEL. Antes o sequenciador abortava ('PAINEL_NAO_ABRIU') e NENHUM
+    shove curto fechava. Agora _panel_open aceita (confirm + slider) e plan_raise
+    roteia SHOVE. So o teste ao vivo revelou isto."""
+
+    FIX = os.path.join('tests', 'fixtures', 'raise_panel', 'short_stack_allin_slider.png')
+
+    def setUp(self):
+        if cv2 is None or not os.path.exists(self.FIX):
+            self.skipTest('fixture/opencv ausente')
+        # NAO chamar configure_ocr aqui: liga o OCR in-process GLOBAL e vaza p/ outros
+        # testes (rank_confirmation conta chamadas de OCR). _panel_open/slider/confirm
+        # sao PURO CV (sem OCR), entao o fixture basta.
+        self.crop = cv2.imread(self.FIX)
+
+    def test_painel_curto_reconhecido_confirm_e_slider(self):
+        # CV puro: o painel de stack curto (1 preset) tem confirm + slider -> aberto.
+        # _ocr mock (rotulo irrelevante p/ _panel_open) evita tesseract/OCR global.
+        panel = read_raise_panel(self.crop, _ocr=lambda *a, **k: '2x')
+        slider = read_raise_slider(self.crop)
+        self.assertTrue(RaiseSequencer._panel_open(panel, slider))     # painel aberto
+        self.assertEqual(slider['status'], 'SLIDER_FOUND')
+        self.assertIsNotNone(slider.get('allin_to'))                   # tem alvo de all-in
+        self.assertIsNotNone(panel.get('confirm'))                     # tem "Raise" p/ confirmar
+
+    def test_alvo_shove_roteia_mesmo_com_1_preset(self):
+        # Com 1 preset so, o alvo-sentinela do shove roteia plan_raise -> SHOVE.
+        self.assertEqual(plan_raise(1000.0, [dict(mult=2.0, label='2x',
+                                                  box=[0, 0, 10, 10])])['kind'], 'SHOVE')
+
+
+class ShortStackShoveRunFakes(unittest.TestCase):
+    """REGRESSAO (bug ao vivo 18/11): no shove de stack curto o painel NAO e
+    EXPERIMENTAL_RAISE_PANEL (so confirm+slider). O passo C (confirmar) exigia
+    EXPERIMENTAL_RAISE_PANEL e o all-in MORRIA em CONFIRMAR_SEM_PAINEL depois de
+    arrastar a barra (Eduardo: 'arrastou a barra e nao concluiu'). Agora o passo C
+    aceita o painel curto (mesmo criterio do _panel_open) e o shove FECHA ate confirmar.
+    Roda o run() INTEIRO com fakes (sem fixture)."""
+
+    def test_shove_painel_curto_fecha_ate_confirmar(self):
+        world = World()
+        inp = WInput(world)
+        seq = RaiseSequencer(capture=_capture_of(world), window_rect=WIN, input_adapter=inp,
+                             target_mult=25.0, max_tables=6, sleep=lambda s: None,
+                             read_actions=_ra_of(world), read_panel=_rp_short(world),
+                             detect=_detect, hand='H1',
+                             read_hand=lambda c: {'hand_id': 'H1'},
+                             read_slider=_slider_of(found=True))
+        out = seq.run()
+        self.assertTrue(out['ok'], out)                     # antes do fix: CONFIRMAR_SEM_PAINEL
+        self.assertEqual(out['preset'], 'ALL_IN')
+        self.assertTrue(out['confirmed'])
+        whats = [e[0] for e in out['log'] if isinstance(e[0], str)]
+        self.assertIn('ABRIR', whats)
+        self.assertIn('ALLIN_SLIDER', whats)
+        self.assertIn('CONFIRMAR', whats)                   # <- antes do fix NUNCA chegava
 
 
 if __name__ == '__main__':

@@ -4,8 +4,9 @@ Observation only, labelled experimental. Each numeric field carries its source
 (ocr), a confidence (high/medium) and the raw OCR text; a field that cannot be
 read is None (abstain), never guessed. PPPoker stacks and the pot show one
 decimal (X,X BB); when OCR drops the comma we restore it from that fixed rule,
-at medium confidence. Dealer button, positions, per-seat bets and to-call are
-NOT read here yet (returned as None) and must not be inferred from cards/buttons.
+at medium confidence. Per-seat bets are read from the felt chips; to-call comes
+from two independent routes (the Call button and a derivation from the read bets,
+cross-checked in merge_to_call). Nothing is inferred from cards.
 
 Validated on a real gabarito (9/9 seat stacks, pot) with both OCR backends; only
 the blue 9-max layout at the gabarito scale is validated.
@@ -89,12 +90,27 @@ def read_occupancy(crop):
     seat) is still 'occupied' but flagged occluded_suspected, since we cannot
     confirm or read it there."""
     out = {}
+    H, W = crop.shape[0], crop.shape[1]
     for seat in SEAT_ANCHORS:
-        x0, y0, x1, y1 = nameplate_box(crop.shape[1], crop.shape[0], seat)
+        x0, y0, x1, y1 = nameplate_box(W, H, seat)
         blue, std = _felt_blue_and_std(crop[y0:y1, x0:x1])
         occupied = blue < OCCUPANCY_BLUE
-        out[seat] = dict(occupied=occupied, felt_blue=round(blue, 3), source='avatar',
-                         occluded_suspected=bool(occupied and blue < 0.1 and std < _OCCLUSION_STD))
+        source = 'nameplate'
+        if not occupied:
+            # FALLBACK pelo AVATAR (foto do jogador). O box do nameplate nos assentos
+            # do TOPO mistura nameplate + chip de aposta + feltro (ex.: top_center/SB
+            # dava blue~0.51, borderline → marcava VAZIO e desalinhava TODAS as
+            # posições). O avatar é limpo: foto clara → blue baixo (0.03–0.56);
+            # assento vazio (feltro ou botão 'Empty') → blue alto (~0.72–0.99). Um
+            # corte CONSERVADOR em 0.5 só confirma foto nítida, sem risco de FP no
+            # 'Empty' (~0.72). Resolve a Camada 2 (ocupação → posições corretas).
+            ax0, ay0, ax1, ay1 = avatar_box(W, H, seat)
+            av_blue, _ = _felt_blue_and_std(crop[ay0:ay1, ax0:ax1])
+            if av_blue < 0.5:
+                occupied, source = True, 'avatar'
+        out[seat] = dict(occupied=occupied, felt_blue=round(blue, 3), source=source,
+                         occluded_suspected=bool(occupied and source == 'nameplate'
+                                                 and blue < 0.1 and std < _OCCLUSION_STD))
     return out
 
 
@@ -132,6 +148,59 @@ def read_to_call(crop):
     return dict(to_call_bb=None, confidence='abstain', source='buttons', raw=None)
 
 
+def derive_to_call(bets, *, hero_seat='hero'):
+    """to_call DERIVADO das apostas lidas: max(aposta na mesa) - aposta do hero, em
+    BB. Segunda ROTA independente do botão Call (que só entrega valor quando o rótulo
+    traz 'BB' explícito; sem isso, abstém). NÃO inventa: só usa apostas efetivamente
+    LIDAS (bet_bb não-None). Sem nenhuma aposta -> abstain (None). É o mesmo cálculo
+    que o hand_history faz offline, agora disponível ao vivo p/ reduzir to_call=None.
+
+    Confiança 'medium' (depende de ler as apostas relevantes); o consumidor que for
+    COMPROMETER ficha deve exigir confiança alta (cruzar com o botão) — ver
+    merge_to_call e read_table_state."""
+    seat_bet = {}
+    for b in bets or []:
+        v = b.get('bet_bb')
+        if isinstance(v, (int, float)):
+            seat_bet[b.get('seat')] = float(v)
+    if not seat_bet:
+        return dict(to_call_bb=None, confidence='abstain', source='no_bets_read', raw=None)
+    max_bet = max(seat_bet.values())
+    hero_bet = seat_bet.get(hero_seat, 0.0)
+    return dict(to_call_bb=round(max(0.0, max_bet - hero_bet), 2), confidence='medium',
+                source='derived_from_bets', max_bet_bb=max_bet, hero_bet_bb=hero_bet,
+                seats_with_bet=len(seat_bet))
+
+
+def merge_to_call(button, derived, *, tol_bb=0.2, tol_frac=0.12):
+    """Combina a rota do BOTÃO (displayed, autoritária quando em BB) com a rota
+    DERIVADA das apostas, sem nunca inventar:
+      - botão com valor BB  -> usa o botão (high). Se o derivado existe e DISCORDA,
+        mantém o botão mas marca 'DERIVED_DISAGREES' (o jogo é a verdade exibida).
+        Se CONCORDA, sobe p/ 'call_button+derived_agree'.
+      - botão abstém/None mas derivado tem valor -> usa o DERIVADO (medium). É o ganho:
+        preenche to_call quando o rótulo do Call não trazia 'BB'.
+      - ambos sem valor -> None.
+    Mantém sempre os dois diagnósticos em _routes p/ auditoria."""
+    b = button or {}
+    d = derived or {}
+    bv, dv = b.get('to_call_bb'), d.get('to_call_bb')
+    routes = dict(button=b, derived=d)
+    if bv is not None:
+        out = dict(b, to_call_bb=bv, _routes=routes)
+        if dv is not None:
+            agree = abs(bv - dv) <= max(tol_bb, tol_frac * max(bv, dv))
+            if agree:
+                out['confidence'] = 'high'
+                out['source'] = 'call_button+derived_agree'
+            else:
+                out.setdefault('caveats', []).append('DERIVED_DISAGREES_%.2f_vs_%.2f' % (bv, dv))
+        return out
+    if dv is not None:
+        return dict(d, to_call_bb=dv, _routes=routes)
+    return dict(to_call_bb=None, confidence='abstain', source='no_to_call', _routes=routes)
+
+
 def _detect_red_chips(crop):
     """Bounding centres (cx, cy, w, h) of the red bet chips on the felt.
 
@@ -161,8 +230,17 @@ def read_bets(crop):
     'Pot' label. Observation only; a seat with no chip simply has no bet, and the
     one-decimal rule applies to a dropped comma as elsewhere."""
     h, w = crop.shape[:2]
-    bets = []
+    # Rejeita chips sobre o AVATAR de um assento OCUPADO: elementos vermelhos/laranjas
+    # das FOTOS (timer, roupa, logo) viram falso-positivo de 'chip'. Uma aposta real
+    # fica no FELTRO (entre o assento e o pote), nunca sobre a foto. Usa a ocupação
+    # confiável (fallback por avatar) pra saber quais fotos estão presentes.
+    occ = read_occupancy(crop)
+    avatars = [avatar_box(w, h, s) for s, v in occ.items() if v.get('occupied')]
+    occupied_seats = [s for s, v in occ.items() if v.get('occupied')] or list(SEAT_ANCHORS)
+    best = {}   # seat -> (dist2, bet_dict): UMA aposta por assento (chip mais perto dele)
     for cx, cy, cw, ch in _detect_red_chips(crop):
+        if any(ax0 <= cx <= ax1 and ay0 <= cy <= ay1 for (ax0, ay0, ax1, ay1) in avatars):
+            continue   # chip sobre avatar ocupado = falso-positivo, não é aposta
         # Filter the 'Pot: ...' chip with an unrestricted OCR of a wide region
         # (so the 'Pot' word survives), then read the amount to the RIGHT of the
         # chip, starting past the disc so its white suit symbol is not mistaken
@@ -173,25 +251,77 @@ def read_bets(crop):
                                   cv2.COLOR_BGR2GRAY), '--psm 7')
         if 'ot' in label.lower():   # the 'Pot: ...' chip, not a bet
             continue
-        region = crop[max(0, cy - 16):cy + 16, min(w, cx + cw):min(w, cx + cw + 110)]
+        # Valor à DIREITA do chip. `cx` é o CENTRO do chip (centroide), então a região
+        # começa na borda direita (cx + cw//2), NÃO em cx+cw (que pulava meio chip e
+        # cortava os 1os dígitos). Altura ±0.02h (a ±16px fixa CORTAVA o texto na
+        # vertical e perdia/erravas apostas — ex.: o raise de 4bb do vilão). Upscale
+        # 4x + OTSU deixam o OCR confiável (validado: 0,5 / 0,9 / 1,0 / 4,0 -> 4/4).
+        rx0 = min(w, cx + cw // 2 + 2)
+        rx1 = min(w, cx + cw // 2 + int(0.16 * w))
+        ry0, ry1 = max(0, cy - int(0.02 * h)), min(h, cy + int(0.02 * h))
+        region = crop[ry0:ry1, rx0:rx1]
         if region.size == 0:
             continue
-        raw = _ocr(cv2.cvtColor(region, cv2.COLOR_BGR2GRAY),
-                   '--psm 7 -c tessedit_char_whitelist=0123456789.,B ')
+        g = cv2.cvtColor(region, cv2.COLOR_BGR2GRAY)
+        up = cv2.resize(g, None, fx=4, fy=4, interpolation=cv2.INTER_CUBIC)
+        _, th = cv2.threshold(up, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        raw = _ocr(th, '--psm 7 -c tessedit_char_whitelist=0123456789.,B ')
         value, conf = parse_amount(raw)
         if value is None:
             continue
-        seat = min(SEAT_ANCHORS, key=lambda s: (SEAT_ANCHORS[s][0] * w - cx) ** 2 + (SEAT_ANCHORS[s][1] * h - cy) ** 2)
-        bets.append(dict(seat=seat, bet_bb=value, confidence=conf, source='chip', chip=[cx, cy], raw=raw))
-    return bets
+        # Atribui ao assento OCUPADO mais próximo (não a um vazio) e mantém UMA aposta
+        # por assento: a do chip mais PERTO do jogador (o chip real fica junto dele;
+        # um chip central/morto fica longe e perde p/ o verdadeiro → sem phantom).
+        seat = min(occupied_seats, key=lambda s: (SEAT_ANCHORS[s][0] * w - cx) ** 2 + (SEAT_ANCHORS[s][1] * h - cy) ** 2)
+        d2 = (SEAT_ANCHORS[seat][0] * w - cx) ** 2 + (SEAT_ANCHORS[seat][1] * h - cy) ** 2
+        if seat not in best or d2 < best[seat][0]:
+            best[seat] = (d2, dict(seat=seat, bet_bb=value, confidence=conf, source='chip', chip=[cx, cy], raw=raw))
+    return [b for _, b in best.values()]
+
+
+_BREAK_CLOCK = re.compile(r'(\d{1,2})\s*[:.\-]\s*(\d{2})')
+
+
+def read_break_state(crop):
+    """Detecta o INTERVALO do torneio: overlay central 'Pausa' + contador MM:SS.
+    Retorna {in_break, countdown, seconds}. Durante o intervalo não há botões de
+    ação e o operador espera; este detector deixa o estado EXPLÍCITO (faixa mostra
+    'EM INTERVALO mm:ss') e serve ao runner da rotina (saber que o jogo está pausado).
+
+    Calibrado no skin Karekas (REENTRY): 'Pausa' ~y0.43–0.49, contador ~y0.49–0.57,
+    centralizado. O contador usa upscale+OTSU + whitelist de dígitos/':'."""
+    out = dict(in_break=False, countdown=None, seconds=None)
+    if not isinstance(crop, np.ndarray) or crop.ndim != 3 or crop.shape[2] != 3:
+        return out
+    h, w = crop.shape[:2]
+    lbl = crop[int(0.43 * h):int(0.49 * h), int(0.30 * w):int(0.70 * w)]
+    if lbl.size == 0:
+        return out
+    label = _ocr(cv2.cvtColor(lbl, cv2.COLOR_BGR2GRAY), '--psm 7').lower()
+    if 'pausa' not in label and 'break' not in label and 'interval' not in label:
+        return out
+    out['in_break'] = True
+    band = crop[int(0.49 * h):int(0.57 * h), int(0.28 * w):int(0.72 * w)]
+    if band.size:
+        g = cv2.cvtColor(band, cv2.COLOR_BGR2GRAY)
+        up = cv2.resize(g, None, fx=3, fy=3, interpolation=cv2.INTER_CUBIC)
+        _, th = cv2.threshold(up, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        raw = _ocr(th, '--psm 7 -c tessedit_char_whitelist=0123456789:.-')
+        m = _BREAK_CLOCK.search(raw)
+        if m:
+            mm, ss = int(m.group(1)), int(m.group(2))
+            out['countdown'] = '%02d:%02d' % (mm, ss)
+            out['seconds'] = mm * 60 + ss
+    return out
 
 
 def read_table_state(crop):
-    """Experimental table state: per-seat stacks, pot, dealer button and derived
-    positions. Per-seat bets and to-call are placeholders (None) for the next
-    increment, never inferred from cards or buttons. Positions use the occupancy
-    implied by readable stacks, so an unreadable (occluded) seat can shift them;
-    that limitation rides on the stacks' own confidence."""
+    """Experimental table state: per-seat stacks, pot, dealer button, derived
+    positions, per-seat bets (felt chips) and to-call (Call button cross-checked
+    with a derivation from the read bets; see merge_to_call). Nothing is inferred
+    from cards. Positions use the occupancy implied by readable stacks, so an
+    unreadable (occluded) seat can shift them; that limitation rides on the stacks'
+    own confidence."""
     if crop is None or crop.ndim != 3 or crop.shape[2] != 3:
         raise ValueError('Expected a BGR table crop')
     stacks = read_seat_stacks(crop)
@@ -202,6 +332,11 @@ def read_table_state(crop):
     dealer = find_dealer_seat(crop)
     occupied = [s for s in SEAT_ANCHORS if seats[s]['occupied']]
     positions = derive_positions(dealer['seat'], occupied) if dealer['seat'] else {}
+    bets = read_bets(crop)
+    # to_call por DUAS rotas independentes, cruzadas (merge_to_call): o botão Call
+    # (autoritário em BB) + a derivação das apostas (max - aposta do hero). Reduz o
+    # to_call=None quando o rótulo do Call não traz 'BB'. Nunca inventa.
+    to_call = merge_to_call(read_to_call(crop), derive_to_call(bets))
     return dict(experimental=True, scope='BLUE_LAYOUT_PASSIVE_READING', source='ocr',
                 seats=seats, pot=read_pot(crop), dealer=dealer, positions=positions,
-                to_call=read_to_call(crop), bets=read_bets(crop))
+                to_call=to_call, bets=bets)

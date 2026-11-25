@@ -2,7 +2,7 @@
 
 Captura (ou carrega) o lobby do PPPoker, lê os cartões com `grade_reader`,
 aplica o seletor de política (F1) e, para um alvo autorizado, percorre o fluxo
-de inscrição até AGUARDANDO CONFIRMAÇÃO — e PARA. O bot não clica: a confirmação
+de inscrição até AGUARDANDO CONFIRMAÇÃO — e PARA. O Henrique não clica: a confirmação
 no cliente é sua.
 
 Uso:
@@ -53,7 +53,9 @@ def main(argv=None):
     src.add_argument('--image', help='Caminho de um frame/crop de lobby salvo')
     p.add_argument('--is-crop', action='store_true',
                    help='A imagem JA e o painel do lobby recortado (ex.: mesa-1)')
-    p.add_argument('--club', default='Karekas')
+    p.add_argument('--club', default=None,
+                   help='Rotulo do clube do lobby (ex.: "AK Ahakha club2"), so p/ registro; '
+                        'NAO restringe. Todos os clubes sao liberados; a selecao e a grade.')
     p.add_argument('--currency', required=True, help='Moeda explicita (nunca inventada)')
     p.add_argument('--max-entry', type=float, required=True, help='Teto por inscricao')
     p.add_argument('--budget', type=float, required=True, help='Orcamento da sessao')
@@ -81,7 +83,7 @@ def main(argv=None):
     lob, meta = _read_lobby_for(args)
 
     config = SessionConfig(
-        enabled=True, clubs_authorized=(args.club,),
+        enabled=True, clubs_authorized=(),   # todos os clubes liberados (selecao = grade)
         allowed_modalities=('freezeout', 'mko', 'pko'), currency=args.currency,
         max_entry_buyin=args.max_entry, daily_budget=args.budget,
         bankroll_bi=args.bankroll, max_simultaneous=args.max_simultaneous,
@@ -89,7 +91,7 @@ def main(argv=None):
     ledger = RegistrationLedger(args.db)
 
     print('=' * 70)
-    print('PLUG NO LOBBY — MODO OBSERVACAO (o bot NAO clica) | fonte:', meta.get('source', 'hwnd'))
+    print('PLUG NO LOBBY — MODO OBSERVACAO (o Henrique NAO clica) | fonte:', meta.get('source', 'hwnd'))
     print('=' * 70)
     if not lob['ok']:
         print('Sem lobby:', lob['reason'])

@@ -124,6 +124,35 @@ class WindowsCursorInput:
         accepted = self.backend.send([flags], abs_xy=(nx, ny))
         return dict(requested=1, accepted=accepted, norm=(nx, ny))
 
+    def drag(self, x0, y0, x1, y1, *, bounds=None, steps=14, settle_s=0.05):
+        """Arrasta: move a (x0,y0) → LEFTDOWN → move suave até (x1,y1) → LEFTUP.
+        Para operar a BARRA de aposta (slider) do painel de aumento. Soltura
+        GARANTIDA (try/finally). Retorna o relato de eventos."""
+        report = dict(moved_start=self.move_to(x0, y0, bounds), down_accepted=0,
+                      up_accepted=0, released=False, steps=steps)
+        down_sent = False
+        try:
+            if settle_s > 0:
+                self._sleep(settle_s)
+            report['down_accepted'] = self.backend.send([MOUSEEVENTF_LEFTDOWN])
+            down_sent = True
+            if settle_s > 0:
+                self._sleep(settle_s)
+            n = max(1, int(steps))
+            for i in range(1, n + 1):
+                xi = x0 + (x1 - x0) * i / n
+                yi = y0 + (y1 - y0) * i / n
+                self.move_to(xi, yi, bounds)
+                self._sleep(0.012)
+            self.move_to(x1, y1, bounds)        # ponto final exato
+            if settle_s > 0:
+                self._sleep(settle_s)
+        finally:
+            if down_sent:
+                report['up_accepted'] = self.backend.send([MOUSEEVENTF_LEFTUP])
+                report['released'] = report['up_accepted'] >= 1
+        return report
+
     def click_once(self, x=None, y=None, *, bounds=None, hold_s=None):
         """Clique ÚNICO na posição atual ou em (x,y): move (se dado) → down → up,
         com soltura GARANTIDA. Retorna o relato de eventos enviados/aceitos."""
