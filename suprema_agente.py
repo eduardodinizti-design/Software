@@ -599,9 +599,41 @@ def main():
     if getattr(args, "bust_guard", True):
         try:
             import suprema_bust
+            # REGISTRO DE RESULTADO (painel diário): ao bustar, grava 1 linha por torneio/coluna no
+            # jsonl que o painel lê (session_summary). Vale em DRY também (o bust aconteceu). Best-effort:
+            # lê mtt/bounty direto dos atributos da mesa viva (estável; o método de decisão retorna None
+            # sem cartas do hero no bust) + buy-in da Grade do Dia. Ver suprema_results.
+            import suprema_results as _RES
+            _sess_id = _RES.new_session_id()
+            _buyin = _RES.buyin_from_grade(name=args.tournament, tournament_id=tour_id)
+            _bust_recorded = set()
+
+            def _state_for_column(col):
+                try:
+                    live = order.live_rooms()
+                    room = next((r for r in live if binder.column_of(r) == col), None)
+                    if room is None and live:
+                        room = live[-1]
+                    t = router.table(room) if room else None
+                    if t is None:
+                        return None
+                    return {'mtt': dict(getattr(t, 'mtt', {}) or {}),
+                            'players': getattr(t, 'players', {}) or {},
+                            'hero_seat': getattr(t, 'hero_seat', None)}
+                except Exception:
+                    return None
+
+            def _on_bust(column=None, tile=None):
+                rec = _RES.make_bust_recorder(
+                    session_id=_sess_id, tournament_id=tour_id, name=args.tournament,
+                    buyin=_buyin, get_state=(lambda c=column: _state_for_column(c)),
+                    recorded=_bust_recorded)
+                return rec(column=column, tile=tile)
+
             threading.Thread(target=suprema_bust.bust_watch, args=(hwnd, control, stop),
-                             kwargs=dict(seconds=args.seconds), daemon=True).start()
-            print("[AG] vigia de BUST ATIVO (--bust-guard).", flush=True)
+                             kwargs=dict(seconds=args.seconds, on_bust=_on_bust), daemon=True).start()
+            print("[AG] vigia de BUST ATIVO (--bust-guard) + registro de resultado (sessão %s)."
+                  % _sess_id, flush=True)
         except Exception as e:
             print("[AG] vigia de bust NÃO subiu (%s)." % e, flush=True)
 

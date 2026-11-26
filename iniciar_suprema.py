@@ -399,6 +399,11 @@ class Wizard:
                  highlightthickness=0, bd=0, sliderrelief="flat", length=300,
                  font=("Segoe UI", 7)).pack(side="right", fill="x", expand=True, padx=(8, 0))
 
+        # ── PAINEL de resultados do dia (R$) — abre o painel.py (aba Suprema) ──
+        tk.Button(self.root, text="📊 Resultados do dia (R$)", font=("Segoe UI", 10, "bold"),
+                  fg=FG, bg=CARD, activebackground=GREEN, activeforeground=BG, relief="flat",
+                  cursor="hand2", command=self._abrir_painel, padx=14, pady=5).pack(pady=(6, 0))
+
         self.foot = tk.Label(self.root, text="iniciando…", font=("Segoe UI", 10, "bold"),
                              fg=GOLD, bg=BG)
         self.foot.pack(pady=(4, 6))
@@ -479,6 +484,30 @@ class Wizard:
             os.replace(tmp, _ALPHA_FILE)
         except Exception:
             pass
+
+    def _abrir_painel(self):
+        """Abre o PAINEL de resultados do dia (painel.py, aba Suprema, em R$ play money) SEM console.
+        FROZEN (.exe): re-invoca o próprio executável com o subcomando 'painel' (nvtbot_main
+        despacha). FONTE: pythonw painel.py --suprema (GUI, sem janela de CMD).
+
+        NÃO usar `-I` aqui: isola o Python e TIRA o diretório do script do sys.path -> o painel.py
+        não acha session_summary/app_paths (ModuleNotFoundError) e, sob pythonw (sem console), a
+        janela nunca aparece ('clico e nada acontece'). cwd=REPO já coloca o REPO no path."""
+        existing = getattr(self, "_painel_proc", None)
+        if existing is not None and existing.poll() is None:
+            return  # já aberto
+        if getattr(sys, "frozen", False):
+            cmd = [sys.executable, "painel", "--suprema"]
+        else:
+            cmd = [_find_pythonw(), "painel.py", "--suprema"]
+        try:
+            self._painel_proc = subprocess.Popen(
+                cmd, cwd=REPO, creationflags=DETACHED | NO_WINDOW | NEW_GROUP, close_fds=True)
+        except Exception as e:
+            try:
+                self.foot.config(text="não abriu o painel: %s" % e, fg=RED)
+            except Exception:
+                pass
 
     def _spawn(self, name, cmd, cwd, env, group=False):
         cf = NO_WINDOW | (NEW_GROUP if group else 0)

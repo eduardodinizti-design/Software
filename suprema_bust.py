@@ -82,10 +82,15 @@ def find_sair(tile_rgb):
     return (sair[0] + sair[2] // 2, by0 + sair[1] + sair[3] // 2)
 
 
-def bust_watch(hwnd, control, stop, *, seconds=0.0, period=4.0, cooldown=25.0, click=None, detect=None):
+def bust_watch(hwnd, control, stop, *, seconds=0.0, period=4.0, cooldown=25.0, click=None,
+               detect=None, on_bust=None):
     """THREAD de bust: a cada `period`s varre cada COLUNA; se achar o pop-up de CLASSIFICAÇÃO (bust),
     clica o botão SAIR (coords -> tela). Gated por control.execution_allowed() (só ARMADO). Cooldown
-    longo por coluna (a tela some após o clique). Independente do hook. `click`/`detect` injetáveis."""
+    longo por coluna (a tela some após o clique). Independente do hook. `click`/`detect` injetáveis.
+
+    `on_bust(column, tile)` (opcional): chamado 1× por bust detectado (ANTES do cooldown re-barrar),
+    p/ REGISTRAR o resultado do torneio (suprema_results). Best-effort: exceção nele NUNCA derruba o
+    vigia nem impede o clique de Sair."""
     import time
     import suprema_click as C
     from PIL import ImageGrab
@@ -104,15 +109,20 @@ def bust_watch(hwnd, control, stop, *, seconds=0.0, period=4.0, cooldown=25.0, c
                 pos = detect(tile)
                 if not pos:
                     continue
-                if control is not None and not control.execution_allowed():
-                    continue                              # pausado/off: Eduardo assumiu, não força
                 if (time.time() - last.get(i, 0.0)) < cooldown:
                     continue
+                last[i] = time.time()                     # 1 evento por bust (armado OU dry)
+                if on_bust is not None:                   # REGISTRA o resultado (vale em DRY também:
+                    try:                                  # o bust aconteceu independente de clicarmos)
+                        on_bust(column=i, tile=tile)
+                    except Exception:
+                        pass
+                if control is not None and not control.execution_allowed():
+                    continue                              # DRY/pausado: registrou, mas NÃO clica Sair
                 sx, sy = tx + int(pos[0]), ty + int(pos[1])
                 print("[AG] BUSTOU do torneio (coluna %d/%d) -> clico SAIR em (%d,%d)"
                       % (i, n, sx, sy), flush=True)
                 click(sx, sy)
-                last[i] = time.time()
         except Exception:
             pass
         stop.wait(period)

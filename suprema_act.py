@@ -94,6 +94,18 @@ def _clamp_and_preset(chips, rr):
     return round(chips, 2), preset
 
 
+def _checking_is_free(legal, table):
+    """CHECK só é de graça quando NÃO há aposta pendente. Discriminador robusto: 'call' NÃO é
+    ação legal (o servidor só OFERECE call quando há aposta a pagar) E não há call_amount>0.
+    A Suprema manda call como BOOLEANO True no facing-bet (call_amount fica None), então gatear
+    só em call_amount deixava o buraco aberto -> usamos 'CALL in legal' como sinal primário.
+    Protege o FOLD->CHECK/CHECK contra estado VELHO onde 'check' e 'call' aparecem juntos:
+    nesse caso checar clicaria o botão check/CALL = PAGAR (bug Ah5d #26, 25/11)."""
+    if CALL in legal:
+        return False
+    return ((table.prompt.get('call_amount') or 0) <= 0)
+
+
 def plan_action(advice, table):
     """Devolve o plano: {action, chips?, preset?, reason}. `advice` = dict do cérebro;
     `table` = SupremaTable (legal_actions/prompt/bb). action=WAIT se não é a vez; ABSTAIN se
@@ -107,16 +119,22 @@ def plan_action(advice, table):
     if fam is None:
         return dict(action=ABSTAIN, reason='REC_DESCONHECIDO:%s' % advice.get('recommended'))
 
-    # FOLD: nunca de graça -> se dá p/ checar, checa.
+    # FOLD: só vira CHECK quando checar é REALMENTE de graça (sem aposta pendente). Se há algo a
+    # pagar e o CHECK aparece como legal por estado VELHO/flicker, "checar" CLICA o botão
+    # check/CALL = PAGAR o fold -> atrocidade (bug Ah5d #26, 25/11: fold no turn virou call de
+    # 3189 com ás-alto, pote multiway). Gate em _checking_is_free -> nunca paga um fold.
     if fam == FOLD:
-        if CHECK in legal:
+        if CHECK in legal and _checking_is_free(legal, table):
             return dict(action=CHECK, reason='FOLD->CHECK_GRATIS')
         if FOLD in legal:
             return dict(action=FOLD, reason='fold')
         return dict(action=ABSTAIN, reason='FOLD_SEM_BOTAO')
 
     if fam == CHECK:
-        if CHECK in legal:
+        # mesma blindagem: 'check' só clica o botão quando é de graça; com aposta pendente (CALL
+        # legal ou call_amount>0) "checar" pagaria. Cai p/ CALL0 (se for check-via-call de graça)
+        # ou ABSTAIN -> JAMAIS converte um check em call pago.
+        if CHECK in legal and _checking_is_free(legal, table):
             return dict(action=CHECK, reason='check')
         if CALL in legal and (table.prompt.get('call_amount') or 0) <= 0:
             return dict(action=CALL, reason='CHECK->CALL0')

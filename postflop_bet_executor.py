@@ -14,7 +14,16 @@ Só clica se ACHAR o botão da fração; senão devolve NO_FRACTION_BUTTON (não
 import cv2
 import numpy as np
 
-from registrar_armado import _click_step, _ocr_line
+from registrar_armado import _click_step, _ocr_line as _ocr_line_raw
+
+
+def _ocr_line(img):
+    """OCR tolerante: NUNCA lança (tesseract ausente no PATH derrubava o read_bet_panel). Sem OCR,
+    devolve '' — os presets ainda saem por SLOT (_GREEN_ORDER); só o label vira cosmético."""
+    try:
+        return _ocr_line_raw(img)
+    except Exception:
+        return ''
 
 # bucket do postflop_sizing ('1/3'...) -> bucket do painel
 _SLIDER_TO_PANEL = {'1/3': 't33', '1/2': 't50', '2/3': 't66', 'geo': 'geo',

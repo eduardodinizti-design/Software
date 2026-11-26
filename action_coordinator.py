@@ -191,3 +191,11 @@ class DryRunInput:
         self.clicks.append((x, y))
         return dict(released=True, down_accepted=1, up_accepted=1,
                     moved=dict(requested=1, accepted=1), dry_run=True)
+
+    def drag(self, x0, y0, x1, y1, *, bounds=None, steps=14, settle_s=0.05):
+        """DRY: registra o arrasto (ex.: handle do slider -> all-in), não envia input."""
+        if not hasattr(self, 'drags'):
+            self.drags = []
+        self.drags.append((x0, y0, x1, y1))
+        self.pos = (x1, y1)
+        return dict(dry_run=True, down_accepted=1, up_accepted=1)

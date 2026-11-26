@@ -61,6 +61,36 @@ class PlanAction(unittest.TestCase):
         p = A.plan_action(ADV('fold'), _table_with_prompt(FACING))  # sem check
         self.assertEqual(p['action'], A.FOLD)
 
+    def test_fold_facing_bet_com_check_velho_NAO_paga(self):
+        # BUG Ah5d #26 (25/11): estado VELHO/flicker traz 'check' E 'call' juntos (vilao apostou
+        # DEPOIS do hero checar). Cerebro=fold -> convertia p/ CHECK -> clicava o botao check/CALL
+        # = PAGAVA o fold (call de 3189 com as-alto). Agora: FOLDA, nunca paga.
+        stale = {"fold": True, "check": True, "call": 3189,
+                 "raise": "range,6000,60000,2X,6000", "all_in": True}
+        p = A.plan_action(ADV('fold'), _table_with_prompt(stale))
+        self.assertEqual(p['action'], A.FOLD)
+        self.assertEqual(p['reason'], 'fold')
+
+    def test_fold_facing_bet_com_call_BOOLEANO_e_check_velho_NAO_paga(self):
+        # Ao vivo a Suprema manda call=True (booleano) -> call_amount fica None. Gatear so em
+        # call_amount deixaria o buraco: aqui o sinal e 'call' estar nas acoes legais.
+        stale = {"fold": True, "check": True, "call": True,
+                 "raise": "range,6000,60000,2X,6000", "all_in": True}
+        t = _table_with_prompt(stale)
+        self.assertIn('call', t.legal_actions())     # call booleano entra como acao legal
+        self.assertIsNone(t.prompt.get('call_amount'))
+        p = A.plan_action(ADV('fold'), t)
+        self.assertEqual(p['action'], A.FOLD)
+
+    def test_check_facing_bet_velho_NAO_vira_call_pago(self):
+        # Mesma blindagem na familia CHECK: cerebro=check com aposta pendente nao pode virar
+        # call pago -> ABSTAIN (nao age; a trava 1-tentativa re-dispara no proximo frame limpo).
+        stale = {"fold": True, "check": True, "call": 3189,
+                 "raise": "range,6000,60000,2X,6000", "all_in": True}
+        p = A.plan_action(ADV('check'), _table_with_prompt(stale))
+        self.assertNotIn(p['action'], (A.CALL,))      # JAMAIS paga
+        self.assertEqual(p['action'], A.ABSTAIN)
+
     def test_call_usa_valor_do_prompt(self):
         p = A.plan_action(ADV('call'), _table_with_prompt(FACING))
         self.assertEqual(p['action'], A.CALL)

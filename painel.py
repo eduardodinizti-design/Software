@@ -9,6 +9,7 @@ import json
 import os
 import subprocess
 import sys
+from datetime import datetime
 
 import tkinter as tk
 from tkinter import ttk, messagebox
@@ -22,9 +23,15 @@ except Exception:
     def find_data(name, **k):
         return os.path.join(base_dir(), name)
 
+import session_summary as _ss  # CONTRATO: agregador de desempenho da Suprema (Play money R$). Só consumo.
+
 BG, FG, ACCENT = '#111111', '#f5f5f5', '#ff7a00'
+GREEN, RED = '#2ecc71', '#e06c5a'              # lucro >=0 / <0 (R$)
 GRADE_FILE = os.path.join(base_dir(), 'grade_do_dia.json')
 METRICS_FILE = os.path.join(base_dir(), 'logs', 'metrics', 'torneios.jsonl')
+# Suprema (play-money): tudo em R$ (play money). Arquivo REAL alimentado pelo pipeline; SAMPLE p/ dev.
+SUPREMA_LOG = os.path.join(base_dir(), 'logs', 'metrics', 'torneios_suprema.jsonl')
+SUPREMA_SAMPLE = os.path.join(base_dir(), 'logs', 'metrics', 'torneios_suprema.SAMPLE.jsonl')
 
 
 # ----------------------------- dados ------------------------------------------
@@ -79,13 +86,165 @@ def summarize(rows):
     return dict(n=n, avg_buyin=avg_buyin, itm_pct=itm_pct, ft_pct=ft_pct, avg_pos=avg_pos, res=dict(res))
 
 
+# ----------------------- dados/desempenho SUPREMA (Play money R$) --------------------
+def suprema_log_path():
+    """Caminho do jsonl da Suprema. Prefere o REAL (de produção) quando existe e tem
+    conteúdo; senão cai no SAMPLE (dev), p/ o painel nunca abrir vazio durante o dev.
+    Portátil (procura via app_paths em fonte e .exe)."""
+    real = [SUPREMA_LOG, find_data('torneios_suprema.jsonl',
+                                   subdirs=('', 'logs', os.path.join('logs', 'metrics')))]
+    for p in real:
+        try:
+            if p and os.path.exists(p) and os.path.getsize(p) > 0:
+                return p
+        except Exception:
+            continue
+    sample = [SUPREMA_SAMPLE, find_data('torneios_suprema.SAMPLE.jsonl',
+                                        subdirs=('', 'logs', os.path.join('logs', 'metrics')))]
+    for p in sample:
+        try:
+            if p and os.path.exists(p):
+                return p
+        except Exception:
+            continue
+    return SUPREMA_LOG  # nada ainda -> estado "sem dados"
+
+
+def load_suprema_rows():
+    """Lê os torneios da Suprema via o CONTRATO (session_summary). Nunca faz parsing na mão."""
+    return _ss.load_rows(suprema_log_path())
+
+
+def _fmt_rs(n):
+    """Play money R$ no padrão pt-BR: 1250 -> 'R$ 1.250,00'. Negativo ganha '-'. None/inválido -> '--'."""
+    if n is None:
+        return '--'
+    try:
+        v = float(n)
+    except (TypeError, ValueError):
+        return '--'
+    s = format(abs(v), ',.2f').replace(',', 'X').replace('.', ',').replace('X', '.')
+    return ('-R$ ' if v < 0 else 'R$ ') + s
+
+
+def _fmt_lucro(n):
+    """Lucro em R$ com SINAL explícito: +R$ 1.250,00 / -R$ 1.000,00. None -> '--'."""
+    if n is None:
+        return '--'
+    try:
+        v = float(n)
+    except (TypeError, ValueError):
+        return '--'
+    return ('+' if v >= 0 else '-') + _fmt_rs(abs(v))
+
+
+def _fmt_roi(roi):
+    """ROI (fração) -> '305%'. None -> '--'."""
+    if roi is None:
+        return '--'
+    try:
+        return '%.0f%%' % (float(roi) * 100)
+    except (TypeError, ValueError):
+        return '--'
+
+
+def _fmt_pct(x):
+    """Percentual 0..100 -> '33%'. None -> '--'."""
+    if x is None:
+        return '--'
+    try:
+        return '%.0f%%' % float(x)
+    except (TypeError, ValueError):
+        return '--'
+
+
+def _lucro_sinal(n):
+    """Classifica o lucro p/ cor: 'pos' (>=0, verde), 'neg' (<0, vermelho), 'neutro' (None)."""
+    if n is None:
+        return 'neutro'
+    try:
+        return 'pos' if float(n) >= 0 else 'neg'
+    except (TypeError, ValueError):
+        return 'neutro'
+
+
+def _kpi_values(summary):
+    """Linha de KPIs (label, valor, sinal) a partir de um Summary (ou seu as_dict()).
+    Tudo em R$ (play money). `sinal` só pinta Lucro/ROI (pos=verde, neg=vermelho); resto=neutro."""
+    d = summary.as_dict() if hasattr(summary, 'as_dict') else dict(summary)
+    lucro = d.get('profit')
+    roi = d.get('roi')
+    pos = d.get('avg_pos_pct')
+    return [
+        ('Torneios', str(d.get('n') or 0), 'neutro'),
+        ('Investido (R$)', _fmt_rs(d.get('invested')), 'neutro'),
+        ('Prêmios (R$)', _fmt_rs(d.get('prize')), 'neutro'),
+        ('Bounty / KOs', '%s / %d' % (_fmt_rs(d.get('bounty')), int(d.get('kos') or 0)), 'neutro'),
+        ('Lucro (R$)', _fmt_lucro(lucro), _lucro_sinal(lucro)),
+        ('ROI', _fmt_roi(roi), (_lucro_sinal(roi) if roi is not None else 'neutro')),
+        ('ITM%', _fmt_pct(d.get('itm_pct')), 'neutro'),
+        ('Mesa Final%', _fmt_pct(d.get('ft_pct')), 'neutro'),
+        ('Posição média', (_fmt_pct(pos) + ' do campo') if pos is not None else '--', 'neutro'),
+    ]
+
+
+# colunas da tabela de torneios da Suprema (id, título, largura)
+SUPREMA_COLS = (
+    ('torneio', 'Torneio', 220), ('modo', 'Modo', 80), ('investido', 'Investido', 90),
+    ('premio', 'Prêmio', 90), ('bounty', 'Bounty', 80), ('kos', 'KOs', 50),
+    ('pos', 'Posição', 90), ('itm', 'ITM', 50), ('lucro', 'Lucro', 100),
+)
+
+
+def _row_to_cells(row):
+    """Converte um registro cru de torneio nas células da tabela (em R$). Puro/testável."""
+    rank, fld = row.get('rank'), row.get('field')
+    pos = ('%d/%d' % (rank, fld)) if isinstance(rank, int) and isinstance(fld, int) and fld > 0 else '--'
+    itm = row.get('itm')
+    itm_txt = 'Sim' if itm else ('Não' if itm is not None else '--')
+    kos = row.get('kos')
+    return (
+        row.get('name') or row.get('tournament_id') or '?',
+        row.get('mode') or '--',
+        _fmt_rs(_ss.invested_of(row)),
+        _fmt_rs(row.get('prize')),
+        _fmt_rs(row.get('bounty')),
+        (str(kos) if isinstance(kos, int) else '--'),
+        pos,
+        itm_txt,
+        _fmt_lucro(_ss.profit_of(row)),
+    )
+
+
+# recortes padrão (chave interna -> rótulo)
+RECORTE_HOJE, RECORTE_TUDO = '__hoje__', '__tudo__'
+
+
+def _filter_by_recorte(rows, recorte, today=None):
+    """Filtra as linhas pelo recorte escolhido: Hoje / Tudo / um session_id. Puro/testável."""
+    if recorte == RECORTE_TUDO:
+        return list(rows)
+    if recorte == RECORTE_HOJE:
+        day = today or datetime.now().strftime('%Y-%m-%d')
+        return [r for r in rows if _ss.day_key(r) == day]
+    return [r for r in rows if r.get('session_id') == recorte]
+
+
+def _recorte_options(rows):
+    """Lista de (rótulo, chave) p/ o seletor: Hoje, Tudo e cada sessão (mais recente 1º)."""
+    opts = [('Hoje', RECORTE_HOJE), ('Tudo (histórico)', RECORTE_TUDO)]
+    for sid in _ss.sessions(rows):
+        opts.append(('Sessão %s' % sid, sid))
+    return opts
+
+
 # ----------------------------- UI ---------------------------------------------
 class Painel:
-    def __init__(self, root):
+    def __init__(self, root, select_tab=None):
         self.root = root
         root.title('NVT Henrique — Painel de Gestão')
-        root.geometry('900x600')
-        root.minsize(760, 520)
+        root.geometry('980x660')
+        root.minsize(820, 560)
         try:
             root.configure(bg=BG)
             st = ttk.Style(); st.theme_use('clam')
@@ -98,9 +257,131 @@ class Painel:
         except Exception:
             pass
         nb = ttk.Notebook(root); nb.pack(fill='both', expand=True, padx=8, pady=8)
+        self.nb = nb
+        self._tab_frames = {}
+        self._tab_suprema(nb)       # 📊 Suprema — Hoje (R$): resultados do dia/histórico
         self._tab_grade(nb)
-        self._tab_desempenho(nb)
+        self._tab_desempenho(nb)    # Desempenho do PPPoker (schema antigo) — intacto
         self._tab_controle(nb)
+        if select_tab and select_tab in self._tab_frames:
+            try:
+                nb.select(self._tab_frames[select_tab])
+            except Exception:
+                pass
+
+    # --- aba Suprema (R$): resultados do dia + histórico ---
+    def _tab_suprema(self, nb):
+        f = ttk.Frame(nb, padding=10); nb.add(f, text='📊 Suprema — Hoje')
+        self._tab_frames['suprema'] = f
+
+        top = ttk.Frame(f); top.pack(fill='x')
+        ttk.Label(top, text='Recorte:', font=('Segoe UI', 10, 'bold')).pack(side='left')
+        self.s_recorte = ttk.Combobox(top, state='readonly', width=22)
+        self.s_recorte.pack(side='left', padx=(6, 12))
+        self.s_recorte.bind('<<ComboboxSelected>>', lambda _e: self._suprema_render())
+        ttk.Button(top, text='↻ Atualizar', command=self._suprema_refresh).pack(side='left')
+        self.s_source = ttk.Label(top, text='', foreground='#888', font=('Segoe UI', 8))
+        self.s_source.pack(side='right')
+
+        self.s_kpis = ttk.Frame(f); self.s_kpis.pack(fill='x', pady=10)
+
+        ttk.Label(f, text='Lucro acumulado em R$ (play money) no tempo (linha do zero tracejada; '
+                  'verde = lucro, vermelho = prejuízo)', foreground='#aaa').pack(anchor='w')
+        self.s_chart = tk.Canvas(f, height=150, bg='#1b1b1b', highlightthickness=0)
+        self.s_chart.pack(fill='x', pady=(2, 8))
+
+        cols = tuple(c for c, _t, _w in SUPREMA_COLS)
+        self.s_tree = ttk.Treeview(f, columns=cols, show='headings', height=9)
+        for c, t, w in SUPREMA_COLS:
+            self.s_tree.heading(c, text=t); self.s_tree.column(c, width=w, anchor='w')
+        self.s_tree.tag_configure('pos', foreground=GREEN)
+        self.s_tree.tag_configure('neg', foreground=RED)
+        self.s_tree.pack(fill='both', expand=True)
+
+        self._suprema_rows = []
+        self._suprema_refresh()
+
+    def _suprema_refresh(self):
+        """Relê o jsonl, repopula o seletor de recorte (mantendo a escolha) e redesenha."""
+        self._suprema_rows = load_suprema_rows()
+        try:
+            src = suprema_log_path()
+            tag = 'AMOSTRA (dev)' if src.upper().endswith('.SAMPLE.JSONL') else 'produção'
+            self.s_source.config(text='fonte: %s' % tag)
+        except Exception:
+            pass
+        opts = _recorte_options(self._suprema_rows)
+        self._recorte_keys = [k for _lbl, k in opts]
+        labels = [lbl for lbl, _k in opts]
+        cur = self.s_recorte.get()
+        self.s_recorte['values'] = labels
+        if cur in labels:
+            self.s_recorte.set(cur)
+        else:
+            self.s_recorte.set(labels[0])   # 'Hoje' por padrão
+        self._suprema_render()
+
+    def _suprema_render(self):
+        """Aplica o recorte escolhido aos KPIs, à tabela e ao gráfico de lucro."""
+        idx = self.s_recorte.current()
+        recorte = self._recorte_keys[idx] if 0 <= idx < len(self._recorte_keys) else RECORTE_HOJE
+        rows = _filter_by_recorte(self._suprema_rows, recorte)
+        summary = _ss.summarize(rows)
+
+        for w in self.s_kpis.winfo_children():
+            w.destroy()
+        for label, value, sinal in _kpi_values(summary):
+            self._kpi(self.s_kpis, label, value, sinal=sinal)
+
+        for i in self.s_tree.get_children():
+            self.s_tree.delete(i)
+        ordered = sorted(rows, key=lambda r: r.get('ts') or '', reverse=True)  # mais recentes 1º
+        for r in ordered:
+            tag = _lucro_sinal(_ss.profit_of(r))
+            self.s_tree.insert('', 'end', values=_row_to_cells(r),
+                               tags=((tag,) if tag in ('pos', 'neg') else ()))
+        self._draw_profit_chart(rows)
+
+    def _draw_profit_chart(self, rows):
+        """Lucro ACUMULADO em R$ no tempo (Canvas puro, sem libs). Linha do zero
+        tracejada; cor pela posição final (verde lucro / vermelho prejuízo)."""
+        c = self.s_chart
+        c.delete('all')
+        W = max(c.winfo_width(), 400)
+        H = max(c.winfo_height(), 150)
+        pad = 28
+        serie = _ss.cumulative_profit(rows)   # [(ts, lucro_acumulado)]
+        if not serie:
+            c.create_text(W // 2, H // 2, text='(sem dados de lucro ainda)', fill='#777')
+            return
+        ys = [v for _ts, v in serie]
+        lo, hi = min(ys + [0.0]), max(ys + [0.0])
+        if hi == lo:
+            hi = lo + 1.0
+
+        def X(i):
+            return pad + (W - 2 * pad) * (i / max(len(serie) - 1, 1))
+
+        def Y(v):
+            return pad + (H - 2 * pad) * (1 - (v - lo) / (hi - lo))
+
+        zy = Y(0.0)
+        c.create_line(pad, zy, W - pad, zy, fill='#555', dash=(3, 3))
+        c.create_text(W - pad, zy - 8, text='0', fill='#888', anchor='e', font=('Segoe UI', 7))
+        final = ys[-1]
+        col = GREEN if final >= 0 else RED
+        pts = []
+        for i, v in enumerate(ys):
+            pts += [X(i), Y(v)]
+        if len(pts) >= 4:
+            c.create_line(*pts, fill=col, width=2, smooth=True)
+        for i, v in enumerate(ys):
+            c.create_oval(X(i) - 2, Y(v) - 2, X(i) + 2, Y(v) + 2,
+                          fill=(GREEN if v >= 0 else RED), outline='')
+        ty = Y(final) - 10 if final >= 0 else Y(final) + 10
+        c.create_text(X(len(ys) - 1), max(10, min(H - 10, ty)),
+                      text=_fmt_lucro(final), fill=col, anchor='e',
+                      font=('Segoe UI', 8, 'bold'))
 
     # --- aba Grade do Dia ---
     def _tab_grade(self, nb):
@@ -177,10 +458,12 @@ class Painel:
         self.dtree.pack(fill='both', expand=True)
         self._desemp_refresh()
 
-    def _kpi(self, parent, label, value):
-        card = tk.Frame(parent, bg='#1b1b1b', padx=14, pady=10)
-        card.pack(side='left', padx=6)
-        tk.Label(card, text=value, bg='#1b1b1b', fg=ACCENT, font=('Segoe UI', 18, 'bold')).pack()
+    def _kpi(self, parent, label, value, sinal='neutro'):
+        """Card de KPI. sinal: 'pos' (verde), 'neg' (vermelho) ou 'neutro' (laranja)."""
+        fg = {'pos': GREEN, 'neg': RED}.get(sinal, ACCENT)
+        card = tk.Frame(parent, bg='#1b1b1b', padx=12, pady=10)
+        card.pack(side='left', padx=5)
+        tk.Label(card, text=value, bg='#1b1b1b', fg=fg, font=('Segoe UI', 16, 'bold')).pack()
         tk.Label(card, text=label, bg='#1b1b1b', fg='#aaa', font=('Segoe UI', 9)).pack()
 
     def _desemp_refresh(self):
@@ -278,8 +561,10 @@ class Painel:
 
 
 def main():
+    # --suprema abre direto na aba de resultados da Suprema (usado pelo launcher .exe/fonte)
+    select = 'suprema' if '--suprema' in sys.argv[1:] else None
     root = tk.Tk()
-    Painel(root)
+    Painel(root, select_tab=select)
     root.mainloop()
 
 

@@ -136,14 +136,60 @@ def main():
     procs = [x for x in dev.enumerate_processes() if x.name.lower() == "pppoker.exe"]
     if not procs:
         print("[emit] PPPoker fechado."); return
-    s = dev.attach(procs[0].pid)
+    # Multi-instância: NVT_PPP_PID fixa o processo a anexar (o dono da janela-alvo). Sem ele, 1º.
+    want = int(os.environ.get("NVT_PPP_PID", "0") or 0)
+    chosen = next((p for p in procs if p.pid == want), None) if want else None
+    if want and chosen is None:
+        print("[emit] NVT_PPP_PID=%d não está entre os PPPoker abertos -> aborta (não anexa errado)." % want)
+        return
+    target = chosen or procs[0]
+    s = dev.attach(target.pid)
     with open(os.path.join(HERE, "emitir_seats.js"), encoding="utf-8") as fh:
         sc = s.create_script(fh.read())
     sc.set_log_handler(lambda l, t: print(t, flush=True))
     sc.on("message", on_msg)
     s.on("detached", lambda *a: _request_stop())   # PPPoker fechou -> para sem tentar detach morto
     sc.load()
-    print("[emit] anexado (pid %d). Gravando %s. Ctrl+C p/ sair." % (procs[0].pid, OUT), flush=True)
+    print("[emit] anexado (pid %d). Gravando %s. Ctrl+C p/ sair." % (target.pid, OUT), flush=True)
+    # TILES (binding multi-mesa v228): 2º script na MESMA sessão + thread que grava logs/tiles.json
+    # (FloatingWindowController._tableId@52=roomid + _rectTransform@64; ver readTiles2/emitir_tiles).
+    tiles_sc = None
+    try:
+        with open(os.path.join(HERE, "ler_tiles.js"), encoding="utf-8") as fh:
+            tiles_sc = s.create_script(fh.read())
+        tiles_sc.on("message", lambda m, d: None)     # ignora os sends do hook do ler_tiles
+        tiles_sc.load()
+        import threading
+        TILES_OUT = os.path.join(REPO, "logs", "tiles.json")
+
+        def _tiles_loop():
+            last = None
+            while not _stop["flag"]:
+                try:
+                    r = tiles_sc.exports_sync.readtilesscreen()   # rect de TELA Unity (px físico, Y up)
+                    tiles = {}
+                    for t in (r or {}).get("tiles") or []:
+                        tid, sr = t.get("tableId"), t.get("srect")
+                        if isinstance(tid, int) and tid > 0 and isinstance(sr, list) and len(sr) == 4:
+                            tiles[str(tid)] = [float(v) for v in sr]
+                    obj = {"render": [r.get("screenW"), r.get("screenH")], "tiles": tiles}
+                    if obj != last:
+                        os.makedirs(os.path.dirname(TILES_OUT), exist_ok=True)
+                        tmp = TILES_OUT + ".tmp"
+                        with open(tmp, "w", encoding="utf-8") as f:
+                            json.dump(obj, f, ensure_ascii=False)
+                        os.replace(tmp, TILES_OUT)
+                        print("[emit] tiles.json: %d mesa(s) %s (render %s)" % (
+                            len(tiles), sorted(tiles), obj["render"]), flush=True)
+                        last = obj
+                except Exception:
+                    pass
+                time.sleep(2.0)
+
+        threading.Thread(target=_tiles_loop, daemon=True).start()
+        print("[emit] TILES ativo (binding multi-mesa v228) -> %s" % TILES_OUT, flush=True)
+    except Exception as e:
+        print("[emit] tiles NÃO subiu (%s) -> segue SEM binding multi-mesa." % e, flush=True)
     t0 = time.time()
     try:
         while not _stop["flag"] and (not SECONDS or (time.time() - t0) < SECONDS):
@@ -155,6 +201,10 @@ def main():
         pass
     finally:
         # unload ANTES do detach: reverte os hooks IL2CPP com a conexão viva -> sem crash.
+        try:
+            if tiles_sc is not None:
+                tiles_sc.unload()
+        except Exception: pass
         try: sc.unload()
         except Exception: pass
         try: s.detach()

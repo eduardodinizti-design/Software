@@ -175,3 +175,104 @@ function armHook(){
 }
 function go(){ try{ armHook(); }catch(e){ console.log('[tiles] erro:', e.stack||e); } }
 if(Process.findModuleByName(MOD)){ go(); } else { const id=setInterval(()=>{ if(Process.findModuleByName(MOD)){ clearInterval(id); go(); } },500); }
+
+// RPC p/ o produtor de tiles (emitir_tiles.py): devolve {tiles:[{roomid,rect:[x0,y0,x1,y1]}]}.
+rpc.exports = { readtiles: function(){ try{ return readTiles(); }catch(e){ return {err:String(e)}; } } };
+
+// PROBE (RE v228): conta instâncias vivas de classes candidatas (read-only).
+function probeClasses(names){
+  boot(); const c=classes();
+  const out=[];
+  names.forEach(function(nm){
+    try{
+      const k = classByName('PP.Production.PPPoker', nm);
+      if(k.isNull()){ out.push({name:nm, cls:'NULL'}); return; }
+      const typeObj = il.type_get_object(il.class_get_type(k));
+      const arrp = callS(c.m.find,'pointer',['pointer'],[typeObj]);
+      const n = arrp.isNull()? -1 : arrp.add(0x18).readS32();
+      out.push({name:nm, n:n});
+    }catch(e){ out.push({name:nm, err:String(e)}); }
+  });
+  return out;
+}
+rpc.exports.probe = function(names){ try{ return probeClasses(names); }catch(e){ return {err:String(e)}; } };
+
+rpc.exports.dumpfields = function(name){ try{ return dumpFields(name); }catch(e){ return [String(e)]; } };
+
+// readTiles2 (v228): FloatingWindowController._tableId@52 + _rectTransform@64 -> cantos na tela.
+function readTiles2(){
+  boot(); const c=classes();
+  const k = classByName('PP.Production.PPPoker','FloatingWindowController');
+  if(k.isNull()) return {err:'FloatingWindowController NULL'};
+  const typeObj = il.type_get_object(il.class_get_type(k));
+  const arrp = callS(c.m.find,'pointer',['pointer'],[typeObj]);
+  if(arrp.isNull()) return {tiles:[], n:0};
+  const len = arrp.add(0x18).readS32();
+  const sh = c.m.screenH.isNull()? 0 : callS(c.m.screenH,'int',[],[]);
+  const out=[];
+  for(let i=0;i<Math.min(len,16);i++){
+    try{
+      const w = arrp.add(0x20 + i*Process.pointerSize).readPointer(); if(w.isNull())continue;
+      const tableId = w.add(52).readS32();
+      const rt = w.add(64).readPointer();
+      let rect=null;
+      if(!rt.isNull() && !c.m.getCorners.isNull()){
+        const varr = il.array_new(c.vec3, 4);
+        callI(c.m.getCorners,'void',['pointer'],rt,[varr]);
+        const base = varr.add(0x20); const pts=[];
+        for(let j=0;j<4;j++){ const b=base.add(j*12); pts.push([b.readFloat(), b.add(4).readFloat()]); }
+        const xs=pts.map(p=>p[0]), ys=pts.map(p=>p[1]);
+        rect=[Math.min.apply(null,xs),Math.min.apply(null,ys),Math.max.apply(null,xs),Math.max.apply(null,ys)];
+      }
+      out.push({tableId:tableId, rect:rect});
+    }catch(e){ out.push({err:String(e)}); }
+  }
+  return {tiles:out, n:len, screenH:sh};
+}
+rpc.exports.readtiles2 = function(){ try{ return readTiles2(); }catch(e){ return {err:String(e)}; } };
+
+rpc.exports.cameras = function(){ try{ return readCameras(); }catch(e){ return [String(e)]; } };
+
+// readTilesScreen (A): projeta os cantos de MUNDO dos tiles -> px de TELA Unity via
+// _Camera_Main.WorldToScreenPoint (sret + arg Vector3 por ponteiro, ABI Win x64). READ-ONLY.
+function readTilesScreen(){
+  boot(); const c=classes();
+  const camType = il.type_get_object(il.class_get_type(c.cam));
+  const camArr = callS(c.m.find,'pointer',['pointer'],[camType]);
+  if(camArr.isNull()||camArr.add(0x18).readS32()<1) return {err:'sem camera'};
+  const cam = camArr.add(0x20).readPointer();
+  const w2s = method(c.cam,'WorldToScreenPoint',1);
+  if(w2s.isNull()) return {err:'WorldToScreenPoint NULL'};
+  const f = new NativeFunction(w2s.readPointer(),'void',['pointer','pointer','pointer','pointer']);
+  function project(wx,wy,wz){
+    const world=Memory.alloc(12); world.writeFloat(wx); world.add(4).writeFloat(wy); world.add(8).writeFloat(wz);
+    const ret=Memory.alloc(12); f(ret, cam, world, w2s);
+    return [ret.readFloat(), ret.add(4).readFloat()];
+  }
+  const k = classByName('PP.Production.PPPoker','FloatingWindowController');
+  const typeObj = il.type_get_object(il.class_get_type(k));
+  const arrp = callS(c.m.find,'pointer',['pointer'],[typeObj]);
+  if(arrp.isNull()) return {tiles:[], n:0};
+  const len = arrp.add(0x18).readS32();
+  const sw = c.m.screenW.isNull()?0:callS(c.m.screenW,'int',[],[]);
+  const sh = c.m.screenH.isNull()?0:callS(c.m.screenH,'int',[],[]);
+  const out=[];
+  for(let i=0;i<Math.min(len,16);i++){
+    try{
+      const wnd=arrp.add(0x20+i*Process.pointerSize).readPointer(); if(wnd.isNull())continue;
+      const tableId=wnd.add(52).readS32(); const rt=wnd.add(64).readPointer();
+      let srect=null;
+      if(!rt.isNull() && !c.m.getCorners.isNull()){
+        const varr=il.array_new(c.vec3,4);
+        callI(c.m.getCorners,'void',['pointer'],rt,[varr]);
+        const base=varr.add(0x20); const pts=[];
+        for(let j=0;j<4;j++){ const b=base.add(j*12); pts.push(project(b.readFloat(),b.add(4).readFloat(),b.add(8).readFloat())); }
+        const xs=pts.map(p=>p[0]), ys=pts.map(p=>p[1]);
+        srect=[Math.min.apply(null,xs),Math.min.apply(null,ys),Math.max.apply(null,xs),Math.max.apply(null,ys)];
+      }
+      out.push({tableId:tableId, srect:srect});
+    }catch(e){ out.push({err:String(e)}); }
+  }
+  return {tiles:out, n:len, screenW:sw, screenH:sh};
+}
+rpc.exports.readtilesscreen = function(){ try{ return readTilesScreen(); }catch(e){ return {err:String(e)}; } };
